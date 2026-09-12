@@ -110,7 +110,6 @@ const KNOWN_NOT_SHIPPED = [
   // Root dev documents — framework-authoring docs, never shipped to consumers.
   { prefix: ".gitattributes", reason: "framework-repo git config — dev-tooling, not shipped to consumers" },
   { prefix: "DICTIONARY.md", reason: "framework-repo authoring glossary — dev-tooling, not shipped to consumers" },
-  { prefix: "INTERESTING.md", reason: "framework-repo project notes — dev-tooling, not shipped to consumers" },
   { prefix: "PROJECT.md", reason: "framework-repo project doc — dev-tooling; consumers get their own scaffolded PROJECT.md" },
   { prefix: "RELEASES.md", reason: "framework-repo release notes — dev-tooling, not shipped to consumers" },
   { prefix: "ROADMAP.md", reason: "framework-repo roadmap — dev-tooling, not shipped to consumers" },
