@@ -2,7 +2,7 @@
 
 > **What this is.** The ledger of meaningful work performed **outside** a formal epic or sprint,
 > per the enforced tracking system in
-> [`agentic_os_tracker_system_improvements.md`](./agentic_os_tracker_system_improvements.md) §18 / §31.
+> [`_planning/tracker-system-improvements.md`](./_planning/tracker-system-improvements.md) §18 / §31.
 > Untracked work is allowed only if it is captured here. The President agent periodically reconciles
 > each entry into the proper epic/sprint structure (§18, §31).
 >
@@ -78,7 +78,7 @@
 - **Date and time:** 2026-06-05
 - **Session ID:** 2026-06-05-tracker-scaffold (june-5)
 - **Agent or agents involved:** Alpha
-- **Description of work:** Classified `agentic_os_tracker_system_improvements.md` (the active
+- **Description of work:** Classified `_planning/tracker-system-improvements.md` (the active
   tracker-system project spec / requirements input) as a WarpOS-internal `runtime-working-doc` in the
   manifest builder, alongside `DUMP.md` and `TRACKER.md`. Such root working docs are tracked but NOT
   shipped to products and are not a framework view: `owner=runtime, managed=false`.
@@ -94,7 +94,7 @@
   the project lands and the spec is archived/relocated under `_requirements/` (noted inline in
   `build.js`).
 - **Evidence of completion:** `scripts/warpos/manifest/build.js` lines 511–524 (runtime-working-doc
-  rule lists `agentic_os_tracker_system_improvements.md`, verified present 2026-06-05 via grep).
+  rule lists `_planning/tracker-system-improvements.md`, verified present 2026-06-05 via grep).
 - **Related definitions:** Path, System Inventory (see TRACKER.md).
 - **Related verification items:** `scripts/warpos/manifest/build.js` Verified Exists; rule covers the
   brief, `DUMP.md`, and `TRACKER.md`.

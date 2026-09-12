@@ -94,7 +94,7 @@ A non-zero exit in canonical is a critical finding: the reference procedure laye
 
 **Tracker integrity — the enforced-tracker gate** *(default + `--deep`)*
 
-The enforced-tracker validator (`agentic_os_tracker_system_improvements.md` §28.7, epic E-TRACKER-001) runs as a direct script invocation — it is the engine behind the `/trackers:validate` skill (a `/trackers:*` skill, not a `/scan:*` token, so it is referenced by path here like the canon + knowledge enforcers, and is NOT on the `scan-coverage.allowlist.json` skill list):
+The enforced-tracker validator (`_planning/tracker-system-improvements.md` §28.7, epic E-TRACKER-001) runs as a direct script invocation — it is the engine behind the `/trackers:validate` skill (a `/trackers:*` skill, not a `/scan:*` token, so it is referenced by path here like the canon + knowledge enforcers, and is NOT on the `scan-coverage.allowlist.json` skill list):
 
 ```bash
 node scripts/trackers/validate.js   # E-TRACKER-001/T4: TRACKER.md carries all 34 §5 sections, no blank section, no broken intra-repo links, active epics/sprints link to real /trackers/ files, active items have a next action, completed items have evidence + are 100%, 100% items are marked completed, sprints name a parent epic, no §21 ambiguous-state language, no undefined §8 terms, §33 required paths exist (exit 0/1/2, fail-closed)
@@ -102,7 +102,7 @@ node scripts/trackers/validate.js   # E-TRACKER-001/T4: TRACKER.md carries all 3
 
 A non-zero exit is a critical finding (the tracker drifted from reality / lies about state — a missing section, an active item with no next action, a completed item with no evidence, a broken tracker-file link). Fail-closed (exit 2 = could-not-run = NOT green). This is what makes the tracker's truthfulness an automatic gate, not a runnable-on-demand check.
 
-The tracker-fidelity probe (`agentic_os_tracker_system_improvements.md` / SP-20260718-005 AC-15, ED-056 recurrence class) is the STRUCTURED-YAML sibling of `tracker-reality-drift.js`: it checks the sprint trackers (`progress.yaml` / `current.yaml`) FIELD-BY-FIELD against a ground-truth AUTHORITY MAP at a consistent snapshot — a field that names a nonexistent artifact path, or a `current.id` that disagrees with the active-sprint registry, is drift:
+The tracker-fidelity probe (`_planning/tracker-system-improvements.md` / SP-20260718-005 AC-15, ED-056 recurrence class) is the STRUCTURED-YAML sibling of `tracker-reality-drift.js`: it checks the sprint trackers (`progress.yaml` / `current.yaml`) FIELD-BY-FIELD against a ground-truth AUTHORITY MAP at a consistent snapshot — a field that names a nonexistent artifact path, or a `current.id` that disagrees with the active-sprint registry, is drift:
 
 ```bash
 node scripts/checks/tracker-fidelity.js   # SP-20260718-005 AC-15 / G3.5 (REPORT-ONLY here): field-level ground-truth authority map over the active sprint's progress.yaml + current.yaml (active-sprint id · plan_contract/requirements/active_files disk existence · checks_passing script existence), consistent-snapshot semantics. exit 0 clean / 0 report-only-with-findings / 2 FAIL-CLOSED (unreadable tracker / no active sprint). --enforce ramp = exit 1 on a mismatch (BINDING at a sprint's Phase-3 exit). Test: scripts/checks/tracker-fidelity.test.js 8/8.

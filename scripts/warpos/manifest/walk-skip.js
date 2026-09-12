@@ -62,9 +62,8 @@ const WALK_SKIP_FILES = new Set([
   ".env.local",
   "DUMP.md",
   "CODEX-LOG.md",
-  // HOW2CLEANMEMORY.md — operator-facing failure-case writeup (2026-07-26, blog raw
-  // material); local per-repo doc, same class as DUMP.md, never shipped framework content.
-  "HOW2CLEANMEMORY.md",
+  // (HOW2CLEANMEMORY.md moved to _docs/ in E-OPEN-SOURCE-001 S-OS-05 — classified by the
+  // project-docs rule now, no skip needed.)
   // Transient/local root docs — operator input specs + per-repo registers, NOT
   // shipped framework (same class as DUMP.md). WARPOS.md is a per-repo gap register
   // (products generate their own via /warp:flag; canonical's is local, never shipped);

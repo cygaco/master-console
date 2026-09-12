@@ -7,7 +7,7 @@
 - **Title:** Enforced Tracker System (roadmap/epic/sprint/definition/tracker overhaul)
 - **Owner:** President
 - **Parent roadmap area:** Agentic OS tracking layer — see ../../ROADMAP.md (to be migrated milestones → epics, spec §29)
-- **Goal:** Implement the system defined in [`agentic_os_tracker_system_improvements.md`](../../agentic_os_tracker_system_improvements.md): an accurate, enforced, resumable tracking system that becomes the highest operational source of truth for long-running work, so work is reliably planned, tracked, resumed, verified, audited, completed, reconciled, and enforced across sessions, agents, modes, and phases.
+- **Goal:** Implement the system defined in [`_planning/tracker-system-improvements.md`](../../_planning/tracker-system-improvements.md): an accurate, enforced, resumable tracking system that becomes the highest operational source of truth for long-running work, so work is reliably planned, tracked, resumed, verified, audited, completed, reconciled, and enforced across sessions, agents, modes, and phases.
 - **Background:** During the agent-system restructuring the OS began behaving like a company; work was lost between sessions, believed complete when it wasn't (and vice-versa), plans drifted from implementation, terms drifted, and definitions lived in memory/chat/scattered files. The spec defines the fix.
 - **Scope:** New `TRACKER.md` per §5; `How to Use` §7; authoritative Definitions §8; System Inventory §9; Verification Matrix §10; state model §19; percent rules §20; language rules §21; epic/sprint tracker files §22/§23; session/change/evidence logging §24–§26; `UNTRACKED_WORK.md` §18; roadmap milestones→epics §29; templates §35; validation §28.7; mode wiring §28.1/§34; enforcement §28.
 - **Out of scope:** Product-feature work; non-tracking framework backlog (0.16–0.18 milestones remain in `ROADMAP.md`); shipping the brief to downstream products (it is a runtime-working-doc, UW-003).
@@ -104,28 +104,28 @@
 
 ### 2026-06-06 — T4 Completed; epic advanced to ~95% (President via backend-builder)
 - Changed: Sprint T4 (Validation engine + enforcement) Completed — added the 8 deferred cross-file §28.7 checks (m–t) to `scripts/trackers/validate.js`, taking the validator to 20 checks (live 20/20 PASS + selftest 55/55, fail-closed + bite-tested). Epic percent ~90% → ~95%; DoD "required validators / validation-run / resumability" items checked; related-sprints T4 → Completed. The single residual is now a hard enforcement HOOK (G-2), machine-enforced-to-stay-tracked by the new `hooks-enforce-or-tracked` check.
-- Reason: Deliver sprint T4 of `agentic_os_tracker_system_improvements.md` (§28.7) — machine-catch cross-document drift.
+- Reason: Deliver sprint T4 of `_planning/tracker-system-improvements.md` (§28.7) — machine-catch cross-document drift.
 - Affected: `scripts/trackers/validate.js`; `../../TRACKER.md`; `../sprints/T4-validation-engine-and-enforcement.md`; this epic file.
 - Previous state: Active, ~90%; T4 Review Needed; validator 12 single-file checks.
 - New state: Active, ~95%; T4 Completed; validator 20 checks; only the hard enforcement hook residual remains.
 
 ### 2026-06-06 — T5 Completed; epic advanced to ~90% (President via systems builders)
 - Changed: Sprint T5 (Roadmap milestones → epics) Completed — `ROADMAP.md` migrated to epic-based: added a `## Epics` registry as the primary organizing unit (4 active + 5 planned epics with §29 fields, 4 parked trigger-gated bets, 10 completed + 1 superseded), marked `## 🏛 Milestones` DEPRECATED (preserved), recorded the migration in a roadmap change log, and created 8 new `trackers/epics/` files (E-GOLDEN-FLOW-001, E-CONTENT-DELIVERY-001, E-TEST-SUITE-001, E-STABLE-CHANNEL-001, E-BOUNDARY-001, E-MULTIPRODUCT-001, E-SKILL-CATALOG-001, E-MANAGER-LAYER-001). Epic percent ~80% → ~90%; DoD roadmap-epic-based item checked; related-sprints T5 → Completed; resumability DoD note updated.
-- Reason: Deliver sprint T5 of `agentic_os_tracker_system_improvements.md` (§29 Roadmap Rules) — make the roadmap epic-based and resumable, not milestone-organized.
+- Reason: Deliver sprint T5 of `_planning/tracker-system-improvements.md` (§29 Roadmap Rules) — make the roadmap epic-based and resumable, not milestone-organized.
 - Affected: `../../ROADMAP.md` (`## Epics` + DEPRECATED milestones + roadmap change log); 8 new `../sprints/`→`../epics/E-*.md` files; `../../TRACKER.md`; `../sprints/T5-roadmap-milestones-to-epics.md`; this epic file.
 - Previous state: Active, ~80%; T5 Planned; `ROADMAP.md` "Exists But Incomplete (not epic-based)".
 - New state: Active, ~90%; T5 Completed; `ROADMAP.md` epic-based; 9 epic files Verified Exists; validator 12/12 PASS.
 
 ### 2026-06-05 — T3 Completed; epic advanced to ~80% (President via systems builder)
 - Changed: Sprint T3 (System Inventory + Verification Matrix) Completed — both sections fully disk-verified (40 inventory rows + 26 matrix rows, zero `Unknown`); E-ADR0007 E1–E8 hashes + the `warpos@0.14.0` tag re-verified against `git`; epic percent ~65% → ~80%; DoD inventory/matrix + path/wiring + completed-evidence + resumability items updated; related-sprints T3 → Completed; Verification log inventory/matrix rows → Verified Exists and the non-enterable-postures row → Verified Not Wired.
-- Reason: Deliver sprint T3 of `agentic_os_tracker_system_improvements.md` (§9 System Inventory + §10 Verification Matrix) — prove every referenced artifact on disk.
+- Reason: Deliver sprint T3 of `_planning/tracker-system-improvements.md` (§9 System Inventory + §10 Verification Matrix) — prove every referenced artifact on disk.
 - Affected: this epic file; ../../TRACKER.md (inventory + matrix rewritten); trackers/sprints/T3 file.
 - Previous state: Active, ~65%; T3 Planned; inventory/matrix Exists But Incomplete; non-enterable-posture wiring Unknown.
 - New state: Active, ~80%; T3 Completed; inventory/matrix fully disk-verified; non-enterable-posture wiring Verified Not Wired (tracked G-2).
 
 ### 2026-06-05 — T6 Completed; epic advanced to ~65% (President via systems builder)
 - Changed: Sprint T6 (mode-wiring + scan-suite gate) Completed — start-of-work tracker-consult wired into all four live modes + the validator gated in `/scan:full`; T4 advanced to ~90% (standing-gate follow-up closed); epic percent ~50% → ~65%; related-sprints + Verification-log mode-wiring rows + DoD validator/enforcement items updated.
-- Reason: Deliver sprint T6 + the standing-gate half of T4's enforcement tail of `agentic_os_tracker_system_improvements.md`.
+- Reason: Deliver sprint T6 + the standing-gate half of T4's enforcement tail of `_planning/tracker-system-improvements.md`.
 - Affected: this epic file; ../../TRACKER.md; trackers/sprints/T6 + T4 files; the 4 mode skills + `scan/full.md`.
 - Previous state: Active, ~50%; T6 Planned; mode wiring Unknown.
 - New state: Active, ~65%; T6 Completed; 4 live modes + standing gate Verified Wired.
@@ -139,7 +139,7 @@
 
 ### 2026-06-05 — Session 2026-06-05-tracker-scaffold
 - Changed: Created E-TRACKER-001 and its scaffold/templates/ledger.
-- Reason: Implement `agentic_os_tracker_system_improvements.md`; give T1 templates to fill.
+- Reason: Implement `_planning/tracker-system-improvements.md`; give T1 templates to fill.
 - Affected: new trackers/ tree, UNTRACKED_WORK.md, this epic, T1–T6.
 - Previous state: No enforced tracker scaffold existed.
 - New state: Scaffold + templates + ledger authored; epic Active at 15%.

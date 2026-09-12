@@ -500,10 +500,8 @@ function buildRules(sourcePrefix) {
         // class as CLAUDE.md/AGENTS.md.
         rel === "CODEX.md" ||
         rel === "ANTIGRAVITY.md" ||
-        // GEMINI.md — sunset-tombstone executor shim (SP-20260723-001 / ADR-0036); same
-        // framework-root-doc class as CODEX/ANTIGRAVITY. Remove this line when GEMINI.md is
-        // deleted per the ADR-0036 removal-trigger (last gemini-CLI consumer rerouted to agy).
-        rel === "GEMINI.md" ||
+        // GEMINI.md (sunset tombstone, ADR-0036) was DELETED by E-OPEN-SOURCE-001 S-OS-05
+        // per the ADR's removal-trigger; the Gemini family routes through ANTIGRAVITY.md.
         rel === "PROJECT.md" ||
         rel === "README.md" ||
         rel === "USER_GUIDE.md" ||
@@ -512,7 +510,6 @@ function buildRules(sourcePrefix) {
         rel === "RELEASES.md" ||
         rel === ".gitignore" ||
         rel === ".gitattributes" ||
-        rel === "INTERESTING.md" ||
         // LICENSE — the AGPL-3.0 text added by E-OPEN-SOURCE-001 S-OS-02; same root-doc class.
         rel === "LICENSE" ||
         rel === "version.json",
@@ -555,21 +552,38 @@ function buildRules(sourcePrefix) {
     },
     {
       name: "runtime-working-doc",
-      // DUMP.md (session handoff), TRACKER.md (the burndown), and
-      // agentic_os_tracker_system_improvements.md (the active tracker-system
-      // project spec / requirements input) are WarpOS-internal working docs at
-      // root — tracked, but NOT shipped to products and not a framework view.
-      // owner=runtime, managed=false. (Remove the brief entry when that project
-      // lands and the spec is archived/relocated under _requirements/.)
+      // DUMP.md (session handoff), TRACKER.md (the burndown) and the other root
+      // working docs are canonical-internal — tracked, but NOT shipped to products
+      // and not a framework view. owner=runtime, managed=false. (The former
+      // WARP.md design spec and the tracker-system brief moved under _planning/
+      // — a walk-skipped dir — in E-OPEN-SOURCE-001 S-OS-05.)
       match: (rel) =>
         rel === "DUMP.md" ||
         rel === "TRACKER.md" ||
         rel === "UNTRACKED_WORK.md" ||
-        rel === "WARP.md" ||
         rel === "REGRESSIONS.md" ||
-        rel === "GRAPH.md" ||
-        rel === "agentic_os_tracker_system_improvements.md",
+        rel === "GRAPH.md",
       entry: () => ({ owner: "runtime", managed: false }),
+    },
+    {
+      name: "repo-community-doc",
+      // Public-repo community + provenance docs (E-OPEN-SOURCE-001 S-OS-05):
+      // CONTRIBUTING / SECURITY / CODE_OF_CONDUCT / CHANGELOG at root and docs/*.
+      // They describe the canonical repo itself and are NEVER shipped to a
+      // consumer install (a product gets its own), so they are owner=project,
+      // managed=false — the same posture as the project-docs rule for _docs/.
+      match: (rel) =>
+        rel === "CONTRIBUTING.md" ||
+        rel === "SECURITY.md" ||
+        rel === "CODE_OF_CONDUCT.md" ||
+        rel === "CHANGELOG.md" ||
+        rel.startsWith("docs/"),
+      entry: () => ({
+        owner: "project",
+        managed: false,
+        class: "reference",
+        _note: "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers.",
+      }),
     },
     {
       name: "framework-trackers-templates",

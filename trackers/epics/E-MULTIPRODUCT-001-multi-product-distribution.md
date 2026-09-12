@@ -55,7 +55,7 @@
 <!-- Append-only (§24). One entry per meaningful session; use SESSION_LOG_TEMPLATE.md fields. -->
 ### 2026-06-06 — Session 2026-06-06-t5-roadmap-to-epics
 - Agent(s): President Agent (via systems builder) · Mode: sprint
-- Work performed: Created this epic tracker file during the T5 roadmap→epic migration of `agentic_os_tracker_system_improvements.md` (§29) — captured the multi-product-distribution work from the deprecated `🟡 0.12.0` milestone block as an enforced Planned epic.
+- Work performed: Created this epic tracker file during the T5 roadmap→epic migration of `_planning/tracker-system-improvements.md` (§29) — captured the multi-product-distribution work from the deprecated `🟡 0.12.0` milestone block as an enforced Planned epic.
 - Files changed: trackers/epics/E-MULTIPRODUCT-001-multi-product-distribution.md
 - Paths changed: none · Wirings changed: none (authoring only; no git/regen/mode-wiring this session)
 - Decisions: None
@@ -71,7 +71,7 @@
 <!-- §25 -->
 ### 2026-06-06 — Epic created during T5 roadmap→epic migration (President Agent via systems builder)
 - Changed: Created E-MULTIPRODUCT-001 — Multi-Product Distribution Maturity, at Planned / 0%, from the deprecated `🟡 0.12.0` milestone block.
-- Reason: T5 of `agentic_os_tracker_system_improvements.md` (§29) — migrate roadmap milestones → enforced epics; the multi-product-distribution work needs an epic tracker file as its source of truth.
+- Reason: T5 of `_planning/tracker-system-improvements.md` (§29) — migrate roadmap milestones → enforced epics; the multi-product-distribution work needs an epic tracker file as its source of truth.
 - Affected: new trackers/epics/E-MULTIPRODUCT-001-multi-product-distribution.md; ../../ROADMAP.md (0.12.0 block deprecation); ../../TRACKER.md (Planned Epics).
 - Previous state: No enforced epic tracker file existed for multi-product distribution (work lived only in the ROADMAP 0.12.0 block).
 - New state: Epic authored; Planned at 0%.

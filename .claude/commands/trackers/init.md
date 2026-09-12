@@ -4,7 +4,7 @@ description: Initialize the enforced tracker system in a repo — scaffold a val
 
 # /trackers:init — Stand up the tracker system
 
-The enforced tracker system (`agentic_os_tracker_system_improvements.md`) makes long-running work **resumable, auditable, and truthful** across sessions — and `/trackers:validate` refuses any tracker that drifted from reality. But a consumer that has the validator and nothing else can't *use* the system: there's no `TRACKER.md`, no `/trackers/` dirs, no seed. This skill is the on-ramp: it scaffolds a fresh, **validator-GREEN** tracker structure so `/trackers:validate` passes from the first run.
+The enforced tracker system (`_planning/tracker-system-improvements.md`) makes long-running work **resumable, auditable, and truthful** across sessions — and `/trackers:validate` refuses any tracker that drifted from reality. But a consumer that has the validator and nothing else can't *use* the system: there's no `TRACKER.md`, no `/trackers/` dirs, no seed. This skill is the on-ramp: it scaffolds a fresh, **validator-GREEN** tracker structure so `/trackers:validate` passes from the first run.
 
 It is the setup companion to [`/trackers:validate`](validate.md) and shares its discipline: a **pure planner** (read-before-write, decides create-vs-skip without side effects) wrapped in a thin apply step, so a re-run is safe and a `--dry-run` previews the plan with no writes.
 
@@ -49,4 +49,4 @@ The 9 §33 templates under `trackers/templates/*` are **framework content shippe
 
 - Engine: `scripts/trackers/init.js` — pure `plan(root, force)` (read-before-write) + thin `apply()`, with the seed renderers (`renderTracker` / `renderRoadmapSeed` / `renderUntrackedWork*`). `SECTION_ORDER` + `CORE_TERMS` are kept in lockstep with `scripts/trackers/validate.js`.
 - Validator: [`/trackers:validate`](validate.md) — run it after init to confirm all 20 checks pass (exit 0).
-- Spec: `agentic_os_tracker_system_improvements.md` — §5 (34 sections) · §8 (definitions) · §28.7 (validation enforcement) · §29 (epic-based roadmap) · §33 (required paths).
+- Spec: `_planning/tracker-system-improvements.md` — §5 (34 sections) · §8 (definitions) · §28.7 (validation enforcement) · §29 (epic-based roadmap) · §33 (required paths).

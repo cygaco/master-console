@@ -3,7 +3,7 @@
 
 /**
  * scripts/hooks/tracker-start-of-work.js — SessionStart enforcement hook for the
- * enforced-tracker system (agentic_os_tracker_system_improvements.md §28.2
+ * enforced-tracker system (_planning/tracker-system-improvements.md §28.2
  * Start-of-Work Enforcement). It is the HARD counterpart to the procedural
  * "consult TRACKER.md" step the four live modes carry: at every session start it
  * RUNS the tracker validator and injects the tracker's validity verdict into the

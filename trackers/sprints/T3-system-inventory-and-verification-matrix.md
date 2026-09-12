@@ -81,7 +81,7 @@
 ## Change log
 ### 2026-06-05 — T3 disk-verification (President, via systems builder)
 - Changed: Completed the System Inventory (§9, 40 rows) + Verification Matrix (§10, 26 rows) by disk-verifying every artifact; resolved every `Unknown` to a definite state; re-verified completed-work git evidence; set T3 Completed (100%).
-- Reason: Sprint T3 of `agentic_os_tracker_system_improvements.md` (§9 + §10).
+- Reason: Sprint T3 of `_planning/tracker-system-improvements.md` (§9 + §10).
 - Affected: `../../TRACKER.md`, the epic file, this file.
 - Previous state: Planned, 0%.
 - New state: Completed, 100%.

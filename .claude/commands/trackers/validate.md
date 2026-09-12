@@ -1,10 +1,10 @@
 ---
-description: Fail-closed validator for the enforced tracker system (agentic_os_tracker_system_improvements.md §28.7). Asserts TRACKER.md carries all 34 §5 sections with no blank section, no broken intra-repo links, active epics/sprints link to real /trackers/ files, active items have a next action, completed items have evidence and are 100%, 100% items are marked completed, sprints name a parent epic, no §21 ambiguous-state language, no undefined §8 operational terms, and the §33 required paths exist. A validator that errors must never read green.
+description: Fail-closed validator for the enforced tracker system (_planning/tracker-system-improvements.md §28.7). Asserts TRACKER.md carries all 34 §5 sections with no blank section, no broken intra-repo links, active epics/sprints link to real /trackers/ files, active items have a next action, completed items have evidence and are 100%, 100% items are marked completed, sprints name a parent epic, no §21 ambiguous-state language, no undefined §8 operational terms, and the §33 required paths exist. A validator that errors must never read green.
 ---
 
 # /trackers:validate — Does the tracker tell the truth?
 
-The tracker system (`agentic_os_tracker_system_improvements.md`) exists to make long-running work **resumable, auditable, and truthful** across sessions — and §28.7 mandates a validation process so the rules don't live only in prose. This skill is that process: a deterministic, **fail-closed** check that refuses the tracker's core failure classes — a missing required section, a blank section that hides ambiguity, a link to a file that isn't there, an "active" item with no next action, a "completed" item with no evidence or below 100%, a 100% item still marked in-progress, a sprint with no parent epic, "probably done"-style language, an operational term used without a §8 definition, and a §33 required path that doesn't exist.
+The tracker system (`_planning/tracker-system-improvements.md`) exists to make long-running work **resumable, auditable, and truthful** across sessions — and §28.7 mandates a validation process so the rules don't live only in prose. This skill is that process: a deterministic, **fail-closed** check that refuses the tracker's core failure classes — a missing required section, a blank section that hides ambiguity, a link to a file that isn't there, an "active" item with no next action, a "completed" item with no evidence or below 100%, a 100% item still marked in-progress, a sprint with no parent epic, "probably done"-style language, an operational term used without a §8 definition, and a §33 required path that doesn't exist.
 
 The discipline is the same as the rest of the suite: a **pure `evaluate()` core** (every seam injected — no disk, no cwd) wrapped in a thin FS reader, with an in-file **bite-test** that fires every check both PASS and FAIL. The validator roots itself at the canonical repo, not the working directory, so it is correct even when run from a stale worktree.
 
@@ -46,4 +46,4 @@ Exit `0` all checks pass · `1` at least one check failed · `2` usage / runner 
 ## Reference
 
 - Engine: `scripts/trackers/validate.js` — pure `evaluate({ tracker, items, linkTargets, pathExists })` + thin FS `run()` + in-file bite-test (`--selftest`, 30 cases: positive + checks a–l firing both ways + fail-closed).
-- Spec: `agentic_os_tracker_system_improvements.md` — §5 (34 sections) · §8 (definitions) · §19 (states) · §20 (percent rules) · §21 (language) · §28.7 (validation enforcement) · §33 (required paths).
+- Spec: `_planning/tracker-system-improvements.md` — §5 (34 sections) · §8 (definitions) · §19 (states) · §20 (percent rules) · §21 (language) · §28.7 (validation enforcement) · §33 (required paths).

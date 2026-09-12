@@ -398,11 +398,10 @@ const FRAMEWORK_DOCS = [
   // Provider-entrypoint shims for non-Claude executors. The ownership manifest treats
   // them as the same root-doc class as CLAUDE.md/AGENTS.md, so they must ship too.
   { src: "CODEX.md", dest: "CODEX.md", merge: "append-if-exists" },
-  // ANTIGRAVITY.md (agy) + GEMINI.md (sunset-redirect) — SP-20260723-001 / ADR-0036,
-  // same executor-entrypoint class as CODEX.md. Remove GEMINI.md here when it is
-  // deleted per the ADR-0036 removal-trigger.
+  // ANTIGRAVITY.md (agy) — SP-20260723-001 / ADR-0036, same executor-entrypoint class
+  // as CODEX.md. The GEMINI.md sunset-redirect shim was deleted per the ADR-0036
+  // removal-trigger (E-OPEN-SOURCE-001 S-OS-05); Gemini-family work routes through agy.
   { src: "ANTIGRAVITY.md", dest: "ANTIGRAVITY.md", merge: "append-if-exists" },
-  { src: "GEMINI.md", dest: "GEMINI.md", merge: "append-if-exists" },
   // ADR-0007: org-structure companion to AGENTS.md, referenced from CLAUDE.md.
   // Ships to consumer roots like AGENTS.md so the agent-tree doc travels with
   // the org doc it complements.
