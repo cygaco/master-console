@@ -3,7 +3,7 @@
 
 /**
  * scripts/hooks/tracker-completion-gate.js — Stop (end-of-work) enforcement hook
- * for the enforced-tracker system (agentic_os_tracker_system_improvements.md
+ * for the enforced-tracker system (_planning/tracker-system-improvements.md
  * §28.5 End-of-Work + §28.6 Completion Gate). At session stop it RUNS the tracker
  * validator and refuses to let a session end quietly on a RED tracker — a tracker
  * that lies about state, claims completion without evidence, or whose epic/sprint

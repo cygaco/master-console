@@ -110,12 +110,12 @@ t("pure CRLF reformat of a region stays GREEN", () => {
 t("trailing blank line inside a region stays GREEN", () => {
   const root = makeFixture();
   try {
-    const p = path.join(root, "GEMINI.md");
+    const p = path.join(root, "CODEX.md");
     let txt = fs.readFileSync(p, "utf8");
     txt = txt.replace(/(\n<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:END)/, "\n\n\n$1"); // blank lines before END, inside region
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
-    assert.ok(!findingFor(findings, "GEMINI.md"), "trailing-blank-line reformat must not drift: " + JSON.stringify(findings));
+    assert.ok(!findingFor(findings, "CODEX.md"), "trailing-blank-line reformat must not drift: " + JSON.stringify(findings));
   } finally {
     rmrf(root);
   }
@@ -125,9 +125,9 @@ t("trailing blank line inside a region stays GREEN", () => {
 t("missing required entry file -> finding", () => {
   const root = makeFixture();
   try {
-    fs.rmSync(path.join(root, "GEMINI.md"));
+    fs.rmSync(path.join(root, "CODEX.md"));
     const { findings } = runParity({ repoRoot: root });
-    const f = findingFor(findings, "GEMINI.md");
+    const f = findingFor(findings, "CODEX.md");
     assert.ok(f && /missing/i.test(f.reason), "expected a missing finding, got " + JSON.stringify(findings));
   } finally {
     rmrf(root);
@@ -135,15 +135,15 @@ t("missing required entry file -> finding", () => {
 });
 
 // 6. An OVERSIZED shim delta (bytes OUTSIDE the region beyond tier) -> RED.
-t("oversized shim delta (tombstone tier) -> finding", () => {
+t("oversized shim delta (full-entry tier) -> finding", () => {
   const root = makeFixture();
   try {
-    const p = path.join(root, "GEMINI.md");
+    const p = path.join(root, "CODEX.md");
     const txt = fs.readFileSync(p, "utf8");
-    const filler = ("\nfiller line well beyond the tombstone tier bound ".padEnd(80, "x")).repeat(60); // > 2048B AND > 40 lines
+    const filler = ("\nfiller line well beyond the full-entry tier bound ".padEnd(80, "x")).repeat(140); // > 8192B AND > 120 lines
     fs.writeFileSync(p, txt + filler);
     const { findings } = runParity({ repoRoot: root });
-    const f = findingFor(findings, "GEMINI.md");
+    const f = findingFor(findings, "CODEX.md");
     assert.ok(f && /oversized/i.test(f.reason), "expected an oversized finding, got " + JSON.stringify(findings));
   } finally {
     rmrf(root);
@@ -227,7 +227,7 @@ t("sole-oracle: mutating ONLY canonical makes every embedder mismatch", () => {
     txt = txt.slice(0, cut) + "WarpOX" + txt.slice(cut + "WarpOS".length);
     fs.writeFileSync(cp, txt);
     const { findings } = runParity({ repoRoot: root });
-    for (const rel of ["CODEX.md", "ANTIGRAVITY.md", "GEMINI.md", "AGENTS.md"]) {
+    for (const rel of ["CODEX.md", "ANTIGRAVITY.md", "AGENTS.md"]) {
       const f = findingFor(findings, rel);
       assert.ok(f && /drift|mismatch/i.test(f.reason), rel + " must mismatch the mutated oracle, got " + JSON.stringify(findings));
     }

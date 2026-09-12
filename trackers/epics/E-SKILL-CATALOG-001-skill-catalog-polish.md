@@ -52,7 +52,7 @@
 <!-- Append-only (§24). One entry per meaningful session; use SESSION_LOG_TEMPLATE.md fields. -->
 ### 2026-06-06 — Session 2026-06-06-roadmap-epic-migration (june-5)
 - Agent(s): President Agent (via systems builder) · Mode: sprint
-- Work performed: Created this epic tracker file during the T5 roadmap→epic migration of `agentic_os_tracker_system_improvements.md`; populated Goal/Background/Scope/DoD from the `🟡 0.13.0` deprecated-milestone block and the § Epics Planned-epics entry in ../../ROADMAP.md.
+- Work performed: Created this epic tracker file during the T5 roadmap→epic migration of `_planning/tracker-system-improvements.md`; populated Goal/Background/Scope/DoD from the `🟡 0.13.0` deprecated-milestone block and the § Epics Planned-epics entry in ../../ROADMAP.md.
 - Files changed: trackers/epics/E-SKILL-CATALOG-001-skill-catalog-polish.md · Paths changed: none · Wirings changed: none
 - Decisions: None · Issues discovered: None
 - Definitions added/changed: None

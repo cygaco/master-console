@@ -65,7 +65,7 @@
 
 ### 2026-06-06 — Session 2026-06-06-t5-roadmap-to-epics
 - Agent(s): President Agent (via systems builder) · Mode: sprint
-- Work performed: Created this epic tracker file during the T5 roadmap→epic migration of `agentic_os_tracker_system_improvements.md` (§29) — captured the content-delivery-integrity work from the deprecated `🟡 0.16.0` milestone block as an enforced epic.
+- Work performed: Created this epic tracker file during the T5 roadmap→epic migration of `_planning/tracker-system-improvements.md` (§29) — captured the content-delivery-integrity work from the deprecated `🟡 0.16.0` milestone block as an enforced epic.
 - Files changed: trackers/epics/E-CONTENT-DELIVERY-001-content-delivery-integrity.md
 - Paths changed: none · Wirings changed: none (authoring only; no git/regen/mode-wiring this session)
 - Decisions: none this session.
@@ -101,7 +101,7 @@
 
 ### 2026-06-06 — Epic created during T5 roadmap→epic migration (President Agent via systems builder)
 - Changed: Created E-CONTENT-DELIVERY-001 — Content-Delivery Integrity & Ownership-Pattern Realignment, at Active / ~50%, from the deprecated `🟡 0.16.0` milestone block.
-- Reason: T5 of `agentic_os_tracker_system_improvements.md` (§29) — migrate roadmap milestones → enforced epics; the content-delivery-integrity work needs an epic tracker file as its source of truth.
+- Reason: T5 of `_planning/tracker-system-improvements.md` (§29) — migrate roadmap milestones → enforced epics; the content-delivery-integrity work needs an epic tracker file as its source of truth.
 - Affected: new trackers/epics/E-CONTENT-DELIVERY-001-content-delivery-integrity.md; ../../ROADMAP.md (0.16.0 block deprecation); ../../TRACKER.md (Active Epics).
 - Previous state: No enforced epic tracker file existed for content-delivery integrity (work lived only in the ROADMAP 0.16.0 block).
 - New state: Epic authored; Active at ~50% (SP-20260525-024 essential-roots patch + ship-coverage enforcer shipped; structural/exhaustive reconciliation remains).

@@ -7,7 +7,7 @@
 
 ## Entering-agent preamble
 
-New here? Read this block first, then act. It is single-sourced from `.claude/project/reference/entry-preamble.md` and hash-parity-checked by `scripts/checks/entry-preamble-parity.js` (edit the canonical source, not this copy). Per-executor entrypoints: `CODEX.md` (Codex/GPT), `ANTIGRAVITY.md` (Antigravity/`agy`), `GEMINI.md` (sunset → `agy`).
+New here? Read this block first, then act. It is single-sourced from `.claude/project/reference/entry-preamble.md` and hash-parity-checked by `scripts/checks/entry-preamble-parity.js` (edit the canonical source, not this copy). Per-executor entrypoints: `CODEX.md` (Codex/GPT), `ANTIGRAVITY.md` (Antigravity/`agy`; the Gemini family routes through `agy` — the former `GEMINI.md` tombstone was removed per the ADR-0036 removal-trigger).
 
 <!-- WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
 **What this repo is.** WarpOS is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.

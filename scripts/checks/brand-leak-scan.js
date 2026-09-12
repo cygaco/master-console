@@ -6,11 +6,16 @@
  * Master-Console branding boundary on the FIRST net-new product-facing surface
  * this epic ships: the founders in-app readiness panel + the in-app guide content.
  *
- * Rule (project_masterconsole_branding_boundary):
- *   "WarpOS" is the engine name; it must NEVER appear in product-facing copy. The
- *   only public brand is the product's own name. The readiness `warpos/readiness/v1`
- *   schema id is allowed in the MACHINE layer (server-only constants, JSON payloads
- *   consumed by code) but must NEVER reach the visible DOM that a founder reads.
+ * Rule (2026-09-02 ruling, E-OPEN-SOURCE-001 — supersedes project_masterconsole_branding_boundary):
+ *   The engine and its UI share ONE public brand, Master Console; "formerly WarpOS" is
+ *   allowed wherever history is referenced, and the engine's own docs (README, CHANGELOG,
+ *   docs/PROVENANCE.md) are NOT in this scanner's scope. What this scanner still protects
+ *   is the SCAFFOLDED PRODUCT's surface: a product built with the engine shows its OWN
+ *   brand to its founder/users, so the engine's identifier ("warpos" — the pre-2.0.0
+ *   slug; "mc" after S-OS-06) must not leak into that product's visible copy. The
+ *   readiness `warpos/readiness/v1` schema id is allowed in the MACHINE layer (server-only
+ *   constants, JSON payloads consumed by code) but must NEVER reach the visible DOM that
+ *   a founder reads.
  *
  * What we scan (VISIBLE product-facing surface only):
  *   - the readiness panel templates:  src/app/admin/readiness/*.tsx.tmpl
@@ -18,7 +23,8 @@
  *   - the guide viewer route:          src/app/admin/guides/[ref]/page.tsx.tmpl
  *
  * What FAILS:
- *   - a product-facing "WarpOS" string anywhere in the visible surface
+ *   - the engine identifier "warpos" (any casing) anywhere in the scaffolded product's
+ *     visible surface — it is the engine's slug, never the product's brand
  *   - the `warpos/readiness/v1` schema id appearing in VISIBLE DOM (JSX text /
  *     attribute values / markdown body) rather than staying server-only
  *

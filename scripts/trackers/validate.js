@@ -3,7 +3,7 @@
 
 /**
  * scripts/trackers/validate.js — fail-closed validator for the enforced
- * tracker system (agentic_os_tracker_system_improvements.md, esp. §28.7
+ * tracker system (_planning/tracker-system-improvements.md, esp. §28.7
  * Validation Enforcement). It refuses the "tracker drifted from reality" /
  * "tracker lies about state" failure classes the spec exists to prevent:
  * a missing required section, a blank section that hides ambiguity, a broken

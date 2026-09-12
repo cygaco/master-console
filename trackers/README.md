@@ -1,7 +1,7 @@
 # trackers/
 
 Per-item tracker files and fill-in templates for the enforced tracking system
-defined in [`agentic_os_tracker_system_improvements.md`](../agentic_os_tracker_system_improvements.md).
+defined in [`_planning/tracker-system-improvements.md`](../_planning/tracker-system-improvements.md).
 
 The top-level source of truth is [`../TRACKER.md`](../TRACKER.md). This directory
 holds the per-epic and per-sprint tracker documents it links to, plus the blank

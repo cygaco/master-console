@@ -1,317 +1,199 @@
-# WarpOS
+# Master Console
 
-An AI operating system for Claude Code. It gives you a team of AI agents that plan, build, review, and learn — so you can focus on what matters.
+**Formerly WarpOS.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
 
-**Platform:** Windows only (for now)
-**Version:** 0.8.0
-**Skills:** ~140 slash commands
-**Hooks:** 57 automated hooks (54 enabled by default)
+**Version:** 1.2.0
 
-_Last verified: 2026-05-19_
+**Skills:** 237 slash commands
 
-## What Is This?
+**Hooks:** 75 automated hooks
 
-You know how using Claude Code feels like talking to a smart colleague? WarpOS turns that colleague into a full team.
+**Platform:** Windows-first (PowerShell installer, Node.js hooks). Other platforms are untested.
 
-Instead of one assistant, you get:
-- **An architect** that plans what to build and in what order
-- **A judgment model** that catches bad decisions before they cost you time
-- **A builder** that writes code in isolated branches so your main code stays clean
-- **Reviewers** that automatically check every build for bugs, security issues, and spec compliance
+**License:** [AGPL-3.0](LICENSE)
 
-Plus **~140 skills** (commands you can run like `/fix:fast` or `/research:deep`), **57 automated hooks** (things that happen automatically, like secret scanning and code formatting), and a **learning system** that remembers what works across sessions.
+## Naming note
 
-## Quick Start
+The brand is **Master Console**; the engine in this repository was built and released as **WarpOS** from March to July 2026. This rebrand is landing in two steps:
 
-### What You Need
+1. **Brand layer (this README, the docs, the story)** — done. Where history is referenced, it says "formerly WarpOS".
+2. **Identifier layer** — not yet. The package name (`warpos`), the `warp:*` skill namespace, the `WARPOS_*` environment variables, the `_warpos/` directory, the `warpos@` release tags and the `WARPOS.md` gap register are all unchanged until the `2.0.0` release, which introduces the `mc` slug with one release of deprecated aliases. Until then, everything you type is still spelled `warp`.
 
-1. **Claude Code** — the CLI tool from Anthropic
-2. **Node.js 18+** — the hooks are JavaScript
-3. **Git** — for version control and builder isolation
+The GitHub repository is still `cygaco/WarpOS`. It will be renamed; GitHub redirects the old clone URLs after a rename, and the runbook is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because "WarpOS" collides with an unrelated `warp-os/warpos` project (GitHub and PyPI) and with Warp, the terminal company. The story of what was built when, with reproducible receipts, is in [docs/PROVENANCE.md](docs/PROVENANCE.md).
+
+## What is this?
+
+You know how using Claude Code feels like talking to a smart colleague? Master Console turns that colleague into a company.
+
+Instead of one assistant you get **Alex**, one identity shown in five faces depending on the work:
+
+| Face | Symbol | What Alex is doing |
+|------|--------|--------------------|
+| Alpha | α | Running it — architect, spec creator, orchestrator, your main session |
+| Beta | β | Checking it — independent judgment on decisions, read-only, cites precedent |
+| Gamma | γ | Delivering a single feature (adhoc build) — dispatches builders and the review gauntlet |
+| Delta | δ | Delivering a full skeleton build (oneshot) — runs standalone with a state machine |
+| Epsilon | ε | Delivering a sprint — plan → design → build → gauntlet → release → retro |
+
+Under Alex sit the **departments** — Product (with Quality), Engineering and Growth — as directors, leads and specialist workers: builders and fixers that write code in isolated git worktrees, code-quality reviewers, a QA reviewer (traceability, integrity and 13 failure-mode personas), a three-lab security panel, and design/visual reviewers. Roles, models and reporting lines come from one registry file, `.claude/agents/_org/role-registry.json`. See [AGENTS.md](AGENTS.md) and [AGENT-STRUCTURE.md](AGENT-STRUCTURE.md).
+
+Around the agents:
+
+- **237 skills** — slash commands such as `/fix:fast`, `/research:deep`, `/sprint:full`, `/sleep:deep`. They live under `.claude/commands/<namespace>/<name>.md` (230 live plus 7 deprecated aliases kept for one release).
+- **75 hooks** — things that happen automatically around every prompt, edit and command: secret scanning, formatting, path guards, dispatch guards, tracker validation. Registered in `.claude/settings.json`; the scripts are under `scripts/hooks/`.
+- **Memory** — an append-only events log, scored learnings with a validation lifecycle, reasoning traces, and a sleep/dream consolidation cycle that prunes and promotes what the system learned.
+- **Enforcement** — every policy names an enforcer or logs the gap; `/scan:full` runs the whole enforcer suite; the sprint lifecycle refuses to close without real evidence.
+- **Cross-provider dispatch** — reviewers and judges can run on a different AI lab than the one that wrote the code, through each lab's own CLI.
+
+## Quick start
+
+### What you need
+
+1. **Claude Code** — the CLI from Anthropic
+2. **Node.js 20+** — the hooks and scripts are JavaScript (`package.json` declares `engines.node >= 20`)
+3. **Git** — for version control and builder isolation (builders work in worktrees)
 
 ### Install
 
-```
-Open your project in your IDE of choice, then open a fresh terminal and:
+Open your project in your editor, then in a fresh terminal:
 
-# 1. Clone WarpOS
+```
+# 1. Clone the engine next to your project
 git clone https://github.com/cygaco/WarpOS.git
 
-# 2. Run the installer
-node ../WarpOS/scripts/warp-setup.js
+# 2. Run the installer from inside your project
+cd <your-project>
+node ../WarpOS/scripts/warp-setup.js .
 
-# 3
-Run claude in your terminal, and perform:
-/warp:setup to finish up, and then
-/warp:tour to learn about the system.
+# 3. Start Claude Code in your project and finish setup
+/warp:setup     # completes any missing step: clone, install, CLAUDE.md merge, hooks
+/warp:tour      # guided introduction
 ```
 
-That's it. The installer:
-- Creates the directory structure your project needs
-- Copies all agents, skills, and hooks
-- Detects your tech stack and configures everything
-- Sets up automated hooks for code quality and security
-- Generates a project manifest
+The PowerShell installer is equivalent: `..\WarpOS\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/warp:update` can upgrade you later.
 
-### Optional: provider CLIs (recommended)
+### Optional: provider CLIs
 
-WarpOS runs a **provider-by-department** model spread — reviewers run on a *different* AI lab than the one that generated the code, because same-model review is blind to shared failure modes. By default:
-
-- **Engineering** builds on **Claude** (`claude-sonnet-5`); its code-quality reviewers run on **OpenAI** (`gpt-5.6-sol`, via the Codex CLI) — cross-lab by construction
-- **Product + Growth** judgment and authoring run on **OpenAI** (the `gpt-5.6` family)
-- **Security** is a **3-lab panel** — a Claude planner+judge over Gemini + GPT + Claude hunter lanes; it **fails closed** if it loses a lab to fallback
-- The President's own tools (β judgment, Cabinet, Ops-Analyst) consult **OpenAI** on-demand via the CLI; everything else stays on Claude
-
-The installer auto-detects these CLIs. **Missing CLIs → graceful fallback to Claude** (still works, just loses cross-lab diversity; the security panel blocks rather than review blind). Full per-role chart: [AGENTS.md § Dispatch Topology & Model Spread](AGENTS.md).
-
-To get full diversity:
+The role registry spreads roles across providers. Builders, fixers and the engineering leads run on Claude; the code-quality reviewers run on a different Claude model than the builders; Beta, the Product and Growth directors and leads, the ops analyst and the cabinet consult run on OpenAI through the Codex CLI; the security reviewer's Gemini lane and the research lead run through the Antigravity `agy` CLI. Dispatch is CLI-only — the engine never calls a provider API where a CLI exists.
 
 ```powershell
-# OpenAI — Product/Growth judgment + Engineering code-quality reviewers
+# OpenAI — Beta, Product and Growth judgment, ops analyst
 npm i -g @openai/codex
-codex login                         # or: $env:OPENAI_API_KEY = "sk-..."
+codex login
 
-# Gemini — via the Antigravity `agy` CLI (the individual `gemini` CLI is sunset).
-# Used by the security Gemini hunter lane + Growth research-lead; self-auth per the
-# Antigravity CLI setup (~/.gemini/antigravity-cli). agy is a standalone binary — pin
-# the version you verify.
+# Gemini — through the Antigravity `agy` CLI (the standalone `gemini` CLI is not used)
+# Install and authenticate per the Antigravity CLI setup; see ANTIGRAVITY.md.
 ```
 
-Verify with `/scan:environment` after install.
+A missing CLI degrades to the fallback declared for that role in the registry. The security panel is designed to refuse rather than review with a single lab. Run `/scan:environment` after install to see what is reachable. Full per-role chart: [AGENTS.md § Dispatch Topology](AGENTS.md).
 
 ### Verify
 
-Open Claude Code in your project. Type:
-
 ```
-/warp:health    — Check that everything is set up correctly
-/warp:tour      — Get a guided introduction to everything
+/warp:health    — checks every system, reports green / yellow / red with plain-English fixes
+/warp:doctor    — the full-coverage diagnostic
 ```
 
-Then read **[USER_GUIDE.md](USER_GUIDE.md)** — the daily-rhythm guide. Modes, the five-terminal setup, skill sequences, and (most important) git discipline.
+Then read **[USER_GUIDE.md](USER_GUIDE.md)** — the daily-rhythm guide: modes, the terminal setup, skill sequences, and (most important) git discipline.
 
-## Start Here (5 Core Skills)
+## Start here — five skills
 
 | Skill | What it does |
-|-------|-------------|
-| `/fix:fast` | Quick diagnosis: read error, find cause, fix it, verify |
-| `/fix:deep` | Deep fix with framework selection, 5 solutions, root cause analysis |
-| `/oneshot:retro` | Full retrospective: context + git log + code diffs, 9 categories |
-| `/session:handoff` | Generate rich handoff doc for the next session |
-| `/commit:land` | Commit, push the branch, then merge into the default branch |
+|-------|--------------|
+| `/fix:fast` | Quick diagnosis: read the error, find the cause, fix it, verify |
+| `/fix:deep` | Deep fix: framework selection, five candidate solutions, root cause, prevention |
+| `/scan:full` | Run every check in parallel and get one unified health report |
+| `/session:handoff` | Write a rich handoff document for the next session |
+| `/commit:land` | Commit, push the branch, merge into the default branch |
 
-## Structure
+## Modes
+
+| Mode | Who is in the room | When |
+|------|--------------------|------|
+| `/mode:solo` | You + Alpha | Quick edits, reading, skill management — most of the day |
+| `/mode:adhoc` | Alpha + Beta + Gamma | One feature with oversight: plan, judge, build, gauntlet |
+| `/mode:oneshot` | Delta alone | Rebuild a whole codebase from its specs, feature by feature |
+| `/mode:sprint` | Epsilon conducting the org | Full lifecycle with plan contracts, tickets, release and retro |
+
+Entering a mode only sets it up; nothing builds until you give an explicit task.
+
+## Repository layout
 
 ```
-WarpOS/
-├── CLAUDE.md              — Alex identity doc (copied to your project)
-├── AGENTS.md              — Agent system router (copied to your project)
-├── install.ps1            — Windows installer entry point
-├── .claude/               — The AI operating system
-│   ├── agents/            — the 5 Alex faces + the org (departments + build agents)
-│   │   ├── president/     — Alpha, Beta, Gamma, Delta, Epsilon (the 5 faces)
-│   │   ├── engineering/   — Engineering department agents
-│   │   ├── product/       — Product department agents (Quality lives here)
-│   │   ├── growth/        — Growth department agents
-│   │   └── _org/          — Role registry (the org keystone)
-│   ├── commands/          — 95 skills (slash commands)
-│   └── project/reference/ — Reasoning frameworks, operational loop
-├── scripts/hooks/         — 52 automated hooks + lib modules
-├── _requirements/          — Documentation templates (PRD, stories, architecture)
-│   ├── 00-canonical/      — Product foundations (brief, model, glossary)
-│   ├── 01-09/             — Design, copy, architecture, security, testing, CI/CD
-│   └── 05-features/       — Feature spec templates + example
-├── patterns/              — Validated implementation patterns
+.
+├── CLAUDE.md               — Alex's identity and operating doctrine (merged into your project)
+├── AGENTS.md               — agent system router; AGENT-STRUCTURE.md — the org tree
+├── install.ps1             — PowerShell installer; scripts/warp-setup.js — Node installer
+├── .claude/
+│   ├── agents/             — president/ (the five faces), engineering/, product/, growth/, _org/ (role registry)
+│   ├── commands/           — the 237 skills, one .md per slash command, grouped by namespace
+│   ├── project/reference/  — reasoning frameworks, operational loop, sprint workflow reference
+│   └── settings.json       — compiled hook wiring (75 hooks)
+├── scripts/                — hooks/, dispatch/, sprint/, paths/, checks/, warpos/ (install + release engine)
+├── framework/              — paths registry source (framework/paths.registry.json) + release capsules
+├── _requirements/          — spec templates: canonical brief, design system, architecture, features, ops, security, testing
+├── _warpos/                — framework zone: templates, settings defaults, ownership manifest, a synthetic example product
+├── patterns/               — validated implementation patterns
+├── trackers/               — the enforced tracker system (TRACKER.md + per-epic/sprint files + validator)
+├── schemas/  migrations/  tests/
+└── docs/                   — PROVENANCE.md, RENAME-RUNBOOK.md
 ```
 
-> **Note:** The `.claude/` directory in this repo IS the framework. When installed into your project, its contents are copied to your project's `.claude/` directory. The file paths inside agent specs reference `.claude/agents/...` — those paths are correct for the installed location in your project.
->
-> Canonical-repo-local scratch — per-run artifacts under `runtime/`, the `WarpOS-v1/` rebuild-charter corpus, and `CODEX-LOG.md` — is gitignored and manifest-walk-skipped, so it stays on the maintainer's disk and never ships in an install or the public image.
+The `.claude/` directory in this repository **is** the framework; the installer copies it into your project's `.claude/`. Paths inside agent specs are written for the installed location.
 
-## All Skills
+Project paths are never hard-coded in skills, agents or hooks; they are `paths.X` keys resolved from `framework/paths.registry.json` (the source) into `.claude/paths.json` (generated by `node scripts/paths/build.js`).
 
-<details>
-<summary>Click to see the skill catalog</summary>
+## Skills by namespace
 
-> **Partial snapshot.** The catalog below is curated and may lag the live registry. The authoritative count and listing live under `.claude/commands/` after install — run `/skills:list` for the current state. Sprint workflow skills (`/sprint:plan`, `/sprint:design`, `/sprint:execute`, `/sprint:release`, `/sprint:retrospective`) and per-system check skills (`/scan:warpos-*`) ship alongside the categories below.
+Browse `.claude/commands/`. The namespaces:
 
-### Build & Fix
-- `/fix:fast` — Quick fix (direct investigation)
-- `/fix:deep` — Deep fix (framework selection, root cause, prevention)
-- `/commit:local` — Stage + commit locally
-- `/commit:remote` — Push to remote
-- `/commit:land` — Commit + push branch + merge to default branch
+| Namespace | Purpose |
+|-----------|---------|
+| `fix`, `qa`, `redteam`, `ui` | Diagnose and fix; QA personas; security red-team; design-system review |
+| `scan` | Enforcers and health checks — `/scan:full` runs them all |
+| `mode`, `session`, `turbo`, `permissions` | Modes, checkpoints, handoffs, resume, speed levers |
+| `sprint`, `epic`, `trackers`, `roadmap`, `issues`, `report` | The planning and tracking lifecycle |
+| `oneshot`, `karpathy`, `etc` | Autonomous skeleton builds; closed-loop artifact optimization; skill authoring with eval packs |
+| `learn`, `sleep`, `beta`, `memory`, `reasoning` | Learning extraction, consolidation, judgment model, memory verification |
+| `research`, `discover`, `maps`, `docs` | Multi-provider research; system discovery; relationship maps |
+| `agents`, `models`, `hooks`, `skills`, `paths`, `manifest`, `enforcement`, `events` | Managing the engine itself |
+| `bootstrap`, `portfolio`, `admin`, `cockpit`, `panel`, `guides`, `knowledge`, `playbook` | Product on-ramps, multi-product operation, founder panels, guide and knowledge libraries |
+| `growth`, `content` | Message briefs, angles, landing pages, ad creative, posts |
+| `warp` | Install, update, release, health, diagnostics of the engine (renamed to `mc:*` in 2.0.0) |
+| `commit`, `linters`, `fav`, `check` | Landing work; linters; favourites; deprecated `check:*` aliases for `scan:*` |
 
-### Quality & Checks
-- `/qa:audit` — Full codebase QA audit (failure-mode personas)
-- `/qa:check` — Passive QA scan on recent changes
-- `/scan:full` — Run every check in parallel — unified report
-- `/scan:architecture` — Architecture integrity check
-- `/scan:coherence` — System coherence graph (15 drift types)
-- `/scan:design-system` — Design-system compliance scan
-- `/scan:environment` — Environment readiness audit
-- `/scan:install` — Verify a fresh WarpOS install
-- `/scan:patterns` — Cross-run intelligence and automation proposals
-- `/scan:privacy` — Pre-publish scan for personal data
-- `/scan:references` — Cross-file reference integrity
-- `/scan:requirements` — Spec consistency and drift detection
-- `/scan:system` — System inventory vs manifest
-- `/scan:timeline` — Reconstruct a build timeline
+## Requirements system
 
-### Red Team & Security
-- `/redteam:full` — Full red team audit (11 personas)
-- `/redteam:scan` — Quick deterministic security scan
-
-### Learning & Memory
-- `/learn:deep` — Combined learning extraction (conversation + events + retros)
-- `/learn:ingest` — Ingest external knowledge (files, links, videos)
-- `/learn:integrate` — Promote validated learnings into enforcement
-- `/sleep:deep` — Full consolidation cycle (15-30 min)
-- `/sleep:quick` — Light nap (5 min)
-
-### Reasoning
-- `/reasoning:run` — Reason through a problem with auto-framework selection
-- `/reasoning:log` — Log a reasoning episode
-- `/reasoning:score` — Score fix quality (0-4)
-
-### Research
-- `/research:deep` — Multi-model deep research (Claude + OpenAI + Gemini)
-- `/research:simple` — Parallel research across 3 models
-
-### Session Management
-- `/session:handoff` — Rich handoff document
-- `/session:checkpoint` — Force checkpoint save
-- `/session:resume` — Load last handoff
-- `/session:history` — Browse recent sessions
-- `/session:recap` — Catch up on the last N turns
-- `/session:read` — Read cross-session inbox
-- `/session:write` — Post to cross-session inbox
-- `/session:takenotes` — Append a timestamped note
-
-### Observability — Maps
-- `/maps:all` — Refresh all maps
-- `/maps:architecture` — App structure map
-- `/maps:enforcements` — Enforcement coverage
-- `/maps:hooks` — Hook wiring diagram
-- `/maps:memory` — Memory store relationships
-- `/maps:skills` — Skill dependency graph
-- `/maps:steps` — Regenerate step tables in canonical docs
-- `/maps:systems` — Systems manifest graph
-- `/maps:tools` — Tool registry
-
-### Discovery
-- `/discover:orphaned` — Find deferred or abandoned work
-- `/discover:systems` — Multi-angle system discovery (6 lenses)
-
-### Agent Modes
-- `/mode:solo` — Solo mode (just you + Alex)
-- `/mode:adhoc` — Team mode (Alpha + Beta + Gamma)
-- `/mode:oneshot` — Oneshot build (Delta standalone)
-- `/mode:sprint` — Sprint mode (Epsilon conducts the full plan→build→gauntlet→release→retro lifecycle)
-
-### Oneshot
-- `/oneshot:start` — Lightweight kickoff
-- `/oneshot:preflight` — Pre-run preflight (branch + skeleton + 7-pass audit)
-- `/oneshot:improve` — Update preflight passes based on gaps
-- `/oneshot:retro` — Post-run retrospective (9 categories)
-
-### Skills & Hooks Infrastructure
-- `/skills:create` — Create a new skill
-- `/skills:edit` — Edit existing skill
-- `/skills:delete` — Delete skill
-- `/skills:cleanup` — Audit skills for issues
-- `/hooks:add` — Create a new hook
-- `/hooks:disable` — Disable a hook
-- `/hooks:test` — Test all hooks
-- `/hooks:friction` — Find missing hooks
-- `/hooks:sync` — Sync hooks to WarpOS
-
-### Issues
-- `/issues:list` — List recurring system issues
-- `/issues:log` — Record a new instance of a recurring issue
-- `/issues:resolve` — Mark a recurring issue resolved
-- `/scan:issues` — Pattern-mine events for repeat audit-block signatures
-
-### Paths Registry
-- `/paths:add` — Add a paths registry key
-- `/paths:convert` — Convert hardcoded literals to `paths.*`
-- `/paths:coverage` — Path registry documentation coverage
-- `/paths:doctor` — Validate path registry
-- `/paths:explain` — Explain one paths registry key
-- `/paths:rename` — Rename a paths registry key
-
-### WarpOS
-- `/warp:setup` — Initialize WarpOS in a project
-- `/warp:update` — Pull canonical WarpOS into this install (primary inbound)
-- `/warp:promote` — Push framework changes to canonical (outbound)
-- `/warp:release` — Drive a full WarpOS release
-- `/warp:check` — Compare local vs WarpOS
-- `/warp:health` — Verify WarpOS installation
-- `/warp:doctor` — Unified WarpOS diagnostic
-- `/warp:tour` — Guided introduction
-- `/warp:deprecate` — Create a deprecation proposal
-- `/warp:uninstall` — Clean removal with restore from backup
-- `/warp:sync` — DEPRECATED alias for `/warp:update`; removed in 1.0.0
-
-### Karpathy (autoresearch)
-- `/karpathy:run` — Closed-loop experiment with autonomous review
-- `/karpathy:integrate` — Merge winning artifact into main
-- `/karpathy:status` — Read-only status dashboard
-
-### Other
-- `/beta:mine` — Mine patterns from user behavior
-- `/beta:integrate` — Apply validated recommendations into the judgment model
-- `/fav:list` — Browse favorite moments
-- `/fav:search` — Search favorites
-- `/ui:review` — Design system compliance audit
-- `/content:contra` — Create a Contra portfolio post
-- `/content:linkedin` — Create a LinkedIn post
-</details>
-
-## Agents
-
-| Agent | Symbol | Role |
-|-------|--------|------|
-| Alex Alpha (α) | Lead | Architect, orchestrator, main session |
-| Alex Beta (β) | Judge | Simulates user judgment, routes decisions (read-only) |
-| Alex Gamma (γ) | Builder | Adhoc feature builds, dispatches sub-agents |
-| Alex Delta (δ) | Runner | Oneshot full skeleton builds |
-| Alex Epsilon (ε) | Conductor | Sprint mode — drives the full plan→build→gauntlet→release→retro lifecycle |
-
-Plus build agents, organized into departments (`engineering`, `product`, `growth`): Builder + Fixer (Claude, isolated worktrees), a cross-lab **Code-quality Reviewer** (GPT, Check-7 + holdout-fixture), the **QA-Reviewer** (one role carrying traceability + integrity + 13 failure-mode personas — absorbs the former Req-Reviewer, Compliance, and QA agents), and the **Security-Reviewer 3-lab panel** (replaces Red Team; Gemini + GPT + Claude hunters under a Claude judge, fails closed on lab-diversity loss). Plus Ops-Analyst (cross-cycle pattern analysis, was Learner), Skeleton-Builder (was Stub-Scaffold), Test-Runner, and the Claude-pinned Design-Quality + Visual-Review. ~60 agent spec files under `.claude/agents/`; the keystone role → spec → model map is `.claude/agents/_org/role-registry.json`. See [AGENTS.md](AGENTS.md) for the full dispatch topology.
-
-## Requirements System
-
-Templates for every document type you need to build a product:
+Templates for every document a product needs, under `_requirements/`:
 
 | Folder | What |
 |--------|------|
 | `00-canonical` | Product brief, model, glossary, golden paths |
-| `01-design-system` | UX principles, colors, components |
-| `02-copy-system` | Voice, tone, microcopy patterns |
-| `03-requirement-standards` | PRD, stories, inputs templates |
-| `04-architecture` | Stack, data flow, security |
-| `05-features` | Feature specs + onboarding example |
-| `06-09` | Operations, security review, testing, CI/CD |
+| `01-design-system` | UX principles, colours, components |
+| `03-architecture` | Stack, data flow, security |
+| `04-features` | Feature specs (PRD, stories, inputs) |
+| `05-operations` … `10-contracts` | Operations, security review, testing, automation, integrations, contracts |
 
-All templates include `<!-- GUIDANCE: -->` comments explaining what to write.
+Templates carry `<!-- GUIDANCE: -->` comments explaining what to write.
 
-## Your Project
+## Your project
 
-When you install WarpOS, it creates a `manifest.json` in your `.claude/` directory. This tells Alex about your project — what framework you use, where your source code lives, what features you're building.
+The installer creates `.claude/manifest.json` in your project. It tells Alex what framework you use, where your source lives and what you are building. Edit `CLAUDE.md` to describe your project, edit the manifest to configure hooks and guards, write feature specs in `_requirements/04-features/`, and use `/skills:create` to add your own skills.
 
-You can customize everything:
-- Edit `CLAUDE.md` to tell Alex about your project
-- Edit `.claude/manifest.json` to configure hooks and guards
-- Create feature specs in your requirements directory
-- Use `/skills:create` to add your own custom skills
+## Documentation
+
+- [USER_GUIDE.md](USER_GUIDE.md) — how to actually use it day to day
+- [AGENTS.md](AGENTS.md) · [AGENT-STRUCTURE.md](AGENT-STRUCTURE.md) · [CLAUDE.md](CLAUDE.md) — the agent system and doctrine
+- [CHANGELOG.md](CHANGELOG.md) · [RELEASES.md](RELEASES.md) — what changed, release by release
+- [docs/PROVENANCE.md](docs/PROVENANCE.md) — formerly WarpOS: what was built when, with receipts
+- [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md) — the pending GitHub repository rename
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## Support
 
-Questions? Issues? Reach out to the person who shared this repo with you. You can also:
-- Run `/warp:health` to diagnose issues
-- Check the system updates log in `.claude/project/reference/`
+- Run `/warp:health` first; it names the failing system and the fix.
+- Bugs and questions: [GitHub issues](https://github.com/cygaco/WarpOS/issues). Security reports: see [SECURITY.md](SECURITY.md) — private vulnerability reporting on the repository, no email.
 
 ## License
 
-Private. Shared by invitation only. Free for initial testers.
+Master Console is free software under the [GNU Affero General Public License v3.0](LICENSE). The engine in this repository is fully open; a hosted **Master Console UI** may later be offered separately (open core). Contributions are accepted under the same license — see [CONTRIBUTING.md](CONTRIBUTING.md).

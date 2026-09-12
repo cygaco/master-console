@@ -2,7 +2,7 @@
 
 > This file is the ONE canonical source of the provider-neutral **entering-agent preamble**
 > (SP-20260723-001, ADR-0036). The block between the markers below is embedded VERBATIM in every
-> entry doc — `CODEX.md`, `ANTIGRAVITY.md`, `GEMINI.md`, and a section of `AGENTS.md` — and is
+> entry doc — `CODEX.md`, `ANTIGRAVITY.md`, and a section of `AGENTS.md` — and is
 > hash-parity-checked by `scripts/checks/entry-preamble-parity.js`. Edit the shared rules HERE, then
 > re-embed the block into every shim (the enforcer REDs on drift). The block is authority-NEUTRAL by
 > design: it describes the repo and the read-order and points to `CLAUDE.md` for identity/authority —

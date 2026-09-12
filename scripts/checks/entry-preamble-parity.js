@@ -8,7 +8,7 @@
  * The shared entering-agent block lives ONCE, canonically, at
  * `.claude/project/reference/entry-preamble.md` between a pair of HTML-comment markers
  * (`WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN`/`:END`). Every provider-neutral entry doc — `CODEX.md`,
- * `ANTIGRAVITY.md`, `GEMINI.md`, and a section of `AGENTS.md` — embeds that block VERBATIM. This
+ * `ANTIGRAVITY.md`, and a section of `AGENTS.md` — embeds that block VERBATIM. This
  * enforcer keys on REAL FILE BYTES only (never a self-declared field): it re-extracts the marked
  * region from each embedder, hashes it, and compares against the hash of the canonical source's own
  * region. A canonical file can never grade itself — the canonical's region IS the oracle every other
@@ -78,7 +78,8 @@ const FILES = [
   { rel: "AGENTS.md", existsRequired: true, embeds: true, tier: null },
   { rel: "CODEX.md", existsRequired: true, embeds: true, tier: "full-entry" },
   { rel: "ANTIGRAVITY.md", existsRequired: true, embeds: true, tier: "full-entry" },
-  { rel: "GEMINI.md", existsRequired: true, embeds: true, tier: "tombstone" },
+  // GEMINI.md (tier "tombstone") was DELETED per the ADR-0036 removal-trigger
+  // (E-OPEN-SOURCE-001 S-OS-05); the tombstone tier stays defined for any future shim.
 ];
 
 /**

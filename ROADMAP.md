@@ -117,7 +117,7 @@ WarpOS exists to help the maintainer ship real products faster while extracting 
 - **Related definitions:** Wiring, Verification, Evidence, Dispatch, Completion.
 
 #### E-TRACKER-001 — Enforced TRACKER System
-- **Goal:** Implement the enforced tracking system specified in `agentic_os_tracker_system_improvements.md` — a 34-section `TRACKER.md`, full operational definitions, the `/trackers/` scaffold + templates, an epic-based roadmap, mode-wiring, and a runnable validation engine.
+- **Goal:** Implement the enforced tracking system specified in `_planning/tracker-system-improvements.md` — a 34-section `TRACKER.md`, full operational definitions, the `/trackers/` scaffold + templates, an epic-based roadmap, mode-wiring, and a runnable validation engine.
 - **Priority:** High (this agent's own substrate; finish, don't expand). **State:** Active. **Completion:** ~90% (T1/T2/T3/T5/T6 Completed; T4 Review Needed).
 - **Epic tracker:** [trackers/epics/E-TRACKER-001-enforced-tracker-system.md](trackers/epics/E-TRACKER-001-enforced-tracker-system.md).
 - **Related sprints:** T1 keystone (Completed) · T2 templates+dirs (Completed) · T3 inventory/matrix (Completed) · T4 validation engine (Review Needed) · T5 roadmap→epics (this migration) · T6 mode-wiring (Completed).
