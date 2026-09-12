@@ -5,7 +5,7 @@
  * Isolated P5 test for framework-purity.js. Proves:
  *   - a clean string produces no findings of any kind,
  *   - the HARD client-slug detector FAILS the gate on a planted slug (P5.3),
- *   - the report-only DOMAIN-VOCAB advisory DETECTS a planted jobzooka-origin
+ *   - the report-only DOMAIN-VOCAB advisory DETECTS a planted origin-product
  *     identifier (debitRockets / untrusted_job_data / masterResume /
  *     targetedResumes) — and, being advisory, does NOT flip the exit code.
  *
@@ -14,7 +14,11 @@
 
 const assert = require("assert");
 const { harness } = require("./lib/fixture-harness");
-const { scanContent } = require("./framework-purity");
+const { scanContent, CLIENT_SLUGS } = require("./framework-purity");
+// The planted slug comes from the detector's own list so this test never carries a
+// private product name literally (the gate scans this file too).
+const SLUG = CLIENT_SLUGS[0];
+const slug = CLIENT_SLUGS[1];
 
 const h = harness("framework-purity");
 
@@ -46,7 +50,7 @@ h.pass("clean framework-neutral text produces no findings", () => {
 
 // ── PLANTED HARD VIOLATION: a client slug must FAIL the gate (P5.3) ──────
 h.violation("a planted client slug is a hard finding (fails the gate)", () => {
-  const f = scan("docs/leak.md", "This file mentions Jobzooka by name.");
+  const f = scan("docs/leak.md", `This file mentions ${SLUG} by name.`);
   return f.client_slug; // non-empty array ⇒ isPass() returns false ⇒ counted as the required planted-violation
 });
 
@@ -57,13 +61,13 @@ h.violation("a planted client slug is a hard finding (fails the gate)", () => {
 h.test("an epic tracker is EXEMPT for a client slug (it documents removing it) — but a non-exempt path is NOT", () => {
   const exempt = scan(
     "trackers/epics/E-DISPATCH-PERFECT-001-perfecting-agent-dispatch.md",
-    "Remaining: sweep jobzooka vocab from the contaminated specs (~40 residual jobzooka occurrences).",
+    `Remaining: sweep ${slug} vocab from the contaminated specs (~40 residual ${slug} occurrences).`,
   );
   assert.strictEqual(exempt.client_slug.length, 0, "an epic tracker naming the slug it removes must be exempt (path-scoped)");
-  const planExempt = scan("_planning/epics/E-DISPATCH-PERFECT-001.md", "The jobzooka genericization plan.");
+  const planExempt = scan("_planning/epics/E-DISPATCH-PERFECT-001.md", `The ${slug} genericization plan.`);
   assert.strictEqual(planExempt.client_slug.length, 0, "the plan-artifact mirror is exempt too");
   // The SAME slug in a non-exempt canonical path still fails — proving this is path-scoped.
-  const notExempt = scan("docs/some-canonical-doc.md", "This canonical doc mentions Jobzooka.");
+  const notExempt = scan("docs/some-canonical-doc.md", `This canonical doc mentions ${SLUG}.`);
   assert.ok(notExempt.client_slug.length > 0, "a non-exempt canonical path with the SAME slug must STILL fail (not a slug-detector weakening)");
 });
 

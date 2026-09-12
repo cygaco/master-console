@@ -1,57 +1,52 @@
 #!/usr/bin/env node
 /**
- * scripts/checks/framework-purity.js — refuse canonical-tree drift that
- * would leak product-specific content into the public framework repo.
+ * scripts/checks/framework-purity.js — refuse product-content leaks in the
+ * public framework repo. FAIL-CLOSED, FULL-TREE by default (S-OS-04 / ED-417).
  *
- * SP-20260522-001 / T-180-followup. Replaces the dropped /scan:warpos-
- * privacy-leak skill (which guarded the now-purged promote surface). The
- * leak surface today is direct hand-edits to canonical, and that's what
- * this gate refuses.
+ * SP-20260522-001 / T-180-followup introduced this gate in DIFF mode with a
+ * pending-scrub allow-list for the private product slugs. S-OS-04 flipped it:
+ * the default mode scans every git-TRACKED file (what actually ships), the
+ * slug detector has no pending-scrub exemptions, and a violation exits 1.
  *
- * Four detectors:
+ * Detectors (HARD — each one fails the gate):
  *
- *   1. ROOT-LEAK     — Any file at canonical's `_requirements/` or
- *                      `_docs/` (those directories should not exist at
- *                      canonical root post-scrub).
- *   2. CLIENT-SLUG   — Known product slugs in tracked file content
- *                      (Jobzooka, DreamTeam, dreamteam, aiweb, etc.).
- *                      Skip historical sprint planning artifacts under
- *                      .claude/project/sprint/ and the dream journal
- *                      under .claude/dreams/ (operator's private notes).
- *   3. ABS-PATH      — Hardcoded maintainer-home absolute paths
- *                      (`C:\\Users\\Vladislav`, `/home/<user>/`, etc.).
- *   4. PROMOTE-RELIC — Reintroduction of any of the purged paths
- *                      (`scripts/warpos/promote.js`, `promote-flags.js`,
- *                      `flag.js`, `warpos-to-update.md`, etc.) closes
- *                      the door behind SP-20260522-001's purge commit.
+ *   1. CLIENT-SLUG   — Known private product slugs in tracked file content
+ *                      (CLIENT_SLUGS). Only planning/history RECORDS are
+ *                      exempt (ALLOW_CLIENT_SLUG_PATHS: trackers, ROADMAP,
+ *                      release changelogs, the dream journal) — never shipped
+ *                      framework content.
+ *   2. ABS-PATH      — Maintainer-home absolute paths in EXECUTABLE / CONFIG
+ *                      files under scripts/ and .claude/ (.js .mjs .cjs .ps1
+ *                      .sh .cmd .bat .json). Both the old `C:\Users\Vladislav`
+ *                      and the current `C:\Users\Vlad\` forms, plus the
+ *                      `/home/<u>/Desktop/` + `/Users/<u>/Desktop/` forms.
+ *                      DELIBERATELY NOT applied to docs/logs/markdown: the
+ *                      operator is a public figure and old paths inside prose
+ *                      or historical logs are fine — a hardcoded path in a
+ *                      script is a portability bug AND a leak; in a doc it is
+ *                      neither.
+ *   3. PROMOTE-RELIC — Reintroduction of any of the purged promote-suite
+ *                      paths/tokens (SP-20260522-001).
  *
- * Plus one REPORT-ONLY advisory (does NOT affect the exit code):
+ * Plus two REPORT-ONLY advisories (never affect the exit code):
  *
- *   • DOMAIN-VOCAB   — Product-origin domain identifiers that leaked from
- *                      the jobzooka-era resume/job-application product into
- *                      framework-neutral surfaces (`debitRockets`,
- *                      `untrusted_job_data`, `masterResume`,
- *                      `targetedResumes`). These are NARROW hard-ref
- *                      identifiers, not broad English words — we do NOT ban
- *                      "resume"/"job"/"market" (false-positive storm:
- *                      "resume" legitimately means continue-work). This
- *                      detector is ADVISORY: it surfaces leaks for cleanup
- *                      but never fails the gate, so a pre-existing canonical
- *                      occurrence outside an edit's scope can't block an
- *                      unrelated commit (E-DISPATCH-PERFECT-001 W4).
+ *   • ROOT-LEAK      — Files under `_requirements/` or `_docs/` at canonical
+ *                      root. The canonical repo dogfoods its own product canon
+ *                      there (66 + 113 tracked files); whether to relocate them
+ *                      is a scope decision outside this gate, so it REPORTS
+ *                      (visible) instead of the previous silent-off
+ *                      ROOT_LEAK_PENDING_SCRUB switch.
+ *   • DOMAIN-VOCAB   — Product-origin domain identifiers (debitRockets,
+ *                      untrusted_job_data, masterResume, targetedResumes) on
+ *                      framework-neutral surfaces. NARROW hard-ref identifiers,
+ *                      not broad English words (E-DISPATCH-PERFECT-001 W4).
  *
  * Modes:
- *   --full   Walk the entire on-disk tree. Reports every current
- *            violation. Useful for taking inventory of the pre-scrub
- *            leak debt.
- *   --diff   (default) Scan `git diff --cached` (staged) + `git diff`
- *            (unstaged) changes. The full change-set view — used by the
- *            manual /scan:framework-purity skill.
- *   --staged Scan ONLY `git diff --cached` (staged) changes. This is the
- *            COMMIT gate: a commit only writes the staged tree, so the
- *            pre-commit guard must judge what is actually being committed,
- *            not unrelated unstaged edits that aren't part of this commit
- *            (WI-23). Wired into scripts/hooks/framework-purity-guard.js.
+ *   --full   (default) Every git-TRACKED file (`git ls-files`, so staged adds
+ *            count and gitignored local state does not). The leak gate.
+ *   --diff   Scan `git diff --cached` (staged) + `git diff` (unstaged) changes.
+ *   --staged Scan ONLY `git diff --cached` (staged) changes — the COMMIT gate
+ *            (WI-23), wired into scripts/hooks/framework-purity-guard.js.
  *
  * Usage:
  *   node scripts/checks/framework-purity.js [--full | --diff | --staged] [--json] [--quiet]
@@ -59,7 +54,11 @@
  * Exit codes:
  *   0  clean — no violations
  *   1  violations detected
- *   2  CLI / git error
+ *   2  CLI / git error (fail-closed: an unreadable tree never reads green)
+ *
+ * Enforcer of its own contract: scripts/checks/framework-purity.test.js
+ * (detector unit tests) + scripts/checks/framework-purity-gate.test.js
+ * (planted-leak RED proof against a throwaway git repo, via WARPOS_PURITY_ROOT).
  */
 
 "use strict";
@@ -70,14 +69,16 @@ const { execSync } = require("child_process");
 
 // REPO_ROOT defaults to the canonical repo (two levels up from this file).
 // WARPOS_PURITY_ROOT is a test-only seam: it lets the test suite point the
-// scanner at a throwaway git repo so staged-vs-unstaged scoping (WI-23) can be
-// exercised hermetically without a false-RED on the real working tree.
+// scanner at a throwaway git repo so the modes can be exercised hermetically
+// without a false-RED on the real working tree.
 const REPO_ROOT = process.env.WARPOS_PURITY_ROOT
   ? path.resolve(process.env.WARPOS_PURITY_ROOT)
   : path.resolve(__dirname, "..", "..");
 
 // ── Configurable rule set ────────────────────────────────────────────
 
+// Private product slugs. This list is the DEFINITION of the detector and is
+// the one sanctioned place the slugs appear in shipped content (self-exempt).
 const CLIENT_SLUGS = [
   "Jobzooka",
   "jobzooka",
@@ -91,11 +92,8 @@ const CLIENT_SLUGS = [
 ];
 
 // REPORT-ONLY domain-vocabulary advisory. NARROW hard-ref identifiers from the
-// jobzooka-era resume/job-application origin product — NOT broad English words.
-// Deliberately excludes "resume"/"job"/"market" (false-positive storm). Findings
-// here are advisory and DO NOT contribute to the violation count / exit code; see
-// the DOMAIN-VOCAB note in the header (E-DISPATCH-PERFECT-001 W4). Matched on word
-// boundaries so substrings of unrelated identifiers don't trip it.
+// origin resume/job-application product — NOT broad English words.
+// Deliberately excludes "resume"/"job"/"market" (false-positive storm).
 const DOMAIN_VOCAB_TOKENS = [
   "debitRockets",
   "untrusted_job_data",
@@ -103,11 +101,33 @@ const DOMAIN_VOCAB_TOKENS = [
   "targetedResumes",
 ];
 
+// Maintainer-home absolute paths. `[\\/]+` so JSON-escaped `C:\\Users\\…`
+// (double backslash) and forward-slash forms both match.
 const ABS_PATH_PATTERNS = [
-  /C:\\Users\\Vladislav/i,
-  /\/home\/[^/]+\/Desktop\//,
-  /\/Users\/[^/]+\/Desktop\//,
+  /C:[\\/]+Users[\\/]+Vladislav/i, // old home dir
+  /C:[\\/]+Users[\\/]+Vlad(?![A-Za-z0-9_-])/i, // current home dir (`C:\Users\Vlad\…`)
+  /\/c\/Users\/Vlad/i, // msys / Git-Bash form
+  /\/home\/[^/\s]+\/Desktop\//,
+  /\/Users\/[^/\s]+\/Desktop\//,
 ];
+
+// The abs-path rule is SCOPED to executable/config files under these roots.
+const ABS_PATH_SCOPE_PREFIXES = ["scripts/", ".claude/"];
+const ABS_PATH_SCOPE_EXTS = new Set([
+  ".js",
+  ".mjs",
+  ".cjs",
+  ".ps1",
+  ".sh",
+  ".cmd",
+  ".bat",
+  ".json",
+]);
+
+function inAbsPathScope(rel) {
+  if (!ABS_PATH_SCOPE_PREFIXES.some((p) => rel.startsWith(p))) return false;
+  return ABS_PATH_SCOPE_EXTS.has(path.posix.extname(rel).toLowerCase());
+}
 
 const PROMOTE_RELIC_FILES = [
   "scripts/warpos/promote.js",
@@ -138,33 +158,28 @@ const ROOT_LEAK_PREFIXES = ["_requirements/", "_docs/"];
 
 // ── Skip surfaces ────────────────────────────────────────────────────
 
-// File patterns where we ALLOW client-slug references (historical
-// records, planning notes, etc.).
+// Paths where a client-slug reference is ALLOWED. ONE class only: planning /
+// history RECORDS that document de-contaminating the product (a tracker that
+// says "sweep <slug> vocab" is not shipped framework content). The former
+// pending-scrub entries (_warpos/EXAMPLES/, _docs/{briefs,clones,imports,
+// research}/, scripts/portfolio/, _index/) are GONE — S-OS-04 untracked the
+// private trees and neutralised the remaining mentions instead.
 const ALLOW_CLIENT_SLUG_PATHS = [
-  /^\.claude\/project\/sprint\//, // historical sprint planning
-  /^\.claude\/dreams\//, // operator's private journal
+  /^scripts\/checks\/framework-purity\.js$/, // self-reference: the slug list IS the detector
+  /^\.claude\/project\/sprint\//, // historical sprint planning records
+  /^\.claude\/dreams\//, // operator's private journal (history)
   /^\.claude\/project\/decisions\//, // historical decisions
   /^\.claude\/project\/learnings\//, // historical learnings
-  /^runtime\/notes\//, // dev analysis notes — reference products by design, not shipped
-  /^\.claude\/agents\/.*events\.jsonl$/, // runtime agent event logs (owner=runtime, not shipped to consumers — historical beta/agent consult audit)
-  /^framework\/releases\/.+\/changelog\.md$/, // shipped release notes
-  /^_docs\/(briefs|clones|imports|research)\//, // brief/clone outputs
-  /^_warpos\/MANIFEST\.json$/, // current manifest snapshot
-  /^scripts\/portfolio\//, // portfolio scripts mention slugs by design
-  /^scripts\/checks\/framework-purity\.js$/, // self-reference for the slug list
-  /^scripts\/checks\/framework-purity-allow\.js$/, // allow-list (future)
+  /^framework\/releases\/.+\/changelog\.md$/, // shipped release notes (history)
   /^ROADMAP\.md$/, // the purge plan itself
-  /^trackers\/epics\//, // epic trackers legitimately NAME the product they document de-contaminating (same class as ROADMAP "the purge plan itself" — e.g. an E-DISPATCH-PERFECT/E-BOUNDARY/E-MULTIPRODUCT tracker that records "sweep jobzooka vocab"); a tracker is a planning/history record, never shipped framework content
-  /^_planning\/epics\//, // the epic trackers' companion plan artifacts (same rationale)
-  /^_warpos\/EXAMPLES\//, // W4: the sanctioned home for the ONE labeled example product — it LEGITIMATELY carries its own brand (e.g. _warpos/EXAMPLES/Jobzooka/) because it IS the example, kept aside so canonical _requirements/ stays product-agnostic (same class as ROADMAP "the purge plan itself"). Operator-authorized 2026-06-22.
   /^RELEASES\.md$/, // shipped release history
-  /^_index\//, // any product index
+  /^trackers\//, // epic + sprint trackers legitimately NAME the product they document de-contaminating (planning/history record, never shipped framework content)
+  /^_planning\/epics\//, // the epic trackers' companion plan artifacts (same rationale)
+  /^_warpos\/MANIFEST\.json$/, // DERIVED view of the tree (regenerated by the manifest build); a slug path listed here implies the same path in the tree, which this gate catches directly
 ];
 
 // File patterns where DOMAIN_VOCAB advisory hits are suppressed — surfaces that
 // legitimately name the identifiers (the detector's own definition + its test).
-// Report-only, so this allow-list only keeps the advisory list tidy; it never
-// changes the gate's pass/fail.
 const ALLOW_DOMAIN_VOCAB_PATHS = [
   /^scripts\/checks\/framework-purity\.js$/, // self-reference (token list)
   /^scripts\/checks\/framework-purity\.test\.js$/, // planted-fixture test
@@ -175,7 +190,8 @@ const ALLOW_DOMAIN_VOCAB_PATHS = [
 // document the retirement.
 const ALLOW_PROMOTE_RELIC_PATHS = [
   /^scripts\/checks\/framework-purity\.js$/, // self-reference
-  /^\.claude\/commands\/check\/framework-purity\.md$/, // skill body
+  /^\.claude\/commands\/scan\/framework-purity\.md$/, // skill body
+  /^\.claude\/commands\/check\/framework-purity\.md$/, // deprecated alias skill body
   /^scripts\/hooks\/framework-purity-guard\.js$/, // hook
   /^ROADMAP\.md$/, // documents the retirement plan
   /^RELEASES\.md$/, // shipped release history
@@ -185,13 +201,12 @@ const ALLOW_PROMOTE_RELIC_PATHS = [
   /^_warpos\/MANIFEST\.json$/,
   /^scripts\/hooks\/version-bump-guard\.js$/, // FRAMEWORK_PREFIXES mirror comment
   /^scripts\/phase0-verify\.js$/, // historical test names
+  /^(_warpos\/BASELINE\/)?_docs\/phase0\//, // historical phase-0 report documenting the retired ledger
 ];
 
-// File patterns where ABS_PATH is allowed — runtime/session state
-// legitimately records absolute paths from the maintainer's machine
-// (these files are gitignored; if they appear in a diff it's because
-// they were previously tracked, and a `git rm --cached` deletion is
-// already staged).
+// File patterns where ABS_PATH is allowed even inside the scoped surface —
+// runtime/session RECORDS that legitimately capture absolute paths from the
+// maintainer's machine (they are logs, not executables).
 const ALLOW_ABS_PATH_PATHS = [
   /^\.claude\/\.session-/, // .session-checkpoint.json, .session-id, etc
   /^\.claude\/\.last-checkpoint/,
@@ -201,15 +216,10 @@ const ALLOW_ABS_PATH_PATHS = [
   /^\.claude\/project\/(events|memory|decisions)\//, // runtime ledgers
   /^\.claude\/runtime\//,
   /^\.claude\/agents\/.+\/events\.jsonl$/,
-  /^scripts\/checks\/framework-purity\.js$/, // self-reference
+  /^scripts\/checks\/framework-purity\.js$/, // self-reference (the patterns)
+  /^scripts\/checks\/framework-purity-gate\.test\.js$/, // planted-fixture test
   /^\.warpos\//, // transaction snapshots
 ];
-
-// File patterns where ROOT_LEAK is allowed (e.g. while the canonical
-// scrub is still pending, _requirements/ at canonical root is expected
-// to exist; flagged as a soft finding but not blocking until the scrub
-// runs).
-const ROOT_LEAK_PENDING_SCRUB = true; // SP-20260522-001 maintainer-action gate
 
 // ── Detector machinery ───────────────────────────────────────────────
 
@@ -218,7 +228,10 @@ function isAllowed(rel, allowList) {
 }
 
 function scanContent(rel, content, findings) {
-  // Client slug
+  if (typeof content !== "string") {
+    throw new TypeError(`scanContent: content for ${rel} must be a string`);
+  }
+  // Client slug — HARD.
   if (!isAllowed(rel, ALLOW_CLIENT_SLUG_PATHS)) {
     for (const slug of CLIENT_SLUGS) {
       if (content.includes(slug)) {
@@ -227,8 +240,8 @@ function scanContent(rel, content, findings) {
       }
     }
   }
-  // Abs path
-  if (!isAllowed(rel, ALLOW_ABS_PATH_PATHS)) {
+  // Abs path — HARD, but SCOPED to executable/config files (see header).
+  if (inAbsPathScope(rel) && !isAllowed(rel, ALLOW_ABS_PATH_PATHS)) {
     for (const re of ABS_PATH_PATTERNS) {
       if (re.test(content)) {
         findings.abs_path.push({ path: rel, pattern: re.source });
@@ -236,9 +249,7 @@ function scanContent(rel, content, findings) {
       }
     }
   }
-  // Promote relics in CONTENT (skill bodies / scripts referencing the
-  // purged surface). Allow-list covers historical/documentation
-  // surfaces that legitimately mention the retired identifiers.
+  // Promote relics in CONTENT — HARD.
   if (!isAllowed(rel, ALLOW_PROMOTE_RELIC_PATHS)) {
     for (const re of PROMOTE_RELIC_REGEX) {
       if (re.test(content)) {
@@ -251,8 +262,6 @@ function scanContent(rel, content, findings) {
     }
   }
   // Domain-vocab advisory (REPORT-ONLY — never counted toward violations).
-  // Word-boundary match on the narrow identifier list so it can't fire on a
-  // substring of an unrelated symbol.
   if (!isAllowed(rel, ALLOW_DOMAIN_VOCAB_PATHS)) {
     for (const tok of DOMAIN_VOCAB_TOKENS) {
       const re = new RegExp(`\\b${tok}\\b`);
@@ -270,128 +279,125 @@ function scanPath(rel, findings) {
       pattern: "purged-file-reintroduced",
     });
   }
-  if (!ROOT_LEAK_PENDING_SCRUB) {
-    for (const prefix of ROOT_LEAK_PREFIXES) {
-      if (rel.startsWith(prefix)) {
-        findings.root_leak.push({ path: rel });
-        break;
-      }
+  // ROOT-LEAK is REPORT-ONLY (see header).
+  for (const prefix of ROOT_LEAK_PREFIXES) {
+    if (rel.startsWith(prefix)) {
+      findings.root_leak.push({ path: rel });
+      break;
     }
   }
 }
 
-// ── Git change set ───────────────────────────────────────────────────
+// ── Git file lists ───────────────────────────────────────────────────
 
-// stagedOnly=true → only `git diff --cached` (the commit gate, WI-23). A commit
-// writes the staged tree; an unstaged edit elsewhere is NOT part of this commit,
-// so the pre-commit guard must not block on it. stagedOnly=false → staged +
-// unstaged (the manual change-set view used by /scan:framework-purity).
+function gitLines(cmd) {
+  const out = execSync(cmd, {
+    encoding: "utf8",
+    cwd: REPO_ROOT,
+    maxBuffer: 64 * 1024 * 1024,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  return out
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+// Every git-TRACKED file (the index: committed + staged adds). Returns null on
+// a git failure so the caller can fail CLOSED (exit 2) instead of scanning an
+// empty list and reading green.
+function gitTrackedFiles() {
+  try {
+    return gitLines("git ls-files");
+  } catch {
+    return null;
+  }
+}
+
+// stagedOnly=true → only `git diff --cached` (the commit gate, WI-23).
+// stagedOnly=false → staged + unstaged (the manual change-set view).
 function gitChangedFiles(stagedOnly) {
   try {
-    // Files staged (and, unless stagedOnly, also unstaged) for
-    // ADD/MODIFY/COPY/RENAME — but NOT for DELETE (those are going away
-    // post-commit; no point scanning their content for leaks).
-    const cmd = stagedOnly
-      ? "git diff --cached --name-only --diff-filter=ACMR"
-      : "git diff --cached --name-only --diff-filter=ACMR && git diff --name-only --diff-filter=ACMR";
-    const out = execSync(cmd, { encoding: "utf8", cwd: REPO_ROOT });
-    const set = new Set(out.split("\n").map((s) => s.trim()).filter(Boolean));
-    return Array.from(set);
+    const staged = gitLines("git diff --cached --name-only --diff-filter=ACMR");
+    const unstaged = stagedOnly
+      ? []
+      : gitLines("git diff --name-only --diff-filter=ACMR");
+    return Array.from(new Set([...staged, ...unstaged]));
   } catch {
-    return [];
+    return null;
   }
-}
-
-// ── Full tree walk ───────────────────────────────────────────────────
-
-const WALK_SKIP_DIRS = new Set([
-  "node_modules",
-  ".git",
-  ".warpos",
-  ".warpos-backup",
-  ".vscode",
-  ".idea",
-  "runtime",
-  "worktrees",
-]);
-
-function* walk(rootAbs) {
-  const stack = [rootAbs];
-  while (stack.length) {
-    const dir = stack.pop();
-    let entries;
-    try {
-      entries = fs.readdirSync(dir, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-    for (const ent of entries) {
-      if (WALK_SKIP_DIRS.has(ent.name)) continue;
-      const full = path.join(dir, ent.name);
-      if (ent.isDirectory()) {
-        stack.push(full);
-        continue;
-      }
-      if (ent.isFile()) {
-        yield full;
-      }
-    }
-  }
-}
-
-function relPath(rootAbs, fullPath) {
-  return path.relative(rootAbs, fullPath).split(path.sep).join("/");
 }
 
 // ── Driver ───────────────────────────────────────────────────────────
 
+const MAX_BYTES = 8 * 1024 * 1024; // above this a file is skipped AND reported
+const BINARY_EXT =
+  /\.(png|jpe?g|gif|ico|webp|svg|woff2?|ttf|eot|pdf|zip|gz|tgz|tar|7z|mp[34]|wav|mov|exe|dll|node|wasm)$/i;
+
+function looksBinary(buf) {
+  const n = Math.min(buf.length, 8192);
+  for (let i = 0; i < n; i++) if (buf[i] === 0) return true;
+  return false;
+}
+
 function run(opts) {
+  const mode = opts.mode || "full";
   const findings = {
-    root_leak: [],
+    root_leak: [], // REPORT-ONLY advisory
     client_slug: [],
     abs_path: [],
     promote_relic: [],
-    domain_vocab: [], // REPORT-ONLY advisory — not counted toward violations
+    domain_vocab: [], // REPORT-ONLY advisory
   };
 
   let files;
-  if (opts.mode === "diff" || opts.mode === "staged") {
-    files = gitChangedFiles(opts.mode === "staged");
+  if (mode === "diff" || mode === "staged") {
+    files = gitChangedFiles(mode === "staged");
   } else {
-    files = [];
-    for (const full of walk(REPO_ROOT)) {
-      const rel = relPath(REPO_ROOT, full);
-      if (rel.startsWith("..")) continue;
-      files.push(rel);
-    }
+    files = gitTrackedFiles();
+  }
+  if (files === null) {
+    return {
+      ok: false,
+      code: 2,
+      mode,
+      error: "git file listing failed — refusing to read green on an unreadable tree",
+      scanned: 0,
+      skipped_large: [],
+      summary: null,
+      findings,
+    };
   }
 
+  const skippedLarge = [];
   for (const rel of files) {
     scanPath(rel, findings);
+    if (BINARY_EXT.test(rel)) continue;
     const abs = path.join(REPO_ROOT, rel);
-    if (!fs.existsSync(abs)) continue;
     let st;
     try {
       st = fs.statSync(abs);
     } catch {
-      continue;
+      continue; // deleted on disk but still in the index — nothing to read
     }
     if (!st.isFile()) continue;
-    // Skip very large or binary-looking files (>2MB)
-    if (st.size > 2 * 1024 * 1024) continue;
-    let content;
+    if (st.size > MAX_BYTES) {
+      skippedLarge.push(rel);
+      continue;
+    }
+    let buf;
     try {
-      content = fs.readFileSync(abs, "utf8");
+      buf = fs.readFileSync(abs);
     } catch {
       continue;
     }
-    scanContent(rel, content, findings);
+    if (looksBinary(buf)) continue;
+    scanContent(rel, buf.toString("utf8"), findings);
   }
 
-  // domain_vocab is ADVISORY and deliberately excluded from violationCount —
-  // it must never flip the exit code (E-DISPATCH-PERFECT-001 W4).
+  // root_leak + domain_vocab are ADVISORY and deliberately excluded from the
+  // violation count — they must never flip the exit code.
   const violationCount =
-    findings.root_leak.length +
     findings.client_slug.length +
     findings.abs_path.length +
     findings.promote_relic.length;
@@ -399,13 +405,14 @@ function run(opts) {
   return {
     ok: violationCount === 0,
     code: violationCount === 0 ? 0 : 1,
-    mode: opts.mode,
+    mode,
     scanned: files.length,
+    skipped_large: skippedLarge,
     summary: {
-      root_leak: findings.root_leak.length,
       client_slug: findings.client_slug.length,
       abs_path: findings.abs_path.length,
       promote_relic: findings.promote_relic.length,
+      root_leak: findings.root_leak.length, // advisory, not a violation
       domain_vocab: findings.domain_vocab.length, // advisory, not a violation
     },
     findings,
@@ -416,7 +423,7 @@ function run(opts) {
 
 function parseArgs(argv) {
   const out = {
-    mode: "diff",
+    mode: "full",
     json: false,
     quiet: false,
     help: false,
@@ -435,63 +442,70 @@ function parseArgs(argv) {
 
 function printHelp() {
   process.stdout.write(`
-scripts/checks/framework-purity.js — refuse product-content leaks in canonical
+scripts/checks/framework-purity.js — refuse product-content leaks in canonical (fail-closed)
 
 Usage:
-  node scripts/checks/framework-purity.js [--full | --diff] [--json] [--quiet]
+  node scripts/checks/framework-purity.js [--full | --diff | --staged] [--json] [--quiet]
 
-Detectors:
-  root_leak       _requirements/ or _docs/ at canonical root (gated by
-                  ROOT_LEAK_PENDING_SCRUB until canonical scrub runs)
-  client_slug     Jobzooka, DreamTeam, aiweb, companycam, etc. in
-                  tracked file content
-  abs_path        Maintainer-home absolute paths in tracked content
-  promote_relic   Reintroduction of /warp:promote-suite paths or
-                  warposFlag/warposPromote token references
+Hard detectors (each one fails the gate):
+  client_slug     private product slugs (CLIENT_SLUGS) in tracked file content;
+                  only planning/history records are exempt
+  abs_path        maintainer-home absolute paths in executable/config files
+                  under scripts/ and .claude/ (.js .mjs .cjs .ps1 .sh .cmd .bat .json)
+  promote_relic   reintroduction of /warp:promote-suite paths or tokens
 
 Advisory (report-only — never affects the exit code):
-  domain_vocab    jobzooka-origin domain identifiers (debitRockets,
-                  untrusted_job_data, masterResume, targetedResumes) on
-                  framework-neutral surfaces — surfaced for cleanup, not a gate
+  root_leak       _requirements/ or _docs/ at canonical root
+  domain_vocab    origin-product domain identifiers on framework-neutral surfaces
 
 Modes:
-  --diff  (default)  scan git diff --cached + git diff (staged + unstaged)
-  --staged           scan git diff --cached only (the commit gate, WI-23)
-  --full              walk entire repo
+  --full  (default)  every git-tracked file (git ls-files) — the leak gate
+  --diff             git diff --cached + git diff (staged + unstaged)
+  --staged           git diff --cached only (the commit gate, WI-23)
 
 Exit codes:
   0  clean
   1  violations
-  2  CLI / git error
+  2  CLI / git error (fail-closed)
 `);
 }
 
 function formatHuman(r) {
   const lines = [];
   lines.push(`scripts/checks/framework-purity.js — ${r.mode} mode`);
+  if (r.error) {
+    lines.push(`  ERROR: ${r.error}`);
+    lines.push(`  result: FAIL (exit ${r.code})`);
+    return lines.join("\n") + "\n";
+  }
   lines.push(`  scanned files:  ${r.scanned}`);
+  if (r.skipped_large.length) {
+    lines.push(`  skipped (> ${MAX_BYTES} bytes): ${r.skipped_large.length}`);
+  }
   lines.push("");
   lines.push("  violations:");
-  lines.push(`    root_leak:       ${r.summary.root_leak}`);
   lines.push(`    client_slug:     ${r.summary.client_slug}`);
   lines.push(`    abs_path:        ${r.summary.abs_path}`);
   lines.push(`    promote_relic:   ${r.summary.promote_relic}`);
   lines.push("");
   lines.push(`  advisory (report-only, does NOT affect exit code):`);
+  lines.push(`    root_leak:       ${r.summary.root_leak}`);
   lines.push(`    domain_vocab:    ${r.summary.domain_vocab}`);
   for (const k of Object.keys(r.findings)) {
     const list = r.findings[k];
     if (list.length === 0) continue;
     lines.push("");
-    const label = k === "domain_vocab" ? `${k.toUpperCase()} (advisory)` : k.toUpperCase();
+    const advisory = k === "domain_vocab" || k === "root_leak";
+    const label = advisory ? `${k.toUpperCase()} (advisory)` : k.toUpperCase();
     lines.push(`  ${label}:`);
-    for (const f of list.slice(0, 10)) {
+    const cap = advisory ? 5 : 50;
+    for (const f of list.slice(0, cap)) {
       const tag = f.slug || f.pattern || f.token;
       const detail = tag ? `  [${tag}]` : "";
       lines.push(`    - ${f.path}${detail}`);
     }
-    if (list.length > 10) {
-      lines.push(`    ... and ${list.length - 10} more`);
+    if (list.length > cap) {
+      lines.push(`    ... and ${list.length - cap} more`);
     }
   }
   lines.push("");
@@ -518,4 +532,12 @@ if (require.main === module) {
   process.exit(main());
 }
 
-module.exports = { run, scanContent, scanPath };
+module.exports = {
+  run,
+  scanContent,
+  scanPath,
+  inAbsPathScope,
+  CLIENT_SLUGS,
+  ABS_PATH_PATTERNS,
+  DOMAIN_VOCAB_TOKENS,
+};

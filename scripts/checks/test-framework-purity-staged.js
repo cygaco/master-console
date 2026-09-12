@@ -28,7 +28,7 @@ const os = require("os");
 const { spawnSync, execSync } = require("child_process");
 
 const SCRIPT = path.join(__dirname, "framework-purity.js");
-const LEAK = "dreamteam"; // a CLIENT_SLUGS entry
+const LEAK = require("./framework-purity").CLIENT_SLUGS[3]; // a CLIENT_SLUGS entry (never literal here — the gate scans this file too)
 
 let pass = 0;
 let fail = 0;

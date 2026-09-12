@@ -21,8 +21,8 @@ description: Open a registered portfolio product — print its path and a cd hin
 Prints the product's absolute path and a `cd` hint per AC-3.3:
 
 ```
-dreamteams is at: /Users/alex/repos/dreamteams
-  cd /Users/alex/repos/dreamteams && claude
+pantry-pilot is at: /Users/alex/repos/pantry-pilot
+  cd /Users/alex/repos/pantry-pilot && claude
 ```
 
 Emits TR-5 `portfolio_open` event.

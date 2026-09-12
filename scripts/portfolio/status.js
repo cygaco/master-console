@@ -29,7 +29,7 @@ const { load } = require("./registry");
 const PER_PRODUCT_TIMEOUT_MS = 5000;
 
 // Column widths chosen to fit C-11's sample line:
-//   "dreamteams    0.8.2   a1b2c3d 2 days ago   0       SP-20260530-001  ✓ github"
+//   "pantry-pilot  0.8.2   a1b2c3d 2 days ago   0       SP-20260530-001  ✓ github"
 const COL = {
   slug: 13,
   warp: 7,

@@ -1,0 +1,194 @@
+{
+  "_comment": "Hash-only denylist for scripts/checks/leak-denylist.js (S-OS-04 / ED-417). Each entry = { kind, words: k, chars: normalised length, sha256, label }. kind=phrase hashes the phrase normalised (lowercase, non-alphanumerics -> single space, trimmed); kind=token hashes the raw lowercased token (single tokens such as an email). NO plaintext lives here by construction; add entries with `node scripts/checks/leak-denylist.js --add \"<phrase>\" --label <l>`. Seeded 2026-09-12 from the operator's LOCAL gitignored rewrite rules (_private/rewrite/replace-rules.clean.txt, 20 rules) plus one innocuous RED-proof fixture phrase used by leak-denylist.test.js. Enforcer: scripts/checks/leak-denylist.test.js.",
+  "entries": [
+    {
+      "kind": "phrase",
+      "words": 4,
+      "chars": 29,
+      "sha256": "7b4581577369919363250b1f1dfa95c408cbad40bbcded36775d98ab12eb2fa8",
+      "label": "fixture-red-proof"
+    },
+    {
+      "kind": "phrase",
+      "words": 4,
+      "chars": 27,
+      "sha256": "7f39944960e0d7325957ab885d43c730b2c71b694b353a94166f99ad91f06849",
+      "label": "rewrite-rule-1"
+    },
+    {
+      "kind": "token",
+      "words": 1,
+      "chars": 27,
+      "sha256": "2a236c4341d636d679b416731a1f6ca527b2f38b70ff6a3bed33f6041f78eca0",
+      "label": "rewrite-rule-1"
+    },
+    {
+      "kind": "phrase",
+      "words": 20,
+      "chars": 96,
+      "sha256": "dbfcc75ed825bd56ebe732b9705fcfccf7e728ec2de5e1d3d14174a047d5af46",
+      "label": "rewrite-rule-2"
+    },
+    {
+      "kind": "phrase",
+      "words": 12,
+      "chars": 64,
+      "sha256": "0263a03ffc40ef342a31daa520cf0f189cd65d12a9e23c6e31dffc27e4baa200",
+      "label": "rewrite-rule-3"
+    },
+    {
+      "kind": "phrase",
+      "words": 25,
+      "chars": 111,
+      "sha256": "f25b24797f5857f819a5cf7828fed65e0c8c6755738bec6752cc1188e25aea33",
+      "label": "rewrite-rule-4"
+    },
+    {
+      "kind": "phrase",
+      "words": 20,
+      "chars": 91,
+      "sha256": "8b3047c98dbcddeb27c692c2564557b13e1ed160485d6447e3f83236e00b4e53",
+      "label": "rewrite-rule-5"
+    },
+    {
+      "kind": "phrase",
+      "words": 13,
+      "chars": 55,
+      "sha256": "a6e3fea6ab9774e656d961fa7782069f38a8eee321fbb6d89f82cc3b06ac705f",
+      "label": "rewrite-rule-6"
+    },
+    {
+      "kind": "phrase",
+      "words": 7,
+      "chars": 29,
+      "sha256": "d876708980b79f1af5d95e2face2e84480f14cc676e0f6bae6609cac96c7c289",
+      "label": "rewrite-rule-7"
+    },
+    {
+      "kind": "phrase",
+      "words": 4,
+      "chars": 20,
+      "sha256": "996f0751fa9355f19de8d0c8ab15b7a85b68ae96f89b684dc6fd19a3601c97f5",
+      "label": "rewrite-rule-8"
+    },
+    {
+      "kind": "phrase",
+      "words": 8,
+      "chars": 31,
+      "sha256": "bce6764a88063fad1ec6b55c5e57def21965582e56e1583173620dcbdd62f487",
+      "label": "rewrite-rule-9"
+    },
+    {
+      "kind": "phrase",
+      "words": 6,
+      "chars": 22,
+      "sha256": "8be22f2e8c2a6432d3413ec45d00bad1fc8ce8747638b98c09b2dd0b92f5515d",
+      "label": "rewrite-rule-10"
+    },
+    {
+      "kind": "phrase",
+      "words": 3,
+      "chars": 17,
+      "sha256": "f9d8f4ee6231bac11120a4d56cc176be908a03f44be5c37c2e15dde0f57e12b3",
+      "label": "rewrite-rule-11"
+    },
+    {
+      "kind": "phrase",
+      "words": 2,
+      "chars": 11,
+      "sha256": "cac975e0b39886dbeedd3489daf7f26d457d4fe55e9d7672b9dff23d38d8cf50",
+      "label": "rewrite-rule-12"
+    },
+    {
+      "kind": "phrase",
+      "words": 3,
+      "chars": 16,
+      "sha256": "09a774883ca8665bb4c2437bc084dc1f53c915a51cac965da2046beaf76be495",
+      "label": "rewrite-rule-13"
+    },
+    {
+      "kind": "phrase",
+      "words": 3,
+      "chars": 12,
+      "sha256": "96a7933697e8da14cf34a75672a870a89ff864a1e0261c3271ed3b941aea23f5",
+      "label": "rewrite-rule-14"
+    },
+    {
+      "kind": "phrase",
+      "words": 5,
+      "chars": 19,
+      "sha256": "1bc1fe70b41c433bf98044f0e08d94d947cdc2abae7afe6d2c7d1327ad4ef96a",
+      "label": "rewrite-rule-15"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 7,
+      "sha256": "31506a8448a761a448a08aa69d9116ea8a6cb1c6b3f4244b3043051f69c9cc3c",
+      "label": "rewrite-rule-16"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 6,
+      "sha256": "b690cdbe59f14b3be083db03237e04051abd85c4ffe35180723e9cb45cd3a519",
+      "label": "rewrite-rule-16"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 6,
+      "sha256": "bb61ef40814ce34c1edf0edb609854be9793198a8f60b67d9fb26643c32281d3",
+      "label": "rewrite-rule-16"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 7,
+      "sha256": "63333e4b5d1cde5495c7538842b6b47ec01cbad8b87c94f569611fa7e0c64413",
+      "label": "rewrite-rule-16"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 4,
+      "sha256": "6ac3c336e4094835293a3fed8a4b5fedde1b5e2626d9838fed50693bba00af0e",
+      "label": "rewrite-rule-16"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 8,
+      "sha256": "30a989afc82c0a21139573591de4e5ff37994f7d1506a9acf2b5997005c2649f",
+      "label": "rewrite-rule-17"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 6,
+      "sha256": "986c99004163a6c5155bbd2bfadc37bee9e279b73c669211f432910425b8e6dd",
+      "label": "rewrite-rule-18"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 4,
+      "sha256": "85fc17f7069acd39a5c636cd0a6530651096128da447959f5e250824857dc559",
+      "label": "rewrite-rule-18"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 8,
+      "sha256": "bd331fb1d24298f52943034a243a341877957b895f4372b11babb87262904ed6",
+      "label": "rewrite-rule-19"
+    },
+    {
+      "kind": "phrase",
+      "words": 1,
+      "chars": 6,
+      "sha256": "0cbd443a1d704e64a6da13d567496765c20361a18138b526257b5da4336a3fb5",
+      "label": "rewrite-rule-20"
+    }
+  ]
+}

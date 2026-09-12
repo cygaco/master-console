@@ -45,7 +45,7 @@ sources: ["<url1>", "<url2>", ...]   # provenance only (NOT "go use this")
 1. **NO external-product/tool recommendations.** Never say "use Canva/Figma/<SaaS>." Teach the
    principle so the agent applies it DIRECTLY. (See the seed's ⚠️ anti-example.)
 2. **Self-contained** — the agent learns the principle from the guide alone.
-3. **Generic framework knowledge** — NOT product-specific (no Jobzooka colors/decisions).
+3. **Generic framework knowledge** — NOT product-specific (no origin-product colors/decisions).
 4. **End in agent-checkable rules** (§6) mirroring the design-quality 6 axes
    (design-tokens, component-usage, visual-hierarchy, mobile-responsive, accessibility, design-handoff)
    and visual-review categories (color, layout, typography, copy, a11y, console-error, regression).

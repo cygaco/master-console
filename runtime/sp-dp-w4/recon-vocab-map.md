@@ -33,7 +33,7 @@
 | 928 | "LinkedIn" | Step 9 output example (AI/ML skills in LinkedIn) | (b) Example product feature | **GENERICIZE:** Replace w/ "[social profile platform]" or $ |
 
 **Context notes:**
-- Line 1331: debitRockets() is the jobzooka-era billing abstraction. Framework agents should not hardcode product payment mechanics.
+- Line 1331: debitRockets() is the origin-product-era billing abstraction. Framework agents should not hardcode product payment mechanics.
 - Lines 856, 928, 945+: References to "resume" and "LinkedIn" appear in context-scoping tables, golden-fixture specs, and step-expectation docs. These are **examples from the resume-builder origin product**, not generic framework concepts. They should be parameterized.
 
 ---
@@ -48,7 +48,7 @@
 | 424 | "job search, application, AI-assisted resume/cover letter generation" | Business-logic-attacker persona checkpoint | (b) Example flows | **GENERICIZE:** Replace w/ "[primary user workflows]" from product spec |
 
 **Context notes:**
-- Line 158: untrusted_job_data is a hardcoded jobzooka security taint source.
+- Line 158: untrusted_job_data is a hardcoded origin-product security taint source.
 - Line 424: Business-logic-attacker persona lists concrete product flows, not generic patterns.
 
 ---

@@ -25,9 +25,9 @@ Four constraints apply unchanged, and stating them is what makes the surviving c
 2. **The substrate is vendor-first by construction.** A WarpOS skill *is* a Claude Code slash command
    / Agent Skill (2025-10-16). A WarpOS hook *is* a Claude Code hook (2025-06-30). A WarpOS agent spec
    *is* a Claude Code subagent (2025-07-24). No priority is claimed on any of it.
-3. **45 of the 237 skills first land at `cd37d410` (2026-04-12)** — the Jobzooka extraction commit.
+3. **45 of the 237 skills first land at `cd37d410` (2026-04-12)** — the origin-product extraction commit.
    They arrived fully formed, so they were built *earlier*, in a private repo, and those dates **are
-   not provable here**. Honest label: *"≤2026-04-12, built earlier in Jobzooka, unprovable in this repo."*
+   not provable here**. Honest label: *"≤2026-04-12, built earlier in the origin product, unprovable in this repo."*
 4. **Git dates are author-supplied and the commits are unsigned.**
 
 ## 1. Verdict vocabulary
@@ -845,7 +845,7 @@ the skill is materially different from its family.
 | `/guides:coverage` | Fail-closed enforcer for the _guides/ library — asserts every guide is anchored, the registry is fresh, every anchor is  | `6ad63316` · 2026-05-31 | guides-knowledge | **VENDOR-FIRST** | *THEY-WERE-FIRST* |  |
 | `/guides:integrate` | Wire each _guides/ guide into the bootstrap pipeline (spinup/lastmile) at its declared anchor in its declared shape, and | `6ad63316` · 2026-05-31 | guides-knowledge | **VENDOR-FIRST** | *THEY-WERE-FIRST* | WARPOS-FIRST (uncontested, niche) — deterministic, idempotent, ledgered doc→consumer-agent-spec placement at a declared anchor. Every vendor analog INDEXES docs instead. |
 | `/guides:organize` | Audit and restructure the _guides/ launch-guide library — backfill the guide-anchor contract onto every guide, (re)gener | `6ad63316` · 2026-05-31 | guides-knowledge | **VENDOR-FIRST** | *THEY-WERE-FIRST* |  |
-| `/guides:write` | Author a launch guide into _guides/ — grounded in the Mark Builds Brands methodology + the existing guides, in the right | `67b32c57` · 2026-05-31 | guides-knowledge | **VENDOR-FIRST** | *THEY-WERE-FIRST* |  |
+| `/guides:write` | Author a launch guide into _guides/ — grounded in an external brand-building methodology (paid course, not redistributed) + the existing guides, in the right | `67b32c57` · 2026-05-31 | guides-knowledge | **VENDOR-FIRST** | *THEY-WERE-FIRST* |  |
 | `/hooks:add` | Design and create a new hook from a description | `cd37d410` · 2026-04-12 | hooks-mgmt | **VENDOR-FIRST** | *THEY-WERE-FIRST* |  |
 | `/hooks:disable` | Temporarily disable a hook by moving it from settings.json into a `_disabled_hooks` section, with a one-step path to re- | `cd37d410` · 2026-04-12 | hooks-mgmt | **VENDOR-FIRST** | *THEY-WERE-FIRST* |  |
 | `/hooks:friction` | Analyze friction points — find patterns that suggest missing hooks | `cd37d410` · 2026-04-12 | hooks-mgmt | **VENDOR-FIRST** | *THEY-WERE-FIRST* | No analog found — measures what a hook costs the operator in interruptions and acts on it. |
@@ -1133,7 +1133,7 @@ Where a skill is materially different from its family, a skill-level note fires 
    only exposes recent versions (2.1.22x+, August 2026) — fetching it returns August-2026 first-mention
    dates for hooks, subagents, plugins and skills, which are wrong by a year. Do not use it this way.
 3. **The 45 extraction-commit skills are undated in the way that matters.** They landed complete on
-   2026-04-12 from a private repo, so every date for them is a *ceiling*. Establishing the Jobzooka
+   2026-04-12 from a private repo, so every date for them is a *ceiling*. Establishing the origin-product
    pre-history would widen several margins — including `cross-session-inbox` and `sleep-dream` — and it
    needs an explicit operator decision (memory rule `feedback_warpos_only_no_cross_project`).
 4. **Author-supplied, unsigned git dates.** The GitHub-side repo-creation timestamp

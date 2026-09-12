@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * qa-health.js — QA infrastructure health report for Jobzooka.
+ * qa-health.js — QA infrastructure health report for the product.
  *
  * Run: node scripts/qa-health.js
  *

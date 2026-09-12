@@ -8,7 +8,7 @@ writes: []
 
 # /scan:privacy
 
-Run before pushing/publishing. Scans tracked files for the enumerated patterns defined in `scripts/check/privacy.js`. Each pattern carries a severity:
+Run before pushing/publishing (also one of the five `/scan:leak-gate` gates; CI runs it on every push). **Fail-closed since S-OS-04 (ED-417): any HIGH or MED finding exits 1** — placeholder emails (`example.com`, `*.local`, bot addresses …) are dropped via `scripts/check/privacy.allowlist.json`; LOW homedir paths are report-only because the operator is a public figure and old paths in docs/logs are fine (hardcoded paths in executables are `/scan:framework-purity`'s hard finding). Enforcer: `scripts/check/privacy.test.js`. Scans tracked files for the enumerated patterns defined in `scripts/check/privacy.js`. Each pattern carries a severity:
 
 | Pattern id | Severity | What it catches |
 |---|---|---|
@@ -28,20 +28,22 @@ This is a **closed category set**. The five regex-based categories (credential-s
 $ARGUMENTS  →  forwarded to: node scripts/check/privacy.js
   --files <a,b,c>       comma-separated file list (default: all tracked)
   --json                JSON output
-  --strict              exit 1 on any finding (default: HIGH-only)
+  --strict              exit 1 on ANY finding (LOW included)
+  --advisory            pre-S-OS-04 behaviour: exit 1 only on HIGH
 ```
 
 ## Output
 
 ```
-# scanned <N> file(s); <M> finding(s) (<K> HIGH)
+# scanned <N> file(s); <M> finding(s) (<K> HIGH, <J> MED); mode=<default|strict|advisory>
   <SEVERITY>  <file>:<line>  <pattern>  <match>
+# result: OK|FAIL (exit 0|1)
 ```
 
 ## Exit codes
 
-- `0` no HIGH findings (or no findings at all in `--strict`)
-- `1` at least one HIGH finding, OR `--strict` with any finding
+- `0` no HIGH or MED findings (default) · no findings at all (`--strict`) · no HIGH findings (`--advisory`)
+- `1` any HIGH or MED finding (default, fail-closed since S-OS-04 / ED-417) · any finding under `--strict` · any HIGH under `--advisory`
 - `2` usage error
 
 ## Empty-state behavior

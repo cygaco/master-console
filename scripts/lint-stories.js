@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Granular Stories Linter — Automated validation for Jobzooka granular stories.
+ * Granular Stories Linter — Automated validation for granular stories.
  *
  * Checks:
  *   1. FORMAT      — Story format, role normalization, single behavior
@@ -446,7 +446,7 @@ function main() {
   const verbose = args.includes("--verbose") || args.includes("-v");
 
   console.log(
-    `\n${BOLD}${CYAN}🔍 Granular Stories Linter — Jobzooka${RESET}\n`,
+    `\n${BOLD}${CYAN}🔍 Granular Stories Linter${RESET}\n`,
   );
 
   // Load shared story IDs

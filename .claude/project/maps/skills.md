@@ -151,7 +151,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | coverage | Fail-closed enforcer for the _guides/ library — asserts every guide is anchored, the registry is fre | 6 | 4 |
 | integrate | Wire each _guides/ guide into the bootstrap pipeline (spinup/lastmile) at its declared anchor in its | 2 | 6 |
 | organize | Audit and restructure the _guides/ launch-guide library — backfill the guide-anchor contract onto ev | 3 | 3 |
-| write | Author a launch guide into _guides/ — grounded in the Mark Builds Brands methodology + the existing  | 5 | 2 |
+| write | Author a launch guide into _guides/ — grounded in an external brand-building methodology (paid course, not redistributed) + the existing  | 5 | 2 |
 
 ### hooks (4)
 

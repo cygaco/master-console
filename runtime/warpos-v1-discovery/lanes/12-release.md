@@ -48,7 +48,7 @@ Live scans: `warpos-version-quorum` → **OK, all 3 sources agree on 0.17.0**; `
 
 ## Downstream
 
-**7 products registered** in `~/.warpos/portfolio.json` (user home, NOT in-repo): dreamteam (0.8.2), companycam (0.9.0), + 5 more, all `last_synced` May 2026. Every one far behind canonical 0.17.0 — large, unenforced update lag.
+**7 products registered** in `~/.warpos/portfolio.json` (user home, NOT in-repo): product-a (0.8.2), product-b (0.9.0), + 5 more, all `last_synced` May 2026. Every one far behind canonical 0.17.0 — large, unenforced update lag.
 
 **Gap-flag flow:** downstream `/warp:flag` → structured `WG-N` entry in that repo's WARPOS.md → canonical `/warp:reconcile` verifies + fixes upstream. Canonical's own WARPOS.md carries 3 open self-flagged gaps (WG-1 native scaffold, WG-2/WG-3 research:deep unrunnable in harness).
 

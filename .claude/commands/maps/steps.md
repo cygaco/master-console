@@ -50,7 +50,7 @@ This is the loop-closer for the step-registry infrastructure. After it lands: an
 (`STEPS.json` + the three canonical step-table docs) lives in the per-product
 canon slot, which is **empty in WarpOS-canonical** — the canonical framework
 carries no baked-in product (W4 RESTRUCTURE; the filled example was relocated to
-`_warpos/EXAMPLES/<product>/_requirements/`). When `STEPS.json` is absent the
+`_warpos/BASELINE/_requirements/`, the synthetic "Pantry Pilot" example). When `STEPS.json` is absent the
 generator (and `--check`, the path the blocking `pre-commit-steps-check.js` hook
 runs) **no-ops with exit 0** — "no product canon in this repo → nothing to
 regenerate" — rather than crashing on the missing file. The companion

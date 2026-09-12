@@ -36,7 +36,7 @@ Total: **90** systems across **2** categories. Files referenced: 89, missing on 
 | skill-guides-coverage | Fail-closed enforcer for the _guides/ library — asserts every guide is anchored, | untested | 1 |
 | skill-guides-integrate | Wire each _guides/ guide into the bootstrap pipeline (spinup/lastmile) at its de | untested | 1 |
 | skill-guides-organize | Audit and restructure the _guides/ launch-guide library — backfill the guide-anc | untested | 1 |
-| skill-guides-write | Author a launch guide into _guides/ — grounded in the Mark Builds Brands methodo | untested | 1 |
+| skill-guides-write | Author a launch guide into _guides/ — grounded in an external brand-building methodology (paid course, not redistributed) + the | untested | 1 |
 | skill-knowledge-coverage | Fail-closed enforcer for the _knowledge/ layer (the company "brain", ADR-0007) — | untested | 1 |
 | skill-knowledge-integrate | Wire each _knowledge/ domain into its consumers in its declared shape — LIBRARY  | untested | 1 |
 | skill-learn-deep | Deep learning — extracts from conversation + event log + oneshot retro files in  | untested | 1 |

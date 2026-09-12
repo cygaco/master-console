@@ -23,7 +23,7 @@ const entries = [
     session,
     data: {
       question:
-        "Privacy hotspot — should we git-filter-repo scrub _docs/briefs/dreamteams and _docs/clones/companycam from canonical public history?",
+        "Privacy hotspot — should we git-filter-repo scrub _docs/briefs/<product-a> and _docs/clones/<product-b> from canonical public history?",
       category: "privacy",
       answer:
         "DECIDE (Class A, conf 0.92, REVISED). Add _docs/briefs/ and _docs/clones/ to .gitignore in canonical WarpOS. No history rewrite needed — verified no commits exist for these paths. Backup-to-private-sibling is naturally covered by /products:from-brief once scope B lands.",

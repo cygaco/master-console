@@ -18,8 +18,8 @@ Non-empty registry → ASCII table with columns per C-4:
 
 ```
 SLUG               PATH                                                       WARP    LAST COMMIT       DIRTY   SPRINT
-dreamteams         /Users/alex/repos/dreamteams                               0.8.2   a1b2c3d 2d ago    0       SP-20260530-001
-companycam         /Users/alex/repos/companycam                               0.8.1   ----              0       (none)
+pantry-pilot         /Users/alex/repos/pantry-pilot                               0.8.2   a1b2c3d 2d ago    0       SP-20260530-001
+orbit-notes         /Users/alex/repos/orbit-notes                               0.8.1   ----              0       (none)
 ```
 
 Columns:

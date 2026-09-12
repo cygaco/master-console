@@ -33,7 +33,7 @@ Intended as the first command an operator runs in a new project.
 - `framework/templates/product-bootstrap/brief.md.tmpl` — MD template with
   stable `## NN — <Title>` heading convention.
 - `framework/templates/product-bootstrap/brief.html.tmpl` — single-file HTML
-  template (family resemblance with `_docs/ai-web-brief-v4.html`).
+  template (family resemblance with `_docs/<product>-brief-v4.html`).
 - `framework/templates/product-bootstrap/sections.json` — section taxonomy
   (minimal 8 + extended 4). Single source of truth for the section ids,
   titles, and seed prompts.

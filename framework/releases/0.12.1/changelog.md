@@ -10,7 +10,7 @@
   - `scripts/checks/guides-coverage.js` — the enforcer engine.
   - The 7 launch guides (AUTH/DATABASE/DEV_SETUP/EMAIL/PAYMENTS/PRIVACY_GDPR/README) now carry anchor-contract frontmatter; `_guides/registry.json` indexes them; guides are wired into the bootstrap pipeline with an auditable ledger.
 
-- **Marketing/growth refinement** — refined the corpus-fed agents (`copy-lead`, `growth-lead`, `research-insight-lead`) + 5 `growth:*` skills (`ad-images`, `advertorial`, `angles`, `message-brief`, `product-finder`) against the HIGH-confidence Mark Builds Brands corpus.
+- **Marketing/growth refinement** — refined the corpus-fed agents (`copy-lead`, `growth-lead`, `research-insight-lead`) + 5 `growth:*` skills (`ad-images`, `advertorial`, `angles`, `message-brief`, `product-finder`) against the HIGH-confidence corpus of an external brand-building methodology (paid course, not redistributed).
 
 ## Breaking changes
 

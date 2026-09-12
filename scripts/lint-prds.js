@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * PRD Linter — Automated validation for Jobzooka feature PRDs.
+ * PRD Linter — Automated validation for feature PRDs.
  *
  * Checks:
  *   1. STRUCTURAL  — All 16 sections present, non-empty, format rules
@@ -583,7 +583,7 @@ function main() {
   const singleFeature = args.find((a) => !a.startsWith("--"));
   const verbose = args.includes("--verbose") || args.includes("-v");
 
-  console.log(`\n${BOLD}${CYAN}🔍 PRD Linter — Jobzooka${RESET}\n`);
+  console.log(`\n${BOLD}${CYAN}🔍 PRD Linter${RESET}\n`);
 
   // Discover features
   let featureDirs;

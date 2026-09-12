@@ -14,10 +14,10 @@ prior-art case credible:
 2. **WarpOS is built *on* Claude Code primitives, not in parallel with them.** WarpOS hooks are
    Claude Code hooks. WarpOS skills are Claude Code slash commands / Agent Skills. Claiming
    priority on those would be false. They are listed as VENDOR-FIRST deliberately.
-3. **The framework was extracted from an earlier private project ("Jobzooka"/"jobhunter") on
-   2026-04-12** (`cd37d410 feat: WarpOS v0.1.0 — full framework extraction from Jobzooka`). The
+3. **The framework was extracted from an earlier private project (the origin product) on
+   2026-04-12** (`cd37d410 feat: WarpOS v0.1.0 — full framework extraction from the origin product`). The
    sleep/dreaming system arrived *fully formed* in that extraction commit, which means it was
-   built earlier, in Jobzooka. **Those earlier dates are not provable from this repo** and are
+   built earlier, in the origin product. **Those earlier dates are not provable from this repo** and are
    treated as unproven throughout. See §5.
 
 The result: **one strong prior-art case (dreaming), three uncontested-but-niche cases, and a
@@ -303,7 +303,7 @@ defensible, ordered by leverage:
    the repo's tree hash, or a `git tag -s` plus an archived Software Heritage snapshot
    (https://archive.softwareheritage.org, which ingests public GitHub repos and records *its own*
    ingest date). Software Heritage may already hold snapshots dated well before 2026-05-06.
-5. **Establish the Jobzooka pre-history.** The sleep system arrived complete in the extraction
+5. **Establish the origin-product pre-history.** The sleep system arrived complete in the extraction
    commit, so it was built earlier. If that repo is also on GitHub, its commit history + GH Archive
    push events would push the margin from 24 days out to something much larger. *Not done here —
    memory rule `feedback_warpos_only_no_cross_project` puts other projects off-limits without
