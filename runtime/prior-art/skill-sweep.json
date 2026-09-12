@@ -15,7 +15,7 @@
   },
   "caveats": [
     "Repo history begins 2026-03-02; anything a vendor shipped before that is vendor-first by construction.",
-    "45 skills first land at cd37d410 (2026-04-12), the Jobzooka extraction commit — they were built EARLIER, in a private repo, and that is not provable here.",
+    "45 skills first land at cd37d410 (2026-04-12), the origin-product extraction commit — they were built EARLIER, in a private repo, and that is not provable here.",
     "Skills are Claude Code slash commands; hooks are Claude Code hooks; subagents are Claude Code subagents. The substrate is vendor-first and no priority is claimed on it.",
     "Git dates are author-supplied and every commit checked is unsigned.",
     "Family verdicts are INHERITED by their skills; per-skill notes flag the cases where the skill is materially different from its family.",
@@ -2178,7 +2178,7 @@
     },
     {
       "skill": "guides:write",
-      "purpose": "Author a launch guide into _guides/ — grounded in the Mark Builds Brands methodology + the existing guides, in the right shape (walkthrough/checklis",
+      "purpose": "Author a launch guide into _guides/ — grounded in an external brand-building methodology (paid course, not redistributed) + the existing guides, in the right shape (walkthrough/checklis",
       "first_hash": "67b32c57",
       "first_date": "2026-05-31",
       "family": "guides-knowledge",

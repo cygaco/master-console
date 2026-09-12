@@ -96,7 +96,7 @@ step; this spec is the design contract it must honor.)
 
 ### The research question set (the source-grounded framework Stage 4 answers)
 
-This is *what* the dossier captures — the question framework from the Mark Builds Brands deep-
+This is *what* the dossier captures — the question framework from an external brand-building methodology's (paid course, not redistributed) deep-
 research method (the doc the SOP tells you to "teach Claude how to do deep research"). Answer
 each in the **market's own language**, copy-pasting verbatim VoC where possible; the goal is to
 "reflect them back to themselves" so the downstream copy reads as a familiar voice. Sources are

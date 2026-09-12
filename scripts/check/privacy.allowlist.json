@@ -1,0 +1,29 @@
+{
+  "_comment": "Email placeholders that are NOT personal data. Consumed by scripts/check/privacy.js (email findings matching an entry are dropped; everything else is a MED finding that FAILS the gate by default). Exact addresses go in `emails`; whole placeholder domains in `emailDomains`; `emailDomainSuffixes` covers reserved TLDs / bot-address domains. Adding a REAL personal address here is a leak — reviewers: treat additions as a policy change. Enforcer: scripts/check/privacy.test.js.",
+  "emails": [
+    "git@github.com",
+    "noreply@anthropic.com",
+    "noreply@github.com",
+    "you@gmail.com"
+  ],
+  "emailDomains": [
+    "example.com",
+    "example.org",
+    "example.net",
+    "domain.com",
+    "yourdomain.com",
+    "yourapp.com",
+    "email.com",
+    "e.com",
+    "x.io",
+    "localhost"
+  ],
+  "emailDomainSuffixes": [
+    ".example",
+    ".invalid",
+    ".local",
+    ".localhost",
+    ".test",
+    ".noreply.github.com"
+  ]
+}

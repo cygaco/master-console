@@ -41,7 +41,7 @@ Dispatch the scan suite **in parallel** (via Agent tool, each producing a sub-re
 
 **Tier 3 — WarpOS distribution integrity** *(default + `--deep`)*
 
-`/scan:install` · `/scan:framework-purity` · `/scan:framework-views-fresh` · `/scan:warpos-version-quorum` · `/scan:version-coherence` · `/scan:warpos-manifest-coverage` · `/scan:warpos-ship-coverage` · `/scan:warpos-manifest-honesty` · `/scan:warpos-path-resolution` · `/scan:warpos-structure-parity` · `/scan:warpos-staleness` · `/scan:warpos-tracked-transients` · `/scan:warpos-capsule-resolvable` · `/scan:warpos-install-baseline` · `/scan:warpos-applied-migrations` · `/scan:warpos-migration-coverage` · `/scan:warpos-migration-presence`
+`/scan:install` · `/scan:framework-purity` · `/scan:framework-views-fresh` · `/scan:warpos-version-quorum` · `/scan:version-coherence` · `/scan:warpos-manifest-coverage` · `/scan:warpos-ship-coverage` · `/scan:warpos-manifest-honesty` · `/scan:warpos-path-resolution` · `/scan:warpos-structure-parity` · `/scan:warpos-staleness` · `/scan:warpos-tracked-transients` · `/scan:leak-gate` · `/scan:warpos-capsule-resolvable` · `/scan:warpos-install-baseline` · `/scan:warpos-applied-migrations` · `/scan:warpos-migration-coverage` · `/scan:warpos-migration-presence`
 
 > **Coverage note (2026-05-30):** `/scan:warpos-ship-coverage` was added here after a full-system-scan-vs-`/scan:full` comparison found the ship-coverage check (`scripts/checks/warpos-ship-coverage.js`) existed and passed but was **never delegated by `/scan:full`** — the exact "the enforcer exists but isn't on the path" gap. It guards the B1/E3 "ships to nobody" class.
 

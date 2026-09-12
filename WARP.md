@@ -202,7 +202,7 @@ approve each purchase.
 
 | Dial | Plain English | Example | Backed by |
 |---|---|---|---|
-| **1. Who's in the room** | Which projects may talk + be changed | "all portfolio" / "companycam + masterconsole" | `~/.warpos/portfolio.json` |
+| **1. Who's in the room** | Which projects may talk + be changed | "all portfolio" / "product-a + product-b" | `~/.warpos/portfolio.json` |
 | **2. What they may do** | Escalating power ladder | *talk/propose* (free) → *fix+test in sandbox* (free) → **mint update** (pre-signed) → **ship to projects** (pre-signed) | extends `sprint:full` autonomy preset |
 | **3. What they may NEVER do** | Floor that survives any mandate | never force-push, never delete `backup/*`/`pre-*`, never spend ≥ $X, never leave the room, never ship a failed gauntlet | turbo safety floor + `authorization-gate.js` |
 | **4. How far it goes** | Budget | time (2h) / $ (API spend) / "until the loop goes quiet" — first to hit | new: Warp session budget tracker |

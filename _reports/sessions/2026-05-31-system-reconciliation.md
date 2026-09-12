@@ -11,7 +11,7 @@ We hardened WarpOS's own tooling and tidied loose ends, then merged it all to `m
 - **The scan suite audits itself now.** WarpOS has 40+ health-checks plus a "run them all" button (`/scan:full`). That button's list was hand-typed and had drifted — **4 checks existed but never ran**. We added a check that checks the checklist (`/scan:scan-coverage`) and wired the 4 missing ones back in.
 - **The maps suite audits itself now too** (`/maps:coverage`, same idea), and we **refreshed** the maps so they reflect everything new this session.
 - **Fixed "learn from a link/file" for Google Docs.** It was getting an empty page (Google Docs load via JavaScript). Now it uses Google's export URL + reads Word `.docx` files directly — no more "please download it for me."
-- **Saved the marketing source material** (the "Mark Builds Brands" docs you downloaded) and mapped which file is which (`_planning/ingest/source/MAP.md`), so the marketing agents can be refined against the real thing.
+- **Saved the marketing source material** (the docs of an external brand-building methodology (paid course, not redistributed) you downloaded) and mapped which file is which (`_planning/ingest/source/MAP.md`), so the marketing agents can be refined against the real thing.
 - **Started the guides skill suite** — built `/guides:write` (authors a launch guide + sets the contract for *where* each guide plugs into the setup flow, so long-lead steps like dev-account signups surface at project START).
 - **Merged everything to `main`** and pushed (12 commits).
 

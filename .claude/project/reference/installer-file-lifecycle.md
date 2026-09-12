@@ -1,6 +1,6 @@
 # Installer File Lifecycle: Skip-vs-Ghost Tradeoff
 
-> Reference for any installer/sync script that copies files from an upstream source into a downstream project (e.g. WarpOS templates copied into `aiweb`, framework files copied into a new project).
+> Reference for any installer/sync script that copies files from an upstream source into a downstream project (e.g. WarpOS templates copied into a downstream product, framework files copied into a new project).
 
 ## Source learning
 

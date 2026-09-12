@@ -279,7 +279,7 @@
         },
         {
           "id": "skill-guides-write",
-          "name": "Author a launch guide into _guides/ — grounded in the Mark Builds Brands methodology + the existing guides, in the right shape (walkthrough/checklist/notice), carrying the guide-anchor contract so /guides:integrate can place it in the bootstrap pipeline.",
+          "name": "Author a launch guide into _guides/ — grounded in an external brand-building methodology (paid course, not redistributed) + the existing guides, in the right shape (walkthrough/checklist/notice), carrying the guide-anchor contract so /guides:integrate can place it in the bootstrap pipeline.",
           "status": "untested",
           "files": [
             ".claude/commands/guides/write.md"

@@ -18,8 +18,8 @@ Non-empty registry → ASCII table per C-11:
 
 ```
 SLUG          WARP    LAST COMMIT          DIRTY   SPRINT           REMOTE
-dreamteams    0.8.2   a1b2c3d 2 days ago   0       SP-20260530-001  ✓ github
-companycam    0.8.1   ----    never        0       (none)           (none)
+pantry-pilot    0.8.2   a1b2c3d 2 days ago   0       SP-20260530-001  ✓ github
+orbit-notes    0.8.1   ----    never        0       (none)           (none)
 stale-prod    ?       ----    stale        ?       (none)           ? stale
 ```
 

@@ -9,7 +9,7 @@ Read this + `DUMP.md`. Execute **Wave 0 (chassis) → Wave 1 (modes) → Wave 2 
 
 ## 1. North star (the reframe)
 WarpOS is a great autonomous **engineering team** and a poor **go-to-market engine**. This update completes it into an autonomous **product studio** by adding the three missing functions — **Design, Marketing/Growth, Audience-Research** — plus the **org** and **modes** to run them.
-**Convergence insight:** the original complaint ("our sites are vibe-coded; *clarity is king; clear beats witty*") and Mark Builds Brands' ("*copy > creative, clarity > cleverness, message-first*") are the **same principle**. The whole update is ONE discipline — **research → message → creative → iterate** — of which converting design/app UX is the *output*. The unit of work shifts from **feature → launch.**
+**Convergence insight:** the original complaint ("our sites are vibe-coded; *clarity is king; clear beats witty*") and an external brand-building methodology's (paid course, not redistributed) ("*copy > creative, clarity > cleverness, message-first*") are the **same principle**. The whole update is ONE discipline — **research → message → creative → iterate** — of which converting design/app UX is the *output*. The unit of work shifts from **feature → launch.**
 **The spine is the `message_brief`** (the winning message). Audience dossiers feed it; offer/conversion, design, build, and every ad/advertorial/landing artifact derive from it. Build the **artifact/eval spine first** — it is the durable value; the org vocabulary is in service of it.
 
 ## 2. The org (v1 — operator-blessed)

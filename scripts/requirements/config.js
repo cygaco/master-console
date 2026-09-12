@@ -35,7 +35,7 @@ const STAGED_FILE =
     "requirements-staged.jsonl",
   );
 
-// Identifier regexes. Match the actual format used by jobzooka specs:
+// Identifier regexes. Match the actual format used by the origin product's specs:
 //   GS-<feature-short>-<NN>     granular story
 //   HL-<feature-short>-<NN>     high-level story
 //   CS-<NNN>                    cross-cutting standard (e.g., "Inherits: CS-003")

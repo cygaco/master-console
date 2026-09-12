@@ -196,7 +196,7 @@
     }
   },
   "principles": {
-    "clarity-is-king": { "name": "Clarity is King", "rooted_in": "manager-principles-base", "summary": "Clear beats clever / witty; message-first. The convergence insight (product 'clarity is king' = Mark Builds Brands 'clarity > cleverness'). A NEW shared-base principle, not a former DoP/DoQA named principle." },
+    "clarity-is-king": { "name": "Clarity is King", "rooted_in": "manager-principles-base", "summary": "Clear beats clever / witty; message-first. The convergence insight (product 'clarity is king' = an external brand-building methodology's (paid course, not redistributed) 'clarity > cleverness'). A NEW shared-base principle, not a former DoP/DoQA named principle." },
     "map-user-journey": { "name": "Map the User Journey", "rooted_in": "manager-principles-base", "summary": "Evaluate every decision in the entry->goal->next-step flow, not in isolation; the worst bugs live in the seams between features. Promoted to base — it was the duplicate across DoP #10 and DoQA #7." },
     "evidence-over-invention": { "name": "Evidence over Invention", "rooted_in": "manager-principles-base", "summary": "Ground every call in the real project + real data; if the evidence isn't there, say what you'd need rather than inventing it. Source-attributed, confidence-scored, no fabricated audience psychographics." },
     "claims-boundary": { "name": "Claims Boundary / Source-Grounded Claims", "rooted_in": "manager-principles-base", "summary": "Marketing owns the market promise (message_brief); Product owns the product-verifiable claim (offer_brief); they must not blur, and security/compliance review stays independent. Crosses Product/Marketing/Research/Compliance — a shared base principle (GPT re-review §11.A)." },

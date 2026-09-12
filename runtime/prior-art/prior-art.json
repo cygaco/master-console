@@ -7,7 +7,7 @@
     "public": true,
     "github_created_at": "2026-03-02T19:53:12Z",
     "first_commit": "2026-03-02",
-    "note": "Framework extracted from an earlier private project ('Jobzooka'/'jobhunter') on 2026-04-12 (cd37d410). Pre-extraction dates are NOT provable from this repo."
+    "note": "Framework extracted from an earlier private project (the origin product) on 2026-04-12 (cd37d410). Pre-extraction dates are NOT provable from this repo."
   },
   "caveats": [
     "Git author/committer dates are author-supplied; all commits checked return verification.verified=false (unsigned).",
@@ -979,7 +979,7 @@
     {"priority": 2, "action": "Cite the immutable GitHub repo created_at (2026-03-02T19:53:12Z) as a non-author-supplied lower bound."},
     {"priority": 3, "action": "Enable commit/tag signing (commit.gpgsign=true) going forward — every commit checked returns verification.verified=false."},
     {"priority": 4, "action": "Timestamp the tree externally now: OpenTimestamps attestation, and check archive.softwareheritage.org for existing snapshots dated before 2026-05-06."},
-    {"priority": 5, "action": "Establish the Jobzooka pre-history (sleep arrived complete in the extraction commit, so it was built earlier). BLOCKED: cross-project access needs explicit operator sign-off per feedback_warpos_only_no_cross_project."},
+    {"priority": 5, "action": "Establish the origin-product pre-history (sleep arrived complete in the extraction commit, so it was built earlier). BLOCKED: cross-project access needs explicit operator sign-off per feedback_warpos_only_no_cross_project."},
     {"priority": 6, "action": "Pair scripts/sleep-20260422-*.js with surviving events.jsonl entries — an execution log dated before 2026-05-06 beats a spec file."},
     {"priority": 7, "action": "Pin the vendor date harder: find and web.archive.org the real Anthropic announcement page, plus the @AnthropicAI/@claudeai post announcing Dreaming with its timestamp."},
     {"priority": 8, "action": "Frame every claim as convergent prior art, never as influence — there is no evidence Anthropic saw this repo."}

@@ -86,11 +86,11 @@ const KNOWN_NOT_SHIPPED = [
   { prefix: "_warpos/BASELINE/", reason: "build-output seed snapshot for the deferred validate.js:30 seed-drift diff; not shipped from canonical (per-install generator pending)" },
   // W4 restructure (c89a73a7): labeled reference examples relocated OUT of canonical
   // _requirements/ to keep installs product-agnostic. Framework-owned on disk for
-  // canonical reference only; shipping a product example (e.g. Jobzooka) into every
+  // canonical reference only; shipping a product example (e.g. the origin product) into every
   // install would re-introduce product-specific content — the exact thing W4 removed.
   // Consumers generate their own canon via the canon engine. Narrow prefix so
   // _warpos/templates/ still falls through to the shipped set.
-  { prefix: "_warpos/EXAMPLES/", reason: "W4 labeled reference examples (relocated from canonical _requirements/); framework-owned canonical reference, NOT shipped to consumer installs (would re-introduce product-specific content); consumers generate their own canon" },
+  { prefix: "_warpos/EXAMPLES/", reason: "W4 labeled reference examples — UNTRACKED + gitignored in S-OS-04 (private product tree); rule retained so a re-tracked copy can never ship; the synthetic example lives at _warpos/BASELINE/; consumers generate their own canon" },
   // WarpOS-as-product canon — root-leak pending 0.10.0 scrub; product content,
   // never shipped (consumers generate their own via the canon engine).
   { prefix: "_requirements/00-canonical/", reason: "WarpOS product canon (root-leak pending scrub); consumers generate their own" },

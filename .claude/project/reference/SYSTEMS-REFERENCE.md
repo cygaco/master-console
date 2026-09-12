@@ -1,7 +1,7 @@
 
 # Alex — Systems Reference
 
-Built on Claude Code. Project: Jobzooka (job search app). Branch: skeleton-test6.
+Built on Claude Code. Project: the origin product (a job-search app). Branch: skeleton-test6.
 
 ## What Is This?
 

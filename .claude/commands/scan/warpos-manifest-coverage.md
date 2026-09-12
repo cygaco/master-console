@@ -19,7 +19,7 @@ node scripts/warpos/manifest/validate.js --strict
 Wires into:
 - `/warp:update --status` reports (lists `unmanifested` paths the operator should sweep)
 - Pre-release CI (refuses a capsule build with coverage gaps)
-- The recurring dreamteam-style bug class where the installer claimed completeness but missed asset directories — manifests now refuse the run if anything is unenumerated.
+- The recurring downstream-install bug class where the installer claimed completeness but missed asset directories — manifests now refuse the run if anything is unenumerated.
 
 Modes:
 - default — strict (any soft finding fails)

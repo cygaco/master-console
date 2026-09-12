@@ -4,12 +4,12 @@ FIRST, read these files in the workspace (you have read access):
 - _planning/FINAL-PLAN.md  (the plan — read fully)
 - _planning/ORG.md  (org structure)
 - _planning/MODES-RECONCILE.md  (how the org maps onto solo/adhoc/oneshot modes)
-- _planning/ingest/SYNTHESIS.md  (the Mark Builds Brands growth-engine corpus + WarpOS mapping)
+- _planning/ingest/SYNTHESIS.md  (the growth-engine corpus of an external brand-building methodology (paid course, not redistributed) + WarpOS mapping)
 - _planning/consult-gpt55-summary.md  (your earlier review, for continuity)
 If file reads fail, use the CONDENSED PLAN below.
 
 == CONDENSED PLAN ==
-Reframe: WarpOS (autonomous engineering team) -> autonomous PRODUCT STUDIO. Adds Design, Marketing/Growth, Audience-Research functions + an org + generalized modes. Convergence: the operator's original "our sites are vibe-coded; clarity is king" design complaint and the marketing creator Mark Builds Brands' "clarity > cleverness, message-first" are ONE discipline: research -> message -> creative -> iterate (of which converting design is the output). Unit of work shifts feature -> launch.
+Reframe: WarpOS (autonomous engineering team) -> autonomous PRODUCT STUDIO. Adds Design, Marketing/Growth, Audience-Research functions + an org + generalized modes. Convergence: the operator's original "our sites are vibe-coded; clarity is king" design complaint and an external brand-building methodology's (paid course, not redistributed) "clarity > cleverness, message-first" are ONE discipline: research -> message -> creative -> iterate (of which converting design is the output). Unit of work shifts feature -> launch.
 
 Org (3 PEER Directors; convention: Director = domain apex, Lead = sub-owner, specialist = doer):
 - Director of Product Management: Product Lead (-> Product Designer, app UI/UX), QA Lead (product-driven; directs the QA scanner), Research/Insight Lead (deep audience layer).

@@ -33,7 +33,7 @@
   - `manifest.foundation_files` — added to spec patterns if present
 
 ### foundation-guard.js
-- **Before:** 14 hardcoded Jobzooka file paths (`src/lib/types.ts`, `src/app/page.tsx`, etc.), wrong store path
+- **Before:** 14 hardcoded origin-product file paths (`src/lib/types.ts`, `src/app/page.tsx`, etc.), wrong store path
 - **After:** Reads `manifest.fileOwnership.foundation` array. Empty default = no blocking on fresh projects. Store path from `PATHS.agents`.
 
 ### boss-boundary.js
@@ -62,7 +62,7 @@
 
 ## manifest.json Updates
 
-Added new fields to Jobzooka's manifest:
+Added new fields to the origin product's manifest:
 - `source_dirs: ["src/", "extension/"]`
 - `component_feature_map: { Step1Resume: "onboarding", ... }` — full 30-entry map
 - `spec_patterns: [...]` — 11 regex patterns as strings
@@ -81,7 +81,7 @@ Added new fields to Jobzooka's manifest:
 - `check/arch.md` — Removed hardcoded foundation file refs. Now reads from manifest.
 
 ### Research skills
-- `research/deep.md` — Replaced "Next.js job search app (Jobzooka)" context with "Read CLAUDE.md and PROJECT.md for context". Changed "Applicability to Jobzooka" → "Applicability to This Project"
+- `research/deep.md` — Replaced "Next.js job search app (origin-product)" context with "Read CLAUDE.md and PROJECT.md for context". Changed "Applicability to origin-product" → "Applicability to This Project"
 - `research/simple.md` — Same changes.
 
 ### Bulk retro path replacement (8 files)
@@ -89,8 +89,8 @@ Replaced `_docs/09-agentic-system/retro` with `the retro directory (check manife
 - check/patterns.md, fix/deep.md, preflight/run.md, sleep/deep.md, learn/ingest.md, maps/enforcements.md, retro/full.md, retro/code.md
 
 ### Other scrubs
-- `learn/ingest.md` — "Jobzooka system" → "current project and WarpOS system"
-- `session/history.md` — Removed Jobzooka-specific example handoff entries
+- `learn/ingest.md` — "origin-product system" → "current project and WarpOS system"
+- `session/history.md` — Removed origin-product-specific example handoff entries
 
 ## WarpOS Repo Restructure
 

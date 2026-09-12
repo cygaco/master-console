@@ -255,15 +255,15 @@ for (const rel of [
     `got ${JSON.stringify(c)}`,
   );
 }
-// The non-view _warpos/ roots that MUST keep shipping from canonical. BASELINE + EXAMPLES are
-// included (review advisory on 117aa1e7): they are NOT .claude/ view mirrors, so a future widening
-// of isFrameworkViewDest that accidentally matched a BASELINE/EXAMPLES-shaped path would silently
-// over-exclude those roots — this guard catches that regression.
+// The non-view _warpos/ roots that MUST keep shipping from canonical. BASELINE is
+// included (review advisory on 117aa1e7; EXAMPLES/ was untracked in S-OS-04): it is NOT a .claude/ view mirror, so a future widening
+// of isFrameworkViewDest that accidentally matched a BASELINE-shaped path would silently
+// over-exclude that root — this guard catches that regression.
 for (const rel of [
   "_warpos/templates/sprint/README.md",
   "_warpos/settings/defaults.json",
-  "_warpos/BASELINE/_docs/ai-web-brief-v4.md",
-  "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/CORE_BRIEF.md",
+  "_warpos/BASELINE/_requirements/00-canonical/CORE_BRIEF.md",
+  "_warpos/BASELINE/_docs/phase0/FINAL_REPORT.md",
 ]) {
   const c = classify(rel, canonRules);
   ok(

@@ -242,3 +242,24 @@ runtime/**/*.out
 .claude/project/sprint/tickets/
 # raw /beta:mine output — verbatim operator prompts; the distilled judgement-model.md is what ships
 .claude/agents/president/_system/beta/mined/
+
+# ── E-OPEN-SOURCE-001 / S-OS-04 leak enforcers (ED-417) ──
+# Private product trees + origin-product specs removed from the INDEX only (files stay on
+# disk; the private mirror holds history). Enforcer: scripts/checks/framework-purity.js
+# (full-tree, fail-closed on the private slugs) + scripts/checks/leak-denylist.js.
+_warpos/EXAMPLES/
+_docs/research/*-staffing-layer/
+_warpos/BASELINE/_docs/research/*-staffing-layer/
+_docs/research/2026-05-21-product-clone-*-postmortem.md
+_warpos/BASELINE/_docs/research/2026-05-21-product-clone-*-postmortem.md
+scripts/delta-*.txt
+scripts/write-mr-fix1-brief.js
+# History-rewrite originals (the plaintext rules + hit lists) live under _private/rewrite/
+# (ignored above). Anything unredacted that lands beside the committed rewrite evidence
+# stays local too. Enforcer: scripts/checks/leak-denylist.js (hash-only denylist).
+runtime/open-source/rewrite/*.orig
+runtime/open-source/rewrite/*unredacted*
+runtime/open-source/rewrite/originals/
+# β mining output (verbatim operator prompts) — re-asserted; enforcer:
+# scripts/checks/warpos-tracked-transients.js (fails on any tracked file under it).
+.claude/agents/president/_system/beta/mined/

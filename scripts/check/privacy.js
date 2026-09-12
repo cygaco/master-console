@@ -1,25 +1,34 @@
 #!/usr/bin/env node
 /**
  * scripts/check/privacy.js — Pre-publish scan for personal data leaks.
+ * FAIL-CLOSED by default since S-OS-04 (ED-417): any HIGH or MED finding exits 1.
  *
  * Patterns enumerated explicitly (NOT a hand-wave "scan for personal data"):
- *   1. Emails (RFC-5322 simplified)
- *   2. Names from .claude/project/memory/known-names.json (project-specific)
- *   3. Session artifacts (paths.runtime contents in framework-manifest)
- *   4. Credential markers (sk-*, ghp_*, glpat-*, AKIA*, BEGIN PRIVATE KEY)
- *   5. Absolute paths under user homedirs (/Users/, /home/, C:\Users\)
- *   6. Any file under paths.runtime, paths.events, paths.memory tracked by git
+ *   1. Emails (RFC-5322 simplified) — MED, minus the placeholder allowlist in
+ *      scripts/check/privacy.allowlist.json (example.com, *.local, git@github.com …)
+ *   2. Names from .claude/project/memory/known-names.json (project-specific) — MED
+ *   3. Credential markers (sk-*, ghp_*, glpat-*, AKIA*, BEGIN PRIVATE KEY) — HIGH
+ *   4. Absolute paths under user homedirs (/Users/, /home/, C:\Users\) — LOW
+ *      (report-only: the operator is a public figure and old paths inside docs and
+ *      logs are fine; hardcoded paths in EXECUTABLES are a hard finding of
+ *      scripts/checks/framework-purity.js, not of this scan)
+ *   5. Any file under paths.runtime, paths.events, paths.memory tracked by git — HIGH
  *
  * Usage:
- *   node scripts/check/privacy.js                  scan repo
- *   node scripts/check/privacy.js --files <glob>   scan specific files
+ *   node scripts/check/privacy.js                  scan every tracked file
+ *   node scripts/check/privacy.js --files <a,b>    scan specific files
  *   node scripts/check/privacy.js --json           JSON output
- *   node scripts/check/privacy.js --strict         exit 1 on any finding (default 1 only on credentials)
+ *   node scripts/check/privacy.js --strict         exit 1 on ANY finding (LOW included)
+ *   node scripts/check/privacy.js --advisory       pre-S-OS-04 behaviour: exit 1 only on HIGH
  *
  * Exit:
- *   0 — no high-severity findings
- *   1 — credential markers, runtime tracked, or --strict with any finding
+ *   0 — no failing findings for the chosen mode
+ *   1 — default: any HIGH or MED · --strict: any finding · --advisory: any HIGH
  *   2 — usage error
+ *
+ * Enforcer of its own contract: scripts/check/privacy.test.js (planted email +
+ * credential fixtures must exit 1; allowlisted placeholder must not; the live
+ * tracked tree must exit 0).
  */
 const fs = require("fs");
 const path = require("path");
@@ -49,7 +58,7 @@ const PATTERNS = [
   {
     id: "homedir-windows",
     severity: "LOW",
-    re: /\bC:[\\/]Users[\\/][A-Za-z0-9._-]+/,
+    re: /\bC:[\\/]+Users[\\/]+[A-Za-z0-9._-]+/,
   },
 ];
 
@@ -69,10 +78,38 @@ const SKIP_FILES = [
   "tests/transcripts/check-privacy.md",
 ];
 
+const ALLOWLIST_FILE = path.join(__dirname, "privacy.allowlist.json");
+
+function loadAllowlist() {
+  try {
+    const j = JSON.parse(fs.readFileSync(ALLOWLIST_FILE, "utf8"));
+    return {
+      emails: new Set((j.emails || []).map((s) => s.toLowerCase())),
+      emailDomains: new Set((j.emailDomains || []).map((s) => s.toLowerCase())),
+      emailDomainSuffixes: (j.emailDomainSuffixes || []).map((s) => s.toLowerCase()),
+    };
+  } catch {
+    // A missing/unreadable allowlist is NOT a reason to fail-open the scan: with
+    // no allowlist every email is a finding (fail-closed).
+    return { emails: new Set(), emailDomains: new Set(), emailDomainSuffixes: [] };
+  }
+}
+
+// true ⇒ this email is a documented placeholder / bot address, not personal data.
+function isAllowlistedEmail(email, allow) {
+  const e = email.toLowerCase();
+  if (allow.emails.has(e)) return true;
+  const at = e.lastIndexOf("@");
+  if (at === -1) return false;
+  const domain = e.slice(at + 1);
+  if (allow.emailDomains.has(domain)) return true;
+  return allow.emailDomainSuffixes.some((suf) => domain.endsWith(suf));
+}
+
 function trackedFiles() {
   try {
     return execSync("git ls-files", {
-      maxBuffer: 32 * 1024 * 1024,
+      maxBuffer: 64 * 1024 * 1024,
     })
       .toString()
       .split("\n")
@@ -106,7 +143,9 @@ function loadRuntimeRoots() {
   }
 }
 
-function scanFile(file) {
+function scanFile(file, ctx) {
+  const knownNames = (ctx && ctx.knownNames) || [];
+  const allow = (ctx && ctx.allow) || loadAllowlist();
   const findings = [];
   let text;
   try {
@@ -114,21 +153,20 @@ function scanFile(file) {
   } catch {
     return findings;
   }
-  const knownNames = loadKnownNames();
   const lines = text.split("\n");
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     for (const p of PATTERNS) {
       const m = line.match(p.re);
-      if (m) {
-        findings.push({
-          file,
-          line: i + 1,
-          pattern: p.id,
-          severity: p.severity,
-          match: m[0].slice(0, 80),
-        });
-      }
+      if (!m) continue;
+      if (p.id === "email" && isAllowlistedEmail(m[0], allow)) continue;
+      findings.push({
+        file,
+        line: i + 1,
+        pattern: p.id,
+        severity: p.severity,
+        match: m[0].slice(0, 80),
+      });
     }
     for (const name of knownNames) {
       if (line.includes(name)) {
@@ -145,11 +183,26 @@ function scanFile(file) {
   return findings;
 }
 
+// mode: "default" (HIGH+MED fail) | "strict" (any) | "advisory" (HIGH only)
+function shouldFail(findings, mode) {
+  if (mode === "strict") return findings.length > 0;
+  if (mode === "advisory") return findings.some((f) => f.severity === "HIGH");
+  return findings.some((f) => f.severity === "HIGH" || f.severity === "MED");
+}
+
 function main() {
   const args = process.argv.slice(2);
   const asJson = args.includes("--json");
-  const strict = args.includes("--strict");
+  const mode = args.includes("--strict")
+    ? "strict"
+    : args.includes("--advisory")
+      ? "advisory"
+      : "default";
   const fi = args.indexOf("--files");
+  if (fi !== -1 && !args[fi + 1]) {
+    process.stderr.write("usage: --files <a,b,c>\n");
+    process.exit(2);
+  }
   const explicit = fi !== -1 ? args[fi + 1].split(",") : null;
 
   let files;
@@ -173,10 +226,11 @@ function main() {
     runtimeRoots.some((r) => f.startsWith(r + "/") || f === r),
   );
 
+  const ctx = { knownNames: loadKnownNames(), allow: loadAllowlist() };
   let allFindings = [];
   for (const f of files) {
     if (!fs.existsSync(f)) continue;
-    allFindings = allFindings.concat(scanFile(f));
+    allFindings = allFindings.concat(scanFile(f, ctx));
   }
 
   for (const f of runtimeTracked) {
@@ -190,22 +244,43 @@ function main() {
   }
 
   const high = allFindings.filter((f) => f.severity === "HIGH");
+  const med = allFindings.filter((f) => f.severity === "MED");
+  const fail = shouldFail(allFindings, mode);
   if (asJson) {
     process.stdout.write(JSON.stringify(allFindings, null, 2) + "\n");
   } else {
     process.stdout.write(
-      `# scanned ${files.length} file(s); ${allFindings.length} finding(s) (${high.length} HIGH)\n`,
+      `# scanned ${files.length} file(s); ${allFindings.length} finding(s) (${high.length} HIGH, ${med.length} MED); mode=${mode}\n`,
     );
-    for (const f of allFindings) {
+    // Failing findings first; LOW (report-only unless --strict) after.
+    const ordered = allFindings
+      .slice()
+      .sort((a, b) => rank(a.severity) - rank(b.severity));
+    for (const f of ordered.slice(0, 200)) {
       process.stdout.write(
         `  ${f.severity}  ${f.file}:${f.line}  ${f.pattern}  ${f.match}\n`,
       );
     }
+    if (ordered.length > 200) {
+      process.stdout.write(`  ... and ${ordered.length - 200} more\n`);
+    }
+    process.stdout.write(`# result: ${fail ? "FAIL" : "OK"} (exit ${fail ? 1 : 0})\n`);
   }
-  const fail = high.length > 0 || (strict && allFindings.length > 0);
   process.exit(fail ? 1 : 0);
+}
+
+function rank(sev) {
+  return sev === "HIGH" ? 0 : sev === "MED" ? 1 : 2;
 }
 
 if (require.main === module) main();
 
-module.exports = { PATTERNS, scanFile, loadKnownNames, loadRuntimeRoots };
+module.exports = {
+  PATTERNS,
+  scanFile,
+  shouldFail,
+  isAllowlistedEmail,
+  loadAllowlist,
+  loadKnownNames,
+  loadRuntimeRoots,
+};

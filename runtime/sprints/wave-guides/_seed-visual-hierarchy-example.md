@@ -45,8 +45,8 @@ Guide / Figma Visual Hierarchy Overview"). **DO NOT reproduce this.** See HARD c
 2. **Sources are for provenance/evidence only.** /research:deep findings are cited to ground the
    knowledge (NN/g, research, established theory) — NOT as "go use this tool" directives.
 3. **Generic framework knowledge, not product-specific.** These train the designer agents
-   universally. No Jobzooka/product-specific colors or decisions (that's product content; the
-   `_requirements/01-design-system/*` Jobzooka specifics are NOT the model here).
+   universally. No origin-product/product-specific colors or decisions (that's product content; the
+   `_requirements/01-design-system/*` origin-product specifics are NOT the model here).
 4. **End in agent-applicable rules + checks.** Each guide closes with rules the
    design-quality / visual-review gauntlet can mechanically check against (mirror their 6 axes /
    finding categories), not just prose.

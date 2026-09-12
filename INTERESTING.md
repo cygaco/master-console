@@ -22,4 +22,4 @@ A reference archive of notable operator prompts, for later reuse.
 
 ### Findings at kickoff
 - codex `0.135.0` + gemini `0.44.1` both installed on this machine.
-- 4 products carry a `WARPOS.md` (dreamteam, companycam, masterconsole, almanac); forerunner does not.
+- 4 products carry a `WARPOS.md` (four of the portfolio products); forerunner does not.

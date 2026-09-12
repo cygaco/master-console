@@ -1,4 +1,4 @@
-# E-DISPATCH-PERFECT-001 W4 (deeper increment) — residual jobzooka vocab sweep
+# E-DISPATCH-PERFECT-001 W4 (deeper increment) — residual origin-product vocab sweep
 
 **Date:** 2026-06-17
 **Scope (allowed files only):**
@@ -93,7 +93,7 @@ hallucination, producer defines the shape, unified fix brief, golden tolerances)
   generic browser-extension term, not in the genericization target list; carries the
   out-of-process-handoff lesson. Left as-is.
 - reviewer.md generic security terms (IDOR, payment bypass, rate abuse, CSRF, Stripe) —
-  these are framework-neutral security concepts, not jobzooka domain vocab.
+  these are framework-neutral security concepts, not origin-product domain vocab.
 - Persona / step counts, `marketAnalysis` field name, `miningResults`/`miningQuestions`
   — these are kept because (a) `marketAnalysis` is already a generic analytics noun, and
   (b) the broad step-pipeline rewrite is out of scope for "swap only the domain noun"; the

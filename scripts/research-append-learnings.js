@@ -47,7 +47,7 @@ const learnings = [
   },
   {
     id: "L-2026-04-23-research-admin-tailscale-separation",
-    tip: "Co-locating admin panel with public API in same Hono process is a structural smell (three-engine consensus). Recommended: separate Fly app jobzooka-admin with [services] bound to [flycast] internal only, Tailscale ACL gates access to admin group. Passkey + scope become defense-in-depth on top of network-layer isolation. Public API has zero admin routes — even on full compromise no mint-refund button to find. Cost: ~$5/mo extra Fly app + Tailscale free tier.",
+    tip: "Co-locating admin panel with public API in same Hono process is a structural smell (three-engine consensus). Recommended: separate Fly app <product>-admin with [services] bound to [flycast] internal only, Tailscale ACL gates access to admin group. Passkey + scope become defense-in-depth on top of network-layer isolation. Public API has zero admin routes — even on full compromise no mint-refund button to find. Cost: ~$5/mo extra Fly app + Tailscale free tier.",
     importance: "medium",
   },
   {
