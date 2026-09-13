@@ -3,163 +3,675 @@
 /**
  * partition-loader.js — the ONE entry point for the S-OS-06 rename partition.
  *
- * The partition artifact is the deny-list (scripts/open-source/rename-mc.denylist.json,
- * committed, T1) plus the allow-list (scripts/open-source/rename-mc.allowlist.json,
- * T2-authored, not yet created as of T1). Today three lists exist across the codebase
- * and drift (cutover-completeness.allowlist.json, framework-purity inline regex arrays,
- * and this codemod's own deny-list) — beta r2 Req1 requires unifying to ONE artifact
- * behind ONE loader. This module IS that loader.
+ * ONE ARTIFACT (β r3 Req1 / T2 resolution R2): the committed deny-list next to this
+ * module (DENYLIST_PATH) is the SOLE partition artifact. There is NO separate allow-list
+ * file: "where the legacy slug may remain" is a VIEW of that one artifact — its Class-3/4
+ * path entries (pathGlobs + futureEntries) plus its occurrencePins — exposed here as
+ * `allowList` / `isAllowed(path)`. Two lists drift; one artifact read through one loader
+ * cannot.
  *
  * RULE: every reader — the codemod (rename-mc.js), the gates (cutover-completeness.js,
- * framework-purity.js, the T5 falsifier fixtures) — MUST call loadPartition() from here.
- * A reader that does `require("./rename-mc.denylist.json")` or
- * `require("./rename-mc.allowlist.json")` directly, bypassing this module, is the exact
- * un-routed-reader violation beta r2 Req1 names. The structural guard that FAILS a
- * direct require lands in T2/T5; this module exposes the single entry point that guard
- * checks callers against — see ROUTED_ENTRY_POINT below.
+ * framework-purity.js), the record-trust exit (record-trust-exit.js) and the S-OS-06
+ * falsifier fixtures — consumes the partition through THIS module. A file that names the
+ * artifact directly (require/readFile of its basename) is the un-routed-reader violation;
+ * `findUnroutedReaders()` below is the structural guard, asserted by
+ * tests/regression/S-OS-06/partition-single-loader.test.js and record-trust-exit.js item 2.
+ * Git-history reads of the artifact (the F8 freeze check) are routed here too
+ * (`readPartitionAt`), so no gate ever opens the artifact on its own.
+ *
+ * What lives here (all partition semantics, so the codemod and the gates cannot disagree):
+ *   - classifyPath(path)               four-class membership + writeProtected (orthogonal)
+ *   - findOccurrencePin(file, text)    R4: pins key on (file, matchText [, anchor]) — never
+ *                                      a bare line number, so an edit above a pinned line
+ *                                      cannot silently break the pin
+ *   - historicalChangelogLines(text)   CHANGELOG sections < 2.0.0 are historical record
+ *   - tallyLegacySlug(...)             per-file disposition tally (pending / pinned /
+ *                                      derived / suppressed-per-entry) — the NUMBERS both
+ *                                      gates emit
+ *   - validateEntries()                F2: every entry carries a one-line warrant; schema
+ *   - checkStale({ trackedFiles })     F7: an entry that matches nothing is a NON-ZERO exit
+ *   - checkFreeze()                    F8: post-freeze additions must be separate, warranted
+ *                                      `partition-amendment:` commits
+ *   - findUnroutedReaders()            Req1 guard
+ *
+ * Fail-closed (F3): a missing, empty, unparseable, or header-less artifact THROWS
+ * PartitionLoadError; callers map that to exit 2. It never degrades to an empty list.
+ *
+ * CLI:  node scripts/open-source/partition-loader.js --keys   (sorted freeze keys, JSON)
  */
 
 const fs = require("fs");
 const path = require("path");
+const { spawnSync } = require("child_process");
 
 const DENYLIST_PATH = path.join(__dirname, "rename-mc.denylist.json");
-const ALLOWLIST_PATH = path.join(__dirname, "rename-mc.allowlist.json");
+const COMMITTED_LEDGER_PATH = path.join(__dirname, "rename-mc.occurrences.json");
+// The repository the partition describes: two levels above this module. Fixtures copy
+// this module (untracked) into a temp git repo, so the root follows the COPY (R5).
+const PARTITION_ROOT = path.resolve(__dirname, "..", "..");
 
-// The T2/T5 un-routed-reader guard greps for this exported constant's VALUE (not this
-// module's own path) to recognize a legitimate load site. Any other file that contains
-// a literal `require(...rename-mc.denylist.json...)` or `...rename-mc.allowlist.json...`
-// outside this module is the violation.
+// The guard recognizes this module as the one legitimate load site.
 const ROUTED_ENTRY_POINT = "scripts/open-source/partition-loader.js#loadPartition";
+
+const AMENDMENT_MARKER = "partition-amendment:";
+const VALID_CLASSES = [1, 2, 3, 4];
+const ALLOW_CLASSES = [3, 4];
+const CHANGELOG_REL = "CHANGELOG.md";
+const PLACEHOLDER_WARRANT = /^(todo|tbd|fixme|n\/a|na|none|null|undefined|-+|\.+|\?+|x+)$/i;
+const CODE_EXTENSIONS = new Set([".js", ".cjs", ".mjs", ".ts", ".cts", ".mts", ".ps1", ".sh", ".py"]);
+
+class PartitionLoadError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "PartitionLoadError";
+    this.code = "PARTITION_UNREADABLE";
+  }
+}
 
 let _cache = null;
 
 function _toPosix(p) {
-  return p.split(path.sep).join("/");
+  return String(p).split(path.sep).join("/").replace(/\\/g, "/");
 }
 
 // Minimal glob -> RegExp: `**` = any depth (incl. zero segments), `*` = within one
-// path segment. Sufficient for the pathGlobs shapes this artifact uses (dir/**,
-// exact files, no character classes). Uses a plain-ASCII sentinel (no control-char
-// escapes) so the intermediate placeholder never risks becoming a stray byte in source.
+// path segment. Uses a plain-ASCII sentinel (no control-char escapes).
 function _globToRegExp(glob) {
   const SENTINEL = "@@RENAME_MC_DOUBLESTAR@@";
-  const escaped = glob.replace(/[.+^${}()|[\]\\]/g, "\\$&");
+  const escaped = String(glob).replace(/[.+^${}()|[\]\\]/g, "\\$&");
   const withDoubleStar = escaped.split("**").join(SENTINEL);
   const withSingleStar = withDoubleStar.replace(/\*/g, "[^/]*");
   const restored = withSingleStar.split(SENTINEL).join(".*");
   return new RegExp("^" + restored + "$");
 }
 
-// Distinguish "file absent" (tolerated — T1 predates T2's allow-list) from "file
-// present but truncated/empty/unparseable" (fail CLOSED — this is the record-trust
-// gate's F3 falsifier: a truncated/empty allow-list must fail closed, not silently
-// behave as an empty-but-valid allow-list).
-function _readJsonOrThrowIfCorrupt(p, { requiredIfPresent = true } = {}) {
-  if (!fs.existsSync(p)) return { present: false, data: null };
-  const raw = fs.readFileSync(p, "utf8");
-  if (!raw || !raw.trim()) {
-    if (requiredIfPresent) {
-      throw new Error(
-        `partition-loader: ${p} exists but is empty — failing CLOSED (F3), not treating as an empty-but-valid list`
-      );
-    }
-    return { present: true, data: null };
+// Parse artifact TEXT. Empty / unparseable / non-object / header-less => throw (F3).
+function _parseArtifactText(raw, label) {
+  if (typeof raw !== "string" || !raw.trim()) {
+    throw new PartitionLoadError(
+      `partition-loader: ${label} is empty — failing CLOSED (F3), never treated as an empty-but-valid partition`
+    );
   }
   let parsed;
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(raw.replace(/^﻿/, ""));
   } catch (e) {
-    throw new Error(`partition-loader: ${p} is present but not valid JSON — failing CLOSED (F3): ${e.message}`);
+    throw new PartitionLoadError(`partition-loader: ${label} is not valid JSON — failing CLOSED (F3): ${e.message}`);
   }
-  return { present: true, data: parsed };
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new PartitionLoadError(`partition-loader: ${label} is not a JSON object — failing CLOSED (F3)`);
+  }
+  if (typeof parsed.$question !== "string" || !parsed.$question.trim()) {
+    throw new PartitionLoadError(
+      `partition-loader: ${label} carries no $question header — an artifact that does not state its question is not the partition (F3)`
+    );
+  }
+  for (const section of ["generatedViews", "pathGlobs", "occurrencePins", "futureEntries"]) {
+    if (parsed[section] !== undefined && !Array.isArray(parsed[section])) {
+      throw new PartitionLoadError(`partition-loader: ${label} section "${section}" is not an array — failing CLOSED (F3)`);
+    }
+  }
+  return parsed;
+}
+
+function _readArtifactFile(p) {
+  if (!fs.existsSync(p)) {
+    throw new PartitionLoadError(
+      `partition-loader: the committed partition artifact is required at ${p} — fail CLOSED, not open`
+    );
+  }
+  return _parseArtifactText(fs.readFileSync(p, "utf8"), p);
+}
+
+/** Sorted, de-duplicated freeze keys over the WHOLE artifact (R4: no line numbers). */
+function entryKeys(denylist) {
+  const d = denylist || {};
+  const keys = [];
+  for (const g of d.generatedViews || []) keys.push(`view|${g && g.path}`);
+  for (const g of d.pathGlobs || []) keys.push(`glob|${g && g.pattern}`);
+  for (const g of d.futureEntries || []) keys.push(`future|${g && g.pattern}`);
+  for (const p of d.occurrencePins || []) keys.push(`pin|${p && p.file}|${p && p.matchText}|${(p && p.anchor) || ""}`);
+  return [...new Set(keys)].sort();
+}
+
+/** Line numbers (1-based) inside CHANGELOG sections for releases < 2.0.0. */
+function historicalChangelogLines(content) {
+  const set = new Set();
+  if (typeof content !== "string") return set;
+  let currentIsHistorical = false;
+  content.split(/\r?\n/).forEach((lineText, idx) => {
+    const heading = lineText.match(/^##\s*\[([^\]]+)\]/);
+    if (heading) {
+      const label = heading[1].trim();
+      if (/^unreleased$/i.test(label)) {
+        currentIsHistorical = false;
+      } else {
+        const semver = label.match(/^(\d+)\.(\d+)\.(\d+)/);
+        currentIsHistorical = semver ? Number(semver[1]) < 2 : true;
+      }
+    }
+    if (currentIsHistorical) set.add(idx + 1);
+  });
+  return set;
+}
+
+function _pinMatchesLine(pin, lineText) {
+  if (!pin || typeof pin.matchText !== "string" || !pin.matchText) return false;
+  if (!lineText.includes(pin.matchText)) return false;
+  return !pin.anchor || lineText.includes(pin.anchor);
+}
+
+// Pins are recorded against pre-rename paths. After the codemod's path renames the same
+// file lives at renamePath(file); resolve lazily so this module has no load-time
+// dependency on the codemod (fixtures may copy the loader without it).
+let _renamePathFn;
+function _renamePath() {
+  if (_renamePathFn === undefined) {
+    try {
+      _renamePathFn = require("./rename-mc").renamePath || null;
+    } catch {
+      _renamePathFn = null;
+    }
+  }
+  return _renamePathFn;
+}
+
+function _pinFileCandidates(pinFile) {
+  const out = [_toPosix(pinFile)];
+  const rn = _renamePath();
+  if (rn) {
+    const to = rn(out[0]);
+    if (to && to !== out[0]) out.push(to);
+  }
+  return out;
+}
+
+function _gitRun(root, args) {
+  return spawnSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+}
+
+/** Repo-relative POSIX paths: tracked (+ untracked-not-ignored when others=true). Throws on git failure. */
+function listRepoFiles(root = PARTITION_ROOT, { others = false } = {}) {
+  const args = ["ls-files", "-z"];
+  if (others) args.push("--cached", "--others", "--exclude-standard");
+  const r = _gitRun(root, args);
+  if (r.status !== 0) {
+    throw new PartitionLoadError(`partition-loader: git ls-files failed in ${root} (status ${r.status}): ${(r.stderr || "").trim()}`);
+  }
+  const NUL = String.fromCharCode(0);
+  return [...new Set(r.stdout.split(NUL).filter(Boolean).map(_toPosix))];
+}
+
+/** The partition artifact as it existed at a git revision; null when absent there. */
+function readPartitionAt(rev, { root = PARTITION_ROOT } = {}) {
+  const rel = _toPosix(path.relative(root, DENYLIST_PATH));
+  const r = _gitRun(root, ["show", `${rev}:${rel}`]);
+  if (r.status !== 0) return null;
+  return _parseArtifactText(r.stdout, `${rev}:${rel}`);
 }
 
 /**
- * loadPartition({ forceReload }) -> {
- *   denylist, allowlist, allowlistPresent,
- *   classifyPath(trackedPath) -> { class, writeProtected, kind, entry },
- *   findOccurrencePin(file, line) -> pin entry | null,
- *   isGeneratedView(file) -> boolean,
- *   generatedViews, pathGlobs, occurrencePins, futureEntries, openQuestions,
- * }
+ * loadPartition({ forceReload }) -> the partition API (see header).
  */
 function loadPartition({ forceReload = false } = {}) {
   if (_cache && !forceReload) return _cache;
+  _cache = buildPartition(_readArtifactFile(DENYLIST_PATH));
+  return _cache;
+}
 
-  const denylistResult = _readJsonOrThrowIfCorrupt(DENYLIST_PATH, { requiredIfPresent: true });
-  if (!denylistResult.present || !denylistResult.data) {
-    throw new Error(
-      `partition-loader: the committed deny-list is required and MUST be present at ${DENYLIST_PATH} — fail CLOSED, not open`
-    );
-  }
-  const denylist = denylistResult.data;
-
-  // Allow-list is T2-authored; absence is tolerated only because T1 ships standalone
-  // ahead of T2. Presence-but-corrupt still fails closed (F3).
-  const allowlistResult = _readJsonOrThrowIfCorrupt(ALLOWLIST_PATH, { requiredIfPresent: true });
-  const allowlist = allowlistResult.data || { header: "T2-authored allow-list — not yet created as of T1", entries: [] };
-
+/** Pure: build the partition API from an already-parsed artifact object. */
+function buildPartition(denylist) {
   const generatedViews = denylist.generatedViews || [];
-  const pathGlobs = (denylist.pathGlobs || []).map((entry) => ({
+  const withRe = (entry) => ({
     ...entry,
     writeProtected: entry.writeProtected !== false,
     _re: _globToRegExp(entry.pattern),
-  }));
+  });
+  const pathGlobs = (denylist.pathGlobs || []).map(withRe);
+  const futureEntries = (denylist.futureEntries || []).map(withRe);
   const occurrencePins = denylist.occurrencePins || [];
-  const futureEntries = denylist.futureEntries || [];
   const openQuestions = denylist.openQuestions || [];
-
-  const generatedViewByPath = new Map(generatedViews.map((g) => [g.path, g]));
+  const generatedViewByPath = new Map(generatedViews.map((g) => [_toPosix(g.path), g]));
 
   function classifyPath(trackedPath) {
     const p = _toPosix(trackedPath);
-
     const gv = generatedViewByPath.get(p);
-    if (gv) {
-      return { class: gv.class, writeProtected: true, kind: "generated-view", entry: gv };
-    }
-
+    if (gv) return { class: gv.class, writeProtected: true, kind: "generated-view", entry: gv };
     for (const glob of pathGlobs) {
-      if (glob._re.test(p)) {
-        return { class: glob.class, writeProtected: glob.writeProtected, kind: "path-glob", entry: glob };
-      }
+      if (glob._re.test(p)) return { class: glob.class, writeProtected: glob.writeProtected, kind: "path-glob", entry: glob };
     }
-
-    // Default: Class 1, LIVE — the codemod's rename target. Every tracked path lands
-    // here unless a generated-view or deny-list glob claimed it above, which is what
-    // makes `unclassified=0` true by construction (see rename-mc.js for the explicit
-    // assertion that still checks this, defensively, rather than trusting the construction).
+    // futureEntries are declared-before-freeze paths a later ticket creates; once the path
+    // exists it must classify exactly as declared (e.g. the 1.2.0-to-2.0.0 migration data).
+    for (const fut of futureEntries) {
+      if (fut._re.test(p)) return { class: fut.class, writeProtected: fut.writeProtected, kind: "future-entry", entry: fut };
+    }
+    // Default: Class 1, LIVE. An entry carrying an INVALID class propagates that class to
+    // the caller, which counts it as unclassified and refuses (F4) — never coerced to 1.
     return { class: 1, writeProtected: false, kind: "default-class-1", entry: null };
   }
 
-  function findOccurrencePin(file, line) {
+  function findOccurrencePin(file, lineText) {
+    if (typeof lineText !== "string") {
+      throw new TypeError(
+        "partition-loader: findOccurrencePin(file, lineText) — R4 pins key on (file, matchText [, anchor]); pass the LINE TEXT, not a line number"
+      );
+    }
     const p = _toPosix(file);
-    return occurrencePins.find((pin) => pin.file === p && pin.line === line) || null;
+    return occurrencePins.find((pin) => _pinFileCandidates(pin.file).includes(p) && _pinMatchesLine(pin, lineText)) || null;
   }
 
   function isGeneratedView(file) {
     return generatedViewByPath.has(_toPosix(file));
   }
 
-  _cache = {
+  // ── R2 allow-view ──────────────────────────────────────────────────────
+  const allowPathEntries = [...pathGlobs, ...futureEntries].filter((e) => ALLOW_CLASSES.includes(e.class));
+  const allowList = {
+    pathEntries: allowPathEntries,
+    occurrencePins,
+    size: allowPathEntries.length + occurrencePins.length,
+  };
+  function isAllowed(trackedPath) {
+    const c = classifyPath(trackedPath);
+    return (c.kind === "path-glob" || c.kind === "future-entry") && ALLOW_CLASSES.includes(c.class) ? c.entry : null;
+  }
+
+  // ── legacy-slug disposition tally (both gates emit these NUMBERS) ──────
+  function createLegacySlugTally() {
+    return {
+      filesWithHits: 0,
+      pendingTotal: 0,
+      pendingByFile: {},
+      pendingSamples: {},
+      pinnedTotal: 0,
+      pinnedByPin: {},
+      derivedTotal: 0,
+      derivedByView: {},
+      changelogHistoricalTotal: 0,
+      suppressedTotal: 0,
+      suppressedByEntry: {},
+      unclassifiedByFile: {},
+    };
+  }
+
+  function _pinLabel(pin) {
+    return `pin ${pin.file} :: ${pin.matchText}${pin.anchor ? ` @ ${pin.anchor}` : ""}`;
+  }
+
+  /**
+   * Tally every case-insensitive `needle` hit in one file's content. The NEEDLE is passed
+   * in by the gate (each gate's needle literal is itself a Class-3 occurrence pin).
+   */
+  function tallyLegacySlug(tally, file, content, needle) {
+    if (typeof content !== "string") throw new TypeError(`tallyLegacySlug: content for ${file} must be a string`);
+    if (typeof needle !== "string" || !needle) throw new TypeError("tallyLegacySlug: needle must be a non-empty string");
+    const reTest = new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    if (!reTest.test(content)) return;
+    const reAll = new RegExp(reTest.source, "gi");
+    const count = (s) => (s.match(reAll) || []).length;
+    const p = _toPosix(file);
+    const add = (bucket, key, n) => {
+      bucket[key] = (bucket[key] || 0) + n;
+    };
+    tally.filesWithHits += 1;
+    const cls = classifyPath(p);
+    if (cls.kind === "generated-view") {
+      const n = count(content);
+      tally.derivedTotal += n;
+      add(tally.derivedByView, p, n);
+      return;
+    }
+    if (!VALID_CLASSES.includes(cls.class)) {
+      const n = count(content);
+      tally.pendingTotal += n;
+      add(tally.pendingByFile, p, n);
+      add(tally.unclassifiedByFile, p, n);
+      return;
+    }
+    if (cls.class !== 1) {
+      const n = count(content);
+      const label = `class-${cls.class} ${cls.entry.pattern}`;
+      tally.suppressedTotal += n;
+      add(tally.suppressedByEntry, label, n);
+      return;
+    }
+    const hist = p === CHANGELOG_REL ? historicalChangelogLines(content) : null;
+    content.split(/\r?\n/).forEach((lineText, idx) => {
+      const n = count(lineText);
+      if (!n) return;
+      const pin = findOccurrencePin(p, lineText);
+      if (pin) {
+        tally.pinnedTotal += n;
+        add(tally.pinnedByPin, _pinLabel(pin), n);
+        return;
+      }
+      if (hist && hist.has(idx + 1)) {
+        tally.changelogHistoricalTotal += n;
+        return;
+      }
+      tally.pendingTotal += n;
+      add(tally.pendingByFile, p, n);
+      if (!tally.pendingSamples[p]) tally.pendingSamples[p] = `${idx + 1}: ${lineText.trim().slice(0, 160)}`;
+    });
+  }
+
+  function formatLegacySlugTally(tally, { indent = "    ", maxPending = 25 } = {}) {
+    const lines = [];
+    const sortDesc = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
+    lines.push(`${indent}suppressed counts (review as NUMBERS — a jump is a live leak behind an exemption):`);
+    const rows = [
+      ...sortDesc(tally.suppressedByEntry).map(([k, v]) => [k, v]),
+      ...sortDesc(tally.pinnedByPin).map(([k, v]) => [k, v]),
+      ...sortDesc(tally.derivedByView).map(([k, v]) => [`derived (generated view) ${k}`, v]),
+    ];
+    if (tally.changelogHistoricalTotal) rows.push([`changelog-historical ${CHANGELOG_REL} (< 2.0.0 sections)`, tally.changelogHistoricalTotal]);
+    if (rows.length === 0) lines.push(`${indent}  (none)`);
+    for (const [k, v] of rows) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
+    lines.push(
+      `${indent}totals: suppressed=${tally.suppressedTotal} pinned=${tally.pinnedTotal} derived=${tally.derivedTotal} changelog-historical=${tally.changelogHistoricalTotal} live-unallowed=${tally.pendingTotal}`
+    );
+    const pending = sortDesc(tally.pendingByFile);
+    if (pending.length && maxPending > 0) {
+      lines.push(`${indent}live-unallowed occurrences by file (top ${Math.min(maxPending, pending.length)} of ${pending.length}):`);
+      for (const [k, v] of pending.slice(0, maxPending)) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
+    }
+    return lines;
+  }
+
+  // ── F2 (+ schema): every entry carries a one-line warrant ──────────────
+  function validateEntries() {
+    const problems = [];
+    const sections = [
+      ["generatedViews", generatedViews, (e) => `view|${e && e.path}`],
+      ["pathGlobs", denylist.pathGlobs || [], (e) => `glob|${e && e.pattern}`],
+      ["futureEntries", denylist.futureEntries || [], (e) => `future|${e && e.pattern}`],
+      ["occurrencePins", occurrencePins, (e) => `pin|${e && e.file}|${e && e.matchText}|${(e && e.anchor) || ""}`],
+    ];
+    for (const [section, list, keyOf] of sections) {
+      for (const e of list) {
+        const key = keyOf(e);
+        if (!e || typeof e !== "object") {
+          problems.push({ id: "SCHEMA", key, message: `${section}: entry is not an object` });
+          continue;
+        }
+        const w = e.warrant;
+        if (typeof w !== "string" || !w.trim()) {
+          problems.push({ id: "F2", key, message: `${section} entry '${key}' has a missing/empty warrant — every allow-list entry must carry a one-line warrant` });
+        } else if (/[\r\n]/.test(w)) {
+          problems.push({ id: "F2", key, message: `${section} entry '${key}' has a multi-line warrant — a warrant is ONE line` });
+        } else if (PLACEHOLDER_WARRANT.test(w.trim())) {
+          problems.push({ id: "F2", key, message: `${section} entry '${key}' has a placeholder warrant ('${w.trim()}') — not a warrant` });
+        }
+        if (section === "occurrencePins") {
+          if (typeof e.file !== "string" || !e.file || typeof e.matchText !== "string" || !e.matchText) {
+            problems.push({ id: "SCHEMA", key, message: `occurrencePins entry '${key}' needs non-empty file + matchText` });
+          }
+          if (Object.prototype.hasOwnProperty.call(e, "line")) {
+            problems.push({ id: "SCHEMA", key, message: `occurrencePins entry '${key}' carries a bare line number — R4: pins key on (file, matchText [, anchor]) only` });
+          }
+        } else if (section === "generatedViews") {
+          if (typeof e.path !== "string" || !e.path) problems.push({ id: "SCHEMA", key, message: "generatedViews entry needs a path" });
+          if (!VALID_CLASSES.includes(e.class)) problems.push({ id: "SCHEMA", key, message: `generatedViews entry '${key}' has invalid class ${JSON.stringify(e.class)}` });
+        } else {
+          if (typeof e.pattern !== "string" || !e.pattern) problems.push({ id: "SCHEMA", key, message: `${section} entry needs a pattern` });
+          if (!VALID_CLASSES.includes(e.class)) problems.push({ id: "SCHEMA", key, message: `${section} entry '${key}' has invalid class ${JSON.stringify(e.class)}` });
+        }
+      }
+    }
+    return problems;
+  }
+
+  // ── F7: an entry that matches NOTHING is a non-zero exit ────────────────
+  function checkStale({ root = PARTITION_ROOT, trackedFiles } = {}) {
+    const tracked = trackedFiles || listRepoFiles(root);
+    const trackedSet = new Set(tracked);
+    const problems = [];
+    const notes = [];
+    for (const gv of generatedViews) {
+      if (!trackedSet.has(_toPosix(gv.path))) {
+        problems.push({ id: "F7", key: `view|${gv.path}`, message: `stale generated-view entry '${gv.path}' — no tracked file at that path` });
+      }
+    }
+    for (const g of pathGlobs) {
+      const n = tracked.filter((f) => g._re.test(f)).length;
+      if (n > 0) continue;
+      const star = g.pattern.indexOf("*");
+      const probe = star < 0 ? g.pattern : `${g.pattern.slice(0, star)}__partition_probe__`;
+      const ci = _gitRun(root, ["check-ignore", "--no-index", "-q", probe]);
+      if (ci.status === 0) {
+        notes.push(`guarded-ignored: '${g.pattern}' matches 0 tracked paths but its tree is gitignored (git check-ignore) — protective, not hollow`);
+      } else if (ci.status === 1) {
+        problems.push({ id: "F7", key: `glob|${g.pattern}`, message: `stale allow-list entry '${g.pattern}' matches NOTHING (0 tracked paths, not a gitignored tree)` });
+      } else {
+        throw new PartitionLoadError(`partition-loader: git check-ignore failed for '${probe}': ${(ci.stderr || "").trim()}`);
+      }
+    }
+    for (const fut of futureEntries) {
+      const n = tracked.filter((f) => fut._re.test(f)).length;
+      if (n > 0) notes.push(`future entry '${fut.pattern}' is now realized (${n} tracked path(s))`);
+    }
+    for (const pin of occurrencePins) {
+      const key = `pin|${pin.file}|${pin.matchText}|${pin.anchor || ""}`;
+      const files = _pinFileCandidates(pin.file).filter((f) => trackedSet.has(f));
+      if (files.length === 0) {
+        problems.push({ id: "F7", key, message: `stale occurrence pin '${key}' — its file is not tracked (at the pinned or post-rename path)` });
+        continue;
+      }
+      const cls = classifyPath(files[0]);
+      if (cls.class !== 1 || cls.kind === "generated-view") {
+        problems.push({ id: "F7", key, message: `hollow occurrence pin '${key}' — its file is ${cls.kind} class ${cls.class}; pins only bind live (Class-1, non-generated) files` });
+        continue;
+      }
+      let matches = 0;
+      const where = [];
+      for (const f of files) {
+        let text;
+        try {
+          text = fs.readFileSync(path.join(root, f), "utf8");
+        } catch (e) {
+          throw new PartitionLoadError(`partition-loader: cannot read pinned file ${f}: ${e.message}`);
+        }
+        text.split(/\r?\n/).forEach((lineText, i) => {
+          if (_pinMatchesLine(pin, lineText)) {
+            matches += 1;
+            where.push(`${f}:${i + 1}`);
+          }
+        });
+      }
+      if (matches === 0) {
+        problems.push({ id: "F7", key, message: `stale occurrence pin '${key}' matches NOTHING — the pinned literal is gone (rewritten or removed)` });
+      } else if (matches > 1) {
+        problems.push({ id: "F7", key, message: `ambiguous occurrence pin '${key}' matches ${matches} lines (${where.slice(0, 5).join(", ")}) — add an anchor so it pins exactly one` });
+      }
+    }
+    return { problems, notes };
+  }
+
+  // ── F8: the freeze ─────────────────────────────────────────────────────
+  function checkFreeze({ root = PARTITION_ROOT } = {}) {
+    const problems = [];
+    const notes = [];
+    const freeze = denylist.$freeze;
+    if (!freeze || typeof freeze !== "object") {
+      problems.push({ id: "F8", key: "$freeze", message: "the partition carries no $freeze block — the allow-list is not frozen" });
+      return { problems, notes };
+    }
+    const baseline = Array.isArray(freeze.baselineKeys) ? freeze.baselineKeys : null;
+    if (!baseline) problems.push({ id: "F8", key: "$freeze.baselineKeys", message: "$freeze.baselineKeys is missing" });
+    const amendmentKeysOf = (dl) => {
+      const f = dl && dl.$freeze;
+      return new Set(((f && f.amendments) || []).map((a) => a && a.key).filter((k) => typeof k === "string"));
+    };
+    for (const a of freeze.amendments || []) {
+      if (!a || typeof a.key !== "string" || !a.key) {
+        problems.push({ id: "F8", key: "$freeze.amendments", message: "an amendment record has no key" });
+      } else if (typeof a.warrant !== "string" || !a.warrant.trim() || /[\r\n]/.test(a.warrant) || PLACEHOLDER_WARRANT.test(a.warrant.trim())) {
+        problems.push({ id: "F8", key: a.key, message: `amendment '${a.key}' has no one-line warrant — an unwarranted amendment is a silent addition` });
+      }
+    }
+    const baseSet = new Set(baseline || []);
+    const amendSet = amendmentKeysOf(denylist);
+    for (const k of entryKeys(denylist)) {
+      if (!baseSet.has(k) && !amendSet.has(k)) {
+        problems.push({ id: "F8", key: k, message: `post-freeze silent addition '${k}' — not in the frozen baseline and no warranted amendment record` });
+      }
+    }
+
+    // git layer: every post-freeze commit that ADDS an entry must be a separate,
+    // partition-only, marked amendment; the baseline itself is immutable after freeze.
+    const inside = _gitRun(root, ["rev-parse", "--is-inside-work-tree"]);
+    if (inside.status !== 0 || inside.stdout.trim() !== "true") {
+      throw new PartitionLoadError(`partition-loader: F8 needs git history but ${root} is not a git work tree — failing CLOSED`);
+    }
+    if (_gitRun(root, ["rev-parse", "--is-shallow-repository"]).stdout.trim() === "true") {
+      notes.push("F8: shallow clone — the commit-separation check only sees the fetched history");
+    }
+    const rel = _toPosix(path.relative(root, DENYLIST_PATH));
+    const ledgerRel = _toPosix(path.relative(root, COMMITTED_LEDGER_PATH));
+    const log = _gitRun(root, ["log", "--no-merges", "--reverse", "--format=%H", "--", rel]);
+    if (log.status !== 0) {
+      // A repo with no commits yet has no history to judge — the worktree layer above still ran.
+      if (/does not have any commits|bad default revision/i.test(log.stderr || "")) {
+        notes.push("F8: no commits yet — freeze history not established");
+        return { problems, notes };
+      }
+      throw new PartitionLoadError(`partition-loader: git log failed for ${rel}: ${(log.stderr || "").trim()}`);
+    }
+    const commits = log.stdout.split(/\r?\n/).filter(Boolean);
+    let freezeCommit = null;
+    let frozenBaseline = null;
+    for (const c of commits) {
+      let at;
+      try {
+        at = readPartitionAt(c, { root });
+      } catch (e) {
+        if (freezeCommit) problems.push({ id: "F8", key: c.slice(0, 12), message: `post-freeze commit ${c.slice(0, 12)} leaves the partition unreadable: ${e.message}` });
+        continue;
+      }
+      if (!at) continue;
+      if (!freezeCommit) {
+        if (at.$freeze && Array.isArray(at.$freeze.baselineKeys)) {
+          freezeCommit = c;
+          frozenBaseline = JSON.stringify([...at.$freeze.baselineKeys].sort());
+        }
+        continue;
+      }
+      const short = c.slice(0, 12);
+      const atBaseline = JSON.stringify([...((at.$freeze && at.$freeze.baselineKeys) || [])].sort());
+      if (atBaseline !== frozenBaseline) {
+        problems.push({ id: "F8", key: short, message: `commit ${short} rewrites $freeze.baselineKeys — the frozen baseline is immutable; additions go through amendments` });
+      }
+      let parent = null;
+      try {
+        parent = readPartitionAt(`${c}^`, { root });
+      } catch {
+        parent = null;
+      }
+      const before = new Set(parent ? entryKeys(parent) : []);
+      const added = entryKeys(at).filter((k) => !before.has(k));
+      if (added.length === 0) continue;
+      const files = _gitRun(root, ["diff-tree", "--no-commit-id", "--name-only", "-r", c]).stdout.split(/\r?\n/).filter(Boolean).map(_toPosix);
+      const foreign = files.filter((f) => f !== rel && f !== ledgerRel);
+      const message = _gitRun(root, ["log", "-1", "--format=%B", c]).stdout;
+      const amendedHere = amendmentKeysOf(at);
+      if (foreign.length) {
+        problems.push({
+          id: "F8",
+          key: short,
+          message: `commit ${short} adds allow-list entr${added.length === 1 ? "y" : "ies"} [${added.join(", ")}] inside a commit that also changes ${foreign.slice(0, 5).join(", ")} — a post-freeze addition must be its OWN warranted amendment commit, never folded into a gate-fixing commit`,
+        });
+      }
+      if (!message.includes(AMENDMENT_MARKER)) {
+        problems.push({ id: "F8", key: short, message: `commit ${short} adds [${added.join(", ")}] without the '${AMENDMENT_MARKER}' marker in its message` });
+      }
+      for (const k of added) {
+        if (!amendedHere.has(k)) problems.push({ id: "F8", key: k, message: `commit ${short} adds '${k}' without an amendment record in $freeze.amendments` });
+      }
+    }
+    if (!freezeCommit) notes.push("F8: the freeze is not committed yet — the working-tree baseline is authoritative until it is");
+    else notes.push(`F8: frozen at ${freezeCommit.slice(0, 12)}; ${amendSet.size} amendment(s) on record`);
+    return { problems, notes };
+  }
+
+  return {
     denylist,
-    allowlist,
-    allowlistPresent: allowlistResult.present,
     classifyPath,
     findOccurrencePin,
     isGeneratedView,
+    isAllowed,
+    allowList,
     generatedViews,
     pathGlobs,
     occurrencePins,
     futureEntries,
     openQuestions,
+    historicalChangelogLines,
+    createLegacySlugTally,
+    tallyLegacySlug,
+    formatLegacySlugTally,
+    validateEntries,
+    checkStale,
+    checkFreeze,
+    entryKeys: () => entryKeys(denylist),
   };
-  return _cache;
+}
+
+/**
+ * Req1 structural guard: executable source files (outside this module) that name the
+ * partition artifact directly. Scans tracked + untracked-not-ignored files.
+ */
+function findUnroutedReaders({ root = PARTITION_ROOT } = {}) {
+  const loaderRel = _toPosix(path.relative(root, __filename));
+  const basename = path.basename(DENYLIST_PATH);
+  const stem = basename.replace(/\.json$/i, "");
+  const offenders = [];
+  for (const rel of listRepoFiles(root, { others: true })) {
+    if (rel === loaderRel) continue;
+    if (!CODE_EXTENSIONS.has(path.posix.extname(rel).toLowerCase())) continue;
+    let text;
+    try {
+      text = fs.readFileSync(path.join(root, rel), "utf8");
+    } catch {
+      continue; // listed but deleted on disk
+    }
+    const lines = text.split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes(basename) || lines[i].includes(stem)) {
+        offenders.push({ file: rel, line: i + 1, text: lines[i].trim().slice(0, 160) });
+      }
+    }
+  }
+  return offenders;
 }
 
 module.exports = {
   loadPartition,
+  buildPartition,
+  entryKeys,
+  historicalChangelogLines,
+  listRepoFiles,
+  readPartitionAt,
+  findUnroutedReaders,
+  PartitionLoadError,
   ROUTED_ENTRY_POINT,
   DENYLIST_PATH,
-  ALLOWLIST_PATH,
+  COMMITTED_LEDGER_PATH,
+  PARTITION_ROOT,
+  AMENDMENT_MARKER,
+  VALID_CLASSES,
+  ALLOW_CLASSES,
 };
+
+if (require.main === module) {
+  if (process.argv.includes("--keys")) {
+    try {
+      process.stdout.write(JSON.stringify(loadPartition().entryKeys(), null, 2) + "\n");
+      process.exit(0);
+    } catch (e) {
+      process.stderr.write(`${e.message}\n`);
+      process.exit(2);
+    }
+  }
+  process.stderr.write("usage: node scripts/open-source/partition-loader.js --keys\n");
+  process.exit(2);
+}

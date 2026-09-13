@@ -40,7 +40,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const { loadPartition } = require("./partition-loader");
+const { loadPartition, historicalChangelogLines } = require("./partition-loader");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 
@@ -89,25 +89,11 @@ function looksBinary(absPath) {
 // Everything under a version heading < 2.0.0 is Class-3/4 historical DATA about a
 // shipped release; the [Unreleased] section (destined to become [2.0.0]) is live.
 
+// The section rule itself lives in the loader (historicalChangelogLines) so the codemod
+// and the gates cannot disagree about which CHANGELOG lines are historical.
 function computeChangelogHistoricalLines(absPath) {
-  const historicalLineSet = new Set();
-  if (!fs.existsSync(absPath)) return historicalLineSet;
-  const lines = fs.readFileSync(absPath, "utf8").split(/\r?\n/);
-  let currentIsHistorical = false;
-  lines.forEach((lineText, idx) => {
-    const heading = lineText.match(/^##\s*\[([^\]]+)\]/);
-    if (heading) {
-      const label = heading[1].trim();
-      if (/^unreleased$/i.test(label)) {
-        currentIsHistorical = false;
-      } else {
-        const semverMatch = label.match(/^(\d+)\.(\d+)\.(\d+)/);
-        currentIsHistorical = semverMatch ? Number(semverMatch[1]) < 2 : true;
-      }
-    }
-    if (currentIsHistorical) historicalLineSet.add(idx + 1); // 1-based line numbers
-  });
-  return historicalLineSet;
+  if (!fs.existsSync(absPath)) return new Set();
+  return historicalChangelogLines(fs.readFileSync(absPath, "utf8"));
 }
 
 // ── occurrence categorization (rewrite-plan bucketing, not disposition) ─────
@@ -224,8 +210,9 @@ function buildLedgerAndPlan({ root, partition }) {
           warrant = "generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)";
           derivedCount += 1;
         } else {
-          const pin = partition.findOccurrencePin(relPath, lineNum);
-          if (pin && lineText.includes(pin.matchText)) {
+          // R4: a pin binds (file, matchText [, anchor]) — never a line number.
+          const pin = partition.findOccurrencePin(relPath, lineText);
+          if (pin) {
             disposition = "pinned";
             rule = "occurrence-pin";
             warrant = pin.warrant;
@@ -480,10 +467,6 @@ function main() {
   }
 }
 
-if (require.main === module) {
-  main();
-}
-
 module.exports = {
   listTrackedFiles,
   looksBinary,
@@ -499,3 +482,9 @@ module.exports = {
   COMMITTED_LEDGER_REL,
   FULL_LEDGER_REL,
 };
+
+// main() runs AFTER module.exports is populated: the loader lazily requires this module
+// for renamePath, and a CLI run that called main() first would hand it an empty exports.
+if (require.main === module) {
+  main();
+}

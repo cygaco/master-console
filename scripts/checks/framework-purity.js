@@ -75,6 +75,56 @@ const REPO_ROOT = process.env.WARPOS_PURITY_ROOT
   ? path.resolve(process.env.WARPOS_PURITY_ROOT)
   : path.resolve(__dirname, "..", "..");
 
+// ── Legacy-slug live-dir detector (S-OS-06 T2, resolution R1) ────────
+// The ONE literal this detector searches for sits on the next line. That line is a
+// Class-3 occurrence pin in the rename partition (anchor "const LEGACY_SLUG_NEEDLE = "),
+// so the rename codemod never rewrites the detector into searching for its own output.
+const LEGACY_SLUG_NEEDLE = "warpos";
+// Version on-switch: REPORT-ONLY below this major (before the cut the live tree still
+// carries the legacy slug everywhere), ENFORCING at/above it. An unreadable or
+// unparseable package.json version fails closed INTO enforcement.
+const LEGACY_SLUG_ENFORCE_MAJOR = 2;
+
+// The partition (allow-view + dispositions) is read ONLY through the one loader
+// (β r3 Req1). Lazy so a missing loader is a fail-closed exit 2, not a crash.
+function loadGatePartition() {
+  const loader = require("../open-source/partition-loader");
+  return loader.loadPartition({ forceReload: true });
+}
+
+function resolveLegacySlugMode(opts) {
+  if (opts && opts.enforceLegacySlug) {
+    return { enforce: true, version: null, reason: "--enforce-legacy-slug" };
+  }
+  let version;
+  try {
+    const raw = fs.readFileSync(path.join(REPO_ROOT, "package.json"), "utf8");
+    version = JSON.parse(raw.replace(/^﻿/, "")).version;
+  } catch (e) {
+    return {
+      enforce: true,
+      version: null,
+      reason: `package.json unreadable (${e.code || e.name}) — enforcing (fail closed)`,
+    };
+  }
+  const m = /^(\d+)\.(\d+)\.(\d+)/.exec(String(version || ""));
+  if (!m) {
+    return {
+      enforce: true,
+      version: version === undefined ? null : version,
+      reason: `package.json version ${JSON.stringify(version)} unparseable — enforcing (fail closed)`,
+    };
+  }
+  const enforce = Number(m[1]) >= LEGACY_SLUG_ENFORCE_MAJOR;
+  return {
+    enforce,
+    version,
+    reason: enforce
+      ? `package.json ${version} >= ${LEGACY_SLUG_ENFORCE_MAJOR}.0.0`
+      : `package.json ${version} < ${LEGACY_SLUG_ENFORCE_MAJOR}.0.0 — report-only until the cut`,
+  };
+}
+
 // ── Configurable rule set ────────────────────────────────────────────
 
 // Private product slugs. This list is the DEFINITION of the detector and is
@@ -369,6 +419,28 @@ function run(opts) {
     };
   }
 
+  // S-OS-06 R1: the legacy-slug live-dir detector classifies through the ONE partition
+  // loader. An unreadable/truncated partition is exit 2 (F3) — never a silent skip.
+  let partition;
+  try {
+    partition = loadGatePartition();
+  } catch (e) {
+    return {
+      ok: false,
+      code: 2,
+      mode,
+      error: `rename partition unreadable — failing CLOSED (F3): ${e.message}`,
+      scanned: 0,
+      skipped_large: [],
+      summary: null,
+      findings,
+      legacy_slug: null,
+    };
+  }
+  const slugMode = resolveLegacySlugMode(opts);
+  const slugTally = partition.createLegacySlugTally();
+  const slugUnscanned = []; // live files too large to scan: unverifiable, fail closed when enforcing
+
   const skippedLarge = [];
   for (const rel of files) {
     scanPath(rel, findings);
@@ -383,6 +455,8 @@ function run(opts) {
     if (!st.isFile()) continue;
     if (st.size > MAX_BYTES) {
       skippedLarge.push(rel);
+      const cls = partition.classifyPath(rel);
+      if (cls.class === 1 && cls.kind !== "generated-view") slugUnscanned.push(rel);
       continue;
     }
     let buf;
@@ -392,15 +466,28 @@ function run(opts) {
       continue;
     }
     if (looksBinary(buf)) continue;
-    scanContent(rel, buf.toString("utf8"), findings);
+    const text = buf.toString("utf8");
+    scanContent(rel, text, findings);
+    partition.tallyLegacySlug(slugTally, rel, text, LEGACY_SLUG_NEEDLE);
   }
 
+  findings.legacy_slug = slugMode.enforce
+    ? [
+        ...Object.entries(slugTally.pendingByFile)
+          .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
+          .map(([p, count]) => ({ path: p, pattern: `${count} live-unallowed`, sample: slugTally.pendingSamples[p] || null })),
+        ...slugUnscanned.map((p) => ({ path: p, pattern: "unscanned (too large) — unverifiable" })),
+      ]
+    : [];
+
   // root_leak + domain_vocab are ADVISORY and deliberately excluded from the
-  // violation count — they must never flip the exit code.
+  // violation count — they must never flip the exit code. legacy_slug counts only
+  // when ENFORCING (package.json >= 2.0.0, or --enforce).
   const violationCount =
     findings.client_slug.length +
     findings.abs_path.length +
-    findings.promote_relic.length;
+    findings.promote_relic.length +
+    findings.legacy_slug.length;
 
   return {
     ok: violationCount === 0,
@@ -412,8 +499,25 @@ function run(opts) {
       client_slug: findings.client_slug.length,
       abs_path: findings.abs_path.length,
       promote_relic: findings.promote_relic.length,
+      legacy_slug: slugTally.pendingTotal + slugUnscanned.length, // a violation only when enforcing
       root_leak: findings.root_leak.length, // advisory, not a violation
       domain_vocab: findings.domain_vocab.length, // advisory, not a violation
+    },
+    legacy_slug: {
+      enforce: slugMode.enforce,
+      version: slugMode.version,
+      reason: slugMode.reason,
+      live_unallowed: slugTally.pendingTotal,
+      unscanned: slugUnscanned,
+      suppressed: slugTally.suppressedTotal,
+      pinned: slugTally.pinnedTotal,
+      derived: slugTally.derivedTotal,
+      changelog_historical: slugTally.changelogHistoricalTotal,
+      suppressed_by_entry: slugTally.suppressedByEntry,
+      pinned_by_pin: slugTally.pinnedByPin,
+      derived_by_view: slugTally.derivedByView,
+      pending_by_file: slugTally.pendingByFile,
+      formatted: partition.formatLegacySlugTally(slugTally, { indent: "    ", maxPending: slugMode.enforce ? 0 : 10 }),
     },
     findings,
   };
@@ -436,6 +540,7 @@ function parseArgs(argv) {
     else if (a === "--staged") out.mode = "staged";
     else if (a === "--json") out.json = true;
     else if (a === "--quiet") out.quiet = true;
+    else if (a === "--enforce" || a === "--enforce-legacy-slug") out.enforceLegacySlug = true;
   }
   return out;
 }
@@ -453,6 +558,10 @@ Hard detectors (each one fails the gate):
   abs_path        maintainer-home absolute paths in executable/config files
                   under scripts/ and .claude/ (.js .mjs .cjs .ps1 .sh .cmd .bat .json)
   promote_relic   reintroduction of /warp:promote-suite paths or tokens
+  legacy_slug     the pre-rebrand slug in a LIVE (Class-1, non-pinned, non-derived) path,
+                  classified through scripts/open-source/partition-loader.js. REPORT-ONLY
+                  (prints the pending count) while package.json < 2.0.0; ENFORCING at
+                  >= 2.0.0 or with --enforce. Suppressed counts are always printed.
 
 Advisory (report-only — never affects the exit code):
   root_leak       _requirements/ or _docs/ at canonical root
@@ -462,6 +571,7 @@ Modes:
   --full  (default)  every git-tracked file (git ls-files) — the leak gate
   --diff             git diff --cached + git diff (staged + unstaged)
   --staged           git diff --cached only (the commit gate, WI-23)
+  --enforce          force the legacy_slug detector ON regardless of package.json
 
 Exit codes:
   0  clean
@@ -487,6 +597,16 @@ function formatHuman(r) {
   lines.push(`    client_slug:     ${r.summary.client_slug}`);
   lines.push(`    abs_path:        ${r.summary.abs_path}`);
   lines.push(`    promote_relic:   ${r.summary.promote_relic}`);
+  if (r.legacy_slug) {
+    const ls = r.legacy_slug;
+    lines.push(
+      `    legacy_slug:     ${r.summary.legacy_slug}  [${ls.enforce ? "ENFORCING" : "REPORT-ONLY — pending until the cut"}: ${ls.reason}]`
+    );
+    lines.push("");
+    lines.push("  legacy slug partition tally:");
+    lines.push(...ls.formatted);
+    if (ls.unscanned.length) lines.push(`    unscanned live files (too large): ${ls.unscanned.length}`);
+  }
   lines.push("");
   lines.push(`  advisory (report-only, does NOT affect exit code):`);
   lines.push(`    root_leak:       ${r.summary.root_leak}`);
@@ -519,7 +639,17 @@ function main() {
     printHelp();
     return 0;
   }
-  const r = run(opts);
+  let r;
+  try {
+    r = run(opts);
+  } catch (e) {
+    // A runner error is never a pass and never a plain violation: exit 2 (fail closed).
+    const msg = String((e && e.message) || e);
+    process.stdout.write(
+      opts.json ? JSON.stringify({ ok: false, code: 2, error: msg }) + "\n" : `framework-purity: runner error (fail-closed): ${msg}\n`
+    );
+    return 2;
+  }
   if (opts.json) {
     process.stdout.write(JSON.stringify(r, null, 2) + "\n");
   } else if (!opts.quiet) {
@@ -537,6 +667,8 @@ module.exports = {
   scanContent,
   scanPath,
   inAbsPathScope,
+  resolveLegacySlugMode,
+  LEGACY_SLUG_ENFORCE_MAJOR,
   CLIENT_SLUGS,
   ABS_PATH_PATTERNS,
   DOMAIN_VOCAB_TOKENS,

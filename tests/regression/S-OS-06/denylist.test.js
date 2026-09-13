@@ -16,8 +16,9 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..", "..", "..");
-const DENYLIST_PATH = path.join(ROOT, "scripts", "open-source", "rename-mc.denylist.json");
 const LOADER_PATH = path.join(ROOT, "scripts", "open-source", "partition-loader.js");
+// T2 Req1: even this test names the partition artifact only through the loader.
+const DENYLIST_PATH = require(LOADER_PATH).DENYLIST_PATH;
 const RENAME_MC = require(path.join(ROOT, "scripts", "open-source", "rename-mc.js"));
 
 let pass = 0;
