@@ -35,6 +35,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const { isVerifiedLivenessRecord } = require("../dispatch/verified-liveness-read");
@@ -179,7 +180,7 @@ function parseArgs(argv) {
     // `--epsilon-dispatch` additionally writes real per-agent completion records.
     // T-297: in sprint mode these default ON (sprint-mode default applied in main() after
     // mode detection; explicit CLI flags and WARPOS_EPSILON_RUNTIME env always win).
-    epsilon: process.env.WARPOS_EPSILON_RUNTIME === "on",
+    epsilon: mcEnv.readEnv("EPSILON_RUNTIME") === "on",
     epsilonDispatch: false,
     // Tracks whether epsilon/epsilonDispatch were set via explicit CLI flag (vs env/default).
     // Used by main() to determine whether to apply the sprint-mode default.
@@ -788,7 +789,7 @@ function maybeConsultBeta(state, boundary, args) {
   // down MUST agree. Two independent process.env reads can disagree if anything mutates the
   // env between them, letting the gate run while the row records "off" (or the reverse) —
   // invisible to the exact audit designed to catch an off-switch flip (AP-15 in env-var costume).
-  const substanceGateOn = process.env.WARPOS_BETA_SUBSTANCE_GATE !== "off";
+  const substanceGateOn = mcEnv.readEnv("BETA_SUBSTANCE_GATE") !== "off";
   if (substanceGateOn) {
     const m = betaMessage.trim();
     const tokenRe = /\b(DECIDE|DIRECTIVE|ESCALATE|DECISION|CLASS\s+[ABC]\b|conf(?:idence)?|0\.\d{2})\b/i;
@@ -823,7 +824,7 @@ function maybeConsultBeta(state, boundary, args) {
 
   const ts = nowIso();
   const latencyMs = 0; // no live round-trip in this subprocess; elapsed is ~0
-  const model = process.env.WARPOS_BETA_MODEL || "claude-opus-4-8";
+  const model = mcEnv.readEnv("BETA_MODEL") || "claude-opus-4-8";
 
   emit("sprint_full_beta_consult", {
     verdict,
@@ -918,7 +919,7 @@ function checkDesignWithoutRoster(sprintId) {
     let hasDesignRecord = false;
     if (hasLedger) {
       const lines = fs.readFileSync(completionsPath, "utf8").split(/\r?\n/).filter(Boolean);
-      const _reqSig = process.env.WARPOS_LIVENESS_REQUIRE_SIG !== "0";
+      const _reqSig = mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0";
       hasDesignRecord = lines.some((line) => {
         try {
           const rec = JSON.parse(line);
@@ -946,7 +947,7 @@ function checkDesignWithoutRoster(sprintId) {
 
 function phase1Plan(state, args) {
   state.currentPhase = "plan";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8): phase context for child dispatches
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8): phase context for child dispatches
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "plan",
@@ -1121,7 +1122,7 @@ function deriveDocScale(state) {
 
 function phase2Design(state) {
   state.currentPhase = "design";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
 
   // On --resume, if tickets are already minted from a prior run, skip
   // the rescaffold + tickets_pending halt and advance to Phase 3.
@@ -1240,7 +1241,7 @@ function phase2Design(state) {
 
 function phase3Execute(state) {
   state.currentPhase = "execute";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "execute",
@@ -1420,7 +1421,7 @@ function findExistingStagingRelease(sprintId, target) {
 
 function phase4ReleasePrep(state) {
   state.currentPhase = "release-prep";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "release-prep",
@@ -1629,7 +1630,7 @@ function flipActiveSprintsStatusForRetro(sprintId) {
 
 function phase5Retro(state) {
   state.currentPhase = "retro";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "retro",
@@ -1787,12 +1788,14 @@ function main() {
   // WARPOS_RUN_ID — a parent orchestrator's run_id wins; only generate when absent.
   // Format mirrors makeDispatchId() but prefixed `run-` to distinguish orchestrator
   // runs from per-dispatch ids.
-  if (!process.env.WARPOS_RUN_ID) {
-    process.env.WARPOS_RUN_ID =
-      "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex");
+  if (!mcEnv.readEnv("RUN_ID")) {
+    mcEnv.setEnv(
+      "RUN_ID",
+      "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex")
+    );
   }
   // Stamp the sprint id so dispatch wrappers' runContext() returns the correct sprint.
-  process.env.WARPOS_SPRINT_ID = sprintId;
+  mcEnv.setEnv("SPRINT_ID", sprintId);
   // WARPOS_PHASE_ID is set at each phase entry (below in each phase function).
 
   // Cost gate: per-run --cost-gate on|off overrides the persistent toggle

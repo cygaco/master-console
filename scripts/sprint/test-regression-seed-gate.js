@@ -25,6 +25,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -148,17 +149,17 @@ const stub = (verdict) => () => verdict;
 //       resolveRepoRole/WARPOS_REPO_ROLE on the gate path.
 {
   // H1 — env spoof must NOT bypass the mandatory gate on canonical.
-  const prev = process.env.WARPOS_REPO_ROLE;
+  const prev = mcEnv.readEnv("REPO_ROLE");
   let ex;
   let threw = false;
   try {
-    process.env.WARPOS_REPO_ROLE = "consumer";
+    mcEnv.setEnv("REPO_ROLE", "consumer");
     ex = quiet(() => release.regressionSeedGate()); // NO injection — production path
   } catch (e) {
     threw = true;
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_REPO_ROLE;
-    else process.env.WARPOS_REPO_ROLE = prev;
+    if (prev === undefined) mcEnv.unsetEnv("REPO_ROLE");
+    else mcEnv.setEnv("REPO_ROLE", prev);
   }
   // On canonical the module exists, so the env spoof is ignored: the gate runs the
   // real enforcer and returns a valid canonical code (0 clean, or 3 if the suite is

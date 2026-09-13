@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * Teeth for the security_claude_hunter PRODUCER (Unit H — ADR-0022, SP-20260718-003 completion).
  * The ADR's teeth are NORMATIVE: this proves the REAL registered producer end-to-end.
@@ -94,13 +95,13 @@ test("activation: the hunter record carries panel_run_id + code_sha for same-run
   withIsolatedLedger((dir, led) => {
     const ev = path.join(dir, "hunter.json");
     fs.writeFileSync(ev, JSON.stringify({ verdict: "pass", findings: [] }));
-    const prevPanel = process.env.WARPOS_PANEL_RUN_ID;
-    process.env.WARPOS_PANEL_RUN_ID = "panel-ACTIVATION-T";
+    const prevPanel = mcEnv.readEnv("PANEL_RUN_ID");
+    mcEnv.setEnv("PANEL_RUN_ID", "panel-ACTIVATION-T");
     try {
       rt.recordInProcessCompletion(hunterPlan, "SP-HUNTER-PANEL", { evidenceFile: ev, elapsedMs: 100 });
     } finally {
-      if (prevPanel === undefined) delete process.env.WARPOS_PANEL_RUN_ID;
-      else process.env.WARPOS_PANEL_RUN_ID = prevPanel;
+      if (prevPanel === undefined) mcEnv.unsetEnv("PANEL_RUN_ID");
+      else mcEnv.setEnv("PANEL_RUN_ID", prevPanel);
     }
     const rec = readLedger(led).find((r) => r.sprint_id === "SP-HUNTER-PANEL");
     assert.ok(rec, "hunter record landed");

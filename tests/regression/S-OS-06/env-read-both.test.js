@@ -32,18 +32,7 @@ const LEG = `${H.SLUG.toUpperCase()}_`;
 const PENDING_RAW_ENV_FILES = [
   // 4b batch scripts/dispatch — DONE (T3 part 4b batch scripts/dispatch)
   // 4b batch scripts/hooks — DONE (T3 part 4b-2)
-  // 4b batch scripts/sprint
-  "scripts/sprint/design.js",
-  "scripts/sprint/epsilon-runtime.js",
-  "scripts/sprint/execute.js",
-  "scripts/sprint/full.js",
-  "scripts/sprint/hunter-producer.test.js",
-  "scripts/sprint/paths.js",
-  "scripts/sprint/plan.js",
-  "scripts/sprint/release.js",
-  "scripts/sprint/retrospective.js",
-  "scripts/sprint/test-regression-seed-gate.js",
-  "scripts/sprint/test-sprint-full.js",
+  // 4b batch scripts/sprint — DONE (T3 part 4b-3)
   // 4b batch scripts/checks
   "scripts/checks/adhoc-team-hygiene.js",
   "scripts/checks/cert-attest-panel.test.js",

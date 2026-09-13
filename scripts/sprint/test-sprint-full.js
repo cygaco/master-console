@@ -26,6 +26,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -1099,8 +1100,8 @@ function testBetaConsultContract() {
 
     // J-16d: kill switch — WARPOS_BETA_SUBSTANCE_GATE=off lets a canned message through (fail-open lever).
     {
-      const prev = process.env.WARPOS_BETA_SUBSTANCE_GATE;
-      process.env.WARPOS_BETA_SUBSTANCE_GATE = "off";
+      const prev = mcEnv.readEnv("BETA_SUBSTANCE_GATE");
+      mcEnv.setEnv("BETA_SUBSTANCE_GATE", "off");
       try {
         const state = makeMinimalState({ mode: "adhoc", sprintId: "SP-J16d" });
         const r = full.maybeConsultBeta(state, "before_plan", {
@@ -1108,8 +1109,8 @@ function testBetaConsultContract() {
         });
         ok("J-16d: gate=off → canned message passes (rollout lever)", r.ok === true, JSON.stringify(r));
       } finally {
-        if (prev === undefined) delete process.env.WARPOS_BETA_SUBSTANCE_GATE;
-        else process.env.WARPOS_BETA_SUBSTANCE_GATE = prev;
+        if (prev === undefined) mcEnv.unsetEnv("BETA_SUBSTANCE_GATE");
+        else mcEnv.setEnv("BETA_SUBSTANCE_GATE", prev);
       }
     }
 
