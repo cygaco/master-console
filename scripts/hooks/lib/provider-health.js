@@ -1,6 +1,6 @@
 /**
  * provider-health.js — classify provider/CLI status into a small set of
- * actionable states so /warp:health, /warp:setup, smart-context, and the
+ * actionable states so /mc:health, /mc:setup, smart-context, and the
  * dispatch wrapper can all agree on what "broken" means.
  *
  * Phase 0 workstream E. Returns:
@@ -151,7 +151,7 @@ function probeProvider(providerName, opts = {}) {
   }
 
   // Optional cheap reachability check (gated by opts.probe = "list" or
-  // explicit env). Default OFF to keep /warp:setup fast.
+  // explicit env). Default OFF to keep /mc:setup fast.
   if (opts.probe === "list") {
     let probeCmd;
     // NOTE: never `agy models` (it HANGS headless); `agy --help` is the safe reachability probe.

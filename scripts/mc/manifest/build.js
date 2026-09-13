@@ -21,7 +21,7 @@
  * output is reviewable:
  *
  *   1. Anything under `<source-prefix>/`                       → owner=framework
- *      (source path = the file itself; products inherit via /warp:update)
+ *      (source path = the file itself; products inherit via /mc:update)
  *   2. `.claude/settings.json`                                 → owner=generated
  *      (compiled_from = [<source-prefix>/settings/defaults.json,
  *                        .claude/settings.local.json])
@@ -299,7 +299,7 @@ function buildRules(sourcePrefix) {
         compiled_from: [".claude/framework-manifest.json"],
         compiler: "scripts/warp-setup.js",
         kind: "json",
-        _note: "Per-install snapshot of what was copied to this project at /warp:setup time. Will be folded into _mc/MANIFEST.json#paths.*.installedSha in v1.0.",
+        _note: "Per-install snapshot of what was copied to this project at /mc:setup time. Will be folded into _mc/MANIFEST.json#paths.*.installedSha in v1.0.",
       }),
     },
     {
@@ -332,7 +332,7 @@ function buildRules(sourcePrefix) {
     //     IS the source (canonical has no separate `framework/commands/` mirror yet).
     //     Source pointer is self-referential; the regenerator no-ops.
     //   - In PRODUCT (sourcePrefix=_mc): the source lives at
-    //     `_mc/commands/foo.md` (populated by /warp:setup from canonical).
+    //     `_mc/commands/foo.md` (populated by /mc:setup from canonical).
     //     Regenerator copies source → .claude/commands/foo.md.
     {
       name: "framework-claude-command",
@@ -396,7 +396,7 @@ function buildRules(sourcePrefix) {
       // these .json data files would otherwise be unclassified (RI-003 fix,
       // 2026-06-09). `_system/events.jsonl` is already caught by runtime-agent-events
       // above (first-match-wins). NOTE: sprint-routing/sprint-full-autonomy are
-      // operator-tunable; if a product needs them preserved across /warp:update,
+      // operator-tunable; if a product needs them preserved across /mc:update,
       // reclassify those two as project/fillable (a later refinement).
       name: "framework-agent-system-data",
       match: (rel) =>
@@ -425,7 +425,7 @@ function buildRules(sourcePrefix) {
     {
       // SP-20260531-002 (ADR-0005): root-level `_guides/` is
       // MC-authored, product-facing documentation (e.g. DEV_SETUP_GUIDE.md)
-      // that SHIPS to consumer products and is update-managed by /warp:update.
+      // that SHIPS to consumer products and is update-managed by /mc:update.
       // Framework content despite the root location — a deliberate ownership-model
       // precedent (root-level owner=framework). The fail-closed ship boundary is
       // asserted by scan:mc-ship-coverage (MUST_SHIP _guides/).
@@ -589,7 +589,7 @@ function buildRules(sourcePrefix) {
       name: "framework-trackers-templates",
       // The "future ship-boundary call" the runtime-trackers-tree rule below
       // anticipated, made now (2026-06-06): the trackers/templates/* subset is
-      // REUSABLE FRAMEWORK scaffolding — products receive it via /warp:update so
+      // REUSABLE FRAMEWORK scaffolding — products receive it via /mc:update so
       // /trackers:init can scaffold the enforced-tracker system downstream.
       // Closes the "shipped the referee, not the field" gap (the tracker
       // validator demands these templates; before this they shipped to nobody —
@@ -708,7 +708,7 @@ function buildRules(sourcePrefix) {
         compiled_from: ["framework/"],
         compiler: "scripts/mc/manifest/build.js",
         kind: "json",
-        _note: "Per-install ownership manifest. Regenerated on /warp:setup and /warp:update. SP-20260522-001.",
+        _note: "Per-install ownership manifest. Regenerated on /mc:setup and /mc:update. SP-20260522-001.",
       }),
     },
     {
@@ -716,7 +716,7 @@ function buildRules(sourcePrefix) {
       // MIRROR — agents/, commands/, project/reference/, kernel/, schemas/ — is the
       // COMPILED .claude/ view, NOT canonical-shipped framework source. In an
       // installed product it is re-materialized by scaffold-core Stage-2.5
-      // (views/populate-source.js) from canonical's .claude/* at /warp:setup; a
+      // (views/populate-source.js) from canonical's .claude/* at /mc:setup; a
       // fresh CANONICAL checkout does not carry it. Enumerating it in the CANONICAL
       // manifest (framework-mc-zone did, as a broad catch-all) makes the manifest
       // PROMISE owner=framework files that a clean canonical tree lacks — BC-02

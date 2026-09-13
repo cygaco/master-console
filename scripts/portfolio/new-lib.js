@@ -65,7 +65,7 @@ function scaffoldProductApp({ repoRoot, slug, install = false, log = () => {} })
 /**
  * createProductRepo — the deterministic "make a product repo" callable. Mirrors
  * the former new.js body exactly: validate → sibling repo + git init + seed
- * identity + copy templates + initial commit + /warp:setup install + register +
+ * identity + copy templates + initial commit + /mc:setup install + register +
  * --from-brief + brief pointer + app scaffold + commit + optional GitHub remote.
  *
  * Returns a result object (never process.exit) so setup.js and the CLI share it.
@@ -125,7 +125,7 @@ function createProductRepo(opts) {
   }
 
   // ── scaffold ───────────────────────────────────────────────
-  log(`scaffolding ${slug} at ${repoPath}... running /warp:setup... done.`);
+  log(`scaffolding ${slug} at ${repoPath}... running /mc:setup... done.`);
   fs.mkdirSync(repoPath, { recursive: true });
 
   const gitInit = spawnSync("git", ["init"], { cwd: repoPath, encoding: "utf8" });

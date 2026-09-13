@@ -2,7 +2,7 @@
 
 The engineering release ledger for MC. See [`paths.sprintReference#ledger-discipline`](.claude/project/reference/sprint-workflow.md#ledger-discipline) for what qualifies.
 
-Two sections — the Versions section reads cleanly in isolation for downstream consumer maintainers running `/warp:update --to X.Y.Z`; the Sprints section is engineering inventory.
+Two sections — the Versions section reads cleanly in isolation for downstream consumer maintainers running `/mc:update --to X.Y.Z`; the Sprints section is engineering inventory.
 
 ## Versions
 
@@ -51,7 +51,7 @@ Every `version.json` bump that produced a capsule under `framework/releases/X.Y.
 | `0.7.1` |  | [0.7.1/release.json](framework/releases/0.7.1/release.json) | Release 0.7.1. |
 | `0.7.2` |  | [0.7.2/release.json](framework/releases/0.7.2/release.json) | Release 0.7.2. |
 | `0.8.0` |  | [0.8.0/release.json](framework/releases/0.8.0/release.json) | Release 0.8.0. |
-<!-- ledger:versions — auto-managed by scripts/sprint/ledger.js. Manual edits valid; may be overwritten on next /warp:release. -->
+<!-- ledger:versions — auto-managed by scripts/sprint/ledger.js. Manual edits valid; may be overwritten on next /mc:release. -->
 
 ## Sprints
 
@@ -76,11 +76,11 @@ Every `RL-*` at status=prepared OR =deployed. Each row links to the full `RL-*.y
 | [RL-20260525-031](.claude/project/sprint/releases/RL-20260525-031.yaml) | [SP-20260525-019](.claude/project/sprint/sprints/SP-20260525-019/) | prepared | staging |  | Install completeness: unify install.ps1 + warp-setup paths, scaffold PROJECT.md + product maps |
 | [RL-20260525-030](.claude/project/sprint/releases/RL-20260525-030.yaml) | [SP-20260525-018](.claude/project/sprint/sprints/SP-20260525-018/) | prepared | staging |  | MC installer completeness: complete + sprint-capable fresh installs |
 | [RL-20260525-029](.claude/project/sprint/releases/RL-20260525-029.yaml) | [SP-20260525-018](.claude/project/sprint/sprints/SP-20260525-018/) | prepared | staging |  | MC installer completeness: complete + sprint-capable fresh installs |
-| [RL-20260523-028](.claude/project/sprint/releases/RL-20260523-028.yaml) | [SP-20260524-001](.claude/project/sprint/sprints/SP-20260524-001/) | prepared | staging |  | Install fixture CI matrix — 5-scenario regression test suite for /warp:setup + /warp:update |
-| [RL-20260523-027](.claude/project/sprint/releases/RL-20260523-027.yaml) | [SP-20260523-003](.claude/project/sprint/sprints/SP-20260523-003/) | prepared | staging |  | Installer ownership manifest hook into /warp:setup — refuse writes to paths not in _mc/MANIFEST.json |
-| [RL-20260523-026](.claude/project/sprint/releases/RL-20260523-026.yaml) | [SP-20260523-002](.claude/project/sprint/sprints/SP-20260523-002/) | prepared | staging |  | Three-layer settings compiler — _mc/settings/defaults.json source migration + wire compile.js into /warp:setup + /warp:update |
+| [RL-20260523-028](.claude/project/sprint/releases/RL-20260523-028.yaml) | [SP-20260524-001](.claude/project/sprint/sprints/SP-20260524-001/) | prepared | staging |  | Install fixture CI matrix — 5-scenario regression test suite for /mc:setup + /mc:update |
+| [RL-20260523-027](.claude/project/sprint/releases/RL-20260523-027.yaml) | [SP-20260523-003](.claude/project/sprint/sprints/SP-20260523-003/) | prepared | staging |  | Installer ownership manifest hook into /mc:setup — refuse writes to paths not in _mc/MANIFEST.json |
+| [RL-20260523-026](.claude/project/sprint/releases/RL-20260523-026.yaml) | [SP-20260523-002](.claude/project/sprint/sprints/SP-20260523-002/) | prepared | staging |  | Three-layer settings compiler — _mc/settings/defaults.json source migration + wire compile.js into /mc:setup + /mc:update |
 | [RL-20260523-025](.claude/project/sprint/releases/RL-20260523-025.yaml) | [SP-20260523-001](.claude/project/sprint/sprints/SP-20260523-001/) | prepared | staging |  | Fix current.yaml#status + active-sprints.yaml status lag after /sprint:full Phase 5 |
-| [RL-20260523-024](.claude/project/sprint/releases/RL-20260523-024.yaml) | [SP-20260522-005](.claude/project/sprint/sprints/SP-20260522-005/) | prepared | staging |  | /warp:update --status wires manifest validator into per-file table |
+| [RL-20260523-024](.claude/project/sprint/releases/RL-20260523-024.yaml) | [SP-20260522-005](.claude/project/sprint/sprints/SP-20260522-005/) | prepared | staging |  | /mc:update --status wires manifest validator into per-file table |
 | [RL-20260523-023](.claude/project/sprint/releases/RL-20260523-023.yaml) | [SP-20260522-004](.claude/project/sprint/sprints/SP-20260522-004/) | prepared | staging |  | Migration bootstrap script — convert existing MC installs to _mc/ architecture |
 | [RL-20260522-022](.claude/project/sprint/releases/RL-20260522-022.yaml) | [SP-20260522-003](.claude/project/sprint/sprints/SP-20260522-003/) | prepared | staging |  | Maintainer &amp; Product Workflow — .vscode/tasks.json from portfolio registry, /portfolio:open --spawn VS Code preference, aiweb product-delivery ticket (cadence rule) |
 | [RL-20260522-021](.claude/project/sprint/releases/RL-20260522-021.yaml) | [SP-20260522-003](.claude/project/sprint/sprints/SP-20260522-003/) | prepared | staging |  | Install &amp; Release Integrity — manifest coverage, dry-run + rollback, idempotent install, framework-views-fresh + framework-purity gates |
@@ -96,7 +96,7 @@ Every `RL-*` at status=prepared OR =deployed. Each row links to the full `RL-*.y
 | [RL-20260513-003](.claude/project/sprint/releases/RL-20260513-003.yaml) | [SP-20260513-002](.claude/project/sprint/sprints/SP-20260513-002/) | deployed | internal-canary | 2026-05-13T21:55:22.704Z | MC provider smoke + RCA + safe-only auto-fix [changelog](_docs/sprint/CHANGELOG_0.5.1.md) |
 | [RL-20260513-004](.claude/project/sprint/releases/RL-20260513-004.yaml) | [SP-20260513-003](.claude/project/sprint/sprints/SP-20260513-003/) | deployed | internal-canary | 2026-05-13T21:55:20.375Z | Organic skill use — Hybrid (CLAUDE.md rule + smart-context ranker + telemetry) [changelog](_docs/sprint/CHANGELOG_0.5.1.md) |
 | [RL-20260513-005](.claude/project/sprint/releases/RL-20260513-005.yaml) | [SP-20260513-004](.claude/project/sprint/sprints/SP-20260513-004/) | deployed | internal-canary | 2026-05-13T21:56:05.449Z | /sprint:retrospective skill — close-of-sprint reflection [changelog](_docs/sprint/CHANGELOG_0.5.1.md) |
-| [RL-20260513-006](.claude/project/sprint/releases/RL-20260513-006.yaml) | [SP-20260513-005](.claude/project/sprint/sprints/SP-20260513-005/) | deployed | internal-canary | 2026-05-13T21:56:19.894Z | Hardened /warp:update — preflight + transactional apply + postflight [changelog](_docs/sprint/CHANGELOG_0.5.1.md) |
+| [RL-20260513-006](.claude/project/sprint/releases/RL-20260513-006.yaml) | [SP-20260513-005](.claude/project/sprint/sprints/SP-20260513-005/) | deployed | internal-canary | 2026-05-13T21:56:19.894Z | Hardened /mc:update — preflight + transactional apply + postflight [changelog](_docs/sprint/CHANGELOG_0.5.1.md) |
 | [RL-20260514-007](.claude/project/sprint/releases/RL-20260514-007.yaml) | [SP-20260513-006](.claude/project/sprint/sprints/SP-20260513-006/) | deployed | internal | 2026-05-14T09:38:36.130Z | Turbo as mode argument [changelog](.claude/project/sprint/releases/RL-20260514-007.changelog.md) |
 | [RL-20260514-008](.claude/project/sprint/releases/RL-20260514-008.yaml) | [SP-20260514-001](.claude/project/sprint/sprints/SP-20260514-001/) | deployed | production | 2026-05-14T09:48:59.624Z | MC 0.7.0 — Hardened update pipeline [changelog](.claude/project/sprint/releases/RL-20260514-008.changelog.md) |
 | [RL-20260514-009](.claude/project/sprint/releases/RL-20260514-009.yaml) | [SP-20260514-002](.claude/project/sprint/sprints/SP-20260514-002/) | deployed | canonical-mc | 2026-05-14T21:59:33.690Z | Enforce sprint routing policy [changelog](.claude/project/sprint/releases/RL-20260514-009.changelog.md) |

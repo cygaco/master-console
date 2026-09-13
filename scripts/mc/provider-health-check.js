@@ -4,7 +4,7 @@
  * green/yellow/red per provider with a one-line suggestion for every
  * non-green state.
  *
- * Phase 0 workstream E. Invoked by /warp:health, /warp:setup, and any
+ * Phase 0 workstream E. Invoked by /mc:health, /mc:setup, and any
  * operator who just wants to know "can I dispatch right now?".
  *
  * Usage:

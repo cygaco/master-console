@@ -3,7 +3,7 @@
  * scan:mc-install-baseline — preflight gate (F-4 mitigation).
  *
  * Verifies a MC install baseline exists in the target project before
- * /warp:update may proceed. Without `--force-fresh`, the gate refuses
+ * /mc:update may proceed. Without `--force-fresh`, the gate refuses
  * when `.claude/framework-installed.json` is missing OR
  * `installedVersion === "0.0.0"` (the silent-fallback sentinel).
  *

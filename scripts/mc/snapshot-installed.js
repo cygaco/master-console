@@ -4,7 +4,7 @@
  * source repository itself without running the fresh installer over the tree.
  *
  * The installer writes this file for downstream projects. The MC dev repo
- * also needs a snapshot so /warp:update can classify local assets against the
+ * also needs a snapshot so /mc:update can classify local assets against the
  * current baseline instead of treating every framework file as local-only.
  */
 
@@ -108,7 +108,7 @@ function buildSnapshot() {
  * capsule + installed snapshot, not the source manifest). Without the
  * manifest, buildSnapshot() can't run and the old code exit(2)'d — leaving a
  * consumer with legitimate framework drift unable to re-baseline so that
- * /warp:update's preflight (manifest-honesty gate) would pass.
+ * /mc:update's preflight (manifest-honesty gate) would pass.
  *
  * This re-hashes every asset already listed in framework-installed.json
  * against the current on-disk bytes, using the SAME content-hash semantics

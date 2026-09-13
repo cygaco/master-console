@@ -1,6 +1,6 @@
-# /warp:update — Three-Phase Pipeline
+# /mc:update — Three-Phase Pipeline
 
-The `/warp:update` engine runs three phases against a consumer install:
+The `/mc:update` engine runs three phases against a consumer install:
 
 1. **Preflight** — composed gates that refuse to apply against an unsafe baseline.
 2. **Transactional apply** — pre-state snapshot + atomic commit-or-rollback.

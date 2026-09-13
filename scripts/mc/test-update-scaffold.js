@@ -3,7 +3,7 @@
 "use strict";
 /**
  * scripts/mc/test-update-scaffold.js — regression test for the downstream
- * content-gap fix (SP-20260525-024). /warp:update now invokes
+ * content-gap fix (SP-20260525-024). /mc:update now invokes
  * scaffold-core.scaffoldProduct after apply so consumers receive the
  * structure-parity skeleton + _docs zones + ROADMAP.md + PROJECT.md + paths.json
  * backfill — content the framework manifest deliberately excludes (to avoid

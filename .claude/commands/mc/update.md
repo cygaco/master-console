@@ -3,7 +3,7 @@ description: "Update MC in this project to a target release. Default = latest. D
 user-invocable: true
 ---
 
-# /warp:update — Apply a MC release capsule
+# /mc:update — Apply a MC release capsule
 
 Phase 4C entry point. The actual engine lives at `scripts/mc/update.js`. This skill is a thin wrapper that resolves arguments, runs the engine, and presents the plan.
 
@@ -11,11 +11,11 @@ Phase 4C entry point. The actual engine lives at `scripts/mc/update.js`. This sk
 
 | Invocation | Behavior |
 |---|---|
-| `/warp:update` | Dry-run against latest available release capsule. Prints the 12-category plan + class-A/B/C breakdown. **Safe.** |
-| `/warp:update 0.2.0` | Dry-run against capsule `framework/releases/0.2.0/`. |
-| `/warp:update --apply` | **Apply** the latest plan. Class A auto-apply, Class B apply-with-reviewer, Class C escalates. |
-| `/warp:update --apply --confirm-deletes` | Same as above, plus actually executes Class A `DELETE_SAFE` removals (otherwise deferred). |
-| `/warp:update --json` | Machine-readable output. |
+| `/mc:update` | Dry-run against latest available release capsule. Prints the 12-category plan + class-A/B/C breakdown. **Safe.** |
+| `/mc:update 0.2.0` | Dry-run against capsule `framework/releases/0.2.0/`. |
+| `/mc:update --apply` | **Apply** the latest plan. Class A auto-apply, Class B apply-with-reviewer, Class C escalates. |
+| `/mc:update --apply --confirm-deletes` | Same as above, plus actually executes Class A `DELETE_SAFE` removals (otherwise deferred). |
+| `/mc:update --json` | Machine-readable output. |
 
 ## Procedure
 
@@ -67,11 +67,11 @@ The engine walks the plan and writes to the local install:
 - Class B `MERGE_SAFE` / `RENAME_SAFE` / `MIGRATION_REQUIRED` → applied in this run; reviewer surfaces in the report.
 - Class C — refused. Engine returns `ok:false` with an `ESCALATE:` error and a sample of offenders.
 
-After the apply, run the `postUpdateChecks` from `release.json` in order. Any non-zero exit → stop, surface the failing check, and recommend `/warp:doctor` to verify state.
+After the apply, run the `postUpdateChecks` from `release.json` in order. Any non-zero exit → stop, surface the failing check, and recommend `/mc:doctor` to verify state.
 
 ### Step 5 — write installed snapshot
 
-The engine updates `.claude/framework-installed.json` with the new `installedVersion`, `installedCommit`, `installedAt`, per-asset `installedHash`, and the `generated[]` array. The snapshot is the source of truth `/warp:update` reads on the next run to classify local-vs-installed drift.
+The engine updates `.claude/framework-installed.json` with the new `installedVersion`, `installedCommit`, `installedAt`, per-asset `installedHash`, and the `generated[]` array. The snapshot is the source of truth `/mc:update` reads on the next run to classify local-vs-installed drift.
 
 ## Preflight (SP-20260513-005 — `scripts/mc/preflight.js`)
 
@@ -115,7 +115,7 @@ After a successful commit, the engine runs 5 checks (diagnostic — does NOT aut
 2. `path-resolution` — every `paths.X` key resolves
 3. `applied-migrations` — no leftover scripts
 4. **provider-smoke** — external check via the `registerExternalCheck` primitive (SP-002 boundary; records `status:degraded` until SP-002 ships)
-5. `/warp:health` rollup — system health aggregate
+5. `/mc:health` rollup — system health aggregate
 
 Per-check + aggregate events emit to `events.jsonl` (`cat=mc.update.postflight`). An evidence package is written to `<txDir>/evidence/postflight.json` matching `IN-3`. Postflight pointer event (`cat=mc.update.evidence`) carries the path.
 
@@ -234,9 +234,9 @@ Indexed to `failure-mining.md` signatures F-1..F-9.
 **Diagnosis:** The capsule for `--to <v>` is not in `REPO_ROOT`, any sibling clone, nor at the manifest-hinted source.
 
 **Remediation:**
-1. Run `/warp:update` (no `--to`) — it auto-discovers and uses the latest available capsule.
+1. Run `/mc:update` (no `--to`) — it auto-discovers and uses the latest available capsule.
 2. Or list available versions and pick one: the red-gate output names them per searched location.
-3. Or point `--source` at a canonical clone explicitly: `/warp:update --to <v> --source /abs/path/to/MC --apply`.
+3. Or point `--source` at a canonical clone explicitly: `/mc:update --to <v> --source /abs/path/to/MC --apply`.
 
 ### F-2 — Capsule gap (release tag exists, capsule wasn't built)
 
@@ -284,7 +284,7 @@ Indexed to `failure-mining.md` signatures F-1..F-9.
 
 **Diagnosis:** Canonical's framework manifest declares a structural skeleton dir that the install doesn't have.
 
-**Remediation:** Re-run install in repair mode, or `mkdir -p <missing-dir>` and re-run `/warp:update`.
+**Remediation:** Re-run install in repair mode, or `mkdir -p <missing-dir>` and re-run `/mc:update`.
 
 ### F-8 — Tracked transients in capsule
 
@@ -292,7 +292,7 @@ Indexed to `failure-mining.md` signatures F-1..F-9.
 
 **Diagnosis:** `.mc/`, `qa-*.png`, `runtime/qa-*/` got committed to the canonical repo and ended up in the capsule.
 
-**Remediation:** Clean up in canonical, rebuild the capsule, re-run `/warp:update`. The downstream install is not at fault.
+**Remediation:** Clean up in canonical, rebuild the capsule, re-run `/mc:update`. The downstream install is not at fault.
 
 ### F-9 — HTML-entity-encoded commands
 
@@ -329,7 +329,7 @@ composition seam that lets postflight surface degraded states.
 | `1` | Internal error — corrupt failure-mode catalog (AC-3.2), invalid argv, shell-meta in `--providers`, or `..`/null-byte in `--target`. |
 | `2` | At least one required provider red. Update apply already committed; smoke is a post-apply verifier, not a rollback trigger. |
 
-`/warp:update --apply` honours these codes per `release.json#postUpdateChecks`. A non-zero smoke exit surfaces in the postflight evidence package at `<txDir>/evidence/postflight.json` (per IN-3).
+`/mc:update --apply` honours these codes per `release.json#postUpdateChecks`. A non-zero smoke exit surfaces in the postflight evidence package at `<txDir>/evidence/postflight.json` (per IN-3).
 
 ### RCA + safe-only auto-fix
 
@@ -363,5 +363,5 @@ SP-005 owns the preflight / transaction / postflight composition above. SP-002 o
 - `migrations/<from>-to-<to>/` — migration scripts run during apply.
 - `.claude/project/sprint/sprints/SP-20260513-005/failure-mining.md` — F-1..F-10 evidence catalog.
 - `/warp:promote` — the outbound counterpart.
-- `/warp:release` — generate a new capsule from current state.
-- `/warp:doctor` — verify the install is healthy after update.
+- `/mc:release` — generate a new capsule from current state.
+- `/mc:doctor` — verify the install is healthy after update.

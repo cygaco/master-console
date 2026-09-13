@@ -84,7 +84,7 @@ edits. The guard is fail-open on parse error.
   can reference it.
 - `.claude/paths.json` — new keys: `dispatchLocks`,
   `dispatchDeathsFile`, `providerTmp`.
-- `.claude/commands/warp/health.md` and `.../warp/setup.md` — call
+- `.claude/commands/mc/health.md` and `.../warp/setup.md` — call
   `node scripts/dispatch/prune-dead-locks.js` at the start.
 - `scripts/hooks/session-start.js` — call the pruner once per startup
   (best-effort, fail-open).
@@ -114,10 +114,10 @@ edits. The guard is fail-open on parse error.
 **Rollback:** legacy lock-file format is still accepted; revert
 dispatch-agent + providers changes; delete new pruner.
 
-## Workstream A — /warp:flag + /warp:promote drain
+## Workstream A — /mc:flag + /warp:promote drain
 
 **Files added:**
-- `.claude/commands/warp/flag.md` — skill doc.
+- `.claude/commands/mc/flag.md` — skill doc.
 - `scripts/mc/flag.js` — append engine.
 - `scripts/mc/promote-flags.js` — drain engine (separate from the
   existing source→canonical promote.js — different concern, easier
@@ -133,7 +133,7 @@ dispatch-agent + providers changes; delete new pruner.
 ```markdown
 # MC Update Flags
 
-<!-- managed by /warp:flag and /warp:promote-flags. Add entries via /warp:flag. -->
+<!-- managed by /mc:flag and /warp:promote-flags. Add entries via /mc:flag. -->
 
 ## 2026-05-11
 
@@ -160,7 +160,7 @@ gitignored by default — controlled by `--archive-policy`).
 **Files added:**
 - `scripts/hooks/lib/provider-health.js` — classification helper.
 - `scripts/mc/provider-health-check.js` — CLI invoked by
-  `/warp:health` / `/warp:setup`.
+  `/mc:health` / `/mc:setup`.
 - `.claude/agents/00-alex/.system/policy/provider-fallback.json` —
   scaffold + schema.
 - `_requirements/09-integrations/PROVIDER/03-google-gemini.md` — fix or
@@ -176,9 +176,9 @@ gitignored by default — controlled by `--archive-policy`).
   path the gemini CLI uses on Windows) declares `oauth-personal` auth.
   Use a marker file under `.claude/runtime/` to dedupe.
 - `.claude/paths.json` — new key `providerFallbackPolicy`.
-- `.claude/commands/warp/health.md` — replace step 10 with structured
+- `.claude/commands/mc/health.md` — replace step 10 with structured
   provider health output.
-- `.claude/commands/warp/setup.md` — call the provider-health-check at
+- `.claude/commands/mc/setup.md` — call the provider-health-check at
   end of Phase 1.
 
 **Health states (returned by helper):**

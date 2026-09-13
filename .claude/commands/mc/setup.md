@@ -3,9 +3,9 @@ description: Set up MC end-to-end — clone, install, merge CLAUDE.md, restart, 
 user-invocable: true
 ---
 
-# /warp:setup — Full MC Setup
+# /mc:setup — Full MC Setup
 
-The one-command onboarding. You run `/warp:setup`, the skill does everything for you — clone, install, merge Alex into your CLAUDE.md, verify. Re-running is safe: the skill checks what's already in place and picks up from the first missing step.
+The one-command onboarding. You run `/mc:setup`, the skill does everything for you — clone, install, merge Alex into your CLAUDE.md, verify. Re-running is safe: the skill checks what's already in place and picks up from the first missing step.
 
 Formerly `/warp:init`. Renamed because it does the whole setup.
 
@@ -20,7 +20,7 @@ The skill checks 4 signals in your project, in this order, and runs whatever ste
 | **3. Alex identity in CLAUDE.md** | `CLAUDE.md` contains the string `"You are **Alex α**"` | Step C — merge CLAUDE.md |
 | **4. Hooks schema valid** | `.claude/settings.json` has `"type": "command"` on every hook entry | Step D — rerun installer to rebuild settings |
 
-If everything passes, the skill reports "MC is fully set up" and suggests `/warp:health`.
+If everything passes, the skill reports "MC is fully set up" and suggests `/mc:health`.
 
 ## Procedure
 
@@ -56,7 +56,7 @@ git clone https://github.com/cygaco/master-console.git ../master-console
 ```
 
 If the clone fails (private repo, no access):
-> "The MC repo requires access. If you have a GitHub account, ask the owner to add you as a collaborator, then run `/warp:setup` again. If you were given a personal access token, run this first:
+> "The MC repo requires access. If you have a GitHub account, ask the owner to add you as a collaborator, then run `/mc:setup` again. If you were given a personal access token, run this first:
 > `git config --global credential.helper store`
 > `git clone https://<PAT>@github.com/cygaco/master-console.git ../master-console`"
 
@@ -153,7 +153,7 @@ Tell the user, VERBATIM:
 >
 > When you reopen, your first prompt will be intercepted by `smart-context.js` (the prompt enrichment hook), logged by `prompt-logger.js`, and your Edits/Writes will go through the guard chain. That's when MC is actually alive in this project.
 >
-> I'll auto-run `/warp:health` the moment you prompt me next session — it has the verification commands and first-use tips.
+> I'll auto-run `/mc:health` the moment you prompt me next session — it has the verification commands and first-use tips.
 
 ### Phase 2.5 — Dispatch + provider sanity (Phase 0)
 
@@ -170,7 +170,7 @@ should NOT block setup.
 
 ### Phase 3 — Provider CLIs (optional)
 
-AFTER the user restarts, the first `/warp:health` will flag missing provider CLIs. At that point, if they want full model diversity, show:
+AFTER the user restarts, the first `/mc:health` will flag missing provider CLIs. At that point, if they want full model diversity, show:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -199,17 +199,17 @@ Don't block on this. Setup is already complete without them.
 
 ## Related
 
-- `/warp:uninstall` — cleanly removes MC, restores from backup
-- `/warp:sync` — pull latest MC updates from GitHub (non-destructive)
-- `/warp:health` — post-install verification
-- `/warp:tour` — guided subsystem walkthrough
+- `/mc:uninstall` — cleanly removes MC, restores from backup
+- `/mc:sync` — pull latest MC updates from GitHub (non-destructive)
+- `/mc:health` — post-install verification
+- `/mc:tour` — guided subsystem walkthrough
 
 ## Why re-run is safe
 
 Every step has an is-done signal. Steps only run when their signal is missing. So:
 - First-time setup runs all 5 steps
 - Partial install (installer succeeded but user never merged CLAUDE.md) resumes at Step C
-- Everything done → skill reports "fully set up, run /warp:health" and exits
+- Everything done → skill reports "fully set up, run /mc:health" and exits
 - Breaking change in schema? Re-run → Step D rebuilds settings.json
 
 Users never have to think about "which step am I at" — the skill figures it out.

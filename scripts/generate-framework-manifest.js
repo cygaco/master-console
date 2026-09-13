@@ -41,7 +41,7 @@ const OUT = path.join(ROOT, ".claude", "framework-manifest.json");
 //                   prefix; read-path back-compat lives in update.js via
 //                   hashMatches. T-20260514-070 dropped the .slice(0, 12)
 //                   truncation here.
-//   mergeStrategy   how /warp:update reconciles upstream changes for this asset
+//   mergeStrategy   how /mc:update reconciles upstream changes for this asset
 //   owner           framework | generated | runtime | project (lifecycle policy)
 //   introducedIn    semver where it first shipped (read from version.json or "0.0.0")
 //   removedIn       null while alive
@@ -189,7 +189,7 @@ const ASSET_DIRS = [
   // The old `{ src: 'requirements', kind: 'requirement' }` entry pointed at a
   // directory that no longer exists (renamed to '_requirements/') AND would have
   // leaked the maintainer's product specs into every install if it had matched.
-  // See /warp:flag F-20260521 — manifest-install-gap for context.
+  // See /mc:flag F-20260521 — manifest-install-gap for context.
   { src: "patterns", kind: "pattern" },
   { src: "fixtures/hooks", kind: "fixture" },
   { src: "fixtures/install-empty-next-app", kind: "fixture" },
@@ -197,7 +197,7 @@ const ASSET_DIRS = [
   { src: "fixtures/update-from-0.0.0-customized-claude-md", kind: "fixture" },
   // Phase 4 codex review fix-forward (2026-04-30): the engines + capsules +
   // schemas + migrations Phase 4 introduced were NOT shipped by the installer.
-  // /warp:update couldn't materialize them because they weren't in the
+  // /mc:update couldn't materialize them because they weren't in the
   // manifest. Now they are.
   { src: "scripts/mc", kind: "mc_script" },
   { src: "scripts/checks", kind: "check_tool" },
@@ -229,7 +229,7 @@ const ASSET_DIRS = [
   { src: "scripts/dispatch", kind: "dispatch_engine" },
   // 0.8.2 fix-forward (2026-05-21): 15 scripts subdirs shipped slash commands
   // that referenced backing scripts under these dirs, but the dirs were never
-  // classified — so /warp:setup installed the .md skills with no backing logic.
+  // classified — so /mc:setup installed the .md skills with no backing logic.
   // A consumer install surfaced this by failing /mode:adhoc --turbo (missing
   // scripts/turbo/apply.js) and /portfolio:* (missing scripts/portfolio/).
   // The 17 dirs on disk are split as follows:

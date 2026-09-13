@@ -1,5 +1,5 @@
 ---
-description: Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /warp:update may proceed.
+description: Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /mc:update may proceed.
 ---
 
 # /scan:mc-install-baseline

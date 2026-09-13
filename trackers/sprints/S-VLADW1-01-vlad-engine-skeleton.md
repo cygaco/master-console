@@ -425,7 +425,7 @@ Operator-ordered (task #11). Recorded honestly as **NOT CLOSED**. Team-lead rule
 ### 2026-08-04 — Port-reference verification, pass 2 (CONTENTS read): a SECOND mis-citation, and it would have broken the product
 Pass 1 confirmed paths; this pass read contents. Two of the three remaining citations verify. One does not, and it is the more dangerous kind — the file exists, the name is plausible, and porting it would do real damage.
 
-**`phases/preflight.js` — WRONG FILE, and porting it would make the engine refuse every stranger repo.** The cited `scripts/bootstrap/lastmile/phases/preflight.js` is a **39-line install gate**: it shells to `scripts/check/install.js` and refuses unless the target is a properly-installed MC repo. Its failure message is verbatim *"install incomplete or not a MC repo (/scan:install exit N) — refusing to proceed. Run /warp:setup (or fix the gaps) first."*
+**`phases/preflight.js` — WRONG FILE, and porting it would make the engine refuse every stranger repo.** The cited `scripts/bootstrap/lastmile/phases/preflight.js` is a **39-line install gate**: it shells to `scripts/check/install.js` and refuses unless the target is a properly-installed MC repo. Its failure message is verbatim *"install incomplete or not a MC repo (/scan:install exit N) — refusing to proceed. Run /mc:setup (or fix the gaps) first."*
 
 That is **precisely the MC-specific-refusal class S-VLADW1-02's S-3 exists to strip**, and it sits behind a citation the epic reads as the write-path preflight. Ported as cited, Vlad would refuse to audit a founder's repository **on the grounds that it is not a MC install** — a total failure of the product's only job, arriving via a citation that looks correct.
 

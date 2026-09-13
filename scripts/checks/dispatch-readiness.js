@@ -27,7 +27,7 @@
  *   PASS    — CLI present, every routed model valid, effort valid, auth present.
  *
  * FAIL-OPEN by contract: this is a diagnostic, not a gate. Exit 0 always in the
- * default mode so it can be wired into /warp:health without ever blocking. Pass
+ * default mode so it can be wired into /mc:health without ever blocking. Pass
  * --strict to exit 2 when any provider is FAIL (for CI / a deliberate gate).
  *
  * Usage:
@@ -335,7 +335,7 @@ function main(argv) {
   try {
     model = buildReadiness();
   } catch (e) {
-    // Total fail-open: never crash the caller (/warp:health).
+    // Total fail-open: never crash the caller (/mc:health).
     const msg = "dispatch-readiness: internal error (fail-open): " + String((e && e.message) || e);
     if (jsonMode) {
       process.stdout.write(JSON.stringify({ ok: false, error: msg, providers: [], roles: [] }) + "\n");

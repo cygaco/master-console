@@ -70,7 +70,7 @@ full readiness sweep. Resolves all build-chain roles via the same path real
 dispatch uses (providers.js + dispatch-agent.js#getRoleModel), pings
 non-Claude roles, and classifies model-availability precisely (catches silent
 downgrade / model_unavailable, not just "ping failed"). Use for pre-dispatch
-health checks, CI readiness gates, and `/warp:health` equivalence.
+health checks, CI readiness gates, and `/mc:health` equivalence.
 
 ## Empty-state behavior
 

@@ -207,9 +207,9 @@ When writing a sprint command, the checkpoint discipline is:
 - Updates `paths.sprintProgress` (the live file).
 - Writes a frozen copy under `paths.sprintCheckpoints/<sprint>-<n>.yaml`.
 
-## /warp:update recovery (SP-20260514-001)
+## /mc:update recovery (SP-20260514-001)
 
-When `/warp:update` is interrupted mid-pipeline:
+When `/mc:update` is interrupted mid-pipeline:
 
 1. Read the transaction id from the last `mc.update.transaction.start`
    event in `paths.eventsFile`. The transaction wrapper writes a frozen
@@ -246,5 +246,5 @@ When `/warp:update` is interrupted mid-pipeline:
 
 - `paths.sprintReference` — full reference doc.
 - `_docs/sprint/RALPH_LOOP.md` — Ralph loop crash semantics.
-- `_docs/sprint/UPDATE_PIPELINE.md` — three-phase `/warp:update` map +
+- `_docs/sprint/UPDATE_PIPELINE.md` — three-phase `/mc:update` map +
   hash semantics + ownership state machine.

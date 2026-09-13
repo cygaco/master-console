@@ -293,7 +293,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | run | Run a skill against another portfolio product in a fresh Claude subprocess — never retargets the cur | 1 | 1 |
 | spinup | "From MC, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spi | 4 | 2 |
 | status | Portfolio dashboard — per-product MC version, last commit, dirty count, current sprint, GitHub r | 1 | 2 |
-| sync | Run /warp:update across every registered portfolio product sequentially. No fail-fast — failures cap | 1 | 0 |
+| sync | Run /mc:update across every registered portfolio product sequentially. No fail-fast — failures cap | 1 | 0 |
 
 ### qa (2)
 
@@ -379,7 +379,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | turbo-spend | Report the turbo session's REAL cross-provider API spend against the operator-set ceiling (framework | 1 | 0 |
 | version-coherence | Verify version + schema-label coherence — product version agrees across ALL manifests (incl. the one | 2 | 1 |
 | mc-applied-migrations | Detect already-applied MC migration scripts left on disk in consumer projects | 0 | 1 |
-| mc-capsule-resolvable | Verify the capsule for /warp:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest. | 1 | 1 |
+| mc-capsule-resolvable | Verify the capsule for /mc:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest. | 1 | 1 |
 | mc-install-baseline | Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion  | 2 | 1 |
 | mc-layer-diff | Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer pro | 3 | 1 |
 | mc-manifest-coverage | Verify every on-disk path is enumerated in _mc/MANIFEST.json — catches "added framework content, | 3 | 3 |
@@ -458,14 +458,14 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | check | Compare your MC installation against the latest version — find stale, new, and missing items | 1 | 1 |
 | deprecate | "Create a guarded MC deprecation proposal for an agent, skill, hook, path, requirement, pattern, | 0 | 0 |
 | diff | Diff canonical MC against an installed product — version/staleness, framework-file drift (stale  | 6 | 0 |
-| doctor | "Unified MC diagnostic — runs every health check in one place. Like /warp:health but full-covera | 9 | 2 |
+| doctor | "Unified MC diagnostic — runs every health check in one place. Like /mc:health but full-covera | 9 | 2 |
 | flag | Flag a MC framework/tooling gap from a downstream product — append a structured, canonical-consu | 3 | 1 |
 | health | Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes | 2 | 13 |
 | md | "Tune CLAUDE.md with project-specific context — refresh the auto-generated project block from PROJEC | 2 | 0 |
 | reconcile | Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify | 10 | 1 |
 | release | "Drive a full MC release of the canonical clone from this product repo — promote, bump, regen, b | 0 | 4 |
 | setup | Set up MC end-to-end — clone, install, merge CLAUDE.md, restart, verify. Safe to re-run; auto-de | 5 | 6 |
-| sync | "Legacy alias for /warp:update that forwards to the canonical update flow so older references and mu | 2 | 4 |
+| sync | "Legacy alias for /mc:update that forwards to the canonical update flow so older references and mu | 2 | 4 |
 | tour | Guided introduction to MC — explains everything in simple language, no jargon | 15 | 1 |
 | uninstall | Completely remove MC from a project — restores pre-install state from backup | 3 | 1 |
 | update | "Update MC in this project to a target release. Default = latest. Default mode = dry-run; pass - | 5 | 14 |
@@ -474,26 +474,26 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 
 Top callers (skills that invoke the most others):
 
-- `/scan:full` → /knowledge:coverage, /maps:all, /oneshot:preflight, /scan:ac-coverage, /scan:adhoc-fail-override, /scan:adhoc-team-hygiene, /scan:admin-suite-coverage, /scan:architecture, /scan:coherence, /scan:cutover-completeness, /scan:design-system, /scan:dispatch-routing-parity, /scan:docker-secrets, /scan:environment, /scan:etc-harness, /scan:framework-purity, /scan:framework-views-fresh, /scan:ingest-firewall, /scan:install, /scan:issues, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:patterns, /scan:planning-principles, /scan:privacy, /scan:references, /scan:regressions, /scan:requirements, /scan:roadmap-trace, /scan:role-parity, /scan:scaffold-coverage, /scan:scan-coverage, /scan:skill-hook-coverage, /scan:sprint-beta-honesty, /scan:sprint-hook-coverage, /scan:sprint-manager-consult, /scan:system, /scan:timeline, /scan:version-coherence, /scan:mc-applied-migrations, /scan:mc-capsule-resolvable, /scan:mc-install-baseline, /scan:mc-layer-diff, /scan:mc-manifest-coverage, /scan:mc-manifest-honesty, /scan:mc-migration-coverage, /scan:mc-migration-presence, /scan:mc-path-resolution, /scan:mc-ship-coverage, /scan:mc-staleness, /scan:mc-structure-parity, /scan:mc-tracked-transients, /scan:mc-version-quorum, /sleep:deep, /sprint:full, /trackers:validate, /warp:doctor, /warp:health
-- `/warp:tour` → /fix:fast, /learn:deep, /maps:all, /maps:architecture, /mode:adhoc, /mode:oneshot, /mode:solo, /portfolio:list, /portfolio:open, /research:simple, /session:handoff, /session:read, /session:write, /sleep:quick, /warp:health
+- `/scan:full` → /knowledge:coverage, /maps:all, /oneshot:preflight, /scan:ac-coverage, /scan:adhoc-fail-override, /scan:adhoc-team-hygiene, /scan:admin-suite-coverage, /scan:architecture, /scan:coherence, /scan:cutover-completeness, /scan:design-system, /scan:dispatch-routing-parity, /scan:docker-secrets, /scan:environment, /scan:etc-harness, /scan:framework-purity, /scan:framework-views-fresh, /scan:ingest-firewall, /scan:install, /scan:issues, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:patterns, /scan:planning-principles, /scan:privacy, /scan:references, /scan:regressions, /scan:requirements, /scan:roadmap-trace, /scan:role-parity, /scan:scaffold-coverage, /scan:scan-coverage, /scan:skill-hook-coverage, /scan:sprint-beta-honesty, /scan:sprint-hook-coverage, /scan:sprint-manager-consult, /scan:system, /scan:timeline, /scan:version-coherence, /scan:mc-applied-migrations, /scan:mc-capsule-resolvable, /scan:mc-install-baseline, /scan:mc-layer-diff, /scan:mc-manifest-coverage, /scan:mc-manifest-honesty, /scan:mc-migration-coverage, /scan:mc-migration-presence, /scan:mc-path-resolution, /scan:mc-ship-coverage, /scan:mc-staleness, /scan:mc-structure-parity, /scan:mc-tracked-transients, /scan:mc-version-quorum, /sleep:deep, /sprint:full, /trackers:validate, /mc:doctor, /mc:health
+- `/mc:tour` → /fix:fast, /learn:deep, /maps:all, /maps:architecture, /mode:adhoc, /mode:oneshot, /mode:solo, /portfolio:list, /portfolio:open, /research:simple, /session:handoff, /session:read, /session:write, /sleep:quick, /mc:health
 - `/session:end` → /beta:integrate, /beta:mine, /commit:land, /enforcement:log, /learn:deep, /learn:integrate, /mode:adhoc, /mode:sprint, /session:checkpoint, /session:dump, /session:handoff, /sleep:deep, /sleep:quick, /trackers:validate
 - `/bootstrap:lastmile` → /guides:integrate, /learn:ingest, /learn:integrate, /qa:audit, /redteam:full, /research:deep, /roadmap:add, /scan:install, /scan:roadmap-trace, /sprint:design, /sprint:execute, /sprint:plan
 - `/maps:all` → /maps:architecture, /maps:coverage, /maps:enforcements, /maps:hooks, /maps:memory, /maps:skills, /maps:steps, /maps:systems, /maps:tools, /scan:scan-coverage
 - `/oneshot:preflight` → /mode:oneshot, /oneshot:improve, /oneshot:retro, /oneshot:start, /preflight:run, /preflight:setup, /run:sync, /scan:architecture, /scan:environment, /scan:requirements
-- `/warp:reconcile` → /enforcement:log, /fix:deep, /issues:log, /portfolio:status, /roadmap:add, /scan:full, /scan:mc-staleness, /warp:flag, /warp:release, /warp:update
+- `/mc:reconcile` → /enforcement:log, /fix:deep, /issues:log, /portfolio:status, /roadmap:add, /scan:full, /scan:mc-staleness, /mc:flag, /mc:release, /mc:update
 - `/oneshot:retro` → /issues:log, /oneshot:improve, /oneshot:preflight, /oneshot:start, /retro:code, /retro:context, /retro:full, /scan:patterns, /scan:requirements
 - `/sprint:full` → /mode:oneshot, /mode:sprint, /scan:full, /scan:roadmap-trace, /sprint:design, /sprint:execute, /sprint:plan, /sprint:release, /sprint:retrospective
-- `/warp:doctor` → /hooks:test, /paths:lint, /scan:architecture, /scan:full, /scan:references, /scan:requirements, /warp:health, /warp:release, /warp:update
+- `/mc:doctor` → /hooks:test, /paths:lint, /scan:architecture, /scan:full, /scan:references, /scan:requirements, /mc:health, /mc:release, /mc:update
 
 Top called (skills others invoke the most):
 
-- `/scan:full` ← /bootstrap:ponder, /check:all, /commit:land, /guides:coverage, /karpathy:run, /knowledge:coverage, /learn:integrate, /maps:coverage, /scan:ac-coverage, /scan:admin-suite-coverage, /scan:cutover-completeness, /scan:dispatch-routing-parity, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:planning-principles, /scan:regressions, /scan:roadmap-trace, /scan:scan-coverage, /scan:system, /scan:turbo-spend, /scan:version-coherence, /scan:mc-install-baseline, /scan:mc-ship-coverage, /sprint:full, /warp:doctor, /warp:reconcile
+- `/scan:full` ← /bootstrap:ponder, /check:all, /commit:land, /guides:coverage, /karpathy:run, /knowledge:coverage, /learn:integrate, /maps:coverage, /scan:ac-coverage, /scan:admin-suite-coverage, /scan:cutover-completeness, /scan:dispatch-routing-parity, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:planning-principles, /scan:regressions, /scan:roadmap-trace, /scan:scan-coverage, /scan:system, /scan:turbo-spend, /scan:version-coherence, /scan:mc-install-baseline, /scan:mc-ship-coverage, /sprint:full, /mc:doctor, /mc:reconcile
 - `/sleep:deep` ← /beta:integrate, /beta:mine, /bootstrap:ponder, /learn:deep, /reasoning:score, /scan:architecture, /scan:environment, /scan:full, /scan:patterns, /scan:references, /scan:requirements, /scan:system, /session:end, /sleep:quick
-- `/warp:update` ← /commit:both, /guides:write, /portfolio:sync, /scan:mc-capsule-resolvable, /scan:mc-install-baseline, /scan:mc-layer-diff, /scan:mc-manifest-coverage, /scan:mc-migration-presence, /scan:mc-staleness, /scan:mc-structure-parity, /warp:diff, /warp:doctor, /warp:reconcile, /warp:sync
-- `/warp:health` ← /agents:test, /mode:adhoc, /mode:sprint, /scan:adhoc-team-hygiene, /scan:architecture, /scan:environment, /scan:full, /scan:system, /warp:doctor, /warp:setup, /warp:tour, /warp:uninstall, /warp:update
+- `/mc:update` ← /commit:both, /guides:write, /portfolio:sync, /scan:mc-capsule-resolvable, /scan:mc-install-baseline, /scan:mc-layer-diff, /scan:mc-manifest-coverage, /scan:mc-migration-presence, /scan:mc-staleness, /scan:mc-structure-parity, /mc:diff, /mc:doctor, /mc:reconcile, /mc:sync
+- `/mc:health` ← /agents:test, /mode:adhoc, /mode:sprint, /scan:adhoc-team-hygiene, /scan:architecture, /scan:environment, /scan:full, /scan:system, /mc:doctor, /mc:setup, /mc:tour, /mc:uninstall, /mc:update
 - `/sprint:full` ← /learn:deep, /mode:sprint, /roadmap:create, /scan:full, /scan:roadmap-trace, /scan:sprint-beta-honesty, /scan:sprint-hook-coverage, /scan:sprint-manager-consult, /session:turbo, /sprint:cost-gate, /sprint:design, /sprint:plan
-- `/scan:requirements` ← /beta:mine, /discover:orphaned, /oneshot:preflight, /oneshot:retro, /scan:architecture, /scan:full, /session:handoff, /sleep:deep, /sleep:quick, /warp:doctor
-- `/issues:log` ← /issues:list, /issues:resolve, /oneshot:retro, /scan:issues, /scan:patterns, /scan:regressions, /sleep:deep, /warp:flag, /warp:reconcile
-- `/scan:references` ← /discover:systems, /maps:steps, /roadmap:cleanup, /scan:architecture, /scan:environment, /scan:full, /scan:requirements, /scan:system, /warp:doctor
+- `/scan:requirements` ← /beta:mine, /discover:orphaned, /oneshot:preflight, /oneshot:retro, /scan:architecture, /scan:full, /session:handoff, /sleep:deep, /sleep:quick, /mc:doctor
+- `/issues:log` ← /issues:list, /issues:resolve, /oneshot:retro, /scan:issues, /scan:patterns, /scan:regressions, /sleep:deep, /mc:flag, /mc:reconcile
+- `/scan:references` ← /discover:systems, /maps:steps, /roadmap:cleanup, /scan:architecture, /scan:environment, /scan:full, /scan:requirements, /scan:system, /mc:doctor
 - `/sprint:plan` ← /bootstrap:lastmile, /epic:plan, /epic:start, /scan:planning-principles, /session:dump, /sprint:design, /sprint:full, /sprint:release, /sprint:status
-- `/fix:deep` ← /fix:fast, /issues:list, /issues:log, /reasoning:log, /reasoning:run, /scan:patterns, /sprint:execute, /warp:reconcile
+- `/fix:deep` ← /fix:fast, /issues:list, /issues:log, /reasoning:log, /reasoning:run, /scan:patterns, /sprint:execute, /mc:reconcile

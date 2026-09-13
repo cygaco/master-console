@@ -47,7 +47,7 @@
 - None currently recorded.
 
 ## Open questions
-- Absorbed open item (homed here by sprint T5 from the deprecated 0.18.1 reconcile block): **E6** — product-overlay path registry (`.claude/paths.local.json` deep-merged by `scripts/paths/build.js`, or an `owner:project` section `/warp:update` never overwrites) so product-specific path keys survive framework updates without MERGE_CONFLICT + honesty-drift each update *(dreamteam W-9)*. Decide whether E6 lands in this epic or a dedicated paths-overlay sprint when activated.
+- Absorbed open item (homed here by sprint T5 from the deprecated 0.18.1 reconcile block): **E6** — product-overlay path registry (`.claude/paths.local.json` deep-merged by `scripts/paths/build.js`, or an `owner:project` section `/mc:update` never overwrites) so product-specific path keys survive framework updates without MERGE_CONFLICT + honesty-drift each update *(dreamteam W-9)*. Decide whether E6 lands in this epic or a dedicated paths-overlay sprint when activated.
 
 ## Session log
 <!-- Append-only (§24). One entry per meaningful session; use SESSION_LOG_TEMPLATE.md fields. -->

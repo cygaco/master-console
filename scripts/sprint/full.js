@@ -1549,7 +1549,7 @@ function phase4ReleasePrep(state) {
     // Sprint-close regression-seed gate (release.js cmdPrepare → regressionSeedGate)
     // blocked: a NEW regression in a covered class, or a runner error. The suite
     // must be green before a sprint can mint a release record. (0.17.0 per-sprint
-    // enforcer — closes the BC-15 gap where the enforcer ran only at /warp:release;
+    // enforcer — closes the BC-15 gap where the enforcer ran only at /mc:release;
     // commit 5870a0c.) The detail (which classes / runner error) is on the helper's
     // stdout+stderr — surface it verbatim so the halt report is actionable.
     return {

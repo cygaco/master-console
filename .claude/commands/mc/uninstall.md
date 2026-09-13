@@ -3,9 +3,9 @@ description: Completely remove MC from a project — restores pre-install state 
 user-invocable: true
 ---
 
-# /warp:uninstall — Remove MC
+# /mc:uninstall — Remove MC
 
-Clean, full, reversible removal. Use when you want to start fresh, when MC is mis-installed, or when a client decides not to use it. Restores the project to its pre-install state using the backup `/warp:setup` created at install time.
+Clean, full, reversible removal. Use when you want to start fresh, when MC is mis-installed, or when a client decides not to use it. Restores the project to its pre-install state using the backup `/mc:setup` created at install time.
 
 ## What it removes
 
@@ -130,7 +130,7 @@ mv ../MC ../MC.uninstalled-<timestamp>
 
 Then: "Moved `../MC` to `../MC.uninstalled-<timestamp>`. Delete it manually when ready: `rm -rf ../MC.uninstalled-*`."
 
-If no flag: leave `../MC/` alone. Explain: "Your `../MC/` clone is untouched. You can reuse it for `/warp:setup` in another project, or delete it manually."
+If no flag: leave `../MC/` alone. Explain: "Your `../MC/` clone is untouched. You can reuse it for `/mc:setup` in another project, or delete it manually."
 
 ### Step 7 — Confirm completion
 
@@ -153,7 +153,7 @@ Removed:
 Backup preserved at: .mc-backup/<timestamp>/
   Safe to delete once you're confident you don't want to reinstall.
 
-If you want to REINSTALL: run `/warp:setup` again.
+If you want to REINSTALL: run `/mc:setup` again.
 If you want to reinstall in ANOTHER project: your ../MC/ clone <is still here | has been moved to ../MC.uninstalled-*>.
 
 Your project is back to its pre-MC state.
@@ -180,13 +180,13 @@ If yes, stage all changed files and commit with that message.
 
 ## Related
 
-- `/warp:setup` — install (or reinstall after uninstall)
-- `/warp:health` — verify MC state before deciding to uninstall
-- `/warp:sync` — pull latest updates (non-destructive alternative to uninstall+reinstall)
+- `/mc:setup` — install (or reinstall after uninstall)
+- `/mc:health` — verify MC state before deciding to uninstall
+- `/mc:sync` — pull latest updates (non-destructive alternative to uninstall+reinstall)
 
 ## Why this exists
 
 - Clients may decide MC isn't for them — they deserve a clean exit
 - Testing the install requires a clean starting state every time
 - Bad installs are common; uninstall gives a quick reset button
-- Upgrade path: for major version jumps, uninstall-then-reinstall is cleaner than `/warp:sync`
+- Upgrade path: for major version jumps, uninstall-then-reinstall is cleaner than `/mc:sync`

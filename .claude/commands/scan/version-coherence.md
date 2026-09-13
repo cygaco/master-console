@@ -6,7 +6,7 @@ description: Verify version + schema-label coherence — product version agrees 
 
 The enforcer born from the 2026-05-30 version audit, which found two drift classes **no existing gate caught**:
 
-1. **Product-version lag** — `.claude/manifest.json#warpos.version` stayed `0.10.0` after the `0.11.0` release, because `/scan:warpos-version-quorum` only checks 4 sources (version.json, framework-manifest, framework-installed, install.ps1 header) — **not** `manifest.warpos.version` or install.ps1's `$Script:WARPOS_VERSION` fallback constant.
+1. **Product-version lag** — `.claude/manifest.json#warpos.version` stayed `0.10.0` after the `0.11.0` release, because `/scan:mc-version-quorum` only checks 4 sources (version.json, framework-manifest, framework-installed, install.ps1 header) — **not** `manifest.warpos.version` or install.ps1's `$Script:WARPOS_VERSION` fallback constant.
 2. **Schema-label divergence** — `paths.json` carried v5 *content* (`_requirements/` + 6 root keys) but a **v4 label** (`framework/paths.registry.json#version` was never bumped), and a stale `framework-manifest/v1` fallback lingered while everything else was v2.
 
 ## What it checks

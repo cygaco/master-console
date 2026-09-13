@@ -88,7 +88,7 @@ if (buildBlock) {
 // Iterates every framework/releases/<version>/release.json and asserts
 // that no postUpdateChecks entry contains a shell-interpolation token.
 // This guards every existing release AND every future release (because
-// /warp:release validates against this test in the release plan).
+// /mc:release validates against this test in the release plan).
 
 const FORBIDDEN_TOKENS = [
   "$(", // command substitution (sh/bash)
@@ -114,7 +114,7 @@ function lintEntry(entry, releaseVersion) {
   // Must be a known shape. We allow either:
   //   `node <path>...`   — Node CLI invocation (current shape)
   //   `/<cmd>:<sub>`     — MC slash-command invocation (legacy capsules)
-  // both of which are literal static strings consumed by /warp:update.
+  // both of which are literal static strings consumed by /mc:update.
   const isNode = entry.startsWith("node ");
   const isSlashCmd = /^\/[a-z][a-z0-9-]*:[a-z][a-z0-9-]*(\s|$)/.test(entry);
   if (!isNode && !isSlashCmd) {

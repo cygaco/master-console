@@ -94,7 +94,7 @@ try {
       marker.seeded_from === `${BASELINE_PREFIX}/${zone}`;
     const fieldsOk =
       marker.framework_version === VERSION &&
-      marker.seeded_by === "/warp:setup" &&
+      marker.seeded_by === "/mc:setup" &&
       marker.zone === zone &&
       !marker.seeded_from.includes(FORBIDDEN_SOURCE);
     if (!srcOk || !fieldsOk) {

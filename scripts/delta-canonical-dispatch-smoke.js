@@ -154,7 +154,7 @@ function loadManifest() {
     log(
       RED,
       `[smoke] .claude/manifest.json not found at ${MANIFEST}\n` +
-        `        fix: run \`/warp:setup\` to create it (auto-generated at install)\n` +
+        `        fix: run \`/mc:setup\` to create it (auto-generated at install)\n` +
         `        smoke needs manifest.agentProviders to know which providers to test`,
     );
     process.exit(1);

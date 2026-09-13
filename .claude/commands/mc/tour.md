@@ -2,7 +2,7 @@
 description: Guided introduction to MC — explains everything in simple language, no jargon
 ---
 
-# /warp:tour — Welcome to MC
+# /mc:tour — Welcome to MC
 
 A friendly, conversational walkthrough of everything MC can do. Written for someone who's never seen this system before.
 
@@ -82,7 +82,7 @@ You can also run `/session:write` to leave a note for your next session, or `/se
 
 "Let's make sure everything is set up correctly."
 
-Run `/warp:health` and show the results. If anything is yellow or red, explain what it means and how to fix it in simple terms.
+Run `/mc:health` and show the results. If anything is yellow or red, explain what it means and how to fix it in simple terms.
 
 ### Step 8: What's Next
 

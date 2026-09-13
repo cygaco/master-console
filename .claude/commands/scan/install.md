@@ -43,7 +43,7 @@ FAIL  <check name>  (<detail>)
 If `.claude/manifest.json` does not exist, the skill bails immediately with:
 
 ```
-not a MC-installed repo (no .claude/manifest.json) — run /warp:setup first
+not a MC-installed repo (no .claude/manifest.json) — run /mc:setup first
 ```
 
 …and exits 1. The skill does not cascade-fail every check; it makes one clear statement.
@@ -60,7 +60,7 @@ OK    at least one agent under agents/president
 
 ```bash
 $ cd /tmp && node /path/to/scripts/check/install.js
-not a MC-installed repo (no .claude/manifest.json) — run /warp:setup first
+not a MC-installed repo (no .claude/manifest.json) — run /mc:setup first
 ```
 
 (Exit 1.)

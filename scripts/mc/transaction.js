@@ -1,5 +1,5 @@
 /**
- * scripts/mc/transaction.js — /warp:update transactional apply wrapper.
+ * scripts/mc/transaction.js — /mc:update transactional apply wrapper.
  *
  * Three primary functions:
  *
@@ -217,7 +217,7 @@ function beginTransaction(opts) {
         .filter((g) => g.status === "red")
         .map((g) => g.name);
       const err = new Error(
-        `fast preflight subset disagreed with earlier pass: ${reds.join(", ")}. State changed between classify and apply — re-run /warp:update --to <v>.`,
+        `fast preflight subset disagreed with earlier pass: ${reds.join(", ")}. State changed between classify and apply — re-run /mc:update --to <v>.`,
       );
       err.code = "EFASTPREFLIGHTDRIFT";
       err.fastSubset = sub;
@@ -255,7 +255,7 @@ function beginTransaction(opts) {
   // Header
   const headerFile = path.join(txDir, "header.json");
   const header = {
-    kind: "warp:update",
+    kind: "mc:update",
     txId,
     fromVersion: opts.fromVersion,
     toVersion: opts.toVersion,

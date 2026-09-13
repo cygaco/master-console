@@ -50,7 +50,7 @@
  *   node scripts/mc/release-canonical.js --apply --sp-id my-release \
  *     --bundle-manifest <promoted-manifest> --bundle-root <promoted-root>
  *
- * Slash entry point: /warp:release (see .claude/commands/warp/release.md).
+ * Slash entry point: /mc:release (see .claude/commands/mc/release.md).
  */
 
 const fs = require("fs");

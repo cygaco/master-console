@@ -19,7 +19,7 @@
 - [ ] The test-suite system is a documented, manifest-registered MC system with a named enforcer (`scripts/testsuite/enforce.js`) — PARTIAL: enforcer + convention doc (`_docs/sprint/TESTSUITE.md`) exist; manifest registration as a first-class system still to confirm/record.
 - [ ] The enforcer refuses to close a canonical sprint without its suite AND is a no-op / opt-in in consumer repos — proven by `scripts/mc/test-install-matrix.js` in BOTH repo roles — PARTIAL: `regressionSeedGate()` is wired into the sprint-close chokepoint and fails closed / role-aware; both-role install-matrix proof not yet recorded here.
 - [ ] The baseline regression seed covers every recurring bug class, all green — PARTIAL: 28-class registry on disk; full-green run not yet evidenced in this epic.
-- [ ] Each feature sprint ships its exhaustive suite (hook-overhaul carries explicit before/after numbers) — NOT STARTED: the `_planning`/diff/hook-overhaul suites are the remaining batch (`/warp:diff` shipped 2026-05-29 with 24 unit tests; the rest pending).
+- [ ] Each feature sprint ships its exhaustive suite (hook-overhaul carries explicit before/after numbers) — NOT STARTED: the `_planning`/diff/hook-overhaul suites are the remaining batch (`/mc:diff` shipped 2026-05-29 with 24 unit tests; the rest pending).
 - [ ] The per-sprint convention is documented so it binds every future sprint — PARTIAL: `_docs/sprint/TESTSUITE.md` exists; binding-on-every-future-sprint enforcement to confirm.
 
 ## Related definitions
@@ -32,7 +32,7 @@
 <!-- Link each sprint tracker in /trackers/sprints/ -->
 - SP-20260528-002 — Active/Planned — test-suite foundation + planning (shipped the enforcer + 28-class regression seed + the sprint-close `regressionSeedGate()` half; commit `4bfb0ac`).
 - `_planning` seed-zone sprint — Planned — ship `_planning/` as a seeded-with-provenance seed-zone, with its exhaustive suite.
-- MC↔product diff sprint — Planned — `/warp:diff` engine (`scripts/mc/diff.js`, shipped 2026-05-29 with 24 unit tests) deepened, with its exhaustive suite.
+- MC↔product diff sprint — Planned — `/mc:diff` engine (`scripts/mc/diff.js`, shipped 2026-05-29 with 24 unit tests) deepened, with its exhaustive suite.
 - Hook-system overhaul sprint — Planned — hook-system overhaul carrying its exhaustive suite + before/after numbers.
 
 ## Dependencies
@@ -81,7 +81,7 @@
 <!-- §26 — concrete enough that another agent can resume/verify without memory -->
 ### 2026-06-06 — Test-suite foundation exists on disk and gates sprint close
 - Evidence type: Existence confirmation
-- Detail/location: `scripts/testsuite/enforce.js` (enforcer); `_requirements/07-testing/recurring-bug-classes.json` (28 classes — `node -e` count); `scripts/sprint/release.js` `regressionSeedGate()` @line 98, called from `cmdPrepare()` @line 159, both exported; `_docs/sprint/TESTSUITE.md` (convention); `scripts/mc/test-install-matrix.js` (both-role install proof harness); `scripts/mc/diff.js#computeDiff` (`/warp:diff`, shipped 2026-05-29).
+- Detail/location: `scripts/testsuite/enforce.js` (enforcer); `_requirements/07-testing/recurring-bug-classes.json` (28 classes — `node -e` count); `scripts/sprint/release.js` `regressionSeedGate()` @line 98, called from `cmdPrepare()` @line 159, both exported; `_docs/sprint/TESTSUITE.md` (convention); `scripts/mc/test-install-matrix.js` (both-role install proof harness); `scripts/mc/diff.js#computeDiff` (`/mc:diff`, shipped 2026-05-29).
 - Verified by: President Agent (via systems builder) · Supports: DoD items 1, 2, 3, 4 (foundation half)
 - Remaining uncertainty: full-green seed run, both-role install-matrix proof, and the per-sprint feature suites are not yet evidenced here; the registry holds 28 classes vs the "26" in the ROADMAP narrative (open question).
 
@@ -99,7 +99,7 @@
 | Sprint-close gate `regressionSeedGate()` | Yes | Verified Wired | `scripts/sprint/release.js` → `cmdPrepare` (chokepoint for `/sprint:full` + `/sprint:release`) | `grep -n regressionSeedGate` → @98 def, @159 call, @851 export | 2026-06-06 | President Agent |
 | Convention doc | Yes | Verified Exists | `_docs/sprint/TESTSUITE.md` | `ls _docs/sprint/TESTSUITE.md` | 2026-06-06 | President Agent |
 | Both-role install-matrix proof harness | Yes | Verified Exists | `scripts/mc/test-install-matrix.js` | `ls scripts/mc/test-install-matrix.js` | 2026-06-06 | President Agent |
-| `/warp:diff` engine | Yes | Verified Exists | `scripts/mc/diff.js#computeDiff` | `ls scripts/mc/diff.js` (shipped 2026-05-29, 24 unit tests) | 2026-06-06 | President Agent |
+| `/mc:diff` engine | Yes | Verified Exists | `scripts/mc/diff.js#computeDiff` | `ls scripts/mc/diff.js` (shipped 2026-05-29, 24 unit tests) | 2026-06-06 | President Agent |
 | `_planning/` seed-zone + per-sprint feature suites | Yes | Missing But Required | to be built (`_planning/` + diff/hook-overhaul suites) | ROADMAP `[open] _planning/` + batch listing | 2026-06-06 | President Agent |
 | Focus/centering mechanism | Yes | Missing But Required | not yet built | none (remaining deliverable) | 2026-06-06 | President Agent |
 

@@ -1,10 +1,10 @@
 ---
-description: Run /warp:update across every registered portfolio product sequentially. No fail-fast — failures captured in the final summary.
+description: Run /mc:update across every registered portfolio product sequentially. No fail-fast — failures captured in the final summary.
 ---
 
 # /portfolio:sync — Portfolio-Wide MC Update
 
-Iterate the portfolio registry and run `/warp:update` against each product. Sequential (not parallel) to avoid gh rate-limit risk per the Plan Contract.
+Iterate the portfolio registry and run `/mc:update` against each product. Sequential (not parallel) to avoid gh rate-limit risk per the Plan Contract.
 
 ## Usage
 

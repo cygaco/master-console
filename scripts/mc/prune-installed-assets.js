@@ -2,7 +2,7 @@
 /**
  * prune-installed-assets.js — remove framework-installed.json#assets entries
  * whose dest is missing on disk. Run after cleanup of stale migration dirs
- * or other intentional file removals before /warp:update preflight.
+ * or other intentional file removals before /mc:update preflight.
  *
  * Usage:
  *   node scripts/mc/prune-installed-assets.js --target <path>

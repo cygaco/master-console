@@ -11,4 +11,4 @@ repo's default integration branch.
 Run **`/commit:land`** instead — it is the canonical name. This alias forwards there and
 will be removed at `mc@1.0.0`.
 
-(Matches the `/warp:sync` → `/warp:update` deprecation-alias precedent.)
+(Matches the `/mc:sync` → `/mc:update` deprecation-alias precedent.)

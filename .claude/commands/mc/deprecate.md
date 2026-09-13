@@ -3,7 +3,7 @@ description: "Create a guarded MC deprecation proposal for an agent, skill, hook
 user-invocable: true
 ---
 
-# /warp:deprecate
+# /mc:deprecate
 
 Create a deprecation proposal that follows the Phase 6 removal policy. This command does not delete files.
 

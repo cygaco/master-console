@@ -703,7 +703,7 @@
         },
         {
           "id": "skill-scan-mc-install-baseline",
-          "name": "Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /warp:update may proceed.",
+          "name": "Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /mc:update may proceed.",
           "status": "untested",
           "files": [
             ".claude/commands/scan/mc-install-baseline.md"
@@ -818,7 +818,7 @@
           "name": "Diff canonical MC against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.",
           "status": "untested",
           "files": [
-            ".claude/commands/warp/diff.md"
+            ".claude/commands/mc/diff.md"
           ]
         },
         {
@@ -826,7 +826,7 @@
           "name": "Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes",
           "status": "untested",
           "files": [
-            ".claude/commands/warp/health.md"
+            ".claude/commands/mc/health.md"
           ]
         },
         {
@@ -834,7 +834,7 @@
           "name": "Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.",
           "status": "untested",
           "files": [
-            ".claude/commands/warp/reconcile.md"
+            ".claude/commands/mc/reconcile.md"
           ]
         }
       ]

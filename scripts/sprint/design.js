@@ -249,7 +249,7 @@ function scaffold(args) {
     process.stderr.write(
       `sprint requirements templates missing at ${tmplRoot} — the design ` +
         `phase cannot scaffold a requirements bundle (no PRD / acceptance ` +
-        `criteria / stories). Run /warp:update to restore ` +
+        `criteria / stories). Run /mc:update to restore ` +
         `_mc/templates/sprint/requirements/, then re-run /sprint:design.\n`,
     );
     return 1;
@@ -364,7 +364,7 @@ function scaffold(args) {
     process.stderr.write(
       `design phase wrote 0 of ${expected} requirement documents — all ` +
         `templates missing under ${path.join(SPRINT.templates, "requirements")}. ` +
-        `Run /warp:update to restore the sprint templates, then re-run.\n`,
+        `Run /mc:update to restore the sprint templates, then re-run.\n`,
     );
     return 1;
   }

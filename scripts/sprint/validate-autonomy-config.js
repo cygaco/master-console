@@ -86,7 +86,7 @@ function main() {
       `autonomy path key(s) not registered in .claude/paths.json: ` +
         `${missingKeys.join(", ")}. The sprint-full subsystem cannot resolve ` +
         `its config. Run \`node scripts/paths/build.js\` to regenerate the ` +
-        `registry, then re-run /warp:health.\n`,
+        `registry, then re-run /mc:health.\n`,
     );
     return 1;
   }

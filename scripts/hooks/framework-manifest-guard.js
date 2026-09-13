@@ -292,7 +292,7 @@ process.stdin.on("end", () => {
           `Affected files (${stagedTracked.length}):`,
           `  - ${list}${extra}`,
           "",
-          "Regenerate the manifest before pushing so /warp:update consumers",
+          "Regenerate the manifest before pushing so /mc:update consumers",
           "stay honest:",
           "  node scripts/generate-framework-manifest.js",
           "",

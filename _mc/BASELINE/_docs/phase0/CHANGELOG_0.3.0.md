@@ -17,15 +17,15 @@ upstream propagation plumbing — no new build features.
   zero-byte deaths are persisted to `dispatch-deaths.jsonl`. Eager
   dead-PID pruning runs at session-start and from
   `node scripts/dispatch/prune-dead-locks.js`.
-- **`/warp:flag` + `/warp:promote-flags`** — repo-local
+- **`/mc:flag` + `/warp:promote-flags`** — repo-local
   `mc-to-update.md` ledger plus a drain engine. Safe in product
   installs and the canonical MC clone.
 - **Provider health** — classification helper distinguishes `ok`,
   `cli_missing`, `auth_missing`, `auth_source_mismatch`,
   `model_not_found`, `quota_exhausted`, `free_tier_limit_zero`,
   `stale_cli_registry`, `trusted_directory_required`,
-  `provider_timeout`, `unknown_error`. `/warp:health` and
-  `/warp:setup` consume it.
+  `provider_timeout`, `unknown_error`. `/mc:health` and
+  `/mc:setup` consume it.
 - **Gemini hardening** — opt-in `--skip-trust` via
   `WARPOS_GEMINI_TRUST_BYPASS=1`. Smart-context emits a one-shot
   warning when `GEMINI_API_KEY` is set AND Gemini settings declare
@@ -67,7 +67,7 @@ upstream propagation plumbing — no new build features.
 - `scripts/test-manifest-guard-product.js`
 - `scripts/test-dispatch-agent-resolution.js`
 - `scripts/test-requirement-format-guard.js`
-- `.claude/commands/warp/flag.md`
+- `.claude/commands/mc/flag.md`
 - `.claude/commands/warp/promote-flags.md`
 - `.claude/project/reference/agent-dispatch-guide.md`
 - `.claude/agents/00-alex/.system/policy/provider-fallback.json`
@@ -94,8 +94,8 @@ upstream propagation plumbing — no new build features.
 - `scripts/path-lint.js` and `scripts/paths/gate.js` — `WARPOS_ROADMAP.md`
 - `.claude/agents/00-alex/gamma.md` — dispatch-guide read directive
 - `.claude/agents/00-alex/delta.md` — dispatch-guide read directive
-- `.claude/commands/warp/health.md` — new sections 11 (provider) + 12 (locks)
-- `.claude/commands/warp/setup.md` — Phase 2.5 (dispatch + provider sanity)
+- `.claude/commands/mc/health.md` — new sections 11 (provider) + 12 (locks)
+- `.claude/commands/mc/setup.md` — Phase 2.5 (dispatch + provider sanity)
 - `.claude/commands/mode/adhoc.md` — lifecycle guardrails
 - `ROADMAP.md` — clean product scaffold (framework backlog moved to WARPOS_ROADMAP.md)
 - `_requirements/09-integrations/PROVIDER/03-google-gemini.md` — known field issues + trust + auth-source

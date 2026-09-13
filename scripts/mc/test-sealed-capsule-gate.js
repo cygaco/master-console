@@ -233,7 +233,7 @@ function seal(o) {
   }
 
   // The consumer's own bill-of-materials: .claude/framework-manifest.json is
-  // owner=generated and NOT in #assets, but scan:install (and /warp:update) require
+  // owner=generated and NOT in #assets, but scan:install (and /mc:update) require
   // it in a real install. The complete consumer installer copies it as an asset;
   // warp-setup's source-clone path skips it. Seal it explicitly so the payload is a
   // genuine consumer end-state (mirrors test-fresh-install-smoke.js). Missing it is

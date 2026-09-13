@@ -7,18 +7,18 @@ prompt. Each workstream below records: what already exists in the repo, what
 is missing, the proposed file-level scope, whether tests are required, and
 known primitive limits we cannot fix here.
 
-## A. /warp:flag and /warp:promote drain workflow
+## A. /mc:flag and /warp:promote drain workflow
 
 - `/warp:promote` exists at `.claude/commands/warp/promote.md` and the engine
   lives at `scripts/mc/promote.js`. **Its scope is source → canonical
   framework-file propagation**, not a flag-ledger drain. The two concerns
   share a name but not an implementation.
-- **No `/warp:flag` command** exists.
+- **No `/mc:flag` command** exists.
 - **No `mc-to-update.md` ledger convention** is documented anywhere in
   the repo. Recent issue logs reference flagged items but no ledger file.
 
 Scope:
-- New `.claude/commands/warp/flag.md` (skill doc).
+- New `.claude/commands/mc/flag.md` (skill doc).
 - New `scripts/mc/flag.js` (engine — append entries to repo-local
   `mc-to-update.md`).
 - Extend `.claude/commands/warp/promote.md` with a documented drain
@@ -75,7 +75,7 @@ Primitive limits: none.
   prompt_bytes, cmdline_checksum, dispatch_id, cwd.
 - Pruning is **lazy only** — happens inside `tryAcquireOnce`. There is
   **no eager prune at session-start** and no prune surfaced in
-  `/warp:health` or `/warp:setup`.
+  `/mc:health` or `/mc:setup`.
 - **No completion marker** is written after a dispatch.
 - **No silent-death log**. The dispatch wrapper captures stdout via
   `execSync` but never persists a death record for empty-output exits.
@@ -90,8 +90,8 @@ Scope:
   `.claude/runtime/dispatch-deaths.jsonl` on silent zero-byte death or
   abnormal exit. Capture stderr-bytes and the last stderr/stdout mtimes.
 - New `scripts/dispatch/prune-dead-locks.js` (eager prune; surface via
-  `/warp:health`).
-- Update `/warp:health` and `/warp:setup` skills to run the eager pruner.
+  `/mc:health`).
+- Update `/mc:health` and `/mc:setup` skills to run the eager pruner.
 
 Tests: extend `scripts/test-concurrency-lock.js` to assert lock metadata
 shape; new `scripts/test-dispatch-deaths.js` to assert death record on
@@ -131,7 +131,7 @@ Primitive limits: none.
 - Gemini CLI invocation is `gemini -m {model} -p` with `-o json` for JSON
   envelope. **No `--skip-trust` flag** is passed.
 - **No `GEMINI_API_KEY` vs OAuth-personal mismatch warning** anywhere.
-- `/warp:health` step 10 only reports "codex/gemini installed yes/no". No
+- `/mc:health` step 10 only reports "codex/gemini installed yes/no". No
   active probe.
 - Existing redteam→gemini 75KB prompt safety fallback proves the fallback
   pattern (`dispatch-agent.js` lines 162-183). No general provider-fallback
@@ -151,7 +151,7 @@ Scope:
   free_tier_limit_zero/stale_cli_registry/trusted_directory_required/
   provider_timeout/unknown_error states.
 - New `scripts/mc/provider-health-check.js` CLI invoked by
-  `/warp:health` and `/warp:setup`.
+  `/mc:health` and `/mc:setup`.
 - Update `providers.js` Gemini invocation to pass `--skip-trust` when the
   trusted-directory bypass is required (gated by env or detected from
   CLI error output).
@@ -164,7 +164,7 @@ Scope:
   `scripts/dispatch/catalog.js` to `_requirements/09-integrations/PROVIDER/03-google-gemini.md`.
 
 Tests: unit test for the classification helper; manual checklist for
-`/warp:health` output.
+`/mc:health` output.
 Primitive limits: actual provider response details depend on installed
 CLI versions; we cannot guarantee classification when the CLI changes its
 error vocabulary.

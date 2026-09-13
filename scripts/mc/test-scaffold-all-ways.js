@@ -11,7 +11,7 @@
  * release-gates.js retirement comment) with real installs.
  *
  *   Leg 1 — /portfolio:new              (scripts/portfolio/new-lib.js#createProductRepo)
- *   Leg 2 — manual /warp:setup          (scripts/warp-setup.js --yes) over a SEEDED
+ *   Leg 2 — manual /mc:setup          (scripts/warp-setup.js --yes) over a SEEDED
  *                                        pre-existing CLAUDE.md
  *   Leg 3 — shipped install.ps1         (REAL run, PowerShell required; fail-closed
  *                                        if PS is present but the run doesn't produce
@@ -375,7 +375,7 @@ function runLeg1({ sandboxRoot, timeoutMs }) {
   };
 }
 
-// ── Leg 2 — manual /warp:setup over a SEEDED pre-existing CLAUDE.md ─────────
+// ── Leg 2 — manual /mc:setup over a SEEDED pre-existing CLAUDE.md ─────────
 function runLeg2({ sandboxRoot, timeoutMs }) {
   const t0 = Date.now();
   const assertions = [];
@@ -399,7 +399,7 @@ function runLeg2({ sandboxRoot, timeoutMs }) {
       [path.join(REPO_ROOT, "scripts", "warp-setup.js"), sandboxDir, "--yes"],
       { encoding: "utf8", timeout: timeoutMs },
     );
-    assert("manual /warp:setup (--yes) exits 0", setup.status === 0, describeSpawnFailure(setup));
+    assert("manual /mc:setup (--yes) exits 0", setup.status === 0, describeSpawnFailure(setup));
 
     const mergedContent = fs.existsSync(claudeMdPath) ? fs.readFileSync(claudeMdPath, "utf8") : "";
     const canonicalClaudeMd = fs.readFileSync(path.join(REPO_ROOT, "CLAUDE.md"), "utf8");
@@ -454,7 +454,7 @@ function runLeg2({ sandboxRoot, timeoutMs }) {
       encoding: "utf8",
       timeout: timeoutMs,
     });
-    assert("scan:install GREEN after manual /warp:setup", scan.status === 0, describeSpawnFailure(scan));
+    assert("scan:install GREEN after manual /mc:setup", scan.status === 0, describeSpawnFailure(scan));
   } catch (e) {
     assert("leg2 ran without throwing", false, e.message);
   }
@@ -560,7 +560,7 @@ function runLeg3({ sandboxRoot, timeoutMs, findPs = findPowershellReal, runInsta
     assert("scan:install GREEN after shipped install.ps1", scan.status === 0, describeSpawnFailure(scan));
 
     // R4 — the load-bearing cross-check: install.ps1's tree must be
-    // PATH-SET-IDENTICAL to /warp:setup's tree (Leg 2), modulo the SAME
+    // PATH-SET-IDENTICAL to /mc:setup's tree (Leg 2), modulo the SAME
     // reviewed, named allowlist test-install-matrix.js already uses.
     if (leg2Dir && fs.existsSync(leg2Dir)) {
       // eslint-disable-next-line global-require
@@ -569,7 +569,7 @@ function runLeg3({ sandboxRoot, timeoutMs, findPs = findPowershellReal, runInsta
       const leg3List = treeFileList(sandboxDir);
       const parity = parityDiff(leg2List, leg3List);
       assert(
-        "both_path_parity: install.ps1 tree == manual /warp:setup tree (sorted relative paths, modulo the named allowlist)",
+        "both_path_parity: install.ps1 tree == manual /mc:setup tree (sorted relative paths, modulo the named allowlist)",
         parity.equal,
         `onlyInLeg2(${parity.onlyInA.length})=${parity.onlyInA.slice(0, 8).join(", ")} | onlyInLeg3(${parity.onlyInB.length})=${parity.onlyInB.slice(0, 8).join(", ")}`,
       );

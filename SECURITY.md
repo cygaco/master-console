@@ -14,7 +14,7 @@ This is a single-maintainer project. You will get an acknowledgement in the advi
 
 ## Supported versions
 
-Only the **latest release** receives security fixes. Releases are cut from `main` as capsules under `framework/releases/<version>/`; the current version is in `version.json` and `package.json`. Downstream installs upgrade with `/warp:update`.
+Only the **latest release** receives security fixes. Releases are cut from `main` as capsules under `framework/releases/<version>/`; the current version is in `version.json` and `package.json`. Downstream installs upgrade with `/mc:update`.
 
 ## What is in scope
 

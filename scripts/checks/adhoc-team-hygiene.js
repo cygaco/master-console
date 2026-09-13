@@ -12,7 +12,7 @@
 //
 // This check flags accretion + stale signatures per team — it does NOT mutate
 // anything (reconcile is /mode:adhoc's + scripts/teams/lifecycle.js's job; Alpha
-// wires this into /warp:health):
+// wires this into /mc:health):
 //   1. -N-suffixed member names    (e.g. "Beta (β)-2") — duplicate accretion [HARD]
 //   2. session drift               — a member's prompt references a session id
 //                                    that is NOT the team's current leadSessionId [HARD]

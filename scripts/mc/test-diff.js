@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/mc/test-diff.js — tests for the /warp:diff engine (#441).
+ * scripts/mc/test-diff.js — tests for the /mc:diff engine (#441).
  *
  * Builds two synthetic trees (a fake canonical + a fake product) under a temp
  * dir and asserts computeDiff classifies every divergence correctly. NEVER

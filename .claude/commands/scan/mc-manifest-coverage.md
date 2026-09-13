@@ -17,7 +17,7 @@ node scripts/mc/manifest/validate.js --strict
 ```
 
 Wires into:
-- `/warp:update --status` reports (lists `unmanifested` paths the operator should sweep)
+- `/mc:update --status` reports (lists `unmanifested` paths the operator should sweep)
 - Pre-release CI (refuses a capsule build with coverage gaps)
 - The recurring downstream-install bug class where the installer claimed completeness but missed asset directories — manifests now refuse the run if anything is unenumerated.
 

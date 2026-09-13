@@ -22,13 +22,13 @@
 ## Tasks
 - [ ] Leg A — migrate 5 skills + β judgement-model (TeamCreate→Agent-spawn directives).
 - [ ] Leg B — migrate 4 hooks' emitted directive strings (team-guard, session-start, lifecycle, install); logic + fail-open untouched.
-- [ ] Leg C — build `scripts/dispatch/reap-orphans.js` (PID-liveness, fail-open) + wire into session-start + /warp:health + named enforcer.
+- [ ] Leg C — build `scripts/dispatch/reap-orphans.js` (PID-liveness, fail-open) + wire into session-start + /mc:health + named enforcer.
 - [ ] Leg D — orchestration-doctrine doc (CLAUDE.md + dispatch-guide §9) + `scripts/checks/no-dead-team-tools.js` (+ .test.js) wired into /scan:full + migrate team_name tests.
 - [ ] Gauntlet — cross-provider GPT+Gemini on hook changes; qa on skills+docs; security on the reaper; telemetry gate.
 - [ ] Close — regen both manifests; reconcile epic/TRACKER/ROADMAP; merge to main.
 
 ## Files expected to change
-- `.claude/commands/mode/sprint.md`, `.claude/commands/mode/adhoc.md`, `.claude/commands/warp/health.md`, `.claude/commands/session/end.md`, `.claude/project/reference/sprint-workflow.md`, `.claude/agents/president/_system/beta/judgement-model.md`
+- `.claude/commands/mode/sprint.md`, `.claude/commands/mode/adhoc.md`, `.claude/commands/mc/health.md`, `.claude/commands/session/end.md`, `.claude/project/reference/sprint-workflow.md`, `.claude/agents/president/_system/beta/judgement-model.md`
 - `scripts/hooks/team-guard.js`, `scripts/hooks/session-start.js`, `scripts/teams/lifecycle.js`, `scripts/check/install.js`
 - `scripts/dispatch/reap-orphans.js` (new), `scripts/checks/no-dead-team-tools.js` (new) + `.test.js`
 - `CLAUDE.md`, `.claude/agents/_system/guides/agent-dispatch-guide.md`
@@ -50,7 +50,7 @@
 
 ## Wirings expected
 - `no-dead-team-tools.js` → /scan:full — regression enforcer must run in the scan set
-- `reap-orphans.js` → session-start eager-prune + /warp:health — reaper must run on session start + be visible in health
+- `reap-orphans.js` → session-start eager-prune + /mc:health — reaper must run on session start + be visible in health
 
 ## Wirings verified
 - None currently recorded.

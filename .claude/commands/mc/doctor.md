@@ -1,37 +1,37 @@
 ---
-description: "Unified MC diagnostic — runs every health check in one place. Like /warp:health but full-coverage."
+description: "Unified MC diagnostic — runs every health check in one place. Like /mc:health but full-coverage."
 user-invocable: true
 ---
 
-# /warp:doctor — Comprehensive MC diagnostic
+# /mc:doctor — Comprehensive MC diagnostic
 
 Phase 4F entry point. Aggregates every check that exists across the system into one report. Use this when:
 
-- After `/warp:update --apply` completes — verify the install is healthy.
-- Before `/warp:release` — confirm the source repo is green.
+- After `/mc:update --apply` completes — verify the install is healthy.
+- Before `/mc:release` — confirm the source repo is green.
 - After a long session — sweep for accumulated drift.
-- When `/warp:health` reports yellow and you want the deeper view.
+- When `/mc:health` reports yellow and you want the deeper view.
 
-## Difference from /warp:health
+## Difference from /mc:health
 
-- `/warp:health` = quick status (10s) — green/yellow/red per system, designed for "is anything broken?" triage.
-- `/warp:doctor` = full diagnostic (1-3 min) — runs every check + every gate + every fixture, surfaces every finding, classifies severity.
+- `/mc:health` = quick status (10s) — green/yellow/red per system, designed for "is anything broken?" triage.
+- `/mc:doctor` = full diagnostic (1-3 min) — runs every check + every gate + every fixture, surfaces every finding, classifies severity.
 
 ## Usage
 
 | Invocation | Behavior |
 |---|---|
-| `/warp:doctor` | Full diagnostic. Default. |
-| `/warp:doctor --quick` | Skip fixtures. ~30s. |
-| `/warp:doctor --gates-only` | Run only the release gates (use before `/warp:release`). |
-| `/warp:doctor --json` | Machine-readable output. |
-| `/warp:doctor --worktrees` | Also enumerate active worktrees + their dirty state. |
+| `/mc:doctor` | Full diagnostic. Default. |
+| `/mc:doctor --quick` | Skip fixtures. ~30s. |
+| `/mc:doctor --gates-only` | Run only the release gates (use before `/mc:release`). |
+| `/mc:doctor --json` | Machine-readable output. |
+| `/mc:doctor --worktrees` | Also enumerate active worktrees + their dirty state. |
 
 ## What runs
 
 In parallel where possible:
 
-1. **`/warp:health`** — install integrity, ownership, missing files.
+1. **`/mc:health`** — install integrity, ownership, missing files.
 2. **`/scan:references`** — broken cross-file links.
 3. **`/scan:requirements`** + `node scripts/requirements/gate.js` — spec drift.
 4. **`/paths:lint --strict`** — path coherence.
@@ -64,7 +64,7 @@ Fail = any red. Warn = any yellow without red. Pass = all green.
 
 ## Release gates (Phase 4H)
 
-When called as `/warp:doctor --gates-only`, runs only the 10 release gates:
+When called as `/mc:doctor --gates-only`, runs only the 10 release gates:
 
 1. Path Coherence — `node scripts/paths/gate.js`
 2. Framework Manifest — `node scripts/generate-framework-manifest.js --check`
@@ -77,7 +77,7 @@ When called as `/warp:doctor --gates-only`, runs only the 10 release gates:
 9. Runtime Leak Scan — `git ls-files | grep -E '\\.claude/runtime/|\\.claude/project/events/'` empty
 10. Version Consistency — `version.json` `version` matches `framework-manifest.json` `version` matches latest capsule's `release.json` `version`
 
-If any gate fails, `/warp:release` stops; the publish does not proceed.
+If any gate fails, `/mc:release` stops; the publish does not proceed.
 
 ## Failure recovery
 
@@ -85,6 +85,6 @@ The output for each red finding includes a fix hint. For framework-level fixes (
 
 ## See also
 
-- `/warp:health` — the lightweight check, designed to run frequently.
-- `/warp:release` — uses `/warp:doctor --gates-only` as its first step.
-- `/scan:full` — runs the project-level checks; `/warp:doctor` is the framework-level superset.
+- `/mc:health` — the lightweight check, designed to run frequently.
+- `/mc:release` — uses `/mc:doctor --gates-only` as its first step.
+- `/scan:full` — runs the project-level checks; `/mc:doctor` is the framework-level superset.

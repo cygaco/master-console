@@ -3,7 +3,7 @@
  * scan:mc-capsule-resolvable — preflight gate (F-1 mitigation).
  *
  * Verifies the capsule for `--to <version>` is resolvable from the target
- * project, walking the same lookup paths /warp:update#discoverCanonical
+ * project, walking the same lookup paths /mc:update#discoverCanonical
  * uses, in this order:
  *
  *   1. <target>/framework/releases/<v>/release.json          (self-update)
@@ -227,9 +227,9 @@ const remediation = [
   `capsule ${VERSION} not found in any searched location. Options:`,
   availableLines,
   `  1. Use one of the available versions above:`,
-  `       /warp:update --to <available-v> --apply`,
+  `       /mc:update --to <available-v> --apply`,
   `  2. Or point --source at a canonical clone explicitly:`,
-  `       /warp:update --to ${VERSION} --source /abs/path/to/MC --apply`,
+  `       /mc:update --to ${VERSION} --source /abs/path/to/MC --apply`,
   `  3. If the capsule was never built, build it in canonical:`,
   `       node scripts/mc/release-build.js ${VERSION}`,
 ].join("\n");

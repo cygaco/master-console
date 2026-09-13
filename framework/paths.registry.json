@@ -1106,7 +1106,7 @@
       "mutable": false,
       "introducedIn": "0.9.0",
       "docsToken": "paths.testInstallMatrix",
-      "_note": "Install fixture CI matrix runner — 5-scenario regression suite for /warp:setup + /warp:update. Sprint SP-20260524-001."
+      "_note": "Install fixture CI matrix runner — 5-scenario regression suite for /mc:setup + /mc:update. Sprint SP-20260524-001."
     },
     "contractsSchemas": {
       "path": "schemas/contracts",

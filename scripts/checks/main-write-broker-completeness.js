@@ -171,7 +171,7 @@ const ALLOWLIST = Object.freeze({
     reason:
       "Guidance doc describing turbo-close ff-merge + a push-to-main opt-in; not an executable call-site. Allowlisted; brokered-aware rewrite is a named follow-up.",
   },
-  ".claude/commands/warp/release.md": {
+  ".claude/commands/mc/release.md": {
     kind: "doc-prose",
     reason:
       "Guidance doc describing the release ceremony stages that release-canonical.js IMPLEMENTS. Allowlisted; once #1 is migrated its stage-9 description rewrite is a named follow-up.",

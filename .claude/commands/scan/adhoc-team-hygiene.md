@@ -19,4 +19,4 @@ Scans `~/.claude/teams/*/config.json` and flags:
 Both are the **W-21** accretion signature. Exits 1 when any team is flagged.
 **Reconcile via `SendMessage {type:"shutdown_request"}`, never by editing
 `config.json`** (that orphans a still-running in-process agent) — see `/mode:adhoc`
-Step 1.75 (reconcile-before-spawn). Surfaced in `/warp:health`.
+Step 1.75 (reconcile-before-spawn). Surfaced in `/mc:health`.

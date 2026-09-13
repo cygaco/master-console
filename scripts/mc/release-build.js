@@ -1,7 +1,7 @@
 /**
  * release-build.js — Build a release capsule for a given version.
  *
- * Phase 4E artifact (engine; the slash command /warp:release is a wrapper).
+ * Phase 4E artifact (engine; the slash command /mc:release is a wrapper).
  *
  * Usage:
  *   node scripts/mc/release-build.js 0.1.0          # build capsule for 0.1.0
@@ -262,7 +262,7 @@ const KNOWN_DANGLING_REFS = [
     reason: "(B) MC internal regression suite (scripts/testsuite/); canonical CI only, never shipped" },
   { skill: ".claude/commands/roadmap/prioritize.md", script: "scripts/testsuite/enforce.js",
     reason: "(B) MC internal regression-suite enforcer (scripts/testsuite/); canonical CI only, never shipped" },
-  { skill: ".claude/commands/warp/setup.md", script: "scripts/warp-setup.js",
+  { skill: ".claude/commands/mc/setup.md", script: "scripts/warp-setup.js",
     reason: "(B) canonical installer invoked from a product via ../MC/scripts/warp-setup.js; lives in the canonical clone, never shipped" },
 
   // ── (C) Consumer-eligible — backs a shipped consumer skill but NOT YET shipped (E3 audit will ship these) ──
@@ -468,7 +468,7 @@ function buildCapsule(version, opts) {
   // SP-20260524-002 / T-183 — Refuse to snapshot a stale manifest. Run
   // generate-framework-manifest.js --check before copying. A stale manifest
   // captured into the capsule would lie about what shipped, downstream
-  // /warp:update would fail to copy phantom files (the post-warp:promote
+  // /mc:update would fail to copy phantom files (the post-warp:promote
   // ghost-files class), and the only signal would be deep-buried in apply
   // failures days later. Bypass with --skip-manifest-check for emergency
   // re-builds when you've already verified manifest health by other means.
@@ -638,7 +638,7 @@ function buildCapsule(version, opts) {
     console.log(
       `Capsule ${version} verified: ${Object.keys(checksums).length} files, all checksums match.`,
     );
-    printHumanReport("warp:release", {
+    printHumanReport("mc:release", {
       verdict: "Capsule verified",
       whatChanged: "No files changed in --check mode.",
       why: "The existing release capsule checksum set matches current capsule contents.",
@@ -663,10 +663,10 @@ function buildCapsule(version, opts) {
   console.log(
     `Capsule ${version} built: ${Object.keys(checksums).length} files, checksums at ${path.relative(REPO_ROOT, checksumsFile)}`,
   );
-  printHumanReport("warp:release", {
+  printHumanReport("mc:release", {
     verdict: "Capsule built",
     whatChanged: `Updated manifest snapshot and checksums for ${version}.`,
-    why: "Release capsules give /warp:update a deterministic source manifest, migrations, and integrity checks.",
+    why: "Release capsules give /mc:update a deterministic source manifest, migrations, and integrity checks.",
     risksRemaining: "Release gates still need to pass before publishing.",
     whatWasRejected:
       "Migration paths outside migrations/ were rejected before checksums.",

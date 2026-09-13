@@ -79,4 +79,4 @@ The brand is Master Console; identifiers are still `mc` / `warp:*` / `MC_*` / `_
 
 ## Questions
 
-Open a [GitHub discussion or issue](https://github.com/cygaco/master-console/issues). Run `/warp:health` first — it usually names the fix.
+Open a [GitHub discussion or issue](https://github.com/cygaco/master-console/issues). Run `/mc:health` first — it usually names the fix.

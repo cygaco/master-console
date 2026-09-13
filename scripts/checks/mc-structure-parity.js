@@ -66,7 +66,7 @@ else {
   );
   for (const m of missing) console.error(`  - ${m}/`);
   console.error(
-    "\nFix: run /warp:update --apply to pull canonical's structure, or recreate the dirs by hand.",
+    "\nFix: run /mc:update --apply to pull canonical's structure, or recreate the dirs by hand.",
   );
 }
 process.exit(1);

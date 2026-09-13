@@ -11,7 +11,7 @@
 ## Context
 
 The D-4 standing standard demanded a REAL, BLOCKING release gate that runs the three shipped
-scaffold paths (`/portfolio:new`, manual `/warp:setup`, the shipped `install.ps1`) for real, instead
+scaffold paths (`/portfolio:new`, manual `/mc:setup`, the shipped `install.ps1`) for real, instead
 of the two pre-existing cosmetic gates that only asserted a fixture DIRECTORY exists
 (`fresh_install_fixture`, `customized_install_fixture` — `scripts/mc/release-gates.js`, never
 ran an install). A gate that shells real installers 3x is also a gate that can corrupt canonical if
@@ -67,12 +67,12 @@ wiring) — never a silent pass.
 | Gate | Verdict | Why |
 |---|---|---|
 | `fresh_install_fixture` | **RETIRED** | Was `fs.existsSync` on `fixtures/install-empty-next-app/` only — never ran an install. Subsumed by Leg 1 (`/portfolio:new`) + Leg 3 (shipped `install.ps1`), both real installs asserting real end-state. |
-| `customized_install_fixture` | **RETIRED** | Was `fs.existsSync` on `fixtures/update-from-0.0.0-customized-claude-md/` only — never touched a CLAUDE.md. Subsumed by Leg 2 (manual `/warp:setup` over a SEEDED pre-existing CLAUDE.md — real merge/survival/backup asserts). |
+| `customized_install_fixture` | **RETIRED** | Was `fs.existsSync` on `fixtures/update-from-0.0.0-customized-claude-md/` only — never touched a CLAUDE.md. Subsumed by Leg 2 (manual `/mc:setup` over a SEEDED pre-existing CLAUDE.md — real merge/survival/backup asserts). |
 | `update_fixture_from_previous` | **STAYS** | Not cosmetic — loads a real `framework-installed.json` fixture and runs the `update.js` classifier. UPGRADE domain (GATE-B / INC-3), not fresh-scaffold. Retiring it on adjacency to the other two would drop real coverage GATE-A does not provide. |
 
 ### R4 — parity-diff completeness
 
-Leg 3 (install.ps1) vs Leg 2 (manual `/warp:setup`) is a full-tree PATH-SET diff (not content), reusing
+Leg 3 (install.ps1) vs Leg 2 (manual `/mc:setup`) is a full-tree PATH-SET diff (not content), reusing
 `treeFileList`/`parityDiff`/`PARITY_ALLOWLIST` from `test-install-matrix.js` verbatim rather than
 re-deriving a second normalization set. That allowlist already enumerates + justifies each entry
 (timestamps live inside files, not the path set; `.claude/framework-installed.json` carries a
@@ -94,7 +94,7 @@ per-install id + hashes; `.claude/framework-manifest.json` is legitimately insta
   2. `install.ps1`'s Stage 1 asset-copy uses `Test-Path`/`Copy-Item` without `-LiteralPath`, so
      PowerShell wildcard-interprets bracket characters in asset paths (e.g. Next.js dynamic-route
      dirs like `[ref]`) and silently skips them ("Source missing... skipped") even though the file
-     exists — a real install.ps1-vs-`/warp:setup` divergence the R4 parity check catches for the
+     exists — a real install.ps1-vs-`/mc:setup` divergence the R4 parity check catches for the
      first time. This is EXACTLY the kind of real regression a wired-in real gate is supposed to
      surface (mirrors R6's "resolve what surfaces, don't dodge it" principle) — but fixing
      `install.ps1`/the manifest classifier is outside this unit's scope (`scripts/mc/

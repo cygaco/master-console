@@ -4,7 +4,7 @@
  *
  * SP-20260514-001 / T-20260514-077.
  *
- * Drives every load-bearing /warp:update invariant against the current
+ * Drives every load-bearing /mc:update invariant against the current
  * repo state. Exits non-zero on any failure. Intended to run before a
  * candidate MC release is tagged AND as a precommit smoke when any
  * file under scripts/mc/lib/ or scripts/checks/mc-*.js is

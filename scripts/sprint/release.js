@@ -75,7 +75,7 @@ function emitGate(kind, data) {
 // ── Sprint-close regression-seed gate (0.17.0 per-sprint enforcer) ─────
 // The named enforcer for the per-sprint test-suite convention
 // (_docs/sprint/TESTSUITE.md), applied at SPRINT CLOSE. Before this, the
-// regression-seed enforcer ran ONLY at /warp:release
+// regression-seed enforcer ran ONLY at /mc:release
 // (scripts/mc/release-gates.js) — so a sprint could close (mint a release
 // record) carrying a NEW regression in a covered class (the BC-15
 // aspirational-vs-enforced gap captured in commit 5870a0c).

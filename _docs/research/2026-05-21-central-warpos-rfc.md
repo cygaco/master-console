@@ -98,7 +98,7 @@ Real cost multiplier: `active_products × framework_change_frequency × install_
 
 Per codex stay-simple consult — pull this RFC forward if any of:
 
-1. **Updating MC across products regularly costs more than 30-60 minutes/week** — measure honestly via timing a few real `/warp:update` rounds.
+1. **Updating MC across products regularly costs more than 30-60 minutes/week** — measure honestly via timing a few real `/mc:update` rounds.
 2. **Bugs are repeatedly caused by version drift** between product installs — track via recurring-issues.jsonl entries tagged with version-drift signature.
 3. **The maintainer needs cross-product orchestration / reporting / shared memory** — observed not hypothetical (e.g., "I want to see all sprints across all products at once").
 4. **New-product setup remains painful AFTER install/update reliability work ships** (Now: Install & Release Integrity sprint complete) — measured by stopwatch.

@@ -162,7 +162,7 @@ ok("sha256 deterministic across two calls", s1 === s2);
 // pointer in PRODUCT mode (sourcePrefix=_mc). populate-source.js mirrors
 // exactly the dests its isFrameworkViewDest() accepts. If a `.claude/**` path
 // gets a `_mc/` source but is NOT accepted by isFrameworkViewDest, the
-// product-install source dangles (never mirrored → /warp:update is inert, or the
+// product-install source dangles (never mirrored → /mc:update is inert, or the
 // regenerated view is absent). This is the invariant both files' headers assert
 // "in lock-step" but nothing enforced — the exact gap that let the kernel/schemas
 // rules ship a `_mc/` pointer with no mirror (INC-2.5 / ED-249). A regression
@@ -243,7 +243,7 @@ process.stdout.write("G. RI-003 — canonical excludes the generated _mc view mi
 const canonRules = buildRules("framework");
 for (const rel of [
   "_mc/agents/president/beta.md",
-  "_mc/commands/warp/release.md",
+  "_mc/commands/mc/release.md",
   "_mc/project/reference/evolution.md",
   "_mc/kernel/role-binding.json",
   "_mc/schemas/workorder-min.schema.json",

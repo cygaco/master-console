@@ -184,7 +184,7 @@ Array of `{ check, severity, layer, file, message, autoFixable, suggestedFix }`.
 - **Before starting a build session** — `internal` + `seams`
 - **After structural renames** (files moved, skills renamed, agents refactored) — full run
 - **Weekly/on `/sleep:deep`** — `health` mode for drift
-- **When `/warp:health` shows yellow** on architecture items
+- **When `/mc:health` shows yellow** on architecture items
 
 ## Related
 

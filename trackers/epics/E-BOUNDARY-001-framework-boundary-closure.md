@@ -19,7 +19,7 @@
 - [ ] Private `mc-as-product` repo exists with the relocated specs + a first ROADMAP entry
 - [ ] `grep -rn "00-canonical\|jobzooka\|dreamteam\|aiweb\|companycam" .` in canonical returns hits only in ROADMAP archive references + version-history
 - [ ] `framework-purity-guard` rejects a synthetic `_requirements/00-canonical/foo.md` write attempt on canonical
-- [ ] A fresh `/warp:setup` of canonical into a new product writes zero product-titled paths
+- [ ] A fresh `/mc:setup` of canonical into a new product writes zero product-titled paths
 
 ## Related definitions
 <!-- Terms from ../../TRACKER.md §Definitions that govern this epic -->

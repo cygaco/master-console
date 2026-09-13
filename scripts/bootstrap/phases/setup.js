@@ -33,7 +33,7 @@ const { spawnSync } = require("child_process");
 const { scaffoldProductApp, createProductRepo } = require("../../portfolio/new-lib");
 
 // §3 platform targets. v1 every target scaffolds the web/PWA baseline (native
-// packaging is a follow-on epic + a /warp:flag); the target is RECORDED honestly.
+// packaging is a follow-on epic + a /mc:flag); the target is RECORDED honestly.
 const PLATFORMS = new Set(["android", "ios", "web", "desktop-pc", "desktop-mac"]);
 const DEFAULT_PLATFORM = "web";
 const NATIVE_PLATFORMS = new Set(["android", "ios", "desktop-pc", "desktop-mac"]);
@@ -218,7 +218,7 @@ async function run(ctx) {
       }
     }
     if (NATIVE_PLATFORMS.has(platform)) {
-      log(`note: --where ${platform} recorded; v1 scaffolds the web/PWA baseline. Native packaging is a follow-on epic (see /warp:flag native-scaffold).`);
+      log(`note: --where ${platform} recorded; v1 scaffolds the web/PWA baseline. Native packaging is a follow-on epic (see /mc:flag native-scaffold).`);
     }
   }
 
@@ -284,7 +284,7 @@ async function run(ctx) {
     return {
       ok: false,
       status: "failed",
-      message: `install incomplete or not a MC repo (/scan:install exit ${pf.code}) — refusing to proceed. Run /warp:setup (or fix the gaps) first.`,
+      message: `install incomplete or not a MC repo (/scan:install exit ${pf.code}) — refusing to proceed. Run /mc:setup (or fix the gaps) first.`,
       data: { exit: pf.code, intentFile, platform },
     };
   }

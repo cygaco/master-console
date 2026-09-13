@@ -39,4 +39,4 @@ Each deprecation must include:
 
 ## Command
 
-`/warp:deprecate <id>` writes a guarded deprecation proposal. The command is backed by `scripts/mc/deprecate.js`.
+`/mc:deprecate <id>` writes a guarded deprecation proposal. The command is backed by `scripts/mc/deprecate.js`.

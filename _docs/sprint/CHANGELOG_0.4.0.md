@@ -162,7 +162,7 @@ All `owner: runtime|project|framework` per their semantics. Added
 
 Downstream repos on 0.3.x updating to 0.4.0:
 
-1. Run `/warp:update --apply`. Framework sprint assets land.
+1. Run `/mc:update --apply`. Framework sprint assets land.
 2. Optional: `node scripts/sprint/init.js --project "<name>"` to opt
    in to the sprint workflow. This creates
    `.claude/project/sprint/` + `issues.md`.
@@ -170,7 +170,7 @@ Downstream repos on 0.3.x updating to 0.4.0:
    `paths.recurringIssuesFile`) continue to work unchanged.
 
 Opting out: stop running `/sprint:*` commands. Tracker files freeze;
-nothing else is affected. Re-pinning to 0.3.x via `/warp:update --to
+nothing else is affected. Re-pinning to 0.3.x via `/mc:update --to
 0.3.0` removes the sprint paths cleanly.
 
 ## Known gaps (intentional)

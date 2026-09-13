@@ -9,7 +9,7 @@
  * is never a clean pass).
  *
  * Closes the BC-15 aspirational-vs-enforced gap captured in commit 5870a0c:
- * the regression-seed enforcer existed only at /warp:release (release-gates.js)
+ * the regression-seed enforcer existed only at /mc:release (release-gates.js)
  * and not at sprint close. The gate now lives in release.js cmdPrepare — the
  * single chokepoint both /sprint:full (phase 4 calls `release.js prepare`) and
  * standalone /sprint:release pass through.

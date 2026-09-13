@@ -15,7 +15,7 @@
  *   - _mc/MANIFEST.json (SP-20260522-001) — the AUTHORITATIVE per-path
  *     OWNERSHIP declaration (owner=framework|generated|project|runtime). Built by
  *     scripts/mc/manifest/build.js. Validated by /scan:mc-manifest-coverage.
- *   - .claude/framework-manifest.json — what /warp:setup AND /warp:update actually
+ *   - .claude/framework-manifest.json — what /mc:setup AND /mc:update actually
  *     SHIP (assets[]). Built by scripts/generate-framework-manifest.js (ASSET_DIRS).
  * Nothing asserted the second covers the first. So a framework-owned path absent
  * from ASSET_DIRS shipped to NOBODY, silently, with green gates (the existing
@@ -103,7 +103,7 @@ const KNOWN_NOT_SHIPPED = [
   { prefix: "package.json", reason: "framework-dev metadata" },
   { prefix: "package-lock.json", reason: "framework-dev metadata" },
   { prefix: "README.md", reason: "framework-repo readme; consumers get their own scaffolded PROJECT.md/README" },
-  { prefix: "CLAUDE.md", reason: "merged separately by /warp:setup CLAUDE.md merge, not a manifest asset" },
+  { prefix: "CLAUDE.md", reason: "merged separately by /mc:setup CLAUDE.md merge, not a manifest asset" },
   { prefix: "version.json", reason: "shipped as version_file (separate manifest section), not an asset dir" },
 
   // ── Exhaustive dev-tooling allowlist (SP-20260525-024 follow-up; run-0160 curation) ──

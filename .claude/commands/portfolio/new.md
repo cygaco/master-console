@@ -26,7 +26,7 @@ Creates a fresh product repo as a sibling directory to MC on disk, installs the 
 1. Validates slug (IN-1 regex + reserved-name guard — exits 2 before any filesystem ops).
 2. Resolves sibling path: `path.resolve(<mcRoot>, '..', <slug>)`.
 3. Creates the directory, runs `git init`, copies scaffold templates from `_mc/templates/portfolio/`, makes an initial commit.
-4. Runs `/warp:setup` inside the new directory.
+4. Runs `/mc:setup` inside the new directory.
 5. Registers the slug via `scripts/portfolio/register.js`.
 6. If `--from-brief` given, moves the brief files in (the folded-in adopt step).
 7. **Scaffolds the app (S0.3, default on):** materializes the pinned Next.js+Tailwind v4+shadcn/ui+Radix+Lucide scaffold (`scripts/scaffold/app.js` → `_mc/templates/app-scaffold`) into the repo — a real component library + design tokens + security-header baseline + a smoke e2e. Skipped with `--no-scaffold`; `--install` also runs `npm install`. Fail-open (a scaffold error never invalidates the repo + warp install).
@@ -37,7 +37,7 @@ Creates a fresh product repo as a sibling directory to MC on disk, installs the 
 ## Output (default — local-only)
 
 ```
-scaffolding <slug> at <path>... running /warp:setup... done.
+scaffolding <slug> at <path>... running /mc:setup... done.
   scaffold: N file(s) created, M preserved
 
 Local repo ready — MC installed, app scaffolded, committed, no remote:
@@ -58,7 +58,7 @@ With `--github`, additionally creates + pushes the private remote and prints the
 |------|---------|
 | 0 | Success |
 | 2 | Validation failure (bad slug, reserved name) |
-| 4 | Filesystem error (path not writable, warp:setup failed) |
+| 4 | Filesystem error (path not writable, mc:setup failed) |
 
 ## Procedure
 

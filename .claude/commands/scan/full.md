@@ -343,17 +343,17 @@ Use whichever path is faster for the current session.
 - **First thing after `/clear` on a long-running branch** — catch drift accumulated across sessions
 - **After a structural change** (new system, renamed skill, moved directory) — cascade check
 - **Weekly / on `/sleep:deep`** — embedded as a growth-phase step
-- **When `/warp:health` shows multiple yellow items** — deep dive to classify them
+- **When `/mc:health` shows multiple yellow items** — deep dive to classify them
 
 ## Not for
 
 - **Per-edit validation** — hooks handle that (path-guard, memory-guard, edit-watcher)
 - **Single-feature checks** — use `/scan:requirements <feature>` directly
-- **Quick triage** — `/warp:health` is faster for a green/yellow/red rollup
+- **Quick triage** — `/mc:health` is faster for a green/yellow/red rollup
 
 ## Related
 
-- `/warp:health` — lightweight rollup (faster, less detail)
-- `/warp:doctor` — planned: `/warp:health` + `/scan:full` + deltas
+- `/mc:health` — lightweight rollup (faster, less detail)
+- `/mc:doctor` — planned: `/mc:health` + `/scan:full` + deltas
 - `/sleep:deep` Phase 2 — runs `/scan:full --fast` as part of cleanup
 - `/oneshot:preflight` — pre-agent-run subset (architecture + environment + requirements)

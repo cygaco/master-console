@@ -1,10 +1,10 @@
 /**
- * release-gates.js - release gates for /warp:release.
+ * release-gates.js - release gates for /mc:release.
  *
  * Phase 4H artifact. Wraps existing checks (paths, requirements, references,
  * hooks, framework-manifest, runtime-leak, version-consistency, and Phase 6
  * production-quality checks into a single
- * runner that /warp:release calls before publishing.
+ * runner that /mc:release calls before publishing.
  *
  * Exit codes:
  *   0 — all green
@@ -317,7 +317,7 @@ const GATES = [
       ok: true,
       severity: "manual",
       message:
-        "Reference integrity check requires the /scan:references slash skill (no headless equivalent yet) — run manually before /warp:release. Tracked separately, not auto-passed.",
+        "Reference integrity check requires the /scan:references slash skill (no headless equivalent yet) — run manually before /mc:release. Tracked separately, not auto-passed.",
     };
   }),
 
@@ -516,7 +516,7 @@ const GATES = [
   // `customized_install_fixture` asserted ONLY that
   // fixtures/update-from-0.0.0-customized-claude-md/ EXISTS as a directory —
   // cosmetic, never ran an install or touched a CLAUDE.md. SUBSUMED by
-  // GATE-A Leg 2 (manual /warp:setup over a SEEDED pre-existing CLAUDE.md,
+  // GATE-A Leg 2 (manual /mc:setup over a SEEDED pre-existing CLAUDE.md,
   // real merge), which asserts identity-merge, seeded-content survival, and a
   // pre-merge backup — the real behavior this fixture only gestured at.
 
@@ -658,7 +658,7 @@ const GATES = [
       return {
         ok: false,
         severity: "yellow",
-        message: `No release capsule for ${v.version} yet — run /warp:release ${v.version}.`,
+        message: `No release capsule for ${v.version} yet — run /mc:release ${v.version}.`,
       };
     }
     const c = JSON.parse(fs.readFileSync(capsule, "utf8"));
@@ -835,7 +835,7 @@ const GATES = [
   //     fixture DIRECTORY only, never ran an install. Subsumed by Leg 1
   //     (/portfolio:new) + Leg 3 (shipped install.ps1), both real installs.
   //   - `customized_install_fixture`  RETIRED — same class, directory-exists
-  //     only. Subsumed by Leg 2 (manual /warp:setup over a SEEDED pre-existing
+  //     only. Subsumed by Leg 2 (manual /mc:setup over a SEEDED pre-existing
   //     CLAUDE.md — real identity-merge + survival + backup asserts).
   //   - `update_fixture_from_previous` STAYED through INC-2 (not cosmetic like
   //     the two above — it ran the update.js classifier over a real fixture)

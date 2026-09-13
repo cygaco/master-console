@@ -90,7 +90,7 @@ existing team whose members carry a `-N` suffix (`Beta (β)-2`) or a stale
 Reuse any member that is live in the current session instead of re-spawning.
 **Cleanup = `shutdown_request`, NEVER edit `config.json`** — deleting a member
 entry orphans a still-running in-process agent (it stays addressable and
-reappears). This probe is also wired into `/warp:health`.
+reappears). This probe is also wired into `/mc:health`.
 
 ### Step 2: Create team and spawn teammates
 
@@ -98,7 +98,7 @@ reappears). This probe is also wired into `/warp:health`.
 experimental agent-teams flag (`env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) is being phased out
 and is **no longer required**. Teams are implicit + session-scoped: each teammate spawns via
 `Agent(run_in_background: true)` and `SendMessage` is built-in. Back-compat: older Claude Code
-builds may still use the flag — /warp:health Section 3.5 reports it as informational only.
+builds may still use the flag — /mc:health Section 3.5 reports it as informational only.
 
 **Concrete tool calls — execute these directly, do not wrap them in prompt-style language:**
 

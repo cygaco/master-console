@@ -5,7 +5,7 @@
  * Problem: install.ps1 / older update.js applies record installedHash over
  * LF byte content (Node fs.writeFileSync with \n). Git's autocrlf=true on
  * Windows checkout converts working-tree files LF -> CRLF afterward. Next
- * /warp:update sees current-sha != installedHash and classifies the file
+ * /mc:update sees current-sha != installedHash and classifies the file
  * MERGE_CONFLICT even though no human ever touched it.
  *
  * This script walks framework-installed.json#assets. For each asset:

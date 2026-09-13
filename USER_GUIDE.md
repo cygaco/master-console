@@ -10,8 +10,8 @@ If you've just installed, start at §1. If you want the mode summary, skip to §
 
 1. Install (see [README.md](README.md))
 2. Open Claude Code in your project
-3. Type `/warp:tour` — guided introduction
-4. Type `/warp:health` — verifies every system; reports green/yellow/red
+3. Type `/mc:tour` — guided introduction
+4. Type `/mc:health` — verifies every system; reports green/yellow/red
 5. Type `/scan:environment` — flags missing provider CLIs (codex for OpenAI, `agy` for Gemini/Antigravity)
 6. Type `/mode:solo` — stay solo for your first hour
 7. Fix anything red before doing real work
@@ -128,12 +128,12 @@ The core verbs:
 |---|---|
 | `/portfolio:list` | One-line summary table of every registered product. |
 | `/portfolio:status` | Per-product dashboard: MC version, last commit, dirty count, current sprint, GitHub remote. Parallel probes with 5s per-product timeout — one slow product never blocks the others. |
-| `/portfolio:new <slug>` | Scaffold a fresh sibling repo, copy templates, run `/warp:setup`, **auto-create a private GitHub repo** (`gh repo create --private --source=. --remote=origin --push`), and register it. One verb, end-to-end. |
+| `/portfolio:new <slug>` | Scaffold a fresh sibling repo, copy templates, run `/mc:setup`, **auto-create a private GitHub repo** (`gh repo create --private --source=. --remote=origin --push`), and register it. One verb, end-to-end. |
 | `/portfolio:adopt <slug>` | Same as `/portfolio:new` but seeded from an existing `_docs/briefs/<slug>/` or `_docs/clones/<slug>/`. Promotes a research deliverable into a real private product. |
 | `/portfolio:register <slug> <path>` | Register an existing repo that wasn't scaffolded by MC. |
 | `/portfolio:open <slug>` | Print the product's absolute path + a `cd … && claude` hint. With `--spawn`, opens a fresh Claude session in a new terminal window pinned to that repo. |
 | `/portfolio:dispatch <slug> /<skill> [args]` | Run any skill against another product's working tree without leaving MC. Spawns a fresh Claude subprocess with `CLAUDE_PROJECT_DIR` set to the target; the current session is never retargeted. |
-| `/portfolio:sync` | Run `/warp:update` across every registered product sequentially. No fail-fast — failures captured in the final summary. |
+| `/portfolio:sync` | Run `/mc:update` across every registered product sequentially. No fail-fast — failures captured in the final summary. |
 | `/portfolio:bootstrap`, `/portfolio:clone`, `/portfolio:import`, `/portfolio:ponder` | Pre-product research verbs (formerly `/product:*`). |
 
 **Private-by-default.** Every `/portfolio:new` and `/portfolio:adopt` invocation hardcodes `--private`; there is no `--public` path. The GitHub repo is created under your authenticated `gh` user. On gh auth failure, the local repo stays intact and you get a one-line copyable command to finish manually.
@@ -208,7 +208,7 @@ Six command families cover 90% of daily work.
 | `/sleep:deep` | Full 6-phase cycle (~15–30 min). NREM → cleanup → replay → REM dreaming → repair → growth. Surfaces unexpected connections, proposes improvements, runs `/scan:full --fast` as part of growth phase. |
 
 **When to run:**
-- `/sleep:quick` — end of each productive stretch, or when `/warp:health` flags memory bloat
+- `/sleep:quick` — end of each productive stretch, or when `/mc:health` flags memory bloat
 - `/sleep:deep` — once a day, when you're stepping away (not mid-flow)
 
 The sleep cycle isn't ceremony — it actively reshapes the memory that the next session will load. Skipping it = accumulating drift.
@@ -318,7 +318,7 @@ Never edit these by hand — `memory-guard` will block. Read them with the skill
 
 | Symptom | First move |
 |---|---|
-| `/warp:health` red anywhere | Fix before doing real work |
+| `/mc:health` red anywhere | Fix before doing real work |
 | Hook blocking a legit command | `/hooks:disable <name>` temporarily; file a `/hooks:friction` note |
 | Lost context after `/clear` | `/session:resume` |
 | Don't know what the agent did overnight | `/session:history` + read latest handoff |
@@ -337,7 +337,7 @@ Never edit these by hand — `memory-guard` will block. Read them with the skill
 - **Don't run team modes for solo tasks.** Agent overhead is real.
 - **Don't skip `/learn:deep` after a hard fix.** You'll repeat the debugging.
 - **Don't forget `/maps:all` after structural changes.** Stale maps mislead the next session.
-- **Don't ignore `/warp:health` yellow items.** They compound.
+- **Don't ignore `/mc:health` yellow items.** They compound.
 - **Don't edit `events.jsonl` / `learnings.jsonl` directly.** The guard will block; the system will drift.
 - **Don't run oneshot without specs.** It'll build confidently in the wrong direction.
 - **Don't skip preflight before oneshot.** Non-negotiable.

@@ -196,7 +196,7 @@ function buildDoc(registry) {
   lines.push("## Owner classification");
   lines.push("");
   lines.push(
-    "- **framework** — shipped by MC. `/warp:update` may regenerate or merge.",
+    "- **framework** — shipped by MC. `/mc:update` may regenerate or merge.",
   );
   lines.push(
     "- **generated** — produced by tooling. Do not hand-edit; regenerate from source.",
@@ -205,7 +205,7 @@ function buildDoc(registry) {
     "- **runtime** — written by sessions during normal operation. Excluded from publish.",
   );
   lines.push(
-    "- **project** — owned by the user/team. Never overwritten by `/warp:update`.",
+    "- **project** — owned by the user/team. Never overwritten by `/mc:update`.",
   );
   lines.push("");
   lines.push("## Mutability");

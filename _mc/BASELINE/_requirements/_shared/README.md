@@ -7,4 +7,4 @@ it.
 
 This directory is part of the structure-parity skeleton (`/scan:mc-structure-parity`
 REQUIRED_DIRS) and is scaffolded into every product by `scripts/mc/scaffold-core.js`
-on both fresh install and `/warp:update`.
+on both fresh install and `/mc:update`.

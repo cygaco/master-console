@@ -40,7 +40,7 @@ function readManifest() {
   if (!fs.existsSync(file)) {
     process.stderr.write(
       `manifest not found: ${file}\n` +
-        `  fix: run \`/warp:setup\` (creates .claude/manifest.json from project scan)\n` +
+        `  fix: run \`/mc:setup\` (creates .claude/manifest.json from project scan)\n` +
         `  or:  copy _mc/templates/manifest.template.json (if framework template exists)\n`,
     );
     process.exit(1);
@@ -50,7 +50,7 @@ function readManifest() {
   } catch (e) {
     process.stderr.write(
       `manifest is not valid JSON (${file}): ${e.message}\n` +
-        `  fix: restore from .claude/.mc-backup/ or re-run /warp:setup\n`,
+        `  fix: restore from .claude/.mc-backup/ or re-run /mc:setup\n`,
     );
     process.exit(1);
   }

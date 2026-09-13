@@ -78,7 +78,7 @@ const entries = [
         "Repo-creation automation — should /products:new run `gh repo create --private` (behind --create-remote flag) or always require explicit user execution?",
       category: "autonomy",
       answer:
-        "DECIDE (Class B with red-line override, conf 0.88). /products:new scaffolds local sibling + runs /warp:setup, then HALTS and prints one line: 'Run `gh repo create <slug> --private --source=. --remote=origin --push` to create the GitHub repo.' User runs the gh command; α never does. Not a limitation — correct scope boundary. Turbo does NOT override the 'Ask first' red line per P-030 + §Two-gate authority. NOTE: this is STRICTER than the Plan Contract's --create-remote flag pattern. /sprint:design must drop the flag and adopt surface-only semantics.",
+        "DECIDE (Class B with red-line override, conf 0.88). /products:new scaffolds local sibling + runs /mc:setup, then HALTS and prints one line: 'Run `gh repo create <slug> --private --source=. --remote=origin --push` to create the GitHub repo.' User runs the gh command; α never does. Not a limitation — correct scope boundary. Turbo does NOT override the 'Ask first' red line per P-030 + §Two-gate authority. NOTE: this is STRICTER than the Plan Contract's --create-remote flag pattern. /sprint:design must drop the flag and adopt surface-only semantics.",
       escalated: false,
       confidence: 0.88,
       overridden: null,

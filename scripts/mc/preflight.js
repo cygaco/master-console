@@ -1,5 +1,5 @@
 /**
- * scripts/mc/preflight.js — /warp:update preflight composer.
+ * scripts/mc/preflight.js — /mc:update preflight composer.
  *
  * Runs 10 gates in fail-fast order against the target install, producing
  * one structured aggregate report (IN-1). Emits TR-1 per-gate + 1 aggregate

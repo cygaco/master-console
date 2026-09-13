@@ -77,7 +77,7 @@ child env. `gcloud auth` works for Cloud Code paths. Key value is never logged.
 
 The catalog (`scripts/dispatch/catalog.js`) deliberately excludes this model. CLI will not offer it.
 
-## Known field issues (DISCOVERED-2026-05-11, tracked via /warp:flag)
+## Known field issues (DISCOVERED-2026-05-11, tracked via /mc:flag)
 
 - ~~`gemini-3.1-flash` and `gemini-3.1-flash-lite` return HTTP 404~~ **RESOLVED 2026-05-30**: all `gemini-3.1-*` ghost ids dropped from `scripts/dispatch/catalog.js` + `providers.js` + manifest + agent specs. Default redteam model is now `gemini-2.5-flash` (real, verified). `provider-health.js` still flags any re-introduced ghost via `status: model_not_found`.
 - Gemini CLI's bundled model registry (`models list`) lags the API. A `model_not_found` from `gemini -m <id> -p` does NOT necessarily mean the model is gone — try a CLI upgrade first.

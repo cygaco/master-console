@@ -3,7 +3,7 @@
 /**
  * scripts/portfolio/sync.js — /portfolio:sync (T-20260521-175).
  *
- * Portfolio-wide /warp:update. Iterates registry SEQUENTIALLY (Plan Contract
+ * Portfolio-wide /mc:update. Iterates registry SEQUENTIALLY (Plan Contract
  * non-blocking decision — avoids gh rate-limit risk), runs MC
  * scripts/mc/update.js inside each registered product's repo_path, and
  * emits an aggregate summary at the end.
@@ -25,7 +25,7 @@ const { spawn } = require("child_process");
 
 const { load } = require("./registry");
 
-const UPDATE_TIMEOUT_MS = 300000; // 5 min per product; /warp:update may pull tarballs
+const UPDATE_TIMEOUT_MS = 300000; // 5 min per product; /mc:update may pull tarballs
 
 function emitTrace(payload) {
   try {

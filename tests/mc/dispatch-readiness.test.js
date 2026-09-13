@@ -97,7 +97,7 @@ process.stdout.write("\n2. runtimeExclusionGate\n");
   const cleanManifest = {
     assets: {
       skill: [
-        { id: "skill.commands.warp.health.md", src: ".claude/commands/warp/health.md", owner: "framework" },
+        { id: "skill.commands.warp.health.md", src: ".claude/commands/mc/health.md", owner: "framework" },
         { id: "skill.commands.agents.test.md", src: ".claude/commands/agents/test.md", owner: "framework" },
       ],
       hook: [
@@ -113,7 +113,7 @@ process.stdout.write("\n2. runtimeExclusionGate\n");
   const runtimeManifest = {
     assets: {
       skill: [
-        { id: "skill.commands.warp.health.md", src: ".claude/commands/warp/health.md", owner: "framework" },
+        { id: "skill.commands.warp.health.md", src: ".claude/commands/mc/health.md", owner: "framework" },
       ],
       maps_baseline: [
         {
@@ -321,7 +321,7 @@ process.stdout.write("\n4. isExcluded agreement between E1 gate and generator\n"
 
   // Fixture set: paths that SHOULD NOT be excluded (normal framework assets)
   const shouldNotExclude = [
-    ".claude/commands/warp/health.md",
+    ".claude/commands/mc/health.md",
     "scripts/mc/provider-smoke.js",
     "scripts/hooks/session-start.js",
     ".claude/agents/00-alex/alpha.md",
@@ -422,7 +422,7 @@ process.stdout.write("\n6. Skill .md content assertions\n");
 
 {
   const healthMd = fs.readFileSync(
-    path.join(REPO_ROOT, ".claude", "commands", "warp", "health.md"),
+    path.join(REPO_ROOT, ".claude", "commands", "mc", "health.md"),
     "utf8",
   );
   check(

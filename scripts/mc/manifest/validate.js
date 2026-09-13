@@ -21,7 +21,7 @@
  *                         is set and != current sha256, the user has
  *                         locally edited a managed file. Flagged
  *                         `user_modified` (not necessarily wrong; surfaces
- *                         what /warp:update would overwrite).
+ *                         what /mc:update would overwrite).
  *
  * Deferred to follow-up:
  *   - owner=generated re-compile + diff (depends on the compiler scripts

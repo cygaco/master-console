@@ -4,7 +4,7 @@ description: Verify every framework-owned path under the consumer-essential root
 
 # /scan:mc-ship-coverage
 
-Asserts that every framework-owned path the consumer install needs is actually a shipped manifest asset — the enforcer behind the recurring "downstream is missing X" class (a framework script/skill exists in canonical but was never enumerated in `framework-manifest.json`, so `install.ps1` / `/warp:setup` never copies it). 2026-05-30 reconcile surfaced two live instances this gate now covers: `scripts/package.json` (module-scope insulation, B1) and `scripts/bootstrap/`+`scripts/canon/` backing scripts (dead-skill class, E3).
+Asserts that every framework-owned path the consumer install needs is actually a shipped manifest asset — the enforcer behind the recurring "downstream is missing X" class (a framework script/skill exists in canonical but was never enumerated in `framework-manifest.json`, so `install.ps1` / `/mc:setup` never copies it). 2026-05-30 reconcile surfaced two live instances this gate now covers: `scripts/package.json` (module-scope insulation, B1) and `scripts/bootstrap/`+`scripts/canon/` backing scripts (dead-skill class, E3).
 
 `status: green` — every consumer-essential framework-owned path is enumerated + shipped.
 `status: red` — a framework-owned path under a consumer-essential root is missing from the manifest; `remediation` names the path + the ASSET_DIRS/TOP_LEVEL entry to add in `scripts/generate-framework-manifest.js`.

@@ -20,7 +20,7 @@ node scripts/checks/mc-layer-diff.js --root <dir>   # scan another install
 
 Three sections (plus a glanceable count header):
 
-1. **PRODUCT LAYER** — `owner=framework` paths that are in the shipped manifest (reach consumer products via `/warp:setup` + `/warp:update`).
+1. **PRODUCT LAYER** — `owner=framework` paths that are in the shipped manifest (reach consumer products via `/mc:setup` + `/mc:update`).
 2. **DEV-TOOLING LAYER** — `owner=framework` paths NOT in the shipped manifest (framework-internal: tests, dev-only top-level scripts, one-off tooling, etc.).
 3. **SUMMARY** — counts (product · dev-tooling · total framework-owned).
 

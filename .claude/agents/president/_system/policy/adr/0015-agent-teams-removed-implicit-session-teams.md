@@ -45,7 +45,7 @@ strictly under it. The wrong-project-survives safety invariant is preserved — 
 matching name nor a matching member cwd is still NOT ours and is never kill-eligible.
 
 **3. The `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` flag is informational, not a gate.** `install.js` and
-`/warp:health` §3.5 report it as INFO (present = harmless legacy; absent = fine) — never a FAIL/RED.
+`/mc:health` §3.5 report it as INFO (present = harmless legacy; absent = fine) — never a FAIL/RED.
 
 **4. Orphaned dispatch subprocesses get a reaper.** `scripts/dispatch/reap-orphans.js` detects (and
 with `--apply` SIGTERM-terminates) a provider CLI orphaned when the harness reaps its `dispatch-*.js`
@@ -53,7 +53,7 @@ wrapper (the ED-039/RI-004 class — distinct from the lock-file cleanup `pruneD
 It is conservative-by-construction and fail-open: a process is reaped ONLY when its command line
 matches a MC dispatch signature AND its parent is dead/reparented AND it is older than ~20min AND
 it holds no fresh concurrency lock AND it is not the reaper's own tree; any ambiguity ⇒ skip. It runs
-report-only on session start and is surfaced in `/warp:health` §12.5.
+report-only on session start and is surfaced in `/mc:health` §12.5.
 
 **5. Named enforcer (per the policy-needs-an-enforcer rule).** `scripts/checks/no-dead-team-tools.js`
 (wired into `/scan:full`) fails on any new LIVE call to the REMOVED team tools as a directive in the
@@ -78,7 +78,7 @@ edit can't trade one dead tool-name for another. Fail-closed on runner error; pl
   blast radius on session-critical hooks for no gain.
 - **Auto-`--apply` the reaper on session start** — rejected: terminating processes silently on every
   session start is too aggressive for a privilege surface; report-only + a deliberate operator `--apply`
-  (or `/warp:health`) is the safe default. The reaper's conservative gates make a false-kill unlikely,
+  (or `/mc:health`) is the safe default. The reaper's conservative gates make a false-kill unlikely,
   but defense-in-depth keeps the kill explicit.
 
 ## Known limitations (documented by design — β rider 3)

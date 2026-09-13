@@ -17,7 +17,7 @@
  *     source is `_mc/BASELINE/<zone>`. This writer NEVER references the old,
  *     now-deleted framework templates location — only `_mc/`.
  *   - `framework_version` — the MC version that seeded the zone.
- *   - `seeded_by` — a "seeded by /warp:setup" note.
+ *   - `seeded_by` — a "seeded by /mc:setup" note.
  *
  * SIBLING TO populate-source.js (NOT merged into it): populate-source.js mirrors
  * the framework VIEW source into `_mc/` so regenerate.js does real work — a
@@ -147,7 +147,7 @@ function expectedMarker(zoneRel, version) {
     zone: zoneRel,
     seeded_from: `${BASELINE_PREFIX}/${zoneRel}`,
     framework_version: version,
-    seeded_by: "/warp:setup",
+    seeded_by: "/mc:setup",
     note:
       "Provenance for a MC seed zone — records the framework source this " +
       "skeleton was seeded from. Safe to edit or delete; MC will not " +

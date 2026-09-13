@@ -1,5 +1,5 @@
 ---
-description: Verify every migration listed in capsule release.json#migrations[] exists in the source tree before /warp:update may apply.
+description: Verify every migration listed in capsule release.json#migrations[] exists in the source tree before /mc:update may apply.
 ---
 
 # /scan:mc-migration-presence

@@ -1,6 +1,6 @@
 # Fixture: update-from-0.0.0-clean
 
-Phase 4G fixture for `/warp:update --dry-run --to 0.1.0`.
+Phase 4G fixture for `/mc:update --dry-run --to 0.1.0`.
 
 ## What it tests
 

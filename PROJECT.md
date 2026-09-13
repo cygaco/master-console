@@ -106,8 +106,8 @@ Before deleting a file referenced across the project: `grep` for the basename ac
 
 | Skill | What it does |
 |-------|--------------|
-| `/warp:health` | Verifies install; reports green/yellow/red per system |
-| `/warp:tour` | Guided introduction |
+| `/mc:health` | Verifies install; reports green/yellow/red per system |
+| `/mc:tour` | Guided introduction |
 | `/sprint:plan` | Front door for the sprint workflow |
 | `/fix:fast` / `/fix:deep` | Quick / framework-driven debugging |
 | `/session:handoff` | Generate rich handoff for the next session |

@@ -2249,10 +2249,10 @@
         "version-bump-gate"
       ],
       "blocks": [
-        "(block mode only, post-soft-rollout) git commit staging FRAMEWORK_PREFIXES files while version.json#version ALREADY has a minted capsule under framework/releases/<version>/ — exit 2; bump the version before more framework changes ship (else downstream /warp:update --to <version> gets a stale capsule)"
+        "(block mode only, post-soft-rollout) git commit staging FRAMEWORK_PREFIXES files while version.json#version ALREADY has a minted capsule under framework/releases/<version>/ — exit 2; bump the version before more framework changes ship (else downstream /mc:update --to <version> gets a stale capsule)"
       ],
       "warns": [
-        "(warn mode, default) same condition — stderr naming the staged framework files + the /warp:release fix, allow"
+        "(warn mode, default) same condition — stderr naming the staged framework files + the /mc:release fix, allow"
       ],
       "allows": [
         "no framework-prefix files staged",
@@ -2272,7 +2272,7 @@
       ],
       "file_size": 7695,
       "file_modified": "2026-06-08T20:28:50.013Z",
-      "note": "2026-05-20 audit: 28 new assets + 179 SHA drifts accumulated against the 0.8.0 label over 5 days because no enforcer surfaced it at write-time — downstream /warp:update --to 0.8.0 got a stale framework. Makes the version-bump-after-capsule requirement self-detecting. FRAMEWORK_PREFIXES canonical here since SP-20260522-001 retired the promote.js mirror."
+      "note": "2026-05-20 audit: 28 new assets + 179 SHA drifts accumulated against the 0.8.0 label over 5 days because no enforcer surfaced it at write-time — downstream /mc:update --to 0.8.0 got a stale framework. Makes the version-bump-after-capsule requirement self-detecting. FRAMEWORK_PREFIXES canonical here since SP-20260522-001 retired the promote.js mirror."
     },
     {
       "id": "worktree-preflight",

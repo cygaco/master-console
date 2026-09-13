@@ -63,7 +63,7 @@ downstream product work:
 
 ## Future primitive asks (to surface upstream)
 
-These belong in the `/warp:flag` ledger so the Phase 0 → Phase 1 → 1.0
+These belong in the `/mc:flag` ledger so the Phase 0 → Phase 1 → 1.0
 pipeline tracks them:
 
 - `TeamCreate --force-replace <name>` so refresh is a single primitive

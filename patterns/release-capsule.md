@@ -16,7 +16,7 @@ Ship MC changes as versioned release capsules with manifests, migrations, checks
 
 ## Example
 
-`/warp:release <version>` builds `framework/releases/<version>/` and verifies checksums with `scripts/mc/release-build.js`.
+`/mc:release <version>` builds `framework/releases/<version>/` and verifies checksums with `scripts/mc/release-build.js`.
 
 ## Failure Modes
 

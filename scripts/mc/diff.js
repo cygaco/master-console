@@ -2,7 +2,7 @@
 /**
  * scripts/mc/diff.js — canonical ↔ product divergence report (#441).
  *
- * The engine behind /warp:diff (and /portfolio:diff <slug>). Diffs THIS
+ * The engine behind /mc:diff (and /portfolio:diff <slug>). Diffs THIS
  * canonical MC checkout against an installed product repo and reports:
  *   1. version + staleness   — product installedVersion vs canonical version
  *   2. framework file drift   — framework-owned files whose on-disk content
@@ -268,17 +268,17 @@ if (require.main === module) {
 
   const resolved = resolveProductRoot(positional, explicitPath);
   if (resolved.error) {
-    process.stderr.write(`warp:diff: ${resolved.error}\n`);
+    process.stderr.write(`mc:diff: ${resolved.error}\n`);
     process.exit(2);
   }
   if (!fs.existsSync(resolved.root)) {
-    process.stderr.write(`warp:diff: product root does not exist: ${resolved.root}\n`);
+    process.stderr.write(`mc:diff: product root does not exist: ${resolved.root}\n`);
     process.exit(2);
   }
 
   const report = computeDiff(REPO_ROOT, resolved.root);
   if (!report.ok) {
-    process.stderr.write(`warp:diff: ${report.error}\n`);
+    process.stderr.write(`mc:diff: ${report.error}\n`);
     process.exit(2);
   }
 

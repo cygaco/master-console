@@ -31,6 +31,16 @@
  *               helper CALL that does not exist until T3; --apply does not invent one,
  *               and never performs the disallowed literal WARPOS_->MC_ env swap.
  *
+ *   --apply-skill-namespace   (T3 part 1c) the SHORT-form skill namespace the warpos rewrite never
+ *               matched (`warp:` is not "warpos"). ENUMERATED alternation only — never a bare prefix:
+ *               `warp:(check|deprecate|diff|doctor|flag|health|md|reconcile|release|setup|sync|tour|
+ *               uninstall|update)` -> `mc:$1` and `scan:warpos-<x>` -> `scan:mc-<x>`, plus the same
+ *               enumeration's path form `commands/warp/<skill>.md` -> `commands/mc/<skill>.md`, over
+ *               Class-1, non-write-protected files only (occurrence-pinned lines and CHANGELOG
+ *               historical lines stay verbatim); `git mv`s `.claude/commands/warp/<skill>.md` to
+ *               `.claude/commands/mc/<skill>.md`. Every other `warp:` token is untouched and reported
+ *               by --dry-run as a named residual. Refuses on any refused skill move. Idempotent.
+ *
  * Everything here is injectable-root (see run*({ root })) so tests exercise --apply
  * against a disposable temp fixture, never the live tree — the isolation the T1
  * ticket requires ("Do NOT run --apply. Do NOT rename or rewrite any existing tree file.").
@@ -96,14 +106,211 @@ function computeChangelogHistoricalLines(absPath) {
   return historicalChangelogLines(fs.readFileSync(absPath, "utf8"));
 }
 
+// ── skill-namespace rename (T3 part 1c — α Class-B ruling implementing R-2) ──
+// The warpos->mc rewrite never matched the SHORT-form skill namespace `warp:` (it is not "warpos").
+// Part 1c renames it with an ENUMERATED alternation only, never a bare `warp:` prefix: a retired or
+// never-renamed `warp:<other>` token stays verbatim and is reported as a named residual. ONE
+// enumeration drives the ledger's skill-namespace category, the dry-run skill-namespace counts and
+// --apply-skill-namespace, so the three cannot disagree.
+
+const SKILL_NAMESPACE_SKILLS = Object.freeze([
+  "check", "deprecate", "diff", "doctor", "flag", "health", "md",
+  "reconcile", "release", "setup", "sync", "tour", "uninstall", "update",
+]);
+const SKILL_ALT = SKILL_NAMESPACE_SKILLS.join("|");
+const SKILL_TOKEN_RE = new RegExp(`\\bwarp:(${SKILL_ALT})\\b`, "g");
+const SCAN_TOKEN_RE = /\bscan:warpos-([a-z-]+)\b/g;
+// Path form of the SAME enumeration: live code that reads a moved skill by path (a gate allowlist key,
+// the release builder's skill->script pairing, a test's content read) must follow the move instead of
+// silently reading the deprecated alias left at the legacy path.
+const SKILL_PATH_REF_RE = new RegExp(`\\bcommands/warp/(${SKILL_ALT})\\.md\\b`, "g");
+const SKILL_FILE_RE = new RegExp(`^\\.claude/commands/warp/(${SKILL_ALT})\\.md$`);
+const SKILL_HYPHEN_JOINED_RE = new RegExp(`\\bwarp:(${SKILL_ALT})-`, "g");
+const ANY_WARP_TOKEN_RE = /\bwarp:[A-Za-z][\w-]*/g;
+
+function countMatches(re, text) {
+  return (String(text).match(re) || []).length;
+}
+
+/** Enumerated token rewrite of ONE line: warp:<skill> -> mc:<skill>, scan:warpos-<x> -> scan:mc-<x>. */
+function rewriteSkillNamespaceTokens(lineText) {
+  return lineText.replace(SKILL_TOKEN_RE, "mc:$1").replace(SCAN_TOKEN_RE, "scan:mc-$1");
+}
+
+/** Enumerated path-reference rewrite of ONE line: commands/warp/<skill>.md -> commands/mc/<skill>.md. */
+function rewriteSkillPathRefs(lineText) {
+  return lineText.replace(SKILL_PATH_REF_RE, "commands/mc/$1.md");
+}
+
+/** .claude/commands/warp/<skill>.md -> .claude/commands/mc/<skill>.md for the enumerated skills; any other path unchanged. */
+function skillPathRename(relPath) {
+  const m = SKILL_FILE_RE.exec(relPath);
+  return m ? `.claude/commands/mc/${m[1]}.md` : relPath;
+}
+
+/** `warp:` tokens the enumeration does NOT change (the named residual), from a line's final text. */
+function residualWarpTokens(lineText) {
+  return (lineText.match(ANY_WARP_TOKEN_RE) || []).filter((tok) => rewriteSkillNamespaceTokens(tok) === tok);
+}
+
+/**
+ * One line's 1c decision. `file` is the tracked path, `effective` its post-move path (they differ only
+ * for a planned skill move). A line that would change but is occurrence-pinned or a CHANGELOG
+ * historical line stays verbatim.
+ */
+function skillNamespaceLineDecision(partition, file, effective, hist, lineText, lineNum) {
+  const after = rewriteSkillPathRefs(rewriteSkillNamespaceTokens(lineText));
+  if (after === lineText) return { after, verbatimReason: null };
+  if (partition.findOccurrencePin(file, lineText) || (effective !== file && partition.findOccurrencePin(effective, lineText))) {
+    return { after: lineText, verbatimReason: "occurrence-pin" };
+  }
+  if (hist && hist.has(lineNum)) return { after: lineText, verbatimReason: "changelog-historical" };
+  return { after, verbatimReason: null };
+}
+
+/** Plan part 1c over the tracked tree: skill path moves + per-file content rewrites + honest residual counts. */
+function planSkillNamespace({ root, partition, trackedFiles }) {
+  const tracked = trackedFiles || listTrackedFiles(root);
+  const trackedSet = new Set(tracked);
+
+  const pathMoves = [];
+  const refusedMoves = [];
+  const keptLegacyPaths = []; // Class-3/4 paths at a legacy skill name (e.g. the deprecated aliases): never moved
+  const moveTo = new Map();
+  for (const from of tracked) {
+    const to = skillPathRename(from);
+    if (to === from) continue;
+    const src = partition.classifyPath(from);
+    if (src.class === 3 || src.class === 4) {
+      keptLegacyPaths.push({ path: from, wouldBe: to, class: src.class, kind: src.kind });
+      continue;
+    }
+    if (src.class !== 1 || src.writeProtected) {
+      refusedMoves.push({ from, to, class: src.class, kind: src.kind, reason: "source-write-protected" });
+      continue;
+    }
+    const target = partition.classifyPath(to);
+    if (trackedSet.has(to) || fs.existsSync(path.join(root, to))) {
+      refusedMoves.push({ from, to, class: target.class, kind: target.kind, reason: "target-exists" });
+      continue;
+    }
+    if (target.writeProtected) {
+      refusedMoves.push({ from, to, class: target.class, kind: target.kind, reason: "target-write-protected" });
+      continue;
+    }
+    pathMoves.push({ from, to });
+    moveTo.set(from, to);
+  }
+
+  const counts = {
+    tokensRewritable: 0,
+    pathRefsRewritable: 0,
+    filesRewritable: 0,
+    verbatimLines: 0,
+    verbatimTokens: 0,
+    derivedViewTokens: 0,
+    keptNonClass1Tokens: 0,
+    hyphenJoined: 0,
+    otherWarpResidual: 0,
+  };
+  const fileRewrites = [];
+  const otherWarpResidual = {};
+  const otherWarpResidualByFile = {};
+  const derivedByView = {};
+  const keptByEntry = {};
+  const verbatimByReason = {};
+  const hyphenJoinedSamples = [];
+  const bump = (obj, key, n = 1) => {
+    obj[key] = (obj[key] || 0) + n;
+  };
+
+  for (const file of tracked) {
+    const abs = path.join(root, file);
+    if (looksBinary(abs)) continue;
+    let content;
+    try {
+      content = fs.readFileSync(abs, "utf8");
+    } catch {
+      continue;
+    }
+    if (!content.includes("warp:") && !content.includes("scan:warpos-") && !content.includes("commands/warp/")) continue;
+
+    const effective = moveTo.get(file) || file;
+    const cls = partition.classifyPath(effective);
+    const enumTokens = countMatches(SKILL_TOKEN_RE, content) + countMatches(SCAN_TOKEN_RE, content);
+    if (partition.isGeneratedView(effective) || (cls.class === 1 && cls.writeProtected)) {
+      if (enumTokens) {
+        counts.derivedViewTokens += enumTokens;
+        bump(derivedByView, effective, enumTokens);
+      }
+      continue;
+    }
+    if (cls.class !== 1) {
+      if (enumTokens) {
+        counts.keptNonClass1Tokens += enumTokens;
+        const label = `class-${cls.class} ${cls.entry ? cls.entry.pattern || cls.entry.path : cls.kind}`;
+        bump(keptByEntry, label, enumTokens);
+      }
+      continue;
+    }
+
+    const hist = effective === "CHANGELOG.md" ? historicalChangelogLines(content) : null;
+    let tokens = 0;
+    let pathRefs = 0;
+    content.split(/\r?\n/).forEach((lineText, idx) => {
+      const { after, verbatimReason } = skillNamespaceLineDecision(partition, file, effective, hist, lineText, idx + 1);
+      if (verbatimReason) {
+        counts.verbatimLines += 1;
+        counts.verbatimTokens += countMatches(SKILL_TOKEN_RE, lineText) + countMatches(SCAN_TOKEN_RE, lineText);
+        bump(verbatimByReason, verbatimReason);
+      } else if (after !== lineText) {
+        tokens += countMatches(SKILL_TOKEN_RE, lineText) + countMatches(SCAN_TOKEN_RE, lineText);
+        pathRefs += countMatches(SKILL_PATH_REF_RE, lineText);
+        const joined = countMatches(SKILL_HYPHEN_JOINED_RE, lineText);
+        if (joined) {
+          counts.hyphenJoined += joined;
+          if (hyphenJoinedSamples.length < 20) hyphenJoinedSamples.push(`${effective}:${idx + 1}: ${lineText.trim().slice(0, 140)}`);
+        }
+      }
+      for (const tok of residualWarpTokens(after)) {
+        counts.otherWarpResidual += 1;
+        bump(otherWarpResidual, tok);
+        bump(otherWarpResidualByFile, effective);
+      }
+    });
+    if (tokens || pathRefs) {
+      fileRewrites.push({ file, target: effective, tokens, pathRefs });
+      counts.tokensRewritable += tokens;
+      counts.pathRefsRewritable += pathRefs;
+    }
+  }
+  counts.filesRewritable = fileRewrites.length;
+
+  return {
+    enumeratedSkills: [...SKILL_NAMESPACE_SKILLS],
+    counts,
+    pathMoves,
+    refusedMoves,
+    keptLegacyPaths,
+    fileRewrites,
+    otherWarpResidual,
+    otherWarpResidualByFile,
+    derivedByView,
+    keptByEntry,
+    verbatimByReason,
+    hyphenJoinedSamples,
+  };
+}
+
 // ── occurrence categorization (rewrite-plan bucketing, not disposition) ─────
 
 function categorizeOccurrence(file, lineText) {
   if (file === "framework/paths.registry.json") return "paths-registry";
   if (/process\.env\.WARPOS_[A-Z0-9_]*/i.test(lineText)) return "env";
   if (/\bWARPOS_[A-Z0-9_]+\b/.test(lineText)) return "env";
-  if (/\bwarp:[a-zA-Z][\w-]*/.test(lineText)) return "skill-namespace";
-  if (/\bscan:warpos-[\w-]*/i.test(lineText)) return "skill-namespace";
+  // Ledger honesty (T3 part 1c): skill-namespace ONLY when the enumerated alternation actually changes the
+  // line. A bare `warp:<other>` token (retired / never renamed) is not a skill-namespace rewrite.
+  if (rewriteSkillNamespaceTokens(lineText) !== lineText) return "skill-namespace";
   if (/(^|[^a-zA-Z0-9_])(_warpos|\.warpos-backup|\.warpos)(\/|\b)/i.test(lineText)) return "dir";
   if (/\b[a-z][a-zA-Z0-9]*Warpos[a-zA-Z0-9]*\b/.test(lineText)) return "identifier";
   if (/\bWarpos[A-Z][a-zA-Z0-9]*\b/.test(lineText)) return "identifier";
@@ -366,6 +573,7 @@ function runDryRun({ root = REPO_ROOT } = {}) {
 
   const unclassifiedCount = built.unclassified.length;
   const underivedCount = built.underived.length;
+  const skillNs = planSkillNamespace({ root, partition });
 
   const plan = {
     generatedAt: new Date().toISOString(),
@@ -382,6 +590,7 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     dispositionCounts: built.dispositionCounts,
     unpinnedUnrewrittenUnderived: underivedCount,
     underivedOccurrences: built.underived.slice(0, 50),
+    skillNamespace: skillNs,
     openQuestions: partition.openQuestions,
     occurrenceLedgerPath: COMMITTED_LEDGER_REL,
     fullOccurrenceLedgerPath: FULL_LEDGER_REL,
@@ -416,6 +625,17 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(`  path renames planned: ${built.pathRenames.length} (${viewMoves} generated-view directory move(s))`);
   console.log(`  refusedRenames=${built.refusedRenames.length}`);
   console.log(`  keptHistoricalPaths=${built.keptHistoricalPaths.length}`);
+  const sc = skillNs.counts;
+  console.log(
+    `  skill-namespace (enumerated warp:/scan:warpos-): pathMoves=${skillNs.pathMoves.length} refusedSkillMoves=${skillNs.refusedMoves.length} ` +
+      `tokensRewritable=${sc.tokensRewritable} pathRefsRewritable=${sc.pathRefsRewritable} filesRewritable=${sc.filesRewritable} ` +
+      `verbatimTokens=${sc.verbatimTokens} derivedViewTokens=${sc.derivedViewTokens} keptNonClass1Tokens=${sc.keptNonClass1Tokens} ` +
+      `hyphenJoined=${sc.hyphenJoined} otherWarpResidual=${sc.otherWarpResidual}`
+  );
+  if (skillNs.refusedMoves.length > 0) {
+    console.error(`rename-mc --dry-run: ${skillNs.refusedMoves.length} refused skill move(s) — --apply-skill-namespace will refuse:`);
+    skillNs.refusedMoves.forEach((r) => console.error(`  - ${r.from} -> ${r.to} [${r.reason}]`));
+  }
   if (built.refusedRenames.length > 0) {
     // Not a dry-run exit condition (the plan is still written for inspection), but --apply refuses
     // on it and record-trust-exit item 4 asserts refusedRenames == 0.
@@ -525,16 +745,84 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
   return { renamed, filesRewritten, ok: true };
 }
 
+// ── --apply-skill-namespace (T3 part 1c) ────────────────────────────────────
+
+function runApplySkillNamespace({ root = REPO_ROOT, useGitMv = true } = {}) {
+  const partition = loadPartition({ forceReload: true });
+  const plan = planSkillNamespace({ root, partition });
+
+  if (plan.refusedMoves.length > 0) {
+    const first = plan.refusedMoves[0];
+    throw new Error(
+      `rename-mc --apply-skill-namespace refused: ${first.from} -> ${first.to} [${first.reason}]; ` +
+        `${plan.refusedMoves.length} skill move(s) refused`
+    );
+  }
+
+  let moved = 0;
+  for (const { from, to } of plan.pathMoves) {
+    const absFrom = path.join(root, from);
+    const absTo = path.join(root, to);
+    if (!fs.existsSync(absFrom) || fs.existsSync(absTo)) continue; // never clobber
+    fs.mkdirSync(path.dirname(absTo), { recursive: true });
+    if (useGitMv) {
+      const r = spawnSync("git", ["mv", from, to], { cwd: root, encoding: "utf8" });
+      if (r.status !== 0) fs.renameSync(absFrom, absTo); // fixture trees (no git mv target) fall back to a plain rename
+    } else {
+      fs.renameSync(absFrom, absTo);
+    }
+    moved += 1;
+  }
+
+  // Content: re-derive every line through the SAME decision the plan used; line endings preserved.
+  let filesRewritten = 0;
+  let tokensRewritten = 0;
+  let pathRefsRewritten = 0;
+  for (const { file, target } of plan.fileRewrites) {
+    const absTarget = path.join(root, target);
+    if (!fs.existsSync(absTarget)) continue;
+    const content = fs.readFileSync(absTarget, "utf8");
+    const hist = target === "CHANGELOG.md" ? historicalChangelogLines(content) : null;
+    const parts = content.split(/(\r?\n)/); // even indices = lines, odd = the original line endings
+    let changed = false;
+    for (let i = 0; i < parts.length; i += 2) {
+      const lineText = parts[i];
+      const { after, verbatimReason } = skillNamespaceLineDecision(partition, file, target, hist, lineText, i / 2 + 1);
+      if (verbatimReason || after === lineText) continue;
+      tokensRewritten += countMatches(SKILL_TOKEN_RE, lineText) + countMatches(SCAN_TOKEN_RE, lineText);
+      pathRefsRewritten += countMatches(SKILL_PATH_REF_RE, lineText);
+      parts[i] = after;
+      changed = true;
+    }
+    if (changed) {
+      fs.writeFileSync(absTarget, parts.join(""), "utf8");
+      filesRewritten += 1;
+    }
+  }
+
+  return { moved, filesRewritten, tokensRewritten, pathRefsRewritten, ok: true };
+}
+
 // ── CLI ──────────────────────────────────────────────────────────────────
 
 function main() {
   const args = process.argv.slice(2);
   const wantsApply = args.includes("--apply");
-  const wantsDryRun = args.includes("--dry-run") || !wantsApply;
+  const wantsSkillNamespace = args.includes("--apply-skill-namespace");
+  const modeCount = [wantsApply, args.includes("--dry-run"), wantsSkillNamespace].filter(Boolean).length;
+  const wantsDryRun = args.includes("--dry-run") || modeCount === 0;
 
-  if (wantsApply && args.includes("--dry-run")) {
-    console.error("rename-mc: pass exactly one of --dry-run / --apply");
+  if (modeCount > 1) {
+    console.error("rename-mc: pass exactly one of --dry-run / --apply / --apply-skill-namespace");
     process.exit(2);
+  }
+
+  if (wantsSkillNamespace) {
+    const r = runApplySkillNamespace({});
+    console.log(
+      `rename-mc --apply-skill-namespace: moved=${r.moved} filesRewritten=${r.filesRewritten} tokensRewritten=${r.tokensRewritten} pathRefsRewritten=${r.pathRefsRewritten}`
+    );
+    process.exit(0);
   }
 
   if (wantsApply) {
@@ -560,6 +848,13 @@ module.exports = {
   serializeCommittedLedger,
   runDryRun,
   runApply,
+  SKILL_NAMESPACE_SKILLS,
+  rewriteSkillNamespaceTokens,
+  rewriteSkillPathRefs,
+  skillPathRename,
+  residualWarpTokens,
+  planSkillNamespace,
+  runApplySkillNamespace,
   REPO_ROOT,
   COMMITTED_LEDGER_REL,
   FULL_LEDGER_REL,

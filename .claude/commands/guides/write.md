@@ -6,7 +6,7 @@ description: Author a launch guide into _guides/ — grounded in an external bra
 
 Write (or refine) a single guide under `_guides/` that helps a vibe-coder do the right thing at the right time on the path to a launched, paid product — and tag it with the **guide-anchor contract** so `/guides:integrate` can surface it at the correct bootstrap-pipeline spot.
 
-> `_guides/` is **`owner=framework`, shipped** (ADR-0005) + `/warp:update`-managed — these guides install into every product. Write for the end user (a non-expert founder), not for MC internals.
+> `_guides/` is **`owner=framework`, shipped** (ADR-0005) + `/mc:update`-managed — these guides install into every product. Write for the end user (a non-expert founder), not for MC internals.
 
 ## Input
 

@@ -205,7 +205,7 @@ check(
 );
 check(
   "renderHuman yellow: closing instruction present",
-  yellowOut.includes("Run `/warp:health`"),
+  yellowOut.includes("Run `/mc:health`"),
 );
 
 const redOut = smoke.renderHuman("red", [

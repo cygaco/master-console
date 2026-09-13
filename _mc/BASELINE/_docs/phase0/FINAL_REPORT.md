@@ -14,7 +14,7 @@ is a framework that:
 - blocks raw cross-provider CLI prompt invocations before they execute,
 - persists structured telemetry on every dispatch + a silent-death log,
 - prunes dead-PID concurrency locks eagerly,
-- carries a usable `/warp:flag` + `/warp:promote-flags` upstream flag
+- carries a usable `/mc:flag` + `/warp:promote-flags` upstream flag
   drain workflow,
 - classifies provider health into 11 actionable states,
 - warns clearly when Gemini auth configuration is ambiguous,
@@ -48,12 +48,12 @@ Phase 0 prompt's "inspect before changing" rule.
 "plan artifact before code" rule. Build order followed the prompt's
 priority list (B → C → A → E → D → G → H → F → J → I → K).
 
-## 5. /warp:flag behaviour
+## 5. /mc:flag behaviour
 
 `scripts/mc/flag.js` appends entries to
 `paths.mcFlagLedger` (default `mc-to-update.md`). Categories,
 statuses, source, description, optional canonical-SHA. Date headings.
-No network. Skill doc at `.claude/commands/warp/flag.md`. Smoke test at
+No network. Skill doc at `.claude/commands/mc/flag.md`. Smoke test at
 `scripts/test-warp-flag.js` (22 cases).
 
 ## 6. /warp:promote-flags drain behaviour
@@ -85,8 +85,8 @@ ahead of `merge-guard.js`. Test: `scripts/test-dispatch-route-guard.js`
 start_time, cwd, pid). Backward-compatible — legacy `<pid> <ts>`
 parses too. `pruneDeadLocks()` walks every provider dir, removes locks
 whose owning PID is dead. `scripts/dispatch/prune-dead-locks.js` is the
-CLI wrapper, invoked from session-start (cold start), `/warp:health`,
-and `/warp:setup`. `scripts/dispatch-agent.js` stamps a `dispatch_id`,
+CLI wrapper, invoked from session-start (cold start), `/mc:health`,
+and `/mc:setup`. `scripts/dispatch-agent.js` stamps a `dispatch_id`,
 appends a completion record to
 `paths.dispatchCompletionsFile`, and appends a death record to
 `paths.dispatchDeathsFile` on silent zero-byte exit.
@@ -110,7 +110,7 @@ block to `additionalContext` on every fresh cold start.
 `probeAll`. CLI presence check + Gemini auth-source mismatch detection
 + optional `--probe list` cheap reachability check that classifies
 errors into one of 11 states. `scripts/mc/provider-health-check.js`
-is the CLI used by `/warp:health` (step 11 new) and `/warp:setup` (new
+is the CLI used by `/mc:health` (step 11 new) and `/mc:setup` (new
 Phase 2.5). Test: `scripts/test-provider-health.js` (12 cases).
 
 ## 11. Gemini-specific changes
@@ -139,8 +139,8 @@ ready for Phase 1 to consume.
 
 ## 13. Fresh install / setup health behaviour
 
-`/warp:setup` Phase 2.5 (new) runs `prune-dead-locks.js` then
-`provider-health-check.js --summary`. `/warp:health` adds section 11
+`/mc:setup` Phase 2.5 (new) runs `prune-dead-locks.js` then
+`provider-health-check.js --summary`. `/mc:health` adds section 11
 (Provider Health) and section 12 (Dispatch Hygiene). Both are
 fail-open — they print suggestions, they don't block setup.
 
@@ -198,10 +198,10 @@ env `REQUIREMENT_GUARD_STRICT=1` or marker
 
 ## 18. Docs updated
 
-- `.claude/commands/warp/flag.md` (new)
+- `.claude/commands/mc/flag.md` (new)
 - `.claude/commands/warp/promote-flags.md` (new)
-- `.claude/commands/warp/health.md` (sections 11–12)
-- `.claude/commands/warp/setup.md` (Phase 2.5)
+- `.claude/commands/mc/health.md` (sections 11–12)
+- `.claude/commands/mc/setup.md` (Phase 2.5)
 - `.claude/commands/mode/adhoc.md` (steps 1.75, 2 directive, 6, limits)
 - `.claude/project/reference/agent-dispatch-guide.md` (new)
 - `_requirements/09-integrations/PROVIDER/03-google-gemini.md` (field
@@ -304,7 +304,7 @@ Proceed to **Sprint Workflow v0.1**. Phase 0 closed the safety,
 observability, and propagation gaps that would have made sprint
 infrastructure brittle:
 
-- `/warp:flag` is ready to capture sprint-time framework asks.
+- `/mc:flag` is ready to capture sprint-time framework asks.
 - `/warp:promote-flags` will drain those asks upstream.
 - The requirement-format-guard is ready for `/sprint:design` to lean on.
 - Dispatch is observable and bypass-resistant — sprint orchestrators

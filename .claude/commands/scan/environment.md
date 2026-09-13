@@ -204,11 +204,11 @@ Spawn an Explore agent. Focus: **not just "does it work?" but "is it good?"**
 - **First session of the day** — `ready` mode (fast)
 - **After system changes** (new hooks, renamed paths, updated manifest) — `ready` + affected audit sub-mode
 - **Weekly / `/sleep:deep`** — full `audit` for drift
-- **When `/warp:health` shows yellow** on environment items
+- **When `/mc:health` shows yellow** on environment items
 
 ## Related
 
-- `/warp:health` — higher-level green/yellow/red rollup (consumes this skill's output)
+- `/mc:health` — higher-level green/yellow/red rollup (consumes this skill's output)
 - `/scan:architecture` — verifies docs + agents (this verifies runtime)
 - `/hooks:test` — synthetic payload testing for every hook
 - `/maps:enforcements` — regenerate hook coverage map

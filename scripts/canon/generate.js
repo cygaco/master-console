@@ -311,7 +311,7 @@ function main() {
   }
   if (!fs.existsSync(TMPL_DIR)) {
     process.stderr.write(
-      `canon templates missing at ${TMPL_DIR} — run /warp:update.\n`,
+      `canon templates missing at ${TMPL_DIR} — run /mc:update.\n`,
     );
     return 1;
   }

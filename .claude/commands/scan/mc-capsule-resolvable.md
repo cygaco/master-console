@@ -1,12 +1,12 @@
 ---
-description: Verify the capsule for /warp:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest.mc.source, or framework-installed.json#source.
+description: Verify the capsule for /mc:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest.mc.source, or framework-installed.json#source.
 ---
 
 # /scan:mc-capsule-resolvable
 
 Preflight gate composed by `scripts/mc/preflight.js`. Closes failure-mode F-1 (capsule missing for requested `--to <version>`).
 
-Walks the same canonical-discovery lookup path as `/warp:update` itself, in order:
+Walks the same canonical-discovery lookup path as `/mc:update` itself, in order:
 
 1. `<REPO_ROOT>/framework/releases/<v>/release.json`
 2. `../MC/framework/releases/<v>/release.json`

@@ -1,7 +1,7 @@
 # MC.md — upstream framework gap register
 
 > The durable channel that carries **framework/tooling-layer gaps** to MC canonical so
-> they get fixed once, for everyone. Produced by `/warp:flag`; consumed by `/warp:reconcile`.
+> they get fixed once, for everyone. Produced by `/mc:flag`; consumed by `/mc:reconcile`.
 > MC sync is one-way (canonical → product); this register is how the *gap* travels upstream.
 >
 > Installed MC version: **0.14.0** (source: `.claude/framework-installed.json#installedVersion`).

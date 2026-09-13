@@ -18,7 +18,7 @@ The mechanism by which Alpha (the architect) consults Alex β (the judgment mode
 
 ## Capsule
 
-A versioned snapshot of MC shippable under `framework/releases/<X.Y.Z>/`. Each capsule carries `release.json`, a manifest snapshot, and the canonical source files needed for a downstream consumer to run `/warp:update --to X.Y.Z --apply`. A version bump in `version.json` without a corresponding capsule is a "hollow rung" — `/warp:update` will fail when downstream reaches for it.
+A versioned snapshot of MC shippable under `framework/releases/<X.Y.Z>/`. Each capsule carries `release.json`, a manifest snapshot, and the canonical source files needed for a downstream consumer to run `/mc:update --to X.Y.Z --apply`. A version bump in `version.json` without a corresponding capsule is a "hollow rung" — `/mc:update` will fail when downstream reaches for it.
 
 ## Contractless productization
 
@@ -42,7 +42,7 @@ The top-of-funnel Launch metrics: **Sign-Ups** (count), **Sign-Up rate** (visito
 
 ## Ledger discipline
 
-The rule that every sprint and every release writes a row to two canonical repo-root docs: `ROADMAP.md` (sprints, planned/in-flight/closed) and `RELEASES.md` (version bumps with capsules). The ledgers are auto-managed by `scripts/sprint/ledger.js` — manual edits remain valid but may be overwritten on the next `/sprint:*` or `/warp:release` invocation. Enforced by the policy "every policy needs a named enforcer" — see `CLAUDE.md#Policy & Enforcement Hygiene`.
+The rule that every sprint and every release writes a row to two canonical repo-root docs: `ROADMAP.md` (sprints, planned/in-flight/closed) and `RELEASES.md` (version bumps with capsules). The ledgers are auto-managed by `scripts/sprint/ledger.js` — manual edits remain valid but may be overwritten on the next `/sprint:*` or `/mc:release` invocation. Enforced by the policy "every policy needs a named enforcer" — see `CLAUDE.md#Policy & Enforcement Hygiene`.
 
 ## Organic growth
 

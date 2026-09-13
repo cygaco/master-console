@@ -145,7 +145,7 @@ function detectMode(root) {
   if (!hasClaude) {
     return {
       mode: "no-claude",
-      reason: "no .claude/ directory — run /warp:setup first",
+      reason: "no .claude/ directory — run /mc:setup first",
     };
   }
   return {

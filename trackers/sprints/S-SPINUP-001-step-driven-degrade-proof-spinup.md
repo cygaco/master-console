@@ -16,7 +16,7 @@
 ## Definition of Done
 - [x] §1 positional `<step>` subcommand (`setup|canon|roadmap|paint`) + folded phases; stable `--json` status; consumer dispatch contract documented + enforcer named.
 - [x] §2 `--research off`/`light` rejected non-zero; `--auto` degrade/skip removed; `canon-no-unfilled-tokens` wired as a non-opt-out fail-closed canon gate; raw input never in canon; `--allow-needs-input` audited single-field exception + `/enforcement:log` (ED-029).
-- [x] §3 `--where` accepted/threaded (brief + scaffold); web/PWA baseline for all; native-packaging epic (E-NATIVE-PACKAGING-001) + `/warp:flag` (MC.md WG-1).
+- [x] §3 `--where` accepted/threaded (brief + scaffold); web/PWA baseline for all; native-packaging epic (E-NATIVE-PACKAGING-001) + `/mc:flag` (MC.md WG-1).
 - [x] §4 `portfolio:new` → `create()/scaffold()` callables reused by `setup`; no duplicated logic (`new-lib.js`).
 - [x] §5 Milestone→Epic across the live layer; `scan:roadmap-trace` green (30/30).
 - [x] §6 `portfolio:spinup` forwards `<step>`+modifiers verbatim; no new portfolio sub-skills.

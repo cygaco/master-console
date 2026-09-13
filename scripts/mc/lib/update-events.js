@@ -1,5 +1,5 @@
 /**
- * scripts/mc/lib/update-events.js — TR-1..TR-6 emitter for /warp:update.
+ * scripts/mc/lib/update-events.js — TR-1..TR-6 emitter for /mc:update.
  *
  * Emits structured events to `paths.eventsFile` (resolved from
  * `.claude/paths.json` under CLAUDE_PROJECT_DIR or the supplied targetRoot,

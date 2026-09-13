@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/mc/test-status-cli.js — smoke tests for /warp:update --status.
+ * scripts/mc/test-status-cli.js — smoke tests for /mc:update --status.
  *
  * SP-20260522-005 / T-20260523-196. Verifies the --status branch in update.js:
  *   A. --status (human) emits manifest path + ownerCounts + findings table.

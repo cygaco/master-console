@@ -20,7 +20,7 @@
  *     truth; there's no separate `_mc/commands/foo.md` mirror in
  *     this repo. The manifest's source pointer is self-referential.
  *   - In an installed product, the framework source has been copied
- *     into `_mc/` by /warp:setup, so source != path and the
+ *     into `_mc/` by /mc:setup, so source != path and the
  *     regenerator does real work.
  *
  * Modes:

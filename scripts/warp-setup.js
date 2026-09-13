@@ -109,7 +109,7 @@ if (!fs.existsSync(TARGET)) {
 }
 
 // ── Backup existing config before installer touches anything ─────
-// /warp:uninstall reads this backup to restore the project's pre-install state.
+// /mc:uninstall reads this backup to restore the project's pre-install state.
 function backupExisting() {
   if (SKIP_BACKUP) return null;
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
@@ -146,7 +146,7 @@ function backupExisting() {
     backedUp++;
   }
   if (backedUp > 0) {
-    // write a marker for /warp:uninstall to find
+    // write a marker for /mc:uninstall to find
     fs.writeFileSync(
       path.join(backupRoot, "BACKUP_MANIFEST.json"),
       JSON.stringify(
@@ -163,7 +163,7 @@ function backupExisting() {
       "ok",
       `Backed up ${backedUp} pre-install file(s) to .mc-backup/${ts}/`,
     );
-    log("info", "/warp:uninstall restores from this backup.");
+    log("info", "/mc:uninstall restores from this backup.");
   }
   return backupRoot;
 }
@@ -365,7 +365,7 @@ async function runInterview() {
   interview.mainBranch = await ask(rl, "Main branch", mainBranchDefault);
   interview.mcSource = await ask(
     rl,
-    "MC repo URL (for /warp:sync, /warp:check)",
+    "MC repo URL (for /mc:sync, /mc:check)",
     mcSourceDefault,
   );
   rl.close();
@@ -934,7 +934,7 @@ if (!fs.existsSync(agentsMdTarget) && fs.existsSync(agentsMdSource)) {
 
 // ── Write framework-installed.json snapshot ─────────────
 // Phase 1D — schema v2 captures per-asset hash + mergeStrategy + owner so
-// /warp:update can do a real three-way merge later. Per-asset record:
+// /mc:update can do a real three-way merge later. Per-asset record:
 //   src, dest, installedHash (what we shipped), currentHashAtInstall (what
 //   the target had if we skipped due to existing), owner, mergeStrategy.
 // Adds: installedVersion, installedCommit (from MC source repo HEAD when
@@ -1045,7 +1045,7 @@ try {
 // FAST-FOLLOW (S-LC-10): this presence-only check is the natural hook-in point
 // for the T1/T2/T3 provider-tier readiness report
 // (scripts/mc/provider-tier-check.js). The read-only tier surface is already
-// wired into /warp:health (§11.6) and /scan:environment (E28.5). The DEEPER
+// wired into /mc:health (§11.6) and /scan:environment (E28.5). The DEEPER
 // install-flow wiring here — explain tiers → choose → save the preferred-tier
 // config → check-only-selected → remediate (install CLIs / add funding) — is
 // DEFERRED: those are confirm-class install/write actions (§14) that must gate
@@ -1150,7 +1150,7 @@ if (!SKIP_MANIFEST_CHECK) {
               coverageExitCode = 1;
               log("error", "--strict-manifest set — refusing install completion with findings");
             } else {
-              log("info", "Run with --strict-manifest to refuse install on findings. Or re-run /warp:setup --skip-manifest-check to silence.");
+              log("info", "Run with --strict-manifest to refuse install on findings. Or re-run /mc:setup --skip-manifest-check to silence.");
             }
           }
         } catch (e) {
@@ -1199,23 +1199,23 @@ console.log(
   `${BOX_MID}                                                                  ${BOX_MID}`,
 );
 console.log(
-  `${BOX_MID}  \x1b[2mEither way:\x1b[0m first prompt should be \x1b[1m/warp:health\x1b[0m              ${BOX_MID}`,
+  `${BOX_MID}  \x1b[2mEither way:\x1b[0m first prompt should be \x1b[1m/mc:health\x1b[0m              ${BOX_MID}`,
 );
 console.log(`${BOX_BOT}\n`);
 console.log(`  First skill to run in Claude Code:`);
 console.log(
-  `    \x1b[1m/warp:setup\x1b[0m           confirms install state + guides you from here`,
+  `    \x1b[1m/mc:setup\x1b[0m           confirms install state + guides you from here`,
 );
 console.log(``);
-console.log(`  Other useful skills (after /warp:setup gives the green light):`);
-console.log(`    \x1b[1m/warp:health\x1b[0m          verify every subsystem`);
+console.log(`  Other useful skills (after /mc:setup gives the green light):`);
+console.log(`    \x1b[1m/mc:health\x1b[0m          verify every subsystem`);
 console.log(
   `    \x1b[1m/maps:all\x1b[0m             generate relationship maps (powers smart-context enrichment)`,
 );
 console.log(`    \x1b[1m/scan:system\x1b[0m         manifest vs disk`);
 console.log(`    \x1b[1m/scan:environment\x1b[0m    provider CLIs + auth`);
 console.log(`    \x1b[1m/discover:systems\x1b[0m     6-angle system inventory`);
-console.log(`    \x1b[1m/warp:tour\x1b[0m            guided walkthrough`);
+console.log(`    \x1b[1m/mc:tour\x1b[0m            guided walkthrough`);
 console.log(
-  `    \x1b[1m/warp:uninstall\x1b[0m       if something is wrong, revert cleanly\n`,
+  `    \x1b[1m/mc:uninstall\x1b[0m       if something is wrong, revert cleanly\n`,
 );

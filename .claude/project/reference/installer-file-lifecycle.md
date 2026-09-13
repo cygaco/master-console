@@ -18,7 +18,7 @@ Two install operations:
 - Pros: preserves user customisation
 - Cons: orphans accumulate when upstream renames or removes a file
 
-Concrete example: `/warp:init.md` → renamed to `/warp:setup.md` upstream. With pattern B, the downstream project keeps both `init.md` (now orphaned, no longer maintained upstream) AND gets the new `setup.md` (current). The skill list shows two skills doing similar things; users can't tell which is canonical.
+Concrete example: `/warp:init.md` → renamed to `/mc:setup.md` upstream. With pattern B, the downstream project keeps both `init.md` (now orphaned, no longer maintained upstream) AND gets the new `setup.md` (current). The skill list shows two skills doing similar things; users can't tell which is canonical.
 
 ## The fix: ship-manifest pattern
 

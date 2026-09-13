@@ -4,7 +4,7 @@
  * Reads .claude/framework-installed.json (this project) and the canonical
  * MC repo's version.json (path resolved from framework-installed.json
  * `source` or via WARPOS_CANONICAL env var). Fails if installed < canonical
- * for >7 days AND no pending /warp:update transaction exists.
+ * for >7 days AND no pending /mc:update transaction exists.
  *
  * Exit 0 = green; 1 = stale.
  *
@@ -100,6 +100,6 @@ if (ageDays < STALENESS_DAYS)
   );
 
 fail(
-  `installed ${installedVersion} < canonical ${canonicalVersion}, age ${ageDays.toFixed(1)}d > threshold ${STALENESS_DAYS}d, no pending /warp:update transaction. Run: /warp:update --to ${canonicalVersion} --apply`,
+  `installed ${installedVersion} < canonical ${canonicalVersion}, age ${ageDays.toFixed(1)}d > threshold ${STALENESS_DAYS}d, no pending /mc:update transaction. Run: /mc:update --to ${canonicalVersion} --apply`,
   { installedVersion, canonicalVersion, ageDays },
 );

@@ -5,7 +5,7 @@
  * SP-20260524-001 — install fixture CI matrix. Five-scenario regression test
  * suite for the MC install pipeline. Each scenario spins up an ephemeral
  * fixture project under .mc/test-fixtures/install-matrix/, exercises
- * /warp:setup or /warp:update, asserts the expected post-state, and cleans up.
+ * /mc:setup or /mc:update, asserts the expected post-state, and cleans up.
  *
  * Scenarios:
  *   1 — clean_install                 fresh empty target → warp-setup → assert
@@ -81,7 +81,7 @@ function printHelp() {
   process.stdout.write(`Usage: node scripts/mc/test-install-matrix.js [--scenarios <list>] [--json] [--fixture-root <path>] [--keep-failed] [--inject-regression <name>] [--help]
 
 Runs the MC install-fixture CI matrix. Spins up ephemeral fixture projects
-and exercises /warp:setup and /warp:update against 5 representative scenarios.
+and exercises /mc:setup and /mc:update against 5 representative scenarios.
 
 Scenarios (run all if --scenarios is omitted):
   1   clean_install                 fresh empty target → warp-setup → assert
@@ -221,7 +221,7 @@ function runNode(scriptRel, args, opts = {}) {
 // makes install.ps1 invoke the shared scaffold core
 // (scripts/mc/scaffold-core.js, runnable as
 // `node scripts/mc/scaffold-core.js <target>`) so install.ps1 produces a
-// COMPLETE install — same end-state as the /warp:setup path — instead of the
+// COMPLETE install — same end-state as the /mc:setup path — instead of the
 // bare framework-asset copy it does today.
 //
 // PowerShell generally can't be driven from this Node test env (no pwsh on
@@ -1357,7 +1357,7 @@ function scenario6_adopt_path(scenario, fixtureDir, opts) {
 //
 // Asserts the install.ps1-equivalent path (base framework copy + shared
 // scaffold core) produces a COMPLETE install — the same structural end-state
-// as /warp:setup — and that the two installers produce path-identical trees
+// as /mc:setup — and that the two installers produce path-identical trees
 // (the β parity-DIFF constraint).
 //
 // These assertions are EXPECTED TO FAIL until the parallel ticket lands
@@ -1380,7 +1380,7 @@ function scenario7_installps1_path(scenario, fixtureDir, opts) {
     `mode=${inst.mode} code=${inst.code} stderr=${(inst.stderr || "").slice(0, 200)}`,
   );
 
-  // COMPLETE-install structural assertions (mirror the /warp:setup end-state).
+  // COMPLETE-install structural assertions (mirror the /mc:setup end-state).
   for (const p of [
     "_mc",
     "_mc/MANIFEST.json",
@@ -1431,7 +1431,7 @@ function scenario7_installps1_path(scenario, fixtureDir, opts) {
   );
 
   // ── Part B: both_path_parity — DIFF the two installer trees ──────
-  // Install a SECOND fixture via the /warp:setup path on identical inputs,
+  // Install a SECOND fixture via the /mc:setup path on identical inputs,
   // build a sorted relative-path file list of each tree, and DIFF them. Any
   // structural divergence (modulo PARITY_ALLOWLIST) FAILS. This is a true
   // diff — NOT "both independently pass structure-parity" (β constraint).
@@ -1441,7 +1441,7 @@ function scenario7_installps1_path(scenario, fixtureDir, opts) {
   try {
     const setup = runNode("scripts/warp-setup.js", [setupFixture, "--yes"], { timeout: 180_000 });
     assert(
-      "both_path_parity: /warp:setup reference install exits 0",
+      "both_path_parity: /mc:setup reference install exits 0",
       setup.code === 0,
       `code=${setup.code} stderr=${(setup.stderr || "").slice(0, 200)}`,
     );
@@ -1457,7 +1457,7 @@ function scenario7_installps1_path(scenario, fixtureDir, opts) {
       `setup=${setupList.length} ps1=${ps1List.length}`,
     );
     assert(
-      "both_path_parity: install.ps1-equivalent tree == /warp:setup tree (sorted relative paths, modulo allowlist)",
+      "both_path_parity: install.ps1-equivalent tree == /mc:setup tree (sorted relative paths, modulo allowlist)",
       parity.equal,
       `onlyInSetup(${parity.onlyInA.length})=${parity.onlyInA.slice(0, 8).join(", ")} | onlyInPs1(${parity.onlyInB.length})=${parity.onlyInB.slice(0, 8).join(", ")}`,
     );

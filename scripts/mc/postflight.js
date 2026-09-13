@@ -1,5 +1,5 @@
 /**
- * scripts/mc/postflight.js — /warp:update postflight verifier.
+ * scripts/mc/postflight.js — /mc:update postflight verifier.
  *
  * Composes 5 checks after a successful apply:
  *
@@ -7,7 +7,7 @@
  *   2. path-resolution        (existing scan:mc-path-resolution)
  *   3. applied-migrations     (existing scan:mc-applied-migrations)
  *   4. provider-smoke         (external check via T-058 primitive, SP-002)
- *   5. /warp:health rollup    (scripts/check/mc-health.js if present)
+ *   5. /mc:health rollup    (scripts/check/mc-health.js if present)
  *
  * Writes an evidence package at `<txDir>/evidence/postflight.json` matching
  * IN-3. Emits TR-5 (per-check + aggregate) and TR-6 (evidence pointer).
@@ -171,7 +171,7 @@ function runBuiltinCheck(name, targetRoot) {
 
 function runWarpHealthRollup(targetRoot) {
   const start = Date.now();
-  // Look for an existing /warp:health entry point. The convention varies; we
+  // Look for an existing /mc:health entry point. The convention varies; we
   // try the most likely candidates and fall back to degraded if none exist.
   const candidates = [
     path.join(__dirname, "..", "check", "mc-health.js"),
@@ -189,7 +189,7 @@ function runWarpHealthRollup(targetRoot) {
     return {
       name: "warp-health",
       status: "degraded",
-      reason: "/warp:health rollup script not present yet",
+      reason: "/mc:health rollup script not present yet",
       durationMs: Date.now() - start,
       evidence: { searched: candidates },
     };
@@ -281,7 +281,7 @@ function runPostflight(opts) {
       },
     });
   }
-  // 5. /warp:health rollup
+  // 5. /mc:health rollup
   checks.push(runWarpHealthRollup(targetRoot));
 
   const summary = { green: 0, yellow: 0, red: 0, degraded: 0 };

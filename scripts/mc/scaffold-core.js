@@ -99,7 +99,7 @@ function scaffoldProduct({ target, mcRoot, log }) {
   const _regEntries = _registry ? _registry.paths || _registry : null;
   if (_regEntries) {
     // GATE-B 3c convergence (β beta-ceremony-freshpath-go-b089): generate paths.json via the SINGLE canonical
-    // generator scripts/paths/build.js — the SAME one /warp:update runs (runGenerators) — instead of a forked
+    // generator scripts/paths/build.js — the SAME one /mc:update runs (runGenerators) — instead of a forked
     // hand-rolled projection. The old inline map hardcoded `version: 3` (stale; build.js is v5), omitted
     // `$schema`, and included removedIn keys (re-adding the dead portfolioRegistry that build.js drops,
     // build.js:68), so a fresh install diverged from an upgraded tree at 3c. Delegating makes both byte-identical
@@ -203,7 +203,7 @@ function scaffoldProduct({ target, mcRoot, log }) {
   // After the zones exist, write a `.provenance.json` marker into each one
   // recording `seeded_from` = `_mc/BASELINE/<zone>` (the U1 baseline home —
   // never the deleted framework templates location), the framework version, and
-  // a "seeded by /warp:setup" note. Idempotent + skip-if-modified (it leaves an
+  // a "seeded by /mc:setup" note. Idempotent + skip-if-modified (it leaves an
   // operator-edited marker untouched). Lazy require so there is no load-time
   // circular dependency. Fail-open: a provenance error must never block install.
   try {
@@ -413,7 +413,7 @@ function populateWarposMirror({ target, mcRoot, shipManifest, log, HEADER = "", 
   // ── 8.9. Populate _mc/ framework SOURCE mirror (SP-20260525-003) ──
   // THE MODEL (regenerate.js docstring + Strategy line 17): a product holds
   // framework SOURCE at `_mc/` (a mirror); `.claude/` is the COMPILED VIEW
-  // regenerated from it. Before this, /warp:setup copied framework files only to
+  // regenerated from it. Before this, /mc:setup copied framework files only to
   // the root + `.claude/` and created NO `_mc/`, so scripts/mc/views/
   // regenerate.js had no source mirror and was inert in products.
   //
@@ -1241,7 +1241,7 @@ if (require.main === module) {
     } else {
       log(
         "warn",
-        `_mc/ mirror skipped — no readable framework-manifest at ${manifestPath}. Re-run /warp:setup or regenerate the manifest, then re-run this script.`,
+        `_mc/ mirror skipped — no readable framework-manifest at ${manifestPath}. Re-run /mc:setup or regenerate the manifest, then re-run this script.`,
       );
     }
     log("ok", `scaffold-core complete (${total} item(s) scaffolded)`);

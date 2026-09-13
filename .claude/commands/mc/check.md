@@ -2,7 +2,7 @@
 description: Compare your MC installation against the latest version — find stale, new, and missing items
 ---
 
-# /warp:check — Check MC Status
+# /mc:check — Check MC Status
 
 Compare your project's MC installation against the latest version in the MC repo.
 
@@ -47,6 +47,6 @@ MC Check
   Docs:      CLAUDE.md customized, AGENTS.md synced
 
   Recommendations:
-  - Run /warp:sync to update 5 stale files
+  - Run /mc:sync to update 5 stale files
   - 5 local skills found (yours to keep)
 ```

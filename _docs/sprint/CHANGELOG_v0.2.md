@@ -157,4 +157,4 @@ Two layers, independent of each other:
 - **No new env vars.** `WARPOS_SPRINT_ID` is set by `parseSprintArg` at
   invocation time; not a persistent secret.
 - **No user-facing surface deploys.** Framework promotion to canonical
-  MC is a separate `/warp:release` flow.
+  MC is a separate `/mc:release` flow.

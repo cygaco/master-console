@@ -4,8 +4,8 @@
  *
  * Phase 0 workstream C. Run by:
  *   - scripts/hooks/session-start.js (once per session start)
- *   - /warp:health (verification)
- *   - /warp:setup (initial install sanity)
+ *   - /mc:health (verification)
+ *   - /mc:setup (initial install sanity)
  *   - Anytime an operator wants a clean board: `node scripts/dispatch/prune-dead-locks.js`
  *
  * The existing concurrency-lock.js does lazy mtime-based prune on every

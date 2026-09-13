@@ -13,7 +13,7 @@ later) and wants to opt in to the sprint workflow.
 ## Step 1 — Update MC
 
 ```text
-/warp:update --apply
+/mc:update --apply
 ```
 
 This installs the new sprint framework assets:
@@ -163,7 +163,7 @@ If sprint isn't a good fit for your project, you can:
 - Stop running `/sprint:*` commands. Tracker files freeze.
 - `git rm -rf .claude/project/sprint/` to remove tracker. Framework
   remains installed; you can re-init later.
-- Pin to MC 0.3.x via `/warp:update --to 0.3.0`. The sprint paths
+- Pin to MC 0.3.x via `/mc:update --to 0.3.0`. The sprint paths
   vanish on next regen.
 
 Sprint v0.1 is additive — opting out is reversible.

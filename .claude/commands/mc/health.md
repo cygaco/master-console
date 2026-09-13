@@ -2,7 +2,7 @@
 description: Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes
 ---
 
-# /warp:health — Installation Health Check
+# /mc:health — Installation Health Check
 
 Verify that MC is properly installed and all systems are functional. Reports each system as green (working), yellow (degraded), or red (broken) with clear fix instructions.
 
@@ -172,7 +172,7 @@ none)**. The auth-tier column surfaces the WI-19 axis: a gemini row showing
 PARTIAL — free-tier quota risk); `none` is a FAIL (run `gemini auth login`).
 
 Read-only and **fail-open** — exits 0 even on FAIL so it never blocks
-`/warp:health`. Report each provider's verdict and any GHOST/EFFORT/auth lines.
+`/mc:health`. Report each provider's verdict and any GHOST/EFFORT/auth lines.
 - Provider FAIL → RED: "Fix before dispatching — see the row's reason
   (missing CLI, ghost model, or no auth)."
 - Provider PARTIAL → YELLOW: "Dispatch will work but is degraded (effort

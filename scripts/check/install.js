@@ -53,7 +53,7 @@ function main() {
   // Bail-out check first
   if (!exists(".claude/manifest.json")) {
     const msg =
-      "not a MC-installed repo (no .claude/manifest.json) — run /warp:setup first";
+      "not a MC-installed repo (no .claude/manifest.json) — run /mc:setup first";
     if (asJson) {
       process.stdout.write(
         JSON.stringify({ ok: false, bailed: true, reason: msg }) + "\n",
@@ -134,7 +134,7 @@ function main() {
           : "absent (fine — v2.1.178 removed TeamCreate/TeamDelete; teams are implicit + session-scoped, spawn via Agent)",
       };
     }),
-    // WG-4: sprint-subsystem readiness. WG-1/2/3/10 all survived /warp:setup and
+    // WG-4: sprint-subsystem readiness. WG-1/2/3/10 all survived /mc:setup and
     // provider smoke because nothing instantiated the sprint pipeline — its
     // install-completeness had no enforcer. These three assert it is wired so a
     // fresh install fails loudly HERE instead of mid-/sprint:full.
@@ -195,7 +195,7 @@ function main() {
       if (missing.length)
         return {
           ok: false,
-          detail: `_mc/templates/sprint/{${missing.join(",")}} missing — design phase would write a hollow bundle (WG-10). Run /warp:update.`,
+          detail: `_mc/templates/sprint/{${missing.join(",")}} missing — design phase would write a hollow bundle (WG-10). Run /mc:update.`,
         };
       return true;
     }),

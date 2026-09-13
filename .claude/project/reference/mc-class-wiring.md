@@ -10,7 +10,7 @@ Phase 4K artifact (2026-04-30). Defines how the update / promote engines map the
 - **Class B** — meaningful technical. Score against rubric, decide. Reviewer ack.
 - **Class C** — strategic, irreversible, or business. Escalate with one recommendation, not a menu.
 
-## /warp:update categories → class
+## /mc:update categories → class
 
 The update engine (`scripts/mc/update.js`) classifies every asset into one of 12 categories. Mapping:
 

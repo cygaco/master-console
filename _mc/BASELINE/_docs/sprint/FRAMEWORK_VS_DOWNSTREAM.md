@@ -19,7 +19,7 @@ framework/downstream separation is unchanged.
 | Path keys | `framework/paths.registry.json` | framework |
 
 These are versioned with the MC release. Downstream consumers get
-them via `/warp:update`.
+them via `/mc:update`.
 
 The framework repo MUST NOT contain:
 
@@ -89,7 +89,7 @@ issue.
 
 If the framework ships live sprint state:
 
-- Downstream consumers pull "someone else's sprints" on `/warp:update`.
+- Downstream consumers pull "someone else's sprints" on `/mc:update`.
 - Tracker file conflicts become merge conflicts.
 - The framework manifest count keeps growing for non-framework reasons.
 - The capsule becomes non-deterministic.
@@ -97,9 +97,9 @@ If the framework ships live sprint state:
 The same discipline that keeps `paths.eventsFile` out of the capsule
 applies here.
 
-## /warp:update behavior
+## /mc:update behavior
 
-When a downstream repo runs `/warp:update`:
+When a downstream repo runs `/mc:update`:
 
 - Framework sprint assets (templates, schemas, scripts, commands, docs,
   routing policy, reference doc) are updated in place.

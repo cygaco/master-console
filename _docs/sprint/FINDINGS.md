@@ -13,9 +13,9 @@ level docs (not downstream live tracker state).
 
 | Workstream | Evidence | Result |
 |---|---|---|
-| A — promotion workflow (`/warp:flag`, `/warp:promote-flags`, archive) | `.claude/commands/warp/{flag,promote-flags}.md`, the (retired) flag-ledger path, the (retired) promoted-archive + promote-reports paths | present |
+| A — promotion workflow (`/mc:flag`, `/warp:promote-flags`, archive) | `.claude/commands/warp/{flag,promote-flags}.md`, the (retired) flag-ledger path, the (retired) promoted-archive + promote-reports paths | present |
 | B — dispatch safety (route guard, lock telemetry) | `scripts/hooks/dispatch-route-guard.js`, `scripts/dispatch/prune-dead-locks.js`, `paths.dispatchLocks`, `paths.dispatchDeathsFile`, `paths.dispatchCompletionsFile` | present |
-| C — provider health classifier (11 states) | `scripts/hooks/lib/provider-health.js`, `scripts/test-provider-health.js`, consumed by `/warp:health` + `/warp:setup` | present |
+| C — provider health classifier (11 states) | `scripts/hooks/lib/provider-health.js`, `scripts/test-provider-health.js`, consumed by `/mc:health` + `/mc:setup` | present |
 | D — install hygiene + provider-tmp | `paths.providerTmp` (`.claude/runtime/.provider-tmp`) | present |
 | E — provider fallback policy scaffold | `.claude/agents/00-alex/.system/policy/provider-fallback.json` (`paths.providerFallbackPolicy`), 5 roles, 7 failure signals | present (documented; not yet enforced inside `runProvider`) |
 | F — ROADMAP split | `WARPOS_ROADMAP.md` (framework) + `ROADMAP.md` (product scaffold) | present |

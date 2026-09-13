@@ -127,7 +127,7 @@ Strict separation enforced (`_docs/sprint/FRAMEWORK_VS_DOWNSTREAM.md`):
 | `_docs/sprint/**` | |
 | `framework/paths.registry.json` (the 19 sprint keys) | |
 
-The framework repo never ships seeded live sprint state. `/warp:update`
+The framework repo never ships seeded live sprint state. `/mc:update`
 updates framework assets but does not write to
 `.claude/project/sprint/`.
 

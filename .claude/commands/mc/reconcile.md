@@ -2,9 +2,9 @@
 description: Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.
 ---
 
-# /warp:reconcile — Absorb downstream gap registers into canonical
+# /mc:reconcile — Absorb downstream gap registers into canonical
 
-The canonical-side consumer of [`/warp:flag`](flag.md). Run from the **MC canonical
+The canonical-side consumer of [`/mc:flag`](flag.md). Run from the **MC canonical
 repo**. Every registered portfolio product accumulates a root `MC.md` of
 framework/tooling gaps found while building on the framework. This skill pulls all of
 them up, separates *what's still real* from *what's already fixed*, finds the **deeper
@@ -31,7 +31,7 @@ cluster).
 - **Never modify a downstream repo.** Sync is one-way (canonical → product); products are
   read-only here. Do **not** edit any product's `MC.md`, code, or git — even to mark
   a gap "fixed upstream." Resolution is recorded **canonical-side**; the register updates
-  itself downstream on that product's next `/warp:update` + local re-check, or in the
+  itself downstream on that product's next `/mc:update` + local re-check, or in the
   product's own session. (Operator rule: MC-only — never touch other projects.)
 - **Framework-layer only.** Reconcile framework/tooling gaps. Product bugs that leaked
   into a register get noted and left for the product.
@@ -111,7 +111,7 @@ confirm fresh.
 ### Phase 8 — Record resolution (canonical-side only)
 Record what was fixed/deferred in canonical: `/issues:log` (or resolve) for recurring-issue
 entries, `/enforcement:log` for the policy gaps, `ROADMAP.md` for deferred work, and a
-`/warp:reconcile` report under the reconcile-report path (`.claude/project/reports/`) listing every
+`/mc:reconcile` report under the reconcile-report path (`.claude/project/reports/`) listing every
 consolidated gap → verdict → disposition. **Do not** write back to any downstream
 `MC.md`.
 
@@ -119,10 +119,10 @@ consolidated gap → verdict → disposition. **Do not** write back to any downs
 Summarize: gaps discovered (by product), verified-open vs already-fixed counts, the
 root-cause synthesis (both lenses), fixed-now / sprinted / roadmapped / enforcement-debt
 dispositions, and the follow-up commands. If the fixes warrant a release, point at
-`/warp:release`.
+`/mc:release`.
 
 ## Notes
 - The verify pass (Phase 3) is the difference between this skill and a naive "do everything
   the registers say." Skipping it re-incurs ED-008.
-- Sibling: [`/warp:flag`](flag.md) — the downstream producer this skill consumes.
+- Sibling: [`/mc:flag`](flag.md) — the downstream producer this skill consumes.
 - Pairs with `/scan:mc-staleness` (which installs are behind) and `/portfolio:status`.

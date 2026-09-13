@@ -12,13 +12,13 @@
 #   .\install.ps1 -Target C:\path     # install into <Target>
 #   .\install.ps1 -DryRun             # show plan only, no writes
 #   .\install.ps1 -SkipPrompt          # accept defaults; non-interactive
-#   .\install.ps1 -Update              # call /warp:update path instead
+#   .\install.ps1 -Update              # call /mc:update path instead
 #
 # What's installed:
 #   - Framework assets enumerated in .claude\framework-manifest.json
 #     (agents, hooks, commands, schemas, templates, reference docs,
 #     scripts/mc, scripts/sprint, scripts/paths, scripts/hooks, etc.)
-#   - .claude\framework-installed.json snapshot for /warp:update
+#   - .claude\framework-installed.json snapshot for /mc:update
 #
 # What is NOT installed:
 #   - Live runtime state (.claude\runtime\, .claude\project\events\,
@@ -62,7 +62,7 @@ Write-Step "WarpOS $Script:WARPOS_VERSION installer"
 Write-Step "Source: $Source"
 Write-Step "Target: $Target"
 if ($DryRun)      { Write-Step "Mode:   DRY-RUN (no files written)" }
-elseif ($Update)  { Write-Step "Mode:   UPDATE (delegate to /warp:update - fresh-copy path skipped)" }
+elseif ($Update)  { Write-Step "Mode:   UPDATE (delegate to /mc:update - fresh-copy path skipped)" }
 else              { Write-Step "Mode:   FRESH-INSTALL" }
 
 # Pre-existing install detection. Keep this before the -Update branch so
@@ -79,13 +79,13 @@ if ($Update) {
         exit 1
     }
     Write-Step ""
-    Write-Step "/warp:update is the canonical update path - install.ps1 -Update no longer copies files."
+    Write-Step "/mc:update is the canonical update path - install.ps1 -Update no longer copies files."
     Write-Step "Open the project in Claude Code and run:"
-    Write-Step "    /warp:update                     # dry-run"
-    Write-Step "    /warp:update --apply             # apply (when 0.1.x lands)"
+    Write-Step "    /mc:update                     # dry-run"
+    Write-Step "    /mc:update --apply             # apply (when 0.1.x lands)"
     Write-Step ""
     Write-Step "Why: a fresh-copy under -Update silently overwrote local customizations."
-    Write-Step "     /warp:update uses the 12-category classifier and respects mergeStrategy."
+    Write-Step "     /mc:update uses the 12-category classifier and respects mergeStrategy."
     exit 0
 }
 
@@ -119,7 +119,7 @@ if ($DryRun) {
 # Stage 1 - copy framework-owned assets and record per-asset SHA256.
 # Phase 4 fix-forward (codex review 2026-04-30 critical #2): the prior
 # revision left assets[] and installedHash empty, which made every
-# downstream /warp:update misclassify all files as MERGE_CONFLICT. Now we
+# downstream /mc:update misclassify all files as MERGE_CONFLICT. Now we
 # hash each copied byte and record it in $InstalledAssets for Stage 2.
 Write-Step "Stage 1/3 - copying assets"
 $Copied = 0
@@ -181,7 +181,7 @@ $installRecord = [ordered]@{
 }
 # 0.4.2 fix-forward: PowerShell 5.1's `Out-File -Encoding utf8` writes
 # UTF-8 WITH BOM. JSON.parse rejects BOM. Use .NET WriteAllText with an
-# explicit no-BOM UTF-8 encoding so /warp:update can re-read the snapshot.
+# explicit no-BOM UTF-8 encoding so /mc:update can re-read the snapshot.
 $installRecordJson = $installRecord | ConvertTo-Json -Depth 10
 $installRecordPath = Join-Path $Target ".claude\framework-installed.json"
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -246,7 +246,7 @@ if (Test-Path $ScaffoldCore) {
     # mirror source from canonical, exactly like the warp-setup path.
     & node $ScaffoldCore $Target --mc-root "$Source"
     if ($LASTEXITCODE -ne 0) {
-        Write-Warn "scaffold-core.js exited $LASTEXITCODE - product scaffold may be incomplete (paths.json/zones/ROADMAP/PROJECT.md/maps/_mc). Re-run /warp:setup from inside the project to complete it."
+        Write-Warn "scaffold-core.js exited $LASTEXITCODE - product scaffold may be incomplete (paths.json/zones/ROADMAP/PROJECT.md/maps/_mc). Re-run /mc:setup from inside the project to complete it."
     } else {
         Write-Step "Stage 2.5/3 - product scaffold complete (paths.json, _requirements/_docs zones, ROADMAP, PROJECT.md, maps nudge, _mc/ mirror)"
         # GATE-B 3c (beta-ceremony-freshpath-go-b089): the Stage-2 manifest regen ran BEFORE this scaffold, so it
@@ -268,14 +268,14 @@ if (Test-Path $ScaffoldCore) {
         }
     }
 } else {
-    Write-Warn "scaffold-core.js not found at $ScaffoldCore - skipping product scaffold. The manifest may predate it; regenerate the framework manifest and re-run, or run /warp:setup from inside the project."
+    Write-Warn "scaffold-core.js not found at $ScaffoldCore - skipping product scaffold. The manifest may predate it; regenerate the framework manifest and re-run, or run /mc:setup from inside the project."
 }
 
 # Stage 3 - post-install hint
 Write-Step "Stage 3/3 - install complete"
-Write-Step "Next step: open the project in Claude Code; run /warp:health or /warp:doctor to verify."
+Write-Step "Next step: open the project in Claude Code; run /mc:health or /mc:doctor to verify."
 if ($Update) {
-    Write-Step "UPDATE mode: now run /warp:update --dry-run from inside the project to plan deltas."
+    Write-Step "UPDATE mode: now run /mc:update --dry-run from inside the project to plan deltas."
 }
 
 # Sprint Workflow v0.1 (0.4.0+) - opt-in adoption note.

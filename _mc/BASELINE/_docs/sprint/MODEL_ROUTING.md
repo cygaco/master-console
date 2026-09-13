@@ -128,7 +128,7 @@ exists in `model_classes`, and every `escalate_to` exists too.
 
 Downstream override pattern: if a project wants to swap providers,
 they can edit their checked-in copy of `sprint-routing.json`. The
-canonical version updates on `/warp:update`, but local edits are
+canonical version updates on `/mc:update`, but local edits are
 preserved (this file is `owner: framework`, `mutable: false`, but the
 file watcher hook does not block reads).
 

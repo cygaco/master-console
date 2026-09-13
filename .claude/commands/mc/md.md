@@ -3,7 +3,7 @@ description: "Tune CLAUDE.md with project-specific context — refresh the auto-
 user-invocable: true
 ---
 
-# /warp:md — Tune CLAUDE.md with project context
+# /mc:md — Tune CLAUDE.md with project context
 
 Augment the root `CLAUDE.md` with the load-bearing project facts an agent
 needs every session, while leaving **every framework section untouched**. The
@@ -18,7 +18,7 @@ the safe, idempotent way to keep that project block honest.
 
 ## Input
 
-`/warp:md [stack | commands | conventions | <free-text steer>]`
+`/mc:md [stack | commands | conventions | <free-text steer>]`
 
 - No args → refresh the **whole** project block from all sources.
 - `stack` / `commands` / `conventions` → bias the refresh toward that facet
@@ -30,9 +30,9 @@ the safe, idempotent way to keep that project block honest.
 
 1. **Idempotent, marker-delimited.** The project block is wrapped in:
    ```
-   <!-- warp:md:start (auto-generated project context — refresh via /warp:md) -->
+   <!-- mc:md:start (auto-generated project context — refresh via /mc:md) -->
    ... project facts ...
-   <!-- warp:md:end -->
+   <!-- mc:md:end -->
    ```
    Re-runs replace **only** the text between the markers. If the markers are
    absent, insert the block once, immediately after the `# <Title> — CLAUDE.md`
@@ -71,7 +71,7 @@ the safe, idempotent way to keep that project block honest.
    stack + the handful of commands that matter (build/test/lint/dev) · 2–5
    conventions or gotchas · pointers (`PROJECT.md`, `_requirements/`, spec,
    `COMMS.md` if present).
-4. **Apply idempotently** between the `warp:md:start`/`warp:md:end` markers
+4. **Apply idempotently** between the `mc:md:start`/`mc:md:end` markers
    (insert the markers once if absent, per Invariant 1). Use Edit so the rest of
    `CLAUDE.md` is byte-untouched.
 5. **Verify + report:** confirm (a) every framework section's bytes are

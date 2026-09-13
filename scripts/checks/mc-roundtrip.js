@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // scan:mc-roundtrip — STUB.
-// Verify product → canonical (/warp:promote) → product (/warp:update) is byte-stable
+// Verify product → canonical (/warp:promote) → product (/mc:update) is byte-stable
 // for files in FRAMEWORK_PREFIXES. Refine via /reasoning:run with this prompt:
 //
 // "Design a check that verifies the product↔canonical↔product round-trip preserves

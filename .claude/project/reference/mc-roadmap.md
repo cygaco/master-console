@@ -35,11 +35,11 @@ Current: 13-step install. 8 items are CREATED (paths, manifest, store, memory, s
 - [x] **Interview phase** — `scripts/warp-setup.js#ask` collects project name, pitch, main branch, MC source, ANTHROPIC_API_KEY
 - [ ] **Tool-detected hook bundles** — partial. Hooks register unconditionally today; tooling-aware skipping happens *inside* hook bodies via `command -v <tool>` self-check. Promoting this to a registry-level `requires` field is deferred.
 - [ ] **Requirements pre-fill** — deferred. `/warp:init` not yet authoring CORE_BRIEF/PRODUCT_MODEL/GLOSSARY/USER_COHORTS.
-- [x] **Parameterize `/warp:*` repo URLs** — `/warp:check`, `/warp:update`, `/warp:promote` read `manifest.mc.source`
+- [x] **Parameterize `/warp:*` repo URLs** — `/mc:check`, `/mc:update`, `/warp:promote` read `manifest.mc.source`
 - [x] **Parameterize project name** — manifest.project.name flows to skills/docs
 - [ ] **Install-test harness** — deferred. `warp-setup.js --dry-run` on tmp dir not yet implemented.
-- [x] **`/warp:update` skill** — `.claude/commands/warp/update.md`
-- [x] **`/warp:uninstall` skill** — `.claude/commands/warp/uninstall.md`
+- [x] **`/mc:update` skill** — `.claude/commands/mc/update.md`
+- [x] **`/mc:uninstall` skill** — `.claude/commands/mc/uninstall.md`
 
 ### Gaps from the Created vs Assumed audit
 
@@ -47,7 +47,7 @@ Items that are currently NEITHER created NOR assumed (just missing):
 - `.gitignore` runtime exclusions — **leak risk**
 - Main branch name — assumed "main" everywhere
 - Project name — used basename, no override
-- Git remote URL — hardcoded in `/warp:sync`
+- Git remote URL — hardcoded in `/mc:sync`
 - `.env.example` template
 - Environment flavor selection (minimal / full / security-heavy bundles)
 
@@ -100,9 +100,9 @@ Not a ship blocker. Once cross-provider is live:
 - [x] `/scan:privacy` — `commands/scan/privacy.md` (78bce2c, Phase A4)
 - [x] `/scan:install` — `commands/scan/install.md` (78bce2c, Phase A4)
 - [x] `/scan:hooks` — covered by `/hooks:test`
-- [x] `/warp:doctor` — `commands/warp/doctor.md`
-- [x] `/warp:update` — see Installer section above
-- [x] `/warp:uninstall` — `commands/warp/uninstall.md`
+- [x] `/mc:doctor` — `commands/mc/doctor.md`
+- [x] `/mc:update` — see Installer section above
+- [x] `/mc:uninstall` — `commands/mc/uninstall.md`
 - [x] `/agents:list` + `/agents:test` — c15514b (Phase A1)
 - [x] `/paths:validate` (as `/paths:doctor`) + `/paths:add` — see Path System above
 - [x] `/linters:run` — `commands/linters/run.md` (fc6494d, Phase A3)
@@ -115,7 +115,7 @@ Not a ship blocker. Once cross-provider is live:
 - [ ] `/sleep:deep` — operationalize vague phases (1c dedup algorithm, 1e pattern threshold, 4 REM dream templates)
 - [ ] `/ui:review` — genericized (no longer hardcodes a product name); add parameterized design-system path support
 - [ ] `/retro:code`, `/retro:full` — remove stale "retro directory" manifest.json references; either hard-code `.claude/project/retros/` or make optional
-- [ ] `/warp:sync` — add fallback if `../MC/version.json` doesn't exist (git tags / commit hash)
+- [ ] `/mc:sync` — add fallback if `../MC/version.json` doesn't exist (git tags / commit hash)
 - [ ] `/warp:init` — parameterize GitHub URL (hardcodes `cygaco/MC.git`)
 
 ### Namespace reorganization
@@ -139,7 +139,7 @@ Treat MC itself as a product-in-MC with its own `_requirements/04-features/`:
 
 - [ ] `agent-dashboard.js` turned into a real browser UI (currently CLI-style) — **deferred to separate workstream.** This is productized work, not roadmap work; tracked outside the roadmap doc.
 - [x] Skills get a usage counter — bccddc2 (Phase B). `scripts/hooks/skill-counter.js` on UserPromptSubmit appends to `paths.skillUsageFile`. `/skills:cleanup` Phase 2c reads it.
-- [x] `/warp:tour` version 2 — `commands/warp/tour.md` (interactive walkthrough)
+- [x] `/mc:tour` version 2 — `commands/mc/tour.md` (interactive walkthrough)
 - [x] `USER_GUIDE.md` → split into tutorial + reference — sections §1–§10 structured
 
 ---

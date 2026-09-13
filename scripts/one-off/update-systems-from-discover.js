@@ -40,7 +40,7 @@ const EMERGENT_ADDS = [
     category: "release-tooling",
     files: ["scripts/mc/"],
     notes:
-      "Engine scripts behind /warp:promote, /warp:release, /warp:update, /warp:doctor. Discovered by /discover:systems run-12 (angles 2,3,6). Class A: framework-owned.",
+      "Engine scripts behind /warp:promote, /mc:release, /mc:update, /mc:doctor. Discovered by /discover:systems run-12 (angles 2,3,6). Class A: framework-owned.",
     added: today,
   },
   {
@@ -96,7 +96,7 @@ const EMERGENT_ADDS = [
     category: "quality",
     files: ["fixtures/hooks/"],
     notes:
-      "Test fixtures for hook regressions; gated by /warp:doctor hook_fixture_tests. Discovered by /discover:systems run-12 (angles 2,6).",
+      "Test fixtures for hook regressions; gated by /mc:doctor hook_fixture_tests. Discovered by /discover:systems run-12 (angles 2,6).",
     added: today,
   },
   {

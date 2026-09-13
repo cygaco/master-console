@@ -11,7 +11,7 @@
  * Background: 2026-05-20 audit found 28 new assets + 179 SHA drifts had
  * accumulated against the 0.8.0 label over 5 days because no enforcer
  * surfaced the issue at write-time. Downstream consumers running
- * `/warp:update --to 0.8.0` got a stale framework. This guard makes the
+ * `/mc:update --to 0.8.0` got a stale framework. This guard makes the
  * version-bump requirement self-detecting.
  *
  * Decision logic:
@@ -218,10 +218,10 @@ function run(event) {
     `[version-bump-guard] framework files staged against version ${version}, ` +
     `but framework/releases/${version}/ already exists (capsule already minted). ` +
     `Bump version.json before committing framework changes — otherwise downstream ` +
-    `consumers running /warp:update --to ${version} will get a stale capsule.\n` +
+    `consumers running /mc:update --to ${version} will get a stale capsule.\n` +
     `  Staged framework files: ${sample.join(", ")}${more}\n` +
     `  Bypass (logged): WARPOS_VERSION_GUARD=off, or touch .warpos/version-bump-guard-disable\n` +
-    `  Or run: /warp:release --version patch --apply (bumps + mints capsule).\n`;
+    `  Or run: /mc:release --version patch --apply (bumps + mints capsule).\n`;
 
   process.stderr.write(msg);
 

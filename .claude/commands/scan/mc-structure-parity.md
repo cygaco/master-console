@@ -10,4 +10,4 @@ Catches the gap that opened the 2026-05-03 cleanup: canonical had `_shared/`, `_
 node scripts/checks/mc-structure-parity.js
 ```
 
-**Fix when failing:** `/warp:update --apply` to pull canonical's structure.
+**Fix when failing:** `/mc:update --apply` to pull canonical's structure.

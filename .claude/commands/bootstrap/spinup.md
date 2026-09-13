@@ -6,7 +6,7 @@ user-invocable: true
 # /bootstrap:spinup — Idea → on screen, one step-driven command
 
 The single in-project on-ramp. Run it inside a project that has MC installed
-(scaffolded via `/portfolio:new`, or a manual `/warp:setup`) and it takes you
+(scaffolded via `/portfolio:new`, or a manual `/mc:setup`) and it takes you
 from a bare framework to: **canonical product docs + a roadmap organized into
 epics & sprints + the core loop running on screen.** One command; the steps below
 are positional subcommands, not separate skills.
@@ -202,7 +202,7 @@ node scripts/bootstrap/spinup-orchestrate.js [<step>] \
 ## Pre-flight — install completeness
 The `setup` step runs `/scan:install` (incl. the sprint-subsystem probe) and refuses
 to proceed on a gappy install — a fresh `/portfolio:new` scaffold or a manual
-`/warp:setup` must reach a complete, sprint-capable state first.
+`/mc:setup` must reach a complete, sprint-capable state first.
 
 ## Relationship
 - `portfolio:spinup <slug>` — the from-MC wrapper (forwards `<step>` + modifiers).

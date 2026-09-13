@@ -66,7 +66,7 @@ const WALK_SKIP_FILES = new Set([
   // project-docs rule now, no skip needed.)
   // Transient/local root docs — operator input specs + per-repo registers, NOT
   // shipped framework (same class as DUMP.md). MC.md is a per-repo gap register
-  // (products generate their own via /warp:flag; canonical's is local, never shipped);
+  // (products generate their own via /mc:flag; canonical's is local, never shipped);
   // MC-ISSUES.md is a session issue log; the *-PROMPT.md files are operator input.
   "MC.md",
   "MC-ISSUES.md",

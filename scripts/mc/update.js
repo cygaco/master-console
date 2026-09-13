@@ -1,5 +1,5 @@
 /**
- * update.js — /warp:update engine. Apply or dry-run a release capsule against
+ * update.js — /mc:update engine. Apply or dry-run a release capsule against
  * a local install.
  *
  * Cross-repo aware:
@@ -981,7 +981,7 @@ async function run(opts) {
 
   // 0.4.1: if --source wasn't passed AND the target capsule isn't in the
   // local REPO_ROOT, walk sibling clones / manifest hint to find a canonical
-  // that has it. This makes `/warp:update --to <v>` work in product repos
+  // that has it. This makes `/mc:update --to <v>` work in product repos
   // that have a sibling MC clone without forcing the user to remember
   // --source. Honours --no-discover to disable.
   if (!opts.source && target && !opts.noDiscover) {
@@ -1224,7 +1224,7 @@ async function run(opts) {
       path.join(txDir, "header.json"),
       JSON.stringify(
         {
-          kind: "warp:update",
+          kind: "mc:update",
           txId,
           fromVersion,
           toVersion: target,
@@ -1373,7 +1373,7 @@ async function run(opts) {
     const dstMeta = path.join(targetRoot, "framework", "releases", target, capsuleMetaFile);
     if (!fs.existsSync(srcMeta)) {
       throw new Error(
-        `warp:update: capsule metadata missing at ${srcMeta} — broken release layout (GATE-B 3c fail-closed)`,
+        `mc:update: capsule metadata missing at ${srcMeta} — broken release layout (GATE-B 3c fail-closed)`,
       );
     }
     fs.mkdirSync(path.dirname(dstMeta), { recursive: true });
@@ -1393,7 +1393,7 @@ async function run(opts) {
     for (const g of generatorsResult.log) {
       if (g.status === "failed") {
         console.warn(
-          `warp:update: generator ${g.generator} exited ${g.exitCode} — generated artifacts may be stale. stderr: ${g.stderr}`,
+          `mc:update: generator ${g.generator} exited ${g.exitCode} — generated artifacts may be stale. stderr: ${g.stderr}`,
         );
       }
     }
@@ -1405,12 +1405,12 @@ async function run(opts) {
   const newDirsResult = createNewlyIntroducedDirs(targetRoot, target);
   if (newDirsResult.created.length > 0) {
     process.stderr.write(
-      `warp:update: created ${newDirsResult.created.length} newly-introduced dir(s): ${newDirsResult.created.join(", ")}\n`,
+      `mc:update: created ${newDirsResult.created.length} newly-introduced dir(s): ${newDirsResult.created.join(", ")}\n`,
     );
   }
 
   // SP-20260525-024 (downstream content-gap fix; OPEN_ADR — changes update
-  // semantics): /warp:update must also scaffold the structure-parity skeleton
+  // semantics): /mc:update must also scaffold the structure-parity skeleton
   // (_requirements/* zones, _docs/), ROADMAP.md, PROJECT.md, and the paths.json
   // registry backfill that fresh-install creates. These are DELIBERATELY absent
   // from the framework manifest (the capsule ships engine assets only;
@@ -1423,7 +1423,7 @@ async function run(opts) {
   // Diagnostics to stderr so --json stdout stays parseable (the run result is
   // the only thing on stdout in --json mode).
   const scaffoldLog = (...a) =>
-    process.stderr.write(`warp:update: scaffold — ${a.filter(Boolean).join(" ")}\n`);
+    process.stderr.write(`mc:update: scaffold — ${a.filter(Boolean).join(" ")}\n`);
   try {
     const scaffoldCore = require("./scaffold-core");
     if (scaffoldCore && typeof scaffoldCore.scaffoldProduct === "function") {
@@ -1436,7 +1436,7 @@ async function run(opts) {
     }
   } catch (err) {
     console.warn(
-      `warp:update: scaffold-core skipped (${err.message}) — structure skeleton/ROADMAP/PROJECT may be incomplete.`,
+      `mc:update: scaffold-core skipped (${err.message}) — structure skeleton/ROADMAP/PROJECT may be incomplete.`,
     );
   }
 
@@ -1451,7 +1451,7 @@ async function run(opts) {
       sc.writeProductManifest({ target: targetRoot, mcVersion: target, log: scaffoldLog });
     }
   } catch (err) {
-    console.warn(`warp:update: manifest mc.version restamp skipped (${err.message}).`);
+    console.warn(`mc:update: manifest mc.version restamp skipped (${err.message}).`);
   }
 
   // (a1) ED-264 / GATE-B 3c: framework-manifest.json is reconverged by generate-framework-manifest.js in
@@ -1476,7 +1476,7 @@ async function run(opts) {
     }
   } catch (err) {
     console.warn(
-      `warp:update: _mc/ mirror skipped (${err.message}) — regenerate.js may stay inert downstream.`,
+      `mc:update: _mc/ mirror skipped (${err.message}) — regenerate.js may stay inert downstream.`,
     );
   }
 
@@ -1504,7 +1504,7 @@ async function run(opts) {
       });
     }
   } catch (err) {
-    console.warn(`warp:update: _mc/MANIFEST regeneration skipped (${err.message}).`);
+    console.warn(`mc:update: _mc/MANIFEST regeneration skipped (${err.message}).`);
   }
 
   // Run per-capsule post-update checks (release.json#postUpdateChecks).
@@ -1539,13 +1539,13 @@ async function run(opts) {
         const cr = spawnSync(process.execPath, compileArgs, { encoding: "utf8" });
         if (cr.status !== 0) {
           console.warn(
-            `warp:update: compile.js exited ${cr.status} — settings.json may be stale. stderr: ${(cr.stderr || "").slice(0, 200)}`,
+            `mc:update: compile.js exited ${cr.status} — settings.json may be stale. stderr: ${(cr.stderr || "").slice(0, 200)}`,
           );
         }
       }
     }
   } catch (err) {
-    console.warn(`warp:update: compile.js spawn failed (${err.message}) — settings.json may be stale.`);
+    console.warn(`mc:update: compile.js spawn failed (${err.message}) — settings.json may be stale.`);
   }
 
   // Write updated installed snapshot before commit so the manifest is
@@ -1625,7 +1625,7 @@ async function run(opts) {
   // ── SP-005 Postflight (T-20260513-062) ──────────────────
   //
   // Runs 5 composed checks: manifest-honesty, path-resolution,
-  // applied-migrations, provider-smoke (external), /warp:health rollup.
+  // applied-migrations, provider-smoke (external), /mc:health rollup.
   // Diagnostic — does NOT roll back. Operator action surfaces in the
   // returned report. Honour --skip-postflight + --strict-postflight.
   let postflightReport = null;
@@ -1747,7 +1747,7 @@ function runRollbackCli(txId, opts) {
   }
   const headerFile = path.join(txDir, "header.json");
   if (!fs.existsSync(headerFile)) {
-    const msg = `rollback: header.json missing in ${txDir} — transaction directory is corrupt or unrelated to /warp:update`;
+    const msg = `rollback: header.json missing in ${txDir} — transaction directory is corrupt or unrelated to /mc:update`;
     if (opts.json) {
       console.log(
         JSON.stringify(
@@ -1863,7 +1863,7 @@ function runRollbackCli(txId, opts) {
 }
 
 /**
- * /warp:update --status — manifest validator wired as a per-file table.
+ * /mc:update --status — manifest validator wired as a per-file table.
  *
  * SP-20260522-005 / T-20260523-195. Read-only diagnostic: spawns
  * scripts/mc/manifest/validate.js --json, renders the findings as a
@@ -1933,7 +1933,7 @@ function runStatusCli(opts) {
   }
   // --status exits 1 if ANY findings present (not just strict-class findings).
   // The --strict flag changes the validator's per-finding severity, not the
-  // top-level exit policy. /warp:update --status is a maintainer diagnostic:
+  // top-level exit policy. /mc:update --status is a maintainer diagnostic:
   // "anything to look at?" → non-zero answer wakes up CI.
   const findingsForExit = parsed.findings || {};
   const totalFindingsForExit = Object.values(findingsForExit).reduce(
@@ -1946,7 +1946,7 @@ function runStatusCli(opts) {
     process.exit(totalFindingsForExit === 0 ? 0 : 1);
   }
   // Human-readable per-file table.
-  console.log(`/warp:update --status — manifest validator`);
+  console.log(`/mc:update --status — manifest validator`);
   console.log(`  manifest: ${parsed.manifestPath || "(not found)"}`);
   console.log(`  root:     ${parsed.root || targetRoot}`);
   if (typeof parsed.pathCount === "number") {
@@ -2201,7 +2201,7 @@ if (require.main === module) {
           }
         }
       }
-      printHumanReport("warp:update", {
+      printHumanReport("mc:update", {
         verdict:
           r.report.classCounts.C > 0
             ? "Needs human decision"
@@ -2222,7 +2222,7 @@ if (require.main === module) {
                 ? "One or more migration/post-check failed — see details."
                 : ac.deletes_skipped > 0
                   ? `${ac.deletes_skipped} delete(s) deferred — re-run with --confirm-deletes.`
-                  : "None — verify with /warp:doctor."
+                  : "None — verify with /mc:doctor."
               : "Run --apply to execute the plan.",
         whatWasRejected:
           r.mode === "dry-run"
@@ -2240,16 +2240,16 @@ if (require.main === module) {
             ? "Resolve Class C items before apply."
             : isApply
               ? r.ok
-                ? "Run /warp:doctor to verify the install is healthy."
+                ? "Run /mc:doctor to verify the install is healthy."
                 : "Inspect transaction record + ROLLBACK.md to recover."
               : "None for dry-run.",
         recommendedNextAction: isApply
           ? r.ok
-            ? "node scripts/mc/release-gates.js (or /warp:doctor)"
+            ? "node scripts/mc/release-gates.js (or /mc:doctor)"
             : r.committed
               ? `Re-run the failed post-update check(s) after fixing; the update is applied. Roll back only if needed: node scripts/mc/update.js --rollback ${r.transaction}`
               : `Inspect ${r.transactionDir}/ and consider rollback.`
-          : "Review the plan; pass --apply to execute, or /warp:doctor to verify pre-flight.",
+          : "Review the plan; pass --apply to execute, or /mc:doctor to verify pre-flight.",
       });
       // G5.10b — a committed-with-postcheck-warnings result still exits
       // non-zero (the post-check verdict matters for CI/scripting) but only

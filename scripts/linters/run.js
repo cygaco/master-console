@@ -63,11 +63,11 @@ function discover() {
   // pass alongside the sprint tests. EXCLUDE heavy integration tests that have
   // their own on-demand/CI registration — test-install-matrix.js (~22s,
   // paths.testInstallMatrix) is a 7-scenario install matrix meant for the
-  // /warp:release ship-gate, not the fast per-pass linter loop. Keeping it out
+  // /mc:release ship-gate, not the fast per-pass linter loop. Keeping it out
   // here preserves the harness's sub-10s budget while still wiring in the rest
   // (gate/CLI/smoke tests that were previously orphaned — nothing ran them).
   // test-install-matrix.js — ~22s 7-scenario install matrix (paths.testInstallMatrix),
-  //   for the /warp:release ship-gate, not the fast per-pass loop.
+  //   for the /mc:release ship-gate, not the fast per-pass loop.
   // test-hash-back-compat.js — a one-off install-time SMOKE (per its own docstring)
   //   that compares current file content to install-time `installedHash` prefixes;
   //   it necessarily rots as canonical evolves (every framework file edited since

@@ -477,7 +477,7 @@ function main(argv) {
   try {
     report = buildReport({ probe: args.probe, configPath: args.configPath });
   } catch (e) {
-    // Total fail-open — never crash the caller (/warp:health, /scan:environment).
+    // Total fail-open — never crash the caller (/mc:health, /scan:environment).
     const msg = "provider-tier-check: internal error (fail-open): " + String((e && e.message) || e);
     if (args.json) process.stdout.write(JSON.stringify({ ok: false, report_only: true, error: msg, providers: [] }) + "\n");
     else process.stdout.write(msg + "\n");

@@ -183,7 +183,7 @@ function testCmd(args, _spawnFn) {
     } catch (e) {
       process.stderr.write(
         `.claude/manifest.json missing or unreadable: ${e.message}\n` +
-          `  fix: run \`/warp:setup\` to create it (auto-generated at install)\n` +
+          `  fix: run \`/mc:setup\` to create it (auto-generated at install)\n` +
           `  --all needs manifest.agentProviders to iterate roles\n`,
       );
       return 1;

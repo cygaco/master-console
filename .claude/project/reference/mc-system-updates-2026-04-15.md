@@ -116,8 +116,8 @@ Replaced `_docs/09-agentic-system/retro` with `the retro directory (check manife
 ### Install system
 - `MC/scripts/warp-setup.js` — Node.js installer (detects stack, copies framework, generates manifest, merges settings, creates structure)
 - `MC/install.ps1` — PowerShell wrapper for Windows
-- `.claude/commands/warp/health.md` — Installation verification skill
-- `.claude/commands/warp/tour.md` — Guided introduction skill
+- `.claude/commands/mc/health.md` — Installation verification skill
+- `.claude/commands/mc/tour.md` — Guided introduction skill
 
 ### MC final counts
 - 221 total files

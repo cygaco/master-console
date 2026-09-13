@@ -150,10 +150,10 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 
 ## Owner classification
 
-- **framework** — shipped by MC. `/warp:update` may regenerate or merge.
+- **framework** — shipped by MC. `/mc:update` may regenerate or merge.
 - **generated** — produced by tooling. Do not hand-edit; regenerate from source.
 - **runtime** — written by sessions during normal operation. Excluded from publish.
-- **project** — owned by the user/team. Never overwritten by `/warp:update`.
+- **project** — owned by the user/team. Never overwritten by `/mc:update`.
 
 ## Mutability
 

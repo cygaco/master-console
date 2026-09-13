@@ -222,4 +222,4 @@ For each drift entry: append a status update entry with `status: "removed"` + `r
 - `/scan:architecture` — do layers connect? (this is "what layers exist?")
 - `/scan:references` — file-path integrity
 - `/maps:systems` — regenerate the visual systems map (runs after this skill)
-- `/warp:health` — uses this skill's output for its system-state rollup
+- `/mc:health` — uses this skill's output for its system-state rollup

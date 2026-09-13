@@ -14,7 +14,7 @@
  *   under `_mc/` (e.g. `.claude/commands/foo.md` → `_mc/commands/foo.md`).
  *   regenerate.js then copies `_mc/<source>` → `<dest>` when they differ.
  *
- * Before this migration, /warp:setup copied framework files ONLY to the product
+ * Before this migration, /mc:setup copied framework files ONLY to the product
  * root + `.claude/`, and created NO `_mc/` — so the manifest's view entries
  * had no real source mirror and regenerate.js was inert in products. This
  * populates that mirror.
@@ -42,7 +42,7 @@
  * canonical file content — NOT the product's possibly-edited `.claude/` — so a
  * fresh `_mc/` always reflects the shipped framework. The authoritative
  * list of shipped view files is `.claude/framework-manifest.json#assets` in the
- * canonical clone (the same list /warp:setup installs from), filtered to the
+ * canonical clone (the same list /mc:setup installs from), filtered to the
  * working-set patterns. This guarantees the mirror EXACTLY matches what build.js
  * will point `source` at.
  *

@@ -555,7 +555,7 @@ running with no completion record (holding a model session + slot + memory). `pr
 clears the dead **lock file**; `node scripts/dispatch/reap-orphans.js` finds + (with `--apply`)
 SIGTERM-terminates the orphaned **process** — conservative-by-construction (signature + PPID-orphan
 + age + no-live-lock + not-own-tree; any ambiguity ⇒ skip) and fail-open. It runs report-only on
-session start and is surfaced in `/warp:health` §12.5.
+session start and is surfaced in `/mc:health` §12.5.
 
 ---
 

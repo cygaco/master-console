@@ -70,7 +70,7 @@ const { log } = require(
 // exec` / `agy -p` — keeps this on the single safe dispatch path and away
 // from the LRN-2026-04-17/-04-30 binding-gap bug class (RT-5 / AC-8.1). These
 // requires are lazy inside perRoleProbe() so the default presence-only smoke
-// (the hot path for /warp:setup) pays zero extra require cost.
+// (the hot path for /mc:setup) pays zero extra require cost.
 // T-022: pure-function RCA module. Stays at module scope so caller cost is one
 // require, not one per invocation. No I/O in the module itself.
 const { rcaFor } = require(path.join(__dirname, "lib", "provider-rca.js"));
@@ -622,7 +622,7 @@ function renderHuman(verdict, results, rca, perRoleResults) {
   if (verdict === "green") {
     out.push("All required providers ready.");
   } else if (verdict === "yellow") {
-    out.push("Update may proceed. Run `/warp:health` for remediation.");
+    out.push("Update may proceed. Run `/mc:health` for remediation.");
   } else {
     out.push(
       "Install/update aborted. See remediation above. Re-run after fixing.",
@@ -643,7 +643,7 @@ function run(rawArgv) {
   const exitOnYellow = !!args["exit-on-yellow"];
   const noAutofix = !!args["no-autofix"]; // honoured by T-023 dispatcher
   const target = validateTarget(args.target);
-  // G1.6: opt-in per-role reachability sweep. Default OFF so /warp:setup's
+  // G1.6: opt-in per-role reachability sweep. Default OFF so /mc:setup's
   // hot-path presence smoke stays fast + token-free. --no-ping resolves
   // provider+model per role without spending a dispatch (cheap drift check).
   const perRole = !!args["per-role"];

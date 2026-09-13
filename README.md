@@ -66,11 +66,11 @@ cd <your-project>
 node ../MC/scripts/warp-setup.js .
 
 # 3. Start Claude Code in your project and finish setup
-/warp:setup     # completes any missing step: clone, install, CLAUDE.md merge, hooks
-/warp:tour      # guided introduction
+/mc:setup     # completes any missing step: clone, install, CLAUDE.md merge, hooks
+/mc:tour      # guided introduction
 ```
 
-The PowerShell installer is equivalent: `..\MC\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/warp:update` can upgrade you later.
+The PowerShell installer is equivalent: `..\MC\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/mc:update` can upgrade you later.
 
 ### Optional: provider CLIs
 
@@ -90,8 +90,8 @@ A missing CLI degrades to the fallback declared for that role in the registry. T
 ### Verify
 
 ```
-/warp:health    — checks every system, reports green / yellow / red with plain-English fixes
-/warp:doctor    — the full-coverage diagnostic
+/mc:health    — checks every system, reports green / yellow / red with plain-English fixes
+/mc:doctor    — the full-coverage diagnostic
 ```
 
 Then read **[USER_GUIDE.md](USER_GUIDE.md)** — the daily-rhythm guide: modes, the terminal setup, skill sequences, and (most important) git discipline.
@@ -191,7 +191,7 @@ The installer creates `.claude/manifest.json` in your project. It tells Alex wha
 
 ## Support
 
-- Run `/warp:health` first; it names the failing system and the fix.
+- Run `/mc:health` first; it names the failing system and the fix.
 - Bugs and questions: [GitHub issues](https://github.com/cygaco/master-console/issues). Security reports: see [SECURITY.md](SECURITY.md) — private vulnerability reporting on the repository, no email.
 
 ## License

@@ -14,8 +14,8 @@ Stand up `@mc/cli` as a **parallel distribution path** alongside the current can
 
 | Current | npm shape |
 |---|---|
-| `/warp:update` | `npm update @mc/cli` |
-| `/warp:release` | `npm version && npm publish` |
+| `/mc:update` | `npm update @mc/cli` |
+| `/mc:release` | `npm version && npm publish` |
 | `/warp:promote` | disappears (frame: edit canonical repo, `npm publish`, downstream `npm update`) |
 | Capsules + `framework-installed.json` + ghost-file detection | npm handles atomically |
 
