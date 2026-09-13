@@ -27,7 +27,7 @@ upstream propagation plumbing — no new build features.
   `provider_timeout`, `unknown_error`. `/mc:health` and
   `/mc:setup` consume it.
 - **Gemini hardening** — opt-in `--skip-trust` via
-  `WARPOS_GEMINI_TRUST_BYPASS=1`. Smart-context emits a one-shot
+  `MC_GEMINI_TRUST_BYPASS=1`. Smart-context emits a one-shot
   warning when `GEMINI_API_KEY` is set AND Gemini settings declare
   `auth.selectedType: oauth-personal` (secret not leaked).
 - **Agent dispatch guide** at `paths.agentDispatchGuide` is loaded by
@@ -39,7 +39,7 @@ upstream propagation plumbing — no new build features.
 - **Roadmap pollution prevention** — framework backlog renamed to
   `WARPOS_ROADMAP.md`; canonical `ROADMAP.md` becomes the product
   scaffold; `promote.js` excludes both.
-- **dispatch-agent mode-aware resolution** — `WARPOS_MODE` env honoured;
+- **dispatch-agent mode-aware resolution** — `MC_MODE` env honoured;
   oneshot inferred from store; orchestrator roles still go to 00-alex.
 - **Requirement write-time linter** — Edit/Write hook on
   `_requirements/**/PRD.md|STORIES.md|HL-STORIES.md|CROSS-STANDARDS.md`
@@ -104,7 +104,7 @@ upstream propagation plumbing — no new build features.
 
 1. `git commit` with framework-manifest changes in a product repo with
    gitignored `.claude/` now WARNS instead of BLOCKING. Set
-   `WARPOS_MANIFEST_GUARD=off` or touch `.warpos/manifest-guard-disable`
+   `MC_MANIFEST_GUARD=off` or touch `.mc/manifest-guard-disable`
    to bypass entirely. Canonical clone still blocks.
 2. Raw `codex exec` / `gemini -p` / `cat foo | claude -p` from Bash are
    now blocked. Use `node scripts/dispatch-agent.js <role> <prompt>` or

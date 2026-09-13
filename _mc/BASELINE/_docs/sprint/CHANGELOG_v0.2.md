@@ -48,7 +48,7 @@ Two senses of "parallel" are now first-class:
 Every helper in `scripts/sprint/` now accepts `--sprint <SP-id>`, defaults
 to the registry primary when omitted, and exits non-zero with COPY C-10 on
 an unknown id. `parseSprintArg` lives in `paths.js` and sets
-`process.env.WARPOS_SPRINT_ID` so the centralized logger and decision
+`process.env.MC_SPRINT_ID` so the centralized logger and decision
 ledger auto-tag every appended row with `sprint_id`.
 
 `scripts/sprint/execute.js` honors `lane.type === "worktree"`:
@@ -75,7 +75,7 @@ ledger auto-tag every appended row with `sprint_id`.
   `sprints/<id>/*.yaml` layout and the registry file. Same `block` on
   schema violations.
 - `scripts/hooks/lib/logger.js` auto-resolves `sprint_id` from
-  `process.env.WARPOS_SPRINT_ID` (or `opts.sprint_id`) and emits the
+  `process.env.MC_SPRINT_ID` (or `opts.sprint_id`) and emits the
   field on every row. Pre-existing rows without `sprint_id` are treated
   as `null` (forward-compat, no retro-fill).
 - `scripts/decisions/ledger.js` reads the same env so decision entries
@@ -154,7 +154,7 @@ Two layers, independent of each other:
 ## Notes
 
 - **No new ESDs.** This sprint touches framework internals only.
-- **No new env vars.** `WARPOS_SPRINT_ID` is set by `parseSprintArg` at
+- **No new env vars.** `MC_SPRINT_ID` is set by `parseSprintArg` at
   invocation time; not a persistent secret.
 - **No user-facing surface deploys.** Framework promotion to canonical
   MC is a separate `/mc:release` flow.

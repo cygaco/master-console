@@ -73,7 +73,7 @@ end-to-end mark + archive flow.
 `codex exec` not under the wrapper, `gemini -p` not under the wrapper,
 `claude -p` without `--agent`, and `cat … | (codex|gemini|claude)`.
 Allows: `--version`/`--help`/`auth status`/`models list`, the canonical
-wrapper, `claude -p --agent <role>`, and `WARPOS_PROVIDER_PROBE=1`
+wrapper, `claude -p --agent <role>`, and `MC_PROVIDER_PROBE=1`
 one-shots (logged). The hook is registered in `.claude/settings.json`
 ahead of `merge-guard.js`. Test: `scripts/test-dispatch-route-guard.js`
 (23 cases — 15 safe, 8 forbidden).
@@ -115,7 +115,7 @@ Phase 2.5). Test: `scripts/test-provider-health.js` (12 cases).
 
 ## 11. Gemini-specific changes
 
-- Opt-in `--skip-trust` via `WARPOS_GEMINI_TRUST_BYPASS=1` in
+- Opt-in `--skip-trust` via `MC_GEMINI_TRUST_BYPASS=1` in
   `runProvider`.
 - `provider-health.js` classifier picks up `trusted_directory_required`
   from CLI stderr.
