@@ -14,6 +14,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -203,15 +204,15 @@ section("Unknown repo — no signals");
 section("Precedence — (a) override arg wins over env and signals");
 {
   const dir = makeTmpRepo({ mcManifest: true }); // canonical signal present
-  const origEnv = process.env.WARPOS_REPO_ROLE;
-  process.env.WARPOS_REPO_ROLE = "consumer"; // env says consumer
+  const origEnv = mcEnv.readEnv("REPO_ROLE");
+  mcEnv.setEnv("REPO_ROLE", "consumer"); // env says consumer
   try {
     const r = resolveRepoRole({ root: dir, override: "consumer" });
     ok("override arg wins — role === 'consumer'", r.role === "consumer", `got: ${r.role}`);
     ok("source === 'arg:override'", r.source === "arg:override", `got: ${r.source}`);
   } finally {
-    if (origEnv === undefined) delete process.env.WARPOS_REPO_ROLE;
-    else process.env.WARPOS_REPO_ROLE = origEnv;
+    if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
+    else mcEnv.setEnv("REPO_ROLE", origEnv);
     cleanup(dir);
   }
 }
@@ -220,15 +221,15 @@ section("Precedence — (a) override arg wins over env and signals");
 section("Precedence — (b) env override beats marker signals");
 {
   const dir = makeTmpRepo({ mcManifest: true }); // canonical signal present
-  const origEnv = process.env.WARPOS_REPO_ROLE;
-  process.env.WARPOS_REPO_ROLE = "consumer"; // override via env
+  const origEnv = mcEnv.readEnv("REPO_ROLE");
+  mcEnv.setEnv("REPO_ROLE", "consumer"); // override via env
   try {
     const r = resolveRepoRole({ root: dir });
     ok("env wins over signal — role === 'consumer'", r.role === "consumer", `got: ${r.role}`);
     ok("source === 'env:WARPOS_REPO_ROLE'", r.source === "env:WARPOS_REPO_ROLE", `got: ${r.source}`);
   } finally {
-    if (origEnv === undefined) delete process.env.WARPOS_REPO_ROLE;
-    else process.env.WARPOS_REPO_ROLE = origEnv;
+    if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
+    else mcEnv.setEnv("REPO_ROLE", origEnv);
     cleanup(dir);
   }
 }
@@ -431,8 +432,8 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
   // 19d: Invalid env WARPOS_REPO_ROLE → falls through; canonical signal wins
   {
     const dir = makeTmpRepo({ mcManifest: true });
-    const origEnv = process.env.WARPOS_REPO_ROLE;
-    process.env.WARPOS_REPO_ROLE = "garbage_value";
+    const origEnv = mcEnv.readEnv("REPO_ROLE");
+    mcEnv.setEnv("REPO_ROLE", "garbage_value");
     try {
       const r = resolveRepoRole({ root: dir });
       ok("invalid env 'garbage_value' falls through → canonical via signal", r.role === "canonical",
@@ -440,8 +441,8 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
       ok("invalid env: source is NOT 'env:WARPOS_REPO_ROLE'", r.source !== "env:WARPOS_REPO_ROLE",
         `got: ${r.source}`);
     } finally {
-      if (origEnv === undefined) delete process.env.WARPOS_REPO_ROLE;
-      else process.env.WARPOS_REPO_ROLE = origEnv;
+      if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
+      else mcEnv.setEnv("REPO_ROLE", origEnv);
       cleanup(dir);
     }
   }
@@ -449,8 +450,8 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
   // 19e: Valid env "consumer" still wins over canonical signal
   {
     const dir = makeTmpRepo({ mcManifest: true });
-    const origEnv = process.env.WARPOS_REPO_ROLE;
-    process.env.WARPOS_REPO_ROLE = "consumer";
+    const origEnv = mcEnv.readEnv("REPO_ROLE");
+    mcEnv.setEnv("REPO_ROLE", "consumer");
     try {
       const r = resolveRepoRole({ root: dir });
       ok("valid env 'consumer' wins over canonical signal", r.role === "consumer",
@@ -458,8 +459,8 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
       ok("valid env source is 'env:WARPOS_REPO_ROLE'", r.source === "env:WARPOS_REPO_ROLE",
         `got: ${r.source}`);
     } finally {
-      if (origEnv === undefined) delete process.env.WARPOS_REPO_ROLE;
-      else process.env.WARPOS_REPO_ROLE = origEnv;
+      if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
+      else mcEnv.setEnv("REPO_ROLE", origEnv);
       cleanup(dir);
     }
   }
@@ -573,16 +574,16 @@ section("ED-009 — isCanonicalDir() env-immune canonical-tree detector (admin:*
   //      resolveRepoRole() (which honors env) DOES return 'consumer'.
   {
     const dir = makeTmpRepo({ mcManifest: true });
-    const origEnv = process.env.WARPOS_REPO_ROLE;
-    process.env.WARPOS_REPO_ROLE = "consumer";
+    const origEnv = mcEnv.readEnv("REPO_ROLE");
+    mcEnv.setEnv("REPO_ROLE", "consumer");
     try {
       ok("isCanonicalDir IGNORES WARPOS_REPO_ROLE=consumer (stays true on canonical tree)",
         isCanonicalDir(dir) === true);
       ok("resolveRepoRole HONORS WARPOS_REPO_ROLE=consumer (the divergence isCanonicalDir defeats)",
         resolveRepoRole({ root: dir }).role === "consumer");
     } finally {
-      if (origEnv === undefined) delete process.env.WARPOS_REPO_ROLE;
-      else process.env.WARPOS_REPO_ROLE = origEnv;
+      if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
+      else mcEnv.setEnv("REPO_ROLE", origEnv);
       cleanup(dir);
     }
   }
@@ -591,14 +592,14 @@ section("ED-009 — isCanonicalDir() env-immune canonical-tree detector (admin:*
   //      make an unsignaled tree read as canonical (no env spoof INTO canonical).
   {
     const dir = makeTmpRepo({});
-    const origEnv = process.env.WARPOS_REPO_ROLE;
-    process.env.WARPOS_REPO_ROLE = "canonical";
+    const origEnv = mcEnv.readEnv("REPO_ROLE");
+    mcEnv.setEnv("REPO_ROLE", "canonical");
     try {
       ok("isCanonicalDir IGNORES WARPOS_REPO_ROLE=canonical (stays false on unsignaled tree)",
         isCanonicalDir(dir) === false);
     } finally {
-      if (origEnv === undefined) delete process.env.WARPOS_REPO_ROLE;
-      else process.env.WARPOS_REPO_ROLE = origEnv;
+      if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
+      else mcEnv.setEnv("REPO_ROLE", origEnv);
       cleanup(dir);
     }
   }

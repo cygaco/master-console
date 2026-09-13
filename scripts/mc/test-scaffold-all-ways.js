@@ -91,6 +91,7 @@
  * sandbox-isolation assertion failed; 2 = usage/internal error (fail-CLOSED —
  * a crash is never a pass).
  */
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 "use strict";
 
 const fs = require("fs");
@@ -297,8 +298,8 @@ function runLeg1({ sandboxRoot, timeoutMs }) {
     // vector (b): portfolio registry — point the existing, tested
     // WARPOS_PORTFOLIO_REGISTRY seam (registry.js#registryPath()) at a
     // sandbox doc for the duration of this leg only.
-    savedRegistryEnv = process.env.WARPOS_PORTFOLIO_REGISTRY;
-    process.env.WARPOS_PORTFOLIO_REGISTRY = sandboxRegistryPath;
+    savedRegistryEnv = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+    mcEnv.setEnv("PORTFOLIO_REGISTRY", sandboxRegistryPath);
 
     const { createProductRepo } = require("../portfolio/new-lib");
     const result = createProductRepo({
@@ -340,8 +341,8 @@ function runLeg1({ sandboxRoot, timeoutMs }) {
   } catch (e) {
     assert("leg1 ran without throwing", false, e.message);
   } finally {
-    if (savedRegistryEnv !== undefined) process.env.WARPOS_PORTFOLIO_REGISTRY = savedRegistryEnv;
-    else delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+    if (savedRegistryEnv !== undefined) mcEnv.setEnv("PORTFOLIO_REGISTRY", savedRegistryEnv);
+    else mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
 
     // vector (b), continued — NON-TRUST confirmation (β R1b): the real
     // registry must be byte-identical before/after, regardless of what the

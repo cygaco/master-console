@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/portfolio/registry-path.test.js
@@ -45,8 +46,8 @@ function test(name, fn) {
 // ── 1. Default resolution is HOME-anchored ────────────────────────────────
 test("registryPath() resolves to ~/.mc/portfolio.json", () => {
   // Ensure no env override is active for this assertion
-  const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
-  delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+  const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+  mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
   try {
     const resolved = registryPath();
     const expected = path.join(os.homedir(), ".mc", "portfolio.json");
@@ -56,14 +57,14 @@ test("registryPath() resolves to ~/.mc/portfolio.json", () => {
       `Expected ${expected}, got ${resolved}`,
     );
   } finally {
-    if (saved !== undefined) process.env.WARPOS_PORTFOLIO_REGISTRY = saved;
+    if (saved !== undefined) mcEnv.setEnv("PORTFOLIO_REGISTRY", saved);
   }
 });
 
 // ── 2. Dead project-local path is NEVER returned ──────────────────────────
 test("registryPath() does NOT point at the dead project-local registry.yaml", () => {
-  const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
-  delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+  const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+  mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
   try {
     const resolved = registryPath();
     const deadPath = path.join(ROOT, ".claude", "portfolio", "registry.yaml");
@@ -78,7 +79,7 @@ test("registryPath() does NOT point at the dead project-local registry.yaml", ()
       `Expected path to start with homedir ${os.homedir()}, got ${resolved}`,
     );
   } finally {
-    if (saved !== undefined) process.env.WARPOS_PORTFOLIO_REGISTRY = saved;
+    if (saved !== undefined) mcEnv.setEnv("PORTFOLIO_REGISTRY", saved);
   }
 });
 
@@ -95,8 +96,8 @@ test("paths.json does not contain portfolioRegistry (dead path removed from gene
 // ── 4. WARPOS_PORTFOLIO_REGISTRY env override is honoured ─────────────────
 test("WARPOS_PORTFOLIO_REGISTRY env-var override is honoured by registryPath()", () => {
   const override = path.join(os.tmpdir(), "test-portfolio.json");
-  const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
-  process.env.WARPOS_PORTFOLIO_REGISTRY = override;
+  const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+  mcEnv.setEnv("PORTFOLIO_REGISTRY", override);
   try {
     const resolved = registryPath();
     assert.strictEqual(
@@ -106,9 +107,9 @@ test("WARPOS_PORTFOLIO_REGISTRY env-var override is honoured by registryPath()",
     );
   } finally {
     if (saved !== undefined) {
-      process.env.WARPOS_PORTFOLIO_REGISTRY = saved;
+      mcEnv.setEnv("PORTFOLIO_REGISTRY", saved);
     } else {
-      delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+      mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
     }
   }
 });

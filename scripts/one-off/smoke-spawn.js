@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 // Smoke test for scripts/portfolio/spawn.js. Uses WARPOS_PORTFOLIO_REGISTRY
 // env override (already supported by registry.js) so we don't touch the real
@@ -20,7 +21,7 @@ const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 const TMP_REPO = path.join(TMP_DIR, "fake-product");
 fs.mkdirSync(TMP_REPO, { recursive: true });
 
-process.env.WARPOS_PORTFOLIO_REGISTRY = TMP_REG;
+mcEnv.setEnv("PORTFOLIO_REGISTRY", TMP_REG);
 
 // Reload modules under the new env.
 delete require.cache[require.resolve("../../scripts/portfolio/registry")];

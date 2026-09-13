@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Smoke for scripts/portfolio/dispatch.js (T-20260521-174).
@@ -29,7 +30,7 @@ const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 const TMP_REPO = path.join(TMP_DIR, "fake-product");
 fs.mkdirSync(TMP_REPO, { recursive: true });
 
-process.env.WARPOS_PORTFOLIO_REGISTRY = TMP_REG;
+mcEnv.setEnv("PORTFOLIO_REGISTRY", TMP_REG);
 const PARENT_CPD = process.env.CLAUDE_PROJECT_DIR || "(unset)";
 
 delete require.cache[require.resolve("../../scripts/portfolio/registry")];

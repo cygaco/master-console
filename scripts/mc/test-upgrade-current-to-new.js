@@ -44,6 +44,7 @@
  * internal error (fail-CLOSED — a crash is never a pass).
  */
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -1147,7 +1148,7 @@ async function runEngine({ timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
     try {
       // WARPOS_GATEB_KEEP=1 preserves the sandbox trees (n1-install + freshN oracle) for post-mortem
       // 3c-parity field diffs — the cleanup is otherwise a hard rmSync in this finally.
-      if (!process.env.WARPOS_GATEB_KEEP) fs.rmSync(tmpBase, { recursive: true, force: true });
+      if (!mcEnv.readEnv("GATEB_KEEP")) fs.rmSync(tmpBase, { recursive: true, force: true });
       else process.stderr.write(`[WARPOS_GATEB_KEEP] preserved sandbox: ${tmpBase}\n`);
     } catch {
       /* best-effort */

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Smoke harness for scripts/portfolio/status.js (T-20260521-173).
@@ -22,7 +23,7 @@ const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "mc-status-smoke-"));
 const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 
 // Set BEFORE requiring registry/status — registryPath() reads env on every call.
-process.env.WARPOS_PORTFOLIO_REGISTRY = TMP_REG;
+mcEnv.setEnv("PORTFOLIO_REGISTRY", TMP_REG);
 
 delete require.cache[require.resolve("../../scripts/portfolio/registry")];
 delete require.cache[require.resolve("../../scripts/portfolio/status")];

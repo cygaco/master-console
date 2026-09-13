@@ -35,6 +35,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -59,7 +60,7 @@ function resolveRoot(argv) {
   if (i !== -1 && argv[i + 1]) {
     return path.resolve(argv[i + 1]);
   }
-  const env = (process.env.WARPOS_ROADMAP_ROOT || "").trim();
+  const env = (mcEnv.readEnv("ROADMAP_ROOT") || "").trim();
   if (env) {
     return path.resolve(env);
   }

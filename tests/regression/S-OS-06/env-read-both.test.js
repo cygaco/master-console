@@ -38,18 +38,7 @@ const PENDING_RAW_ENV_FILES = [
   // (4b-4b DONE: mc-staleness … sprint-manager-consult)
   // 4b batch rest
   // (4b-5a DONE: decisions/ledger … mc/repo-role)
-  "scripts/mc/test-repo-role.js",
-  "scripts/mc/test-scaffold-all-ways.js",
-  "scripts/mc/test-upgrade-current-to-new.js",
-  "scripts/one-off/smoke-dispatch.js",
-  "scripts/one-off/smoke-spawn.js",
-  "scripts/one-off/smoke-status.js",
-  "scripts/one-off/smoke-sync.js",
-  "scripts/panel/roadmap-gui.js",
-  "scripts/panel/roadmap.js",
-  "scripts/portfolio/registry-path.test.js",
-  "scripts/portfolio/registry.js",
-  "scripts/skill-adherence-report.js",
+  // (4b-5b DONE: mc/test-repo-role … skill-adherence-report)
   "scripts/skill-description-audit.js",
   "scripts/skills-bench.js",
   "scripts/skills-test.js",

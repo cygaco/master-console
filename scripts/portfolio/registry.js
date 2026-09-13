@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -14,7 +15,7 @@ const SCHEMA_PATH = path.resolve(
 // Resolved fresh on every call — never cached — so WARPOS_PORTFOLIO_REGISTRY
 // overrides and os.homedir() changes (e.g. in tests) are always respected.
 function registryPath() {
-  const override = process.env.WARPOS_PORTFOLIO_REGISTRY;
+  const override = mcEnv.readEnv("PORTFOLIO_REGISTRY");
   if (override) return path.resolve(override);
   const home = os.homedir();
   if (!home) {
