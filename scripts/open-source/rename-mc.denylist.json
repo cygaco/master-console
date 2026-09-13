@@ -53,7 +53,18 @@
       "view|_warpos/MANIFEST.json",
       "view|scripts/hooks/lib/paths.generated.js"
     ],
-    "amendments": []
+    "amendments": [
+      { "key": "pin|scripts/open-source/assert-evidence.js|tag warpos@0.1.4 still resolves|", "warrant": "T3 pre-apply self-reference audit: git-tag DATA (BUILD-SPEC SEPARATE INVARIANTS — warpos@* tags are kept forever); rewriting the doc line desyncs it from the pinned TAG constant" },
+      { "key": "pin|scripts/open-source/assert-evidence.js|\"tag warpos@0.1.4 commit|", "warrant": "T3 pre-apply self-reference audit: evidence-map label naming the real historical tag; a rewrite relabels the anchor commit with a tag that never existed" },
+      { "key": "pin|scripts/open-source/assert-evidence.js|const TAG = \"warpos@0.1.4\";|", "warrant": "T3 pre-apply self-reference audit: the SHA-preservation assertion resolves the REAL tag warpos@0.1.4; a rewrite to mc@0.1.4 makes gate G2 assert a nonexistent tag and fail" },
+      { "key": "pin|scripts/checks/framework-purity.js|\"warpos-to-update.md\",|", "warrant": "T3 pre-apply self-reference audit (resolves denylist openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA; a rewrite makes the detector watch for a relic name that never existed" },
+      { "key": "pin|scripts/checks/framework-purity.js|\".warpos-sync.json\",|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA for the retired sync ledger; the old filename is what a returning relic carries" },
+      { "key": "pin|scripts/checks/framework-purity.js|\".warpos-sync-commit-msg.txt\",|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA for the retired sync commit-message file" },
+      { "key": "pin|scripts/checks/framework-purity.js|\"warpos-promoted-archive.md\",|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA for the retired promoted-archive doc" },
+      { "key": "pin|scripts/checks/framework-purity.js|/\\bwarposFlagLedger\\b/,|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_REGEX detector pattern for the retired paths key; a rewrite makes the regex search for its own replacement and read green forever" },
+      { "key": "pin|scripts/checks/framework-purity.js|/\\bwarposPromotedArchive\\b/,|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_REGEX detector pattern for the retired paths key" },
+      { "key": "pin|scripts/checks/framework-purity.js|/\\bwarposPromoteReports\\b/,|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_REGEX detector pattern for the retired paths key" }
+    ]
   },
 
   "generatedViews": [
@@ -95,6 +106,18 @@
     { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/flag.js\",", "warrant": "same relic-watch pin as scripts/warpos/promote.js" },
     { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/manifest/promote.js\",", "warrant": "same relic-watch pin as scripts/warpos/promote.js" },
     { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG_NEEDLE = ", "warrant": "the live-dir legacy-slug detector's own search literal (R1); rewriting it makes the detector search for its own replacement and read green forever" },
+
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos-to-update.md\",", "warrant": "PROMOTE_RELIC_FILES relic-watch DATA (openQuestion 2, pinned at T3 pre-apply audit): the detector watches for the RETIRED legacy relic name; a rewrite watches for a name that never existed" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\".warpos-sync.json\",", "warrant": "same relic-watch pin as warpos-to-update.md, for the retired sync ledger filename" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\".warpos-sync-commit-msg.txt\",", "warrant": "same relic-watch pin as warpos-to-update.md, for the retired sync commit-message filename" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos-promoted-archive.md\",", "warrant": "same relic-watch pin as warpos-to-update.md, for the retired promoted-archive doc" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "/\\bwarposFlagLedger\\b/,", "warrant": "PROMOTE_RELIC_REGEX detector pattern for a retired paths key; rewriting it makes the regex search for its own replacement and read green forever" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "/\\bwarposPromotedArchive\\b/,", "warrant": "same PROMOTE_RELIC_REGEX detector pin as warposFlagLedger" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "/\\bwarposPromoteReports\\b/,", "warrant": "same PROMOTE_RELIC_REGEX detector pin as warposFlagLedger" },
+
+    { "file": "scripts/open-source/assert-evidence.js", "matchText": "tag warpos@0.1.4 still resolves", "warrant": "git-tag DATA (BUILD-SPEC SEPARATE INVARIANTS: warpos@* tags kept forever); doc line kept verbatim so it matches the pinned TAG constant" },
+    { "file": "scripts/open-source/assert-evidence.js", "matchText": "\"tag warpos@0.1.4 commit", "warrant": "evidence-map label naming the real historical tag commit; a rewrite labels the anchor with a tag that never existed" },
+    { "file": "scripts/open-source/assert-evidence.js", "matchText": "const TAG = \"warpos@0.1.4\";", "warrant": "the SHA-preservation assertion (gate G2) resolves the REAL tag warpos@0.1.4; a rewrite to mc@0.1.4 asserts a nonexistent tag and fails" },
 
     { "file": "scripts/checks/cutover-completeness.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG_NEEDLE = ", "warrant": "the suppressed-count emission's own search literal (AC-7.1); rewriting it zeroes every emitted count — the one defense against the allow-list silent catch-all" },
 
