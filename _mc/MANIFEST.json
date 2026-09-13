@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T20:02:25.286Z",
+  "generatedAt": "2026-09-13T20:06:41.050Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -5577,8 +5577,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "e70b2eb0f2547c6ca5e38af961ce90b93a8643e0e090e6c4707e1fec110f8b8e",
-      "installedSha": "e70b2eb0f2547c6ca5e38af961ce90b93a8643e0e090e6c4707e1fec110f8b8e"
+      "sha256": "6baeeefa391180084b3c83730a6d526bf17f59f73cf022f942aa0f84b0635295",
+      "installedSha": "6baeeefa391180084b3c83730a6d526bf17f59f73cf022f942aa0f84b0635295"
     },
     "tests/regression/S-OS-06/denylist.test.js": {
       "owner": "framework",
@@ -8258,8 +8258,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.js",
-      "sha256": "e5ebb2526cac9e59bba824fe769016e92e11b5826a9cbff4bcfc8ffe78cb3499",
-      "installedSha": "e5ebb2526cac9e59bba824fe769016e92e11b5826a9cbff4bcfc8ffe78cb3499"
+      "sha256": "b17ccda0e20df54cd9d2a8bd0dab22894977fa6f4250e6a31cbeb447fb938cf0",
+      "installedSha": "b17ccda0e20df54cd9d2a8bd0dab22894977fa6f4250e6a31cbeb447fb938cf0"
     },
     "scripts/open-source/rename-mc.occurrences.json": {
       "owner": "framework",

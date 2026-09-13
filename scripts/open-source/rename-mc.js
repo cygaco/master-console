@@ -397,16 +397,26 @@ function genericSlugRewrite(lineText) {
 // A raw process.env read of a legacy-named variable has NO mechanical transform: the literal WARPOS_->MC_ swap
 // silently drops the one-release legacy fallback, and the correct rewrite (a read-both helper CALL + its require)
 // is not a line-local edit. Such a line is untransformable -> counted in the delta -> the codemod refuses.
-const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:\.\s*WARPOS_|\[\s*["'`]WARPOS_)/;
+// Matched case-INSENSITIVELY, aligned with categorizeOccurrence's case-insensitive env detection (7C-001): a mixed- or
+// lower-case read is still a raw legacy read, and the case-preserving generic rewrite would literal-swap it too.
+const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:\.\s*WARPOS_|\[\s*["'`]WARPOS_)/i;
+
+/**
+ * Wrap a category transform so a raw legacy env read has NO transform (-> null -> refuse). Applied to EVERY category:
+ * the categorizer buckets a lower/mixed-case bracket read outside "env" (e.g. prose), and that line must refuse too.
+ */
+function refuseRawLegacyEnvRead(transform) {
+  return (lineText) => (RAW_LEGACY_ENV_READ_RE.test(lineText) ? null : transform(lineText));
+}
 
 /** category -> (lineText) => rewritten line, or null when that line has no mechanical transform. */
 const CATEGORY_TRANSFORMS = Object.freeze({
-  "paths-registry": genericSlugRewrite,
-  env: (lineText) => (RAW_LEGACY_ENV_READ_RE.test(lineText) ? null : genericSlugRewrite(lineText)),
-  "skill-namespace": genericSlugRewrite,
-  dir: genericSlugRewrite,
-  identifier: genericSlugRewrite,
-  prose: genericSlugRewrite,
+  "paths-registry": refuseRawLegacyEnvRead(genericSlugRewrite),
+  env: refuseRawLegacyEnvRead(genericSlugRewrite),
+  "skill-namespace": refuseRawLegacyEnvRead(genericSlugRewrite),
+  dir: refuseRawLegacyEnvRead(genericSlugRewrite),
+  identifier: refuseRawLegacyEnvRead(genericSlugRewrite),
+  prose: refuseRawLegacyEnvRead(genericSlugRewrite),
 });
 
 /** Every category the categorizer can return. A category missing from CATEGORY_TRANSFORMS is uncomputable (refuse). */
