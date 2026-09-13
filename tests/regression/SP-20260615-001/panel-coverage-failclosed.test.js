@@ -70,7 +70,7 @@ function writeJson(name, obj) {
 
 // CLEAN — one row whose skill opener resolves (cockpit:readiness exists in this tree).
 const cleanPath = writeJson("clean.json", {
-  $schema: "warpos/panel-registry/v1",
+  $schema: "mc/panel-registry/v1",
   panels: {
     readiness: {
       name: "readiness",
@@ -83,7 +83,7 @@ const cleanPath = writeJson("clean.json", {
 
 // ORPHAN — a node opener pointing at a non-existent (non-parallel-lane) script.
 const orphanPath = writeJson("orphan.json", {
-  $schema: "warpos/panel-registry/v1",
+  $schema: "mc/panel-registry/v1",
   panels: {
     ghost: { name: "ghost", opener: "node scripts/nonexistent.js", description: "dead opener", run_context: "cli" },
   },
@@ -101,11 +101,11 @@ ok("ORPHAN-row registry → exit 1", () => {
 // check that only handles one corruption shape.
 const corruptCases = {
   "non-JSON content": writeRaw("notjson.json", "this is { not ] valid JSON"),
-  "wrong $schema": writeJson("badschema.json", { $schema: "warpos/WRONG/v9", panels: {} }),
-  "missing panels": writeJson("nopanels.json", { $schema: "warpos/panel-registry/v1" }),
+  "wrong $schema": writeJson("badschema.json", { $schema: "mc/WRONG/v9", panels: {} }),
+  "missing panels": writeJson("nopanels.json", { $schema: "mc/panel-registry/v1" }),
   // B1 (review BLOCKER): an ARRAY `panels` is CORRUPT SHAPE (typeof [] === "object" used to
   // false-green it → exit 0). Must fail CLOSED (≥2), distinct from clean 0 / finding 1.
-  "panels is an ARRAY": writeJson("arraypanels.json", { $schema: "warpos/panel-registry/v1", panels: [] }),
+  "panels is an ARRAY": writeJson("arraypanels.json", { $schema: "mc/panel-registry/v1", panels: [] }),
   "unreadable (nonexistent path)": path.join(tmpDir, "DOES_NOT_EXIST.json"),
 };
 
@@ -133,7 +133,7 @@ ok("the THREE exit codes are DISTINCT and corrupt ≥2 (the β-3 asymmetry)", ()
 // exit ≥2; assert ok:false directly on each corrupt shape, and ok:true on a clean one. This
 // verifies the B1 fix (array panels) in a review sandbox where spawnSync is EPERM.
 ok("B1 (injectable) — loadRegistry rejects an ARRAY `panels` (fail-closed precursor)", () => {
-  const r = loadRegistry(writeJson("arr-inj.json", { $schema: "warpos/panel-registry/v1", panels: [] }));
+  const r = loadRegistry(writeJson("arr-inj.json", { $schema: "mc/panel-registry/v1", panels: [] }));
   assert.strictEqual(r.ok, false, "array panels must be ok:false (→ exit ≥2)");
   assert(/array/i.test(r.reason), `reason should name the array shape, got '${r.reason}'`);
 });
@@ -141,7 +141,7 @@ ok("B1 (injectable) — loadRegistry rejects an ARRAY `panels` (fail-closed prec
 ok("loadRegistry (injectable) — ok:false on every corrupt shape, ok:true on a clean one", () => {
   // clean → ok:true
   const clean = loadRegistry(writeJson("clean-inj.json", {
-    $schema: "warpos/panel-registry/v1",
+    $schema: "mc/panel-registry/v1",
     panels: { readiness: { name: "readiness", opener: "/cockpit:readiness", description: "d", run_context: "cli" } },
   }));
   assert.strictEqual(clean.ok, true, "a clean registry must load ok:true");
@@ -149,8 +149,8 @@ ok("loadRegistry (injectable) — ok:false on every corrupt shape, ok:true on a 
   for (const [label, raw] of [
     ["non-JSON", writeRaw("nj-inj.json", "{ not ] json")],
     ["wrong $schema", writeJson("ws-inj.json", { $schema: "nope", panels: {} })],
-    ["missing panels", writeJson("mp-inj.json", { $schema: "warpos/panel-registry/v1" })],
-    ["array panels", writeJson("ap-inj.json", { $schema: "warpos/panel-registry/v1", panels: [] })],
+    ["missing panels", writeJson("mp-inj.json", { $schema: "mc/panel-registry/v1" })],
+    ["array panels", writeJson("ap-inj.json", { $schema: "mc/panel-registry/v1", panels: [] })],
     ["scalar root", writeRaw("sc-inj.json", "42")],
     ["unreadable", path.join(tmpDir, "NOPE-inj.json")],
   ]) {

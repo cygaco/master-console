@@ -36,6 +36,7 @@
 // Doctrine: paths.agentGuides/signal-channel.md.
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -50,8 +51,8 @@ function projectDir() {
 
 function boardRoot(opts = {}) {
   if (opts.root) return opts.root;
-  if (process.env.WARPOS_SIGNALS_DIR_OVERRIDE) {
-    return process.env.WARPOS_SIGNALS_DIR_OVERRIDE;
+  if (mcEnv.readEnv("SIGNALS_DIR_OVERRIDE")) {
+    return mcEnv.readEnv("SIGNALS_DIR_OVERRIDE");
   }
   // Prefer the registry's runtime key; fall back to the literal.
   let runtime;
@@ -104,7 +105,7 @@ function post(topic, payload, meta = {}, opts = {}) {
   const dir = topicDir(topic, opts);
   fs.mkdirSync(dir, { recursive: true });
   const ts = meta.ts || new Date().toISOString();
-  const from = meta.from || process.env.WARPOS_SIGNAL_FROM || "unknown";
+  const from = meta.from || mcEnv.readEnv("SIGNAL_FROM") || "unknown";
   const record = { topic, from, ts, payload };
   const now = nextStamp();
   const rand = Math.random().toString(36).slice(2, 8);

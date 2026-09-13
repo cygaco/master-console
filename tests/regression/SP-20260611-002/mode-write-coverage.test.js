@@ -54,7 +54,7 @@ function sealedProject() {
   fs.mkdirSync(path.join(proj, ".claude", "runtime"), { recursive: true });
   fs.mkdirSync(path.join(proj, ".claude", "project", "events"), { recursive: true });
   fs.writeFileSync(path.join(proj, ".claude", "runtime", ".session-id"), "s-mwc");
-  fs.writeFileSync(path.join(proj, ".claude", "manifest.json"), JSON.stringify({ project: { slug: "warpos" } }));
+  fs.writeFileSync(path.join(proj, ".claude", "manifest.json"), JSON.stringify({ project: { slug: "mc" } }));
   return proj;
 }
 

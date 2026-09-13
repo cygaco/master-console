@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * PostToolUse untrusted-content firewall (S0.6) — the real-time inbound injection
@@ -30,7 +31,7 @@
 
 const { classify } = require("./lib/untrusted-content");
 
-if (process.env.WARPOS_UNTRUSTED_CONTENT_FIREWALL === "off") process.exit(0);
+if (mcEnv.readEnv("UNTRUSTED_CONTENT_FIREWALL") === "off") process.exit(0);
 
 // Tools whose RESULT is external / untrusted content.
 const INGEST_TOOLS = /^(WebFetch|WebSearch|mcp__|ListMcpResources|ReadMcpResource)/;

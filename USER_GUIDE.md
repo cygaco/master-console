@@ -1,4 +1,4 @@
-# WarpOS User Guide
+# MC User Guide
 
 How to actually use the system. Not the reference — the workflow.
 
@@ -10,8 +10,8 @@ If you've just installed, start at §1. If you want the mode summary, skip to §
 
 1. Install (see [README.md](README.md))
 2. Open Claude Code in your project
-3. Type `/warp:tour` — guided introduction
-4. Type `/warp:health` — verifies every system; reports green/yellow/red
+3. Type `/mc:tour` — guided introduction
+4. Type `/mc:health` — verifies every system; reports green/yellow/red
 5. Type `/scan:environment` — flags missing provider CLIs (codex for OpenAI, `agy` for Gemini/Antigravity)
 6. Type `/mode:solo` — stay solo for your first hour
 7. Fix anything red before doing real work
@@ -120,48 +120,48 @@ This is the super-charge: one brain across many terminals, stitched together by 
 
 ## 4.5 Working a portfolio
 
-WarpOS is also a **portfolio console**. Your products live as sibling repos on disk — each its own private GitHub repo with its own Claude session — and WarpOS is the home base from which you list, status, open, sync, and dispatch across all of them. The `/portfolio:*` skill family is the one namespace for everything product-related.
+MC is also a **portfolio console**. Your products live as sibling repos on disk — each its own private GitHub repo with its own Claude session — and MC is the home base from which you list, status, open, sync, and dispatch across all of them. The `/portfolio:*` skill family is the one namespace for everything product-related.
 
 The core verbs:
 
 | Verb | What it does |
 |---|---|
 | `/portfolio:list` | One-line summary table of every registered product. |
-| `/portfolio:status` | Per-product dashboard: WarpOS version, last commit, dirty count, current sprint, GitHub remote. Parallel probes with 5s per-product timeout — one slow product never blocks the others. |
-| `/portfolio:new <slug>` | Scaffold a fresh sibling repo, copy templates, run `/warp:setup`, **auto-create a private GitHub repo** (`gh repo create --private --source=. --remote=origin --push`), and register it. One verb, end-to-end. |
+| `/portfolio:status` | Per-product dashboard: MC version, last commit, dirty count, current sprint, GitHub remote. Parallel probes with 5s per-product timeout — one slow product never blocks the others. |
+| `/portfolio:new <slug>` | Scaffold a fresh sibling repo, copy templates, run `/mc:setup`, **auto-create a private GitHub repo** (`gh repo create --private --source=. --remote=origin --push`), and register it. One verb, end-to-end. |
 | `/portfolio:adopt <slug>` | Same as `/portfolio:new` but seeded from an existing `_docs/briefs/<slug>/` or `_docs/clones/<slug>/`. Promotes a research deliverable into a real private product. |
-| `/portfolio:register <slug> <path>` | Register an existing repo that wasn't scaffolded by WarpOS. |
+| `/portfolio:register <slug> <path>` | Register an existing repo that wasn't scaffolded by MC. |
 | `/portfolio:open <slug>` | Print the product's absolute path + a `cd … && claude` hint. With `--spawn`, opens a fresh Claude session in a new terminal window pinned to that repo. |
-| `/portfolio:dispatch <slug> /<skill> [args]` | Run any skill against another product's working tree without leaving WarpOS. Spawns a fresh Claude subprocess with `CLAUDE_PROJECT_DIR` set to the target; the current session is never retargeted. |
-| `/portfolio:sync` | Run `/warp:update` across every registered product sequentially. No fail-fast — failures captured in the final summary. |
+| `/portfolio:dispatch <slug> /<skill> [args]` | Run any skill against another product's working tree without leaving MC. Spawns a fresh Claude subprocess with `CLAUDE_PROJECT_DIR` set to the target; the current session is never retargeted. |
+| `/portfolio:sync` | Run `/mc:update` across every registered product sequentially. No fail-fast — failures captured in the final summary. |
 | `/portfolio:bootstrap`, `/portfolio:clone`, `/portfolio:import`, `/portfolio:ponder` | Pre-product research verbs (formerly `/product:*`). |
 
 **Private-by-default.** Every `/portfolio:new` and `/portfolio:adopt` invocation hardcodes `--private`; there is no `--public` path. The GitHub repo is created under your authenticated `gh` user. On gh auth failure, the local repo stays intact and you get a one-line copyable command to finish manually.
 
 **Where products live.** By default, sibling repos land one directory above WarpOS (e.g. if WarpOS is at `~/Projects/WarpOS`, products land at `~/Projects/<slug>`). Override via `--workspace <dir>` or `WARPOS_PORTFOLIO_WORKSPACE`.
 
-**The registry.** `~/.warpos/portfolio.json` is the source of truth. Edit only via the skills — they validate the schema and write atomically.
+**The registry.** `~/.mc/portfolio.json` is the source of truth. Edit only via the skills — they validate the schema and write atomically.
 
 ---
 
 ## 4.6 Multi-terminal parallel products
 
-Pair this with section 4: each product opens in its own terminal window via `/portfolio:open <slug> --spawn`, and each terminal is an isolated Claude session with its own state, sprint, and context. WarpOS stays the orchestration cockpit; products run in parallel as peer sessions.
+Pair this with section 4: each product opens in its own terminal window via `/portfolio:open <slug> --spawn`, and each terminal is an isolated Claude session with its own state, sprint, and context. MC stays the orchestration cockpit; products run in parallel as peer sessions.
 
 Setup pattern:
 
 | Terminal | What it's running | Purpose |
 |---|---|---|
-| 1 | WarpOS, `/mode:solo` | Home base. `/portfolio:status`, decide what to work on, dispatch into products. |
+| 1 | MC, `/mode:solo` | Home base. `/portfolio:status`, decide what to work on, dispatch into products. |
 | 2 | Product A (e.g. your product), `/mode:adhoc` | Build features for product A. |
 | 3 | Product B (e.g. another product), `/mode:adhoc` | Build features for product B in parallel. |
-| 4 | WarpOS, solo | `/portfolio:sync`, `/skills:create`, tooling work. |
+| 4 | MC, solo | `/portfolio:sync`, `/skills:create`, tooling work. |
 
 The active-CWD guard fires when you `/portfolio:open <slug> --spawn` against a product whose `repo_path` already equals `process.cwd()` — opening it would just duplicate the session you're in. Pass `--force` to spawn anyway, or stay put.
 
 When no terminal binary is found on PATH (none of wt, powershell, cmd on Windows; iTerm, Terminal.app on macOS; gnome-terminal, xterm on Linux), `/portfolio:open --spawn` falls back gracefully — it prints a copyable `cd <path> && claude` string instead of failing silently.
 
-Cross-terminal coordination uses the same `/session:write` + `/session:read` inbox pattern from section 4. A product session can leave a note that WarpOS picks up on its next prompt — and vice versa. One brain, many terminals, all products visible from one place.
+Cross-terminal coordination uses the same `/session:write` + `/session:read` inbox pattern from section 4. A product session can leave a note that MC picks up on its next prompt — and vice versa. One brain, many terminals, all products visible from one place.
 
 ---
 
@@ -208,7 +208,7 @@ Six command families cover 90% of daily work.
 | `/sleep:deep` | Full 6-phase cycle (~15–30 min). NREM → cleanup → replay → REM dreaming → repair → growth. Surfaces unexpected connections, proposes improvements, runs `/scan:full --fast` as part of growth phase. |
 
 **When to run:**
-- `/sleep:quick` — end of each productive stretch, or when `/warp:health` flags memory bloat
+- `/sleep:quick` — end of each productive stretch, or when `/mc:health` flags memory bloat
 - `/sleep:deep` — once a day, when you're stepping away (not mid-flow)
 
 The sleep cycle isn't ceremony — it actively reshapes the memory that the next session will load. Skipping it = accumulating drift.
@@ -318,7 +318,7 @@ Never edit these by hand — `memory-guard` will block. Read them with the skill
 
 | Symptom | First move |
 |---|---|
-| `/warp:health` red anywhere | Fix before doing real work |
+| `/mc:health` red anywhere | Fix before doing real work |
 | Hook blocking a legit command | `/hooks:disable <name>` temporarily; file a `/hooks:friction` note |
 | Lost context after `/clear` | `/session:resume` |
 | Don't know what the agent did overnight | `/session:history` + read latest handoff |
@@ -337,7 +337,7 @@ Never edit these by hand — `memory-guard` will block. Read them with the skill
 - **Don't run team modes for solo tasks.** Agent overhead is real.
 - **Don't skip `/learn:deep` after a hard fix.** You'll repeat the debugging.
 - **Don't forget `/maps:all` after structural changes.** Stale maps mislead the next session.
-- **Don't ignore `/warp:health` yellow items.** They compound.
+- **Don't ignore `/mc:health` yellow items.** They compound.
 - **Don't edit `events.jsonl` / `learnings.jsonl` directly.** The guard will block; the system will drift.
 - **Don't run oneshot without specs.** It'll build confidently in the wrong direction.
 - **Don't skip preflight before oneshot.** Non-negotiable.

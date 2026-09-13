@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 // Smoke test for scripts/portfolio/spawn.js. Uses WARPOS_PORTFOLIO_REGISTRY
 // env override (already supported by registry.js) so we don't touch the real
-// portfolio.json under ~/.warpos. Tests:
+// portfolio.json under ~/.mc. Tests:
 //   (1) active-CWD warning fires when repo_path == cwd; spawn skipped
 //   (2) --force overrides the warning (dry-run mode for repeatability)
 //   (3) repo_path missing on disk → exit 1
@@ -15,12 +16,12 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-spawn-smoke-"));
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "mc-spawn-smoke-"));
 const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 const TMP_REPO = path.join(TMP_DIR, "fake-product");
 fs.mkdirSync(TMP_REPO, { recursive: true });
 
-process.env.WARPOS_PORTFOLIO_REGISTRY = TMP_REG;
+mcEnv.setEnv("PORTFOLIO_REGISTRY", TMP_REG);
 
 // Reload modules under the new env.
 delete require.cache[require.resolve("../../scripts/portfolio/registry")];
@@ -32,7 +33,7 @@ const { spawnForSlug, envSatisfies, probeBinary, PLATFORM_BINARIES } = spawnMod;
 // Seed registry with one product.
 const nowIso = new Date().toISOString();
 const doc = {
-  schema: "warpos/portfolio-registry/v1",
+  schema: "mc/portfolio-registry/v1",
   products: {
     "smoke-cwd": {
       slug: "smoke-cwd",

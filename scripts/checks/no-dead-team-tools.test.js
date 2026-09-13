@@ -23,7 +23,7 @@ h.test("qa-final: skips are path-prefix-scoped, not basename-scoped", () => {
   // SKIPPED (the real history/decision/per-run/baseline locations):
   assert(relSkipped(".claude/project/events/events.jsonl"), "the event log is skipped");
   assert(relSkipped(".claude/agents/president/_system/policy/adr/0015-x.md"), "ADRs are skipped");
-  assert(relSkipped("_warpos/BASELINE/_requirements/x.md"), "the shipped baseline is skipped");
+  assert(relSkipped("_mc/BASELINE/_requirements/x.md"), "the shipped baseline is skipped");
   assert(relSkipped("tests/regression/X/y.test.js"), "regression fixtures are skipped");
   assert(relSkipped("scripts/checks/no-dead-team-tools.js"), "the enforcer's own file (exact path) is skipped");
   // NOT skipped (ACTIVE paths a bare-basename skip would have wrongly excluded):

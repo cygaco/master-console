@@ -58,16 +58,16 @@ function discover() {
       }
     }
   }
-  // 3b. scripts/warpos/test-*.js (SP-20260528-001 / #438)
+  // 3b. scripts/mc/test-*.js (SP-20260528-001 / #438)
   // Framework/install-pipeline regression tests that should run on every lint
   // pass alongside the sprint tests. EXCLUDE heavy integration tests that have
   // their own on-demand/CI registration — test-install-matrix.js (~22s,
   // paths.testInstallMatrix) is a 7-scenario install matrix meant for the
-  // /warp:release ship-gate, not the fast per-pass linter loop. Keeping it out
+  // /mc:release ship-gate, not the fast per-pass linter loop. Keeping it out
   // here preserves the harness's sub-10s budget while still wiring in the rest
   // (gate/CLI/smoke tests that were previously orphaned — nothing ran them).
   // test-install-matrix.js — ~22s 7-scenario install matrix (paths.testInstallMatrix),
-  //   for the /warp:release ship-gate, not the fast per-pass loop.
+  //   for the /mc:release ship-gate, not the fast per-pass loop.
   // test-hash-back-compat.js — a one-off install-time SMOKE (per its own docstring)
   //   that compares current file content to install-time `installedHash` prefixes;
   //   it necessarily rots as canonical evolves (every framework file edited since
@@ -77,13 +77,13 @@ function discover() {
     "test-install-matrix.js",
     "test-hash-back-compat.js",
   ]);
-  if (fs.existsSync("scripts/warpos")) {
-    for (const f of fs.readdirSync("scripts/warpos")) {
+  if (fs.existsSync("scripts/mc")) {
+    for (const f of fs.readdirSync("scripts/mc")) {
       if (f.startsWith("test-") && f.endsWith(".js") && !WARPOS_TEST_EXCLUDE.has(f)) {
         const stem = f.replace(/\.js$/, "");
         linters.push({
-          name: `warpos-${stem}`,
-          cmd: `node scripts/warpos/${f}`,
+          name: `mc-${stem}`,
+          cmd: `node scripts/mc/${f}`,
         });
       }
     }

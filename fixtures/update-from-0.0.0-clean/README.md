@@ -1,6 +1,6 @@
 # Fixture: update-from-0.0.0-clean
 
-Phase 4G fixture for `/warp:update --dry-run --to 0.1.0`.
+Phase 4G fixture for `/mc:update --dry-run --to 0.1.0`.
 
 ## What it tests
 
@@ -9,7 +9,7 @@ A clean install at version 0.0.0 with no asset hashes recorded — the simplest 
 ## How to run
 
 ```bash
-node scripts/warpos/update.js --to 0.1.0 --dry-run --json
+node scripts/mc/update.js --to 0.1.0 --dry-run --json
 ```
 
 Currently the engine reads `.claude/framework-installed.json` from the **project root**, not from a fixture path. To use this fixture, copy its `framework-installed.json` over the project's `.claude/framework-installed.json` temporarily — or extend `update.js` with a `--from-install <path>` flag (TODO in Phase 4.1).

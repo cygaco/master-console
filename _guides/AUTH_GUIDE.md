@@ -8,7 +8,7 @@ lead_time: "Google sensitive-scope OAuth verification: days-weeks (only if you r
 
 # AUTH_GUIDE.md — Letting users sign in (Google SSO, email signup, magic links)
 
-> **Part of the WarpOS launch-guide library** (`_guides/`). New here? Read **`README.md`** first — it has the shared *"what only YOU can do vs your AI"* rule, the secrets golden-rule, and the day-zero timing principle that apply to every guide.
+> **Part of the MC launch-guide library** (`_guides/`). New here? Read **`README.md`** first — it has the shared *"what only YOU can do vs your AI"* rule, the secrets golden-rule, and the day-zero timing principle that apply to every guide.
 >
 > **Who this is for:** you're adding a way for users to get *into* your app — "Sign in with Google", email + password, or a magic link. Plain language, from zero.
 
@@ -24,7 +24,7 @@ Auth = proving who a user is. You can offer several methods at once:
 
 > **The single biggest decision:** use a **managed auth provider** (Clerk or Supabase Auth) instead of hand-building auth. Auth is where a small mistake becomes a *breach*, not a bug. See Section 2.
 
-> **Already decided on passwordless Supabase?** If your answer is "Supabase, no passwords — a 6-digit email code + Google," you're past the decision this guide helps with. Jump to **[`AUTH_RUNBOOK.md`](AUTH_RUNBOOK.md)** — the opinionated, agent-drivable execution runbook for exactly that stack (the WarpOS app-scaffold ships its code: clients, sign-in UI, PKCE callback, and the password hard-block migration + verifier). This guide stays the method-*choice* reference; the runbook is the *execution* of one chosen path.
+> **Already decided on passwordless Supabase?** If your answer is "Supabase, no passwords — a 6-digit email code + Google," you're past the decision this guide helps with. Jump to **[`AUTH_RUNBOOK.md`](AUTH_RUNBOOK.md)** — the opinionated, agent-drivable execution runbook for exactly that stack (the MC app-scaffold ships its code: clients, sign-in UI, PKCE callback, and the password hard-block migration + verifier). This guide stays the method-*choice* reference; the runbook is the *execution* of one chosen path.
 
 🔴/🤖 reminder: creating the provider account + the Google/Apple credentials + pasting secrets is **YOU**; installing the SDK, adding the login UI, protecting pages, wiring sessions is **your AI assistant**. (Full framing in `README.md`.)
 
@@ -157,4 +157,4 @@ Letting users sign up **with their email** instead of (or alongside) Google.
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed: May 2026. See `README.md` for the full set + recommended order.*
+*Part of the MC launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed: May 2026. See `README.md` for the full set + recommended order.*

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Ship WarpOS changes as versioned release capsules with manifests, migrations, checksums, changelogs, and upgrade notes.
+Ship MC changes as versioned release capsules with manifests, migrations, checksums, changelogs, and upgrade notes.
 
 ## Use When
 
@@ -11,12 +11,12 @@ Ship WarpOS changes as versioned release capsules with manifests, migrations, ch
 
 ## Do Not Use When
 
-- The change is product-only and should never ship through WarpOS.
+- The change is product-only and should never ship through MC.
 - The target is runtime data or per-session state.
 
 ## Example
 
-`/warp:release <version>` builds `framework/releases/<version>/` and verifies checksums with `scripts/warpos/release-build.js`.
+`/mc:release <version>` builds `framework/releases/<version>/` and verifies checksums with `scripts/mc/release-build.js`.
 
 ## Failure Modes
 
@@ -25,8 +25,8 @@ Ship WarpOS changes as versioned release capsules with manifests, migrations, ch
 
 ## Validation
 
-`node scripts/warpos/release-gates.js` runs path coherence, manifest, hook fixtures, update fixture, runtime leak, version consistency, and Phase 6 production-quality gates.
+`node scripts/mc/release-gates.js` runs path coherence, manifest, hook fixtures, update fixture, runtime leak, version consistency, and Phase 6 production-quality gates.
 
 ## Owner
 
-WarpOS release tooling.
+MC release tooling.

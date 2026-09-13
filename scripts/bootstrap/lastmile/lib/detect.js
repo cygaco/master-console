@@ -24,7 +24,7 @@ const SKIP_DIRS = new Set([
   "dist",
   "build",
   "out",
-  ".warpos",
+  ".mc",
   "coverage",
   ".vercel",
 ]);
@@ -329,7 +329,7 @@ function detectRepoState(repoRoot) {
   const platform = detectPlatform(framework, deploy);
 
   return {
-    schema: "warpos/bootstrap/lastmile-state/v1",
+    schema: "mc/bootstrap/lastmile-state/v1",
     repoRoot: root,
     isNodeProject: !!pkg,
     framework,

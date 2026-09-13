@@ -205,7 +205,7 @@ If the diagnosed root cause is "skill body misled Alpha or the user" (or any var
 - `## Built-in primitive limits` / appendix sections
 - `## Notes` / footnotes
 - Sibling reference docs (`_docs/**`, `.claude/project/reference/**`)
-- The future-flag ledger (`warpos-to-update.md`)
+- The future-flag ledger (`mc-to-update.md`)
 
 …do NOT close the loop. Alpha and the user both read the procedural body first; appendices are skipped on default flow. A doc-only fix re-triggers the bug next session.
 

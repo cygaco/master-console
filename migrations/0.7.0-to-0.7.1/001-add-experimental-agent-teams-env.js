@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* WarpOS 0.7.0 -> 0.7.1 migration 001 — add CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1.
+/* MC 0.7.0 -> 0.7.1 migration 001 — add CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1.
  *
  * Without this env entry in .claude/settings.json, Claude Code does not load
  * the TeamCreate / SendMessage / TeamDelete primitives. /mode:adhoc Step 2 then

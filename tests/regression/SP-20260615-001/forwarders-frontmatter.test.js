@@ -20,8 +20,8 @@ ok("forwarder-frontmatter-declares-namespace-reads-and-defers-runcontext-to-targ
   }
   // admin (in_app) inherits the run-in-product refusal from the keystone — it never asserts its own.
   const admin = full("admin");
-  assert.ok(/keystone[\s\S]*owns that refusal|never\b[\s\S]*WarpOS itself/i.test(admin),
-    "admin forwarder defers the WarpOS-refusal to the keystone (does not re-assert it)");
+  assert.ok(/keystone[\s\S]*owns that refusal|never\b[\s\S]*MC itself/i.test(admin),
+    "admin forwarder defers the MC-refusal to the keystone (does not re-assert it)");
 });
 
 console.log(`\nforwarders-frontmatter: ${p}/${p + f} pass`);

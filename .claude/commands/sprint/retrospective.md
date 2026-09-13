@@ -144,7 +144,7 @@ The script:
 2. Writes `paths.sprintHistory/<SP-id>/retro.yaml` atomically (`.tmp`
    + `rename`).
 3. Writes `paths.sprintHistory/<SP-id>/retro.md` from
-   `_warpos/templates/sprint/retrospective/retro.md.tmpl`.
+   `_mc/templates/sprint/retrospective/retro.md.tmpl`.
 4. Flips `paths.sprintActiveRegistry#sprints[].status` from `closed`
    → `retrospected` (idempotent on re-run).
 5. Emits TR-1 / TR-2 / TR-3 via `paths.loggerLib` for crash recovery
@@ -256,6 +256,6 @@ Routing is enforced — not aspirational (SP-20260514-002).
 - Schema: `schemas/sprint/sprint-retrospective.schema.json`
 - Active-sprints schema: `schemas/sprint/active-sprints.schema.json`
   (status enum includes `retrospected`)
-- Templates: `_warpos/templates/sprint/retrospective/retro.{yaml,md}.tmpl`
+- Templates: `_mc/templates/sprint/retrospective/retro.{yaml,md}.tmpl`
 - Workflow: `paths.sprintReference` (`sprint-workflow.md`)
 - Crash recovery: `_docs/sprint/CRASH_RECOVERY.md`

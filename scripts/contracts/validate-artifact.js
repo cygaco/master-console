@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * Fail-closed validator for WarpOS product-studio artifact contracts (v0.1).
+ * Fail-closed validator for MC product-studio artifact contracts (v0.1).
  *
  * Loads the schemas in schemas/contracts/, then validates a single artifact
  * instance OR a chain (array) of them. It REJECTS (exit 1) — never
@@ -15,7 +15,7 @@
  * A clean conformant chain exits 0 (AC-3.4).
  *
  * Hand-rolled (no ajv vendored) to match the house validators
- * (validate-autonomy-config.js, warpos/manifest/validate.js). Any INTERNAL
+ * (validate-autonomy-config.js, mc/manifest/validate.js). Any INTERNAL
  * error (missing schema dir, unparseable input) is fail-closed: exit 2, never
  * 0 — a validator that errors must not read as "pass" (LRN false-green class).
  *

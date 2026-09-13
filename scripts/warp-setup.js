@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * warp-setup.js — WarpOS installation script.
+ * warp-setup.js — MC installation script.
  *
- * Run from inside the WarpOS repo clone:
+ * Run from inside the MC repo clone:
  *   node scripts/warp-setup.js <target-project-path>
  *
  * Or from the target project:
- *   node ../WarpOS/scripts/warp-setup.js .
+ *   node ../MC/scripts/warp-setup.js .
  *
  * What it does:
  * 1. Checks prerequisites (Node 18+, Git, Claude Code)
@@ -24,7 +24,7 @@ const path = require("path");
 const readline = require("readline");
 // SP-20260525-019 (T-219/T-220): product-scaffold core extracted into a shared module.
 // scaffoldProduct = paths.json + skeleton + ROADMAP (the early bundle);
-// populateWarposMirror = the _warpos/ source mirror (the late block);
+// populateWarposMirror = the _mc/ source mirror (the late block);
 // writeProductManifest/writeAgentStore/writeProductSettings = the generated-file
 // steps (manifest.json, store.json, settings.json — extracted by T-220 so the
 // install.ps1/CLI path produces them too). See the module docstring for why the
@@ -36,7 +36,7 @@ const {
   writeProductManifest,
   writeAgentStore,
   writeProductSettings,
-} = require("./warpos/scaffold-core");
+} = require("./mc/scaffold-core");
 
 const OK = "\x1b[32m  ✓  \x1b[0m";
 const WARN = "\x1b[33m  !  \x1b[0m";
@@ -95,7 +95,7 @@ function copyDir(src, dest) {
 const argv = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const flags = new Set(process.argv.slice(2).filter((a) => a.startsWith("--")));
 const TARGET = path.resolve(argv[0] || ".");
-const WARPOS = path.resolve(__dirname, "..");
+const MC = path.resolve(__dirname, "..");
 const YES = flags.has("--yes") || flags.has("-y"); // skip interview, use defaults
 const DRY_RUN = flags.has("--dry-run");
 const SKIP_BACKUP = flags.has("--skip-backup");
@@ -109,11 +109,11 @@ if (!fs.existsSync(TARGET)) {
 }
 
 // ── Backup existing config before installer touches anything ─────
-// /warp:uninstall reads this backup to restore the project's pre-install state.
+// /mc:uninstall reads this backup to restore the project's pre-install state.
 function backupExisting() {
   if (SKIP_BACKUP) return null;
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  const backupRoot = path.join(TARGET, ".warpos-backup", ts);
+  const backupRoot = path.join(TARGET, ".mc-backup", ts);
   const backupTargets = [
     "CLAUDE.md",
     "AGENTS.md",
@@ -146,14 +146,14 @@ function backupExisting() {
     backedUp++;
   }
   if (backedUp > 0) {
-    // write a marker for /warp:uninstall to find
+    // write a marker for /mc:uninstall to find
     fs.writeFileSync(
       path.join(backupRoot, "BACKUP_MANIFEST.json"),
       JSON.stringify(
         {
           created: new Date().toISOString(),
           files_backed_up: backedUp,
-          warpos_version: WARPOS,
+          mc_version: MC,
         },
         null,
         2,
@@ -161,9 +161,9 @@ function backupExisting() {
     );
     log(
       "ok",
-      `Backed up ${backedUp} pre-install file(s) to .warpos-backup/${ts}/`,
+      `Backed up ${backedUp} pre-install file(s) to .mc-backup/${ts}/`,
     );
-    log("info", "/warp:uninstall restores from this backup.");
+    log("info", "/mc:uninstall restores from this backup.");
   }
   return backupRoot;
 }
@@ -226,9 +226,9 @@ function detectTool(tool) {
 }
 
 // ── Header ──────────────────────────────────────────────
-console.log(`\n${HEADER}  WarpOS Setup${RESET}`);
+console.log(`\n${HEADER}  MC Setup${RESET}`);
 console.log(`  Installing into: ${TARGET}`);
-console.log(`  From: ${WARPOS}`);
+console.log(`  From: ${MC}`);
 console.log(`  ${"─".repeat(50)}\n`);
 
 let errors = 0;
@@ -272,7 +272,7 @@ if (fs.existsSync(path.join(TARGET, ".git"))) {
 if (process.platform !== "win32") {
   log(
     "warn",
-    "WarpOS is Windows-only for now. Some features may not work on this platform.",
+    "MC is Windows-only for now. Some features may not work on this platform.",
   );
   warnings++;
 }
@@ -342,13 +342,13 @@ log(
 // AND stdin is a TTY. Otherwise: use defaults, ship.
 const projectNameDefault = path.basename(TARGET);
 const mainBranchDefault = detectMainBranch(TARGET);
-const warposSourceDefault = "https://github.com/cygaco/master-console.git";
+const mcSourceDefault = "https://github.com/cygaco/master-console.git";
 
 const interview = {
   projectName: projectNameDefault,
   pitch: "",
   mainBranch: mainBranchDefault,
-  warposSource: warposSourceDefault,
+  mcSource: mcSourceDefault,
 };
 
 async function runInterview() {
@@ -363,10 +363,10 @@ async function runInterview() {
   interview.projectName = await ask(rl, "Project name", projectNameDefault);
   interview.pitch = await ask(rl, "One-line pitch", "");
   interview.mainBranch = await ask(rl, "Main branch", mainBranchDefault);
-  interview.warposSource = await ask(
+  interview.mcSource = await ask(
     rl,
-    "WarpOS repo URL (for /warp:sync, /warp:check)",
-    warposSourceDefault,
+    "MC repo URL (for /mc:sync, /mc:check)",
+    mcSourceDefault,
   );
   rl.close();
 }
@@ -379,13 +379,13 @@ const hookTools = {
 };
 
 // ── 2.5 Backup existing config before any destructive writes ────
-// Skip entirely in dry-run so we don't pollute the target with .warpos-backup/
+// Skip entirely in dry-run so we don't pollute the target with .mc-backup/
 console.log(`\n${HEADER}  BACKUP${RESET}`);
 let backupPath = null;
 if (DRY_RUN) {
   log(
     "info",
-    "[dry-run] Would back up pre-install files to .warpos-backup/<ts>/",
+    "[dry-run] Would back up pre-install files to .mc-backup/<ts>/",
   );
 } else {
   backupPath = backupExisting();
@@ -434,7 +434,7 @@ if (!DRY_RUN) {
 // manifest; no installer code change.
 console.log(`\n${HEADER}  INSTALLING FRAMEWORK${RESET}`);
 
-const manifestPath = path.join(WARPOS, ".claude", "framework-manifest.json");
+const manifestPath = path.join(MC, ".claude", "framework-manifest.json");
 let shipManifest = null;
 try {
   shipManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
@@ -445,7 +445,7 @@ try {
   );
   log(
     "info",
-    "Run `node scripts/generate-framework-manifest.js` in the WarpOS repo first.",
+    "Run `node scripts/generate-framework-manifest.js` in the MC repo first.",
   );
   process.exit(1);
 }
@@ -559,7 +559,7 @@ for (const [kind, entries] of Object.entries(shipManifest.assets)) {
   if (SKIP_KINDS.has(kind)) continue;
   let n = 0;
   for (const entry of entries) {
-    const src = path.join(WARPOS, entry.src);
+    const src = path.join(MC, entry.src);
     const dest = path.join(TARGET, entry.dest);
     if (!fs.existsSync(src)) continue; // manifest out of date, skip gracefully
     if (fs.existsSync(dest)) {
@@ -585,14 +585,14 @@ installed += installedThisRun;
 
 // ── 5/5b/5c. Product scaffold — paths.json + skeleton + ROADMAP ──
 // SP-20260525-019 (T-219): these three blocks were moved VERBATIM into the
-// shared scaffold core (scripts/warpos/scaffold-core.js#scaffoldProduct). Same
+// shared scaffold core (scripts/mc/scaffold-core.js#scaffoldProduct). Same
 // registry-driven paths.json build/backfill, same SKELETON_DIRS + .gitkeep, same
-// ROADMAP scaffold call — only relocated and parameterized (TARGET/WARPOS/log).
+// ROADMAP scaffold call — only relocated and parameterized (TARGET/MC/log).
 // Must run here (before the hook-config notice reads _requirements/01-design-system).
 {
   const { installedDelta } = scaffoldProduct({
     target: TARGET,
-    warposRoot: WARPOS,
+    mcRoot: MC,
     log,
   });
   installed += installedDelta;
@@ -600,7 +600,7 @@ installed += installedThisRun;
 
 // ── 6. Create manifest.json ─────────────────────────────
 // SP-20260525-019 (T-220): extracted VERBATIM into the shared scaffold core
-// (scripts/warpos/scaffold-core.js#writeProductManifest) so the install.ps1/CLI
+// (scripts/mc/scaffold-core.js#writeProductManifest) so the install.ps1/CLI
 // path produces manifest.json too. Same interview-driven object + buildCommands
 // auto-detect — only relocated and parameterized (TARGET/interview/stack/
 // framework/log). Idempotent / skip-if-present preserved.
@@ -617,7 +617,7 @@ installed += installedThisRun;
 
 // ── 7. Create store.json (required for build modes) ─────
 // SP-20260525-019 (T-220): extracted VERBATIM into the shared scaffold core
-// (scripts/warpos/scaffold-core.js#writeAgentStore). Same static build-system
+// (scripts/mc/scaffold-core.js#writeAgentStore). Same static build-system
 // state object. Idempotent / skip-if-present preserved.
 {
   const { installedDelta } = writeAgentStore({ target: TARGET, log });
@@ -626,7 +626,7 @@ installed += installedThisRun;
 
 // ── 8. Create memory stores ─────────────────────────────
 // events + learnings + traces start empty. systems gets seeded with the
-// 16 canonical WarpOS system tiers so `/scan:system` has a baseline to
+// 16 canonical MC system tiers so `/scan:system` has a baseline to
 // diff against from day one. The scanner rewrites this file when it runs.
 const memoryFiles = [
   ".claude/project/events/events.jsonl",
@@ -643,7 +643,7 @@ for (const file of memoryFiles) {
   }
 }
 
-// Seed systems.jsonl with canonical 16-tier WarpOS system inventory
+// Seed systems.jsonl with canonical 16-tier MC system inventory
 const systemsFile = path.join(TARGET, ".claude/project/memory/systems.jsonl");
 if (!fs.existsSync(systemsFile)) {
   const now = new Date().toISOString();
@@ -790,16 +790,16 @@ if (!fs.existsSync(systemsFile)) {
 }
 
 // ── 8.5. Append runtime exclusions to .gitignore ────────
-// Every client must keep WarpOS runtime artifacts out of their public repo.
+// Every client must keep MC runtime artifacts out of their public repo.
 // We write an idempotent block between markers; re-running the installer updates it in place.
 const gitignorePath = path.join(TARGET, ".gitignore");
-const GITIGNORE_START = "# >>> WarpOS runtime (managed, do not edit) >>>";
-const GITIGNORE_END = "# <<< WarpOS runtime <<<";
+const GITIGNORE_START = "# >>> MC runtime (managed, do not edit) >>>";
+const GITIGNORE_END = "# <<< MC runtime <<<";
 const runtimeBlock = [
   GITIGNORE_START,
   ".claude/runtime/",
   ".claude/content/",
-  ".warpos/",
+  ".mc/",
   ".claude/project/events/",
   ".claude/project/memory/",
   ".claude/project/builds/",
@@ -850,22 +850,22 @@ if (gitignoreContent.includes(GITIGNORE_START)) {
 
 // ── 8. Merge settings.json ──────────────────────────────
 // SP-20260525-019 (T-220): extracted VERBATIM into the shared scaffold core
-// (scripts/warpos/scaffold-core.js#writeProductSettings) so the install.ps1/CLI
+// (scripts/mc/scaffold-core.js#writeProductSettings) so the install.ps1/CLI
 // path produces settings.json too (without it, a consumer install had NO
 // settings.json → no hooks fired). Same env + permissions + hook-registration
 // merge AND the SP-20260523-002 layered-compile check — only relocated and
-// parameterized (TARGET/WARPOS/hookTools/log/HEADER/RESET).
+// parameterized (TARGET/MC/hookTools/log/HEADER/RESET).
 //
 // ORDERING PRESERVED (load-bearing): this call sits at the SAME site as the
-// inline block did — BEFORE the _warpos/ source mirror below. On a fresh install
-// `_warpos/settings/defaults.json` does not exist yet (the mirror creates it),
+// inline block did — BEFORE the _mc/ source mirror below. On a fresh install
+// `_mc/settings/defaults.json` does not exist yet (the mirror creates it),
 // so writeProductSettings's compile branch is SKIPPED and warp-setup ships the
 // inlined base write, exactly as before. Moving this after the mirror would flip
 // that branch — a behavior change. (See the scaffold-core module docstring.)
 {
   const { installedDelta } = writeProductSettings({
     target: TARGET,
-    warposRoot: WARPOS,
+    mcRoot: MC,
     hookTools,
     log,
     HEADER,
@@ -878,7 +878,7 @@ if (gitignoreContent.includes(GITIGNORE_START)) {
 console.log(`\n${HEADER}  FRAMEWORK DOCS${RESET}`);
 
 const claudeMdTarget = path.join(TARGET, "CLAUDE.md");
-const claudeMdSource = path.join(WARPOS, "CLAUDE.md");
+const claudeMdSource = path.join(MC, "CLAUDE.md");
 const ALEX_MARKER = "You are **Alex α**";
 if (!fs.existsSync(claudeMdTarget) && fs.existsSync(claudeMdSource)) {
   // No CLAUDE.md → just copy the Alex one.
@@ -892,7 +892,7 @@ if (!fs.existsSync(claudeMdTarget) && fs.existsSync(claudeMdSource)) {
     // Alex already merged (or user pasted it themselves) — no-op.
     log("ok", "CLAUDE.md already has Alex identity — no merge needed");
   } else {
-    // Merge: append WarpOS's Alex CLAUDE.md below user's content, with a
+    // Merge: append MC's Alex CLAUDE.md below user's content, with a
     // visible separator. Backup already taken at start of install.
     const alexContent = fs.readFileSync(claudeMdSource, "utf8");
     const separator = userContent.endsWith("\n") ? "\n---\n\n" : "\n\n---\n\n";
@@ -903,30 +903,30 @@ if (!fs.existsSync(claudeMdTarget) && fs.existsSync(claudeMdSource)) {
     );
     log(
       "info",
-      "Revert: copy .warpos-backup/<ts>/CLAUDE.md back over CLAUDE.md",
+      "Revert: copy .mc-backup/<ts>/CLAUDE.md back over CLAUDE.md",
     );
     installed++;
   }
 }
 
 const agentsMdTarget = path.join(TARGET, "AGENTS.md");
-const agentsMdSource = path.join(WARPOS, "AGENTS.md");
+const agentsMdSource = path.join(MC, "AGENTS.md");
 const AGENTS_MARKER = "Alex identity card";
 if (!fs.existsSync(agentsMdTarget) && fs.existsSync(agentsMdSource)) {
   fs.copyFileSync(agentsMdSource, agentsMdTarget);
-  log("ok", "Created AGENTS.md with WarpOS agent system");
+  log("ok", "Created AGENTS.md with MC agent system");
   installed++;
 } else if (fs.existsSync(agentsMdTarget) && fs.existsSync(agentsMdSource)) {
   const userAgents = fs.readFileSync(agentsMdTarget, "utf8");
   if (userAgents.includes(AGENTS_MARKER)) {
-    log("ok", "AGENTS.md already has WarpOS agent system — no merge needed");
+    log("ok", "AGENTS.md already has MC agent system — no merge needed");
   } else {
     const warpAgents = fs.readFileSync(agentsMdSource, "utf8");
     const sep = userAgents.endsWith("\n") ? "\n---\n\n" : "\n\n---\n\n";
     fs.writeFileSync(agentsMdTarget, userAgents + sep + warpAgents);
     log(
       "ok",
-      "Merged WarpOS agent system into your existing AGENTS.md (appended below your content)",
+      "Merged MC agent system into your existing AGENTS.md (appended below your content)",
     );
     installed++;
   }
@@ -934,10 +934,10 @@ if (!fs.existsSync(agentsMdTarget) && fs.existsSync(agentsMdSource)) {
 
 // ── Write framework-installed.json snapshot ─────────────
 // Phase 1D — schema v2 captures per-asset hash + mergeStrategy + owner so
-// /warp:update can do a real three-way merge later. Per-asset record:
+// /mc:update can do a real three-way merge later. Per-asset record:
 //   src, dest, installedHash (what we shipped), currentHashAtInstall (what
 //   the target had if we skipped due to existing), owner, mergeStrategy.
-// Adds: installedVersion, installedCommit (from WarpOS source repo HEAD when
+// Adds: installedVersion, installedCommit (from MC source repo HEAD when
 //       resolvable), installedAt, source.
 //   generated[]: every per-project file the installer creates from a builder.
 try {
@@ -951,11 +951,11 @@ try {
       .slice(0, 12);
   }
 
-  // Resolve installedCommit from WarpOS repo HEAD if we can. Fail open.
+  // Resolve installedCommit from MC repo HEAD if we can. Fail open.
   let installedCommit = null;
   try {
     installedCommit = execSync("git rev-parse HEAD", {
-      cwd: WARPOS,
+      cwd: MC,
       stdio: ["pipe", "pipe", "pipe"],
     })
       .toString()
@@ -969,7 +969,7 @@ try {
   for (const [kind, entries] of Object.entries(shipManifest.assets)) {
     for (const e of entries) {
       installedFiles.push(e.dest);
-      const srcAbs = path.join(WARPOS, e.src);
+      const srcAbs = path.join(MC, e.src);
       const destAbs = path.join(TARGET, e.dest);
       perAsset.push({
         id: e.id || null,
@@ -997,13 +997,13 @@ try {
   }
 
   const snapshot = {
-    $schema: "warpos/framework-installed/v2",
+    $schema: "mc/framework-installed/v2",
     manifest_version: shipManifest.version,
-    manifest_schema: shipManifest.$schema || "warpos/framework-manifest/v2",
+    manifest_schema: shipManifest.$schema || "mc/framework-manifest/v2",
     installedVersion: shipManifest.version,
     installedCommit,
     installedAt: new Date().toISOString(),
-    source: interview.warposSource || "https://github.com/cygaco/master-console.git",
+    source: interview.mcSource || "https://github.com/cygaco/master-console.git",
     counts: shipManifest.counts,
     installed_files: installedFiles.sort(),
     assets: perAsset.sort((a, b) => a.dest.localeCompare(b.dest)),
@@ -1021,17 +1021,17 @@ try {
   log("warn", `Could not write framework-installed.json: ${e.message}`);
 }
 
-// ── 8.9. Populate _warpos/ framework SOURCE mirror (SP-20260525-003) ──
+// ── 8.9. Populate _mc/ framework SOURCE mirror (SP-20260525-003) ──
 // SP-20260525-019 (T-219): moved VERBATIM into the shared scaffold core
-// (scripts/warpos/scaffold-core.js#populateWarposMirror) — same populate-source
+// (scripts/mc/scaffold-core.js#populateWarposMirror) — same populate-source
 // call, same logging, same fail-open. Only relocated + parameterized.
 // MUST run here: AFTER the settings-compile check above (which keys on whether
-// _warpos/settings/defaults.json exists — this block creates it) and BEFORE the
-// MANIFEST COVERAGE block below (which regenerates _warpos/MANIFEST.json).
+// _mc/settings/defaults.json exists — this block creates it) and BEFORE the
+// MANIFEST COVERAGE block below (which regenerates _mc/MANIFEST.json).
 {
   const { installedDelta } = populateWarposMirror({
     target: TARGET,
-    warposRoot: WARPOS,
+    mcRoot: MC,
     shipManifest,
     log,
     HEADER,
@@ -1044,13 +1044,13 @@ try {
 // ── Provider CLI check (informational) ──────────────────
 // FAST-FOLLOW (S-LC-10): this presence-only check is the natural hook-in point
 // for the T1/T2/T3 provider-tier readiness report
-// (scripts/warpos/provider-tier-check.js). The read-only tier surface is already
-// wired into /warp:health (§11.6) and /scan:environment (E28.5). The DEEPER
+// (scripts/mc/provider-tier-check.js). The read-only tier surface is already
+// wired into /mc:health (§11.6) and /scan:environment (E28.5). The DEEPER
 // install-flow wiring here — explain tiers → choose → save the preferred-tier
 // config → check-only-selected → remediate (install CLIs / add funding) — is
 // DEFERRED: those are confirm-class install/write actions (§14) that must gate
 // behind explicit operator confirmation, not auto-run during setup. When wired,
-// call `node scripts/warpos/provider-tier-check.js --json` here (report-only) and
+// call `node scripts/mc/provider-tier-check.js --json` here (report-only) and
 // gate any `--set-tier` write / CLI install on an explicit prompt.
 const codexPresent = cmdExists("codex");
 const agyPresent = cmdExists("agy");
@@ -1063,7 +1063,7 @@ if (warnings > 0)
 
 console.log(`\n${HEADER}  PROVIDER CLIs${RESET}`);
 console.log(
-  `  WarpOS routes review/security agents through other AI providers`,
+  `  MC routes review/security agents through other AI providers`,
 );
 console.log(
   `  for model diversity. Same-model review is blind to shared failure`,
@@ -1095,27 +1095,27 @@ if (agyPresent) {
 }
 
 // SP-20260523-003: Post-install manifest-coverage hook.
-// After all writes, regenerate _warpos/MANIFEST.json + validate against
+// After all writes, regenerate _mc/MANIFEST.json + validate against
 // on-disk state. Surfaces any files we wrote that aren't covered by the
 // manifest (which would silently break future updates). Fail-open by
 // default; --strict-manifest converts findings to non-zero exit.
 if (!SKIP_MANIFEST_CHECK) {
   console.log(`\n${HEADER}  MANIFEST COVERAGE${RESET}`);
-  const warposZone = path.join(TARGET, "_warpos");
-  if (!fs.existsSync(warposZone)) {
-    log("info", "_warpos/ not present in target — skipping manifest coverage (legacy install layout)");
+  const mcZone = path.join(TARGET, "_mc");
+  if (!fs.existsSync(mcZone)) {
+    log("info", "_mc/ not present in target — skipping manifest coverage (legacy install layout)");
   } else {
-    const validateScript = path.join(WARPOS, "scripts/warpos/manifest/validate.js");
+    const validateScript = path.join(MC, "scripts/mc/manifest/validate.js");
     let coverageExitCode = 0;
     let coverageSummary = null;
     try {
       const { spawnSync } = require("child_process");
-      // (1) regenerate _warpos/MANIFEST.json via the SHARED scaffold core
+      // (1) regenerate _mc/MANIFEST.json via the SHARED scaffold core
       // (scaffold-core.js#regenerateWarposManifest) — the SAME build the
       // install.ps1 / CLI path runs, so both installers produce an identical
       // mirror manifest (β: extract-don't-fork). The validate + --strict-manifest
       // install-refusal policy below stays warp-setup-specific.
-      const buildRes = regenerateWarposManifest({ target: TARGET, warposRoot: WARPOS, log });
+      const buildRes = regenerateWarposManifest({ target: TARGET, mcRoot: MC, log });
       if (!buildRes.ok) {
         // helper already logged the skip/build-failure reason — skip the validate pass.
       } else {
@@ -1150,7 +1150,7 @@ if (!SKIP_MANIFEST_CHECK) {
               coverageExitCode = 1;
               log("error", "--strict-manifest set — refusing install completion with findings");
             } else {
-              log("info", "Run with --strict-manifest to refuse install on findings. Or re-run /warp:setup --skip-manifest-check to silence.");
+              log("info", "Run with --strict-manifest to refuse install on findings. Or re-run /mc:setup --skip-manifest-check to silence.");
             }
           }
         } catch (e) {
@@ -1199,23 +1199,23 @@ console.log(
   `${BOX_MID}                                                                  ${BOX_MID}`,
 );
 console.log(
-  `${BOX_MID}  \x1b[2mEither way:\x1b[0m first prompt should be \x1b[1m/warp:health\x1b[0m              ${BOX_MID}`,
+  `${BOX_MID}  \x1b[2mEither way:\x1b[0m first prompt should be \x1b[1m/mc:health\x1b[0m              ${BOX_MID}`,
 );
 console.log(`${BOX_BOT}\n`);
 console.log(`  First skill to run in Claude Code:`);
 console.log(
-  `    \x1b[1m/warp:setup\x1b[0m           confirms install state + guides you from here`,
+  `    \x1b[1m/mc:setup\x1b[0m           confirms install state + guides you from here`,
 );
 console.log(``);
-console.log(`  Other useful skills (after /warp:setup gives the green light):`);
-console.log(`    \x1b[1m/warp:health\x1b[0m          verify every subsystem`);
+console.log(`  Other useful skills (after /mc:setup gives the green light):`);
+console.log(`    \x1b[1m/mc:health\x1b[0m          verify every subsystem`);
 console.log(
   `    \x1b[1m/maps:all\x1b[0m             generate relationship maps (powers smart-context enrichment)`,
 );
 console.log(`    \x1b[1m/scan:system\x1b[0m         manifest vs disk`);
 console.log(`    \x1b[1m/scan:environment\x1b[0m    provider CLIs + auth`);
 console.log(`    \x1b[1m/discover:systems\x1b[0m     6-angle system inventory`);
-console.log(`    \x1b[1m/warp:tour\x1b[0m            guided walkthrough`);
+console.log(`    \x1b[1m/mc:tour\x1b[0m            guided walkthrough`);
 console.log(
-  `    \x1b[1m/warp:uninstall\x1b[0m       if something is wrong, revert cleanly\n`,
+  `    \x1b[1m/mc:uninstall\x1b[0m       if something is wrong, revert cleanly\n`,
 );

@@ -34,7 +34,7 @@ Exit 0 when no canonical-expected detector failed; non-zero on a real regression
 
 ## The per-sprint convention (0.17.0)
 
-Every WarpOS sprint keeps this suite green (modulo documented `n/a`/`gap`) **and** adds a detector for any newly-recurring bug class (≥2 occurrences or an `/issues:log` entry → a new registry row + a real detector in the same sprint). The seed grows with the framework. Mandatory in canonical; opt-in in consumer products (the role-aware enforcer is the 0.17.0 deliverable that gates this).
+Every MC sprint keeps this suite green (modulo documented `n/a`/`gap`) **and** adds a detector for any newly-recurring bug class (≥2 occurrences or an `/issues:log` entry → a new registry row + a real detector in the same sprint). The seed grows with the framework. Mandatory in canonical; opt-in in consumer products (the role-aware enforcer is the 0.17.0 deliverable that gates this).
 
 ## Relationship
 

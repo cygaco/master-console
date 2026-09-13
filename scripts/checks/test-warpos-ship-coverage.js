@@ -2,22 +2,22 @@
 /* eslint-disable no-console */
 "use strict";
 /**
- * scripts/checks/test-warpos-ship-coverage.js
+ * scripts/checks/test-mc-ship-coverage.js
  *
- * Fixture-driven tests for warpos-ship-coverage.js (AC1, run-0160).
+ * Fixture-driven tests for mc-ship-coverage.js (AC1, run-0160).
  * Drives the gate against ephemeral temp directories — no live manifest dependency.
  *
  * Test cases (0.16.0: KNOWN_DANGLING_SET is EMPTY — zero-tolerance for dangling seeded_from):
  *   (a) NEW dangling seeded_from (outside the old dirs) → exit 1 (RED)
  *   (b) dangling seeded_from with EMPTY KNOWN_DANGLING (former framework/templates values) → exit 1 (RED)
- *   (c) Malformed _warpos/MANIFEST.json                                         → exit 2 (setup error)
+ *   (c) Malformed _mc/MANIFEST.json                                         → exit 2 (setup error)
  *   (d) EXHAUSTIVE: run against THIS worktree → info_gaps_count===0, dangling_unallowlisted===0, dangling_seeds_total===0, ok===true
  *   (e) FIX1: unallowlisted owner=framework info_gap path → exit 1, info_gaps_count>0 (not just INFO)
  *   (f) FIX2: a dangle inside framework/templates/_requirements/ (set empty) → exit 1 (RED)
  *   (g) a FORMER known-100 value as seeded_from → now RED (allowlist emptied in 0.16.0)
- *   (h) FIX1-pin (SP-20260618-001): an UNSHIPPED _warpos/templates path → info_gaps
+ *   (h) FIX1-pin (SP-20260618-001): an UNSHIPPED _mc/templates path → info_gaps
  *       (NOT hard_gaps), ok===false. Pins the templates-migration carve against a
- *       future re-broadening of KNOWN_NOT_SHIPPED back to a blanket `_warpos/`.
+ *       future re-broadening of KNOWN_NOT_SHIPPED back to a blanket `_mc/`.
  *
  * Exit: 0 iff all tests pass, 1 otherwise.
  */
@@ -27,7 +27,7 @@ const path = require("path");
 const os = require("os");
 const cp = require("child_process");
 
-const GATE = path.resolve(__dirname, "warpos-ship-coverage.js");
+const GATE = path.resolve(__dirname, "mc-ship-coverage.js");
 const WORKTREE_ROOT = path.resolve(__dirname, "..", "..");
 
 let passes = 0;
@@ -48,22 +48,22 @@ function ok(name, condition, detail) {
 
 /**
  * Create a minimal temp fixture directory with:
- *   _warpos/MANIFEST.json      (provided as warposManifest, or literal JSON string)
+ *   _mc/MANIFEST.json      (provided as mcManifest, or literal JSON string)
  *   .claude/framework-manifest.json  (includes _guides/ to satisfy must-ship check)
  *
  * Returns the temp dir path.
  */
-function makeTempFixture(warposManifest) {
+function makeTempFixture(mcManifest) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wsc-test-"));
 
-  // _warpos/ dir + MANIFEST.json
-  fs.mkdirSync(path.join(dir, "_warpos"), { recursive: true });
-  if (typeof warposManifest === "string") {
-    fs.writeFileSync(path.join(dir, "_warpos", "MANIFEST.json"), warposManifest);
+  // _mc/ dir + MANIFEST.json
+  fs.mkdirSync(path.join(dir, "_mc"), { recursive: true });
+  if (typeof mcManifest === "string") {
+    fs.writeFileSync(path.join(dir, "_mc", "MANIFEST.json"), mcManifest);
   } else {
     fs.writeFileSync(
-      path.join(dir, "_warpos", "MANIFEST.json"),
-      JSON.stringify(warposManifest, null, 2),
+      path.join(dir, "_mc", "MANIFEST.json"),
+      JSON.stringify(mcManifest, null, 2),
     );
   }
 
@@ -192,8 +192,8 @@ console.log("\n[b] dangling seeded_from with empty KNOWN_DANGLING → exit 1 (ze
   }
 }
 
-// ── Test (c): malformed _warpos/MANIFEST.json → exit 2 ───────────────────────
-console.log("\n[c] Malformed _warpos/MANIFEST.json → exit 2");
+// ── Test (c): malformed _mc/MANIFEST.json → exit 2 ───────────────────────
+console.log("\n[c] Malformed _mc/MANIFEST.json → exit 2");
 {
   const dir = makeTempFixture("{ this is not valid json >>>"); // intentionally invalid
   try {
@@ -201,8 +201,8 @@ console.log("\n[c] Malformed _warpos/MANIFEST.json → exit 2");
     ok("(c) exit code is 2", r.code === 2, `got ${r.code}`);
     // json output is undefined since gate exits before printing JSON
     ok(
-      "(c) stderr contains 'invalid JSON' or 'warpos-ship-coverage'",
-      typeof r.stderr === "string" && r.stderr.includes("warpos-ship-coverage"),
+      "(c) stderr contains 'invalid JSON' or 'mc-ship-coverage'",
+      typeof r.stderr === "string" && r.stderr.includes("mc-ship-coverage"),
       `stderr=${r.stderr.slice(0, 200)}`,
     );
   } finally {
@@ -355,18 +355,18 @@ console.log("\n[g] former known-100 value as seeded_from → now RED (allowlist 
   }
 }
 
-// ── Test (h): FIX1-pin — unshipped _warpos/templates path → info_gaps, exit 1 ──
-// SP-20260618-001: the framework/templates → _warpos/templates migration carved
-// KNOWN_NOT_SHIPPED narrowly (only _warpos/MANIFEST.json + _warpos/settings/ +
-// _warpos/BASELINE/), leaving _warpos/templates/** to FALL THROUGH and ship. If a
-// future change re-broadens that to a blanket `_warpos/` (the old mask), an unshipped
+// ── Test (h): FIX1-pin — unshipped _mc/templates path → info_gaps, exit 1 ──
+// SP-20260618-001: the framework/templates → _mc/templates migration carved
+// KNOWN_NOT_SHIPPED narrowly (only _mc/MANIFEST.json + _mc/settings/ +
+// _mc/BASELINE/), leaving _mc/templates/** to FALL THROUGH and ship. If a
+// future change re-broadens that to a blanket `_mc/` (the old mask), an unshipped
 // template would be silently allowlisted and the gate would false-green. This test
 // plants exactly that path and asserts it REDs the gate via info_gaps.
-// β-verified: _warpos/ is NOT in HARD_SIGNAL_ROOTS, so the gap is info_gaps (not hard_gaps);
+// β-verified: _mc/ is NOT in HARD_SIGNAL_ROOTS, so the gap is info_gaps (not hard_gaps);
 // the FIX1 clause (infoGaps.length===0 in `ok`) is what makes it block.
-console.log("\n[h] FIX1-pin: unshipped _warpos/templates path → info_gaps (not hard_gaps), exit 1");
+console.log("\n[h] FIX1-pin: unshipped _mc/templates path → info_gaps (not hard_gaps), exit 1");
 {
-  const planted = "_warpos/templates/app-scaffold/UNSHIPPED_NEW_TEMPLATE.tmpl";
+  const planted = "_mc/templates/app-scaffold/UNSHIPPED_NEW_TEMPLATE.tmpl";
   const manifest = {
     paths: {
       [planted]: {
@@ -381,17 +381,17 @@ console.log("\n[h] FIX1-pin: unshipped _warpos/templates path → info_gaps (not
     ok("(h) exit code is 1", r.code === 1, `got ${r.code}; stderr=${r.stderr}`);
     ok("(h) ok===false", r.json && r.json.ok === false, `json.ok=${r.json && r.json.ok}`);
     ok(
-      "(h) the _warpos/templates path is in info_gaps",
+      "(h) the _mc/templates path is in info_gaps",
       r.json &&
         Array.isArray(r.json.info_gaps) &&
-        r.json.info_gaps.some((p) => p.includes("_warpos/templates/app-scaffold/UNSHIPPED_NEW_TEMPLATE")),
+        r.json.info_gaps.some((p) => p.includes("_mc/templates/app-scaffold/UNSHIPPED_NEW_TEMPLATE")),
       `info_gaps=${JSON.stringify(r.json && r.json.info_gaps)}`,
     );
     ok(
-      "(h) it is NOT in hard_gaps (β-verified: _warpos/ not in HARD_SIGNAL_ROOTS)",
+      "(h) it is NOT in hard_gaps (β-verified: _mc/ not in HARD_SIGNAL_ROOTS)",
       r.json &&
         Array.isArray(r.json.hard_gaps) &&
-        !r.json.hard_gaps.some((p) => p.includes("_warpos/templates")),
+        !r.json.hard_gaps.some((p) => p.includes("_mc/templates")),
       `hard_gaps=${JSON.stringify(r.json && r.json.hard_gaps)}`,
     );
   } finally {
@@ -402,9 +402,9 @@ console.log("\n[h] FIX1-pin: unshipped _warpos/templates path → info_gaps (not
 // ── Summary ───────────────────────────────────────────────────────────────────
 console.log(`\n${passes + failures} tests: ${passes} passed, ${failures} failed`);
 if (failures > 0) {
-  console.error(`FAIL test-warpos-ship-coverage: ${failures} test(s) failed`);
+  console.error(`FAIL test-mc-ship-coverage: ${failures} test(s) failed`);
   process.exit(1);
 } else {
-  console.log("OK   test-warpos-ship-coverage: all tests passed");
+  console.log("OK   test-mc-ship-coverage: all tests passed");
   process.exit(0);
 }

@@ -126,7 +126,7 @@ Don't write from scratch. Start from a proven skeleton, fill with specifics from
 
 ## 5. Analytics Event Per Funnel Step
 
-The funnel must be measurable end to end. Fire one named event per step so you can see exactly where people drop. Use a consistent event taxonomy; emit to your product analytics and mirror key conversion events to the WarpOS event log (`paths.eventsFile`, type `funnel-step`) so a build session can reason over them.
+The funnel must be measurable end to end. Fire one named event per step so you can see exactly where people drop. Use a consistent event taxonomy; emit to your product analytics and mirror key conversion events to the MC event log (`paths.eventsFile`, type `funnel-step`) so a build session can reason over them.
 
 | # | Funnel step | Event name | Fire when | Key properties |
 |---|---|---|---|---|

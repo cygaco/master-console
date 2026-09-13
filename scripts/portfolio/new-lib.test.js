@@ -2,9 +2,9 @@
 "use strict";
 
 /**
- * scripts/portfolio/new-lib.test.js — proves the WarpOS engine-source resolution
- * in _installWarpOS without spawning a real PowerShell installer (spawn injected)
- * and without touching a real WarpOS tree (temp dirs).
+ * scripts/portfolio/new-lib.test.js — proves the MC engine-source resolution
+ * in _installMC without spawning a real PowerShell installer (spawn injected)
+ * and without touching a real MC tree (temp dirs).
  *
  *   node scripts/portfolio/new-lib.test.js
  *
@@ -23,7 +23,7 @@ const os = require("os");
 const path = require("path");
 const assert = require("assert");
 const {
-  _installWarpOS,
+  _installMC,
   _resolveInstallerRoot,
   _isValidInstallSource,
 } = require("./new-lib");
@@ -39,7 +39,7 @@ function test(name, fn) {
   }
 }
 
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-newlib-test-"));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-newlib-test-"));
 function freshDir() {
   return fs.mkdtempSync(path.join(tmp, "d-"));
 }
@@ -86,30 +86,30 @@ try {
     assert.strictEqual(_resolveInstallerRoot(d), d, "valid startRoot resolves to itself");
   });
 
-  test("consumer falls back to sibling ../WarpOS engine (the fix)", () => {
+  test("consumer falls back to sibling ../MC engine (the fix)", () => {
     const parent = freshDir();
     const consumer = path.join(parent, "consumer");
     fs.mkdirSync(consumer, { recursive: true });
     makeSource(consumer, { manifest: false }); // consumer: no manifest => invalid source
-    const engine = path.join(parent, "WarpOS");
+    const engine = path.join(parent, "MC");
     fs.mkdirSync(engine, { recursive: true });
     makeSource(engine); // valid sibling canonical engine
     assert.strictEqual(
       _resolveInstallerRoot(consumer),
-      path.resolve(consumer, "..", "WarpOS"),
+      path.resolve(consumer, "..", "MC"),
       "consumer resolves to its sibling canonical engine",
     );
   });
 
-  test("lowercase sibling ../warpos is also accepted", () => {
+  test("lowercase sibling ../mc is also accepted", () => {
     const parent = freshDir();
     const consumer = path.join(parent, "consumer");
     fs.mkdirSync(consumer, { recursive: true });
     makeSource(consumer, { manifest: false });
-    const engine = path.join(parent, "warpos");
+    const engine = path.join(parent, "mc");
     fs.mkdirSync(engine, { recursive: true });
     makeSource(engine);
-    // On case-insensitive filesystems (Windows/macOS) ../WarpOS resolves first to
+    // On case-insensitive filesystems (Windows/macOS) ../MC resolves first to
     // the same dir; either way a valid engine must be returned, never null.
     assert.ok(_resolveInstallerRoot(consumer), "lowercase sibling resolves to a valid engine");
   });
@@ -122,12 +122,12 @@ try {
     assert.strictEqual(_resolveInstallerRoot(consumer), null, "no engine => null");
   });
 
-  // ── _installWarpOS ─────────────────────────────────────────────────────
+  // ── _installMC ─────────────────────────────────────────────────────
   test("fails LOUD (no silent no-op) when no valid engine source resolves", () => {
     const repo = freshDir();
-    const r = _installWarpOS(repo, { resolveRoot: () => null });
+    const r = _installMC(repo, { resolveRoot: () => null });
     assert.ok(!r.ok, "not ok when source unresolved");
-    assert.ok(/No valid WarpOS engine source/.test(r.error), "explains the missing source");
+    assert.ok(/No valid MC engine source/.test(r.error), "explains the missing source");
     assert.ok(/framework-manifest\.json/.test(r.error), "names the missing manifest");
     assert.ok(/sibling/i.test(r.error), "points at the sibling-clone remedy");
   });
@@ -143,7 +143,7 @@ try {
       calls.push({ cmd, args, opts });
       return { status: 0, stdout: "", stderr: "" };
     };
-    const r = _installWarpOS(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
+    const r = _installMC(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
     assert.ok(r.ok, `ok install: ${r.error || ""}`);
     assert.strictEqual(calls.length, 1, "installer invoked once");
     assert.strictEqual(calls[0].opts.cwd, engine, "installer runs from the resolved engine root");
@@ -157,7 +157,7 @@ try {
     const engine = makeSource(freshDir());
     const repo = freshDir();
     const fakeSpawn = () => ({ status: 1, stdout: "", stderr: "Source repo missing required file" });
-    const r = _installWarpOS(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
+    const r = _installMC(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
     assert.ok(!r.ok, "not ok on installer failure");
     assert.ok(/Source repo missing required file/.test(r.error), "passes through the real stderr");
   });
@@ -166,7 +166,7 @@ try {
     const engine = makeSource(freshDir());
     const repo = freshDir(); // NO framework-installed.json written
     const fakeSpawn = () => ({ status: 0, stdout: "", stderr: "" });
-    const r = _installWarpOS(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
+    const r = _installMC(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
     assert.ok(!r.ok, "not ok when no engine tree produced");
     assert.ok(/produced no engine/.test(r.error), "explains the empty-install refusal");
   });

@@ -5,7 +5,7 @@
  *
  * Phase 2A per BACKLOG §2. The single "is path identity coherent?" check
  * wired into framework-manifest-guard, merge-guard, /scan:references,
- * /preflight:run, /warp:release, and CI.
+ * /preflight:run, /mc:release, and CI.
  *
  * Runs (in order, fail-fast):
  *   1. Registry schema validates (framework/paths.registry.json $schema + shape).
@@ -28,7 +28,7 @@
  *   - merge-guard PostToolUse logs gate failure
  *   - /scan:references prepends the gate
  *   - /preflight:run includes the gate as Pass 7.10
- *   - /warp:release blocks publish on failure
+ *   - /mc:release blocks publish on failure
  *   - .github/workflows/test.yml runs in CI
  */
 
@@ -68,11 +68,11 @@ function checkRegistrySchema() {
       },
     ];
   }
-  if (registry.$schema !== "warpos/paths-registry/v1") {
+  if (registry.$schema !== "mc/paths-registry/v1") {
     findings.push({
       severity: "error",
       area: "registry",
-      message: `registry $schema must be "warpos/paths-registry/v1", got ${JSON.stringify(registry.$schema)}`,
+      message: `registry $schema must be "mc/paths-registry/v1", got ${JSON.stringify(registry.$schema)}`,
     });
   }
   if (typeof registry.version !== "number") {
@@ -281,9 +281,9 @@ function checkDeprecatedAliases() {
     "backups/",
     // Transaction records describe what we did, including naming the
     // deprecated path. Append-only event logs, not framework code.
-    ".warpos/transactions/",
-    ".warpos/",
-    "scripts/warpos/codemod-docs-to-requirements.js",
+    ".mc/transactions/",
+    ".mc/",
+    "scripts/mc/codemod-docs-to-requirements.js",
     // Phase 4B migration: this script's semantic purpose IS to rewrite the
     // legacy path; the literal is data, not navigation.
     "migrations/0.0.0-to-0.1.0/003-docs-to-requirements.js",
@@ -294,8 +294,8 @@ function checkDeprecatedAliases() {
     // Track A.2 saved snapshot of pre-rename templates for canonical mirror
     "runtime/canonical-skeleton/",
     // Historical migration docs: legitimate references to pre-rename paths
-    "warpos-system-updates",
-    "warpos-roadmap.md",
+    "mc-system-updates",
+    "mc-roadmap.md",
     "ROADMAP.md",
     // Per-session runtime checkpoint (snapshot of past prompts; not framework code)
     ".claude/.session-checkpoint.json",
@@ -388,7 +388,7 @@ function checkDocsTokens() {
     ".claude/runtime/plans/",
     // Transaction backups snapshot superseded files verbatim; they are
     // append-only records, not live docs (same rationale as deprecated-alias).
-    ".warpos/",
+    ".mc/",
     // Per-run sprint prompt artifacts — frozen dispatch prompts/diff evidence,
     // not live docs (same class as the deprecated-alias skip)
     "runtime/epsilon-prompts/",

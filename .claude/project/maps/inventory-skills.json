@@ -15,7 +15,7 @@
         {
           "id": "admin:guides",
           "name": "guides",
-          "description": "Open the in-app founder admin panel's guides sub-route in a browser, against a PRODUCT's running Next app (never WarpOS itself). A thin one-row delegator to the canonical admin:preview harness with the /admin/guides sub-route.",
+          "description": "Open the in-app founder admin panel's guides sub-route in a browser, against a PRODUCT's running Next app (never MC itself). A thin one-row delegator to the canonical admin:preview harness with the /admin/guides sub-route.",
           "file": ".claude/commands/admin/guides.md",
           "user_invocable": true,
           "data_flow": {
@@ -30,7 +30,7 @@
         {
           "id": "admin:preview",
           "name": "preview",
-          "description": "Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (or reuses) a fixed throwaway Next instance, boots `npm run dev`, waits for the real ready line + parses the actual port, then opens `/admin`. The keystone of the admin:* dev-tooling suite — never targets WarpOS itself.",
+          "description": "Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (or reuses) a fixed throwaway Next instance, boots `npm run dev`, waits for the real ready line + parses the actual port, then opens `/admin`. The keystone of the admin:* dev-tooling suite — never targets MC itself.",
           "file": ".claude/commands/admin/preview.md",
           "user_invocable": true,
           "data_flow": {
@@ -47,7 +47,7 @@
         {
           "id": "admin:readiness",
           "name": "readiness",
-          "description": "Open the in-app founder admin panel's launch-readiness sub-route in a browser, against a PRODUCT's running Next app (never WarpOS itself). A thin one-row delegator to the canonical admin:preview harness with the /admin/readiness sub-route.",
+          "description": "Open the in-app founder admin panel's launch-readiness sub-route in a browser, against a PRODUCT's running Next app (never MC itself). A thin one-row delegator to the canonical admin:preview harness with the /admin/readiness sub-route.",
           "file": ".claude/commands/admin/readiness.md",
           "user_invocable": true,
           "data_flow": {
@@ -62,7 +62,7 @@
         {
           "id": "admin:seed",
           "name": "seed",
-          "description": "Seed warm-start data (founder-allowlist session, sample events, FOUNDERS_CHECKLIST.md) into the live admin-preview instance so the in-app founder panel renders non-empty. READS the instance pointer written by admin:preview; never scaffolds its own instance and never targets WarpOS itself.",
+          "description": "Seed warm-start data (founder-allowlist session, sample events, FOUNDERS_CHECKLIST.md) into the live admin-preview instance so the in-app founder panel renders non-empty. READS the instance pointer written by admin:preview; never scaffolds its own instance and never targets MC itself.",
           "file": ".claude/commands/admin/seed.md",
           "user_invocable": true,
           "data_flow": {
@@ -106,7 +106,7 @@
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:health"
+              "/mc:health"
             ]
           }
         }
@@ -209,7 +209,7 @@
         {
           "id": "bootstrap:spinup",
           "name": "spinup",
-          "description": "\"From 'just WarpOS' to something on screen — one in-project command: setup (deterministic create+scaffold+intake) → canon (degrade-proof AI synthesis) → roadmap (epics + sprints) → paint (core loop serves). Step-driven, idempotent, resumable. The idea→screen on-ramp.\"",
+          "description": "\"From 'just MC' to something on screen — one in-project command: setup (deterministic create+scaffold+intake) → canon (degrade-proof AI synthesis) → roadmap (epics + sprints) → paint (core loop serves). Step-driven, idempotent, resumable. The idea→screen on-ramp.\"",
           "file": ".claude/commands/bootstrap/spinup.md",
           "user_invocable": true,
           "data_flow": {
@@ -221,7 +221,7 @@
               "/guides:integrate",
               "/portfolio:new",
               "/scan:install",
-              "/warp:setup"
+              "/mc:setup"
             ]
           }
         }
@@ -264,7 +264,7 @@
         {
           "id": "check:framework-views-fresh",
           "name": "framework-views-fresh",
-          "description": "\"[deprecated alias → /scan:framework-views-fresh] Verify .claude views are byte-identical regenerations of _warpos sources. Superseded by /scan:framework-views-fresh in the check:→scan: namespace rename (SP-20260528-001).\"",
+          "description": "\"[deprecated alias → /scan:framework-views-fresh] Verify .claude views are byte-identical regenerations of _mc sources. Superseded by /scan:framework-views-fresh in the check:→scan: namespace rename (SP-20260528-001).\"",
           "file": ".claude/commands/check/framework-views-fresh.md",
           "user_invocable": true,
           "data_flow": {
@@ -279,7 +279,7 @@
         {
           "id": "check:install",
           "name": "install",
-          "description": "\"[deprecated alias → /scan:install] Verify a fresh WarpOS install. Superseded by /scan:install in the check:→scan: namespace rename (SP-20260528-001).\"",
+          "description": "\"[deprecated alias → /scan:install] Verify a fresh MC install. Superseded by /scan:install in the check:→scan: namespace rename (SP-20260528-001).\"",
           "file": ".claude/commands/check/install.md",
           "user_invocable": true,
           "data_flow": {
@@ -331,8 +331,8 @@
             "references": [],
             "calls": [
               "/commit:land",
-              "/warp:sync",
-              "/warp:update"
+              "/mc:sync",
+              "/mc:update"
             ]
           }
         },
@@ -998,7 +998,7 @@
               "/guides:integrate",
               "/guides:organize",
               "/learn:ingest",
-              "/warp:update"
+              "/mc:update"
             ]
           }
         }
@@ -1328,7 +1328,7 @@
         {
           "id": "manifest:migrate",
           "name": "migrate",
-          "description": "Migrate the manifest to a target WarpOS version. Dry-run by default; --apply to write.",
+          "description": "Migrate the manifest to a target MC version. Dry-run by default; --apply to write.",
           "file": ".claude/commands/manifest/migrate.md",
           "user_invocable": true,
           "data_flow": {
@@ -1583,7 +1583,7 @@
             ],
             "calls": [
               "/sprint:design",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         },
@@ -1629,7 +1629,7 @@
               "/mode:adhoc",
               "/mode:oneshot",
               "/sprint:full",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         }
@@ -1804,7 +1804,7 @@
         {
           "id": "panel:admin",
           "name": "admin",
-          "description": "Open a product's in-app founder admin panel in the browser (run-in-product, never WarpOS itself). A thin /panel:* forwarder to the canonical admin:preview opener — ZERO duplicated logic.",
+          "description": "Open a product's in-app founder admin panel in the browser (run-in-product, never MC itself). A thin /panel:* forwarder to the canonical admin:preview opener — ZERO duplicated logic.",
           "file": ".claude/commands/panel/admin.md",
           "user_invocable": true,
           "data_flow": {
@@ -2017,7 +2017,7 @@
         {
           "id": "portfolio:list",
           "name": "list",
-          "description": "List all registered portfolio products — slug, path, WarpOS version, last commit, dirty count, current sprint.",
+          "description": "List all registered portfolio products — slug, path, MC version, last commit, dirty count, current sprint.",
           "file": ".claude/commands/portfolio/list.md",
           "user_invocable": null,
           "data_flow": {
@@ -2030,7 +2030,7 @@
         {
           "id": "portfolio:new",
           "name": "new",
-          "description": "Scaffold a new product repo (sibling to WarpOS) with the framework installed and committed, then register it — local-only by default. Open it in its own session and create the GitHub remote yourself, or pass --github to also create+push a private repo.",
+          "description": "Scaffold a new product repo (sibling to MC) with the framework installed and committed, then register it — local-only by default. Open it in its own session and create the GitHub remote yourself, or pass --github to also create+push a private repo.",
           "file": ".claude/commands/portfolio/new.md",
           "user_invocable": true,
           "data_flow": {
@@ -2041,7 +2041,7 @@
               "/portfolio:list",
               "/portfolio:open",
               "/portfolio:register",
-              "/warp:setup"
+              "/mc:setup"
             ]
           }
         },
@@ -2061,7 +2061,7 @@
         {
           "id": "portfolio:register",
           "name": "register",
-          "description": "Register an existing local repo as a portfolio product in ~/.warpos/portfolio.json.",
+          "description": "Register an existing local repo as a portfolio product in ~/.mc/portfolio.json.",
           "file": ".claude/commands/portfolio/register.md",
           "user_invocable": null,
           "data_flow": {
@@ -2089,7 +2089,7 @@
         {
           "id": "portfolio:spinup",
           "name": "spinup",
-          "description": "\"From WarpOS, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spinup into the product's repo. Thin wrapper over bootstrap:spinup (the real implementation).\"",
+          "description": "\"From MC, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spinup into the product's repo. Thin wrapper over bootstrap:spinup (the real implementation).\"",
           "file": ".claude/commands/portfolio/spinup.md",
           "user_invocable": true,
           "data_flow": {
@@ -2107,7 +2107,7 @@
         {
           "id": "portfolio:status",
           "name": "status",
-          "description": "Portfolio dashboard — per-product WarpOS version, last commit, dirty count, current sprint, GitHub remote (parallel, 5s per-product timeout).",
+          "description": "Portfolio dashboard — per-product MC version, last commit, dirty count, current sprint, GitHub remote (parallel, 5s per-product timeout).",
           "file": ".claude/commands/portfolio/status.md",
           "user_invocable": null,
           "data_flow": {
@@ -2122,7 +2122,7 @@
         {
           "id": "portfolio:sync",
           "name": "sync",
-          "description": "Run /warp:update across every registered portfolio product sequentially. No fail-fast — failures captured in the final summary.",
+          "description": "Run /mc:update across every registered portfolio product sequentially. No fail-fast — failures captured in the final summary.",
           "file": ".claude/commands/portfolio/sync.md",
           "user_invocable": null,
           "data_flow": {
@@ -2130,7 +2130,7 @@
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:update"
+              "/mc:update"
             ]
           }
         }
@@ -2454,14 +2454,14 @@
             "references": [],
             "calls": [
               "/mode:adhoc",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         },
         {
           "id": "scan:admin-suite-coverage",
           "name": "admin-suite-coverage",
-          "description": "Coverage + freshness enforcer for the admin:* dev-tooling suite — each admin skill resolves, every admin-panel registry row's opener resolves to a real script/skill (no orphan/phantom), and preview.js carries the refuseIfTargetIsWarpOS precondition. Fail-CLOSED on a malformed registry; wired REPORT-ONLY into /scan:full.",
+          "description": "Coverage + freshness enforcer for the admin:* dev-tooling suite — each admin skill resolves, every admin-panel registry row's opener resolves to a real script/skill (no orphan/phantom), and preview.js carries the refuseIfTargetIsMC precondition. Fail-CLOSED on a malformed registry; wired REPORT-ONLY into /scan:full.",
           "file": ".claude/commands/scan/admin-suite-coverage.md",
           "user_invocable": null,
           "data_flow": {
@@ -2491,14 +2491,14 @@
               "/scan:references",
               "/scan:requirements",
               "/sleep:deep",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         },
         {
           "id": "scan:coherence",
           "name": "coherence",
-          "description": "Run the WarpOS system coherence graph across 15 drift types.",
+          "description": "Run the MC system coherence graph across 15 drift types.",
           "file": ".claude/commands/scan/coherence.md",
           "user_invocable": true,
           "data_flow": {
@@ -2593,7 +2593,7 @@
               "/scan:architecture",
               "/scan:references",
               "/sleep:deep",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         },
@@ -2626,7 +2626,7 @@
               "scripts/hooks/framework-purity-guard.js"
             ],
             "calls": [
-              "/scan:warpos-privacy-leak",
+              "/scan:mc-privacy-leak",
               "/warp:promote"
             ]
           }
@@ -2634,7 +2634,7 @@
         {
           "id": "scan:framework-views-fresh",
           "name": "framework-views-fresh",
-          "description": "Verify .claude/commands and .claude/agents are byte-identical regenerations of their _warpos/ sources — fails if any view is stale.",
+          "description": "Verify .claude/commands and .claude/agents are byte-identical regenerations of their _mc/ sources — fails if any view is stale.",
           "file": ".claude/commands/scan/framework-views-fresh.md",
           "user_invocable": null,
           "data_flow": {
@@ -2643,14 +2643,14 @@
             "references": [],
             "calls": [
               "/scan:framework-purity",
-              "/scan:warpos-manifest-coverage"
+              "/scan:mc-manifest-coverage"
             ]
           }
         },
         {
           "id": "scan:full",
           "name": "full",
-          "description": "Run every scan in parallel — a full system scan across project health, governance, and WarpOS distribution integrity — merged into one unified report. One command for full system health.",
+          "description": "Run every scan in parallel — a full system scan across project health, governance, and MC distribution integrity — merged into one unified report. One command for full system health.",
           "file": ".claude/commands/scan/full.md",
           "user_invocable": null,
           "data_flow": {
@@ -2698,25 +2698,25 @@
               "/scan:system",
               "/scan:timeline",
               "/scan:version-coherence",
-              "/scan:warpos-applied-migrations",
-              "/scan:warpos-capsule-resolvable",
-              "/scan:warpos-install-baseline",
-              "/scan:warpos-layer-diff",
-              "/scan:warpos-manifest-coverage",
-              "/scan:warpos-manifest-honesty",
-              "/scan:warpos-migration-coverage",
-              "/scan:warpos-migration-presence",
-              "/scan:warpos-path-resolution",
-              "/scan:warpos-ship-coverage",
-              "/scan:warpos-staleness",
-              "/scan:warpos-structure-parity",
-              "/scan:warpos-tracked-transients",
-              "/scan:warpos-version-quorum",
+              "/scan:mc-applied-migrations",
+              "/scan:mc-capsule-resolvable",
+              "/scan:mc-install-baseline",
+              "/scan:mc-layer-diff",
+              "/scan:mc-manifest-coverage",
+              "/scan:mc-manifest-honesty",
+              "/scan:mc-migration-coverage",
+              "/scan:mc-migration-presence",
+              "/scan:mc-path-resolution",
+              "/scan:mc-ship-coverage",
+              "/scan:mc-staleness",
+              "/scan:mc-structure-parity",
+              "/scan:mc-tracked-transients",
+              "/scan:mc-version-quorum",
               "/sleep:deep",
               "/sprint:full",
               "/trackers:validate",
-              "/warp:doctor",
-              "/warp:health"
+              "/mc:doctor",
+              "/mc:health"
             ]
           }
         },
@@ -2738,7 +2738,7 @@
         {
           "id": "scan:install",
           "name": "install",
-          "description": "Verify a fresh WarpOS install — manifest, paths, agents, hooks, version, settings.",
+          "description": "Verify a fresh MC install — manifest, paths, agents, hooks, version, settings.",
           "file": ".claude/commands/scan/install.md",
           "user_invocable": true,
           "data_flow": {
@@ -2746,7 +2746,7 @@
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:setup"
+              "/mc:setup"
             ]
           }
         },
@@ -2970,7 +2970,7 @@
         {
           "id": "scan:scaffold-coverage",
           "name": "scaffold-coverage",
-          "description": "Verify the WarpOS app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is complete and coherent — fail-closed enforcer for S0.3, so every scaffolded product ships a real component library, not vibe-coded raw elements.",
+          "description": "Verify the MC app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is complete and coherent — fail-closed enforcer for S0.3, so every scaffolded product ships a real component library, not vibe-coded raw elements.",
           "file": ".claude/commands/scan/scaffold-coverage.md",
           "user_invocable": null,
           "data_flow": {
@@ -3069,7 +3069,7 @@
         {
           "id": "scan:system",
           "name": "system",
-          "description": "System inventory — enumerate every active WarpOS system, diff against manifest, report drift and gaps",
+          "description": "System inventory — enumerate every active MC system, diff against manifest, report drift and gaps",
           "file": ".claude/commands/scan/system.md",
           "user_invocable": null,
           "data_flow": {
@@ -3082,7 +3082,7 @@
               "/scan:full",
               "/scan:references",
               "/sleep:deep",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         },
@@ -3128,15 +3128,15 @@
             "references": [],
             "calls": [
               "/scan:full",
-              "/scan:warpos-version-quorum"
+              "/scan:mc-version-quorum"
             ]
           }
         },
         {
-          "id": "scan:warpos-applied-migrations",
-          "name": "warpos-applied-migrations",
-          "description": "Detect already-applied WarpOS migration scripts left on disk in consumer projects",
-          "file": ".claude/commands/scan/warpos-applied-migrations.md",
+          "id": "scan:mc-applied-migrations",
+          "name": "mc-applied-migrations",
+          "description": "Detect already-applied MC migration scripts left on disk in consumer projects",
+          "file": ".claude/commands/scan/mc-applied-migrations.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3146,25 +3146,25 @@
           }
         },
         {
-          "id": "scan:warpos-capsule-resolvable",
-          "name": "warpos-capsule-resolvable",
-          "description": "Verify the capsule for /warp:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest.warpos.source, or framework-installed.json#source.",
-          "file": ".claude/commands/scan/warpos-capsule-resolvable.md",
+          "id": "scan:mc-capsule-resolvable",
+          "name": "mc-capsule-resolvable",
+          "description": "Verify the capsule for /mc:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest.mc.source, or framework-installed.json#source.",
+          "file": ".claude/commands/scan/mc-capsule-resolvable.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-install-baseline",
-          "name": "warpos-install-baseline",
-          "description": "Verify a WarpOS install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /warp:update may proceed.",
-          "file": ".claude/commands/scan/warpos-install-baseline.md",
+          "id": "scan:mc-install-baseline",
+          "name": "mc-install-baseline",
+          "description": "Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /mc:update may proceed.",
+          "file": ".claude/commands/scan/mc-install-baseline.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3172,32 +3172,32 @@
             "references": [],
             "calls": [
               "/scan:full",
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-layer-diff",
-          "name": "warpos-layer-diff",
-          "description": "Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer products (product layer) vs which stay framework-internal and never ship (dev-tooling layer), with summary counts. Cross-references _warpos/MANIFEST.json (ownership) × .claude/framework-manifest.json (shipped). Informational, never a gate.",
-          "file": ".claude/commands/scan/warpos-layer-diff.md",
+          "id": "scan:mc-layer-diff",
+          "name": "mc-layer-diff",
+          "description": "Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer products (product layer) vs which stay framework-internal and never ship (dev-tooling layer), with summary counts. Cross-references _mc/MANIFEST.json (ownership) × .claude/framework-manifest.json (shipped). Informational, never a gate.",
+          "file": ".claude/commands/scan/mc-layer-diff.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/scan:warpos-ship-coverage",
-              "/warp:setup",
-              "/warp:update"
+              "/scan:mc-ship-coverage",
+              "/mc:setup",
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-manifest-coverage",
-          "name": "warpos-manifest-coverage",
-          "description": "Verify every on-disk path is enumerated in _warpos/MANIFEST.json — catches \"added framework content, forgot to register\" before downstream installs silently break.",
-          "file": ".claude/commands/scan/warpos-manifest-coverage.md",
+          "id": "scan:mc-manifest-coverage",
+          "name": "mc-manifest-coverage",
+          "description": "Verify every on-disk path is enumerated in _mc/MANIFEST.json — catches \"added framework content, forgot to register\" before downstream installs silently break.",
+          "file": ".claude/commands/scan/mc-manifest-coverage.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3206,15 +3206,15 @@
             "calls": [
               "/scan:framework-purity",
               "/scan:framework-views-fresh",
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-manifest-honesty",
-          "name": "warpos-manifest-honesty",
+          "id": "scan:mc-manifest-honesty",
+          "name": "mc-manifest-honesty",
           "description": "Verify framework-installed.json reflects actual disk state (no missing files, no hash drift)",
-          "file": ".claude/commands/scan/warpos-manifest-honesty.md",
+          "file": ".claude/commands/scan/mc-manifest-honesty.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3226,10 +3226,10 @@
           }
         },
         {
-          "id": "scan:warpos-migration-coverage",
-          "name": "warpos-migration-coverage",
-          "description": "Verify every breaking change in a WarpOS release ships with a corresponding migration script under framework/migrations — stub implementation pending refinement.",
-          "file": ".claude/commands/scan/warpos-migration-coverage.md",
+          "id": "scan:mc-migration-coverage",
+          "name": "mc-migration-coverage",
+          "description": "Verify every breaking change in a MC release ships with a corresponding migration script under framework/migrations — stub implementation pending refinement.",
+          "file": ".claude/commands/scan/mc-migration-coverage.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3241,25 +3241,25 @@
           }
         },
         {
-          "id": "scan:warpos-migration-presence",
-          "name": "warpos-migration-presence",
-          "description": "Verify every migration listed in capsule release.json#migrations[] exists in the source tree before /warp:update may apply.",
-          "file": ".claude/commands/scan/warpos-migration-presence.md",
+          "id": "scan:mc-migration-presence",
+          "name": "mc-migration-presence",
+          "description": "Verify every migration listed in capsule release.json#migrations[] exists in the source tree before /mc:update may apply.",
+          "file": ".claude/commands/scan/mc-migration-presence.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-path-resolution",
-          "name": "warpos-path-resolution",
+          "id": "scan:mc-path-resolution",
+          "name": "mc-path-resolution",
           "description": "Verify every paths.json key points to an existing path (skip generated/ephemeral keys)",
-          "file": ".claude/commands/scan/warpos-path-resolution.md",
+          "file": ".claude/commands/scan/mc-path-resolution.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3271,10 +3271,10 @@
           }
         },
         {
-          "id": "scan:warpos-ship-coverage",
-          "name": "warpos-ship-coverage",
+          "id": "scan:mc-ship-coverage",
+          "name": "mc-ship-coverage",
           "description": "Verify every framework-owned path under the consumer-essential roots is actually shipped (enumerated in framework-manifest.json) — catches \"framework code that ships to nobody\" (the B1/E3 downstream-broken class).",
-          "file": ".claude/commands/scan/warpos-ship-coverage.md",
+          "file": ".claude/commands/scan/mc-ship-coverage.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3282,47 +3282,47 @@
             "references": [],
             "calls": [
               "/scan:full",
-              "/scan:warpos-manifest-coverage",
-              "/scan:warpos-manifest-honesty",
-              "/warp:setup"
+              "/scan:mc-manifest-coverage",
+              "/scan:mc-manifest-honesty",
+              "/mc:setup"
             ]
           }
         },
         {
-          "id": "scan:warpos-staleness",
-          "name": "warpos-staleness",
-          "description": "Detect drift between the installed WarpOS version on disk and the latest canonical version, flagging installs that have been stale for more than seven days.",
-          "file": ".claude/commands/scan/warpos-staleness.md",
+          "id": "scan:mc-staleness",
+          "name": "mc-staleness",
+          "description": "Detect drift between the installed MC version on disk and the latest canonical version, flagging installs that have been stale for more than seven days.",
+          "file": ".claude/commands/scan/mc-staleness.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-structure-parity",
-          "name": "warpos-structure-parity",
+          "id": "scan:mc-structure-parity",
+          "name": "mc-structure-parity",
           "description": "Verify installed framework has the structural skeleton dirs canonical declares",
-          "file": ".claude/commands/scan/warpos-structure-parity.md",
+          "file": ".claude/commands/scan/mc-structure-parity.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "scan:warpos-tracked-transients",
-          "name": "warpos-tracked-transients",
-          "description": "Catch transient state accidentally committed (.warpos/, qa-*.png, runtime/qa-*/, etc.)",
-          "file": ".claude/commands/scan/warpos-tracked-transients.md",
+          "id": "scan:mc-tracked-transients",
+          "name": "mc-tracked-transients",
+          "description": "Catch transient state accidentally committed (.mc/, qa-*.png, runtime/qa-*/, etc.)",
+          "file": ".claude/commands/scan/mc-tracked-transients.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3332,10 +3332,10 @@
           }
         },
         {
-          "id": "scan:warpos-version-quorum",
-          "name": "warpos-version-quorum",
+          "id": "scan:mc-version-quorum",
+          "name": "mc-version-quorum",
           "description": "Verify version.json, .claude/framework-manifest.json, .claude/framework-installed.json, and install.ps1 header agree on the installed version (trust order = version.json wins).",
-          "file": ".claude/commands/scan/warpos-version-quorum.md",
+          "file": ".claude/commands/scan/mc-version-quorum.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3380,7 +3380,7 @@
               "/session:resume",
               "/session:write",
               "/sprint:plan",
-              "/warp:release"
+              "/mc:release"
             ]
           }
         },
@@ -3911,25 +3911,25 @@
       "count": 14,
       "skills": [
         {
-          "id": "warp:check",
+          "id": "mc:check",
           "name": "check",
-          "description": "Compare your WarpOS installation against the latest version — find stale, new, and missing items",
-          "file": ".claude/commands/warp/check.md",
+          "description": "Compare your MC installation against the latest version — find stale, new, and missing items",
+          "file": ".claude/commands/mc/check.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:sync"
+              "/mc:sync"
             ]
           }
         },
         {
-          "id": "warp:deprecate",
+          "id": "mc:deprecate",
           "name": "deprecate",
-          "description": "\"Create a guarded WarpOS deprecation proposal for an agent, skill, hook, path, requirement, pattern, or generated file.\"",
-          "file": ".claude/commands/warp/deprecate.md",
+          "description": "\"Create a guarded MC deprecation proposal for an agent, skill, hook, path, requirement, pattern, or generated file.\"",
+          "file": ".claude/commands/mc/deprecate.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
@@ -3939,10 +3939,10 @@
           }
         },
         {
-          "id": "warp:diff",
+          "id": "mc:diff",
           "name": "diff",
-          "description": "Diff canonical WarpOS against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.",
-          "file": ".claude/commands/warp/diff.md",
+          "description": "Diff canonical MC against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.",
+          "file": ".claude/commands/mc/diff.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3952,17 +3952,17 @@
               "/portfolio:list",
               "/portfolio:open",
               "/portfolio:status",
-              "/scan:warpos-",
-              "/warp:check",
-              "/warp:update"
+              "/scan:mc-",
+              "/mc:check",
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "warp:doctor",
+          "id": "mc:doctor",
           "name": "doctor",
-          "description": "\"Unified WarpOS diagnostic — runs every health check in one place. Like /warp:health but full-coverage.\"",
-          "file": ".claude/commands/warp/doctor.md",
+          "description": "\"Unified MC diagnostic — runs every health check in one place. Like /mc:health but full-coverage.\"",
+          "file": ".claude/commands/mc/doctor.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
@@ -3975,17 +3975,17 @@
               "/scan:full",
               "/scan:references",
               "/scan:requirements",
-              "/warp:health",
-              "/warp:release",
-              "/warp:update"
+              "/mc:health",
+              "/mc:release",
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "warp:flag",
+          "id": "mc:flag",
           "name": "flag",
-          "description": "Flag a WarpOS framework/tooling gap from a downstream product — append a structured, canonical-consumable entry to this repo's WARPOS.md so /warp:reconcile can verify and fix it upstream.",
-          "file": ".claude/commands/warp/flag.md",
+          "description": "Flag a MC framework/tooling gap from a downstream product — append a structured, canonical-consumable entry to this repo's MC.md so /mc:reconcile can verify and fix it upstream.",
+          "file": ".claude/commands/mc/flag.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -3994,15 +3994,15 @@
             "calls": [
               "/enforcement:log",
               "/issues:log",
-              "/warp:reconcile"
+              "/mc:reconcile"
             ]
           }
         },
         {
-          "id": "warp:health",
+          "id": "mc:health",
           "name": "health",
-          "description": "Verify WarpOS installation — checks every system, reports green/yellow/red with plain-English fixes",
-          "file": ".claude/commands/warp/health.md",
+          "description": "Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes",
+          "file": ".claude/commands/mc/health.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [
@@ -4019,10 +4019,10 @@
           }
         },
         {
-          "id": "warp:md",
+          "id": "mc:md",
           "name": "md",
           "description": "\"Tune CLAUDE.md with project-specific context — refresh the auto-generated project block from PROJECT.md, _requirements, manifest, README, and package scripts. Framework sections are never touched.\"",
-          "file": ".claude/commands/warp/md.md",
+          "file": ".claude/commands/mc/md.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
@@ -4035,10 +4035,10 @@
           }
         },
         {
-          "id": "warp:reconcile",
+          "id": "mc:reconcile",
           "name": "reconcile",
-          "description": "Reconcile downstream-flagged WarpOS gaps into canonical — discover every product's WARPOS.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.",
-          "file": ".claude/commands/warp/reconcile.md",
+          "description": "Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.",
+          "file": ".claude/commands/mc/reconcile.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -4051,18 +4051,18 @@
               "/portfolio:status",
               "/roadmap:add",
               "/scan:full",
-              "/scan:warpos-staleness",
-              "/warp:flag",
-              "/warp:release",
-              "/warp:update"
+              "/scan:mc-staleness",
+              "/mc:flag",
+              "/mc:release",
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "warp:release",
+          "id": "mc:release",
           "name": "release",
-          "description": "\"Drive a full WarpOS release of the canonical clone from this product repo — promote, bump, regen, build capsule, run gates, commit, ff-merge to main, push, tag. One command, no cd into canonical.\"",
-          "file": ".claude/commands/warp/release.md",
+          "description": "\"Drive a full MC release of the canonical clone from this product repo — promote, bump, regen, build capsule, run gates, commit, ff-merge to main, push, tag. One command, no cd into canonical.\"",
+          "file": ".claude/commands/mc/release.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
@@ -4072,29 +4072,29 @@
           }
         },
         {
-          "id": "warp:setup",
+          "id": "mc:setup",
           "name": "setup",
-          "description": "Set up WarpOS end-to-end — clone, install, merge CLAUDE.md, restart, verify. Safe to re-run; auto-detects and completes missing steps.",
-          "file": ".claude/commands/warp/setup.md",
+          "description": "Set up MC end-to-end — clone, install, merge CLAUDE.md, restart, verify. Safe to re-run; auto-detects and completes missing steps.",
+          "file": ".claude/commands/mc/setup.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:health",
+              "/mc:health",
               "/warp:init",
-              "/warp:sync",
-              "/warp:tour",
-              "/warp:uninstall"
+              "/mc:sync",
+              "/mc:tour",
+              "/mc:uninstall"
             ]
           }
         },
         {
-          "id": "warp:sync",
+          "id": "mc:sync",
           "name": "sync",
-          "description": "\"Legacy alias for /warp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos@1.0.0; superseded by /warp:update.\"",
-          "file": ".claude/commands/warp/sync.md",
+          "description": "\"Legacy alias for /mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc@1.0.0; superseded by /mc:update.\"",
+          "file": ".claude/commands/mc/sync.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
@@ -4102,15 +4102,15 @@
             "references": [],
             "calls": [
               "/warp:promote",
-              "/warp:update"
+              "/mc:update"
             ]
           }
         },
         {
-          "id": "warp:tour",
+          "id": "mc:tour",
           "name": "tour",
-          "description": "Guided introduction to WarpOS — explains everything in simple language, no jargon",
-          "file": ".claude/commands/warp/tour.md",
+          "description": "Guided introduction to MC — explains everything in simple language, no jargon",
+          "file": ".claude/commands/mc/tour.md",
           "user_invocable": null,
           "data_flow": {
             "reads": [],
@@ -4131,15 +4131,15 @@
               "/session:read",
               "/session:write",
               "/sleep:quick",
-              "/warp:health"
+              "/mc:health"
             ]
           }
         },
         {
-          "id": "warp:uninstall",
+          "id": "mc:uninstall",
           "name": "uninstall",
-          "description": "Completely remove WarpOS from a project — restores pre-install state from backup",
-          "file": ".claude/commands/warp/uninstall.md",
+          "description": "Completely remove MC from a project — restores pre-install state from backup",
+          "file": ".claude/commands/mc/uninstall.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [
@@ -4148,28 +4148,28 @@
             "writes": [],
             "references": [],
             "calls": [
-              "/warp:health",
-              "/warp:setup",
-              "/warp:sync"
+              "/mc:health",
+              "/mc:setup",
+              "/mc:sync"
             ]
           }
         },
         {
-          "id": "warp:update",
+          "id": "mc:update",
           "name": "update",
-          "description": "\"Update WarpOS in this project to a target release. Default = latest. Default mode = dry-run; pass --apply to execute.\"",
-          "file": ".claude/commands/warp/update.md",
+          "description": "\"Update MC in this project to a target release. Default = latest. Default mode = dry-run; pass --apply to execute.\"",
+          "file": ".claude/commands/mc/update.md",
           "user_invocable": true,
           "data_flow": {
             "reads": [],
             "writes": [],
             "references": [],
             "calls": [
-              "/scan:warpos-manifest-honesty",
-              "/warp:doctor",
-              "/warp:health",
+              "/scan:mc-manifest-honesty",
+              "/mc:doctor",
+              "/mc:health",
               "/warp:promote",
-              "/warp:release"
+              "/mc:release"
             ]
           }
         }

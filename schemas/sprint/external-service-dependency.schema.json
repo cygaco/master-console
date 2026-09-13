@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/external-service-dependency/v1",
-  "title": "WarpOS Sprint v0.1 — External Service Dependency",
+  "$id": "mc/sprint/external-service-dependency/v1",
+  "title": "MC Sprint v0.1 — External Service Dependency",
   "description": "Tracks third-party service readiness for a sprint. Identifies what requires human signup, credentials, billing, OAuth, DNS, or compliance approval before terminal-based work can proceed.",
   "type": "object",
   "required": [
@@ -19,7 +19,7 @@
   "properties": {
     "schema": {
       "type": "string",
-      "const": "warpos/sprint/external-service-dependency/v1"
+      "const": "mc/sprint/external-service-dependency/v1"
     },
     "id": { "type": "string", "pattern": "^ESD-[0-9]{8}-[0-9]{3}$" },
     "sprint": { "type": "string" },

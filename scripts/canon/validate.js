@@ -31,7 +31,7 @@ const fs = require("fs");
 const path = require("path");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const TMPL_DIR = path.join(REPO_ROOT, "_warpos", "templates", "canonical");
+const TMPL_DIR = path.join(REPO_ROOT, "_mc", "templates", "canonical");
 
 const DEFAULT_NARRATIVE = [
   "CORE_BRIEF",

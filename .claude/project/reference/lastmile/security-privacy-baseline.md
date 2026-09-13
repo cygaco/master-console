@@ -12,7 +12,7 @@ For `bootstrap:lastmile`. This is **compliance-by-default implementation guidanc
 
 Each item is a launch gate. Fail any → fix before claiming launch-ready.
 
-- [ ] **Secrets scanning.** No keys, tokens, or passwords in the repo or git history. Run a secrets scanner in CI and pre-commit. WarpOS provides `/scan:privacy` and `/redteam:scan` for this. Treat any committed secret as compromised — rotate it, don't just delete it.
+- [ ] **Secrets scanning.** No keys, tokens, or passwords in the repo or git history. Run a secrets scanner in CI and pre-commit. MC provides `/scan:privacy` and `/redteam:scan` for this. Treat any committed secret as compromised — rotate it, don't just delete it.
 - [ ] **Env-var hygiene.** All secrets in environment variables / a secrets manager, never hardcoded. `.env` is gitignored; an `.env.example` documents names with **no real values**. Different secrets per environment (dev/staging/prod). Reference internal paths as `paths.*` tokens, never literal filesystem paths.
 - [ ] **Auth & session.** Passwords hashed with a slow algorithm (bcrypt/argon2/scrypt) — never plaintext or fast hashes. Session tokens are random, httpOnly, Secure, SameSite. Sessions expire and can be revoked (logout works server-side). Offer or plan for MFA on sensitive accounts.
 - [ ] **Rate limiting.** Login, signup, password-reset, and any write/expensive endpoint are rate-limited per IP and per account. Protects against credential stuffing, brute force, and cost-blowout abuse.

@@ -5,8 +5,8 @@
 //     duplicate founder session, no duplicate sample-events file (content stable,
 //     second run reports "unchanged")
 //   - writes are confined to the throwaway instance dir
-//   - the refuseIfTargetIsWarpOS guard applies to the seed target: a pointer that
-//     resolves to the WarpOS canonical root is refused (non-zero), no writes
+//   - the refuseIfTargetIsMC guard applies to the seed target: a pointer that
+//     resolves to the MC canonical root is refused (non-zero), no writes
 // Temp instance + injected --pointer; no real npm run dev.
 // ─────────────────────────────────────────────────────────────────────────────
 "use strict";
@@ -42,7 +42,7 @@ function setup() {
   fs.mkdirSync(instanceDir, { recursive: true });
   fs.writeFileSync(path.join(instanceDir, "package.json"), JSON.stringify({ name: "admin-preview-instance" }), "utf8");
   const pointer = path.join(base, "admin-preview.json");
-  fs.writeFileSync(pointer, JSON.stringify({ $schema: "warpos/admin-preview/v1", instanceDir }), "utf8");
+  fs.writeFileSync(pointer, JSON.stringify({ $schema: "mc/admin-preview/v1", instanceDir }), "utf8");
   return { base, instanceDir, pointer };
 }
 
@@ -75,18 +75,18 @@ ok("seed-twice-idempotent-confined-to-instance", () => {
   assert.strictEqual(r2.actions.checklist, "unchanged", "second seed: checklist unchanged");
 
   // Exactly ONE checklist marker block (no duplicate FOUNDERS_CHECKLIST content).
-  const markerCount = (after2.checklist.match(/warpos:founders-checklist v1/g) || []).length;
+  const markerCount = (after2.checklist.match(/mc:founders-checklist v1/g) || []).length;
   assert.strictEqual(markerCount, 1, "exactly one founders-checklist block after two runs");
 });
 
-ok("seed-target-warpos-root-refused", () => {
-  // Pointer that resolves instanceDir to the WarpOS canonical root → refuse.
-  const base = mkTmp("admin-seed-warpos-");
+ok("seed-target-mc-root-refused", () => {
+  // Pointer that resolves instanceDir to the MC canonical root → refuse.
+  const base = mkTmp("admin-seed-mc-");
   const pointer = path.join(base, "admin-preview.json");
-  fs.writeFileSync(pointer, JSON.stringify({ $schema: "warpos/admin-preview/v1", instanceDir: ROOT }), "utf8");
+  fs.writeFileSync(pointer, JSON.stringify({ $schema: "mc/admin-preview/v1", instanceDir: ROOT }), "utf8");
   const r = seedMod.seed({ pointer });
-  assert.strictEqual(r.ok, false, "seed must refuse the WarpOS canonical root as target");
-  assert.ok(/warpos/i.test(r.error), `refusal must name WarpOS: ${r.error}`);
+  assert.strictEqual(r.ok, false, "seed must refuse the MC canonical root as target");
+  assert.ok(/mc/i.test(r.error), `refusal must name MC: ${r.error}`);
 });
 
 console.log(`\nseed-idempotent: ${pass}/${pass + fail} pass`);

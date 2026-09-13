@@ -217,7 +217,7 @@ The entire feature is **gated on `plan_contract.goal_verification`
 presence.** Pre-Sprint-A sprints (10+ retro'd entries as of 2026-05-18)
 are exempt — no backfill, no enforcement. The gate, executor, and
 audit all skip when the field is absent. Downstream projects updating
-via `/warp:update` inherit the schema additive but their existing
+via `/mc:update` inherit the schema additive but their existing
 sprints continue to ship unchanged.
 
 ## Commands
@@ -552,13 +552,13 @@ Every release-class event lands in one of two repo-root ledgers — `ROADMAP.md`
 |---|---|---|
 | `version.json` bump (capsule under `framework/releases/X.Y.Z/`) | MUST | `RELEASES.md#versions` |
 | `RL-*` at status=deployed OR prepared-at-internal-canary | MUST | `RELEASES.md#sprints` |
-| Bare git tag with capsule but outside `/warp:release` | MAY (flagged "tagged outside pipeline") | `RELEASES.md#versions` |
+| Bare git tag with capsule but outside `/mc:release` | MAY (flagged "tagged outside pipeline") | `RELEASES.md#versions` |
 | Hotfix to `main` without an `RL-*` | MUST NOT | git log only |
 | Docs-only commits | MUST NOT | git log only |
 
 ### Named enforcer (per CLAUDE.md#Policy-and-Enforcement-Hygiene)
 
-- **Writer:** `scripts/sprint/ledger.js` — single shared module called by `plan.js`, `add-sprint.js`, `retrospective.js`, `release.js`, and the `/warp:release` driver. Fail-open: stderr `[ledger] failed: ...` on error, never blocks the host script. Atomic write-temp-then-rename to survive concurrent writers (multi-sprint parallelism).
+- **Writer:** `scripts/sprint/ledger.js` — single shared module called by `plan.js`, `add-sprint.js`, `retrospective.js`, `release.js`, and the `/mc:release` driver. Fail-open: stderr `[ledger] failed: ...` on error, never blocks the host script. Atomic write-temp-then-rename to survive concurrent writers (multi-sprint parallelism).
 - **Guard:** `scripts/hooks/ledger-presence-guard.js` — PreToolUse Bash matcher that watches the four release-class commands and warns when the corresponding ledger row was not detected. Soft-rollout `enforcement.mode = warn` until 2026-06-02, then flip to `block` after smoke validation. Policy at `policies/ledger-presence.json`. Precedent: SP-20260514-002 routing-trace.
 - **Backfill:** `scripts/sprint/backfill-ledgers.js` — reads `active-sprints.yaml`, `releases/RL-*.yaml`, `version.json#previousVersions`, `framework/releases/X.Y.Z/release.json`. Dry-run default; `--apply` writes. Idempotent.
 

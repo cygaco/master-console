@@ -26,7 +26,7 @@ For descriptive "what happened" handoffs, use `/session:handoff` instead.
 Identify what the fresh session is expected to execute. Examples:
 
 - "run `/sprint:plan` twice for sprints A and B"
-- "continue the `/warp:release` after smoke-tests pass"
+- "continue the `/mc:release` after smoke-tests pass"
 - "pick up the in-flight refactor at file X line Y"
 
 If unclear after re-reading recent conversation, ask the user one targeted question, then proceed.

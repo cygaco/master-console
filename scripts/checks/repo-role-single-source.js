@@ -3,9 +3,9 @@
  * scripts/checks/repo-role-single-source.js — ED-009 invariant enforcer.
  *
  * Policy: ALL canonical-vs-consumer role derivation MUST flow through
- * scripts/warpos/repo-role.js. No guard or script may re-derive the repo role
- * by reading canonical signals inline (e.g. checking _warpos/MANIFEST.json
- * existence, .warpos-canonical, manifest.json#warpos.source, version.json#name,
+ * scripts/mc/repo-role.js. No guard or script may re-derive the repo role
+ * by reading canonical signals inline (e.g. checking _mc/MANIFEST.json
+ * existence, .mc-canonical, manifest.json#mc.source, version.json#name,
  * etc.).
  *
  * This script greps for known inline role-derivation idioms across the scripts/
@@ -32,20 +32,20 @@ const SCRIPTS_DIR = path.join(ROOT, "scripts");
 // ── Allowlist ──────────────────────────────────────────────────────────────
 // Individual files allowed to reference canonical-detection patterns.
 const ALLOWLIST_FILES = new Set([
-  path.join(SCRIPTS_DIR, "warpos", "repo-role.js"),
-  path.join(SCRIPTS_DIR, "warpos", "test-repo-role.js"),
+  path.join(SCRIPTS_DIR, "mc", "repo-role.js"),
+  path.join(SCRIPTS_DIR, "mc", "test-repo-role.js"),
   path.join(SCRIPTS_DIR, "checks", "repo-role-single-source.js"), // self
 ]);
 
 // Entire directories allowlisted — files inside these dirs are legitimate
-// manifest-tool readers that reference _warpos/MANIFEST.json for CONTENT
+// manifest-tool readers that reference _mc/MANIFEST.json for CONTENT
 // (build, validate, walk-skip) rather than for role derivation. NOTE: this is a
 // CONTENT-reader carve-out, not a role-derivation hiding place — bootstrap.js's
 // canonical detection (detectMode) was refactored to flow through the resolver
 // (isCanonicalDir) so it no longer re-derives role inline here (xprovider review
 // 2026-06-15 BLOCKER-1a: the dir-allowlist must not mask a LIVE role detector).
 const ALLOWLIST_DIRS = [
-  path.join(SCRIPTS_DIR, "warpos", "manifest"), // build.js, validate.js, walk-skip.js content-readers (+ tests)
+  path.join(SCRIPTS_DIR, "mc", "manifest"), // build.js, validate.js, walk-skip.js content-readers (+ tests)
 ];
 
 function isAllowlisted(file) {
@@ -64,41 +64,41 @@ function isAllowlisted(file) {
 // substring matches that appear in legitimate non-role contexts).
 const PATTERNS = [
   {
-    name: "warpos_canonical_marker",
-    // existsSync check for the .warpos-canonical marker file — exclusively a role signal.
-    regex: /['".]warpos-canonical['"]/,
-    description: "'.warpos-canonical' marker check — role derivation only belongs in repo-role.js",
+    name: "mc_canonical_marker",
+    // existsSync check for the .mc-canonical marker file — exclusively a role signal.
+    regex: /['".]mc-canonical['"]/,
+    description: "'.mc-canonical' marker check — role derivation only belongs in repo-role.js",
   },
   {
-    name: "warpos_source_self",
-    // m.warpos.source === "self" or similar — specific canonical-dev-repo signal.
-    // The (?:\?\.|[.\[]) accessor group also catches optional chaining (warpos?.source).
-    regex: /warpos(?:\?\.|[.\[]).*source.*===.*['"]self['"]|['"]self['"].*===.*warpos(?:\?\.|[.\[]).*source/,
-    description: "warpos.source === \"self\" role check — use resolveRepoRole() instead",
+    name: "mc_source_self",
+    // m.mc.source === "self" or similar — specific canonical-dev-repo signal.
+    // The (?:\?\.|[.\[]) accessor group also catches optional chaining (mc?.source).
+    regex: /mc(?:\?\.|[.\[]).*source.*===.*['"]self['"]|['"]self['"].*===.*mc(?:\?\.|[.\[]).*source/,
+    description: "mc.source === \"self\" role check — use resolveRepoRole() instead",
   },
   {
-    name: "project_slug_warpos",
-    // m.project.slug === "warpos" — specific canonical role signal.
+    name: "project_slug_mc",
+    // m.project.slug === "mc" — specific canonical role signal.
     // The (?:\?\.|[.\[]) accessor group also catches optional chaining (project?.slug).
-    regex: /project(?:\?\.|[.\[]).*slug.*===.*['"]warpos['"]|['"]warpos['"].*===.*project(?:\?\.|[.\[]).*slug/,
-    description: "project.slug === \"warpos\" role check — use resolveRepoRole() instead",
+    regex: /project(?:\?\.|[.\[]).*slug.*===.*['"]mc['"]|['"]mc['"].*===.*project(?:\?\.|[.\[]).*slug/,
+    description: "project.slug === \"mc\" role check — use resolveRepoRole() instead",
   },
   {
-    name: "warpos_manifest_existence_role",
-    // existsSync/safeExists check on _warpos/MANIFEST.json used for role derivation.
+    name: "mc_manifest_existence_role",
+    // existsSync/safeExists check on _mc/MANIFEST.json used for role derivation.
     // Legitimate content-readers (build.js, validate.js, tests) call readFileSync/loadJson
-    // and live in scripts/warpos/manifest/ (allowlisted above). Any OTHER file calling
+    // and live in scripts/mc/manifest/ (allowlisted above). Any OTHER file calling
     // existsSync on that path is re-deriving the role signal inline.
-    regex: /(existsSync|safeExists).*_warpos.*MANIFEST\.json|_warpos.*MANIFEST\.json.*(existsSync|safeExists)/,
-    description: "_warpos/MANIFEST.json existsSync role check — use resolveRepoRole() instead",
+    regex: /(existsSync|safeExists).*_mc.*MANIFEST\.json|_mc.*MANIFEST\.json.*(existsSync|safeExists)/,
+    description: "_mc/MANIFEST.json existsSync role check — use resolveRepoRole() instead",
   },
   {
-    name: "version_json_name_warpos",
-    // version.json#name === "warpos" structural heuristic — a role signal.
-    // Keyed on `.name === "warpos"` / `"warpos" === .name` — specific enough to
+    name: "version_json_name_mc",
+    // version.json#name === "mc" structural heuristic — a role signal.
+    // Keyed on `.name === "mc"` / `"mc" === .name` — specific enough to
     // only catch role-derivation without broad false positives.
-    regex: /\.name\s*===\s*['"]warpos['"]|['"]warpos['"]\s*===\s*\.name/,
-    description: "version.json#name === \"warpos\" role check — use resolveRepoRole() instead",
+    regex: /\.name\s*===\s*['"]mc['"]|['"]mc['"]\s*===\s*\.name/,
+    description: "version.json#name === \"mc\" role check — use resolveRepoRole() instead",
   },
 ];
 
@@ -184,8 +184,8 @@ function main() {
     process.stdout.write(
       JSON.stringify({
         ok,
-        policy: "All repo-role derivation must flow through scripts/warpos/repo-role.js (ED-009)",
-        resolver: "scripts/warpos/repo-role.js",
+        policy: "All repo-role derivation must flow through scripts/mc/repo-role.js (ED-009)",
+        resolver: "scripts/mc/repo-role.js",
         violationCount: violations.length,
         violations,
       }, null, 2) + "\n",
@@ -193,14 +193,14 @@ function main() {
   } else {
     if (ok) {
       process.stdout.write(
-        "repo-role-single-source: OK — no inline role derivation found outside scripts/warpos/repo-role.js\n",
+        "repo-role-single-source: OK — no inline role derivation found outside scripts/mc/repo-role.js\n",
       );
     } else {
       process.stderr.write(
         [
           `repo-role-single-source: FAIL — ${violations.length} inline role-derivation(s) found.`,
           "Policy (ED-009): all canonical-vs-consumer detection must flow through",
-          "  scripts/warpos/repo-role.js  (use resolveRepoRole())",
+          "  scripts/mc/repo-role.js  (use resolveRepoRole())",
           "",
           ...violations.map(
             (v) =>
@@ -208,7 +208,7 @@ function main() {
           ),
           "",
           "Fix: replace the inline check with:",
-          "  const { resolveRepoRole } = require('<rel>/warpos/repo-role');",
+          "  const { resolveRepoRole } = require('<rel>/mc/repo-role');",
           "  const isCanonical = resolveRepoRole({ root: <your-root> }).role === 'canonical';",
           "",
         ].join("\n"),

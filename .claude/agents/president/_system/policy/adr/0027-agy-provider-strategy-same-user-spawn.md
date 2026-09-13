@@ -24,7 +24,7 @@ DUMP.md 2026-07-19 framed agy headless auth as an **upstream hard blocker** (Git
 
 Load-bearing corrections to the prior framing:
 
-- **GitHub #76 (non-TTY stdout drop) does NOT manifest on WarpOS's actual transport.** The Node `spawnSync` pipe captured stdout in both runs. Whether #76 bites a raw bash pipe is untested and moot — raw agy dispatch is guard-blocked anyway.
+- **GitHub #76 (non-TTY stdout drop) does NOT manifest on MC's actual transport.** The Node `spawnSync` pipe captured stdout in both runs. Whether #76 bites a raw bash pipe is untested and moot — raw agy dispatch is guard-blocked anyway.
 - **GitHub #479 is a Linux-container-without-keyring failure mode, not native Windows.** Auth is per-USER (Windows keyring/DPAPI + `~/.gemini/oauth_creds.json`); there is no per-folder auth artifact; a same-user subprocess CAN read it (proven twice).
 - **`GEMINI_API_KEY`/env-var auth is a confirmed-dead upstream seam** (staff, 2026-06-29). Nobody builds it (standing anti-instruction, unchanged).
 

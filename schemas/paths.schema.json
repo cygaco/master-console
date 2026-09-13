@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/paths/v5",
-  "title": "WarpOS paths.json",
+  "$id": "mc/paths/v5",
+  "title": "MC paths.json",
   "type": "object",
   "required": [
     "$schema",
@@ -11,7 +11,7 @@
   "properties": {
     "$schema": {
       "type": "string",
-      "const": "warpos/paths/v5"
+      "const": "mc/paths/v5"
     },
     "version": {
       "type": "integer",
@@ -219,7 +219,7 @@
     },
     "appScaffoldTemplates": {
       "type": "string",
-      "const": "_warpos/templates/app-scaffold",
+      "const": "_mc/templates/app-scaffold",
       "description": "dir (framework) — paths.appScaffoldTemplates"
     },
     "manifest": {
@@ -514,7 +514,7 @@
     },
     "sprintTemplates": {
       "type": "string",
-      "const": "_warpos/templates/sprint",
+      "const": "_mc/templates/sprint",
       "description": "dir (framework) — paths.sprintTemplates"
     },
     "sprintSchemas": {
@@ -594,7 +594,7 @@
     },
     "portfolioTemplates": {
       "type": "string",
-      "const": "_warpos/templates/portfolio",
+      "const": "_mc/templates/portfolio",
       "description": "dir (framework) — paths.portfolioTemplates"
     },
     "skillCatalog": {
@@ -604,7 +604,7 @@
     },
     "providerSmokeSkill": {
       "type": "string",
-      "const": "scripts/warpos/provider-smoke.js",
+      "const": "scripts/mc/provider-smoke.js",
       "description": "js (framework) — paths.providerSmokeSkill"
     },
     "providerFailureModes": {
@@ -614,12 +614,12 @@
     },
     "providerRcaLib": {
       "type": "string",
-      "const": "scripts/warpos/lib/provider-rca.js",
+      "const": "scripts/mc/lib/provider-rca.js",
       "description": "js (framework) — paths.providerRcaLib"
     },
     "providerAutofixLib": {
       "type": "string",
-      "const": "scripts/warpos/lib/provider-autofix.js",
+      "const": "scripts/mc/lib/provider-autofix.js",
       "description": "js (framework) — paths.providerAutofixLib"
     },
     "reasoningFrameworks": {
@@ -644,7 +644,7 @@
     },
     "testInstallMatrix": {
       "type": "string",
-      "const": "scripts/warpos/test-install-matrix.js",
+      "const": "scripts/mc/test-install-matrix.js",
       "description": "file (framework) — paths.testInstallMatrix"
     },
     "contractsSchemas": {

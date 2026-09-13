@@ -154,4 +154,4 @@ ANALYTICS / TELEMETRY
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Tool capabilities and privacy rules change; check the provider docs and your legal/privacy obligations before launch.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Tool capabilities and privacy rules change; check the provider docs and your legal/privacy obligations before launch.*

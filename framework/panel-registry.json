@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/panel-registry/v1",
+  "$schema": "mc/panel-registry/v1",
   "panels": {
     "readiness": {
       "name": "readiness",
@@ -16,7 +16,7 @@
     "admin": {
       "name": "admin",
       "opener": "node scripts/admin/preview.js",
-      "description": "A product's in-app founder admin panel (run-in-product; never WarpOS itself)",
+      "description": "A product's in-app founder admin panel (run-in-product; never MC itself)",
       "run_context": "in_app"
     },
     "roadmap": {

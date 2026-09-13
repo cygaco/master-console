@@ -23,7 +23,7 @@ function scratchManifest(dir) {
   const manifestPath = path.join(dir, "record-trust-gate.manifest.json");
   fs.writeFileSync(
     manifestPath,
-    JSON.stringify({ schema: "warpos/record-trust-gate/v1", trust_anchor_forbidden_for_cross_session: [], surfaces: [] }, null, 2),
+    JSON.stringify({ schema: "mc/record-trust-gate/v1", trust_anchor_forbidden_for_cross_session: [], surfaces: [] }, null, 2),
   );
   return manifestPath;
 }

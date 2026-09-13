@@ -82,13 +82,13 @@ test.describe("readiness panel", () => {
     await page.goto(ROUTE);
     if (await isGated(page)) test.skip(true, "no founder session provisioned");
 
-    // β condition 3 / AC-brand: no product-facing "WarpOS", and the schema id never appears
+    // β condition 3 / AC-brand: no product-facing "MC", and the schema id never appears
     // in the visible DOM / title / aria / data-* / class.
     const html = await page.content();
-    expect(html).not.toMatch(/warpos\/readiness\/v1/i);
-    expect(html).not.toMatch(/WarpOS/);
+    expect(html).not.toMatch(/mc\/readiness\/v1/i);
+    expect(html).not.toMatch(/MC/);
     const title = await page.title();
-    expect(title).not.toMatch(/warpos/i);
+    expect(title).not.toMatch(/mc/i);
   });
 
   test("mobile-single-column", async ({ page }) => {

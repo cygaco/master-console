@@ -65,12 +65,12 @@ A non-zero exit from `--smoke` / `--full` is a RED result, not a warning.
 Reads role→provider mapping from `.claude/manifest.json#agentProviders`.
 Appropriate for quick "does this role work right now?" checks.
 
-`--smoke` / `--full` → `node scripts/warpos/provider-smoke.js --per-role` — 
+`--smoke` / `--full` → `node scripts/mc/provider-smoke.js --per-role` — 
 full readiness sweep. Resolves all build-chain roles via the same path real
 dispatch uses (providers.js + dispatch-agent.js#getRoleModel), pings
 non-Claude roles, and classifies model-availability precisely (catches silent
 downgrade / model_unavailable, not just "ping failed"). Use for pre-dispatch
-health checks, CI readiness gates, and `/warp:health` equivalence.
+health checks, CI readiness gates, and `/mc:health` equivalence.
 
 ## Empty-state behavior
 
@@ -94,7 +94,7 @@ Provider Smoke — GREEN
 node scripts/agents/cli.js test $ARGUMENTS
 
 # Full dispatch-readiness sweep (--smoke / --full)
-node scripts/warpos/provider-smoke.js --per-role
+node scripts/mc/provider-smoke.js --per-role
 ```
 
 See: `tests/transcripts/agents-test.md`.

@@ -115,7 +115,7 @@ Each slide is an HTML file using a shared CSS stylesheet for consistent dark ter
 - Color palette: cyan `#00d4f0`, pink `#d07ce8`, green `#00d787`, gold `#e8c44a`, red `#e05050`, blue `#0088b8`
 - Stat numbers get `text-shadow` glow matching their color
 - Slide number in top-right: `"NN / NN"` format, very dim
-- Watermark bottom-right: `warpos.dev` (or project domain)
+- Watermark bottom-right: `mc.dev` (or project domain)
 - No corner accent brackets — they cause artifacts in Puppeteer
 
 **Per-slide HTML:**

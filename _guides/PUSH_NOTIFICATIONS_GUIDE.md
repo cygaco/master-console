@@ -247,4 +247,4 @@ PUSH NOTIFICATIONS - MINIMUM VIABLE
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Push benchmarks vary by year, vendor, and platform, and OS rules change frequently — treat the percentages here as directional and check the provider docs before launch.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Push benchmarks vary by year, vendor, and platform, and OS rules change frequently — treat the percentages here as directional and check the provider docs before launch.*

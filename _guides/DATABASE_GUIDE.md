@@ -229,4 +229,4 @@ You should always be able to pull a full copy of your data out:
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed 2026-05. Provider pricing, free-tier limits, and backup policies change; the official sources above are the source of truth.*
+*Part of the MC launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed 2026-05. Provider pricing, free-tier limits, and backup policies change; the official sources above are the source of truth.*

@@ -22,6 +22,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -396,7 +397,7 @@ console.log("\n(j) CLI EXIT CODES — subprocess tests:");
     fs.writeFileSync(tmpEvents, "");
     const r = cp.spawnSync(process.execPath, [ENGINE], {
       encoding: "utf8",
-      env: { ...process.env, WARPOS_EVENTS_FILE: tmpEvents, WARPOS_SPRINT_DATES_JSON: "{}" },
+      env: { ...process.env, ...mcEnv.envPair("EVENTS_FILE", tmpEvents), ...mcEnv.envPair("SPRINT_DATES_JSON", "{}") },
     });
     ok(
       "CLI-EXIT: empty events → exit 0 (graceful-empty)",
@@ -425,8 +426,8 @@ console.log("\n(j) CLI EXIT CODES — subprocess tests:");
       encoding: "utf8",
       env: {
         ...process.env,
-        WARPOS_EVENTS_FILE: tmpEvents,
-        WARPOS_SPRINT_DATES_JSON: JSON.stringify({ [sprintId]: POST_CUTOFF_DATE }),
+        ...mcEnv.envPair("EVENTS_FILE", tmpEvents),
+        ...mcEnv.envPair("SPRINT_DATES_JSON", JSON.stringify({ [sprintId]: POST_CUTOFF_DATE })),
       },
     });
     ok(
@@ -457,8 +458,8 @@ console.log("\n(j) CLI EXIT CODES — subprocess tests:");
       encoding: "utf8",
       env: {
         ...process.env,
-        WARPOS_EVENTS_FILE: tmpEvents,
-        WARPOS_SPRINT_DATES_JSON: JSON.stringify({ [sprintId]: POST_CUTOFF_DATE }),
+        ...mcEnv.envPair("EVENTS_FILE", tmpEvents),
+        ...mcEnv.envPair("SPRINT_DATES_JSON", JSON.stringify({ [sprintId]: POST_CUTOFF_DATE })),
       },
     });
     ok(

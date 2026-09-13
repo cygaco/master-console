@@ -70,12 +70,12 @@ const learnings = [
   },
   {
     intent: "cross_project_edit_pollution",
-    tip: "WHEN running inside jobhunter-app: WarpOS/scripts/warp-setup.js was Read 39× and Edited 35× via this project's Alex session. Cross-repo editing from the wrong working tree pollutes the source-of-truth (LRN-2026-04-16-g requires explicit sync). Add a guard: any Edit/Write whose absolute path resolves outside `$CLAUDE_PROJECT_DIR` requires confirmation, or auto-tags the event with `cross_project:true` for filtering.",
+    tip: "WHEN running inside jobhunter-app: MC/scripts/warp-setup.js was Read 39× and Edited 35× via this project's Alex session. Cross-repo editing from the wrong working tree pollutes the source-of-truth (LRN-2026-04-16-g requires explicit sync). Add a guard: any Edit/Write whose absolute path resolves outside `$CLAUDE_PROJECT_DIR` requires confirmation, or auto-tags the event with `cross_project:true` for filtering.",
     conditions: {
       scope: "tool guards / cross-repo work",
       trigger: "Edit or Write with target path outside the project root",
       evidence:
-        "warp-setup.js (in WarpOS/) — 39 reads + 35 edits from jobhunter-app session in 7d",
+        "warp-setup.js (in MC/) — 39 reads + 35 edits from jobhunter-app session in 7d",
     },
     source: "learn:events",
     pending_validation: true,

@@ -1,0 +1,4 @@
+{
+  "_comment": "Tracked paths that match a mc-tracked-transients rule but are legitimately needed. Every entry = { path, reason }. Prefer NONE — an entry here is a claim that a per-run artifact is shipped on purpose. Enforced by scripts/checks/mc-tracked-transients.js (a malformed entry fails the gate closed, exit 2).",
+  "allow": []
+}

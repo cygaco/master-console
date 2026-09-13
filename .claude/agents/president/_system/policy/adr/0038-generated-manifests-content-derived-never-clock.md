@@ -11,7 +11,7 @@ root causes: `scripts/hooks/hook-manifest.json#updatedAt` was derived from the r
 file's **fs mtime** (`build.js`). An upgrade regenerates the manifest **in-target** at
 apply time, while a fresh install **copies it verbatim** — identical sources, divergent
 bytes (`updatedAt` only), and the divergence cascades into every sha-rollup that hashes
-the file (`.claude/framework-manifest.json` `hook` rollup, `_warpos/MANIFEST.json`).
+the file (`.claude/framework-manifest.json` `hook` rollup, `_mc/MANIFEST.json`).
 The mtime choice was itself a half-fix for the earlier `Date.now()` flap — the original
 intent was already determinism; mtime kept the output fs-state-dependent.
 

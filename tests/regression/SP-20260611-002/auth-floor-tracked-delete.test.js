@@ -132,7 +132,7 @@ ok("E2E: with node-e-fs granted, an rmSync of a TRACKED file yields NO approve f
   fs.writeFileSync(
     path.join(repo, ".claude", "runtime", "authorization.json"),
     JSON.stringify({
-      schema: "warpos/auth/v1",
+      schema: "mc/auth/v1",
       scopes: ["node-e-fs", "manifest-edit"],
       expires_at: new Date(Date.now() + 3600 * 1000).toISOString(),
       granted_at: new Date().toISOString(),

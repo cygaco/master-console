@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Isolated P5 test for safe-spawn.js (the dispatch safety kernel). Proves:
@@ -251,7 +252,7 @@ h.test("treeKill reaps a parent + child + GRANDCHILD process tree (not just the 
   // process-group kill reaches them; on win32 `taskkill /T` walks the live tree.
   // Each level appends its own PID to a sealed temp file (deterministic handoff that
   // doesn't depend on stdio inheritance across spawn hops).
-  const pidFile = path.join(os.tmpdir(), `warpos-treekill-${process.pid}-${Date.now()}.txt`);
+  const pidFile = path.join(os.tmpdir(), `mc-treekill-${process.pid}-${Date.now()}.txt`);
   fs.writeFileSync(pidFile, "");
   const fj = JSON.stringify(pidFile);
   const detached = process.platform !== "win32";
@@ -411,10 +412,41 @@ h.failClosed("safeSpawnFile fails closed on an arg violation (NO spawn, NO file)
 });
 
 // ── withCodexHome — the isolated CODEX_HOME seam (RI-009 codex cache multi-writer collision) ──
-// The default is the isolated ~/.codex-warpos (reading the constant does NOT seed).
-h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-warpos", () => ({
-  ok: typeof DEFAULT_CODEX_HOME === "string" && /[\\/]\.codex-warpos$/.test(DEFAULT_CODEX_HOME),
-}));
+// The default is the isolated ~/.codex-mc — or, for one release, an EXISTING legacy codex home used IN PLACE
+// (S-OS-06 T3 part 5: read-both, never moved). Reading the constant does NOT seed. The legacy dir name is derived
+// from mc-env's prefix so this test adds no legacy literal.
+const { resolveCodexHome } = require("./safe-spawn");
+const LEGACY_CODEX_DIR = `.codex-${mcEnv.LEGACY_PREFIX.slice(0, -1).toLowerCase()}`;
+h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-mc (or an existing legacy codex home, read-both)", () => {
+  const override = mcEnv.readEnv("CODEX_HOME");
+  const expected = override || resolveCodexHome().path;
+  const shapeOk = override ? true : [".codex-mc", LEGACY_CODEX_DIR].includes(path.basename(DEFAULT_CODEX_HOME));
+  return { ok: typeof DEFAULT_CODEX_HOME === "string" && DEFAULT_CODEX_HOME === expected && shapeOk };
+});
+
+h.pass("resolveCodexHome: fresh -> ~/.codex-mc; legacy-only -> legacy in place (deprecated, never moved); both -> ~/.codex-mc", () => {
+  const fx = sealedDir({}, "codexhome-readboth");
+  try {
+    const home = fx.dir;
+    const cur = path.join(home, ".codex-mc");
+    const leg = path.join(home, LEGACY_CODEX_DIR);
+    const fresh = resolveCodexHome(home);
+    const freshCreatedNothing = !fs.existsSync(cur);
+    fs.mkdirSync(leg);
+    const legacyOnly = resolveCodexHome(home);
+    const notMoved = !fs.existsSync(cur) && fs.existsSync(leg);
+    fs.mkdirSync(cur);
+    const both = resolveCodexHome(home);
+    return {
+      ok:
+        fresh.path === cur && !fresh.deprecated && freshCreatedNothing &&
+        legacyOnly.path === leg && legacyOnly.deprecated === true && notMoved &&
+        both.path === cur && !both.deprecated,
+    };
+  } finally {
+    fx.cleanup();
+  }
+});
 
 // Behavior: codex spawns get the isolated CODEX_HOME; an explicit CODEX_HOME wins; non-codex
 // tools are untouched; the caller's env is never mutated. Point DEFAULT at a SEALED temp via a
@@ -422,8 +454,8 @@ h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-warpos", () => ({
 h.pass("withCodexHome: codex defaulted, explicit wins, other tools untouched, no env mutation", () => {
   const fx = sealedDir({}, "codexhome");
   const home = fx.dir;
-  const prev = process.env.WARPOS_CODEX_HOME;
-  process.env.WARPOS_CODEX_HOME = home;
+  const prev = mcEnv.readEnv("CODEX_HOME");
+  mcEnv.setEnv("CODEX_HOME", home);
   delete require.cache[require.resolve("./safe-spawn")];
   try {
     const ss = require("./safe-spawn");
@@ -441,8 +473,8 @@ h.pass("withCodexHome: codex defaulted, explicit wins, other tools untouched, no
       input.CODEX_HOME === undefined; // (4) no mutation of the caller's env
     return { ok };
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_CODEX_HOME;
-    else process.env.WARPOS_CODEX_HOME = prev;
+    if (prev === undefined) mcEnv.unsetEnv("CODEX_HOME");
+    else mcEnv.setEnv("CODEX_HOME", prev);
     delete require.cache[require.resolve("./safe-spawn")];
     require("./safe-spawn"); // restore the canonical module instance in the require cache
     fx.cleanup();

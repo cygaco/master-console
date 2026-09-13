@@ -6,7 +6,7 @@ description: Author a launch guide into _guides/ — grounded in an external bra
 
 Write (or refine) a single guide under `_guides/` that helps a vibe-coder do the right thing at the right time on the path to a launched, paid product — and tag it with the **guide-anchor contract** so `/guides:integrate` can surface it at the correct bootstrap-pipeline spot.
 
-> `_guides/` is **`owner=framework`, shipped** (ADR-0005) + `/warp:update`-managed — these guides install into every product. Write for the end user (a non-expert founder), not for WarpOS internals.
+> `_guides/` is **`owner=framework`, shipped** (ADR-0005) + `/mc:update`-managed — these guides install into every product. Write for the end user (a non-expert founder), not for MC internals.
 
 ## Input
 
@@ -50,7 +50,7 @@ Read, as relevant: the existing `_guides/*.md` (tone, structure, the README inde
 Infer from the topic (override via flags). Long-lead external setup → `notice`/`checklist` at `spinup:*` (project start). An integration the user wires → `walkthrough` at the matching `lastmile:module/*`. A legal/approval item → `notice` at `lastmile:gate/*`.
 
 ### Step 3 — Write the guide
-Plain language for a non-expert founder. Honest about cost, lead time, and "human/legal review required" where applicable. No WarpOS-internal jargon. For `walkthrough`: numbered steps. For `checklist`: `- [ ]` items + a clear "done when". For `notice`: 3-6 tight lines + the one action.
+Plain language for a non-expert founder. Honest about cost, lead time, and "human/legal review required" where applicable. No MC-internal jargon. For `walkthrough`: numbered steps. For `checklist`: `- [ ]` items + a clear "done when". For `notice`: 3-6 tight lines + the one action.
 
 ### Step 4 — Emit
 Write to `_guides/<TOPIC>_GUIDE.md` with the contract frontmatter. Do NOT wire it into the pipeline here — that's `/guides:integrate` (which reads this frontmatter, places the guide at its anchor, and records the plugin spot). Adding/uncommenting frontmatter on an existing guide is in scope; restructuring the whole set is `/guides:organize`.
@@ -61,6 +61,6 @@ Write to `_guides/<TOPIC>_GUIDE.md` with the contract frontmatter. Do NOT wire i
 - Companions: `/guides:organize` (restructure all guides), `/guides:integrate` (place + record into bootstrap), `/guides:coverage` (enforce every guide is anchored + surfaced).
 
 ## Anti-patterns
-- Don't write WarpOS-internal docs here — these ship to end users.
+- Don't write MC-internal docs here — these ship to end users.
 - Don't omit the contract frontmatter — an un-anchored guide is invisible to `/guides:integrate` and will be flagged by `/guides:coverage`.
 - Don't bury a long-lead item (dev-account signup) at last-mile — anchor it at project start.

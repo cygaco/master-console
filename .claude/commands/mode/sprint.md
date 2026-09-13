@@ -160,7 +160,7 @@ experimental agent-teams flag (`env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) is be
 and is **no longer required**. Teams are now implicit + session-scoped: each teammate is spawned
 via the `Agent` tool (`run_in_background: true`) and the harness auto-creates the session team;
 `SendMessage` is built-in. Back-compat: on older Claude Code builds the flag may still gate the
-legacy team panel — `/warp:health` §3.5 reports it as informational only.
+legacy team panel — `/mc:health` §3.5 reports it as informational only.
 
 ### Step 1.75: Spawn the persistent team (ε + β) as named background subagents
 
@@ -169,7 +169,7 @@ legacy team panel — `/warp:health` §3.5 reports it as informational only.
 1. There is **no separate team-create call** anymore — the team is implicit. The FIRST spawned
    named background subagent (item 2) implicitly creates the session team. Use a stable
    project-prefixed `name` convention for each teammate (e.g. `Epsilon`, `Beta`, or
-   `warpos-Epsilon`) so members are addressable AND distinguishable from sibling-project
+   `mc-Epsilon`) so members are addressable AND distinguishable from sibling-project
    sessions in `~/.claude/teams/`.
 
 2. Spawn ε + β as in-process teammates **in parallel** (single message, two Agent calls).

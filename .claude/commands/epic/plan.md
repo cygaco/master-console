@@ -29,7 +29,7 @@ start a build. It is the epic-level analogue of `/sprint:plan`.
 
 - The operator gives you messy, plain-language intent that is clearly an **epic**
   (multi-sprint, spans waves, needs a durable plan) rather than a single sprint.
-- You need to convert "make WarpOS do X across many sprints" into a durable,
+- You need to convert "make MC do X across many sprints" into a durable,
   tracker-linked plan with acceptance criteria and sprint candidates BEFORE any
   `/sprint:plan` is minted.
 

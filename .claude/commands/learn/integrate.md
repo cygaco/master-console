@@ -134,7 +134,7 @@ NEXT:
 **Integration:** Mark as `implemented` with `implemented_by: "hook:memory-guard"`. No new write needed — just attestation.
 
 **Learning #52** (`score: 0.9, status: validated, intent: architecture`):
-> "WarpOS-for-us (development) and WarpOS-for-clients (product) must be separate branches"
+> "MC-for-us (development) and MC-for-clients (product) must be separate branches"
 
 **Classification:** intent=architecture → CLAUDE.md rule.
 **Inspection:** No existing rule. Check if `AGENTS.md` would be a better fit (agent-internal) vs CLAUDE.md (project-wide).

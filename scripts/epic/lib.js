@@ -54,7 +54,7 @@ const EPIC_H2_SECTIONS = [
 ];
 
 // ── Fold taxonomy — the 14 classifications (source prompt §G `/epic:fold`,
-//    `_planning/ingest/warpos-lifecycle.md` lines 970-984) ─────────────────────
+//    `_planning/ingest/mc-lifecycle.md` lines 970-984) ─────────────────────
 const FOLD_CLASSES = [
   "clarification",
   "scope-addition",

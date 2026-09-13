@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * coverage-gate.js — N-1: the dispatch-coverage gate ("sprint theater" killer).
@@ -252,7 +253,7 @@ function evaluate(input) {
 
 /** Read the canonical dispatch-completions ledger as an array of records. */
 function readLedger(file) {
-  const f = file || process.env.WARPOS_COVERAGE_LEDGER || path.join(PROJECT_ROOT, ".claude", "runtime", "dispatch-completions.jsonl");
+  const f = file || mcEnv.readEnv("COVERAGE_LEDGER") || path.join(PROJECT_ROOT, ".claude", "runtime", "dispatch-completions.jsonl");
   let txt;
   try {
     txt = fs.readFileSync(f, "utf8");
@@ -341,7 +342,7 @@ if (require.main === module) {
   // FLIPPED (PLAN §4 ramp, §17.4): BLOCKING is now the default. Opt OUT with
   // --report-only or WARPOS_COVERAGE_GATE_ENFORCE=report. (--enforce / =block stay
   // accepted as explicit no-ops for back-compat with existing call sites.)
-  const reportOnly = argv.includes("--report-only") || process.env.WARPOS_COVERAGE_GATE_ENFORCE === "report";
+  const reportOnly = argv.includes("--report-only") || mcEnv.readEnv("COVERAGE_GATE_ENFORCE") === "report";
   const enforce = !reportOnly;
   const verifyArtifacts = argv.includes("--verify-artifacts");
   const records = readLedger(flag("--ledger"));

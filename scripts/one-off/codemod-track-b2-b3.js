@@ -32,7 +32,7 @@ const EXCLUDE = new Set([
   "node_modules",
   ".next",
   "runtime",
-  ".warpos",
+  ".mc",
   "playwright-report",
   "backups",
   ".git",
@@ -42,11 +42,11 @@ const EXCLUDE = new Set([
 ]);
 const EXCLUDE_PATHS = [
   "framework/releases/",
-  ".warpos/",
+  ".mc/",
   "runtime/",
   "scripts/one-off/codemod-track-b5.js",
   "scripts/one-off/codemod-track-b2-b3.js",
-  "scripts/warpos/codemod-docs-to-requirements.js",
+  "scripts/mc/codemod-docs-to-requirements.js",
   "tests/fixtures/manifest-migrate/",
   "framework/paths.registry.json",
   "scripts/path-lint.rules.generated.json",

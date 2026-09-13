@@ -2,7 +2,7 @@
 /**
  * scripts/testsuite/role.js — repo-role bridge for the test-suite enforcer.
  *
- * Thin shim over the shared repo-role resolver (scripts/warpos/repo-role.js).
+ * Thin shim over the shared repo-role resolver (scripts/mc/repo-role.js).
  * This replaces the interim stub (0.17.0 ED-009 open item) per its own comment:
  * "Replace this module's body when the resolver lands; keep the isCanonical()/
  * roleLabel() surface stable so callers don't move."
@@ -17,7 +17,7 @@
  *
  *   DECISION surface (isCanonical(), roleStatus().canonical):
  *     Backed by the shared resolver (resolveRepoRole). Correct even when the
- *     manifest is absent (e.g. canonical-by-_warpos/MANIFEST.json signal or
+ *     manifest is absent (e.g. canonical-by-_mc/MANIFEST.json signal or
  *     version.json heuristic). Never throws — fail-safe to false on any error.
  *
  * Public surface (unchanged — callers enforce.js, run.js, release-gates.js):
@@ -33,14 +33,14 @@
 
 const fs = require("fs");
 const path = require("path");
-const { resolveRepoRole } = require("../warpos/repo-role");
+const { resolveRepoRole } = require("../mc/repo-role");
 
 // Root of this repo, same anchor the old stub used.
 const ROOT = path.resolve(__dirname, "..", "..");
 const MANIFEST = path.join(ROOT, ".claude", "manifest.json");
 
 // ── Internal: read the RAW manifest repoRole field (legacy display contract) ──
-// Returns the raw string from manifest.json top-level repoRole (or warpos.repoRole),
+// Returns the raw string from manifest.json top-level repoRole (or mc.repoRole),
 // or null if the manifest is absent, unreadable, or has no repoRole field.
 // Strips BOM (this repo ships BOM'd JSON).
 function readRawRole() {
@@ -49,7 +49,7 @@ function readRawRole() {
     const m = JSON.parse(fs.readFileSync(MANIFEST, "utf8").replace(/^﻿/, ""));
     if (!m) return null;
     if (typeof m.repoRole === "string" && m.repoRole) return m.repoRole;
-    if (m.warpos && typeof m.warpos.repoRole === "string" && m.warpos.repoRole) return m.warpos.repoRole;
+    if (m.mc && typeof m.mc.repoRole === "string" && m.mc.repoRole) return m.mc.repoRole;
     return null;
   } catch {
     return null;

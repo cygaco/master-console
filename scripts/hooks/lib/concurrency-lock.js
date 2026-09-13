@@ -320,7 +320,7 @@ function listAllLockDirs() {
  * mtime-based pruneStale() so the result is "all currently-live work only".
  * Returns a summary { scanned, dead, stale }.
  *
- * Safe to call from session-start, /warp:health, /warp:setup, and any other
+ * Safe to call from session-start, /mc:health, /mc:setup, and any other
  * non-hot path. Idempotent.
  */
 function pruneDeadLocks(opts = {}) {

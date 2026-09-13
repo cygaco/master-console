@@ -165,7 +165,7 @@ Never auto-deletes orphaned files. Never auto-updates broken refs the user hasn'
 - **After structural renames** — always, to catch orphans
 - **After deleting a file or skill** — to confirm nothing references it
 - **Weekly / on `/sleep:deep`** — to catch drift
-- **Before publishing to WarpOS** — to catch refs that break in a fresh install
+- **Before publishing to MC** — to catch refs that break in a fresh install
 
 ## Related
 

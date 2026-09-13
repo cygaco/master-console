@@ -256,4 +256,4 @@ PRIVACY & GDPR
 
 ---
 
-*This guide is part of the **WarpOS launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, and the sibling guides `AUTH_GUIDE.md`, `DATABASE_GUIDE.md`, and `EMAIL_GUIDE.md` referenced above. **Last reviewed: 2026-05.** Privacy laws and vendor terms change; the official sources above are the source of truth — and this guide is not legal advice.*
+*This guide is part of the **MC launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, and the sibling guides `AUTH_GUIDE.md`, `DATABASE_GUIDE.md`, and `EMAIL_GUIDE.md` referenced above. **Last reviewed: 2026-05.** Privacy laws and vendor terms change; the official sources above are the source of truth — and this guide is not legal advice.*

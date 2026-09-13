@@ -35,7 +35,7 @@ function mkItem(id, dim, checked = false, source = "core", label) {
 }
 function mkChecklist(items, source = "FOUNDERS_CHECKLIST.md") {
   return {
-    present: true, source, ok: true, schema: "warpos/founders-checklist/v1",
+    present: true, source, ok: true, schema: "mc/founders-checklist/v1",
     items, total: items.length, completed: items.filter((i) => i.checked).length,
     open: items.filter((i) => !i.checked), errors: [],
   };
@@ -51,7 +51,7 @@ console.log("AC-1 — schema, item count, owner_class, summary:");
   ]);
   const gates = [{ id: "stripe-live", requires: "test-mode verified + operator approval", blocked: true }];
   const r = buildReadinessReport(REPO_ROOT, { checklist, gates, guideFiles: GUIDE_FILES, generated_at: GEN_AT, product_id: "fixture-app" });
-  ok("schema is warpos/readiness/v1", r.schema === READINESS_SCHEMA, r.schema);
+  ok("schema is mc/readiness/v1", r.schema === READINESS_SCHEMA, r.schema);
   ok("item count = checklist items + gates", r.items.length === 4, `got ${r.items.length}`);
   ok("every owner_class is valid", r.items.every((i) => ["owner-action", "sprint-work", "waiver"].includes(i.owner_class)));
   ok("summary.total matches", r.summary.total === 4, `got ${r.summary.total}`);
@@ -154,11 +154,11 @@ console.log("\nGraceful empty — missing checklist:");
 console.log("\nParse realism — real FOUNDERS_CHECKLIST markdown line:");
 {
   const md = [
-    "<!-- warpos:founders-checklist v1 -->",
-    "schema: warpos/founders-checklist/v1",
+    "<!-- mc:founders-checklist v1 -->",
+    "schema: mc/founders-checklist/v1",
     "- [x] id=provider.accounts dim=product source=core Create production accounts",
     "- [ ] id=legal.privacy_terms dim=privacy source=core Publish privacy policy and terms",
-    "<!-- /warpos:founders-checklist -->",
+    "<!-- /mc:founders-checklist -->",
   ].join("\n");
   const parsed = parseFoundersChecklist(md);
   const checklist = { present: true, source: "FOUNDERS_CHECKLIST.md", ...parsed };

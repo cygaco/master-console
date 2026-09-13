@@ -169,7 +169,7 @@ Never opine from generic best-practice. Ground every call in the real project:
 - **Who matters** — the product's Golden + Vulnerable cohorts (`_requirements/
   00-canonical/USER_COHORTS.md`) and golden flows (`GOLDEN_PATHS.md`).
 - **The lifecycle phase** — use the DECLARED stage first (`paths.currentStage`'s `Stage:`
-  field, or the stage the dispatcher resolves via `scripts/warpos/lifecycle-stage.js`,
+  field, or the stage the dispatcher resolves via `scripts/mc/lifecycle-stage.js`,
   which honors a `WARPOS_LIFECYCLE_STAGE` override); model in
   `.claude/project/reference/product-lifecycle.md`. QA intensity and the metric check
   change by phase (Launch/Finding-PMF reward robustness + telemetry; pre-mvp rewards the

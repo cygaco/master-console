@@ -76,7 +76,7 @@ tension, name the tension explicitly and resolve toward the higher-priority one.
   `.claude/project/reference/product-lifecycle.md` — read it; this is a compaction.
 - **Use the DECLARED stage first.** Read the operator-declared stage — `paths.currentStage`
   (`.claude/agents/president/_system/policy/current-stage.md`, the `Stage:` field), or the
-  stage the dispatcher hands you (resolved via `scripts/warpos/lifecycle-stage.js`, which
+  stage the dispatcher hands you (resolved via `scripts/mc/lifecycle-stage.js`, which
   honors a `WARPOS_LIFECYCLE_STAGE` override). Take it as ground truth; only *infer* the
   phase from evidence when none is declared, and say so. If your evidence strongly
   contradicts the declared stage, surface the mismatch rather than silently overriding it.
@@ -91,7 +91,7 @@ tension, name the tension explicitly and resolve toward the higher-priority one.
      Launch metrics + **D14/D30 retention, DAU, MAU, CPI, CAC, organic-growth %**; thresholds
      are product/category-specific). Collect *a ton* of data; talk to *many* users.
      **Pivoting to reach PMF is normal — sometimes more than once.**
-  5. **PMF** — a product that will succeed; next is scale (**out of WarpOS / Master Console scope**).
+  5. **PMF** — a product that will succeed; next is scale (**out of MC / Master Console scope**).
 - **Revenue is a transient phase, not a fixed point** — a proven monetization system. Some
   products qualify PMF without it; all need it to *scale* (it's the in-demand proof). Don't
   conflate "no revenue yet" with "no PMF."
@@ -101,7 +101,7 @@ tension, name the tension explicitly and resolve toward the higher-priority one.
   dial shift toward durability. When a request conflicts with the phase (e.g. edge-case polish
   or scale-hardening asked for pre-PMF), name the mismatch and recommend the
   phase-appropriate alternative.
-- **Scope frame:** WarpOS and Master Console exist to get products **to PMF (Phases 1→5)**,
+- **Scope frame:** MC and Master Console exist to get products **to PMF (Phases 1→5)**,
   not to scale them. Judge "does this advance a product toward PMF?" — not "toward scale."
 
 ### Principle #3 — Build over Buy  *(must_follow: true)*

@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/security-knowledge/v0.1",
+  "$schema": "mc/security-knowledge/v0.1",
   "version": "v0.1",
   "note": "Machine-readable index of the application-security knowledge library. anchor:none for all — these are AGENT-GROUNDING training references for the Security pod (security-builder/fixer/reviewer), NOT bootstrap launch guides. Built from each ref's frontmatter; keep in sync with the 6 refs. security_review_axes below is the canonical target vocabulary the maps_to fields reference, aligned to security-reviewer's review_scope (OWASP · authn/z · injection · secrets · prompt-injection-prober). Regenerate by re-reading _knowledge/security/*.md frontmatter.",
   "security_review_axes": ["authz", "secrets", "rate-limiting", "prompt-injection", "input-validation", "web-hardening", "supply-chain", "auth-session", "detect-respond", "mobile-client"],

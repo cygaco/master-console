@@ -3,7 +3,7 @@
 // registry-shape.test.js — SP-20260614-002 / AC-R4b (registry shape + alias-beside).
 //
 // The admin-panel registry (framework/admin-panel-registry.json) must:
-//   - carry the $schema "warpos/admin-panel-registry/v1"
+//   - carry the $schema "mc/admin-panel-registry/v1"
 //   - have a generic `panels` map where every row is { route, opener, description }
 //   - sit ALIAS-BESIDE the eventual item-23 /panel:* registry — additive, NOT a fork:
 //     a forward-compatible /panel:admin forwarder could read THIS SAME file unchanged.
@@ -39,7 +39,7 @@ console.log("registry-shape.test.js — AC-R4b");
 const reg = JSON.parse(fs.readFileSync(REGISTRY, "utf8"));
 
 ok("carries the versioned $schema", () => {
-  assert.strictEqual(reg.$schema, "warpos/admin-panel-registry/v1");
+  assert.strictEqual(reg.$schema, "mc/admin-panel-registry/v1");
 });
 
 ok("has a generic `panels` map (object, non-empty)", () => {

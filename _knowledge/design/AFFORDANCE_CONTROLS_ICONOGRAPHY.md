@@ -26,7 +26,7 @@ A control the user can't *recognize* as a control might as well not exist; a tar
 
 Don Norman's framing is the spine here: an **affordance** is what an object *can do* (a button can be pressed); a **signifier** is the perceptible cue that *tells the user* it can (the button's fill, border, shadow, hover state). Flat design's great regression was stripping signifiers — making clickable things indistinguishable from text — so this guide is partly a corrective: signal interactivity, don't hide it.
 
-For the WarpOS designer agents:
+For the MC designer agents:
 
 - **design-lead** explicitly owns **`clear-iconography`**: "an icon that needs a caption to be understood has failed; prefer a labeled icon to a clever-but-opaque one." This guide is the deep version of that owned principle, plus the affordance and target-size craft that makes controls usable for the real cohort.
 - **design-quality** judges `component-usage` (controls are the right interactive primitive, with real affordance and state), `accessibility` (accessible names, focus, target size), and `mobile-responsive` (tap targets hold at mobile). A control with no hover/focus signifier, or a 16px icon-button tap target, is a finding.

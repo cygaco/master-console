@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/dispatch/panel-lane-manifest/v1",
+  "schema": "mc/dispatch/panel-lane-manifest/v1",
   "_doc": "SP-20260718-003 D5 — the machine-readable lane contract for the security 3-lab panel (PRD R-6 / AC-7,8). Declares the binding `panel-3lab` profile and the degraded `panel-2family` floor, and per-lane the {provider, tool_id, shape} identity. This file is a CONTRACT VIEW, NOT a source of truth: lane identity DERIVES from passesOf('security-reviewer') (role-registry keystone) + providerToolId() (dispatch-agent) + support-matrix.json status. validatePanelManifest() (scripts/dispatch/panel-lanes.js) fail-CLOSES on ANY drift between this view and those three sources — so a hand-edit that diverges the manifest is a loud RED, never a silent false-green. Consumed by the D7 panelStatus reducer + the D8 attestation + the CLI-only panel-runner tooth in dispatch-review.js.",
   "_single_source": "Lab identity = passesOf('security-reviewer') primary/second_pass/third_pass (antigravity/openai/claude) mapped to tool-id via providerToolId(); lane STATUS = support-matrix.json rows. No 4th source. Adding/renaming a lab is a role-registry edit; this manifest is validated against it.",
   "sunset": {

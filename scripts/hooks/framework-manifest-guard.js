@@ -16,16 +16,17 @@
  *
  * Phase 0 workstream G — canonical-vs-product detection:
  *   The hook now distinguishes:
- *     - canonical WarpOS framework clone (full block on missing manifest stage)
+ *     - canonical MC framework clone (full block on missing manifest stage)
  *     - product install with .claude/ gitignored (warn-only; cannot stage)
  *     - product install without gitignored .claude/ (block, like canonical)
  *
  *   Escape hatches:
  *     - env: WARPOS_MANIFEST_GUARD=off (set in the harness env, not Bash-inline)
- *     - sentinel: .warpos/manifest-guard-disable on disk (gitignored escape)
+ *     - sentinel: .mc/manifest-guard-disable on disk (gitignored escape)
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -44,12 +45,12 @@ const FRAMEWORK_INSTALLED_PATH = path.join(
 );
 const SENTINEL_PATH = path.join(
   PROJECT_DIR,
-  ".warpos",
+  ".mc",
   "manifest-guard-disable",
 );
 
 // Kill switch for emergencies (harness env, not Bash-inline)
-if (process.env.WARPOS_MANIFEST_GUARD === "off") process.exit(0);
+if (mcEnv.readEnv("MANIFEST_GUARD") === "off") process.exit(0);
 
 // Repo-local sentinel escape hatch — log every bypass for audit.
 if (fs.existsSync(SENTINEL_PATH)) {
@@ -60,7 +61,7 @@ if (fs.existsSync(SENTINEL_PATH)) {
       "system",
       "framework-manifest-guard-sentinel",
       "",
-      ".warpos/manifest-guard-disable present",
+      ".mc/manifest-guard-disable present",
     );
   } catch {
     /* logger optional */
@@ -68,7 +69,7 @@ if (fs.existsSync(SENTINEL_PATH)) {
   process.exit(0);
 }
 
-// Skip if this project doesn't have a framework-manifest (not WarpOS or
+// Skip if this project doesn't have a framework-manifest (not MC or
 // pre-manifest install)
 if (!fs.existsSync(MANIFEST_PATH)) process.exit(0);
 
@@ -173,7 +174,7 @@ function bypassMessage() {
     "  set in the harness env or use the sentinel):",
     "    export WARPOS_MANIFEST_GUARD=off && <git command> && unset WARPOS_MANIFEST_GUARD",
     "  Repo-local sentinel (gitignore-safe; bypass is logged):",
-    "    mkdir -p .warpos && touch .warpos/manifest-guard-disable",
+    "    mkdir -p .mc && touch .mc/manifest-guard-disable",
   ].join("\n");
 }
 
@@ -286,13 +287,13 @@ process.stdin.on("end", () => {
       }
       warn(
         [
-          "Staged WarpOS-tracked changes detected, .claude/ is gitignored, and the",
+          "Staged MC-tracked changes detected, .claude/ is gitignored, and the",
           "on-disk framework-manifest is older than your edits.",
           "",
           `Affected files (${stagedTracked.length}):`,
           `  - ${list}${extra}`,
           "",
-          "Regenerate the manifest before pushing so /warp:update consumers",
+          "Regenerate the manifest before pushing so /mc:update consumers",
           "stay honest:",
           "  node scripts/generate-framework-manifest.js",
           "",
@@ -305,7 +306,7 @@ process.stdin.on("end", () => {
     // Canonical, or product without gitignored .claude/: block.
     block(
       [
-        "framework-manifest-guard: staged changes to WarpOS-tracked assets,",
+        "framework-manifest-guard: staged changes to MC-tracked assets,",
         "but .claude/framework-manifest.json is NOT staged. Regenerate it:",
         "",
         "  node scripts/generate-framework-manifest.js",

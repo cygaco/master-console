@@ -21,6 +21,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const HOOK = path.join(__dirname, "team-guard.js");
 
@@ -57,7 +58,7 @@ function runGuard(opts = {}) {
     );
   }
   if (opts.activeTeam) {
-    const cfg = path.join(home, ".claude", "teams", "warpos-sprint");
+    const cfg = path.join(home, ".claude", "teams", "mc-sprint");
     fs.mkdirSync(cfg, { recursive: true });
     const members = opts.teamHasEpsilon
       ? [{ name: "epsilon", agentType: "epsilon" }, { name: "beta", agentType: "beta" }]
@@ -84,7 +85,7 @@ function runGuard(opts = {}) {
       CLAUDE_PROJECT_DIR: proj,
       HOME: home,
       USERPROFILE: home,
-      WARPOS_TEAM_GATE_SOFT: "1",
+      ...mcEnv.envPair("TEAM_GATE_SOFT", "1"),
     },
     encoding: "utf8",
   });
@@ -109,7 +110,7 @@ ok("sprint + verified team_name present => NO advisory (flowing through a team)"
   const { stdout } = runGuard({
     mode: "sprint",
     seedCount: 5,
-    teamName: "warpos-sprint",
+    teamName: "mc-sprint",
     activeTeam: true,
     teamHasEpsilon: true,
   });

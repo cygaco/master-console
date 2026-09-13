@@ -77,7 +77,7 @@ function checkPath() {
 function checkMode() {
   const mode = readJson(".claude/runtime/mode.json", null);
   if (!mode) return sev("yellow", "mode marker missing; run node scripts/mode-set.js adhoc --by alpha");
-  if (mode.$schema !== "warpos/mode-marker/v2") return sev("red", "mode marker schema is not v2");
+  if (mode.$schema !== "mc/mode-marker/v2") return sev("red", "mode marker schema is not v2");
   return sev("green", `mode marker present: ${mode.mode}`);
 }
 
@@ -118,7 +118,7 @@ function checkConfig() {
 }
 
 function checkInstall() {
-  const r = runNode(["scripts/warpos/snapshot-installed.js", "--check"]);
+  const r = runNode(["scripts/mc/snapshot-installed.js", "--check"]);
   if (!exists("install.ps1") || !exists("version.json")) return sev("red", "install.ps1 or version.json missing");
   return r.status === 0 ? sev("green", "installer, version, and installed snapshot are present") : sev("red", "installed snapshot check failed", (r.stdout + r.stderr).split(/\r?\n/).slice(-8));
 }
@@ -185,7 +185,7 @@ function buildGraph() {
   const red = nodes.filter((n) => n.status === "red").length;
   const yellow = nodes.filter((n) => n.status === "yellow").length;
   const graph = {
-    $schema: "warpos/system-coherence-graph/v1",
+    $schema: "mc/system-coherence-graph/v1",
     generatedAt: new Date().toISOString(),
     driftTypes: DRIFT_TYPES,
     summary: { green: nodes.length - red - yellow, yellow, red, ok: red === 0 },

@@ -66,7 +66,7 @@ function plant(opts) {
 // real on-disk-shaped paths. We DON'T need the dir to exist for the string scope
 // test, but using a home-rooted path keeps parent = home a realistic ancestor.
 function projectUnder(home) {
-  return path.join(home, "work", "warpos");
+  return path.join(home, "work", "mc");
 }
 
 // ── AC-325.2 — a member cwd that is a PARENT of the project does NOT match ─────
@@ -83,7 +83,7 @@ ok("parent-cwd-member-is-not-this-projects-active-team", () => {
     JSON.stringify({ name: teamName, members: [{ name: "m", cwd: home }] }), // PARENT cwd
   );
   // slug deliberately mismatched so ONLY the cwd test can match.
-  const active = guard.findActiveTeamForProject("warpos", projectDir, home);
+  const active = guard.findActiveTeamForProject("mc", projectDir, home);
   assert.strictEqual(
     active,
     null,
@@ -93,7 +93,7 @@ ok("parent-cwd-member-is-not-this-projects-active-team", () => {
 
 ok("grandparent-cwd-member-is-not-this-projects-active-team", () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "tcs-home-"));
-  const projectDir = path.join(home, "a", "b", "warpos"); // deeper nesting
+  const projectDir = path.join(home, "a", "b", "mc"); // deeper nesting
   const teamName = "another-foreign-team";
   const cfgDir = path.join(home, ".claude", "teams", teamName);
   fs.mkdirSync(cfgDir, { recursive: true });
@@ -101,7 +101,7 @@ ok("grandparent-cwd-member-is-not-this-projects-active-team", () => {
     path.join(cfgDir, "config.json"),
     JSON.stringify({ name: teamName, members: [{ name: "m", cwd: path.join(home, "a") }] }),
   );
-  const active = guard.findActiveTeamForProject("warpos", projectDir, home);
+  const active = guard.findActiveTeamForProject("mc", projectDir, home);
   assert.strictEqual(active, null, "a grandparent cwd member must not match either");
 });
 
@@ -116,7 +116,7 @@ ok("exact-project-cwd-member-still-matches", () => {
     path.join(cfgDir, "config.json"),
     JSON.stringify({ name: teamName, members: [{ name: "m", cwd: projectDir }] }), // EXACT
   );
-  const active = guard.findActiveTeamForProject("warpos", projectDir, home);
+  const active = guard.findActiveTeamForProject("mc", projectDir, home);
   assert.strictEqual(active, teamName, "an EXACT project-cwd member is correctly recognized");
 });
 
@@ -131,7 +131,7 @@ ok("under-project-cwd-member-still-matches", () => {
     path.join(cfgDir, "config.json"),
     JSON.stringify({ name: teamName, members: [{ name: "m", cwd: memberCwd }] }),
   );
-  const active = guard.findActiveTeamForProject("warpos", projectDir, home);
+  const active = guard.findActiveTeamForProject("mc", projectDir, home);
   assert.strictEqual(active, teamName, "a member cwd strictly UNDER the project is recognized");
 });
 
@@ -141,14 +141,14 @@ ok("slug-named-team-still-matches-independent-of-cwd", () => {
   // over-narrowing the fix into the name arm.
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "tcs-home-"));
   const projectDir = projectUnder(home);
-  const teamName = "warpos-sprint";
+  const teamName = "mc-sprint";
   const cfgDir = path.join(home, ".claude", "teams", teamName);
   fs.mkdirSync(cfgDir, { recursive: true });
   fs.writeFileSync(
     path.join(cfgDir, "config.json"),
     JSON.stringify({ name: teamName, members: [{ name: "m", cwd: home }] }), // parent cwd, but slug matches
   );
-  const active = guard.findActiveTeamForProject("warpos", projectDir, home);
+  const active = guard.findActiveTeamForProject("mc", projectDir, home);
   assert.strictEqual(active, teamName, "a slug-named team is ours via the name arm (cwd irrelevant)");
 });
 

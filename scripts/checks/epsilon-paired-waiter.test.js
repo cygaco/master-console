@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * epsilon-paired-waiter.test.js — teeth for the ED-256 paired-waiter check (r3, DoE design-lock).
  * SCOPE FROM LEDGER STATE (security r2 #4): a started row with NO terminal completion is OUTSTANDING; a
@@ -223,8 +224,8 @@ t("historical (age > windowMs) -> NOT flagged", () => {
 // ── QA-R2-001: the env opt-out cannot downgrade the default verifier ──────────────────────────────────
 
 t("QA-R2-001: WARPOS_LIVENESS_REQUIRE_SIG=0 does NOT let an UNSIGNED ok:true completion suppress", () => {
-  const prev = process.env.WARPOS_LIVENESS_REQUIRE_SIG;
-  process.env.WARPOS_LIVENESS_REQUIRE_SIG = "0";
+  const prev = mcEnv.readEnv("LIVENESS_REQUIRE_SIG");
+  mcEnv.setEnv("LIVENESS_REQUIRE_SIG", "0");
   try {
     // No isVerified injected -> the default verifier runs; an unsigned completion (no attest_sig) must NOT
     // verify even under the env opt-out, so the started row stays FLAGGED.
@@ -232,7 +233,7 @@ t("QA-R2-001: WARPOS_LIVENESS_REQUIRE_SIG=0 does NOT let an UNSIGNED ok:true com
     const r = evaluatePairedWaiter({ records: recs, nowMs: NOW, staleMs: STALE, artifactProduced: () => false });
     assert.strictEqual(r.findings.length, 1, "the env must not downgrade signature verification: " + JSON.stringify(r));
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_LIVENESS_REQUIRE_SIG; else process.env.WARPOS_LIVENESS_REQUIRE_SIG = prev;
+    if (prev === undefined) mcEnv.unsetEnv("LIVENESS_REQUIRE_SIG"); else mcEnv.setEnv("LIVENESS_REQUIRE_SIG", prev);
   }
 });
 

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/sprint-history/v1",
-  "title": "WarpOS Sprint v0.1 — Sprint History Entry",
+  "$id": "mc/sprint/sprint-history/v1",
+  "title": "MC Sprint v0.1 — Sprint History Entry",
   "description": "Frozen archive of one closed/abandoned sprint. Lives under paths.sprintHistory.",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/sprint-history/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/sprint-history/v1" },
     "id": { "type": "string" },
     "title": { "type": "string" },
     "objective": { "type": "string" },

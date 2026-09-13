@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/compliance-knowledge/v0.1",
+  "$schema": "mc/compliance-knowledge/v0.1",
   "version": "v0.2",
   "note": "Machine-readable index of the launch-compliance knowledge library. anchor:none for all — AGENT-GROUNDING training references for the qa-reviewer's integrity/compliance scope, NOT bootstrap launch guides. Built from each ref's frontmatter; keep in sync with the 8 refs. compliance_axes below is the canonical target vocabulary the maps_to fields reference. NOT legal advice — human/legal-judgment items are FLAGs inside the refs. Regenerate by re-reading _knowledge/compliance/*.md frontmatter.",
   "compliance_axes": ["privacy-data", "consumer-subscriptions", "app-store-policy", "ip-trademark", "data-rights-ops", "breach-incident", "minors", "ai-compliance"],

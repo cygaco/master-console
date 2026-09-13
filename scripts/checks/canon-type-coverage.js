@@ -8,7 +8,7 @@
  * MUST ship — and asserts coverage two ways:
  *
  *   1. Template coverage (always): every canon type in the manifest has a
- *      corresponding template in _warpos/templates/canonical/ (`<TYPE>.md.tmpl`
+ *      corresponding template in _mc/templates/canonical/ (`<TYPE>.md.tmpl`
  *      for narrative, `<TYPE>.json.tmpl` for structured). A missing template = FAIL.
  *
  *   2. Emitted coverage (when --dir <canonical-dir> given): every REQUIRED type is
@@ -28,7 +28,7 @@
  * Usage:
  *   node scripts/checks/canon-type-coverage.js [--dir <canonical-dir>] [--json]
  *
- * Default template dir = _warpos/templates/canonical (resolved via paths.json
+ * Default template dir = _mc/templates/canonical (resolved via paths.json
  * `appScaffoldTemplates`-style lookup if a canonical key exists, else the literal
  * fallback — mirrors the pattern in canon-no-unfilled-tokens.js and
  * scaffold-coverage-scan.js).
@@ -53,7 +53,7 @@ function resolveTemplateDir() {
   // key, fall back to the well-known literal. There is no dedicated
   // `canonicalTemplates` key in paths.json v5, so the fallback always applies —
   // but the lookup future-proofs against a key being added later.
-  const fallback = path.join(REPO_ROOT, "_warpos", "templates", "canonical");
+  const fallback = path.join(REPO_ROOT, "_mc", "templates", "canonical");
   try {
     const reg = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, ".claude", "paths.json"), "utf8"),

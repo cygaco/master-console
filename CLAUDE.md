@@ -176,7 +176,7 @@ the CURRENT file. Never reconstruct it from memory — the file may have changed
 read it, and a reconstructed `old_string` that doesn't match causes a silent no-op or an error.
 
 **Dot-dir behavior:** both Grep and Glob traverse dot-dirs. The "dot-dirs get skipped" effect
-lives in WarpOS's own scripts (`startsWith(".")` skips in manifest walkers), not in the harness
+lives in MC's own scripts (`startsWith(".")` skips in manifest walkers), not in the harness
 tools.
 
 **Never pipe a gate's exit through tail/head in a `&&` chain:** `node gate.js | tail -1 && next`

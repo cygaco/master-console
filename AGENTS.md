@@ -9,8 +9,8 @@
 
 New here? Read this block first, then act. It is single-sourced from `.claude/project/reference/entry-preamble.md` and hash-parity-checked by `scripts/checks/entry-preamble-parity.js` (edit the canonical source, not this copy). Per-executor entrypoints: `CODEX.md` (Codex/GPT), `ANTIGRAVITY.md` (Antigravity/`agy`; the Gemini family routes through `agy` — the former `GEMINI.md` tombstone was removed per the ADR-0036 removal-trigger).
 
-<!-- WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
-**What this repo is.** WarpOS is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
+<!-- MC:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
+**What this repo is.** MC is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
 
 **Read order — once, then act.**
 1. `DUMP.md` (repo root, local) — the session handoff: next action, in-flight state, verbatim payloads. Read once, then execute.
@@ -22,7 +22,7 @@ New here? Read this block first, then act. It is single-sourced from `.claude/pr
 **Guards, gates, and output destinations.** The repo's guarantees are enforced: the `refs/heads/main` reference-transaction fence (every write to main goes through the broker), `/scan:full`, and the release gates. Every policy names an enforcer or logs the debt. Write per-run output under `runtime/`, never a manifest-tracked project dir. Orchestrators hold envelopes, not content — heavy work goes to a subprocess that writes its full output to a file and returns a short envelope. Regenerate both manifests after editing any hash-tracked file.
 
 **For identity, authority, and the complete rules, read `CLAUDE.md`.**
-<!-- WARPOS:ENTERING-AGENT-PREAMBLE:END -->
+<!-- MC:ENTERING-AGENT-PREAMBLE:END -->
 
 ---
 
@@ -136,7 +136,7 @@ The individual-tier `gemini` CLI is **sunset** — all Gemini routes through Ant
 | [CLAUDE.md](CLAUDE.md) | Framework config, identity pointer, memory system |
 | [PROJECT.md](PROJECT.md) | Project-specific context (product, architecture, env) |
 | [agent-system.md](.claude/agents/_system/agent-system.md) | Full operational specification |
-| [manifest.json](.claude/manifest.json) | WarpOS identity card — project metadata, features, phases, providers |
+| [manifest.json](.claude/manifest.json) | MC identity card — project metadata, features, phases, providers |
 | [paths.json](.claude/paths.json) | Centralized path registry — all hooks/scripts read paths from here |
 | [_guides/AUTH_RUNBOOK.md](_guides/AUTH_RUNBOOK.md) | Passwordless-Supabase auth execution runbook — agent-drivable, with 🔴 operator vs 🤖 agent steps fenced |
 | [_knowledge/design/INPUT_COMPOSER_PATTERN.md](_knowledge/design/INPUT_COMPOSER_PATTERN.md) | Reusable ChatGPT-style bottom-composer pattern + glossary (design-lead / design-quality / frontend-builder) |

@@ -186,6 +186,13 @@ function _pinFileCandidates(pinFile) {
   return out;
 }
 
+// Generated views follow the codemod's rename exactly like pins do (T3 post-apply view identity):
+// once --apply MOVES a view with its Class-1 directory (the legacy-dir MANIFEST.json -> _mc/MANIFEST.json),
+// the SAME declared entry answers for the post-rename path. Its content stays derived; the partition
+// artifact is unchanged (no entry added, so no F8 amendment). Resolution is renamePath only — a view
+// never gains any identity other than its declared path and that path's codemod rename.
+const _viewPathCandidates = _pinFileCandidates;
+
 function _gitRun(root, args) {
   return spawnSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
 }
@@ -231,7 +238,10 @@ function buildPartition(denylist) {
   const futureEntries = (denylist.futureEntries || []).map(withRe);
   const occurrencePins = denylist.occurrencePins || [];
   const openQuestions = denylist.openQuestions || [];
-  const generatedViewByPath = new Map(generatedViews.map((g) => [_toPosix(g.path), g]));
+  const generatedViewByPath = new Map();
+  for (const g of generatedViews) {
+    for (const p of _viewPathCandidates(g.path)) if (!generatedViewByPath.has(p)) generatedViewByPath.set(p, g);
+  }
 
   function classifyPath(trackedPath) {
     const p = _toPosix(trackedPath);
@@ -428,8 +438,8 @@ function buildPartition(denylist) {
     const problems = [];
     const notes = [];
     for (const gv of generatedViews) {
-      if (!trackedSet.has(_toPosix(gv.path))) {
-        problems.push({ id: "F7", key: `view|${gv.path}`, message: `stale generated-view entry '${gv.path}' — no tracked file at that path` });
+      if (!_viewPathCandidates(gv.path).some((f) => trackedSet.has(f))) {
+        problems.push({ id: "F7", key: `view|${gv.path}`, message: `stale generated-view entry '${gv.path}' — no tracked file at that path (declared or post-rename)` });
       }
     }
     for (const g of pathGlobs) {
@@ -598,6 +608,8 @@ function buildPartition(denylist) {
     classifyPath,
     findOccurrencePin,
     isGeneratedView,
+    /** A view entry's identities: its declared path, plus the codemod's rename of it when that differs. */
+    viewPathCandidates: (g) => _viewPathCandidates(g && typeof g === "object" ? g.path : g),
     isAllowed,
     allowList,
     generatedViews,

@@ -172,4 +172,4 @@ Each rule: **[ID] severity — assertion → maps_to → detection (observed vs 
 
 ---
 
-*This is a `qa-reviewer` grounding reference in the WarpOS `_knowledge/compliance/` library. It states checkable mechanics and FLAGS the items that need human/legal judgment — and it states the FTC click-to-cancel vacatur precisely so cancellation discipline is not wrongly relaxed. **It is not legal advice.** Laws and platform policies change; the official sources above are the source of truth.*
+*This is a `qa-reviewer` grounding reference in the MC `_knowledge/compliance/` library. It states checkable mechanics and FLAGS the items that need human/legal judgment — and it states the FTC click-to-cancel vacatur precisely so cancellation discipline is not wrongly relaxed. **It is not legal advice.** Laws and platform policies change; the official sources above are the source of truth.*

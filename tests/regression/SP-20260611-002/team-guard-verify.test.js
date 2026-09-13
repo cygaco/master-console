@@ -52,7 +52,7 @@ function ok(name, fn) {
 //   agentType       — Agent subagent_type (default "general-purpose" = a WORKER)
 //   backingTeam     — "epsilon" | "workers" | false: create a fresh ~/.claude/teams
 //                     config carrying ε / only generic workers / nothing
-//   backingTeamName — the config team name (default "warpos-sprint")
+//   backingTeamName — the config team name (default "mc-sprint")
 //   staleConfig     — backdate the backing config >24h (config-window bypass test)
 //   plantHeartbeat  — write a bare `.team-live-<sid>` marker (the AC-1.2 spoof)
 //   killEnv         — set WARPOS_DISABLE_TEAM_GATE=1
@@ -83,7 +83,7 @@ function runGuard(opts = {}) {
   fs.writeFileSync(path.join(proj, ".claude", "runtime", ".sprint-oneoff-count"), "5");
 
   if (opts.backingTeam) {
-    const teamName = opts.backingTeamName || "warpos-sprint";
+    const teamName = opts.backingTeamName || "mc-sprint";
     const cfgDir = path.join(home, ".claude", "teams", teamName);
     fs.mkdirSync(cfgDir, { recursive: true });
     const members =
@@ -148,7 +148,7 @@ ok("foreign-team-name-does-not-borrow-a-different-stale-teams-readiness", () => 
   const { stdout } = runGuard({
     teamName: "fabricated-foreign-team",
     backingTeam: "epsilon",
-    backingTeamName: "warpos-sprint",
+    backingTeamName: "mc-sprint",
     staleConfig: true,
   });
   assert.ok(isGateBlock(stdout), "a foreign team_name fails closed when no team is actually ready/live");
@@ -156,16 +156,16 @@ ok("foreign-team-name-does-not-borrow-a-different-stale-teams-readiness", () => 
 
 ok("finding-1-real-foreign-team-name-doogle-sprint-does-not-bypass-project-scope", () => {
   // The gauntlet bypass: a worker passes a REAL team_name from a sibling project
-  // (doogle-sprint) that is fresh and carries epsilon. With a known WarpOS slug,
-  // named-team verification must reject it because it has neither the warpos slug
+  // (doogle-sprint) that is fresh and carries epsilon. With a known MC slug,
+  // named-team verification must reject it because it has neither the mc slug
   // nor a member cwd under this project.
   const { stdout } = runGuard({
-    manifestSlug: "warpos",
+    manifestSlug: "mc",
     teamName: "doogle-sprint",
     backingTeam: "epsilon",
     backingTeamName: "doogle-sprint",
   });
-  assert.ok(isGateBlock(stdout), "a fresh foreign doogle-sprint team must not verify for the WarpOS project");
+  assert.ok(isGateBlock(stdout), "a fresh foreign doogle-sprint team must not verify for the MC project");
 });
 
 ok("finding-2-globally-freshest-foreign-epsilon-team-is-filtered-before-readiness", () => {
@@ -173,7 +173,7 @@ ok("finding-2-globally-freshest-foreign-epsilon-team-is-filtered-before-readines
   // ~/.claude/teams. A fresh foreign epsilon team therefore opened the gate even
   // when THIS project had no correct team. With project scope, it is filtered out.
   const { stdout } = runGuard({
-    manifestSlug: "warpos",
+    manifestSlug: "mc",
     backingTeam: "epsilon",
     backingTeamName: "doogle-sprint",
   });
@@ -182,7 +182,7 @@ ok("finding-2-globally-freshest-foreign-epsilon-team-is-filtered-before-readines
 
 ok("project-scoped-team-by-member-cwd-still-passes", () => {
   const { stdout } = runGuard({
-    manifestSlug: "warpos",
+    manifestSlug: "mc",
     teamName: "custom-sprint",
     backingTeam: "epsilon",
     backingTeamName: "custom-sprint",
@@ -259,7 +259,7 @@ ok("no-kill-switch-attestation-on-a-ready-team", () => {
 ok("legitimate-verified-team-still-passes", () => {
   // The fully-legitimate happy path: a fresh ε-team is live + the worker is
   // dispatched WITH the matching, VERIFIED team_name → the gate opens as before.
-  const { stdout } = runGuard({ teamName: "warpos-sprint", backingTeam: "epsilon" });
+  const { stdout } = runGuard({ teamName: "mc-sprint", backingTeam: "epsilon" });
   assert.ok(!blocks(stdout), "a worker dispatched with a VERIFIED team_name into a real ε-team passes");
 });
 

@@ -19,11 +19,11 @@ Invoking this skill **is** the authorization. It does not re-prompt; it states e
 
 ## Mechanism (how authorization works in this project)
 
-Three-layer settings model (see `scripts/warpos/settings/compile.js`):
+Three-layer settings model (see `scripts/mc/settings/compile.js`):
 
 | Layer | File | Role |
 |---|---|---|
-| 1 — defaults | `_warpos/settings/defaults.json` | framework defaults (do not edit per-project) |
+| 1 — defaults | `_mc/settings/defaults.json` | framework defaults (do not edit per-project) |
 | 2 — local | `.claude/settings.local.json` | **operator overrides — edit THIS** |
 | 3 — compiled | `paths.settings` (`.claude/settings.json`) | GENERATED (defaults ∪ local) — never hand-edit |
 
@@ -69,13 +69,13 @@ Read the file, add each new entry to `permissions.allow`, **skip duplicates**, w
 
 ### Step 4 — Recompile (make it live)
 ```bash
-node scripts/warpos/settings/compile.js
+node scripts/mc/settings/compile.js
 ```
 Expect `compile OK → …`. If it reports a conflict (exit 1 — e.g. the same string in `deny`), resolve before proceeding. Recompile regenerates `paths.settings` as defaults ∪ local, so the new rule is active for the harness immediately.
 
 **Hook ADDED/DROPPED integrity diff — required before you trust the recompile.** A recompile can
 **silently drop hooks that are live in `paths.settings` but missing from Layer 1**
-(`_warpos/settings/defaults.json`) — pre-existing drift, not something this skill introduced. Diff
+(`_mc/settings/defaults.json`) — pre-existing drift, not something this skill introduced. Diff
 the recompiled hook list against the committed one and fix any defaults drift FIRST:
 
 ```bash
@@ -99,7 +99,7 @@ If the operator wanted the blocked action done, retry it now.
 
 ## Revoke
 
-Remove the line(s) from `.claude/settings.local.json` → `node scripts/warpos/settings/compile.js`. Or `git restore .claude/settings.local.json .claude/settings.json`.
+Remove the line(s) from `.claude/settings.local.json` → `node scripts/mc/settings/compile.js`. Or `git restore .claude/settings.local.json .claude/settings.json`.
 
 ## Honest limitation
 

@@ -109,7 +109,7 @@ console.log(`adopted: ${slug}`);
 console.log(`  source brief: ${briefPath}`);
 console.log(`  target repo:  ${repoPath}`);
 console.log(`  files moved: ${filesMoved}`);
-console.log(`  registered in ~/.warpos/portfolio.json`);
+console.log(`  registered in ~/.mc/portfolio.json`);
 
 // ── telemetry (TR-8) ───────────────────────────────────────
 _emit("portfolio_adopt", {

@@ -45,7 +45,7 @@ approval) is yours.
 `open-question` · `user-preference` · `enforcement-requirement` ·
 `blast-radius-finding` · `compatibility-warning`.
 
-(Source: `_planning/ingest/warpos-lifecycle.md` §G `/epic:fold`.)
+(Source: `_planning/ingest/mc-lifecycle.md` §G `/epic:fold`.)
 
 ## Procedure
 

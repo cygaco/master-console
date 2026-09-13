@@ -1,20 +1,26 @@
 ---
-description: Verify every migration listed in capsule release.json#migrations[] exists in the source tree before /warp:update may apply.
+description: "[deprecated alias → /scan:mc-migration-presence] Forwards to /scan:mc-migration-presence. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-migration-presence
+# /scan:warpos-migration-presence — DEPRECATED, use /scan:mc-migration-presence
 
-Preflight gate composed by `scripts/warpos/preflight.js`. Closes failure-mode F-5 (capsule lists migrations that don't exist in source — silent skip leaves install inconsistent).
+This skill is a thin alias that forwards to **`/scan:mc-migration-presence`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-For each `release.json#migrations[]` entry (string or `{file}` object), resolves the path against the source tree and verifies it exists.
+## Deprecation notice (one-time)
 
-`status: green` — every listed migration file exists in source (or list is empty).
-`status: red` — any migration is missing.
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
 
-**No override** — a broken capsule is the bug; refuse to apply.
+> `/scan:warpos-migration-presence` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-migration-presence`.
 
-```bash
-node scripts/checks/warpos-migration-presence.js --to <v> [--source <path>] [--target <path>] [--json]
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-migration-presence $ARGUMENTS
 ```
 
-Linked: SP-20260513-005 / S-4 / AC-S-4.3 / R-10 / C-4 / failure-mining.md F-5.
+## Removal
+
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-migration-presence` → `/scan:mc-migration-presence`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

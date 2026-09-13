@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * dispatch-contract.js — reader + validator for the dispatch-shape keystone
@@ -36,7 +37,7 @@ const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
 const ARGV_SCHEMA_VERSION = "1";
 // Path-override seam (downstream products + tests): point at an alternate contract
 // or registry without code change. Defaults to the canonical _org/ keystones.
-const CONTRACT_PATH = process.env.WARPOS_DISPATCH_CONTRACT_PATH || path.join(PROJECT_ROOT, ".claude", "agents", "_org", "dispatch-contract.json");
+const CONTRACT_PATH = mcEnv.readEnv("DISPATCH_CONTRACT_PATH") || path.join(PROJECT_ROOT, ".claude", "agents", "_org", "dispatch-contract.json");
 // GPT-5.5 review R2 HIGH: role IDENTITY (the basis of the build_chain hard
 // invariant) must NOT be env-overridable — a hostile env could redefine which
 // roles are build_chain and bypass the in-process rejection. The registry path is
@@ -574,13 +575,13 @@ function contractEnforceMode(wrapperKey, env) {
   //   WARPOS_DISPATCH_CONTRACT_ENFORCE=report|off|0           → fleet kill (back to report-only)
   //   WARPOS_DISPATCH_CONTRACT_ENFORCE_<WRAPPER>=report|off|0 → per-wrapper kill
   //   WARPOS_DISPATCH_CONTRACT_ENFORCE[_<WRAPPER>]=enforce|block → explicit enforce (now also the default)
-  if (/^(1|true|yes)$/i.test(String(e.WARPOS_DISABLE_SHAPE_DOOR || ""))) return false;
+  if (/^(1|true|yes)$/i.test(String(mcEnv.readEnv("DISABLE_SHAPE_DOOR", e) || ""))) return false;
   const isOff = (v) => /^(report|off|0|false|no)$/.test(v);
   const isOn = (v) => /^(enforce|block|1|true|yes)$/.test(v);
-  const per = String(e[`WARPOS_DISPATCH_CONTRACT_ENFORCE_${wrapperKey}`] || "").toLowerCase();
+  const per = String(mcEnv.readEnv(`DISPATCH_CONTRACT_ENFORCE_${wrapperKey}`, e) || "").toLowerCase();
   if (isOff(per)) return false;
   if (isOn(per)) return true;
-  const g = String(e.WARPOS_DISPATCH_CONTRACT_ENFORCE || "").toLowerCase();
+  const g = String(mcEnv.readEnv("DISPATCH_CONTRACT_ENFORCE", e) || "").toLowerCase();
   if (isOff(g)) return false;
   if (isOn(g)) return true;
   return true; // DEFAULT = enforce (ADR-0013 amended SP-20260627-001)

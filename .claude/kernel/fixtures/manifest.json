@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/kernel/fixtures-manifest/v1",
+  "schema": "mc/kernel/fixtures-manifest/v1",
   "manifest_version": "1.0.0",
   "_doc": "D6 (SP-20260718-001 Phase 0). Kernel-scope conformance fixtures harvested from packet-13/15, proving positive coverage per CORE invariant (§7 of top-level-runtime-contract.md) and per in-kernel-scope support-matrix cell (D4). Consumed by scripts/checks/conformance-matrix.js (G0.3) and counted by scripts/checks/contract-lint.js (G0.1 check 4, fixture count nonzero).",
   "count": 13,

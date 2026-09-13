@@ -1,5 +1,5 @@
 ---
-description: Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (or reuses) a fixed throwaway Next instance, boots `npm run dev`, waits for the real ready line + parses the actual port, then opens `/admin`. The keystone of the admin:* dev-tooling suite — never targets WarpOS itself.
+description: Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (or reuses) a fixed throwaway Next instance, boots `npm run dev`, waits for the real ready line + parses the actual port, then opens `/admin`. The keystone of the admin:* dev-tooling suite — never targets MC itself.
 user-invocable: true
 namespace: admin
 reads: [scripts/admin/preview.js, framework/admin-panel-registry.json]
@@ -16,12 +16,12 @@ product code.
 
 `node scripts/admin/preview.js [--route <subroute>] [--force] [--instance-dir <dir>] [--json]`
 
-1. **Refuses WarpOS as a target FIRST.** Before any scaffold or boot it runs
-   `refuseIfTargetIsWarpOS(targetDir)` — if the resolved instance dir is the
-   WarpOS canonical tree (path match, OR a canonical signal via the shared,
-   env-immune resolver `scripts/warpos/repo-role.js#isCanonicalDir`:
-   `_warpos/MANIFEST.json` / `warpos.source === "self"` / `project.slug === "warpos"`
-   / `version.json#name` — a consumer's own `warpos:` install-record block with
+1. **Refuses MC as a target FIRST.** Before any scaffold or boot it runs
+   `refuseIfTargetIsMC(targetDir)` — if the resolved instance dir is the
+   MC canonical tree (path match, OR a canonical signal via the shared,
+   env-immune resolver `scripts/mc/repo-role.js#isCanonicalDir`:
+   `_mc/MANIFEST.json` / `mc.source === "self"` / `project.slug === "mc"`
+   / `version.json#name` — a consumer's own `mc:` install-record block with
    `source != "self"` is NOT a signal) it refuses with a non-zero exit and **no
    side effects**. admin:preview targets a PRODUCT app. (ED-009 single-source.)
 2. **Reuse-default.** If the fixed throwaway instance
@@ -38,12 +38,12 @@ product code.
    (this script is its SOLE writer; `/admin:seed` READS it only) atomically, then
    opens `http://localhost:<port>/admin`.
 
-## Run-in-product — NEVER WarpOS
+## Run-in-product — NEVER MC
 
-Every admin opener targets a **product's** Next app, never WarpOS canonical. The
+Every admin opener targets a **product's** Next app, never MC canonical. The
 default instance is a fixed throwaway product app under `runtime/`. The
-`refuseIfTargetIsWarpOS` precondition is the hard guard — do not point
-`--instance-dir` at the WarpOS root.
+`refuseIfTargetIsMC` precondition is the hard guard — do not point
+`--instance-dir` at the MC root.
 
 ## Sub-routes
 

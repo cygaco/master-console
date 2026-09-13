@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
-const telemetryDir = path.join(REPO_ROOT, "_warpos/templates/app-scaffold/src/lib/telemetry");
+const telemetryDir = path.join(REPO_ROOT, "_mc/templates/app-scaffold/src/lib/telemetry");
 
 const track = fs.readFileSync(path.join(telemetryDir, "track.ts.tmpl"), "utf8");
 const sink = fs.readFileSync(path.join(telemetryDir, "sink.ts.tmpl"), "utf8");

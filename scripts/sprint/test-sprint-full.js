@@ -26,6 +26,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -395,7 +396,7 @@ function testFinalReportReadsCurrentYaml() {
     fs.mkdirSync(sprintsRoot, { recursive: true });
 
     yamlLib.writeYaml(path.join(sprintsRoot, "current.yaml"), {
-      schema: "warpos/sprint/current-sprint/v1",
+      schema: "mc/sprint/current-sprint/v1",
       id: sprintId,
       title: "synthetic final-report test",
       tickets: {
@@ -1099,8 +1100,8 @@ function testBetaConsultContract() {
 
     // J-16d: kill switch — WARPOS_BETA_SUBSTANCE_GATE=off lets a canned message through (fail-open lever).
     {
-      const prev = process.env.WARPOS_BETA_SUBSTANCE_GATE;
-      process.env.WARPOS_BETA_SUBSTANCE_GATE = "off";
+      const prev = mcEnv.readEnv("BETA_SUBSTANCE_GATE");
+      mcEnv.setEnv("BETA_SUBSTANCE_GATE", "off");
       try {
         const state = makeMinimalState({ mode: "adhoc", sprintId: "SP-J16d" });
         const r = full.maybeConsultBeta(state, "before_plan", {
@@ -1108,8 +1109,8 @@ function testBetaConsultContract() {
         });
         ok("J-16d: gate=off → canned message passes (rollout lever)", r.ok === true, JSON.stringify(r));
       } finally {
-        if (prev === undefined) delete process.env.WARPOS_BETA_SUBSTANCE_GATE;
-        else process.env.WARPOS_BETA_SUBSTANCE_GATE = prev;
+        if (prev === undefined) mcEnv.unsetEnv("BETA_SUBSTANCE_GATE");
+        else mcEnv.setEnv("BETA_SUBSTANCE_GATE", prev);
       }
     }
 
@@ -1155,7 +1156,7 @@ function testReleaseRecordIdempotencyAndModerateGate() {
   try {
     fs.mkdirSync(releasesDir, { recursive: true });
     yamlLib.writeYaml(stagingPath, {
-      schema: "warpos/sprint/release/v1",
+      schema: "mc/sprint/release/v1",
       id: rlStaging,
       sprint: sprintWithRelease,
       status: "preparing",
@@ -1164,7 +1165,7 @@ function testReleaseRecordIdempotencyAndModerateGate() {
     });
     // A production record for the SAME sprint must never be matched.
     yamlLib.writeYaml(prodPath, {
-      schema: "warpos/sprint/release/v1",
+      schema: "mc/sprint/release/v1",
       id: rlProd,
       sprint: sprintWithRelease,
       status: "preparing",
@@ -1406,7 +1407,7 @@ function testBetaBoundaryPersistence() {
     fs.writeFileSync(
       sidecar,
       JSON.stringify({
-        schema: "warpos/sprint-full/beta-boundaries/v1",
+        schema: "mc/sprint-full/beta-boundaries/v1",
         sprint: sprintId,
         cleared: ["before_plan", "before_bogus", 42, null, "before_retro"],
         updated_at: new Date().toISOString(),

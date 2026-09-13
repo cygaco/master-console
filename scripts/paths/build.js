@@ -52,7 +52,7 @@ const OUT_DOC = path.join(
 function readRegistry() {
   const raw = fs.readFileSync(REGISTRY_FILE, "utf8");
   const reg = JSON.parse(raw);
-  if (reg.$schema !== "warpos/paths-registry/v1") {
+  if (reg.$schema !== "mc/paths-registry/v1") {
     throw new Error(`Unexpected registry $schema: ${reg.$schema}`);
   }
   return reg;
@@ -61,7 +61,7 @@ function readRegistry() {
 function buildPathsJson(registry) {
   // Phase 2E: $schema first so loaders can detect format version cheaply.
   const out = {
-    $schema: "warpos/paths/v" + registry.version,
+    $schema: "mc/paths/v" + registry.version,
     version: registry.version,
   };
   for (const [key, entry] of Object.entries(registry.paths)) {
@@ -113,7 +113,7 @@ function buildLintRules(registry) {
     warn.push({ match: escaped, key });
   }
   return {
-    $schema: "warpos/path-lint-rules/v1",
+    $schema: "mc/path-lint-rules/v1",
     generated_by: "scripts/paths/build.js",
     critical,
     warn,
@@ -124,7 +124,7 @@ function buildLintRules(registry) {
 
 function buildSchema(registry) {
   const properties = {
-    $schema: { type: "string", const: "warpos/paths/v" + registry.version },
+    $schema: { type: "string", const: "mc/paths/v" + registry.version },
     version: { type: "integer", const: registry.version },
   };
   for (const [key, entry] of Object.entries(registry.paths)) {
@@ -137,8 +137,8 @@ function buildSchema(registry) {
   }
   return {
     $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "warpos/paths/v" + registry.version,
-    title: "WarpOS paths.json",
+    $id: "mc/paths/v" + registry.version,
+    title: "MC paths.json",
     type: "object",
     required: ["$schema", "version"],
     additionalProperties: false,
@@ -196,7 +196,7 @@ function buildDoc(registry) {
   lines.push("## Owner classification");
   lines.push("");
   lines.push(
-    "- **framework** — shipped by WarpOS. `/warp:update` may regenerate or merge.",
+    "- **framework** — shipped by MC. `/mc:update` may regenerate or merge.",
   );
   lines.push(
     "- **generated** — produced by tooling. Do not hand-edit; regenerate from source.",
@@ -205,7 +205,7 @@ function buildDoc(registry) {
     "- **runtime** — written by sessions during normal operation. Excluded from publish.",
   );
   lines.push(
-    "- **project** — owned by the user/team. Never overwritten by `/warp:update`.",
+    "- **project** — owned by the user/team. Never overwritten by `/mc:update`.",
   );
   lines.push("");
   lines.push("## Mutability");

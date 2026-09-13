@@ -24,7 +24,7 @@ sources:
 
 Grouping is **pre-attentive**: the brain partitions a screen into groups in the first ~50–100ms, faster than conscious reading. The user never decides "these three things are related" — perception decides it for them, and they act on that perception. This makes Gestalt the *physics* underneath layout: if your spacing, borders, and styling say "these belong together," the user will treat them as one unit whether or not they actually do. Mis-grouping is therefore not cosmetic — it is a comprehension bug that ships as a layout that "looks fine" but is read wrong.
 
-For the WarpOS designer agents specifically:
+For the MC designer agents specifically:
 
 - **design-lead** owns clarity and consistency (`kiss`, `clear-iconography`). Gestalt is how a screen becomes "simple": fewer *perceived* objects (a labeled group reads as one chunk) lowers cognitive load even when the element count is unchanged. It's also how the same action looks the same everywhere — similarity is the perceptual mechanism behind a consistent visual language.
 - **design-quality** judges the `visual-hierarchy` and `component-usage` axes. A control whose label is visually grouped with the *wrong* field, a card whose footer floats free of its body, or a related set of items with no shared region are all Gestalt failures that read as hierarchy/grouping defects.

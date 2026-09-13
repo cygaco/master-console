@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/sprint/epsilon-runtime.js — the ε (Alex Epsilon) sprint-conductor RUNTIME
@@ -414,17 +415,17 @@ function recordAgentDispatch(
     // T-303 (N8): run-context for §17.4 coverage-gate run-scoped filtering.
     // run_id from env (set by full.js or inherited — null when dispatched standalone).
     // phase_id derived from agentPlan.step (authoritative for in-process records;
-    // also set on process.env.WARPOS_PHASE_ID by full.js before each phase entry so
+    // also set on mcEnv.readEnv("PHASE_ID") by full.js before each phase entry so
     // runContext() would agree, but we use the explicit value for reliability).
     // sprint_id: use the explicit sprintId arg (reliable even when env not set);
     //   the runContext() single-source reads env, but the arg is always present here.
-    run_id: process.env.WARPOS_RUN_ID || null,
+    run_id: mcEnv.readEnv("RUN_ID") || null,
     // SAME-RUN panel correlation (SP-20260718-003 Unit H activation): the in-process hunter record MUST carry
     // the panel_run_id the runner minted (WARPOS_PANEL_RUN_ID) + the code_sha it ran against (git HEAD), exactly
     // as dispatch-agent stamps its CLI records — otherwise applyPanelGate / attestPanelRun cannot same-run
     // correlate the hunter lane into a panel-3lab attestation (ADR-0022 teeth-5: binding-green needs one REAL
     // same-run hunter record). Both are null when the hunter is dispatched outside a panel run (standalone).
-    panel_run_id: process.env.WARPOS_PANEL_RUN_ID || null,
+    panel_run_id: mcEnv.readEnv("PANEL_RUN_ID") || null,
     code_sha: (() => { try { return require("../dispatch/git-head").readGitHead(agentRoot()) || null; } catch { return null; } })(),
     phase_id: agentPlan.step,
     // ε-conductor provenance (extra fields are ignored by gauntlet-verify's typed check):
@@ -546,22 +547,21 @@ function spawnAgent(agentPlan, sprintId, opts = {}) {
   // completion record. Respect an inherited WARPOS_RUN_ID — only generate when
   // absent (parent orchestrator's run_id wins over per-dispatch generation; if full.js
   // set it on process.env it is already in the spread above, but guard anyway for
-  // standalone invocations where process.env.WARPOS_RUN_ID may be absent).
-  if (!env.WARPOS_RUN_ID) {
-    env.WARPOS_RUN_ID =
-      "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex");
+  // standalone invocations where mcEnv.readEnv("RUN_ID") may be absent).
+  if (!mcEnv.readEnv("RUN_ID", env)) {
+    mcEnv.setEnv("RUN_ID", "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex"), env);
   }
-  env.WARPOS_PHASE_ID = agentPlan.step;
-  env.WARPOS_SPRINT_ID = sprintId;
+  mcEnv.setEnv("PHASE_ID", agentPlan.step, env);
+  mcEnv.setEnv("SPRINT_ID", sprintId, env);
   // T-322 (attempt #3): when ε computes a BACKGROUND bound (opts.background === true),
   // propagate the background SIGNAL to the child env. The child wrappers re-clamp the
   // propagated childBaseMs via foregroundAwareTimeout(n, {}) (empty opts → it reads
-  // process.env.WARPOS_DISPATCH_BACKGROUND), so without this stamp a background childBaseMs
+  // mcEnv.readEnv("DISPATCH_BACKGROUND")), so without this stamp a background childBaseMs
   // (900s) would be silently re-clamped back to the 540s foreground ceiling on the child —
   // the "background unaffected" guarantee would hold only when the signal happened to be in
   // the ambient env. Setting it here makes the guarantee hold via the ε spawn path's OWN
   // construction. (process.env passthrough above is preserved; we only ADD the signal.)
-  if (opts.background === true) env.WARPOS_DISPATCH_BACKGROUND = "1";
+  if (opts.background === true) mcEnv.setEnv("DISPATCH_BACKGROUND", "1", env);
   // T-20260610-304: clamp to FOREGROUND_CEILING_MS (540s) when not explicitly backgrounded.
   // opts.background === true or WARPOS_DISPATCH_BACKGROUND=1 passes through the full bound.
   // The per-route child base (childBaseMs) + the env-propagation that single-sources it on
@@ -642,7 +642,7 @@ function spawnAgent(agentPlan, sprintId, opts = {}) {
     // WARPOS_SHAPE_DOOR_EPSILON=report; fleet kill: WARPOS_SHAPE_DOOR=report; ultimate: WARPOS_DISABLE_SHAPE_DOOR=1.
     // Per-wrapper env is a TRUE kill (W2 gauntlet MED-1): report → force report via reportOnlyPin
     // (beats a global enforce); unset → enforceDefault (the ramp default).
-    const killThis = /^(report|off|0)$/i.test(String(env.WARPOS_SHAPE_DOOR_EPSILON || ""));
+    const killThis = /^(report|off|0)$/i.test(String(mcEnv.readEnv("SHAPE_DOOR_EPSILON", env) || ""));
     const door = shapeDoor("subprocess-claude", { kind: "agent", id: agentPlan.role }, env, killThis ? { reportOnlyPin: true } : { enforceDefault: true });
     if (door.mismatch && door.mismatch.mismatch && !door.suppressed) {
       process.stderr.write(

@@ -19,7 +19,7 @@
  * The runtime warning in step-registry-guard.js (PreToolUse, non-blocking)
  * is the first line of defense; this pre-commit check is the last mile
  * before a bad STEPS.json can reach skeleton-test7 / master and cascade
- * into the WarpOS sync.
+ * into the MC sync.
  */
 
 const fs = require("fs");

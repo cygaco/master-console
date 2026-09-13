@@ -1,5 +1,5 @@
 ---
-description: Verify a fresh WarpOS install — manifest, paths, agents, hooks, version, settings.
+description: Verify a fresh MC install — manifest, paths, agents, hooks, version, settings.
 user-invocable: true
 namespace: check
 reads: [paths.manifest]
@@ -8,13 +8,13 @@ writes: []
 
 # /scan:install
 
-Run a full structural audit of a WarpOS install:
+Run a full structural audit of a MC install:
 
 - `.claude/manifest.json`, `.claude/paths.json`, `.claude/settings.json` present
 - `CLAUDE.md` present
 - `.claude/agents/`, `.claude/commands/`, `scripts/hooks/` exist and non-empty
 - `.claude/framework-manifest.json`, `version.json` present
-- `manifest.warpos.installed === true`, `warpos.version` is semver
+- `manifest.mc.installed === true`, `mc.version` is semver
 - At least one agent file under `agents/president/`
 
 ## Input
@@ -35,7 +35,7 @@ FAIL  <check name>  (<detail>)
 ## Exit codes
 
 - `0` install complete
-- `1` install incomplete OR repo is not WarpOS (no manifest)
+- `1` install incomplete OR repo is not MC (no manifest)
 - `2` usage error
 
 ## Empty-state behavior (bail-out case)
@@ -43,7 +43,7 @@ FAIL  <check name>  (<detail>)
 If `.claude/manifest.json` does not exist, the skill bails immediately with:
 
 ```
-not a WarpOS-installed repo (no .claude/manifest.json) — run /warp:setup first
+not a MC-installed repo (no .claude/manifest.json) — run /mc:setup first
 ```
 
 …and exits 1. The skill does not cascade-fail every check; it makes one clear statement.
@@ -60,7 +60,7 @@ OK    at least one agent under agents/president
 
 ```bash
 $ cd /tmp && node /path/to/scripts/check/install.js
-not a WarpOS-installed repo (no .claude/manifest.json) — run /warp:setup first
+not a MC-installed repo (no .claude/manifest.json) — run /mc:setup first
 ```
 
 (Exit 1.)

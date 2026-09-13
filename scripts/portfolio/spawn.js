@@ -20,7 +20,7 @@
  *     Beta DEC-006 addendum).
  *   - PATH-missing branch prints C-7 copyable line and exits 0 (AC-4.3,
  *     graceful degradation).
- *   - Detached + unref so the WarpOS terminal returns immediately.
+ *   - Detached + unref so the MC terminal returns immediately.
  *   - macOS path goes through osascript; the AppleScript string interpolates
  *     repo_path via "quoted form" so paths with spaces survive.
  */

@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/dispatch/provider-breaker.js — TTL'd circuit breaker for quota-dead providers.
@@ -40,8 +41,8 @@ const MAX_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours — clamp absurd parsed valu
  * WARPOS_PROVIDER_DOWN_FILE overrides the default (test seam).
  */
 function resolveFilePath() {
-  if (process.env.WARPOS_PROVIDER_DOWN_FILE) {
-    return process.env.WARPOS_PROVIDER_DOWN_FILE;
+  if (mcEnv.readEnv("PROVIDER_DOWN_FILE")) {
+    return mcEnv.readEnv("PROVIDER_DOWN_FILE");
   }
   // Default: .claude/runtime/provider-down.json
   // Resolve from __dirname so it's cwd-independent.

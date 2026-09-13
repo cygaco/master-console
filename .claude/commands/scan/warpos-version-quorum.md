@@ -1,25 +1,26 @@
 ---
-description: Verify version.json, .claude/framework-manifest.json, .claude/framework-installed.json, and install.ps1 header agree on the installed version (trust order = version.json wins).
+description: "[deprecated alias → /scan:mc-version-quorum] Forwards to /scan:mc-version-quorum. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-version-quorum
+# /scan:warpos-version-quorum — DEPRECATED, use /scan:mc-version-quorum
 
-Preflight gate composed by `scripts/warpos/preflight.js`. Closes failure-mode F-3 (version drift between sources of truth).
+This skill is a thin alias that forwards to **`/scan:mc-version-quorum`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-Reads up to four sources and refuses if any two reachable ones disagree:
+## Deprecation notice (one-time)
 
-1. `version.json#version` — **trust winner** (CLAUDE.md learning 2026-05-13)
-2. `.claude/framework-manifest.json#version`
-3. `.claude/framework-installed.json#installedVersion`
-4. `install.ps1` header constant (optional)
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
 
-`status: green` — all reachable sources agree.
-`status: red` — any disagreement; `remediation` names the trust winner and the disagreeing files.
+> `/scan:warpos-version-quorum` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-version-quorum`.
 
-**No override** at the gate layer. The preflight composer accepts `--allow-version-drift` and re-interprets red as yellow, with `data.overrideUsed=true` emitted in TR-1.
+## Implementation
 
-```bash
-node scripts/checks/warpos-version-quorum.js [--target <path>] [--json]
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-version-quorum $ARGUMENTS
 ```
 
-Linked: SP-20260513-005 / S-4 / AC-S-4.1 / R-2 / C-3 / failure-mining.md F-3.
+## Removal
+
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-version-quorum` → `/scan:mc-version-quorum`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

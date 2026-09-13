@@ -4,7 +4,7 @@
  *
  * Born from the 2026-05-30 audit, which found two drift classes that NO existing
  * gate caught:
- *   (1) PRODUCT VERSION lag — .claude/manifest.json#warpos.version stayed 0.10.0
+ *   (1) PRODUCT VERSION lag — .claude/manifest.json#mc.version stayed 0.10.0
  *       after the 0.11.0 release because version-quorum doesn't check that field.
  *   (2) SCHEMA-LABEL divergence — paths.json carried v5 *content* but a v4 *label*
  *       (registry#version never bumped), and a stale framework-manifest/v1 fallback
@@ -16,7 +16,7 @@
  *   B. Schema-label coherence (authoritative declarations of each schema family
  *      must agree — paths registry→derived→paths.json→schema validator→installed;
  *      framework-manifest version.json-claim vs declared).
- *   C. Broad sweep — any `warpos/<family>/vN` family with >1 distinct version across
+ *   C. Broad sweep — any `mc/<family>/vN` family with >1 distinct version across
  *      OPERATIONAL tracked files (excludes migrations/fixtures/release-capsules/tests/
  *      accept-list validator/docs, which legitimately name historical versions).
  *
@@ -39,7 +39,7 @@ const ok = (msg) => { if (!asJson) console.log("  ok: " + msg); };
 try {
   const truth = R("version.json").version;
   const fields = [
-    [".claude/manifest.json#warpos.version", () => R(".claude/manifest.json").warpos.version],
+    [".claude/manifest.json#mc.version", () => R(".claude/manifest.json").mc.version],
     [".claude/framework-manifest.json#version", () => R(".claude/framework-manifest.json").version],
     [".claude/framework-installed.json#installedVersion", () => R(".claude/framework-installed.json").installedVersion],
   ];
@@ -58,9 +58,9 @@ try {
 // ── B. Schema-label coherence (authoritative declarations) ─────────────
 try {
   const vj = R("version.json");
-  // paths family — registry#version is the root; everything derives "warpos/paths/v<N>"
+  // paths family — registry#version is the root; everything derives "mc/paths/v<N>"
   const regV = R("framework/paths.registry.json").version;
-  const derived = "warpos/paths/v" + regV;
+  const derived = "mc/paths/v" + regV;
   const pathsDecls = [
     ["version.json#pathRegistrySchema", vj.pathRegistrySchema],
     [".claude/paths.json#$schema", R(".claude/paths.json")["$schema"]],
@@ -98,7 +98,7 @@ try {
     if (!/\.(js|json|ps1)$/.test(f)) continue;
     let txt;
     try { txt = fs.readFileSync(path.join(ROOT, f), "utf8"); } catch { continue; }
-    const re = /warpos\/([a-z][a-z-]*(?:\/[a-z][a-z-]*)?)\/v(\d+)/g;
+    const re = /mc\/([a-z][a-z-]*(?:\/[a-z][a-z-]*)?)\/v(\d+)/g;
     let mm;
     while ((mm = re.exec(txt))) {
       const fam = mm[1], ver = "v" + mm[2];
@@ -112,7 +112,7 @@ try {
     if (vlist.length > 1) {
       split++;
       const detail = vlist.map((v) => `${v} in [${[...vers[v]].slice(0, 3).join(", ")}]`).join(" vs ");
-      red("family-split", `warpos/${fam}: ${detail}`);
+      red("family-split", `mc/${fam}: ${detail}`);
     }
   }
   if (!split) ok("no schema family carries >1 version label in operational files");

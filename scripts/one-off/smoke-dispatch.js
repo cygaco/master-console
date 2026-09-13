@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Smoke for scripts/portfolio/dispatch.js (T-20260521-174).
@@ -24,12 +25,12 @@ const os = require("os");
 const path = require("path");
 const { PassThrough } = require("stream");
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-dispatch-smoke-"));
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "mc-dispatch-smoke-"));
 const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 const TMP_REPO = path.join(TMP_DIR, "fake-product");
 fs.mkdirSync(TMP_REPO, { recursive: true });
 
-process.env.WARPOS_PORTFOLIO_REGISTRY = TMP_REG;
+mcEnv.setEnv("PORTFOLIO_REGISTRY", TMP_REG);
 const PARENT_CPD = process.env.CLAUDE_PROJECT_DIR || "(unset)";
 
 delete require.cache[require.resolve("../../scripts/portfolio/registry")];
@@ -38,7 +39,7 @@ const reg = require("../../scripts/portfolio/registry");
 const { dispatchToSlug, validateInputs, SKILL_RE, SAFE_ARG_RE } = require("../../scripts/portfolio/dispatch");
 
 reg.save({
-  schema: "warpos/portfolio-registry/v1",
+  schema: "mc/portfolio-registry/v1",
   products: {
     "smoke-prod": {
       slug: "smoke-prod",

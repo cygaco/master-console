@@ -11,5 +11,5 @@
     "reason": "the tracker asserts a status ('done') with no corroborating disk or git evidence -- tracker/disk/git mismatch. RATIFIED-PLAN H-3/G3.5 makes this BINDING at Phase-3 exit; the Phase-0 kernel fixture proves the RULE (a claim without evidence is invalid), not the live /scan:full wiring."
   },
   "kernel_scope": "IN",
-  "note": "Harvested from packet-13/15 hidden-eval 'tracker drift fixtures' + WarpOS's own ED-056/tracker-fidelity recurrence class (verify-don't-inherit)."
+  "note": "Harvested from packet-13/15 hidden-eval 'tracker drift fixtures' + MC's own ED-056/tracker-fidelity recurrence class (verify-don't-inherit)."
 }

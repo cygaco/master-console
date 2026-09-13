@@ -34,8 +34,8 @@ if (require.main === module) {
     text = fs.readFileSync(p, "utf8");
   } catch (e) {
     // SP-005 ship-safety (β B/0.88 CATCH-2): partition a genuinely ABSENT register (ENOENT) — SKIP exit 0,
-    // "nothing to lint" (the product state: a scaffolded product has no WarpOS ED-register) — from a
-    // register that is PRESENT-but-unreadable/corrupt — fail-closed exit 2 (the WarpOS-corruption state).
+    // "nothing to lint" (the product state: a scaffolded product has no MC ED-register) — from a
+    // register that is PRESENT-but-unreadable/corrupt — fail-closed exit 2 (the MC-corruption state).
     // Matches the established shipped-script pattern (betaevents-dedup / reasoned-consult-honesty skip-on-
     // absent; next-ed-id ENOENT→empty). Without this, a shipped BLOCKING /scan:full (full.md:130) REDs in
     // every product that lacks the register.

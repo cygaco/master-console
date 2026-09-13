@@ -36,10 +36,10 @@ I0719 00:11:12.001288 39296 auto_updater.go:207] Last check was less than 15 min
 I0719 00:11:12.001288 39296 common.go:130] Launching CLI mode
 E0719 00:11:12.001288 39296 common.go:145] Failed to resolve GeminiDir ".gemini": .gemini must be an absolute path: path is not absolute, falling back to default
 I0719 00:11:12.001288 39296 common.go:176] CLI app data directory: C:\Users\Vlad\.gemini\antigravity-cli
-I0719 00:11:12.001288 39296 server.go:236] Creating CLI server backend: product=antigravity workspaceDirs=[C:\Users\Vlad\Desktop\Claude\Projects\WarpOS] appDataDir=C:\Users\Vlad\.gemini\antigravity-cli cascadeManager=true codeAssist=true
+I0719 00:11:12.001288 39296 server.go:236] Creating CLI server backend: product=antigravity workspaceDirs=[C:\Users\Vlad\Desktop\Claude\Projects\MC] appDataDir=C:\Users\Vlad\.gemini\antigravity-cli cascadeManager=true codeAssist=true
 I0719 00:11:12.002854 39296 server.go:1526] Backend project ID updated dynamically to: default-cli-project
 I0719 00:11:12.002854 39296 printmode.go:104] Print mode: starting (promptLength=55, model="Gemini 3.1 Pro (High)", conversationID="")
-I0719 00:11:12.002854 39296 manager.go:317] Initializing CLI store manager for workspace C:\Users\Vlad\Desktop\Claude\Projects\WarpOS
+I0719 00:11:12.002854 39296 manager.go:317] Initializing CLI store manager for workspace C:\Users\Vlad\Desktop\Claude\Projects\MC
 I0719 00:11:12.003367 39296 cli_setting_manager.go:138] applyUserSettings: no shared config permissions from C:\Users\Vlad\.gemini\config\config.json
 I0719 00:11:12.003367 39296 cli_setting_manager.go:820] Skipping telemetry propagation because user is not logged in
 I0719 00:11:12.003367 39296 cli_setting_manager.go:81] CLI settings initialized: permissions=<nil>, toolPermission=request-review

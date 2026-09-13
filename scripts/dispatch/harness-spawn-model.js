@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * harness-spawn-model.js — the Agent-tool CHANNEL model resolver (SP-20260718-003 D1, ED-208).
  *
@@ -43,8 +44,8 @@ const path = require("path");
 // Claude models the harness Agent-tool channel is PROVEN to spawn (support-matrix.json Addendum A:
 // claude-opus-4-8 / harness / proven:true). Env-overridable so a model-string rotation is one var,
 // not a code edit (same discipline as providers.js OPENAI_FLAGSHIP).
-const HARNESS_FACE_MODEL = process.env.WARPOS_HARNESS_FACE_MODEL || "claude-opus-4-8";
-const HARNESS_WORKER_MODEL = process.env.WARPOS_HARNESS_WORKER_MODEL || "claude-sonnet-5";
+const HARNESS_FACE_MODEL = mcEnv.readEnv("HARNESS_FACE_MODEL") || "claude-opus-4-8";
+const HARNESS_WORKER_MODEL = mcEnv.readEnv("HARNESS_WORKER_MODEL") || "claude-sonnet-5";
 
 // tier → the Claude model the Agent-tool channel spawns for a NON-Claude role. Capability tier is
 // preserved (a director-tier reviewer still gets the top Claude brain); only the PROVIDER is coerced.

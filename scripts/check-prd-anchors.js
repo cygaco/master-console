@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * check-prd-anchors.js — Verify implementation anchors in WarpOS-as-product PRDs.
+ * check-prd-anchors.js — Verify implementation anchors in MC-as-product PRDs.
  *
  * Each PRD frontmatter declares `implementation: [<paths>]`. Each PRD body should
  * cite file paths in the form `path/to/file.js:LINE-LINE` or `path/to/file.js#anchor`.

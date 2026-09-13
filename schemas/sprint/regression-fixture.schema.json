@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/regression-fixture/v1",
-  "title": "WarpOS Sprint v0.1 — Regression Fixture",
+  "$id": "mc/sprint/regression-fixture/v1",
+  "title": "MC Sprint v0.1 — Regression Fixture",
   "description": "Per-sprint fixture record under paths.sprintRegressionCorpus/<SP-id>/<RF-id>.yaml. Introduced 2026-05-18 by SP-20260518-007. Captures the executable contract that the sprint's originally-reported failure is closed and would still be detected if it regressed.",
   "type": "object",
   "required": [
@@ -20,7 +20,7 @@
   "properties": {
     "schema": {
       "type": "string",
-      "const": "warpos/sprint/regression-fixture/v1"
+      "const": "mc/sprint/regression-fixture/v1"
     },
     "id": {
       "type": "string",

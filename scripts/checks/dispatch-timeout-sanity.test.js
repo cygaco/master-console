@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * dispatch-timeout-sanity.test.js — planted-violation + fail-closed tests (T-20260610-304).
@@ -39,51 +40,51 @@ function test(name, fn) {
 console.log("\n(1) foregroundAwareTimeout — clamp and background-signal logic:");
 
 test("foregroundAwareTimeout(20min, {}) clamps to FOREGROUND_CEILING_MS", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = foregroundAwareTimeout(20 * 60 * 1000, {});
     assert.strictEqual(result, FOREGROUND_CEILING_MS,
       `Expected ${FOREGROUND_CEILING_MS}ms, got ${result}ms`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
 test("foregroundAwareTimeout(15min, {}) clamps to FOREGROUND_CEILING_MS", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = foregroundAwareTimeout(15 * 60 * 1000, {});
     assert.strictEqual(result, FOREGROUND_CEILING_MS,
       `Expected ${FOREGROUND_CEILING_MS}ms, got ${result}ms`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
 test("foregroundAwareTimeout(20min, { background: true }) returns full 20min", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = foregroundAwareTimeout(20 * 60 * 1000, { background: true });
     assert.strictEqual(result, 20 * 60 * 1000,
       `Expected ${20 * 60 * 1000}ms (full), got ${result}ms`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
 test("WARPOS_DISPATCH_BACKGROUND=1 env signal → full bound (background path)", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  process.env.WARPOS_DISPATCH_BACKGROUND = "1";
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.setEnv("DISPATCH_BACKGROUND", "1");
   try {
     const result = foregroundAwareTimeout(20 * 60 * 1000, {});
     assert.strictEqual(result, 20 * 60 * 1000,
       `Expected ${20 * 60 * 1000}ms (full), got ${result}ms`);
   } finally {
-    if (orig === undefined) delete process.env.WARPOS_DISPATCH_BACKGROUND;
-    else process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig === undefined) mcEnv.unsetEnv("DISPATCH_BACKGROUND");
+    else mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
@@ -91,8 +92,8 @@ test("WARPOS_DISPATCH_BACKGROUND=1 env signal → full bound (background path)",
 console.log("\n(2) Fail-closed detection — absence of signal → clamp:");
 
 test("no background signal (env absent, no opts.background) → clamps to ceiling", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = foregroundAwareTimeout(20 * 60 * 1000, {});
     assert(result <= FOREGROUND_CEILING_MS,
@@ -100,31 +101,31 @@ test("no background signal (env absent, no opts.background) → clamps to ceilin
     assert.strictEqual(result, FOREGROUND_CEILING_MS,
       `Expected exactly ${FOREGROUND_CEILING_MS}ms when foreground, got ${result}ms`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
 test("opts.background=false (explicit non-background) → clamps to ceiling", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = foregroundAwareTimeout(20 * 60 * 1000, { background: false });
     assert.strictEqual(result, FOREGROUND_CEILING_MS,
       `Expected ${FOREGROUND_CEILING_MS}ms (clamped), got ${result}ms`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
 test("small default (1000ms) → returned unchanged (already under ceiling)", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = foregroundAwareTimeout(1000, {});
     assert.strictEqual(result, 1000,
       `Expected 1000ms (already ≤ ceiling), got ${result}ms`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
@@ -137,8 +138,8 @@ test("WRAPPER_DEFAULTS is non-empty (sanity: defaults are defined)", () => {
 });
 
 test("all WRAPPER_DEFAULTS foreground effective bounds ≤ ceiling", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     for (const [wrapper, defaultMs] of Object.entries(WRAPPER_DEFAULTS)) {
       const effective = foregroundAwareTimeout(defaultMs, {});
@@ -146,7 +147,7 @@ test("all WRAPPER_DEFAULTS foreground effective bounds ≤ ceiling", () => {
         `${wrapper}: foreground effective ${effective}ms > ceiling ${FOREGROUND_CEILING_MS}ms`);
     }
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
@@ -154,8 +155,8 @@ test("all WRAPPER_DEFAULTS foreground effective bounds ≤ ceiling", () => {
 console.log("\n(4) runChecks() GREEN on real WRAPPER_DEFAULTS:");
 
 test("runChecks() returns ok:true on real WRAPPER_DEFAULTS", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     const result = runChecks();
     assert.strictEqual(result.ok, true,
@@ -165,7 +166,7 @@ test("runChecks() returns ok:true on real WRAPPER_DEFAULTS", () => {
     assert(result.checks.every(c => c.status === "green"),
       `Not all checks are green: ${JSON.stringify(result.checks.filter(c => c.status !== "green"))}`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
@@ -178,8 +179,8 @@ test("runChecks() returns ok:true on real WRAPPER_DEFAULTS", () => {
 console.log("\n(5) Planted violation — foreground bound >540s → red:");
 
 test("planted: large default clamped to ceiling by helper → check is GREEN (the fix works)", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     // 30min default with no bg signal: foregroundAwareTimeout clamps to 540000 ≤ ceiling → GREEN
     const result = runChecks({ wrapperDefaults: { "large-default-clamped": 30 * 60 * 1000 } });
@@ -189,7 +190,7 @@ test("planted: large default clamped to ceiling by helper → check is GREEN (th
       `Expected green (30min clamped→540000 ≤ ceiling by foregroundAwareTimeout), got ${c.status}`);
     assert.strictEqual(result.ok, true, "Expected ok:true when the helper clamps the bound");
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
@@ -197,8 +198,8 @@ test("planted: WARPOS_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exp
   // This is the true planted violation: with background signal set, the helper returns the
   // raw defaultMs (no clamp). If defaultMs > ceiling, the check correctly reports RED.
   // This proves the check's comparison logic fires (not just the helper's clamp).
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  process.env.WARPOS_DISPATCH_BACKGROUND = "1"; // bypass clamp → raw 30min returned
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.setEnv("DISPATCH_BACKGROUND", "1"); // bypass clamp → raw 30min returned
   try {
     const result = runChecks({ wrapperDefaults: { "bg-bypass-planted": 30 * 60 * 1000 } });
     // effective = 30*60*1000 = 1800000 > 540000 → RED
@@ -210,14 +211,14 @@ test("planted: WARPOS_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exp
     assert(c.reason && /VIOLATION/i.test(c.reason),
       `Expected VIOLATION in reason, got: ${c.reason}`);
   } finally {
-    if (orig === undefined) delete process.env.WARPOS_DISPATCH_BACKGROUND;
-    else process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig === undefined) mcEnv.unsetEnv("DISPATCH_BACKGROUND");
+    else mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 
 test("planted: 541000ms default (1ms over ceiling) clamped → GREEN (clamp saves it)", () => {
-  const orig = process.env.WARPOS_DISPATCH_BACKGROUND;
-  delete process.env.WARPOS_DISPATCH_BACKGROUND;
+  const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
   try {
     // effectiveMs = min(541000, 540000) = 540000 ≤ 540000 → GREEN (the clamp is the fix)
     const result = runChecks({ wrapperDefaults: { "just-over-ceiling": 541000 } });
@@ -226,7 +227,7 @@ test("planted: 541000ms default (1ms over ceiling) clamped → GREEN (clamp save
     assert.strictEqual(c.status, "green",
       `Expected green (541000ms clamped to 540000ms ≤ ceiling), got ${c.status}: ${c.reason}`);
   } finally {
-    if (orig !== undefined) process.env.WARPOS_DISPATCH_BACKGROUND = orig;
+    if (orig !== undefined) mcEnv.setEnv("DISPATCH_BACKGROUND", orig);
   }
 });
 

@@ -88,16 +88,16 @@ test("schema-id-not-in-visible-dom", () => {
 
 test("planted-leak-fails", () => {
   const dir = cleanFixture();
-  // Plant a product-facing "WarpOS" string into a visible guide body — must FAIL.
+  // Plant a product-facing "MC" string into a visible guide body — must FAIL.
   touch(
     dir,
     `${brand.GUIDE_CONTENT_DIR}/PAYMENTS_GUIDE.md.tmpl`,
-    "# Powered by WarpOS\n\nThis copy leaks the engine brand to the founder.\n"
+    "# Powered by MC\n\nThis copy leaks the engine brand to the founder.\n"
   );
   const res = brand.evaluateBrandLeak(dir);
-  assert.strictEqual(res.ok, false, "product-facing WarpOS must FAIL");
+  assert.strictEqual(res.ok, false, "product-facing MC must FAIL");
   assert.ok(
-    res.errors.some((e) => /product-facing engine brand "WarpOS"/.test(e)),
+    res.errors.some((e) => /product-facing engine brand "MC"/.test(e)),
     `expected brand-leak error, got: ${res.errors.join("; ")}`
   );
 });
@@ -107,11 +107,11 @@ test("brand-leak-in-panel-jsx-text-fails", () => {
   touch(
     dir,
     `${brand.PANEL_GLOB_DIR}/page.tsx.tmpl`,
-    "export default function P(){ return <span>Built on WarpOS</span>; }\n"
+    "export default function P(){ return <span>Built on MC</span>; }\n"
   );
   const res = brand.evaluateBrandLeak(dir);
-  assert.strictEqual(res.ok, false, "WarpOS in panel JSX must FAIL");
-  assert.ok(res.errors.some((e) => /engine brand "WarpOS"/.test(e)));
+  assert.strictEqual(res.ok, false, "MC in panel JSX must FAIL");
+  assert.ok(res.errors.some((e) => /engine brand "MC"/.test(e)));
 });
 
 test("schema-id-in-machine-layer-comment-is-allowed", () => {
@@ -123,7 +123,7 @@ test("schema-id-in-machine-layer-comment-is-allowed", () => {
 });
 
 // ── FIX-4 / AC-brand — FAIL-CLOSED on a missing/unreadable scan dir ──────────
-// The false-green class WarpOS hardens against (project_enforcer_falsegreen_gauntlet): pointed at
+// The false-green class MC hardens against (project_enforcer_falsegreen_gauntlet): pointed at
 // a scan dir that does NOT exist, the scanner must FAIL (ok:false, exit1) — never return the
 // vacuous ok:true scanned:0 that would let a brand leak ship undetected because nothing ran.
 test("missing-scan-dir-fails-closed-not-vacuous-pass", () => {

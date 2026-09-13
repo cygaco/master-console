@@ -1,4 +1,4 @@
 {
-  "$schema": "warpos/design-system-allowlist/v1",
+  "$schema": "mc/design-system-allowlist/v1",
   "allow": []
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/sprint-progress/v1",
-  "title": "WarpOS Sprint v0.2 — Sprint Progress / Crash Recovery Checkpoint",
+  "$id": "mc/sprint/sprint-progress/v1",
+  "title": "MC Sprint v0.2 — Sprint Progress / Crash Recovery Checkpoint",
   "description": "Per-sprint live execution checkpoint. v0.2 layout: .claude/project/sprint/sprints/<SP-id>/progress.yaml. Written before each sprint command starts, after plan creation, before each ticket, after each meaningful code/doc/test change, after each check, when issues/approvals/external services change, before final report. Legacy v0.1 layout (paths.sprintProgress at sprint root) still validates and is migrated by scripts/sprint/migrate-v0.2.js. The active set of sprints is enumerated in paths.sprintActiveRegistry.",
   "type": "object",
   "required": [
@@ -18,7 +18,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/sprint-progress/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/sprint-progress/v1" },
     "sprint": {
       "type": "string",
       "description": "Sprint id (matches current-sprint.yaml#id)."

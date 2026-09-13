@@ -30,7 +30,7 @@ Each lens is a different *source* of "this hasn't been finished." They overlap d
 What the project explicitly says is unfinished.
 
 **Sources:**
-- `ROADMAP.md` at project root — **the primary Lens-1 source in canonical WarpOS**: sections "Now", "Next", "Known issues", "Downstream Reconcile", any `## ⚠️ ALERTS`, and every `[open]`/`[deferred]`/`[blocked]`-tagged item. (2026-05-30 improvement: canonical has no `NEXT.md`, so the original Lens-1 source was dead here — ROADMAP.md is the real explicit-deferred backlog.)
+- `ROADMAP.md` at project root — **the primary Lens-1 source in canonical MC**: sections "Now", "Next", "Known issues", "Downstream Reconcile", any `## ⚠️ ALERTS`, and every `[open]`/`[deferred]`/`[blocked]`-tagged item. (2026-05-30 improvement: canonical has no `NEXT.md`, so the original Lens-1 source was dead here — ROADMAP.md is the real explicit-deferred backlog.)
 - `NEXT.md` at project root, if present (product repos use it; sections "Open issues", "Pending decision", "Medium/Low priority", "Open questions") — absent in canonical.
 - any root `*-plan.md`
 - `paths.handoffs/*.md` (last 3 by mtime)

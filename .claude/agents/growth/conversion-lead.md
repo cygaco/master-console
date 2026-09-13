@@ -99,7 +99,7 @@ edit, no persona rewrite.)*
 <!-- knowledge:design role:conversion-lead (grounding — training references, do not weaken existing grounding) -->
 ### Design-principles guides (training references)
 
-Ground your conversion judgment in the WarpOS **design-principles guide library**
+Ground your conversion judgment in the MC **design-principles guide library**
 (`_knowledge/design/` · machine-readable index `_knowledge/design/registry.json` · overview
 `_knowledge/design/README.md`). These are framework-generic, self-contained teachable
 principles (CXL/Baymard conversion research, NN/g, Laws of UX, WCAG 2.2) — not tool

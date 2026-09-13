@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 // Bite-test for security-pass-count.js (E-DISPATCH-PERFECT-001 W1) — proves config-coherence FIRES
 // on a broken pass chain and runtime-stamp detection FIRES on an under-fired review, and that a
 // correct 3-distinct-provider claude-last chain + a full 3-provider run are clean.
 // These fixtures inject UNSIGNED synthetic records to exercise the pass-COUNTING logic, so they opt out of
 // the SP-20260718-004 same-session signature requirement (WARPOS_LIVENESS_REQUIRE_SIG=0); the signature gate
 // itself is asserted by the "R4 signed pass-count" case below.
-process.env.WARPOS_LIVENESS_REQUIRE_SIG = "0";
+mcEnv.setEnv("LIVENESS_REQUIRE_SIG", "0");
 const assert = require("assert");
 const { evaluateConfig, evaluateRuntime } = require("./security-pass-count");
 const { signRecord } = require("../dispatch/attest-signing");

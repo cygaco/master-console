@@ -498,7 +498,7 @@ process.stdin.on("end", () => {
       // bg-drop class — a provider CLI whose wrapper was reaped, still running with
       // no completion record). pruneDeadLocks above clears the dead lock FILE; this
       // surfaces the orphaned PROCESS. REPORT-ONLY here (dry-run, never auto-kills on
-      // session start — the kill is a deliberate /warp:health --apply or manual
+      // session start — the kill is a deliberate /mc:health --apply or manual
       // action). Conservative-by-construction + fail-open (reaps nothing on any
       // ambiguity); wrapped so a slow/failed enumeration never blocks session start.
       try {
@@ -591,7 +591,7 @@ process.stdin.on("end", () => {
         const smokePath = path.join(
           __dirname,
           "..",
-          "warpos",
+          "mc",
           "provider-smoke.js",
         );
         const { perRoleProbe, classifyPerRole, PER_ROLE_BUILD_CHAIN } =
@@ -615,7 +615,7 @@ process.stdin.on("end", () => {
             (first.provider || "unknown provider") +
             " but its CLI is not reachable; cross-provider dispatch will " +
             "fall back to Claude (loses diff-model coverage). Run " +
-            "/warp:health for the full per-role verdict.";
+            "/mc:health for the full per-role verdict.";
         }
       } catch {
         // Fail-open: providers.js or smoke load failure on a partial install

@@ -44,7 +44,7 @@ JSON: array of `{ name, cmd, ok, elapsedMs, error? }`.
 
 ## Empty-state behavior
 
-If no linters discovered, stderr `no linters discovered` and exit 1. (A WarpOS install ships with at least path-lint; absence is failure.)
+If no linters discovered, stderr `no linters discovered` and exit 1. (A MC install ships with at least path-lint; absence is failure.)
 
 ## Example
 

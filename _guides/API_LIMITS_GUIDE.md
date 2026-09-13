@@ -198,4 +198,4 @@ API LIMITS & CAPACITY
 
 ---
 
-*Part of the **WarpOS launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `README.md` for the shared preamble, and the sibling guides `SECURITY_GUIDE.md`, `EMAIL_GUIDE.md`, `PAYMENTS_GUIDE.md`, and `DEV_SETUP_GUIDE.md` referenced above. **Last reviewed: 2026-06.** Provider tiers and numbers change constantly — check your provider's dashboard.*
+*Part of the **MC launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `README.md` for the shared preamble, and the sibling guides `SECURITY_GUIDE.md`, `EMAIL_GUIDE.md`, `PAYMENTS_GUIDE.md`, and `DEV_SETUP_GUIDE.md` referenced above. **Last reviewed: 2026-06.** Provider tiers and numbers change constantly — check your provider's dashboard.*

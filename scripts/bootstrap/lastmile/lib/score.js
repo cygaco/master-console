@@ -8,7 +8,7 @@
  * deployment, analytics, support.
  *
  * Sensitive-data signals CAP privacy + security until a legal/security review is
- * recorded (state.sensitive.escalate) — WarpOS never auto-claims compliance.
+ * recorded (state.sensitive.escalate) — MC never auto-claims compliance.
  */
 
 const DIMENSIONS = [

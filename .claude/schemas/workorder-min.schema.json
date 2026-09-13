@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://warpos.local/schemas/workorder-min.schema.json",
+  "$id": "https://mc.local/schemas/workorder-min.schema.json",
   "title": "WorkOrder (minimum schema)",
   "description": "SP-20260718-005 Phase 3, unit BE-1. The minimum shape a WorkOrder must satisfy before role-resolver.deriveBinding treats a dispatch as validated_workorder_or_cli_binding (ED-218). Same-session artifact — trust anchor is the per-session HMAC (attest-signing.js) over workorder_digest (BE-3), NOT this schema file at runtime; scripts/dispatch/workorder-schema.js#validate is a hand-rolled, dependency-free validator that implements this shape (kept in sync by hand — see the header comment there).",
   "type": "object",

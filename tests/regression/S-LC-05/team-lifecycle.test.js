@@ -77,12 +77,12 @@ function plantInboxDir(teamsRoot, uuid) {
 // ── AC-5.1 — THE LOAD-BEARING TEST: a wrong-project team SURVIVES a kill ──────
 ok("AC-5.1 wrong-project team survives a slug-scoped teardown --apply", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  // This project = slug "warpos". Plant OUR team + a FOREIGN team (doogle —
+  // This project = slug "mc". Plant OUR team + a FOREIGN team (doogle —
   // mirrors the real machine's live `doogle-sprint` that MUST NOT be killed).
   // OUR team is STALE (48h) so verifyTerminated() positively confirms it is not
   // live — only then is the handle eligible for removal under --apply. (A fresh,
   // possibly-live team is NOT removed; that is AC-5.9.)
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"], {
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"], {
     ageHours: 48,
   });
   const foreign = plantTeam(teamsRoot, "doogle-sprint", [
@@ -91,7 +91,7 @@ ok("AC-5.1 wrong-project team survives a slug-scoped teardown --apply", () => {
     "epsilon",
   ]);
 
-  const opts = { teamsRoot, stateDir, slug: "warpos", mode: "adhoc" };
+  const opts = { teamsRoot, stateDir, slug: "mc", mode: "adhoc" };
   const res = lifecycle.teardown({ ...opts, apply: true });
 
   // The FOREIGN team's handle is UNTOUCHED.
@@ -110,7 +110,7 @@ ok("AC-5.1 wrong-project team survives a slug-scoped teardown --apply", () => {
   );
   // OUR team WAS the target (handle removed under apply).
   assert.ok(
-    res.requested.some((r) => r.team === "warpos-adhoc" && r.handleRemoved),
+    res.requested.some((r) => r.team === "mc-adhoc" && r.handleRemoved),
     "our own team handle should have been removed under --apply",
   );
   // Honest ceiling: never a claimed guaranteed kill.
@@ -119,8 +119,8 @@ ok("AC-5.1 wrong-project team survives a slug-scoped teardown --apply", () => {
 
 ok("AC-5.1b a foreign team survives even when names share a prefix root", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  // slug "warp" must NOT match "warpos-sprint" (prefix-bleed protection).
-  plantTeam(teamsRoot, "warpos-sprint", ["team-lead", "beta", "epsilon"]);
+  // slug "warp" must NOT match "mc-sprint" (prefix-bleed protection).
+  plantTeam(teamsRoot, "mc-sprint", ["team-lead", "beta", "epsilon"]);
   const res = lifecycle.teardown({
     teamsRoot,
     stateDir,
@@ -129,8 +129,8 @@ ok("AC-5.1b a foreign team survives even when names share a prefix root", () => 
     apply: true,
   });
   assert.ok(
-    fs.existsSync(path.join(teamsRoot, "warpos-sprint", "config.json")),
-    "slug 'warp' bled into 'warpos-sprint' — prefix-bleed protection FAILED",
+    fs.existsSync(path.join(teamsRoot, "mc-sprint", "config.json")),
+    "slug 'warp' bled into 'mc-sprint' — prefix-bleed protection FAILED",
   );
   assert.strictEqual(res.requested.length, 0, "no team belongs to slug 'warp'");
 });
@@ -138,14 +138,14 @@ ok("AC-5.1b a foreign team survives even when names share a prefix root", () => 
 // ── AC-5.2 — slug filter unit / prefix-bleed protection ──────────────────────
 ok("AC-5.2 teamBelongsToProject: exact + prefix, no bleed", () => {
   const b = lifecycle.teamBelongsToProject;
-  assert.strictEqual(b("warpos", "warpos"), true, "exact match");
-  assert.strictEqual(b("warpos-sprint", "warpos"), true, "<slug>- prefix");
-  assert.strictEqual(b("warpos-adhoc", "warpos"), true);
-  assert.strictEqual(b("doogle-sprint", "warpos"), false, "foreign slug");
-  assert.strictEqual(b("warposx-sprint", "warpos"), false, "no prefix bleed (x)");
-  assert.strictEqual(b("warpos-sprint", "warp"), false, "no prefix bleed (warp)");
+  assert.strictEqual(b("mc", "mc"), true, "exact match");
+  assert.strictEqual(b("mc-sprint", "mc"), true, "<slug>- prefix");
+  assert.strictEqual(b("mc-adhoc", "mc"), true);
+  assert.strictEqual(b("doogle-sprint", "mc"), false, "foreign slug");
+  assert.strictEqual(b("mcx-sprint", "mc"), false, "no prefix bleed (x)");
+  assert.strictEqual(b("mc-sprint", "warp"), false, "no prefix bleed (warp)");
   assert.strictEqual(
-    b("3c48a70b-7089-4c31-b168-06a51373d69c", "warpos"),
+    b("3c48a70b-7089-4c31-b168-06a51373d69c", "mc"),
     false,
     "unattributable UUID team is foreign (never killed)",
   );
@@ -160,46 +160,46 @@ ok("AC-5.2 teamBelongsToProject: exact + prefix, no bleed", () => {
 // harness rename to a THIRD scheme fails loudly rather than silently widening scope.
 ok("AC-5.2b teamBelongsToProject: member-cwd arm finds OUR session-<uuid> team, excludes foreign", () => {
   const b = lifecycle.teamBelongsToProject;
-  const proj = process.platform === "win32" ? "C:\\proj\\warpos" : "/proj/warpos";
-  const underProj = process.platform === "win32" ? "C:\\proj\\warpos\\sub" : "/proj/warpos/sub";
+  const proj = process.platform === "win32" ? "C:\\proj\\mc" : "/proj/mc";
+  const underProj = process.platform === "win32" ? "C:\\proj\\mc\\sub" : "/proj/mc/sub";
   const sibling = process.platform === "win32" ? "C:\\proj\\doogle" : "/proj/doogle";
   const parent = process.platform === "win32" ? "C:\\proj" : "/proj";
   const team = (members) => ({ name: "session-3c48a70b-7089-4c31-b168-06a51373d69c", members });
   // OURS — a uuid-named team with a member cwd AT the project root:
-  assert.strictEqual(b(team([{ agentType: "epsilon", cwd: proj }]), "warpos", proj), true, "member cwd == project root => ours");
+  assert.strictEqual(b(team([{ agentType: "epsilon", cwd: proj }]), "mc", proj), true, "member cwd == project root => ours");
   // OURS — a member cwd strictly UNDER the project root:
-  assert.strictEqual(b(team([{ name: "Beta", cwd: underProj }]), "warpos", proj), true, "member cwd under project root => ours");
+  assert.strictEqual(b(team([{ name: "Beta", cwd: underProj }]), "mc", proj), true, "member cwd under project root => ours");
   // FOREIGN — a sibling-project uuid team (the wrong-project-survives invariant):
-  assert.strictEqual(b(team([{ agentType: "epsilon", cwd: sibling }]), "warpos", proj), false, "sibling-project member cwd => NOT ours (survives teardown)");
+  assert.strictEqual(b(team([{ agentType: "epsilon", cwd: sibling }]), "mc", proj), false, "sibling-project member cwd => NOT ours (survives teardown)");
   // FOREIGN — a team rooted ABOVE the project (parent-containment is NOT ownership):
-  assert.strictEqual(b(team([{ cwd: parent }]), "warpos", proj), false, "parent-dir member cwd => NOT ours");
+  assert.strictEqual(b(team([{ cwd: parent }]), "mc", proj), false, "parent-dir member cwd => NOT ours");
   // FOREIGN — a uuid team with NO member cwd evidence + a foreign slug name:
-  assert.strictEqual(b(team([{ agentType: "epsilon" }]), "warpos", proj), false, "no cwd evidence + uuid name => NOT ours");
+  assert.strictEqual(b(team([{ agentType: "epsilon" }]), "mc", proj), false, "no cwd evidence + uuid name => NOT ours");
   // legacy name-slug arm still works alongside the cwd arm:
-  assert.strictEqual(b({ name: "warpos-sprint", members: [] }, "warpos", proj), true, "legacy <slug>- name still ours");
+  assert.strictEqual(b({ name: "mc-sprint", members: [] }, "mc", proj), true, "legacy <slug>- name still ours");
 });
 
 // ── AC-5.3 — orphan/stale + duplicate (-N accretion) detection ───────────────
 ok("AC-5.3 stale-team handle detected (config older than STALE_HOURS)", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"], {
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"], {
     ageHours: 48, // ≥ 24h → stale
   });
   const findings = lifecycle.detectOrphansStale({
     teamsRoot,
     stateDir,
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
   });
   assert.ok(
-    findings.some((f) => f.type === "stale-team" && f.team === "warpos-adhoc"),
+    findings.some((f) => f.type === "stale-team" && f.team === "mc-adhoc"),
     "stale 48h team handle not detected",
   );
 });
 
 ok("AC-5.3b -N accretion duplicate member detected", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  plantTeam(teamsRoot, "warpos-adhoc", [
+  plantTeam(teamsRoot, "mc-adhoc", [
     "team-lead",
     "beta",
     "gamma",
@@ -208,7 +208,7 @@ ok("AC-5.3b -N accretion duplicate member detected", () => {
   const dupes = lifecycle.detectDuplicates({
     teamsRoot,
     stateDir,
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
   });
   assert.ok(
@@ -219,18 +219,18 @@ ok("AC-5.3b -N accretion duplicate member detected", () => {
 
 ok("AC-5.3c duplicate project TEAM handles detected", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"]);
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"]);
   // A second handle for the same mode (different dir name, same -adhoc suffix).
-  const dir = path.join(teamsRoot, "warpos-adhoc-dup");
+  const dir = path.join(teamsRoot, "mc-adhoc-dup");
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(
     path.join(dir, "config.json"),
-    JSON.stringify({ name: "warpos-adhoc", members: [{ name: "team-lead" }] }),
+    JSON.stringify({ name: "mc-adhoc", members: [{ name: "team-lead" }] }),
   );
   const dupes = lifecycle.detectDuplicates({
     teamsRoot,
     stateDir,
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
   });
   assert.ok(
@@ -242,11 +242,11 @@ ok("AC-5.3c duplicate project TEAM handles detected", () => {
 // ── AC-5.4 — best-effort teardown honesty ────────────────────────────────────
 ok("AC-5.4 default teardown is REQUEST-ONLY (no handle removal)", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  const mine = plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta"]);
+  const mine = plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta"]);
   const res = lifecycle.teardown({
     teamsRoot,
     stateDir,
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
   }); // no apply
   assert.strictEqual(res.apply, false);
@@ -264,23 +264,23 @@ ok("AC-5.4 default teardown is REQUEST-ONLY (no handle removal)", () => {
 
 ok("AC-5.4b teardown writes a durable state record", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta"]);
-  lifecycle.teardown({ teamsRoot, stateDir, slug: "warpos", mode: "adhoc" });
-  const state = lifecycle.readState({ teamsRoot, stateDir, slug: "warpos" });
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta"]);
+  lifecycle.teardown({ teamsRoot, stateDir, slug: "mc", mode: "adhoc" });
+  const state = lifecycle.readState({ teamsRoot, stateDir, slug: "mc" });
   assert.ok(
     state.teardownRequests.length >= 1 &&
-      state.teardownRequests[0].teams.includes("warpos-adhoc"),
+      state.teardownRequests[0].teams.includes("mc-adhoc"),
     "teardown request not durably recorded",
   );
 });
 
 ok("AC-5.4c readiness record writes the .team-live marker + state", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"]);
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"]);
   const rec = lifecycle.writeReadinessRecord({
     teamsRoot,
     stateDir,
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
     sid: "s-abc123",
   });
@@ -294,8 +294,8 @@ ok("AC-5.4c readiness record writes the .team-live marker + state", () => {
 // ── AC-5.5 — fail-open: missing / malformed config → no throw, reconcile ─────
 ok("AC-5.5 malformed config.json → no throw; listed unreadable", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  plantTeam(teamsRoot, "warpos-adhoc", [], { raw: "{ not json ]" });
-  const opts = { teamsRoot, stateDir, slug: "warpos", mode: "adhoc" };
+  plantTeam(teamsRoot, "mc-adhoc", [], { raw: "{ not json ]" });
+  const opts = { teamsRoot, stateDir, slug: "mc", mode: "adhoc" };
   let teams;
   assert.doesNotThrow(() => {
     teams = lifecycle.listTeams(opts);
@@ -313,7 +313,7 @@ ok("AC-5.5b missing teams dir → empty list, no throw", () => {
   const opts = {
     teamsRoot: path.join(base, "does-not-exist"),
     stateDir: path.join(base, "runtime"),
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
   };
   let teams;
@@ -327,18 +327,18 @@ ok("AC-5.5b missing teams dir → empty list, no throw", () => {
 ok("AC-5.5c UUID inbox-only dir (no config.json) is ignored", () => {
   const { teamsRoot, stateDir } = freshDirs();
   plantInboxDir(teamsRoot, "3c48a70b-7089-4c31-b168-06a51373d69c");
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta"]);
-  const teams = lifecycle.listTeams({ teamsRoot, stateDir, slug: "warpos" });
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta"]);
+  const teams = lifecycle.listTeams({ teamsRoot, stateDir, slug: "mc" });
   assert.strictEqual(teams.length, 1, "inbox-only UUID dir must be skipped");
-  assert.strictEqual(teams[0].name, "warpos-adhoc");
+  assert.strictEqual(teams[0].name, "mc-adhoc");
 });
 
 ok("AC-5.5d reconcile records a reconciliation, never blind-kills", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  const mine = plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta"], {
+  const mine = plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta"], {
     ageHours: 48,
   });
-  const opts = { teamsRoot, stateDir, slug: "warpos", mode: "adhoc" };
+  const opts = { teamsRoot, stateDir, slug: "mc", mode: "adhoc" };
   const rec = lifecycle.reconcile(opts);
   assert.strictEqual(rec.action, "marked-stale-no-kill");
   assert.ok(
@@ -355,10 +355,10 @@ ok("AC-5.5d reconcile records a reconciliation, never blind-kills", () => {
 ok("AC-5.9 apply + verifyTerminated()=FALSE (fresh) → handle NOT removed, residual logged", () => {
   const { teamsRoot, stateDir } = freshDirs();
   // FRESH heartbeat → a member may still be live → termination unverified.
-  const mine = plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"]);
-  const opts = { teamsRoot, stateDir, slug: "warpos", mode: "adhoc" };
+  const mine = plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"]);
+  const opts = { teamsRoot, stateDir, slug: "mc", mode: "adhoc" };
   const res = lifecycle.teardown({ ...opts, apply: true });
-  const entry = res.requested.find((r) => r.team === "warpos-adhoc");
+  const entry = res.requested.find((r) => r.team === "mc-adhoc");
   assert.ok(entry, "our team must still appear in the request set");
   assert.strictEqual(entry.handleRemoved, false, "fresh/unverified handle must NOT be removed");
   assert.strictEqual(
@@ -377,12 +377,12 @@ ok("AC-5.9 apply + verifyTerminated()=FALSE (fresh) → handle NOT removed, resi
 ok("AC-5.9b apply + verifyTerminated()=TRUE (stale) → handle removed", () => {
   const { teamsRoot, stateDir } = freshDirs();
   // STALE heartbeat (48h ≥ STALE_HOURS) → positively confirmed not-live.
-  const mine = plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta"], {
+  const mine = plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta"], {
     ageHours: 48,
   });
-  const opts = { teamsRoot, stateDir, slug: "warpos", mode: "adhoc" };
+  const opts = { teamsRoot, stateDir, slug: "mc", mode: "adhoc" };
   const res = lifecycle.teardown({ ...opts, apply: true });
-  const entry = res.requested.find((r) => r.team === "warpos-adhoc");
+  const entry = res.requested.find((r) => r.team === "mc-adhoc");
   assert.strictEqual(entry.handleRemoved, true, "verified-stale handle should be removed");
   assert.strictEqual(entry.terminationVerified, true);
   assert.ok(
@@ -394,17 +394,17 @@ ok("AC-5.9b apply + verifyTerminated()=TRUE (stale) → handle removed", () => {
 
 ok("AC-5.9c verifyTerminated unit: fresh=false, stale=true, unreadable=false", () => {
   const { teamsRoot, stateDir } = freshDirs();
-  const opts = { teamsRoot, stateDir, slug: "warpos" };
+  const opts = { teamsRoot, stateDir, slug: "mc" };
   // Fresh (mtime ≈ now) → not verified.
   assert.strictEqual(
-    lifecycle.verifyTerminated({ name: "warpos-adhoc", ageHours: 0 }, opts),
+    lifecycle.verifyTerminated({ name: "mc-adhoc", ageHours: 0 }, opts),
     false,
     "fresh heartbeat must be treated as possibly-live",
   );
   // Stale beyond STALE_HOURS → confirmed not-live.
   assert.strictEqual(
     lifecycle.verifyTerminated(
-      { name: "warpos-adhoc", ageHours: lifecycle.STALE_HOURS + 1 },
+      { name: "mc-adhoc", ageHours: lifecycle.STALE_HOURS + 1 },
       opts,
     ),
     true,
@@ -413,7 +413,7 @@ ok("AC-5.9c verifyTerminated unit: fresh=false, stale=true, unreadable=false", (
   // Unreadable handle → roster unverifiable → fail-safe false.
   assert.strictEqual(
     lifecycle.verifyTerminated(
-      { name: "warpos-adhoc", ageHours: Infinity, unreadable: true },
+      { name: "mc-adhoc", ageHours: Infinity, unreadable: true },
       opts,
     ),
     false,
@@ -427,12 +427,12 @@ ok("AC-5.9d unverified skip is honest: foreign STILL protected, never a guarante
   const { teamsRoot, stateDir } = freshDirs();
   // Our team is fresh (unverified) AND a foreign team is present — both must be
   // left intact: the foreign one by the slug filter, ours by the verify gate.
-  const mine = plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta"]);
+  const mine = plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta"]);
   const foreign = plantTeam(teamsRoot, "doogle-sprint", ["team-lead", "epsilon"]);
   const res = lifecycle.teardown({
     teamsRoot,
     stateDir,
-    slug: "warpos",
+    slug: "mc",
     mode: "adhoc",
     apply: true,
   });

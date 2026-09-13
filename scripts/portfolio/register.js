@@ -83,12 +83,12 @@ function main() {
     die(2, `'${slug}' is already registered at ${existing.repo_path}. Unregister it first with /portfolio:register --remove ${slug}.`);
   }
 
-  // Detect warpos_version
-  let warposVersion = null;
+  // Detect mc_version
+  let mcVersion = null;
   try {
     const fi = path.join(repoPath, ".claude", "framework-installed.json");
     const data = JSON.parse(fs.readFileSync(fi, "utf8"));
-    warposVersion = data.installedVersion || null;
+    mcVersion = data.installedVersion || null;
   } catch {
     // not installed — that's fine
   }
@@ -98,7 +98,7 @@ function main() {
     slug,
     repo_path: repoPath,
     github_url: githubUrl,
-    warpos_version: warposVersion,
+    mc_version: mcVersion,
     last_synced: new Date().toISOString(),
     role: "product",
     remote_type: githubUrl ? "github" : null,

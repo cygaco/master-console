@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * safe-spawn.js — the dispatch SAFETY KERNEL (PLAN §16.3 / §17.3 / §17.4).
@@ -56,13 +57,24 @@ const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
 // all share ~/.codex/models_cache.json and write INCOMPATIBLE schemas — whoever writes
 // last decides whether OUR CLI can LOAD it (intermittent "missing field
 // supports_reasoning_summaries" load failure; a read-only pin instead yields "Access is
-// denied"). Fix: give WarpOS codex spawns their OWN CODEX_HOME so the shared cache can't
+// denied"). Fix: give MC codex spawns their OWN CODEX_HOME so the shared cache can't
 // be clobbered under us. This is applied at the SINGLE kernel choke-point every codex
 // spawn routes through (providers.js runProvider, cert-attest.js, dispatch-review →
 // dispatch-agent, ...); the raw `codex exec`-from-Bash route is separately blocked by
 // dispatch-route-guard, so the two together cover both routes (lib-only-fix pairing).
-const DEFAULT_CODEX_HOME =
-  process.env.WARPOS_CODEX_HOME || path.join(os.homedir(), ".codex-warpos");
+// S-OS-06 T3 part 5: ~/.codex-mc first, else an EXISTING legacy codex home (authenticated state) used IN PLACE — never
+// moved; the legacy join below is the pinned machine literal. The deprecation line waits for an actual codex spawn.
+function resolveCodexHome(home = os.homedir()) {
+  const current = path.join(home, ".codex-mc");
+  const legacy = path.join(home, ".codex-warpos");
+  try {
+    return require("../hooks/lib/mc-dirs").resolvePair(current, legacy, { warn: false });
+  } catch {
+    return { path: fs.existsSync(current) || !fs.existsSync(legacy) ? current : legacy, deprecated: false };
+  }
+}
+const _codexHomeResolution = resolveCodexHome();
+const DEFAULT_CODEX_HOME = mcEnv.readEnv("CODEX_HOME") || _codexHomeResolution.path;
 const _codexHomeSeeded = new Set();
 
 // Seed the isolated home ONCE per process: copy-if-MISSING auth.json + config.toml from
@@ -92,6 +104,13 @@ function seedCodexHome(dir) {
 function withCodexHome(toolId, env) {
   if (toolId !== "codex") return env;
   if (env && env.CODEX_HOME) return env; // explicit override wins — untouched
+  if (_codexHomeResolution.deprecated && DEFAULT_CODEX_HOME === _codexHomeResolution.path) {
+    try {
+      require("../hooks/lib/mc-dirs").warnLegacy(_codexHomeResolution, path.join(os.homedir(), ".codex-mc"), DEFAULT_CODEX_HOME);
+    } catch {
+      /* a deprecation line must never block a dispatch */
+    }
+  }
   seedCodexHome(DEFAULT_CODEX_HOME);
   return { ...(env || {}), CODEX_HOME: DEFAULT_CODEX_HOME };
 }
@@ -442,7 +461,7 @@ function which(cmd) {
  */
 function resolveTool(toolId, opts = {}) {
   if (!TOOL_IDS.has(toolId)) return { ok: false, reason: `tool-id '${toolId}' is not in the allowlist` };
-  const p = opts.path || process.env[`WARPOS_TOOL_${toolId.toUpperCase()}_PATH`] || which(toolId);
+  const p = opts.path || mcEnv.readEnv(`TOOL_${toolId.toUpperCase()}_PATH`) || which(toolId);
   if (!p) return { ok: false, reason: `tool '${toolId}' not found on PATH` };
   let real;
   try {
@@ -457,7 +476,7 @@ function resolveTool(toolId, opts = {}) {
   if (real === tmp || real.startsWith(tmp + path.sep)) {
     return { ok: false, reason: `resolved '${toolId}' under the OS temp dir (${real}) — refusing (writable-hijack guard)` };
   }
-  const approved = (process.env.WARPOS_APPROVED_TOOL_ROOTS || "").split(path.delimiter).filter(Boolean);
+  const approved = (mcEnv.readEnv("APPROVED_TOOL_ROOTS") || "").split(path.delimiter).filter(Boolean);
   if (approved.length && !approved.some((root) => real === root || real.startsWith(root + path.sep))) {
     return { ok: false, reason: `resolved '${toolId}' (${real}) is under no WARPOS_APPROVED_TOOL_ROOTS entry` };
   }
@@ -828,4 +847,4 @@ function safeSpawnFile(toolId, args, opts = {}) {
   };
 }
 
-module.exports = { resolveTool, assertArgs, normalizeStdin, treeKill, safeSpawnSync, safeSpawnFile, TOOL_IDS, ARG_POLICY, PROJECT_ROOT, CMDLINE_MAX, assembledCmdlineLen, AGY_FORBIDDEN_SKIP_PERM, withCodexHome, DEFAULT_CODEX_HOME };
+module.exports = { resolveTool, assertArgs, normalizeStdin, treeKill, safeSpawnSync, safeSpawnFile, TOOL_IDS, ARG_POLICY, PROJECT_ROOT, CMDLINE_MAX, assembledCmdlineLen, AGY_FORBIDDEN_SKIP_PERM, withCodexHome, DEFAULT_CODEX_HOME, resolveCodexHome };

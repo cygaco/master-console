@@ -6,7 +6,7 @@
  *
  * Single entry point for every release-class skill that produces a durable
  * artifact. Callers: plan.js, add-sprint.js, retrospective.js, release.js,
- * scripts/warpos/release-canonical.js (and any future /warp:release driver).
+ * scripts/mc/release-canonical.js (and any future /mc:release driver).
  *
  * Contract (from PRD R-2, sprint SP-20260519-001):
  *   - Idempotent: re-writing an existing row returns { written:false,
@@ -529,7 +529,7 @@ function selfTest() {
   fs.writeFileSync(
     roadmap,
     [
-      "# WarpOS Roadmap",
+      "# MC Roadmap",
       "",
       "## Sprints",
       "",
@@ -547,7 +547,7 @@ function selfTest() {
   fs.writeFileSync(
     releases,
     [
-      "# WarpOS Releases",
+      "# MC Releases",
       "",
       "## Versions",
       "",

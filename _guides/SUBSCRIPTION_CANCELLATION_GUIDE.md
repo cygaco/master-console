@@ -217,4 +217,4 @@ OPS (🔴 human-confirmed, not code-passes)
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). The cancel-path **build walkthrough** — the law lives in `LEGAL_GUIDE.md` §3, the billing wiring in `PAYMENTS_GUIDE.md`. Last reviewed: 2026-06. Subscription law and platform policies change (the federal rule above was alive one year and vacated the next) — the official sources are the source of truth, and **this guide is not legal advice.***
+*Part of the MC launch-guide library (`_guides/`). The cancel-path **build walkthrough** — the law lives in `LEGAL_GUIDE.md` §3, the billing wiring in `PAYMENTS_GUIDE.md`. Last reviewed: 2026-06. Subscription law and platform policies change (the federal rule above was alive one year and vacated the next) — the official sources are the source of truth, and **this guide is not legal advice.***

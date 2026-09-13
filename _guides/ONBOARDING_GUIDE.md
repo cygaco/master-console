@@ -268,4 +268,4 @@ ONBOARDING - MINIMUM VIABLE
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Activation benchmarks vary by category, and privacy law for minors changes and varies by country — treat the percentage bands here as directional, and confirm COPPA / GDPR-K obligations against primary sources before launching anything aimed at, or open to, minors.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Activation benchmarks vary by category, and privacy law for minors changes and varies by country — treat the percentage bands here as directional, and confirm COPPA / GDPR-K obligations against primary sources before launching anything aimed at, or open to, minors.*

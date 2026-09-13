@@ -178,4 +178,4 @@ DEPLOYMENT / INFRA
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Hosting dashboards, limits, and DNS behavior change; verify current provider docs before launch.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Hosting dashboards, limits, and DNS behavior change; verify current provider docs before launch.*

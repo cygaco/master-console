@@ -401,7 +401,7 @@ function testMainArgOrder() {
   process.stdout.write("\nE2E — main() validates --phase BEFORE any state write (LM-NEW-1 integration)\n");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "lastmile-argorder-"));
   const sf = path.join(tmp, "s.json");
-  const seeded = { schema: "warpos/bootstrap/lastmile-state/v1", completed: ["preflight", "audit", "plan"], awaiting: "inject", phases: {} };
+  const seeded = { schema: "mc/bootstrap/lastmile-state/v1", completed: ["preflight", "audit", "plan"], awaiting: "inject", phases: {} };
   fs.writeFileSync(sf, JSON.stringify(seeded), "utf8");
   const r = spawnSync(
     process.execPath,

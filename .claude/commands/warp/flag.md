@@ -1,70 +1,26 @@
 ---
-description: Flag a WarpOS framework/tooling gap from a downstream product — append a structured, canonical-consumable entry to this repo's WARPOS.md so /warp:reconcile can verify and fix it upstream.
+description: "[deprecated alias → /mc:flag] Forwards to /mc:flag. The `warp:` skill namespace was renamed to `mc:` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /warp:flag — Flag a framework gap upstream
+# /warp:flag — DEPRECATED, use /mc:flag
 
-You hit a problem with the **WarpOS framework/tooling layer** (`.claude/`, `scripts/`,
-hooks, the paths registry, the dispatch bridge, the sprint pipeline, the install/update
-engine) while working in a **downstream product repo**. This skill records it in this
-repo's root `WARPOS.md` — the **upstream gap register** — in a shape a canonical-side
-Alex agent can verify and fix with **zero re-investigation**, then later consume via
-`/warp:reconcile`.
+This skill is a thin alias that forwards to **`/mc:flag`**. The `warp:` skill namespace was renamed to `mc:` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-WarpOS sync is one-way (canonical → product); products never push code upstream. So a
-downstream fix never reaches the next product. `WARPOS.md` is the durable channel that
-carries the *gap* upstream so canonical can fix it once, for everyone.
+## Deprecation notice (one-time)
 
-## Input
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
 
-`$ARGUMENTS` — freeform description of the gap (what you were doing, the symptom).
-Optional flags: `--severity H|M|L`, `--subsystem <name>`, `--id <WG-N>` (force an id),
-`--product-bug` (override the layer test only if you're certain — see Step 1).
+> `/warp:flag` is deprecated and will be removed in mc@2.1.0. Use `/mc:flag`.
 
-## The contract (what makes an entry canonical-consumable)
+## Implementation
 
-An entry that a canonical agent can act on without re-deriving carries **nine fields**.
-The last one is the most important and the most often skipped.
+Reads `$ARGUMENTS` and dispatches:
 
-1. **ID** — `WG-N`, stable and monotonic within this file.
-2. **Severity** — `H` (blocks a subsystem/command) · `M` (friction / partial failure) · `L` (polish / latent).
-3. **Subsystem** — `sprint-full` · `dispatch` · `install` · `update` · `hooks` · `paths` · `scaffold` · `guards` · …
-4. **Symptom** — the **verbatim** error + what you were doing. Paste the real stack trace / CLI output; don't paraphrase it away.
-5. **Root cause** — the **framework** `file:line`/function, not the product symptom site. Trace it down into `scripts/**` / `.claude/**`.
-6. **Local status** — `fixed-local` · `open` · `worked-around` — the state in **THIS product** (the user's "local" = fixed within this project itself).
-7. **Upstream status** — `open` · `escalated` · `fixed-canonical` — the state in **WarpOS canonical** (the user's "upstream" = fixed in warpos).
-8. **Recommended upstream fix** — the concrete change in canonical. Include the patch/code when you know it (one-block diffs are gold).
-9. **Verify-in-canonical hint** — *how a canonical agent confirms the gap still reproduces @current.* **This install may be stale; the gap may already be fixed upstream.** Name the file/function/check to inspect, or the command that proves it. (This is the antidote to wasted re-builds — WarpOS ED-008: roughly half of one register's gaps were already fixed in canonical.)
+```
+/mc:flag $ARGUMENTS
+```
 
-## Invariants
+## Removal
 
-- **Framework-layer only.** `WARPOS.md` is for gaps in the AI operating system — **not** product bugs. Product source / API routes / specs / UI bugs belong in `issues.md` / `_requirements/00-canonical/FAILURE_STATES.md`. State the layer decision explicitly in the entry's first line.
-- **Stable filename.** Always the repo-root `WARPOS.md`. Do not repurpose it for anything else (a product-positioning doc named `WARPOS.md` is a collision that breaks `/warp:reconcile` discovery — keep positioning elsewhere).
-- **Summary table at the top** — one row per gap (`ID · Severity · Subsystem · Symptom · Local status · Upstream status`) for fast triage.
-- **Append + dedupe.** Append new gaps; before adding, scan existing entries for the same root cause and **update** rather than duplicate.
-- **paths.X rule.** Reference framework paths by registry key (`paths.eventsFile`, …), not brittle literals.
-
-## Procedure
-
-### Step 1 — Layer test (gate)
-Decide: does the gap live in the framework layer (`.claude/`, `scripts/`, hooks, dispatch/sprint/update/paths machinery)? → continue. Is it product code (`src/`, API, specs, UI)? → **stop**, route it to `issues.md` / `FAILURE_STATES.md`. Only `--product-bug` overrides, and only when you're certain it's a framework gap that merely *surfaces* in product code.
-
-### Step 2 — Locate / create `WARPOS.md`
-Open the repo-root `WARPOS.md`. If absent, create it with: a one-line purpose, the installed WarpOS version + source (read `version.json` / `.claude/framework-installed.json#installedVersion`), the severity legend, the local-vs-upstream status legend, and an empty summary table. If present, read the header convention + the highest existing `WG-N`.
-
-### Step 3 — Reproduce & trace
-Capture the **verbatim** symptom (Step-2 field 4). Trace into the framework to the real `file:line` root cause (field 5) — open the script/hook, don't guess. Note what you did to work around it (if anything) for the Local-status field.
-
-### Step 4 — Classify
-Assign severity + subsystem. Pick the next `WG-N` (after a dedupe scan; reuse/update an existing id if it's the same root cause).
-
-### Step 5 — Write the entry
-Append a section with all nine fields. Make field 9 (verify-in-canonical) concrete — a canonical agent should be able to run/inspect exactly what you name to decide REPRODUCES vs FIXED. Update the summary table row.
-
-### Step 6 — Report
-Print the entry id + one-line summary, and remind: **the fix happens in canonical via `/warp:reconcile`** (run from the WarpOS repo), which discovers this `WARPOS.md`, verifies each gap @current, triages, and drives the fix. Note once (only if `WARPOS.md` was just created) that canonical also ships machine-queryable stores — `paths.recurringIssuesFile` (`/issues:log`) and `paths.enforcementDebt` (`/enforcement:log`) — for teams that prefer tooling over the human-readable register.
-
-## Notes
-- Keep entries **dense and specific** — a canonical agent reads dozens at once; every line should change what they verify or fix next.
-- A gap that recommends a *policy* should name its **enforcer** (hook / test / check / gate) per CLAUDE.md § Policy & Enforcement Hygiene — "fix it" without an enforcer just re-opens later.
-- Sibling skill: [`/warp:reconcile`](reconcile.md) — the canonical-side consumer of every `WARPOS.md` across the portfolio.
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/warp:flag` → `/mc:flag`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

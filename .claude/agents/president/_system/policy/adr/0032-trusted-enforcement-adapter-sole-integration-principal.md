@@ -2,7 +2,7 @@
 
 - **Status:** Proposed (design-lock, SP-20260720-002 Phase 4). Ratified at merge by α.
 - **Date:** 2026-07-20
-- **Sprint:** SP-20260720-002 (WarpOS 1.0 Phase 4 finale — trusted enforcement adapter)
+- **Sprint:** SP-20260720-002 (MC 1.0 Phase 4 finale — trusted enforcement adapter)
 - **β:** DECIDE B/0.89 at plan→design (6 binding riders, OPEN_ADR flagged); design→build consult in flight.
 - **Extends:** ADR-0028 (immutable-SHA result binding), ADR-0030 (typed acceptance-record commit-identity schema), ADR-0027/0031 (agy provider strategy / legacy gemini removal — the panel-2family floor this adapter's exit proof runs on). Realizes the trust boundary DEFINED in Phase 0 (`.claude/kernel/top-level-runtime-contract.md` §1/§7, CORE-2).
 

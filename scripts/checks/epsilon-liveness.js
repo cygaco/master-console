@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/checks/epsilon-liveness.js — detect a stalled sprint conductor (WG-6).
@@ -425,7 +426,7 @@ if (require.main === module) {
   const result = evaluate({ evidenceFiles, ledgerLines, nowMs });
 
   // ED-256 paired-waiter check — ADVISORY by default (WARN); under WARPOS_WAITER_ENFORCE it BLOCKS.
-  const waiterEnforce = process.env.WARPOS_WAITER_ENFORCE === "1" || process.env.WARPOS_WAITER_ENFORCE === "true";
+  const waiterEnforce = mcEnv.readEnv("WAITER_ENFORCE") === "1" || mcEnv.readEnv("WAITER_ENFORCE") === "true";
   const pw = { findings: [], systemError: null };
   if (ledgerLines === null) {
     // backend r2 #3: under enforce an unreadable ledger is a SYSTEM ERROR (fail-closed exit 2), never a

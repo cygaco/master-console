@@ -5,7 +5,7 @@
  * release-notes-placeholder-scan.js — refuse a release capsule that still carries its own generated
  * placeholder text, or that cannot state what it was built from.
  *
- * WHY THIS EXISTS: WarpOS 1.2.0 was tagged with framework/releases/1.2.0/changelog.md and
+ * WHY THIS EXISTS: MC 1.2.0 was tagged with framework/releases/1.2.0/changelog.md and
  * upgrade-notes.md still holding the skeleton ("Replace this placeholder content with real release
  * notes before tagging", "(TODO: list user-visible changes)") and the RELEASES.md row still reading
  * "Patch bump to 1.2.0. Fill in via release notes." The release gates check manifest honesty,
@@ -15,7 +15,7 @@
  * sentinels rather than a judgement call.
  *
  * DRIFT-PROOFING: every sentinel below is a literal the GENERATOR writes
- * (scripts/warpos/release-canonical.js — the RELEASES.md summary line and the capsule skeletons).
+ * (scripts/mc/release-canonical.js — the RELEASES.md summary line and the capsule skeletons).
  * If the generator's wording changes, this list must change with it; keeping them adjacent is the
  * point. A sentinel that no longer matches anything is not a pass, it is a signal the pair drifted —
  * see --require-sentinels-live.

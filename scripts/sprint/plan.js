@@ -33,6 +33,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -96,7 +97,7 @@ function ensureCurrentSprint() {
     isolation_notes: "",
   };
   current = {
-    schema: "warpos/sprint/current-sprint/v1",
+    schema: "mc/sprint/current-sprint/v1",
     id: sid,
     title: initialTitle,
     objective: "(set by /sprint:plan)",
@@ -210,7 +211,7 @@ function writePlanContract(payload, current) {
   const pcId = planContractId(SPRINT.planContracts);
   const now = nowIso();
   const planContract = {
-    schema: "warpos/sprint/plan-contract/v1",
+    schema: "mc/sprint/plan-contract/v1",
     id: pcId,
     created_at: now,
     updated_at: now,
@@ -523,7 +524,7 @@ function main() {
       artifact_id: pcId,
       artifact_path: pcPath,
       sprint: current.id,
-      model: process.env.WARPOS_RECORDING_MODEL || "claude:claude-opus-4-8",
+      model: mcEnv.readEnv("RECORDING_MODEL") || "claude:claude-opus-4-8",
       recorded_by: "/sprint:plan",
       allow_single_vendor: true,
       auto_override: true,

@@ -15,7 +15,7 @@
  *                              per provider — the WI-19 axis surfaced as a column
  *
  * It deliberately does NOT ping the providers (no token spend, no network) — that
- * is `scripts/warpos/provider-smoke.js --per-role`'s job. This check is the fast,
+ * is `scripts/mc/provider-smoke.js --per-role`'s job. This check is the fast,
  * cheap, offline complement that catches the static failures (ghost model, bad
  * effort, missing CLI, no auth) the live smoke would otherwise burn a dispatch to
  * discover. Run it first; run smoke when this is green.
@@ -27,7 +27,7 @@
  *   PASS    — CLI present, every routed model valid, effort valid, auth present.
  *
  * FAIL-OPEN by contract: this is a diagnostic, not a gate. Exit 0 always in the
- * default mode so it can be wired into /warp:health without ever blocking. Pass
+ * default mode so it can be wired into /mc:health without ever blocking. Pass
  * --strict to exit 2 when any provider is FAIL (for CI / a deliberate gate).
  *
  * Usage:
@@ -321,7 +321,7 @@ function renderHuman(model) {
     );
   }
   out.push("");
-  out.push("Static checks only. Run `node scripts/warpos/provider-smoke.js --per-role`");
+  out.push("Static checks only. Run `node scripts/mc/provider-smoke.js --per-role`");
   out.push("for a live reachability ping when this is green.");
   return out.join("\n") + "\n";
 }
@@ -335,7 +335,7 @@ function main(argv) {
   try {
     model = buildReadiness();
   } catch (e) {
-    // Total fail-open: never crash the caller (/warp:health).
+    // Total fail-open: never crash the caller (/mc:health).
     const msg = "dispatch-readiness: internal error (fail-open): " + String((e && e.message) || e);
     if (jsonMode) {
       process.stdout.write(JSON.stringify({ ok: false, error: msg, providers: [], roles: [] }) + "\n");

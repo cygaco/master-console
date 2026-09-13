@@ -82,7 +82,7 @@ function cmdCreate(argv) {
   const id = newEsdId(SPRINT.externalServices);
   const now = nowIso();
   const esd = {
-    schema: "warpos/sprint/external-service-dependency/v1",
+    schema: "mc/sprint/external-service-dependency/v1",
     id,
     sprint: current.id,
     related_ticket: f["related-ticket"] || null,

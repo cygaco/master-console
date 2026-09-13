@@ -5,7 +5,7 @@
  *
  * Turns a product's intent (a brief from bootstrap:spinup's guided discussion,
  * or a clone doc from --clone) into the full _requirements/00-canonical/* set:
- * 8 narrative MD + 4 structured JSON, rendered from _warpos/templates/canonical/*.
+ * 8 narrative MD + 4 structured JSON, rendered from _mc/templates/canonical/*.
  *
  * Pipeline: parse intent -> map sections to template fields -> brief-EXPAND thin
  * fields from intent (WI-38; deterministic derivation BEFORE research) -> detect
@@ -44,7 +44,7 @@ const { validateArtifacts } = require("./validate");
 const { parseStackIntent } = require("./tech-stack");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const TMPL_DIR = path.join(REPO_ROOT, "_warpos", "templates", "canonical");
+const TMPL_DIR = path.join(REPO_ROOT, "_mc", "templates", "canonical");
 
 const NARRATIVE = [
   "CORE_BRIEF",
@@ -311,7 +311,7 @@ function main() {
   }
   if (!fs.existsSync(TMPL_DIR)) {
     process.stderr.write(
-      `canon templates missing at ${TMPL_DIR} — run /warp:update.\n`,
+      `canon templates missing at ${TMPL_DIR} — run /mc:update.\n`,
     );
     return 1;
   }

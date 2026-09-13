@@ -146,4 +146,4 @@ ADMIN TOOLING
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Admin tools touch real users and should stay small until operational need is proven.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Admin tools touch real users and should stay small until operational need is proven.*

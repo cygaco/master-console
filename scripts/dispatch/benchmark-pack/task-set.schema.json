@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/skill-dispatch/benchmark-task-set/v1",
+  "$id": "mc/skill-dispatch/benchmark-task-set/v1",
   "title": "Skill-dispatch §13.7 benchmark task set (SCAFFOLD — no measurements shipped yet)",
   "description": "A replayable task set that proves subprocessing a skill is WORTH IT (Axis 1: token/context savings) AND its results are GOOD (Axis 2: quality >= inline within tolerance). PLAN §13.7 + §17.5. A skill earns `execution: subprocess` only when BOTH axes pass, measured per-skill, never assumed. This schema describes the INPUT (tasks + thresholds); run artifacts/verdicts live under runs/ and results/.",
   "type": "object",
   "required": ["schema", "skill", "thresholds", "tasks"],
   "additionalProperties": false,
   "properties": {
-    "schema": { "const": "warpos/skill-dispatch/benchmark-task-set/v1" },
+    "schema": { "const": "mc/skill-dispatch/benchmark-task-set/v1" },
     "skill": {
       "type": "string",
       "description": "The skill under measurement, e.g. 'scan:full' or 'research:deep'. Must already be §13.6 subprocess_verified (a ping smoke proved it RUNS headless) before §13.7 measurement is meaningful."

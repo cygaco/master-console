@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/checks/doc-ref-integrity.js — S-13b doc-reference-integrity enforcer.
@@ -30,7 +31,7 @@
  *      (not http(s)://, #anchor, mailto:, tel:, or absolute `/…`); `#frag`/`?query`
  *      stripped before resolution.
  *   2. Backtick prose refs `` `…` `` containing a path ANCHORED to a known repo
- *      top-level dir (scripts/ .claude/ trackers/ framework/ _warpos/ runtime/)
+ *      top-level dir (scripts/ .claude/ trackers/ framework/ _mc/ runtime/)
  *      AND ending in a file extension — e.g. `scripts/checks/dispatch-contract.js`
  *      even inside `` `scripts/checks/dispatch-contract.js validate` ``. A
  *      placeholder like `scripts/<name>.js` never matches (the `<` breaks the
@@ -71,7 +72,7 @@ const norm = (p) => p.replace(/\\/g, "/");
 
 // Known repo top-level dirs that anchor a backtick prose path-ref. A backtick span
 // that doesn't START at one of these isn't a deliberate repo-file citation.
-const REPO_ANCHORS = ["scripts", ".claude", "trackers", "framework", "_warpos", "runtime"];
+const REPO_ANCHORS = ["scripts", ".claude", "trackers", "framework", "_mc", "runtime"];
 // Path-shape inside a backtick span, anchored to a repo dir + ending in an extension.
 // The `(?<![\w./-])` lookbehind keeps the anchor word-boundaried so a SUBSTRING match
 // doesn't fire — e.g. "tests/tran`scripts`/x.md" must NOT yield "scripts/x.md".
@@ -91,7 +92,7 @@ const EXCLUDED_DIR_SEGMENTS = new Set([
   "node_modules",
   ".git",
   "worktrees",
-  "releases", // framework/releases + _warpos/releases — frozen per-version capsules
+  "releases", // framework/releases + _mc/releases — frozen per-version capsules
 ]);
 function isExcludedFile(rel) {
   const segs = norm(rel).split("/");
@@ -313,7 +314,7 @@ function run() {
 function main() {
   const asJson = process.argv.includes("--json");
   const enforce =
-    process.argv.includes("--enforce") || process.env.WARPOS_DOC_REF_INTEGRITY_ENFORCE === "block";
+    process.argv.includes("--enforce") || mcEnv.readEnv("DOC_REF_INTEGRITY_ENFORCE") === "block";
   let res;
   try {
     res = run();

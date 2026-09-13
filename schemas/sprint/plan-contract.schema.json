@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/plan-contract/v1",
-  "title": "WarpOS Sprint v0.1 — Plan Contract",
+  "$id": "mc/sprint/plan-contract/v1",
+  "title": "MC Sprint v0.1 — Plan Contract",
   "description": "Durable artifact written by /sprint:plan. Single source of truth between brief founder intent and downstream design/execution. Evidence-labeled. Approval-aware. Crash-recoverable.",
   "type": "object",
   "required": [
@@ -46,7 +46,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/plan-contract/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/plan-contract/v1" },
     "id": { "type": "string", "pattern": "^PC-[0-9]{8}-[0-9]{4}$" },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" },

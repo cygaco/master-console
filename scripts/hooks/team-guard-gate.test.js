@@ -28,6 +28,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const { spawnSync } = require("child_process");
 
 const HOOK = path.join(__dirname, "team-guard.js");
@@ -74,7 +75,7 @@ function runGuard(opts = {}) {
     );
   }
   if (opts.activeTeam) {
-    const cfgDir = path.join(home, ".claude", "teams", "warpos-sprint");
+    const cfgDir = path.join(home, ".claude", "teams", "mc-sprint");
     fs.mkdirSync(cfgDir, { recursive: true });
     const members = opts.teamHasEpsilon
       ? [
@@ -112,11 +113,11 @@ function runGuard(opts = {}) {
   // S-12c is now DEFAULT-ON: the gate is active unless WARPOS_TEAM_GATE_SOFT=1.
   // `hardGate:true` is the normal shipped posture (no env needed); `hardGate:false`
   // means "explicitly soften the gate back to advisory-only" (the ramp-off path).
-  delete env.WARPOS_TEAM_GATE_HARD; // legacy force-on; default-on no longer needs it
-  if (opts.hardGate === false) env.WARPOS_TEAM_GATE_SOFT = "1";
-  else delete env.WARPOS_TEAM_GATE_SOFT;
-  if (opts.killSwitchEnv) env.WARPOS_DISABLE_TEAM_GATE = "1";
-  else delete env.WARPOS_DISABLE_TEAM_GATE;
+  mcEnv.unsetEnv("TEAM_GATE_HARD", env); // legacy force-on; default-on no longer needs it
+  if (opts.hardGate === false) mcEnv.setEnv("TEAM_GATE_SOFT", "1", env);
+  else mcEnv.unsetEnv("TEAM_GATE_SOFT", env);
+  if (opts.killSwitchEnv) mcEnv.setEnv("DISABLE_TEAM_GATE", "1", env);
+  else mcEnv.unsetEnv("DISABLE_TEAM_GATE", env);
   const r = spawnSync("node", [HOOK], { input: JSON.stringify(event), env, encoding: "utf8" });
   return { stdout: r.stdout || "", status: r.status };
 }
@@ -152,7 +153,7 @@ ok("(4) sprint + dispatch WITH verified team_name => ALLOW (into team)", () => {
     mode: "sprint",
     hardGate: true,
     agentType: "general-purpose",
-    teamName: "warpos-sprint",
+    teamName: "mc-sprint",
     activeTeam: true,
     teamHasEpsilon: true,
   });
@@ -223,7 +224,7 @@ ok("(+) team member 'epsilon-helper' (spoof) => BLOCK worker (not real ε)", () 
   fs.writeFileSync(path.join(proj, ".claude", "runtime", ".session-id"), "s-spoof");
   fs.writeFileSync(path.join(proj, ".claude", "runtime", ".sprint-oneoff-count"), "5");
   // a team whose only "ε-ish" member is a spoof substring match
-  const cfgDir = path.join(home, ".claude", "teams", "warpos-sprint");
+  const cfgDir = path.join(home, ".claude", "teams", "mc-sprint");
   fs.mkdirSync(cfgDir, { recursive: true });
   fs.writeFileSync(
     path.join(cfgDir, "config.json"),
@@ -239,9 +240,7 @@ ok("(+) team member 'epsilon-helper' (spoof) => BLOCK worker (not real ε)", () 
     tool_input: { subagent_type: "general-purpose", name: "worker" },
   };
   const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, HOME: home, USERPROFILE: home };
-  delete env.WARPOS_TEAM_GATE_HARD;
-  delete env.WARPOS_TEAM_GATE_SOFT;
-  delete env.WARPOS_DISABLE_TEAM_GATE;
+  for (const s of ["TEAM_GATE_HARD", "TEAM_GATE_SOFT", "DISABLE_TEAM_GATE"]) mcEnv.unsetEnv(s, env);
   const r = spawnSync("node", [HOOK], { input: JSON.stringify(event), env, encoding: "utf8" });
   assert.ok(isGateBlock(r.stdout || ""), "a spoof 'epsilon-helper' must not count as ε");
   assert.ok(/MISSING ε/.test(r.stdout || ""), "block reason names missing ε");

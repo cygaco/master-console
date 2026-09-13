@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * Bite-test for cert-attest.js attestPanelRun — same-run panel attestation (D8, AC-14,15 · qa-plan T5).
  *
@@ -16,7 +17,7 @@ const path = require("path");
 // ORIGIN-PROOF (ED-231 / ADR-0025): a TEST secret so the signer + verifier share it without touching the real
 // one; set BEFORE requiring cert-attest so attest-signing resolves it. A REAL record IS signed by the trusted
 // writer — rec() signs; the forgery teeth build UNSIGNED/bad-MAC records to prove the fail-closed.
-process.env.WARPOS_ATTEST_SECRET_FILE = path.join(os.tmpdir(), `attest-secret-panel-test-${process.pid}-${Date.now()}`);
+mcEnv.setEnv("ATTEST_SECRET_FILE", path.join(os.tmpdir(), `attest-secret-panel-test-${process.pid}-${Date.now()}`));
 const { attestLane, attestPanelRun, readLedgerRecords } = require("./cert-attest");
 const { signRecord } = require("../dispatch/attest-signing");
 
@@ -251,7 +252,7 @@ test("QA-014: a record with panel_run_id===run but a DIFFERENT run_id still atte
   assert.equal(out.attested, true, "a real runner record must correlate by panel_run_id, not be discarded on run_id");
 });
 test("QA-014: readLedgerRecords filters by panel_run_id, not run_id", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-qa014-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-qa014-"));
   const ledger = path.join(dir, "l.jsonl");
   try {
     const recA = JSON.stringify({ sprint_id: S, run_id: "sprint-run-XYZ", panel_run_id: R, role: "security-reviewer", provider: "openai", ok: true });

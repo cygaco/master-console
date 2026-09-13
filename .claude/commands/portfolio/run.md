@@ -4,7 +4,7 @@ description: Run a skill against another portfolio product in a fresh Claude sub
 
 # /portfolio:run — Run a skill against another product (cross-repo dispatch)
 
-`/portfolio:run <slug> /<namespace>:<skill> [args...]` — Run any skill against a registered product's working tree without leaving WarpOS. Spawns a fresh Claude subprocess with `CLAUDE_PROJECT_DIR` set to the target's `repo_path`. The current WarpOS Claude session is never retargeted.
+`/portfolio:run <slug> /<namespace>:<skill> [args...]` — Run any skill against a registered product's working tree without leaving MC. Spawns a fresh Claude subprocess with `CLAUDE_PROJECT_DIR` set to the target's `repo_path`. The current MC Claude session is never retargeted.
 
 ## Input
 
@@ -26,7 +26,7 @@ Target subprocess stdout/stderr is piped to the caller's terminal. Exit code is 
 
 ## Hard non-goal
 
-**Never retargets the current Claude session.** The subprocess receives `CLAUDE_PROJECT_DIR=<repo_path>` via its child-process environment. The parent WarpOS session's `CLAUDE_PROJECT_DIR` is never mutated (AC-7.2 invariant — observable in the trace payload via `parent_cpd_preserved: true`).
+**Never retargets the current Claude session.** The subprocess receives `CLAUDE_PROJECT_DIR=<repo_path>` via its child-process environment. The parent MC session's `CLAUDE_PROJECT_DIR` is never mutated (AC-7.2 invariant — observable in the trace payload via `parent_cpd_preserved: true`).
 
 ## Procedure
 
@@ -61,5 +61,5 @@ Emits `portfolio_dispatch` (TR-10) to `paths.eventsFile`:
 
 ## Acceptance criteria covered
 
-- AC-7.1 — `CLAUDE_PROJECT_DIR` of the subprocess equals `slug.repo_path`, not canonical WarpOS
-- AC-7.2 — subprocess exit captured in TR-10; parent WarpOS session retains its original `CLAUDE_PROJECT_DIR`
+- AC-7.1 — `CLAUDE_PROJECT_DIR` of the subprocess equals `slug.repo_path`, not canonical MC
+- AC-7.2 — subprocess exit captured in TR-10; parent MC session retains its original `CLAUDE_PROJECT_DIR`

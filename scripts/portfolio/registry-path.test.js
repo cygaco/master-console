@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/portfolio/registry-path.test.js
@@ -7,7 +8,7 @@
  * Planted-violation test for T-20260611-309.
  *
  * Asserts:
- *  1. registry.js#registryPath() resolves to ~/.warpos/portfolio.json
+ *  1. registry.js#registryPath() resolves to ~/.mc/portfolio.json
  *     (home-anchored, NOT project-local).
  *  2. The dead project-local registry.yaml (under the project portfolio dir) is
  *     NEVER what registryPath() returns. (Literal intentionally split here and
@@ -43,27 +44,33 @@ function test(name, fn) {
 }
 
 // ── 1. Default resolution is HOME-anchored ────────────────────────────────
-test("registryPath() resolves to ~/.warpos/portfolio.json", () => {
+// S-OS-06 T3 part 5 read-both: ~/.mc/portfolio.json — unless ONLY the legacy registry exists on this machine, which
+// is then used in place (never moved). The legacy dir name is derived from mc-env's prefix (no legacy literal here);
+// the sandboxed fresh/legacy-only/dual cases live in tests/regression/S-OS-06/home-read-both.test.js.
+test("registryPath() resolves to ~/.mc/portfolio.json (or an existing legacy registry, read-both)", () => {
   // Ensure no env override is active for this assertion
-  const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
-  delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+  const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+  mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
   try {
     const resolved = registryPath();
-    const expected = path.join(os.homedir(), ".warpos", "portfolio.json");
+    const fs = require("fs");
+    const current = path.join(os.homedir(), ".mc", "portfolio.json");
+    const legacy = path.join(os.homedir(), `.${mcEnv.LEGACY_PREFIX.slice(0, -1).toLowerCase()}`, "portfolio.json");
+    const expected = fs.existsSync(current) || !fs.existsSync(legacy) ? current : legacy;
     assert.strictEqual(
       resolved,
       expected,
       `Expected ${expected}, got ${resolved}`,
     );
   } finally {
-    if (saved !== undefined) process.env.WARPOS_PORTFOLIO_REGISTRY = saved;
+    if (saved !== undefined) mcEnv.setEnv("PORTFOLIO_REGISTRY", saved);
   }
 });
 
 // ── 2. Dead project-local path is NEVER returned ──────────────────────────
 test("registryPath() does NOT point at the dead project-local registry.yaml", () => {
-  const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
-  delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+  const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+  mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
   try {
     const resolved = registryPath();
     const deadPath = path.join(ROOT, ".claude", "portfolio", "registry.yaml");
@@ -78,7 +85,7 @@ test("registryPath() does NOT point at the dead project-local registry.yaml", ()
       `Expected path to start with homedir ${os.homedir()}, got ${resolved}`,
     );
   } finally {
-    if (saved !== undefined) process.env.WARPOS_PORTFOLIO_REGISTRY = saved;
+    if (saved !== undefined) mcEnv.setEnv("PORTFOLIO_REGISTRY", saved);
   }
 });
 
@@ -95,8 +102,8 @@ test("paths.json does not contain portfolioRegistry (dead path removed from gene
 // ── 4. WARPOS_PORTFOLIO_REGISTRY env override is honoured ─────────────────
 test("WARPOS_PORTFOLIO_REGISTRY env-var override is honoured by registryPath()", () => {
   const override = path.join(os.tmpdir(), "test-portfolio.json");
-  const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
-  process.env.WARPOS_PORTFOLIO_REGISTRY = override;
+  const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
+  mcEnv.setEnv("PORTFOLIO_REGISTRY", override);
   try {
     const resolved = registryPath();
     assert.strictEqual(
@@ -106,9 +113,9 @@ test("WARPOS_PORTFOLIO_REGISTRY env-var override is honoured by registryPath()",
     );
   } finally {
     if (saved !== undefined) {
-      process.env.WARPOS_PORTFOLIO_REGISTRY = saved;
+      mcEnv.setEnv("PORTFOLIO_REGISTRY", saved);
     } else {
-      delete process.env.WARPOS_PORTFOLIO_REGISTRY;
+      mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
     }
   }
 });

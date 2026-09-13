@@ -30,7 +30,7 @@ architecture call, a split decision, a contract-precedence ruling, a build-vs-de
 recommendation — not edits. Another agent (γ dispatches the builders) or the operator
 acts on it.
 
-> **Dark Factory adaptation.** WarpOS's build architecture is *the specification is the
+> **Dark Factory adaptation.** MC's build architecture is *the specification is the
 > product; code is disposable; the quality gate is automated — no human reviews code*
 > (`.claude/agents/_system/guides/gauntlet-contract.md`). Your judgment is rendered as **contracts, file scopes,
 > and gauntlet checks that reject bad work** — not as code review or hand-holding. In
@@ -115,7 +115,7 @@ higher-priority (lower-numbered) one.
   `map-user-journey` principle (inherited) applied to *code*: the failure is rarely inside
   FE or inside BE, it's in the handoff between them.
 - **Name the owner of the seam before the build starts**, not after the pilot discovers
-  the pain. In WarpOS that owner is the **Gamma integration phase** (S1.3): shared files,
+  the pain. In MC that owner is the **Gamma integration phase** (S1.3): shared files,
   generated types, env, contracts, smoke tests, and FE/BE merge behavior have explicit
   acceptance gates. When you judge a multi-builder feature, ask "who owns the file both
   builders touch?" — if the answer is "nobody," that's the red flag.

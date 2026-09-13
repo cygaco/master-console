@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/mode-lifecycle-hooks/v0.1",
+  "$schema": "mc/mode-lifecycle-hooks/v0.1",
   "_doc": "THE declarative registry of the VIRTUAL mode-lifecycle EVENTS (E-LIFECYCLE-001 / S-LC-02). A SIBLING of .claude/agents/_org/mode-lifecycle.json (the mode→contract keystone, S-LC-01) and a parallel of .claude/agents/_org/sprint-hook-points.json (the sprint agent-attachment registry) — a DISTINCT contract with its own schema string, not the sprint-hook-points schema. These events are VIRTUAL: the Claude harness cannot fire custom hook events, so every row carries harness_fires:false and is emitted as a logged `lifecycle-event` record to paths.eventsFile via scripts/hooks/lib/lifecycle-events.js#emit. The 2 REAL PreToolUse guards (mode-switch preflight, mode:init:gate) are NOT declared here — they are S-LC-03/04. This registry + the logger + the report-only coverage enforcer (scripts/checks/mode-lifecycle-hooks-coverage.js) are the EVENT SPINE only: a single place to declare what fires across the mode lifecycle, with a self-detecting assertion that every declared event has an emitter (or a documented pending-wiring entry).",
   "version": "v0.1",
   "description": "Mode-Lifecycle Hooks — the virtual (logged, not harness-fired) lifecycle-event registry for mode switch / teardown / init / session-end / resume.",

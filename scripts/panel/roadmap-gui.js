@@ -35,6 +35,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const http = require("node:http");
 const crypto = require("node:crypto");
@@ -1037,7 +1038,7 @@ function parseArgs(argv) {
   const keepalive =
     argv.includes("--review-mode") ||
     argv.includes("--no-auto-shutdown") ||
-    !!(process.env.WARPOS_GUI_KEEPALIVE || "").trim();
+    !!(mcEnv.readEnv("GUI_KEEPALIVE") || "").trim();
   // --no-open OR review-mode default to NOT opening a browser (a headless gauntlet
   // doesn't want a browser spawned; a human in review-mode can paste the URL).
   const openBrowser = !argv.includes("--no-open") && !keepalive;

@@ -1,11 +1,12 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * verified-liveness-read.test.js — the same-session liveness choke-point (SP-20260718-004 R4).
  */
 const os = require("node:os");
 const path = require("node:path");
 const fs = require("node:fs");
-process.env.WARPOS_ATTEST_SECRET_FILE = path.join(os.tmpdir(), `vlr-secret-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+mcEnv.setEnv("ATTEST_SECRET_FILE", path.join(os.tmpdir(), `vlr-secret-${Date.now()}-${Math.random().toString(36).slice(2)}`));
 
 const { test } = require("node:test");
 const assert = require("node:assert");
@@ -36,4 +37,4 @@ test("filterVerifiedLiveness keeps only the verified records", () => {
   const out = filterVerifiedLiveness([{ ...base }, signed(), { ...base, ok: false }]);
   assert.strictEqual(out.length, 1);
 });
-test("cleanup", () => { try { fs.unlinkSync(process.env.WARPOS_ATTEST_SECRET_FILE); } catch { /* ignore */ } });
+test("cleanup", () => { try { fs.unlinkSync(mcEnv.readEnv("ATTEST_SECRET_FILE")); } catch { /* ignore */ } });

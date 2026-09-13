@@ -14,12 +14,12 @@ ok("panel-registry-is-new-file-admin-registry-byte-unchanged", () => {
   const adminP = path.join(ROOT, "framework", "admin-panel-registry.json");
   assert.ok(fs.existsSync(panelP), "framework/panel-registry.json must exist (NEW file)");
   const panel = JSON.parse(fs.readFileSync(panelP, "utf8"));
-  assert.strictEqual(panel.$schema, "warpos/panel-registry/v1", "panel registry carries its own schema");
+  assert.strictEqual(panel.$schema, "mc/panel-registry/v1", "panel registry carries its own schema");
 
   // admin registry is a SEPARATE, untouched file with its own admin-scoped shape.
   assert.ok(fs.existsSync(adminP), "admin-panel-registry.json must still exist");
   const admin = JSON.parse(fs.readFileSync(adminP, "utf8"));
-  assert.strictEqual(admin.$schema, "warpos/admin-panel-registry/v1", "admin registry keeps its own schema (not folded into panel)");
+  assert.strictEqual(admin.$schema, "mc/admin-panel-registry/v1", "admin registry keeps its own schema (not folded into panel)");
   for (const k of ["admin", "readiness", "guides"]) {
     assert.ok(admin.panels && admin.panels[k], `admin registry still has its '${k}' row (untouched)`);
   }

@@ -23,7 +23,7 @@
         "skill-warp-diff",
         "skill-playbook-add",
         "skill-roadmap-prioritize",
-        "skill-scan-warpos-ship-coverage",
+        "skill-scan-mc-ship-coverage",
         "skill-scan-full",
         "skill-discover-orphaned",
         "skill-warp-reconcile",
@@ -47,7 +47,7 @@
         "skill-growth-ad-video",
         "skill-roadmap-create",
         "skill-_report_skill_tmp",
-        "skill-scan-warpos-layer-diff",
+        "skill-scan-mc-layer-diff",
         "skill-scan-scan-coverage",
         "skill-learn-ingest",
         "skill-maps-coverage",
@@ -68,7 +68,7 @@
         "skill-scan-framework-purity",
         "skill-warp-health",
         "skill-scan-docker-secrets",
-        "skill-scan-warpos-install-baseline",
+        "skill-scan-mc-install-baseline",
         "skill-session-dump",
         "skill-scan-sprint-manager-consult",
         "skill-scan-adhoc-fail-override",
@@ -135,7 +135,7 @@
         },
         {
           "id": "skill-admin-preview",
-          "name": "Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (or reuses) a fixed throwaway Next instance, boots `npm run dev`, waits for the real ready line + parses the actual port, then opens `/admin`. The keystone of the admin:* dev-tooling suite — never targets WarpOS itself.",
+          "name": "Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (or reuses) a fixed throwaway Next instance, boots `npm run dev`, waits for the real ready line + parses the actual port, then opens `/admin`. The keystone of the admin:* dev-tooling suite — never targets MC itself.",
           "status": "untested",
           "files": [
             ".claude/commands/admin/preview.md"
@@ -151,7 +151,7 @@
         },
         {
           "id": "skill-bootstrap-spinup",
-          "name": "\"From 'just WarpOS' to something on screen — one in-project command: intent (guided brief, or --clone a competitor) → canonical docs → roadmap with sprints → execute the first sprint until the core loop serves. The idea→screen on-ramp.\"",
+          "name": "\"From 'just MC' to something on screen — one in-project command: intent (guided brief, or --clone a competitor) → canonical docs → roadmap with sprints → execute the first sprint until the core loop serves. The idea→screen on-ramp.\"",
           "status": "untested",
           "files": [
             ".claude/commands/bootstrap/spinup.md"
@@ -415,7 +415,7 @@
         },
         {
           "id": "skill-panel-admin",
-          "name": "Open a product's in-app founder admin panel in the browser (run-in-product, never WarpOS itself). A thin /panel:* forwarder to the canonical admin:preview opener — ZERO duplicated logic.",
+          "name": "Open a product's in-app founder admin panel in the browser (run-in-product, never MC itself). A thin /panel:* forwarder to the canonical admin:preview opener — ZERO duplicated logic.",
           "status": "untested",
           "files": [
             ".claude/commands/panel/admin.md"
@@ -463,7 +463,7 @@
         },
         {
           "id": "skill-portfolio-new",
-          "name": "Scaffold a new product repo (sibling to WarpOS) with the framework installed and committed, then register it — local-only by default. Open it in its own session and create the GitHub remote yourself, or pass --github to also create+push a private repo.",
+          "name": "Scaffold a new product repo (sibling to MC) with the framework installed and committed, then register it — local-only by default. Open it in its own session and create the GitHub remote yourself, or pass --github to also create+push a private repo.",
           "status": "untested",
           "files": [
             ".claude/commands/portfolio/new.md"
@@ -471,7 +471,7 @@
         },
         {
           "id": "skill-portfolio-spinup",
-          "name": "\"From WarpOS, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spinup into the product's repo. Thin wrapper over bootstrap:spinup (the real implementation).\"",
+          "name": "\"From MC, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spinup into the product's repo. Thin wrapper over bootstrap:spinup (the real implementation).\"",
           "status": "untested",
           "files": [
             ".claude/commands/portfolio/spinup.md"
@@ -591,7 +591,7 @@
         },
         {
           "id": "skill-scan-full",
-          "name": "Run every scan in parallel — a full system scan across project health, governance, and WarpOS distribution integrity — merged into one unified report. One command for full system health.",
+          "name": "Run every scan in parallel — a full system scan across project health, governance, and MC distribution integrity — merged into one unified report. One command for full system health.",
           "status": "untested",
           "files": [
             ".claude/commands/scan/full.md"
@@ -607,7 +607,7 @@
         },
         {
           "id": "skill-scan-install",
-          "name": "Verify a fresh WarpOS install — manifest, paths, agents, hooks, version, settings.",
+          "name": "Verify a fresh MC install — manifest, paths, agents, hooks, version, settings.",
           "status": "untested",
           "files": [
             ".claude/commands/scan/install.md"
@@ -639,7 +639,7 @@
         },
         {
           "id": "skill-scan-scaffold-coverage",
-          "name": "Verify the WarpOS app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is complete and coherent — fail-closed enforcer for S0.3, so every scaffolded product ships a real component library, not vibe-coded raw elements.",
+          "name": "Verify the MC app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is complete and coherent — fail-closed enforcer for S0.3, so every scaffolded product ships a real component library, not vibe-coded raw elements.",
           "status": "untested",
           "files": [
             ".claude/commands/scan/scaffold-coverage.md"
@@ -687,7 +687,7 @@
         },
         {
           "id": "skill-scan-system",
-          "name": "System inventory — enumerate every active WarpOS system, diff against manifest, report drift and gaps",
+          "name": "System inventory — enumerate every active MC system, diff against manifest, report drift and gaps",
           "status": "untested",
           "files": [
             ".claude/commands/scan/system.md"
@@ -702,27 +702,27 @@
           ]
         },
         {
-          "id": "skill-scan-warpos-install-baseline",
-          "name": "Verify a WarpOS install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /warp:update may proceed.",
+          "id": "skill-scan-mc-install-baseline",
+          "name": "Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion ≠ 0.0.0) before /mc:update may proceed.",
           "status": "untested",
           "files": [
-            ".claude/commands/scan/warpos-install-baseline.md"
+            ".claude/commands/scan/mc-install-baseline.md"
           ]
         },
         {
-          "id": "skill-scan-warpos-layer-diff",
-          "name": "Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer products (product layer) vs which stay framework-internal and never ship (dev-tooling layer), with summary counts. Cross-references _warpos/MANIFEST.json (ownership) × .claude/framework-manifest.json (shipped). Informational, never a gate.",
+          "id": "skill-scan-mc-layer-diff",
+          "name": "Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer products (product layer) vs which stay framework-internal and never ship (dev-tooling layer), with summary counts. Cross-references _mc/MANIFEST.json (ownership) × .claude/framework-manifest.json (shipped). Informational, never a gate.",
           "status": "untested",
           "files": [
-            ".claude/commands/scan/warpos-layer-diff.md"
+            ".claude/commands/scan/mc-layer-diff.md"
           ]
         },
         {
-          "id": "skill-scan-warpos-ship-coverage",
+          "id": "skill-scan-mc-ship-coverage",
           "name": "Verify every framework-owned path under the consumer-essential roots is actually shipped (enumerated in framework-manifest.json) — catches \"framework code that ships to nobody\" (the B1/E3 downstream-broken class).",
           "status": "untested",
           "files": [
-            ".claude/commands/scan/warpos-ship-coverage.md"
+            ".claude/commands/scan/mc-ship-coverage.md"
           ]
         },
         {
@@ -815,26 +815,26 @@
         },
         {
           "id": "skill-warp-diff",
-          "name": "Diff canonical WarpOS against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.",
+          "name": "Diff canonical MC against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.",
           "status": "untested",
           "files": [
-            ".claude/commands/warp/diff.md"
+            ".claude/commands/mc/diff.md"
           ]
         },
         {
           "id": "skill-warp-health",
-          "name": "Verify WarpOS installation — checks every system, reports green/yellow/red with plain-English fixes",
+          "name": "Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes",
           "status": "untested",
           "files": [
-            ".claude/commands/warp/health.md"
+            ".claude/commands/mc/health.md"
           ]
         },
         {
           "id": "skill-warp-reconcile",
-          "name": "Reconcile downstream-flagged WarpOS gaps into canonical — discover every product's WARPOS.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.",
+          "name": "Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.",
           "status": "untested",
           "files": [
-            ".claude/commands/warp/reconcile.md"
+            ".claude/commands/mc/reconcile.md"
           ]
         }
       ]

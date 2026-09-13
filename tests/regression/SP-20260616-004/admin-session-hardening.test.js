@@ -22,7 +22,7 @@ const path = require("path");
 const { createHmac, timingSafeEqual } = require("node:crypto");
 
 const ROOT = path.resolve(__dirname, "../../..");
-const TMPL = path.join(ROOT, "_warpos/templates/app-scaffold/src/lib/admin/config.ts.tmpl");
+const TMPL = path.join(ROOT, "_mc/templates/app-scaffold/src/lib/admin/config.ts.tmpl");
 
 let passed = 0, failed = 0;
 const fails = [];

@@ -13,7 +13,7 @@
  *
  * FAIL-CLOSED: if the policy module can't be loaded, or a wrapper's bound can't be
  * computed (constant missing / not a finite number), that reads as a VIOLATION — not
- * a pass. Mirrors the warpos-install-baseline fail-closed pattern.
+ * a pass. Mirrors the mc-install-baseline fail-closed pattern.
  *
  * PLANTED-VIOLATION: use `runChecks({ wrapperDefaults: { "bad-wrapper": 30*60*1000 } })`
  * to confirm a >540s foreground bound is caught as red. See the companion test.

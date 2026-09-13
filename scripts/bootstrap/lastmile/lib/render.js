@@ -2,7 +2,7 @@
 /**
  * lib/render.js — tiny template renderer + artifact writer for lastmile phases.
  *
- * Templates ship in _warpos/templates/lastmile/<basename>.tmpl.md (framework-
+ * Templates ship in _mc/templates/lastmile/<basename>.tmpl.md (framework-
  * owned, installed into consumer products). Each template uses a small fixed var
  * set ({{title}}, {{generated_at}}, {{summary}}, {{body}}) so templates stay
  * trivial + stable and the PHASES own the document content. If a template is
@@ -14,7 +14,7 @@ const fs = require("fs");
 const path = require("path");
 
 // scripts/bootstrap/lastmile/lib → repo root is four levels up.
-const TEMPLATE_DIR = path.join(__dirname, "..", "..", "..", "..", "_warpos", "templates", "lastmile");
+const TEMPLATE_DIR = path.join(__dirname, "..", "..", "..", "..", "_mc", "templates", "lastmile");
 
 function fillTemplate(basename, vars) {
   let tmpl = null;

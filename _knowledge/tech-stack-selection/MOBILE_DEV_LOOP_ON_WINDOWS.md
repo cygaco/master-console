@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Keep mobile-first products buildable and testable from a Windows PC — the default WarpOS founder environment. Stack choice determines whether the daily dev loop runs on the PC or stalls on missing Apple hardware.
+Keep mobile-first products buildable and testable from a Windows PC — the default MC founder environment. Stack choice determines whether the daily dev loop runs on the PC or stalls on missing Apple hardware.
 
 ## Doctrine (verified 2026-06)
 

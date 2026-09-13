@@ -21,7 +21,7 @@ node scripts/checks/leak-gate.js --json
 |---|---|---|---|
 | privacy | `scripts/check/privacy.js` | credential markers (HIGH), non-placeholder emails + known names (MED), tracked files under `paths.runtime` / `paths.events` / `paths.memory` (HIGH). LOW homedir paths are report-only (`--strict` to fail; `--advisory` = old HIGH-only behaviour). Placeholder emails live in `scripts/check/privacy.allowlist.json`. | `scripts/check/privacy.test.js` |
 | framework-purity | `scripts/checks/framework-purity.js --full` | private product slugs anywhere in tracked content (only planning/history records exempt), maintainer abs paths in executable/config files under `scripts/` + `.claude/`, promote-relic reintroduction | `framework-purity.test.js`, `framework-purity-gate.test.js` |
-| tracked-transients | `scripts/checks/warpos-tracked-transients.js` | tracked/staged `.warpos/`, QA screenshots, owner=runtime logs, anything under the β mining output dir, `runtime/**/*.{jsonl,log,diff,err,out}`, transcript-like `runtime/**/*.txt` > 200 KB. Exceptions need a reason in `warpos-tracked-transients.allowlist.json` (currently empty). | `warpos-tracked-transients.test.js` |
+| tracked-transients | `scripts/checks/mc-tracked-transients.js` | tracked/staged `.mc/`, QA screenshots, owner=runtime logs, anything under the β mining output dir, `runtime/**/*.{jsonl,log,diff,err,out}`, transcript-like `runtime/**/*.txt` > 200 KB. Exceptions need a reason in `mc-tracked-transients.allowlist.json` (currently empty). | `mc-tracked-transients.test.js` |
 | leak-denylist | `scripts/checks/leak-denylist.js` | any phrase the 2026-09-03 history rewrite removed — matched by sliding k-word window against `scripts/checks/leak-denylist.json`, which holds only `{ kind, words, chars, sha256, label }` (hash of the normalised phrase; never plaintext). A hit prints `file:line [label]`, never the text. Add an entry with `--add "<phrase>" --label <l>`. A 0-entry list is a fail (exit 2), not a pass. | `leak-denylist.test.js` |
 | readme-drift | `scripts/checks/readme-drift.js` | README fact lines `**Version:** …` / `**Skills:** N slash commands` / `**Hooks:** N automated hooks` missing or unequal to `package.json`, the tracked `paths.commands` `.md` count, and the hook-entry count in `.claude/settings.json` | `readme-drift.test.js` |
 
@@ -39,4 +39,4 @@ The denylist and this doc describe the banned **classes**, never the strings. No
 - `leak-denylist` — rewrite the flagged line; never store the phrase anywhere tracked.
 - `readme-drift` — update the three fact lines in README.md to the printed expected values.
 
-Related: `/scan:privacy`, `/scan:framework-purity`, `/scan:warpos-tracked-transients`. Wired into `/scan:full` (Tier 3).
+Related: `/scan:privacy`, `/scan:framework-purity`, `/scan:mc-tracked-transients`. Wired into `/scan:full` (Tier 3).

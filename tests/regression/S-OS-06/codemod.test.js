@@ -103,43 +103,80 @@ try {
   if (fixtureDir) rmrf(fixtureDir);
 }
 
-// AC-1.3: a write-protected path that WOULD be touched by a naive rename must cause
-// --apply to REFUSE (throw), never silently skip-and-continue.
+// T3 part 0 ruling (rename candidacy vs write permission): a Class-3/4 historical path that a
+// naive rename WOULD touch is never a rename CANDIDATE — it keeps its name verbatim and is
+// recorded in keptHistoricalPaths (not pathRenames, not refusedRenames), so --apply proceeds.
+const { loadPartition: loadRealPartition } = require(path.join(ROOT, "scripts", "open-source", "partition-loader.js"));
+
+function makeBareFixture(prefix) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+  git(["init", "-q"], dir);
+  git(["config", "user.email", "test@example.com"], dir);
+  git(["config", "user.name", "S-OS-06 fixture"], dir);
+  return dir;
+}
+
 let protectedFixtureDir;
 try {
-  protectedFixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), "rename-mc-protected-fixture-"));
-  git(["init", "-q"], protectedFixtureDir);
-  git(["config", "user.email", "test@example.com"], protectedFixtureDir);
-  git(["config", "user.name", "S-OS-06 fixture"], protectedFixtureDir);
+  protectedFixtureDir = makeBareFixture("rename-mc-protected-fixture-");
   // Mirrors the real tree's own denylisted glob (framework/releases/**) with a
   // basename ("warpos") that WOULD be renamed by the generic segment rule — the
-  // exact shape the real tree already exhibits (framework/releases isn't hit
-  // today only because none of its 200 capsules happen to have a bare "warpos"
-  // path segment; this fixture forces the case so the refusal is exercised).
+  // exact shape the real tree exhibits with _planning/warpos-lifecycle-plan.md.
+  const HISTORICAL_REL = "framework/releases/warpos/notes.md";
+  const HISTORICAL_BODY = "historical warpos release notes\n";
   fs.mkdirSync(path.join(protectedFixtureDir, "framework", "releases", "warpos"), { recursive: true });
-  fs.writeFileSync(
-    path.join(protectedFixtureDir, "framework", "releases", "warpos", "notes.md"),
-    "historical warpos release notes\n",
-    "utf8"
-  );
+  fs.writeFileSync(path.join(protectedFixtureDir, ...HISTORICAL_REL.split("/")), HISTORICAL_BODY, "utf8");
   git(["add", "-A"], protectedFixtureDir);
 
-  ok("apply-refuses-write-protected-touch", () => {
-    assert.throws(
-      () => RENAME_MC.runApply({ root: protectedFixtureDir }),
-      /write-protected/,
-      "runApply must throw rather than silently rename a Class-4 (framework/releases/**) path"
+  ok("class4-historical-path-is-kept-never-a-rename-candidate", () => {
+    const built = RENAME_MC.buildLedgerAndPlan({ root: protectedFixtureDir, partition: loadRealPartition({ forceReload: true }) });
+    assert.ok(
+      built.keptHistoricalPaths.some((k) => k.path === HISTORICAL_REL && k.class === 4 && k.wouldBe === "framework/releases/mc/notes.md"),
+      `the Class-4 path must be recorded in keptHistoricalPaths: ${JSON.stringify(built.keptHistoricalPaths)}`
     );
+    assert.ok(!built.pathRenames.some((r) => r.from === HISTORICAL_REL), "a Class-4 path is never in pathRenames");
+    assert.strictEqual(built.refusedRenames.length, 0, "a Class-4 path is never a refusal (it is not a candidate)");
   });
 
-  ok("apply-refusal-leaves-the-protected-path-untouched", () => {
-    assert.ok(
-      fs.existsSync(path.join(protectedFixtureDir, "framework", "releases", "warpos", "notes.md")),
-      "the protected path must still exist at its original location after the refused apply"
+  ok("apply-keeps-the-class4-historical-path-name-and-bytes-verbatim", () => {
+    const result = RENAME_MC.runApply({ root: protectedFixtureDir });
+    assert.ok(result.ok, "apply proceeds: a kept historical path is not a refusal");
+    assert.strictEqual(result.renamed, 0, "nothing is renamed");
+    assert.strictEqual(
+      fs.readFileSync(path.join(protectedFixtureDir, ...HISTORICAL_REL.split("/")), "utf8"),
+      HISTORICAL_BODY,
+      "the historical path keeps its name and bytes"
     );
+    assert.ok(!fs.existsSync(path.join(protectedFixtureDir, "framework", "releases", "mc", "notes.md")), "no renamed copy appears");
   });
 } finally {
   if (protectedFixtureDir) rmrf(protectedFixtureDir);
+}
+
+// AC-1.3: a GENUINE refusal still throws — a Class-2 (gated, write-protected) path on a rename
+// path must cause --apply to REFUSE, never silently skip-and-continue. (F9 covers the
+// target-lands-on-a-write-protected-path refusal; F5 the generated-view refusals.)
+let gatedFixtureDir;
+try {
+  gatedFixtureDir = makeBareFixture("rename-mc-gated-fixture-");
+  fs.mkdirSync(path.join(gatedFixtureDir, ".github", "warpos"), { recursive: true });
+  fs.writeFileSync(path.join(gatedFixtureDir, ".github", "warpos", "ci.yml"), "name: warpos ci\n", "utf8");
+  git(["add", "-A"], gatedFixtureDir);
+
+  ok("apply-refuses-a-write-protected-class2-rename", () => {
+    assert.throws(
+      () => RENAME_MC.runApply({ root: gatedFixtureDir }),
+      /\.github\/warpos\/ci\.yml -> \.github\/mc\/ci\.yml is write-protected \(class 2, path-glob\)/,
+      "runApply must throw rather than silently rename a Class-2 (.github/**) path"
+    );
+  });
+
+  ok("apply-refusal-leaves-the-gated-path-untouched", () => {
+    assert.ok(fs.existsSync(path.join(gatedFixtureDir, ".github", "warpos", "ci.yml")), "the gated path must still exist after the refused apply");
+    assert.ok(!fs.existsSync(path.join(gatedFixtureDir, ".github", "mc", "ci.yml")), "the gated path was not renamed");
+  });
+} finally {
+  if (gatedFixtureDir) rmrf(gatedFixtureDir);
 }
 
 console.log(`\ncodemod: ${pass}/${pass + fail} pass`);

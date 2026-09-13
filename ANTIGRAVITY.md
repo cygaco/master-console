@@ -5,8 +5,8 @@
 > from `.claude/project/reference/entry-preamble.md`, hash-parity-checked); this file adds ONLY what is
 > different under `agy`. (SP-20260723-001 / ADR-0036.)
 
-<!-- WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
-**What this repo is.** WarpOS is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
+<!-- MC:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
+**What this repo is.** MC is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
 
 **Read order — once, then act.**
 1. `DUMP.md` (repo root, local) — the session handoff: next action, in-flight state, verbatim payloads. Read once, then execute.
@@ -18,7 +18,7 @@
 **Guards, gates, and output destinations.** The repo's guarantees are enforced: the `refs/heads/main` reference-transaction fence (every write to main goes through the broker), `/scan:full`, and the release gates. Every policy names an enforcer or logs the debt. Write per-run output under `runtime/`, never a manifest-tracked project dir. Orchestrators hold envelopes, not content — heavy work goes to a subprocess that writes its full output to a file and returns a short envelope. Regenerate both manifests after editing any hash-tracked file.
 
 **For identity, authority, and the complete rules, read `CLAUDE.md`.**
-<!-- WARPOS:ENTERING-AGENT-PREAMBLE:END -->
+<!-- MC:ENTERING-AGENT-PREAMBLE:END -->
 
 ## What is DIFFERENT under Antigravity (`agy`)
 
@@ -36,4 +36,4 @@ A cross-provider review **inlines its content into the `-p` value** (like the GP
 
 **4. Headless tool permissions — model EXISTS, headless enforcement UNVERIFIED.** `agy` (**1.1.5**) HAS a per-tool permission model: a `settings.json` `{ "permissions": { "allow": [], "deny": [], "ask": [] } }` block with `action(target)` rules (`read_file`/`write_file`/`read_url`/`command`/`unsandboxed`/`mcp`), plus the `--dangerously-skip-permissions` flag (**NEVER use** — auto-approves everything). A headless task that needs a tool (e.g. reading a file via its shell) hits a "command permission auto-denied" wall, and `agy`'s own error points at `permissions.allow` in `settings.json`. **BUT whether adding a scoped allow-rule actually ENFORCES headless is UNVERIFIED** (not yet probed) — do NOT rely on it, and do NOT add a `permissions` block speculatively, until it is empirically tested. This does NOT affect cross-provider **review**: the dispatch `-p` PRINT path inlines the review content and invokes no agentic tools (§2), so a toolless review needs no permission and works today. `agy` READING files headlessly (needed only for a big diff that exceeds the ~32KB `-p` bound) would require the allow-rule **and** an enforcement probe — an OPTIONAL operator-machine security-posture decision, out of scope until requested (recommendation when opened: a pure file-reader floor — allow reads, deny writes/destructive; NEVER `--dangerously-skip-permissions`). *(This corrects a prior ADR-0031 amendment that read `agy`@1.1.4 as exposing no permission mechanism — that read is STALE: the installed `agy`@1.1.5 exposes the model above, ground-truth-verified 2026-07-23.)*
 
-**5. Same executor-mechanics as the other non-Claude CLIs.** As with Codex: no WarpOS hooks fire (the guards are your manual responsibility), you have no in-process Agent tool (dispatch via the CLI routes only), builders dispatch FOREGROUND (the reap), and cross-provider review stays real (a binding FAIL cannot be overridden). See `CODEX.md` §§3–6 for the detail — the mechanics are identical; only the invocation + the ED-230 honesty above differ.
+**5. Same executor-mechanics as the other non-Claude CLIs.** As with Codex: no MC hooks fire (the guards are your manual responsibility), you have no in-process Agent tool (dispatch via the CLI routes only), builders dispatch FOREGROUND (the reap), and cross-provider review stays real (a binding FAIL cannot be overridden). See `CODEX.md` §§3–6 for the detail — the mechanics are identical; only the invocation + the ED-230 honesty above differ.

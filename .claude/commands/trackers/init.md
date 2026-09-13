@@ -32,7 +32,7 @@ node scripts/trackers/validate.js              # expect: all 20 checks pass, exi
 
 ## Templates are framework content (not generated here)
 
-The 9 §33 templates under `trackers/templates/*` are **framework content shipped by the capsule** — this initializer does NOT generate them; it assumes they exist at the target. If any are missing, init prints a `WARN` and `/trackers:validate`'s `required-paths` check will FAIL until the capsule ships them. (In canonical WarpOS the templates are already present.)
+The 9 §33 templates under `trackers/templates/*` are **framework content shipped by the capsule** — this initializer does NOT generate them; it assumes they exist at the target. If any are missing, init prints a `WARN` and `/trackers:validate`'s `required-paths` check will FAIL until the capsule ships them. (In canonical MC the templates are already present.)
 
 ## Safety
 

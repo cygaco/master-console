@@ -1,20 +1,4 @@
 #!/usr/bin/env node
-// scan:warpos-roundtrip — STUB.
-// Verify product → canonical (/warp:promote) → product (/warp:update) is byte-stable
-// for files in FRAMEWORK_PREFIXES. Refine via /reasoning:run with this prompt:
-//
-// "Design a check that verifies the product↔canonical↔product round-trip preserves
-//  bytes for any FRAMEWORK_PREFIX file. Should it be a property test, integration
-//  test, or CI fixture? What's the failure-mode taxonomy (line-ending drift,
-//  YAML reordering, JSON whitespace, BOM, schema-coercion)?"
-//
-// Pre-stub behaviour: succeed with TODO note so /scan:full stays green.
-const JSON_OUT = process.argv.includes("--json");
-const out = {
-  ok: true,
-  status: "stub",
-  todo: "design via /reasoning:run before promoting beyond stub",
-};
-if (JSON_OUT) console.log(JSON.stringify(out));
-else console.log("OK   [warpos-roundtrip] STUB — design via /reasoning:run");
-process.exit(0);
+"use strict";
+// DEPRECATED alias shim (S-OS-06, mc@2.0.0) -> scripts/checks/mc-roundtrip.js. Legacy name kept for the 2.0.x compat window; removed in 2.1.0.
+if (require.main === module) { const r = require("child_process").spawnSync(process.execPath, [require.resolve("./mc-roundtrip.js"), ...process.argv.slice(2)], { stdio: "inherit" }); process.exit(r.error || r.status === null ? 1 : r.status); } else { module.exports = require("./mc-roundtrip.js"); }

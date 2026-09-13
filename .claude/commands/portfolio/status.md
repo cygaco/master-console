@@ -1,5 +1,5 @@
 ---
-description: Portfolio dashboard — per-product WarpOS version, last commit, dirty count, current sprint, GitHub remote (parallel, 5s per-product timeout).
+description: Portfolio dashboard — per-product MC version, last commit, dirty count, current sprint, GitHub remote (parallel, 5s per-product timeout).
 ---
 
 # /portfolio:status — Portfolio Dashboard

@@ -35,6 +35,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const { spawnSync } = require("child_process");
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const REPO = path.resolve(__dirname, "..", "..");
 
@@ -71,14 +72,14 @@ function copyDirSync(src, dst) {
 function buildProject(opts) {
   const { withPrimary = true } = opts || {};
   const tmp = fs.mkdtempSync(
-    path.join(os.tmpdir(), "warpos-plan-registry-primary-"),
+    path.join(os.tmpdir(), "mc-plan-registry-primary-"),
   );
   // Minimal project skeleton — just what plan.js needs to resolve paths,
   // templates, and schemas.
   for (const rel of [
     ".claude/paths.json",
     "schemas/sprint",
-    "_warpos/templates/sprint",
+    "_mc/templates/sprint",
     ROUTING_REL,
   ]) {
     const src = path.join(REPO, rel);
@@ -109,7 +110,7 @@ function buildProject(opts) {
   const sprintId = "SP-20260518-001";
   if (withPrimary) {
     const reg = [
-      "schema: warpos/sprint/active-sprints/v1",
+      "schema: mc/sprint/active-sprints/v1",
       `primary: ${sprintId}`,
       "sprints:",
       `  - id: ${sprintId}`,
@@ -163,7 +164,7 @@ function runPlan(tmp, payloadPath, extraArgs) {
   // worktree we're invoked from.
   env.CLAUDE_PROJECT_DIR = tmp;
   // Don't carry over a stale sprint id from a prior test or the host shell.
-  delete env.WARPOS_SPRINT_ID;
+  mcEnv.unsetEnv("SPRINT_ID", env);
   const r = spawnSync(
     process.execPath,
     [planJs, "--payload", payloadPath, ...(extraArgs || [])],

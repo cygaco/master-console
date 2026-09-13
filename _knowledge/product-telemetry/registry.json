@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/product-telemetry-knowledge/v0.1",
+  "$schema": "mc/product-telemetry-knowledge/v0.1",
   "version": "v0.1",
   "guides": [
     {

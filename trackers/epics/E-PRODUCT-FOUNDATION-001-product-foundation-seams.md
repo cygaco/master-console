@@ -24,7 +24,7 @@
 - [x] T-G: the 3 new guides exist with guide-anchor contracts and registry entries; ENFORCER = /guides:coverage green.
 - [x] T-K: the 3 new _knowledge LIBRARY domains exist with _domain.json + consumer marker blocks; ENFORCER = /knowledge:coverage green.
 - [x] T-P: >=2 situational playbooks authored (launch-readiness, provider-setup) per SUITE-DESIGN.md; ENFORCER = a playbook-suite presence check wired into a scan, or an /enforcement:log debt entry if deferred. Landed locally in S-PF-07 with all five designed playbooks authored (`launch-readiness`, `provider-setup`, `mode-switch`, `incident-response`, `retro-loop`) and `scripts/checks/playbook-suite-coverage.js` wired into `/scan:full`.
-- [x] Downstream integrity: both manifests regenerated; warpos-ship-coverage green through every scaffold-layer change; no NOTAGAIN §6 receipt re-fixed. Rechecked in S-PF-07 after adding the playbook-suite enforcer (`framework-manifest` current, `_warpos/MANIFEST` strict OK, ship-coverage green).
+- [x] Downstream integrity: both manifests regenerated; mc-ship-coverage green through every scaffold-layer change; no NOTAGAIN §6 receipt re-fixed. Rechecked in S-PF-07 after adding the playbook-suite enforcer (`framework-manifest` current, `_mc/MANIFEST` strict OK, ship-coverage green).
 - [x] Tracker hygiene: ROADMAP § Epics + TRACKER.md reconciled (DONE 2026-06-12 — Claude audit reconciled both; re-reconciled at close 2026-06-16); every sprint id minted explicitly via add-sprint.js (RI-007) — **CLOSED 2026-06-16 via explicit RI-007 WAIVER (β-ratified DECIDE 0.90, EVT not gated):** S-PF-02..S-PF-08 ran as evidenced epic work-items on the S-PF-01 branch without individual mints; each carries a dated § Session log entry + CODEX-LOG.md receipts + a passing per-sprint regression suite, so the work is fully traceable WITHOUT the mints. Backfilling empty sprint dirs = ceremony, not evidence (RI-001/RI-007 precedent: close via evidence, not skeleton records). Waiver rationale + forward-fix recorded in `_reports/E-PRODUCT-FOUNDATION-001-epic-retro.md`. β HOW-condition honored: `validate.js` re-run 20/20 with the epic at Completed 100% (see § Session log 2026-06-16).
 
 ## Related definitions
@@ -129,7 +129,7 @@
 - Evidence/references: `CODEX-LOG.md` 2026-06-11 S-PF-08 entries.
 
 ### 2026-06-14 — S-PF-09a R-2 founder in-app panel LANDED
-- Agent(s): Alex α (Opus 4.8) wearing the ε face + warpos-sprint team (ε conductor, β judgment); 4 parallel Agent-tool builders/fixers - Mode: sprint
+- Agent(s): Alex α (Opus 4.8) wearing the ε face + mc-sprint team (ε conductor, β judgment); 4 parallel Agent-tool builders/fixers - Mode: sprint
 - Work performed: built + landed SP-20260614-001 (S-PF-09a R-2) — the W3 in-app founder launch-readiness panel: founder-allowlist-gated `/admin/readiness` board (cold/warm/all-done FTUE, owner-action-only checkable, deep-link CTAs), `/admin/guides/[ref]` viewer (path-traversal-hardened, registry-allowlisted) + 8 producer-referenceable guides (brand-sanitized), surgical `FOUNDERS_CHECKLIST.md` write-back (id-matched in-place toggle, atomic, patch-on-current, server-derived authz, never-swallow error surface), scaffold-coverage addReadinessSurface/GuideChecks, fail-closed brand-leak-scan.js, design-quality-gate wired report-only into sprint-composition.
 - Files changed: framework/templates/app-scaffold/src/app/admin/readiness/{page.tsx,actions.ts,ToggleControl.tsx}.tmpl, .../guides/[ref]/page.tsx.tmpl + _content/{8 guides}.md.tmpl, src/lib/readiness/{types,group,writeback}.ts.tmpl, scripts/checks/{scaffold-coverage-scan,brand-leak-scan}.js, scripts/sprint/epsilon-runtime.js, .claude/agents/_org/sprint-hook-points.json, tests/regression/SP-20260614-001/* (8 suites), ROADMAP.md (seam groups), TRACKER.md, sprint records.
 - State change: Active -> Active; Completion ~99% -> ~99% (R-2 is an additional W3-arc surface within the ~99%; epic close gate = retro, unchanged).
@@ -147,7 +147,7 @@
 - Evidence/references: AP-20260612-029, RL-20260611-045 (status=deployed), `.claude/project/sprint/history/S-PF-01/retro.md`.
 
 ### 2026-06-16 — Epic close (Completed 100%)
-- Agent(s): Alex α (Opus 4.8) wearing the ε face + warpos-sprint team (β judgment) · Mode: sprint
+- Agent(s): Alex α (Opus 4.8) wearing the ε face + mc-sprint team (β judgment) · Mode: sprint
 - Work performed: closed E-PRODUCT-FOUNDATION-001 to Completed 100%. Resolved the one open DoD item (RI-007 sprint-mint residual) via an explicit β-ratified WAIVER rather than backfilling 7 empty sprint dirs — the S-PF-02..08 work is fully evidenced (session-log + CODEX-LOG receipts + per-sprint regression suites). Authored the epic retro `_reports/E-PRODUCT-FOUNDATION-001-epic-retro.md`.
 - Files changed: this file (state Active→Completed, percent ~99%→100%, DoD tracker-hygiene item [x]), `_reports/E-PRODUCT-FOUNDATION-001-epic-retro.md` (new), ROADMAP.md (§ Planned epics → Completed), TRACKER.md (next-action + global state reconciled).
 - Decisions: RI-007 waiver (β DECIDE 0.90, class B reversible bookkeeping) — close via evidence not skeleton records.
@@ -257,12 +257,12 @@
 
 ### 2026-06-11 - S-PF-07 playbook authoring
 - Evidence type: Coverage + bite-test.
-- Detail/location: `node scripts/checks/playbook-suite-coverage.js --json` PASS (`5 authored playbook(s)`, `5 required`, `6 required section(s)`); `node scripts/checks/playbook-suite-coverage.test.js` PASS (`7/7`); `node scripts/checks/scan-coverage.js --json` PASS; `node scripts/checks/warpos-ship-coverage.js --json` PASS.
+- Detail/location: `node scripts/checks/playbook-suite-coverage.js --json` PASS (`5 authored playbook(s)`, `5 required`, `6 required section(s)`); `node scripts/checks/playbook-suite-coverage.test.js` PASS (`7/7`); `node scripts/checks/scan-coverage.js --json` PASS; `node scripts/checks/mc-ship-coverage.js --json` PASS.
 - Verified by: Codex - Supports: Definition of Done T-P.
 
 ### 2026-06-11 - S-PF-08 mobile billing policy seam
 - Evidence type: Regression + enforcer checks.
-- Detail/location: `node tests/regression/S-PF-08/mobile-billing.test.js` PASS (`4/4`); `node scripts/checks/scaffold-coverage-scan.js --json` PASS; `node scripts/bootstrap/lastmile/test-orchestrate.js` PASS (`61/61`); `node scripts/warpos/manifest/validate.js --strict` PASS; `node scripts/trackers/validate.js` PASS (`20/20`); `node scripts/testsuite/enforce.js` PASS (`0 NEW regressions`, known baseline reds `BC-17`, `BC-26`).
+- Detail/location: `node tests/regression/S-PF-08/mobile-billing.test.js` PASS (`4/4`); `node scripts/checks/scaffold-coverage-scan.js --json` PASS; `node scripts/bootstrap/lastmile/test-orchestrate.js` PASS (`61/61`); `node scripts/mc/manifest/validate.js --strict` PASS; `node scripts/trackers/validate.js` PASS (`20/20`); `node scripts/testsuite/enforce.js` PASS (`0 NEW regressions`, known baseline reds `BC-17`, `BC-26`).
 - Verified by: Codex - Supports: mobile billing follow-up DoD.
 
 ## Verification log

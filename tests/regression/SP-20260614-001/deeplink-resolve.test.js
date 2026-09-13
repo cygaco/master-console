@@ -20,7 +20,7 @@ const {
 
 const GUIDE_PAGE = path.join(
   REPO,
-  "_warpos",
+  "_mc",
   "templates",
   "app-scaffold",
   "src",

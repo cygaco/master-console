@@ -1,52 +1,26 @@
 ---
-description: Compare your WarpOS installation against the latest version — find stale, new, and missing items
+description: "[deprecated alias → /mc:check] Forwards to /mc:check. The `warp:` skill namespace was renamed to `mc:` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /warp:check — Check WarpOS Status
+# /warp:check — DEPRECATED, use /mc:check
 
-Compare your project's WarpOS installation against the latest version in the WarpOS repo.
+This skill is a thin alias that forwards to **`/mc:check`**. The `warp:` skill namespace was renamed to `mc:` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-## Procedure
+## Deprecation notice (one-time)
 
-### Step 1: Find WarpOS repo
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
 
-Read `manifest.warpos.source` — the repo URL configured at install time. Check for a local clone at `../WarpOS/`. If not found, tell the user to `git clone {manifest.warpos.source} ../WarpOS` first.
+> `/warp:check` is deprecated and will be removed in mc@2.1.0. Use `/mc:check`.
 
-### Step 2: Compare files
+## Implementation
 
-For each category, compare your project's files against WarpOS:
-
-| Category | Your project | WarpOS repo | What to compare |
-|----------|-------------|-------------|-----------------|
-| Agents | `.claude/agents/` | `../WarpOS/.claude/agents/` | File list + content diff |
-| Skills | `.claude/commands/` | `../WarpOS/.claude/commands/` | File list + content diff |
-| Hooks | `scripts/hooks/` | `../WarpOS/scripts/hooks/` | File list + content diff |
-| Reference | `.claude/project/reference/` | `../WarpOS/.claude/project/reference/` | File list |
-| CLAUDE.md | `./CLAUDE.md` | `../WarpOS/CLAUDE.md` | Content diff |
-| AGENTS.md | `./AGENTS.md` | `../WarpOS/AGENTS.md` | Content diff |
-
-### Step 3: Classify each file
-
-For each file, classify as:
-- **SYNCED** — identical in both locations
-- **STALE** — WarpOS has a newer version
-- **CUSTOMIZED** — your version differs (you changed it)
-- **NEW** — exists in WarpOS but not in your project (added since install)
-- **LOCAL** — exists in your project but not in WarpOS (you created it)
-
-### Step 4: Report
+Reads `$ARGUMENTS` and dispatches:
 
 ```
-WarpOS Check
-════════════
-
-  Agents:    12 synced, 2 stale, 0 new
-  Skills:    58 synced, 3 stale, 5 local
-  Hooks:     25 synced, 0 stale
-  Reference: 5 synced
-  Docs:      CLAUDE.md customized, AGENTS.md synced
-
-  Recommendations:
-  - Run /warp:sync to update 5 stale files
-  - 5 local skills found (yours to keep)
+/mc:check $ARGUMENTS
 ```
+
+## Removal
+
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/warp:check` → `/mc:check`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

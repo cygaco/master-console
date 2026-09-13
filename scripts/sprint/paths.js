@@ -23,7 +23,7 @@
  *   SPRINT.ralph                -> .claude/project/sprint/ralph
  *   SPRINT.checkpoints          -> .claude/project/sprint/checkpoints
  *   SPRINT.requirements         -> .claude/project/sprint/requirements
- *   SPRINT.templates            -> _warpos/templates/sprint
+ *   SPRINT.templates            -> _mc/templates/sprint
  *   SPRINT.schemas              -> schemas/sprint
  *   SPRINT.routing              -> sprint-routing.json
  *   SPRINT.reference            -> sprint-workflow.md
@@ -54,6 +54,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -158,7 +159,7 @@ const SPRINT = {
   ralph: p("sprintRalph", ".claude/project/sprint/ralph"),
   checkpoints: p("sprintCheckpoints", ".claude/project/sprint/checkpoints"),
   requirements: p("sprintRequirements", ".claude/project/sprint/requirements"),
-  templates: p("sprintTemplates", "_warpos/templates/sprint"),
+  templates: p("sprintTemplates", "_mc/templates/sprint"),
   schemas: p("sprintSchemas", "schemas/sprint"),
   routing: p(
     "sprintRouting",
@@ -196,7 +197,7 @@ function active() {
   // wins over the registry primary. This lets a helper invoked with
   // --sprint <SP-id> target a non-primary sprint without rewriting the
   // registry.
-  if (process.env.WARPOS_SPRINT_ID) return process.env.WARPOS_SPRINT_ID;
+  if (mcEnv.readEnv("SPRINT_ID")) return mcEnv.readEnv("SPRINT_ID");
   const reg = loadRegistry();
   if (!reg || !reg.primary) return null;
   return reg.primary;
@@ -214,14 +215,14 @@ function statusOf(id) {
 
 // parseSprintArg — convention shared by every sprint helper.
 // Looks for "--sprint <SP-id>" in argv. If found, validates that id
-// exists in active-sprints.yaml and sets process.env.WARPOS_SPRINT_ID
+// exists in active-sprints.yaml and sets mcEnv.readEnv("SPRINT_ID")
 // so SPRINT.active() and the centralized logger both pick it up.
 //
 // If the id is unknown, writes COPY C-10 to stderr and returns null —
 // the caller is expected to exit non-zero. If --sprint is omitted,
 // returns the registry primary (or null if no registry yet).
 //
-// Side effect: sets process.env.WARPOS_SPRINT_ID. This is intentional
+// Side effect: sets mcEnv.readEnv("SPRINT_ID"). This is intentional
 // so downstream helpers (logger.js, decisions/ledger.js) auto-tag.
 function parseSprintArg(argv) {
   let explicit = null;
@@ -243,7 +244,7 @@ function parseSprintArg(argv) {
       );
       return { id: null, error: "unknown_sprint" };
     }
-    process.env.WARPOS_SPRINT_ID = explicit;
+    mcEnv.setEnv("SPRINT_ID", explicit);
     return { id: explicit, error: null };
   }
   // No --sprint flag — fall back to primary.

@@ -1,11 +1,11 @@
 {
-  "$schema": "warpos/provider-failure-modes/v1",
+  "$schema": "mc/provider-failure-modes/v1",
   "version": 1,
-  "comment": "Failure-mode catalog consumed by scripts/warpos/provider-smoke.js (T-20260513-019) and scripts/warpos/lib/provider-rca.js (T-20260513-022). Each entry maps a provider-health status to a root_cause + safe_to_autofix + fix_recipe + remediation + fallback_allowed signal. β-decided defaults applied 2026-05-13: only `trusted_directory_required` is safe_to_autofix=true; `auth_source_mismatch` is fallback_allowed=false (mirrors provider-fallback.json#do_not_fall_back).",
+  "comment": "Failure-mode catalog consumed by scripts/mc/provider-smoke.js (T-20260513-019) and scripts/mc/lib/provider-rca.js (T-20260513-022). Each entry maps a provider-health status to a root_cause + safe_to_autofix + fix_recipe + remediation + fallback_allowed signal. β-decided defaults applied 2026-05-13: only `trusted_directory_required` is safe_to_autofix=true; `auth_source_mismatch` is fallback_allowed=false (mirrors provider-fallback.json#do_not_fall_back).",
   "known_providers": ["claude", "openai", "antigravity"],
   "severity_buckets": {
     "yellow": ["cli_missing", "auth_source_mismatch", "stale_cli_registry"],
-    "comment": "Severity matches scripts/warpos/provider-smoke.js#iconFor. 'ok' is green; the three statuses above are yellow (non-blocking unless --exit-on-yellow); everything else is red."
+    "comment": "Severity matches scripts/mc/provider-smoke.js#iconFor. 'ok' is green; the three statuses above are yellow (non-blocking unless --exit-on-yellow); everything else is red."
   },
   "entries": {
     "cli_missing": {
@@ -21,7 +21,7 @@
       "root_cause": "Provider CLI is installed but session/login is missing or expired.",
       "safe_to_autofix": false,
       "fix_recipe": null,
-      "remediation": "Authenticate the CLI interactively. claude: `claude /login`. openai: `codex login`. antigravity: sign in to Antigravity (`agy`) so its ~/.gemini keyring carries a session. This is a DAY-ZERO step on every fresh install / new machine, and a WarpOS/CLI update can reset it — without it the gauntlet silently falls back off the Gemini lab and loses adversarial-corpus diversity. Never auto-fix — interactive auth requires the operator.",
+      "remediation": "Authenticate the CLI interactively. claude: `claude /login`. openai: `codex login`. antigravity: sign in to Antigravity (`agy`) so its ~/.gemini keyring carries a session. This is a DAY-ZERO step on every fresh install / new machine, and a MC/CLI update can reset it — without it the gauntlet silently falls back off the Gemini lab and loses adversarial-corpus diversity. Never auto-fix — interactive auth requires the operator.",
       "fallback_allowed": true
     },
     "auth_source_mismatch": {

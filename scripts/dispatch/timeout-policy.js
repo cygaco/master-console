@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * timeout-policy.js — Foreground-aware timeout policy for dispatch wrappers.
@@ -71,7 +72,7 @@ const WRAPPER_DEFAULTS = {
  * foreground/background mode CANNOT be determined. Concretely, clamp to
  * FOREGROUND_CEILING_MS UNLESS an explicit background signal is present:
  *   1. opts.background === true   (caller set it explicitly)
- *   2. process.env.WARPOS_DISPATCH_BACKGROUND === "1"
+ *   2. mcEnv.readEnv("DISPATCH_BACKGROUND") === "1"
  * ABSENCE of either signal ⇒ clamp (NOT the longer default).
  *
  * @param {number} defaultMs  The raw requested bound (e.g. from WRAPPER_DEFAULTS or an env override).
@@ -81,7 +82,7 @@ const WRAPPER_DEFAULTS = {
 function foregroundAwareTimeout(defaultMs, opts) {
   const isBackground =
     (opts != null && opts.background === true) ||
-    process.env.WARPOS_DISPATCH_BACKGROUND === "1";
+    mcEnv.readEnv("DISPATCH_BACKGROUND") === "1";
 
   if (isBackground) return defaultMs;
   return Math.min(defaultMs, FOREGROUND_CEILING_MS);

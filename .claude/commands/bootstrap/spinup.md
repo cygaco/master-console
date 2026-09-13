@@ -1,18 +1,18 @@
 ---
-description: "From 'just WarpOS' to something on screen — one in-project command: setup (deterministic create+scaffold+intake) → canon (degrade-proof AI synthesis) → roadmap (epics + sprints) → paint (core loop serves). Step-driven, idempotent, resumable. The idea→screen on-ramp."
+description: "From 'just MC' to something on screen — one in-project command: setup (deterministic create+scaffold+intake) → canon (degrade-proof AI synthesis) → roadmap (epics + sprints) → paint (core loop serves). Step-driven, idempotent, resumable. The idea→screen on-ramp."
 user-invocable: true
 ---
 
 # /bootstrap:spinup — Idea → on screen, one step-driven command
 
-The single in-project on-ramp. Run it inside a project that has WarpOS installed
-(scaffolded via `/portfolio:new`, or a manual `/warp:setup`) and it takes you
+The single in-project on-ramp. Run it inside a project that has MC installed
+(scaffolded via `/portfolio:new`, or a manual `/mc:setup`) and it takes you
 from a bare framework to: **canonical product docs + a roadmap organized into
 epics & sprints + the core loop running on screen.** One command; the steps below
 are positional subcommands, not separate skills.
 
 > **Two entry points, one implementation.** `bootstrap:spinup` is the real
-> implementation (runs in the current project). From WarpOS, `portfolio:spinup
+> implementation (runs in the current project). From MC, `portfolio:spinup
 > <slug>` is a thin wrapper that dispatches this skill into the chosen product
 > via `portfolio:run`, forwarding the positional `<step>` + modifiers verbatim.
 > Both reach the same result.
@@ -64,7 +64,7 @@ spinup [setup → canon → roadmap → paint]
 > ⚖️ **Day-zero triage — COMPLIANCE_TRIGGERS:** 10 questions that switch on extra duties (cross-border sales tax/MoR, SMS/TCPA, UGC/DMCA/CSAM, ad pixels/GPC, health/biometric data, sanctions). Answer them in writing on day zero and re-answer when adding feature classes. See [`_guides/COMPLIANCE_TRIGGERS_GUIDE.md`](../../../_guides/COMPLIANCE_TRIGGERS_GUIDE.md). (Surfaced here by `/guides:integrate`.)
 
 ### Step 1 — setup (DETERMINISTIC — no LLM)
-Create the product repo when the target isn't a WarpOS repo yet (reusing
+Create the product repo when the target isn't a MC repo yet (reusing
 `portfolio:new`'s `create()`/`scaffold()` callables — §4, one implementation), or
 operate in-place; scaffold the platform-aware app (web/PWA baseline, §3); register;
 and capture RAW intake into the INTENT/brief artifact ONLY:
@@ -121,7 +121,7 @@ run that synthesis, so the step seeds the deterministic scaffold and returns
 degraded output, §2).
 
 ### Step 4 — paint
-**Scaffold-if-missing (S0.3):** an idempotent safety net materializes the WarpOS app
+**Scaffold-if-missing (S0.3):** an idempotent safety net materializes the MC app
 scaffold (Next.js+Tailwind v4+shadcn/ui+Radix+Lucide via `scripts/scaffold/app.js`)
 when the repo has no `package.json` (setup is the primary scaffolder). Then execute
 Epic-1's first sprint until the core loop **serves**, gated by verify-before-claim:
@@ -192,20 +192,20 @@ node scripts/bootstrap/spinup-orchestrate.js [<step>] \
 - Each step is independently dispatchable, idempotent (2nd run = no-op), resumable.
 - Deterministic steps run in-process by reusing existing engines (`portfolio:new`
   create/scaffold, `scripts/check/install.js`, `scripts/canon/generate.js`,
-  `scripts/portfolio/clone.js`, `scripts/warpos/generate-roadmap-scaffold.js`).
+  `scripts/portfolio/clone.js`, `scripts/mc/generate-roadmap-scaffold.js`).
 - LLM steps exit **3 (`needs_orchestration`)** with an `orchestration_prompt`; the
   consumer fulfills it then re-invokes `--resume`.
-- Phase-state persists to `.warpos/spinup-state.json`; `--resume` continues after the
+- Phase-state persists to `.mc/spinup-state.json`; `--resume` continues after the
   last completed step, `<step>` re-runs exactly one.
 - Seam + anti-degrade + headless-contract tests: `node scripts/bootstrap/test-spinup-orchestrate.js`.
 
 ## Pre-flight — install completeness
 The `setup` step runs `/scan:install` (incl. the sprint-subsystem probe) and refuses
 to proceed on a gappy install — a fresh `/portfolio:new` scaffold or a manual
-`/warp:setup` must reach a complete, sprint-capable state first.
+`/mc:setup` must reach a complete, sprint-capable state first.
 
 ## Relationship
-- `portfolio:spinup <slug>` — the from-WarpOS wrapper (forwards `<step>` + modifiers).
+- `portfolio:spinup <slug>` — the from-MC wrapper (forwards `<step>` + modifiers).
 - `bootstrap:ponder` — sit with direction before/around an on-ramp.
 - `roadmap:create` — the roadmap step's engine (also runnable standalone).
 - `/portfolio:new` — scaffolds the repo; `bootstrap:spinup setup` is it composed.

@@ -11,7 +11,7 @@
  * Background: 2026-05-20 audit found 28 new assets + 179 SHA drifts had
  * accumulated against the 0.8.0 label over 5 days because no enforcer
  * surfaced the issue at write-time. Downstream consumers running
- * `/warp:update --to 0.8.0` got a stale framework. This guard makes the
+ * `/mc:update --to 0.8.0` got a stale framework. This guard makes the
  * version-bump requirement self-detecting.
  *
  * Decision logic:
@@ -19,7 +19,7 @@
  *      DETECT_GIT_COMMIT below for the exact pattern).
  *   2. Gather staged file paths via `git diff --cached --name-only`.
  *   3. Filter to FRAMEWORK_PREFIXES (originally mirrored from the now-
- *      retired scripts/warpos/promote.js; since SP-20260522-001 the list
+ *      retired scripts/mc/promote.js; since SP-20260522-001 the list
  *      is canonical here. EXCLUDE_PREFIXES skipped.
  *   4. If 0 framework-prefix files staged → exit 0.
  *   5. Read version.json#version. Check if framework/releases/<version>/
@@ -32,7 +32,7 @@
  *
  * Bypass (logged via stderr):
  *   - env: WARPOS_VERSION_GUARD=off
- *   - sentinel: .warpos/version-bump-guard-disable
+ *   - sentinel: .mc/version-bump-guard-disable
  *
  * Fail-open conditions (legitimate "nothing to check" — always exit 0):
  *   - Not a `git commit` command.
@@ -57,6 +57,7 @@
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -65,7 +66,7 @@ const { execSync } = require("child_process");
 const DETECT_GIT_COMMIT = /\bgit(\s+-[A-Za-z][^\s]*)*\s+commit\b/;
 
 // FRAMEWORK_PREFIXES — canonical here since SP-20260522-001 retired the
-// scripts/warpos/promote.js mirror source. Edit this list when framework-
+// scripts/mc/promote.js mirror source. Edit this list when framework-
 // owned top-level dirs change.
 const FRAMEWORK_PREFIXES = [
   ".claude/agents/",
@@ -145,7 +146,7 @@ function run(event) {
   if (!command) return process.exit(0);
   if (!DETECT_GIT_COMMIT.test(command)) return process.exit(0);
 
-  if (process.env.WARPOS_VERSION_GUARD === "off") {
+  if (mcEnv.readEnv("VERSION_GUARD") === "off") {
     process.stderr.write(
       "[version-bump-guard] bypass: WARPOS_VERSION_GUARD=off (logged)\n",
     );
@@ -155,9 +156,10 @@ function run(event) {
   const project = resolveProject();
   if (!project) return process.exit(0);
 
-  if (fs.existsSync(path.join(project, ".warpos", "version-bump-guard-disable"))) {
+  // S-OS-06 T3 4c: a legacy-dir sentinel is still honoured for one release (read in place, never moved).
+  if (fs.existsSync(require("./lib/mc-dirs").resolveProjectPath(project, ".mc/version-bump-guard-disable"))) {
     process.stderr.write(
-      "[version-bump-guard] bypass: sentinel .warpos/version-bump-guard-disable present (logged)\n",
+      "[version-bump-guard] bypass: sentinel .mc/version-bump-guard-disable present (logged)\n",
     );
     return process.exit(0);
   }
@@ -218,10 +220,10 @@ function run(event) {
     `[version-bump-guard] framework files staged against version ${version}, ` +
     `but framework/releases/${version}/ already exists (capsule already minted). ` +
     `Bump version.json before committing framework changes — otherwise downstream ` +
-    `consumers running /warp:update --to ${version} will get a stale capsule.\n` +
+    `consumers running /mc:update --to ${version} will get a stale capsule.\n` +
     `  Staged framework files: ${sample.join(", ")}${more}\n` +
     `  Bypass (logged): WARPOS_VERSION_GUARD=off, or touch .warpos/version-bump-guard-disable\n` +
-    `  Or run: /warp:release --version patch --apply (bumps + mints capsule).\n`;
+    `  Or run: /mc:release --version patch --apply (bumps + mints capsule).\n`;
 
   process.stderr.write(msg);
 

@@ -54,11 +54,11 @@ function copyDirSync(src, dst) {
 }
 
 function buildProject(activeStatuses) {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-ticket-bleed-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-ticket-bleed-"));
   for (const rel of [
     ".claude/paths.json",
     "schemas/sprint",
-    "_warpos/templates/sprint",
+    "_mc/templates/sprint",
     ROUTING_REL,
   ]) {
     const src = path.join(REPO, rel);
@@ -88,7 +88,7 @@ function buildProject(activeStatuses) {
     };
   });
   const registry = {
-    schema: "warpos/sprint/active-sprints/v1",
+    schema: "mc/sprint/active-sprints/v1",
     primary: sprints[0].id,
     sprints,
     created_at: "2026-05-13T00:00:00Z",
@@ -106,7 +106,7 @@ function buildProject(activeStatuses) {
     const dir = path.join(tmp, s.pointer);
     fs.mkdirSync(dir, { recursive: true });
     yaml.writeYaml(path.join(dir, "current.yaml"), {
-      schema: "warpos/sprint/current-sprint/v1",
+      schema: "mc/sprint/current-sprint/v1",
       id: s.id,
       title: s.title,
       status: s.status,

@@ -10,7 +10,7 @@
  *
  * Enforcement subcommands (SP-20260514-002):
  *   record   — append a routing-trace row to paths.sprintDecisions/routing-trace.jsonl
- *              (schema warpos/sprint/routing-trace/v1). Validates model is in the
+ *              (schema mc/sprint/routing-trace/v1). Validates model is in the
  *              declared class. Honors single-vendor fallback (writes evidence
  *              "single_vendor_session" + decision-ledger row).
  *   check    — verify a matching trace row exists for (phase, artifact, sprint).
@@ -140,8 +140,8 @@ const SPRINT_ID_RE = /^(?:SP-\d{8}-\d{3,4}|S-[A-Z0-9]+-\d{2,3})$/;
 
 function validateTraceRow(row) {
   const errors = [];
-  if (row.schema !== "warpos/sprint/routing-trace/v1") {
-    errors.push(`schema must be warpos/sprint/routing-trace/v1`);
+  if (row.schema !== "mc/sprint/routing-trace/v1") {
+    errors.push(`schema must be mc/sprint/routing-trace/v1`);
   }
   if (!row.sprint_id || !SPRINT_ID_RE.test(row.sprint_id)) {
     errors.push(`sprint_id missing or malformed: ${row.sprint_id}`);
@@ -473,7 +473,7 @@ function cmdRecord(argv) {
   // Build trace row.
   const now = new Date().toISOString();
   const row = {
-    schema: "warpos/sprint/routing-trace/v1",
+    schema: "mc/sprint/routing-trace/v1",
     sprint_id: f.sprint,
     phase: f.phase,
     artifact_id: f.artifact,
@@ -842,7 +842,7 @@ function recordTrace(opts) {
   }
   const now = new Date().toISOString();
   const row = {
-    schema: "warpos/sprint/routing-trace/v1",
+    schema: "mc/sprint/routing-trace/v1",
     sprint_id: opts.sprint,
     phase: opts.phase,
     artifact_id: opts.artifact_id,

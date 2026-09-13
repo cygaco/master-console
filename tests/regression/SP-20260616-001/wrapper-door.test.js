@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * wrapper-door.test.js — E-DISPATCH-SHAPE-001 W2-core (SP-20260616-001), AC-2.1/2.2/4.1.
@@ -98,8 +99,9 @@ console.log("\n(3) two-toggle-coherence-backcompat (β#2, DoE-C2 — STRUCTURAL)
   // The contract-consult block keeps its OWN enforce toggle (one switch per concern), now via the
   // shared contractEnforceMode helper (ADR-0013 flip: enforce-by-default + WARPOS_DISPATCH_CONTRACT_ENFORCE=report kill).
   ok("the contract-consult enforce is env-controllable via contractEnforceMode (ADR-0013; kept, not removed)", /contractEnforceMode\(/.test(dcSrc));
-  // The shape block no longer inlines a process.env.WARPOS_DISPATCH_CONTRACT_ENFORCE shape check (folded into the door — β#2 one-switch).
-  ok("dispatch-claude shape block no longer inlines process.env.WARPOS_DISPATCH_CONTRACT_ENFORCE", !/process\.env\.WARPOS_DISPATCH_CONTRACT_ENFORCE/.test(dcShape));
+  // The shape block no longer inlines a DISPATCH_CONTRACT_ENFORCE env check — raw or via the read-both helper
+  // (folded into the door — β#2 one-switch).
+  ok("dispatch-claude shape block no longer inlines a DISPATCH_CONTRACT_ENFORCE env check", !/process\.env\.WARPOS_DISPATCH_CONTRACT_ENFORCE|readEnv\(\s*["']DISPATCH_CONTRACT_ENFORCE["']/.test(dcShape));
 }
 
 console.log(`\n${failed === 0 ? "PASS" : "FAIL"} — wrapper-door: ${passed} passed, ${failed} failed`);

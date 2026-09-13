@@ -75,6 +75,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -631,7 +632,7 @@ if (require.main === module) {
     // record can never green a lane here. Opt out with --no-require-sig or WARPOS_GAUNTLET_REQUIRE_SIG=0
     // (a named, deliberate escape for a transition/debug, never a silent default).
     const requireSignature =
-      !argv.includes("--no-require-sig") && process.env.WARPOS_GAUNTLET_REQUIRE_SIG !== "0";
+      !argv.includes("--no-require-sig") && mcEnv.readEnv("GAUNTLET_REQUIRE_SIG") !== "0";
 
     if (!rolesArg || rolesArg === true) {
       process.stderr.write(

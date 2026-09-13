@@ -17,14 +17,14 @@ const { scoreReadiness } = require("../../../scripts/bootstrap/lastmile/lib/scor
 const audit = require("../../../scripts/bootstrap/lastmile/phases/audit");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
-const REAL_SCAFFOLD = path.join(REPO_ROOT, "_warpos", "templates", "app-scaffold");
+const REAL_SCAFFOLD = path.join(REPO_ROOT, "_mc", "templates", "app-scaffold");
 
 const tests = [];
 function test(name, fn) {
   tests.push({ name, fn });
 }
 
-function tempRepo(prefix = "warpos-spf04-") {
+function tempRepo(prefix = "mc-spf04-") {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
 }
 
@@ -52,7 +52,7 @@ function writeDeclaredStack(repo, paymentsChoice = "Stripe") {
 }
 
 function fixture(mutator) {
-  const dir = tempRepo("warpos-spf04-scaffold-");
+  const dir = tempRepo("mc-spf04-scaffold-");
   fs.cpSync(REAL_SCAFFOLD, dir, { recursive: true });
   if (mutator) mutator(dir);
   return dir;

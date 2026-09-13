@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 // scan:sprint-hook-coverage — BIDIRECTIONAL coverage of the sprint hook-point registry
 // (.claude/agents/_org/sprint-hook-points.json). Phase D F3c. The "easily find gaps"
@@ -378,7 +379,7 @@ function main() {
 
   // FORWARD — read events + per-sprint composition.
   let rawEvents = [];
-  const eventsPath = process.env.WARPOS_EVENTS_FILE || PATHS.eventsFile;
+  const eventsPath = mcEnv.readEnv("EVENTS_FILE") || PATHS.eventsFile;
   try {
     for (const line of fs.readFileSync(eventsPath, "utf8").split(/\r?\n/)) {
       if (!line.trim()) continue;
@@ -389,7 +390,7 @@ function main() {
   // Load dispatch completion records for F-1 backing-record check (post-RECORD_BACKED_CUTOFF)
   let dispatchRecords = [];
   const dispatchPath =
-    process.env.WARPOS_DISPATCH_COMPLETIONS_FILE ||
+    mcEnv.readEnv("DISPATCH_COMPLETIONS_FILE") ||
     PATHS.dispatchCompletionsFile ||
     path.join(PATHS.runtime || "", "dispatch-completions.jsonl");
   try {

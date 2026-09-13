@@ -6,7 +6,7 @@
  * actually HONORS (lets `permissions.allow` auto-approve) vs GATES per-action
  * (requires per-action operator intent regardless of `permissions.allow`).
  *
- * Why this exists: WarpOS cannot introspect the harness classifier directly from
+ * Why this exists: MC cannot introspect the harness classifier directly from
  * Node. What it CAN do is record the EMPIRICALLY-PROVEN mapping and pin the turbo
  * permission profile to it, so the profile reflects REALITY, not aspiration. The
  * keystone proof: `Bash(git push *)` is already in BOTH `.claude/settings.json`
@@ -82,7 +82,7 @@ function runtimeDir(project) {
  */
 function buildMapping() {
   return {
-    schema: "warpos/turbo-classifier-preflight/v1",
+    schema: "mc/turbo-classifier-preflight/v1",
     recorded_at: new Date().toISOString(),
     honored: MAPPING.honored.map((h) => h.scope),
     gated: MAPPING.gated.map((g) => g.scope),

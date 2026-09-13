@@ -2,7 +2,7 @@
 
 /**
  * scripts/portfolio/new-lib.js — the reusable create()/scaffold() callables behind
- * /portfolio:new (WARPOS-PROMPT §4 reconcile).
+ * /portfolio:new (MC-PROMPT §4 reconcile).
  *
  * ONE implementation per phase: the deterministic "make a product repo" work
  * (`createProductRepo`) and the app-scaffold work (`scaffoldProductApp`, a thin
@@ -29,7 +29,7 @@ const RESERVED = new Set([
   "dispatch", "sync", "bootstrap", "clone", "ponder", "import",
 ]);
 
-const TEMPLATES_DIR = path.resolve(__dirname, "../../_warpos/templates/portfolio");
+const TEMPLATES_DIR = path.resolve(__dirname, "../../_mc/templates/portfolio");
 const WARPOS_ROOT = path.resolve(__dirname, "../..");
 
 // ── Validation seam (reused by both create + the CLI) ───────────────────────
@@ -46,7 +46,7 @@ function validateSlug(slug) {
 
 /**
  * scaffoldProductApp — the app-scaffold callable. Thin wrapper over
- * scripts/scaffold/app.js so the WarpOS Next+Tailwind+shadcn baseline is
+ * scripts/scaffold/app.js so the MC Next+Tailwind+shadcn baseline is
  * materialized by exactly one engine. Idempotent (no-op when package.json exists)
  * and fail-open. `platform` is recorded by the caller; v1 the scaffold is the
  * web/PWA baseline for every target (§3 native-packaging is a follow-on).
@@ -65,7 +65,7 @@ function scaffoldProductApp({ repoRoot, slug, install = false, log = () => {} })
 /**
  * createProductRepo — the deterministic "make a product repo" callable. Mirrors
  * the former new.js body exactly: validate → sibling repo + git init + seed
- * identity + copy templates + initial commit + /warp:setup install + register +
+ * identity + copy templates + initial commit + /mc:setup install + register +
  * --from-brief + brief pointer + app scaffold + commit + optional GitHub remote.
  *
  * Returns a result object (never process.exit) so setup.js and the CLI share it.
@@ -125,7 +125,7 @@ function createProductRepo(opts) {
   }
 
   // ── scaffold ───────────────────────────────────────────────
-  log(`scaffolding ${slug} at ${repoPath}... running /warp:setup... done.`);
+  log(`scaffolding ${slug} at ${repoPath}... running /mc:setup... done.`);
   fs.mkdirSync(repoPath, { recursive: true });
 
   const gitInit = spawnSync("git", ["init"], { cwd: repoPath, encoding: "utf8" });
@@ -145,16 +145,16 @@ function createProductRepo(opts) {
   );
   if (gitCommit.status !== 0) return { ok: false, code: 4, error: `git commit failed: ${gitCommit.stderr}` };
 
-  // ── install WarpOS into the new repo (LOUD, never silent) ──
+  // ── install MC into the new repo (LOUD, never silent) ──
   // WI-50 regression: this step used to resolve scripts/warp-setup.js against
   // WARPOS_ROOT and existsSync-GUARD it. But warp-setup.js is the canonical
   // installer that is INTENTIONALLY NEVER SHIPPED (release-build.js: "lives in
   // the canonical clone, never shipped") — so on any CONSUMER install the guard
   // was false and the install SILENTLY no-op'd, producing a project with app
-  // files but no WarpOS engine (no .claude/, no scripts/ tree) → dead on
+  // files but no MC engine (no .claude/, no scripts/ tree) → dead on
   // arrival. Fix: install via install.ps1 (shipped in every capsule), and FAIL
   // LOUDLY if no installer exists or the install produced no engine.
-  const install = _installWarpOS(repoPath);
+  const install = _installMC(repoPath);
   if (!install.ok) {
     return { ok: false, code: 4, error: install.error };
   }
@@ -166,7 +166,7 @@ function createProductRepo(opts) {
     slug,
     repo_path: repoPath,
     github_url: null,
-    warpos_version: _readInstalledVersion(repoPath),
+    mc_version: _readInstalledVersion(repoPath),
     last_synced: new Date().toISOString(),
     role: "product",
     remote_type: null,
@@ -198,7 +198,7 @@ function createProductRepo(opts) {
   // ── commit the full scaffold ───────────────────────────────
   spawnSync("git", ["add", "-A"], { cwd: repoPath, encoding: "utf8" });
   spawnSync(
-    "git", ["commit", "-m", "chore(scaffold): warpos install" + (fromBrief ? " + brief" : "")],
+    "git", ["commit", "-m", "chore(scaffold): mc install" + (fromBrief ? " + brief" : "")],
     { cwd: repoPath, encoding: "utf8" },
   );
 
@@ -322,7 +322,7 @@ function _defaultBranch(cwd) {
 }
 
 function _printLocalOnlyNextSteps(slugVal, repoPathVal, log = console.log) {
-  log(`\nLocal repo ready — WarpOS installed, app scaffolded, committed, no remote:`);
+  log(`\nLocal repo ready — MC installed, app scaffolded, committed, no remote:`);
   log(`  ${repoPathVal}`);
   log(`Install deps and see it on screen (the scaffold ships pinned deps, not node_modules):`);
   log(`  cd "${repoPathVal}" && npm install && npm run dev`);
@@ -406,7 +406,7 @@ const _SOURCE_CONTRACT = [
   "version.json",
 ];
 
-// A dir is a valid WarpOS engine install SOURCE only if it satisfies install.ps1's
+// A dir is a valid MC engine install SOURCE only if it satisfies install.ps1's
 // source contract AND carries an actual installer (install.ps1 or the
 // canonical-only warp-setup.js).
 function _isValidInstallSource(root) {
@@ -417,20 +417,20 @@ function _isValidInstallSource(root) {
   return hasContract && hasInstaller;
 }
 
-// Resolve a dir that is a VALID WarpOS engine install source. The running root is
-// valid when WarpOS is canonical (or a consumer that still ships the manifest),
+// Resolve a dir that is a VALID MC engine install source. The running root is
+// valid when MC is canonical (or a consumer that still ships the manifest),
 // but a CONSUMER product driving the engine (e.g. a cockpit running a Create)
 // has no framework-manifest.json and CANNOT be a source — install.ps1 correctly
 // refuses it ("Source repo missing required file: .claude\framework-manifest.json",
 // WI-50 round 3, 2026-06-07). Fall back to a sibling canonical clone, matching
 // the existing capsule sibling-resolution precedent
-// (scripts/checks/warpos-capsule-resolvable.js: ../WarpOS, ../warpos). Returns an
+// (scripts/checks/mc-capsule-resolvable.js: ../MC, ../mc). Returns an
 // absolute root path, or null if no valid source exists.
 function _installSourceCandidates(startRoot) {
   return [
     startRoot,
-    path.resolve(startRoot, "..", "WarpOS"),
-    path.resolve(startRoot, "..", "warpos"),
+    path.resolve(startRoot, "..", "MC"),
+    path.resolve(startRoot, "..", "mc"),
   ];
 }
 function _resolveInstallerRoot(startRoot = WARPOS_ROOT) {
@@ -440,7 +440,7 @@ function _resolveInstallerRoot(startRoot = WARPOS_ROOT) {
   return null;
 }
 
-// Install WarpOS into a freshly-created product repo using the SHIPPED
+// Install MC into a freshly-created product repo using the SHIPPED
 // installer. Prefer install.ps1 (present in every release capsule AND the
 // canonical clone); fall back to the canonical-only warp-setup.js when
 // install.ps1 is absent. The installer is resolved against a VALID engine source
@@ -448,23 +448,23 @@ function _resolveInstallerRoot(startRoot = WARPOS_ROOT) {
 // against WARPOS_ROOT, which is a consumer when a cockpit drives the engine
 // (WI-50 round 3). The prior code existsSync-guarded warp-setup.js and SILENTLY
 // skipped when absent — so a consumer install produced a project with app files
-// but no WarpOS engine (WI-50). This FAILS LOUDLY when no valid source/installer
-// is available AND asserts the install actually produced a complete WarpOS tree
+// but no MC engine (WI-50). This FAILS LOUDLY when no valid source/installer
+// is available AND asserts the install actually produced a complete MC tree
 // (.claude/framework-installed.json) — never a silent no-op. Returns
 // {ok:true} | {ok:false, error}.
-function _installWarpOS(repoPath, { spawn = spawnSync, resolveRoot = _resolveInstallerRoot } = {}) {
+function _installMC(repoPath, { spawn = spawnSync, resolveRoot = _resolveInstallerRoot } = {}) {
   const installerRoot = resolveRoot(WARPOS_ROOT);
   if (!installerRoot) {
     return {
       ok: false,
       error:
-        `No valid WarpOS engine source found. The running WarpOS root ` +
+        `No valid MC engine source found. The running MC root ` +
         `(${WARPOS_ROOT}) is a consumer install — it is missing ` +
         `.claude/framework-manifest.json, so install.ps1 refuses it as a source ` +
         `— and no sibling canonical engine was found. Tried: ` +
         `${_installSourceCandidates(WARPOS_ROOT).join(", ")}. A valid source must ` +
         `carry ${_SOURCE_CONTRACT.join(", ")} plus an installer. Clone the ` +
-        `canonical WarpOS engine as a sibling (../WarpOS) to enable Create.`,
+        `canonical MC engine as a sibling (../MC) to enable Create.`,
     };
   }
   const psInstaller = path.resolve(installerRoot, "install.ps1");
@@ -492,27 +492,27 @@ function _installWarpOS(repoPath, { spawn = spawnSync, resolveRoot = _resolveIns
     return {
       ok: false,
       error:
-        `No WarpOS installer found at ${installerRoot} (neither install.ps1 nor ` +
-        `scripts/warp-setup.js). The resolved WarpOS source is incomplete — ` +
-        `cannot install WarpOS into ${repoPath}.`,
+        `No MC installer found at ${installerRoot} (neither install.ps1 nor ` +
+        `scripts/warp-setup.js). The resolved MC source is incomplete — ` +
+        `cannot install MC into ${repoPath}.`,
     };
   }
   if (res.status !== 0) {
     return {
       ok: false,
-      error: `WarpOS install into ${repoPath} failed:\n${(res.stderr || res.stdout || "").trim()}`,
+      error: `MC install into ${repoPath} failed:\n${(res.stderr || res.stdout || "").trim()}`,
     };
   }
-  // Completeness gate — the install MUST produce a real WarpOS tree, not a
+  // Completeness gate — the install MUST produce a real MC tree, not a
   // silent no-op. install.ps1 writes .claude/framework-installed.json on
   // success; its absence means the engine was not installed.
   if (!fs.existsSync(path.join(repoPath, ".claude", "framework-installed.json"))) {
     return {
       ok: false,
       error:
-        `WarpOS install into ${repoPath} reported success but produced no engine ` +
+        `MC install into ${repoPath} reported success but produced no engine ` +
         `(.claude/framework-installed.json is missing). The created project would ` +
-        `be WarpOS-less — refusing to continue (WI-50 silent-no-op guard).`,
+        `be MC-less — refusing to continue (WI-50 silent-no-op guard).`,
     };
   }
   return { ok: true };
@@ -535,7 +535,7 @@ module.exports = {
   createProductRepo,
   scaffoldProductApp,
   validateSlug,
-  _installWarpOS,
+  _installMC,
   _resolveInstallerRoot,
   _isValidInstallSource,
   SLUG_RE,

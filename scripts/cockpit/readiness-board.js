@@ -8,13 +8,13 @@
 // (composite %, blocked count, owner-action work left), and can drill into one product.
 //
 // It is the aggregator over the R-1 keystone (scripts/scaffold/readiness-report.js): for each
-// product in the portfolio registry (~/.warpos/portfolio.json) it runs buildReadinessReport()
+// product in the portfolio registry (~/.mc/portfolio.json) it runs buildReadinessReport()
 // against that product's repo and rolls the results into a board. ALSO the "runnable skill"
 // retrofit/run-anywhere mechanism (DoP decision 2026-06-13): run it against any product —
 // existing (retrofit) or new — without that product shipping any panel code.
 //
 // STRICTLY READ-ONLY against sibling product repos — it reads FOUNDERS_CHECKLIST.md state and
-// never writes to another project (WarpOS-only boundary: feedback_warpos_only_no_cross_project).
+// never writes to another project (MC-only boundary: feedback_mc_only_no_cross_project).
 // PURE/DETERMINISTIC: takes no clock; generated_at is stamped by the CLI.
 
 const fs = require("fs");
@@ -22,8 +22,8 @@ const os = require("os");
 const path = require("path");
 const { buildReadinessReport } = require("../scaffold/readiness-report");
 
-const BOARD_SCHEMA = "warpos/readiness-board/v1";
-const DEFAULT_REGISTRY = path.join(os.homedir(), ".warpos", "portfolio.json");
+const BOARD_SCHEMA = "mc/readiness-board/v1";
+const DEFAULT_REGISTRY = path.join(os.homedir(), ".mc", "portfolio.json");
 
 /** Read the portfolio registry → [{ slug, repo_path }]. Missing/unreadable → []. */
 function readRegistry(registryPath) {
@@ -136,7 +136,7 @@ if (require.main === module) {
   if (json) { console.log(JSON.stringify(board, null, 2)); process.exit(0); }
 
   if (board.product_count === 0) {
-    console.log("[cockpit] no products registered (~/.warpos/portfolio.json empty) — register one with /portfolio:register, or run `--root <path>` for a single product.");
+    console.log("[cockpit] no products registered (~/.mc/portfolio.json empty) — register one with /portfolio:register, or run `--root <path>` for a single product.");
     process.exit(0);
   }
   console.log(`Launch-readiness cockpit — ${board.present_count}/${board.product_count} products readable, ${board.blocked_count} blocked item(s):\n`);

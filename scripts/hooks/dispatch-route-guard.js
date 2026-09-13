@@ -30,13 +30,14 @@
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const path = require("path");
 
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 
 // Kill switch
-if (process.env.WARPOS_DISPATCH_ROUTE_GUARD === "off") process.exit(0);
+if (mcEnv.readEnv("DISPATCH_ROUTE_GUARD") === "off") process.exit(0);
 
 function block(reason) {
   try {
@@ -53,7 +54,7 @@ function probeBypass(cmd) {
   // Honour one-shot bypass for provider-health probes. The probe path sets
   // WARPOS_PROVIDER_PROBE=1 in the harness env before launching the Bash
   // tool call. We log the bypass for audit.
-  if (process.env.WARPOS_PROVIDER_PROBE === "1") {
+  if (mcEnv.readEnv("PROVIDER_PROBE") === "1") {
     try {
       const { logEvent } = require("./lib/logger");
       logEvent(

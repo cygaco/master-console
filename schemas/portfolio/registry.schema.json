@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/portfolio-registry/v1",
-  "title": "WarpOS Portfolio Registry v1",
-  "description": "HOME-dir registry of products managed by WarpOS. Lives at ~/.warpos/portfolio.json.",
+  "$id": "mc/portfolio-registry/v1",
+  "title": "MC Portfolio Registry v1",
+  "description": "HOME-dir registry of products managed by MC. Lives at ~/.mc/portfolio.json.",
   "type": "object",
   "required": ["schema", "products"],
   "additionalProperties": false,
   "properties": {
     "schema": {
       "type": "string",
-      "const": "warpos/portfolio-registry/v1"
+      "const": "mc/portfolio-registry/v1"
     },
     "products": {
       "type": "object",
@@ -41,9 +41,9 @@
           "pattern": "^(https://github\\.com/|git@github\\.com:|git://github\\.com/)",
           "description": "Optional GitHub remote URL. null if not yet created."
         },
-        "warpos_version": {
+        "mc_version": {
           "type": ["string", "null"],
-          "description": "WarpOS version installed in this product (from framework-installed.json). null if unknown."
+          "description": "MC version installed in this product (from framework-installed.json). null if unknown."
         },
         "last_synced": {
           "type": "string",
@@ -53,7 +53,7 @@
         "role": {
           "type": "string",
           "enum": ["framework", "product", "fork"],
-          "description": "Product's relationship to WarpOS. 'product' is the common case."
+          "description": "Product's relationship to MC. 'product' is the common case."
         },
         "remote_type": {
           "type": ["string", "null"],

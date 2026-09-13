@@ -35,6 +35,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const { isVerifiedLivenessRecord } = require("../dispatch/verified-liveness-read");
@@ -179,7 +180,7 @@ function parseArgs(argv) {
     // `--epsilon-dispatch` additionally writes real per-agent completion records.
     // T-297: in sprint mode these default ON (sprint-mode default applied in main() after
     // mode detection; explicit CLI flags and WARPOS_EPSILON_RUNTIME env always win).
-    epsilon: process.env.WARPOS_EPSILON_RUNTIME === "on",
+    epsilon: mcEnv.readEnv("EPSILON_RUNTIME") === "on",
     epsilonDispatch: false,
     // Tracks whether epsilon/epsilonDispatch were set via explicit CLI flag (vs env/default).
     // Used by main() to determine whether to apply the sprint-mode default.
@@ -656,7 +657,7 @@ function recordClearedBetaBoundary(sprintId, boundary) {
     fs.writeFileSync(
       fp,
       JSON.stringify(
-        { schema: "warpos/sprint-full/beta-boundaries/v1", sprint: sprintId, cleared, updated_at: nowIso() },
+        { schema: "mc/sprint-full/beta-boundaries/v1", sprint: sprintId, cleared, updated_at: nowIso() },
         null,
         2,
       ) + "\n",
@@ -779,7 +780,7 @@ function maybeConsultBeta(state, boundary, args) {
   // each /sprint:full resume is a SEPARATE process with state.betaConsultations
   // freshly [] (one-consult-per-resume), so the orchestrator has no prior-consult
   // history to compare against. C3/C4 are enforced fail-closed by the AUDIT layer
-  // (scripts/warpos/release-build.js betaHonestyGate + /scan:sprint-beta-honesty),
+  // (scripts/mc/release-build.js betaHonestyGate + /scan:sprint-beta-honesty),
   // which reads the full events corpus and BLOCKS the release on a duplicate.
   // Kill switch WARPOS_BETA_SUBSTANCE_GATE=off (default ON) — fail-closed, never warn-only;
   // an off-switch (like dispatch-route-guard's) is a rollout/emergency lever, not a soften.
@@ -788,7 +789,7 @@ function maybeConsultBeta(state, boundary, args) {
   // down MUST agree. Two independent process.env reads can disagree if anything mutates the
   // env between them, letting the gate run while the row records "off" (or the reverse) —
   // invisible to the exact audit designed to catch an off-switch flip (AP-15 in env-var costume).
-  const substanceGateOn = process.env.WARPOS_BETA_SUBSTANCE_GATE !== "off";
+  const substanceGateOn = mcEnv.readEnv("BETA_SUBSTANCE_GATE") !== "off";
   if (substanceGateOn) {
     const m = betaMessage.trim();
     const tokenRe = /\b(DECIDE|DIRECTIVE|ESCALATE|DECISION|CLASS\s+[ABC]\b|conf(?:idence)?|0\.\d{2})\b/i;
@@ -823,7 +824,7 @@ function maybeConsultBeta(state, boundary, args) {
 
   const ts = nowIso();
   const latencyMs = 0; // no live round-trip in this subprocess; elapsed is ~0
-  const model = process.env.WARPOS_BETA_MODEL || "claude-opus-4-8";
+  const model = mcEnv.readEnv("BETA_MODEL") || "claude-opus-4-8";
 
   emit("sprint_full_beta_consult", {
     verdict,
@@ -918,7 +919,7 @@ function checkDesignWithoutRoster(sprintId) {
     let hasDesignRecord = false;
     if (hasLedger) {
       const lines = fs.readFileSync(completionsPath, "utf8").split(/\r?\n/).filter(Boolean);
-      const _reqSig = process.env.WARPOS_LIVENESS_REQUIRE_SIG !== "0";
+      const _reqSig = mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0";
       hasDesignRecord = lines.some((line) => {
         try {
           const rec = JSON.parse(line);
@@ -946,7 +947,7 @@ function checkDesignWithoutRoster(sprintId) {
 
 function phase1Plan(state, args) {
   state.currentPhase = "plan";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8): phase context for child dispatches
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8): phase context for child dispatches
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "plan",
@@ -985,28 +986,28 @@ function phase1Plan(state, args) {
   // The skill body is responsible for constructing the Plan Contract
   // payload from the verbatim request (Alpha's reasoning). The
   // orchestrator can't infer it from argv alone. So this phase
-  // requires the skill body to have written .warpos/plan-payload-<slug>.json
+  // requires the skill body to have written .mc/plan-payload-<slug>.json
   // BEFORE invoking full.js, OR the caller can pass an explicit payload
   // file path. For v0.1 we expect the skill body to have done so.
-  const payloadGlob = `${REPO_ROOT}/.warpos/plan-payload-*.json`;
+  const payloadGlob = `${REPO_ROOT}/.mc/plan-payload-*.json`;
   let payloadFile = null;
   // Use the most recent matching file by mtime as a best-effort.
   try {
     const candidates = fs
-      .readdirSync(path.join(REPO_ROOT, ".warpos"))
+      .readdirSync(path.join(REPO_ROOT, ".mc"))
       .filter((f) => f.startsWith("plan-payload-") && f.endsWith(".json"))
-      .map((f) => path.join(REPO_ROOT, ".warpos", f))
+      .map((f) => path.join(REPO_ROOT, ".mc", f))
       .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
     payloadFile = candidates[0] || null;
   } catch {
-    /* .warpos missing */
+    /* .mc missing */
   }
   if (!payloadFile) {
     return {
       ok: false,
       halt_reason: "plan_payload_missing",
       message:
-        "Phase 1 (plan) requires a payload JSON at .warpos/plan-payload-*.json constructed by Alpha from the verbatim request. None found. /sprint:full's skill body is the right place to construct this — see .claude/commands/sprint/full.md.",
+        "Phase 1 (plan) requires a payload JSON at .mc/plan-payload-*.json constructed by Alpha from the verbatim request. None found. /sprint:full's skill body is the right place to construct this — see .claude/commands/sprint/full.md.",
     };
   }
 
@@ -1024,7 +1025,7 @@ function phase1Plan(state, args) {
         message:
           `Most-recent plan-payload (${path.basename(payloadFile)}) targets sprint '${pl.sprint}', ` +
           `not '${state.sprintId}'. The skill body likely skipped Step 1.1 (write ` +
-          `.warpos/plan-payload-<slug>.json for THIS sprint) — Phase 1 would plan the WRONG sprint. ` +
+          `.mc/plan-payload-<slug>.json for THIS sprint) — Phase 1 would plan the WRONG sprint. ` +
           `Write the correct payload for ${state.sprintId}, then resume.`,
       };
     }
@@ -1121,7 +1122,7 @@ function deriveDocScale(state) {
 
 function phase2Design(state) {
   state.currentPhase = "design";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
 
   // On --resume, if tickets are already minted from a prior run, skip
   // the rescaffold + tickets_pending halt and advance to Phase 3.
@@ -1240,7 +1241,7 @@ function phase2Design(state) {
 
 function phase3Execute(state) {
   state.currentPhase = "execute";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "execute",
@@ -1420,7 +1421,7 @@ function findExistingStagingRelease(sprintId, target) {
 
 function phase4ReleasePrep(state) {
   state.currentPhase = "release-prep";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "release-prep",
@@ -1549,7 +1550,7 @@ function phase4ReleasePrep(state) {
     // Sprint-close regression-seed gate (release.js cmdPrepare → regressionSeedGate)
     // blocked: a NEW regression in a covered class, or a runner error. The suite
     // must be green before a sprint can mint a release record. (0.17.0 per-sprint
-    // enforcer — closes the BC-15 gap where the enforcer ran only at /warp:release;
+    // enforcer — closes the BC-15 gap where the enforcer ran only at /mc:release;
     // commit 5870a0c.) The detail (which classes / runner error) is on the helper's
     // stdout+stderr — surface it verbatim so the halt report is actionable.
     return {
@@ -1629,7 +1630,7 @@ function flipActiveSprintsStatusForRetro(sprintId) {
 
 function phase5Retro(state) {
   state.currentPhase = "retro";
-  process.env.WARPOS_PHASE_ID = state.currentPhase; // T-303 (N8)
+  mcEnv.setEnv("PHASE_ID", state.currentPhase); // T-303 (N8)
   emit("sprint_full_phase_started", {
     sprint_id: state.sprintId,
     phase: "retro",
@@ -1787,12 +1788,14 @@ function main() {
   // WARPOS_RUN_ID — a parent orchestrator's run_id wins; only generate when absent.
   // Format mirrors makeDispatchId() but prefixed `run-` to distinguish orchestrator
   // runs from per-dispatch ids.
-  if (!process.env.WARPOS_RUN_ID) {
-    process.env.WARPOS_RUN_ID =
-      "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex");
+  if (!mcEnv.readEnv("RUN_ID")) {
+    mcEnv.setEnv(
+      "RUN_ID",
+      "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex")
+    );
   }
   // Stamp the sprint id so dispatch wrappers' runContext() returns the correct sprint.
-  process.env.WARPOS_SPRINT_ID = sprintId;
+  mcEnv.setEnv("SPRINT_ID", sprintId);
   // WARPOS_PHASE_ID is set at each phase entry (below in each phase function).
 
   // Cost gate: per-run --cost-gate on|off overrides the persistent toggle

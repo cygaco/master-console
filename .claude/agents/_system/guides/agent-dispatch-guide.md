@@ -505,7 +505,7 @@ late-landing artifact before writing a lane off. Canonical doctrine:
 
 ## §9.5 — Orchestration doctrine: in-process subagents vs OS subprocesses (E-TEAMS-MIGRATION-001)
 
-WarpOS dispatch runs across **two distinct lanes**. Conflating them is the root of a recurring
+MC dispatch runs across **two distinct lanes**. Conflating them is the root of a recurring
 class of confusion ("are ε/β subprocesses?", "why did the dispatch vanish?"). Know which lane you
 are in before you dispatch.
 
@@ -555,7 +555,7 @@ running with no completion record (holding a model session + slot + memory). `pr
 clears the dead **lock file**; `node scripts/dispatch/reap-orphans.js` finds + (with `--apply`)
 SIGTERM-terminates the orphaned **process** — conservative-by-construction (signature + PPID-orphan
 + age + no-live-lock + not-own-tree; any ambiguity ⇒ skip) and fail-open. It runs report-only on
-session start and is surfaced in `/warp:health` §12.5.
+session start and is surfaced in `/mc:health` §12.5.
 
 ---
 

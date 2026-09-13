@@ -1,4 +1,4 @@
-# WarpOS — Canonical Systems List
+# MC — Canonical Systems List
 
 The authoritative list of systems. Each system has state, rules, a lifecycle, and interactions with other systems. This doc + `paths.systemsFile` (`.claude/project/memory/systems.jsonl`) are the two sources of truth.
 
@@ -88,7 +88,7 @@ Last updated: 2026-04-16.
 | Reference docs | `paths.reference/*.md` — reasoning-frameworks, operational-loop, learning-lifecycle, SYSTEMS.md | Living reference library |
 | SPEC_GRAPH | `paths.specGraph` | Staleness propagation graph — when A changes, B gets STALE |
 
-## Tier 7 — Product skeleton (WarpOS-only, shipped to installs)
+## Tier 7 — Product skeleton (MC-only, shipped to installs)
 
 | System | Files | Purpose |
 |---|---|---|

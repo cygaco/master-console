@@ -40,8 +40,8 @@ function readManifest() {
   if (!fs.existsSync(file)) {
     process.stderr.write(
       `manifest not found: ${file}\n` +
-        `  fix: run \`/warp:setup\` (creates .claude/manifest.json from project scan)\n` +
-        `  or:  copy _warpos/templates/manifest.template.json (if framework template exists)\n`,
+        `  fix: run \`/mc:setup\` (creates .claude/manifest.json from project scan)\n` +
+        `  or:  copy _mc/templates/manifest.template.json (if framework template exists)\n`,
     );
     process.exit(1);
   }
@@ -50,7 +50,7 @@ function readManifest() {
   } catch (e) {
     process.stderr.write(
       `manifest is not valid JSON (${file}): ${e.message}\n` +
-        `  fix: restore from .claude/.warpos-backup/ or re-run /warp:setup\n`,
+        `  fix: restore from .claude/.mc-backup/ or re-run /mc:setup\n`,
     );
     process.exit(1);
   }
@@ -68,18 +68,18 @@ function show(args) {
 }
 
 // ── validate ────────────────────────────────────────────────
-const REQUIRED_TOP_LEVEL = ["$schema", "project", "warpos", "agents"];
+const REQUIRED_TOP_LEVEL = ["$schema", "project", "mc", "agents"];
 
 const REQUIRED_PROJECT_KEYS = ["name", "slug"];
-const REQUIRED_WARPOS_KEYS = ["version", "installed"];
+const REQUIRED_MC_KEYS = ["version", "installed"];
 
 function validateManifest(data) {
   const errors = [];
   const warnings = [];
 
-  if (data.$schema !== "warpos/manifest/v1") {
+  if (data.$schema !== "mc/manifest/v1") {
     warnings.push(
-      `unexpected $schema: ${data.$schema} (expected warpos/manifest/v1)`,
+      `unexpected $schema: ${data.$schema} (expected mc/manifest/v1)`,
     );
   }
   for (const k of REQUIRED_TOP_LEVEL) {
@@ -90,12 +90,12 @@ function validateManifest(data) {
       if (!data.project[k]) errors.push(`missing project.${k}`);
     }
   }
-  if (data.warpos) {
-    for (const k of REQUIRED_WARPOS_KEYS) {
-      if (!(k in data.warpos)) errors.push(`missing warpos.${k}`);
+  if (data.mc) {
+    for (const k of REQUIRED_MC_KEYS) {
+      if (!(k in data.mc)) errors.push(`missing mc.${k}`);
     }
-    if (data.warpos.version && !/^\d+\.\d+\.\d+$/.test(data.warpos.version)) {
-      errors.push(`warpos.version is not semver: ${data.warpos.version}`);
+    if (data.mc.version && !/^\d+\.\d+\.\d+$/.test(data.mc.version)) {
+      errors.push(`mc.version is not semver: ${data.mc.version}`);
     }
   }
   if (data.agentProviders) {
@@ -130,22 +130,22 @@ const MIGRATIONS = [
   {
     from: "0.1.0",
     to: "0.1.1",
-    apply: (m) => ({ ...m, warpos: { ...m.warpos, version: "0.1.1" } }),
+    apply: (m) => ({ ...m, mc: { ...m.mc, version: "0.1.1" } }),
   },
   {
     from: "0.1.1",
     to: "0.1.2",
-    apply: (m) => ({ ...m, warpos: { ...m.warpos, version: "0.1.2" } }),
+    apply: (m) => ({ ...m, mc: { ...m.mc, version: "0.1.2" } }),
   },
   {
     from: "0.1.2",
     to: "0.1.3",
-    apply: (m) => ({ ...m, warpos: { ...m.warpos, version: "0.1.3" } }),
+    apply: (m) => ({ ...m, mc: { ...m.mc, version: "0.1.3" } }),
   },
   {
     from: "0.1.3",
     to: "0.1.4",
-    apply: (m) => ({ ...m, warpos: { ...m.warpos, version: "0.1.4" } }),
+    apply: (m) => ({ ...m, mc: { ...m.mc, version: "0.1.4" } }),
   },
 ];
 
@@ -230,9 +230,9 @@ function migrate(args) {
     manifestFile = r.file;
   }
 
-  const current = manifestData.warpos && manifestData.warpos.version;
+  const current = manifestData.mc && manifestData.mc.version;
   if (!current) {
-    process.stderr.write("manifest has no warpos.version — cannot migrate\n");
+    process.stderr.write("manifest has no mc.version — cannot migrate\n");
     return 1;
   }
   const cmp = semverCmp(current, target);

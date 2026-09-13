@@ -27,7 +27,7 @@ fs.appendFileSync(
         "USER OVERRIDE of Beta DEC-003. User responded 'option b' (auto-create) to Alpha's surface-walkthrough + recommendation of option C (hybrid confirm).",
       category: "autonomy-override",
       answer:
-        "OVERRIDDEN by user (cygaco, plain prose 'option b'). Beta's DEC-003 (Class B with red-line override) said /portfolio:new SURFACES the gh repo create command and halts. User authorization flips to: /portfolio:new + /portfolio:adopt EXECUTE `gh repo create <slug> --private --source=. --remote=origin --push` directly after the scaffold + /warp:setup steps. No interactive confirm prompt (would have been option C; user picked B). Per CLAUDE.md decision-policy, user override of Beta is a recognized authority — Alpha may proceed.",
+        "OVERRIDDEN by user (cygaco, plain prose 'option b'). Beta's DEC-003 (Class B with red-line override) said /portfolio:new SURFACES the gh repo create command and halts. User authorization flips to: /portfolio:new + /portfolio:adopt EXECUTE `gh repo create <slug> --private --source=. --remote=origin --push` directly after the scaffold + /mc:setup steps. No interactive confirm prompt (would have been option C; user picked B). Per CLAUDE.md decision-policy, user override of Beta is a recognized authority — Alpha may proceed.",
       escalated: false,
       confidence: 1.0,
       overridden: "EVT-s-sp-20260521-001-beta-003 (DEC-003 surface-only)",
@@ -58,7 +58,7 @@ fs.appendFileSync(
     actor: "user-via-alpha",
     class: "C",
     decision:
-      "USER OVERRIDE of Beta DEC-003. /portfolio:new + /portfolio:adopt now EXECUTE `gh repo create <slug> --private --source=. --remote=origin --push` automatically after local scaffold + /warp:setup. No interactive confirm. Slug regex (IN-1) is the only injection defense; gh's own idempotency handles name collisions.",
+      "USER OVERRIDE of Beta DEC-003. /portfolio:new + /portfolio:adopt now EXECUTE `gh repo create <slug> --private --source=. --remote=origin --push` automatically after local scaffold + /mc:setup. No interactive confirm. Slug regex (IN-1) is the only injection defense; gh's own idempotency handles name collisions.",
     rationale:
       "User picked option B from Alpha's A/B/C menu. Original Beta directive (DEC-003 surface-only) was protective against typo-leaks; user accepts that residual risk in exchange for one-command product creation. Slug regex `^[a-z0-9][a-z0-9-]{0,63}$` precludes shell metacharacters. The user's verbatim ask in /sprint:plan ('side-by-side repos with private GitHub, accessible to team') is more cleanly satisfied by auto-create than by surface-only.",
     overrides: "DEC-sp-20260521-001-003 (Beta DEC-003 surface-only)",

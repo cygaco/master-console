@@ -34,6 +34,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -49,7 +50,7 @@ const {
   yamlDump,
 } = require("./fs");
 
-const SCHEMA_ID = "warpos/sprint/sprint-retrospective/v1";
+const SCHEMA_ID = "mc/sprint/sprint-retrospective/v1";
 const WRITER_VERSION = "1.0.0";
 const RETRO_DIR_NAME = "retrospective";
 
@@ -733,7 +734,7 @@ function main() {
     return 1;
   }
 
-  process.env.WARPOS_SPRINT_ID = sprintId;
+  mcEnv.setEnv("SPRINT_ID", sprintId);
 
   // Review-only: print existing retro to stdout, no mutation, no registry flip.
   if (args.reviewOnly) {
@@ -966,7 +967,7 @@ function main() {
       artifact_id: `retro:${sprintId}`,
       artifact_path: retroYamlPath(sprintId),
       sprint: sprintId,
-      model: process.env.WARPOS_RECORDING_MODEL || "claude:claude-opus-4-8",
+      model: mcEnv.readEnv("RECORDING_MODEL") || "claude:claude-opus-4-8",
       recorded_by: "/sprint:retrospective",
       allow_single_vendor: true,
       auto_override: true,

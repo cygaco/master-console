@@ -9,7 +9,7 @@
 
 ## Decision
 
-Adopt the `DISPATCH.md` (2026-07-12, doogle plan-hardening, β rows 113–114) agent-dispatch architecture in WarpOS canonical:
+Adopt the `DISPATCH.md` (2026-07-12, doogle plan-hardening, β rows 113–114) agent-dispatch architecture in MC canonical:
 
 1. **Model families.** OpenAI `gpt-5.5` → the **`gpt-5.6` family** (`-sol` flagship, `-terra` mid, `-luna` cheap, 1.05M ctx; never the bare `gpt-5.6` alias — it 400s and silently degrades). Anthropic **add `claude-fable-5`** (top brain) **+ `claude-sonnet-5`** (builders/legwork); **retire `claude-sonnet-4-6`** and any Opus < 4.8; keep `claude-opus-4-8` as **the** fallback target. Gemini: the individual `gemini` CLI is **sunset** → route all Gemini through the **Antigravity `agy`** CLI (new provider id `antigravity`), model `gemini-3.1-pro-preview` only (Flash removed).
 2. **Effort ladder.** Add `max` + `ultra`, for `sol`/`terra` only (`luna` caps at `max`; no xhigh/ultra). `ultra` fans out parallel subagents (heavy/agentic — budget 10–15 min; for a bounded verdict use `sol@xhigh`).

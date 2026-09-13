@@ -8,16 +8,16 @@
 - **Owner:** President Agent
 - **Parent roadmap area:** [../../ROADMAP.md](../../ROADMAP.md) § Epics → Planned epics (detail: the `🟡 0.12.0` deprecated-milestone block)
 - **Goal:** Keep N≥3 portfolio products current with low maintainer touch — capsules ship complete orchestrator infra, the installer is branch-safe by default, same-name agent collisions prompt for resolution, and the install matrix exercises cross-version `--apply`.
-- **Background:** DreamTeam is missing `/sprint:full` orchestrator infra (`paths.sprintFullAutonomy`, `paths.sprintSchemas`, and the full-reports/checkpoints/plan-contracts/approvals/releases/history/routing dirs); `/warp:setup` runs on `main` by default with no branch guard; same-name agent collisions are silent; and the install matrix exercises only dry-run for cross-version upgrades. Each new product is a custodial burden until these gaps close.
-- **Scope:** DreamTeam orchestrator capsule fix (canonical ships the capsule; the operator pulls it from the dreamteam-side session — WarpOS canonical never reaches into dreamteam directly); installer branch-safety (`warp/install-<timestamp>` default; refuse on `main` without `--yes-install-on-main`); same-name agent collision detection at install; install-matrix cross-version `--apply` via historical-source-tree fixtures; a `/scan:skill-engines` skill (parse every skill .md for `scripts/...` refs, verify the engine exists) wired into release-build + `/warp:setup` postflight.
-- **Out of scope:** Central multi-product architecture (parked E-CENTRAL-WARPOS).
+- **Background:** DreamTeam is missing `/sprint:full` orchestrator infra (`paths.sprintFullAutonomy`, `paths.sprintSchemas`, and the full-reports/checkpoints/plan-contracts/approvals/releases/history/routing dirs); `/mc:setup` runs on `main` by default with no branch guard; same-name agent collisions are silent; and the install matrix exercises only dry-run for cross-version upgrades. Each new product is a custodial burden until these gaps close.
+- **Scope:** DreamTeam orchestrator capsule fix (canonical ships the capsule; the operator pulls it from the dreamteam-side session — MC canonical never reaches into dreamteam directly); installer branch-safety (`warp/install-<timestamp>` default; refuse on `main` without `--yes-install-on-main`); same-name agent collision detection at install; install-matrix cross-version `--apply` via historical-source-tree fixtures; a `/scan:skill-engines` skill (parse every skill .md for `scripts/...` refs, verify the engine exists) wired into release-build + `/mc:setup` postflight.
+- **Out of scope:** Central multi-product architecture (parked E-CENTRAL-MC).
 - **Current state:** Planned
 - **Percent completion:** 0% — not started; Planned. Conservative per §20.
 
 ## Definition of Done
 <!-- Concrete, checkable criteria. Nothing reaches 100% until all are satisfied + evidenced (§20, §27). -->
 - [ ] `/portfolio:sync` lands clean across ≥3 products in one invocation
-- [ ] Fresh-product `/warp:setup` on `main` requires explicit `--yes-install-on-main` or auto-creates a branch
+- [ ] Fresh-product `/mc:setup` on `main` requires explicit `--yes-install-on-main` or auto-creates a branch
 - [ ] A synthetic same-name collision prompts for resolution instead of silently overwriting
 - [ ] Install matrix exercises cross-version `--apply` against ≥2 historical-source-tree fixtures
 - [ ] `/scan:skill-engines` exits 0 across canonical and release-build refuses a capsule where any installed skill's engine script is missing

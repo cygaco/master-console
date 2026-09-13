@@ -7,7 +7,7 @@
  *
  *   1. Additively merges curated entries into `.claude/settings.json#permissions.allow`
  *      so the harness classifier auto-allows the listed patterns.
- *   2. Writes `paths.runtime/authorization.json` (schema warpos/auth/v1) so the
+ *   2. Writes `paths.runtime/authorization.json` (schema mc/auth/v1) so the
  *      project-side PreToolUse hook `scripts/hooks/authorization-gate.js` can
  *      short-circuit downstream guards for the matching scope.
  *
@@ -46,6 +46,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -403,7 +404,7 @@ function writeAuthorization(scopes, ttlMin, reason, spendCeilingUsd, opts = {}) 
       : null) ||
     now.toISOString();
   const auth = {
-    schema: "warpos/auth/v1",
+    schema: "mc/auth/v1",
     scopes,
     ttl_min: ttlMin,
     granted_at: now.toISOString(),
@@ -578,7 +579,7 @@ function main() {
   // When set, classifier-hard-denied scopes (node-e-fs) are dropped with a note
   // instead of failing the apply. Absent/0 = honor explicit opt-in as before.
   const autoMode = /^(1|true|yes)$/i.test(
-    String(process.env.WARPOS_AUTO_MODE || ""),
+    String(mcEnv.readEnv("AUTO_MODE") || ""),
   );
   const scopes = normalizeScopes(args.scopes, { autoMode });
   if (scopes.length === 0) {

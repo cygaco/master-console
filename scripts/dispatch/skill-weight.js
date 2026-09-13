@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * skill-weight.js — generate the skill-weight registry (PLAN §13.2).
@@ -34,7 +35,7 @@ const path = require("path");
 
 const PROJECT =
   process.env.CLAUDE_PROJECT_DIR ||
-  process.env.WARPOS_PROJECT_DIR ||
+  mcEnv.readEnv("PROJECT_DIR") ||
   path.resolve(__dirname, "..", "..");
 
 const COMMANDS_DIR = path.join(PROJECT, ".claude", "commands");
@@ -164,7 +165,7 @@ function buildRegistry(commandsDir) {
     if (c.execution === "inline-required") inlineRequired++;
   }
   return {
-    schema: "warpos/skill-weight/v1",
+    schema: "mc/skill-weight/v1",
     generated_at: new Date().toISOString(),
     source: ".claude/commands",
     classification: "seeded-candidates",

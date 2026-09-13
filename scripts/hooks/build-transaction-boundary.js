@@ -54,7 +54,7 @@ function start(event) {
   const id = txId(role, feature, prompt);
   const allowedFiles = scopeFromPrompt(prompt);
   const tx = {
-    $schema: "warpos/build-transaction/v1",
+    $schema: "mc/build-transaction/v1",
     buildId: id,
     role,
     feature,

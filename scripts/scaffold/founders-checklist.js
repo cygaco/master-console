@@ -4,9 +4,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const CHECKLIST_SCHEMA = "warpos/founders-checklist/v1";
-const MARKER_OPEN = "<!-- warpos:founders-checklist v1 -->";
-const MARKER_CLOSE = "<!-- /warpos:founders-checklist -->";
+const CHECKLIST_SCHEMA = "mc/founders-checklist/v1";
+const MARKER_OPEN = "<!-- mc:founders-checklist v1 -->";
+const MARKER_CLOSE = "<!-- /mc:founders-checklist -->";
 
 const CORE_ITEMS = [
   {
@@ -254,7 +254,7 @@ function parseFoundersChecklist(markdown) {
     });
   }
   if (!text.includes(MARKER_OPEN) || !text.includes(MARKER_CLOSE)) {
-    errors.push("FOUNDERS_CHECKLIST.md missing warpos checklist markers");
+    errors.push("FOUNDERS_CHECKLIST.md missing mc checklist markers");
   }
   if (!text.includes(CHECKLIST_SCHEMA)) {
     errors.push(`FOUNDERS_CHECKLIST.md missing schema ${CHECKLIST_SCHEMA}`);

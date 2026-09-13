@@ -6,7 +6,7 @@ timing: reference
 lead_time: "none"
 ---
 
-# WarpOS Application-Security Knowledge Library — agent training references
+# MC Application-Security Knowledge Library — agent training references
 
 > This is the **security-hardening knowledge library**: 9 self-contained, teachable references that **train the Security pod agents** — `security-builder` (builds the hardening), `security-fixer` (repairs it), and `security-reviewer` (the binding red-team verdict). Each ref closes with a §6 **agent-applicable RULES** section phrased as PASS/FAIL assertions in the reviewer's own finding vocabulary, so a ref is something an agent can grade a build against.
 >
@@ -52,4 +52,4 @@ This library is **agent grounding (`anchor: none`)** — it is grounded into eac
 
 ---
 
-*The WarpOS application-security knowledge library — framework-generic, reviewer-grade security judgment training, grounded in OWASP (Top 10 2025, API Top 10 2023, LLM Top 10 2025, Cheat Sheets), Supabase/Postgres RLS docs, and current 2025–2026 incident evidence. Sources are cited per ref. Last reviewed: 2026-06. Not a substitute for a professional security audit on apps handling sensitive data.*
+*The MC application-security knowledge library — framework-generic, reviewer-grade security judgment training, grounded in OWASP (Top 10 2025, API Top 10 2023, LLM Top 10 2025, Cheat Sheets), Supabase/Postgres RLS docs, and current 2025–2026 incident evidence. Sources are cited per ref. Last reviewed: 2026-06. Not a substitute for a professional security audit on apps handling sensitive data.*

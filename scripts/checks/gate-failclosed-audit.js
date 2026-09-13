@@ -66,7 +66,7 @@
  * anywhere without the emitted list it derives from. An omitted/unknowable
  * field reads as UNKNOWN, never as "nothing to report".
  *
- * Node built-ins only. No dependencies (WarpOS has no package.json / node_modules).
+ * Node built-ins only. No dependencies (MC has no package.json / node_modules).
  */
 
 const fs = require("fs");

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/routing-trace/v1",
-  "title": "WarpOS Sprint — Routing Trace Row",
+  "$id": "mc/sprint/routing-trace/v1",
+  "title": "MC Sprint — Routing Trace Row",
   "description": "Per-artifact provenance row written by scripts/sprint/routing.js record at every sprint-artifact finalize boundary. Append-only JSONL at paths.sprintDecisions/routing-trace.jsonl. One row per (sprint_id, phase, artifact_id) finalization. Coverage and check subcommands query these rows. See SP-20260514-002 PRD R-2.",
   "type": "object",
   "required": [
@@ -18,7 +18,7 @@
   "properties": {
     "schema": {
       "type": "string",
-      "const": "warpos/sprint/routing-trace/v1"
+      "const": "mc/sprint/routing-trace/v1"
     },
     "sprint_id": {
       "type": "string",

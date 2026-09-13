@@ -3,6 +3,7 @@
  * decision ledger - append and verify Class B/C decisions.
  */
 
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 
@@ -88,7 +89,7 @@ function appendDecision(fields) {
   // known. Resolution order: explicit fields.sprint_id → env
   // WARPOS_SPRINT_ID → null. Pre-existing rows without the field keep
   // parsing (AC-14.3).
-  const sid = fields.sprint_id || process.env.WARPOS_SPRINT_ID || null;
+  const sid = fields.sprint_id || mcEnv.readEnv("SPRINT_ID") || null;
   if (sid) entry.sprint_id = sid;
   fs.appendFileSync(file, JSON.stringify(entry) + "\n", "utf8");
   return entry;

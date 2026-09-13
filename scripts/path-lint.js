@@ -299,8 +299,8 @@ const SKIP_SUBSTRINGS = [
   ".claude/agents/.system/dispatch-backups/", // dispatch snapshots
   "backups/",
   "SYSTEMS-REFERENCE.md", // doc being migrated
-  "warpos-system-updates", // historical migration doc
-  "warpos-roadmap.md", // roadmap docs (legacy reference)
+  "mc-system-updates", // historical migration doc
+  "mc-roadmap.md", // roadmap docs (legacy reference)
   "ROADMAP.md", // canonical framework backlog (consumer scaffold is generated, not propagated)
   ".claude/.session-checkpoint.json", // periodic snapshot of past prompts
   ".claude/.last-checkpoint", // periodic snapshot
@@ -317,7 +317,7 @@ const SKIP_SUBSTRINGS = [
   // Phase 4 — capsule + migration historical references
   "framework/releases/", // changelogs / upgrade-notes name the renamed paths
   "migrations/0.0.0-to-0.1.0/003-docs-to-requirements.js", // semantic purpose IS the rewrite
-  ".warpos/", // per-install transactional state (audit log)
+  ".mc/", // per-install transactional state (audit log)
   "scripts/one-off/codemod-track-b5.js", // Track C codemod encodes paths as data
   "runtime/canonical-skeleton/", // Track A.2 preserved templates pre-overwrite for canonical mirror
 ];

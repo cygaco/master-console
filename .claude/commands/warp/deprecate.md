@@ -1,43 +1,27 @@
 ---
-description: "Create a guarded WarpOS deprecation proposal for an agent, skill, hook, path, requirement, pattern, or generated file."
+description: "[deprecated alias → /mc:deprecate] Forwards to /mc:deprecate. The `warp:` skill namespace was renamed to `mc:` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
 user-invocable: true
+tags: [deprecated, alias, mc]
 ---
 
-# /warp:deprecate
+# /warp:deprecate — DEPRECATED, use /mc:deprecate
 
-Create a deprecation proposal that follows the Phase 6 removal policy. This command does not delete files.
+This skill is a thin alias that forwards to **`/mc:deprecate`**. The `warp:` skill namespace was renamed to `mc:` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-## Usage
+## Deprecation notice (one-time)
 
-```bash
-node scripts/warpos/deprecate.js <id> --type <kind> --replacement <id-or-none> --removal-version <version> --reason "<why>"
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
+
+> `/warp:deprecate` is deprecated and will be removed in mc@2.1.0. Use `/mc:deprecate`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/mc:deprecate $ARGUMENTS
 ```
 
-Examples:
+## Removal
 
-```bash
-node scripts/warpos/deprecate.js warp.sync --type skill --replacement warp.update --removal-version 1.0.0 --reason "Renamed to update."
-node scripts/warpos/deprecate.js old.path.key --type path --replacement new.path.key --removal-version 0.3.0 --reason "Path registry consolidation."
-```
-
-## Output
-
-The engine writes a JSON proposal under `.claude/project/decisions/deprecations/`.
-
-Each proposal includes:
-
-- Stable ID
-- Type
-- Replacement
-- Reason
-- First deprecated version
-- Earliest removal version
-- Migration placeholder
-- User warning placeholder
-- Rollback path
-
-## Rules
-
-- Do not remove the target in the same step unless a migration and release note already exist.
-- Path keys must also be marked in `framework/paths.registry.json` when removal actually ships.
-- Shipped skills and agents need a sunset window unless the item is a security hazard.
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/warp:deprecate` → `/mc:deprecate`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

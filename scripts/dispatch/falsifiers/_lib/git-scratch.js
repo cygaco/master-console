@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../../../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * git-scratch.js — shared scratch-git-repo helper for Seam E (protected-ref-transaction) falsifiers
  * (SP-20260720-002 Phase 4). NOT a falsifier itself — a test utility. Lives under falsifiers/_lib/ so every
@@ -81,18 +82,16 @@ function headSha(dir, ref) {
 function fenceEnv(spId, token, leaseRoot, base = process.env) {
   return {
     ...base,
-    WARPOS_CONTROLLER_FENCE_TOKEN: String(token),
-    WARPOS_CONTROLLER_FENCE_SPID: spId,
-    WARPOS_CONTROLLER_FENCE_LEASE_ROOT: leaseRoot,
+    ...mcEnv.envPair("CONTROLLER_FENCE_TOKEN", String(token)),
+    ...mcEnv.envPair("CONTROLLER_FENCE_SPID", spId),
+    ...mcEnv.envPair("CONTROLLER_FENCE_LEASE_ROOT", leaseRoot),
   };
 }
 
 /** An env guaranteed to carry NO fence vars (strip any that leaked from the parent process). */
 function noFenceEnv(base = process.env) {
   const env = { ...base };
-  delete env.WARPOS_CONTROLLER_FENCE_TOKEN;
-  delete env.WARPOS_CONTROLLER_FENCE_SPID;
-  delete env.WARPOS_CONTROLLER_FENCE_LEASE_ROOT;
+  for (const s of ["CONTROLLER_FENCE_TOKEN", "CONTROLLER_FENCE_SPID", "CONTROLLER_FENCE_LEASE_ROOT"]) mcEnv.unsetEnv(s, env);
   return env;
 }
 

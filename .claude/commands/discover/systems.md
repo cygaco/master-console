@@ -81,7 +81,7 @@ Who references whom. A tightly-connected cluster of files is usually a system, e
 
 ### Angle 5 — Convention (Named)
 
-Filename and path patterns that WarpOS already uses as system markers.
+Filename and path patterns that MC already uses as system markers.
 
 **Patterns:**
 - `*-guard.js` in `paths.hooks` → PreToolUse guard

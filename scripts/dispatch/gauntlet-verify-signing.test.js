@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * gauntlet-verify-signing.test.js — ED-231 whole-ledger signing (SP-20260718-004 Phase 2, β RIDER-1,
  * MISTAKE-CLASS priority). Proves the liveness reader (the release/WG-19 gate) rejects a FORGED
@@ -12,9 +13,9 @@
 const os = require("node:os");
 const path = require("node:path");
 const fs = require("node:fs");
-process.env.WARPOS_ATTEST_SECRET_FILE = path.join(
-  os.tmpdir(),
-  `gv-signing-secret-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+mcEnv.setEnv(
+  "ATTEST_SECRET_FILE",
+  path.join(os.tmpdir(), `gv-signing-secret-${Date.now()}-${Math.random().toString(36).slice(2)}`),
 );
 
 const crypto = require("node:crypto");
@@ -146,5 +147,5 @@ test("a FORGED record with NO valid signature is still rejected (mistake-class i
 
 // Clean up the temp secret file.
 test("cleanup", () => {
-  try { fs.unlinkSync(process.env.WARPOS_ATTEST_SECRET_FILE); } catch { /* ignore */ }
+  try { fs.unlinkSync(mcEnv.readEnv("ATTEST_SECRET_FILE")); } catch { /* ignore */ }
 });

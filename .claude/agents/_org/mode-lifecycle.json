@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/mode-lifecycle/v0.1",
+  "$schema": "mc/mode-lifecycle/v0.1",
   "_doc": "THE single source of truth for what each Alex MODE requires — roster, persistent-team requirement, lifecycle bindings, provider tier, dispatch profile, and teardown policy (E-LIFECYCLE-001 / S-LC-01). Readers RESOLVE FROM HERE so a mode's roster is edited in ONE place: scripts/hooks/lib/mode-lifecycle.js (the shared reader), scripts/hooks/session-start.js (the persistent-team-init directive), and scripts/hooks/team-guard.js (the bootstrap-face allow-list) all derive their required-team-by-mode from this file. De-duplicates the formerly-hardcoded TEAM_MODES map (session-start) + FACE_TYPES literal (team-guard). The fail-closed drift validator scripts/checks/mode-lifecycle-registry.js earns it: the readers' fail-open FALLBACK constants must MATCH this registry or it exits non-zero. Mode resolution itself (mode.json → mode string) lives in lib/mode.js#getMode; this registry maps the resolved mode → its lifecycle contract. S-LC-01 does NOT build any gate from this (that is S-LC-03/04); it only makes this the source the existing readers READ.",
   "version": "v0.1",
   "description": "Mode-Lifecycle Registry — mode → required-team/roster + bindings + provider-tier + dispatch-profile + teardown.",

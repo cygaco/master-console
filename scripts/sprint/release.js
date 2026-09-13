@@ -22,6 +22,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -75,8 +76,8 @@ function emitGate(kind, data) {
 // ── Sprint-close regression-seed gate (0.17.0 per-sprint enforcer) ─────
 // The named enforcer for the per-sprint test-suite convention
 // (_docs/sprint/TESTSUITE.md), applied at SPRINT CLOSE. Before this, the
-// regression-seed enforcer ran ONLY at /warp:release
-// (scripts/warpos/release-gates.js) — so a sprint could close (mint a release
+// regression-seed enforcer ran ONLY at /mc:release
+// (scripts/mc/release-gates.js) — so a sprint could close (mint a release
 // record) carrying a NEW regression in a covered class (the BC-15
 // aspirational-vs-enforced gap captured in commit 5870a0c).
 //
@@ -186,7 +187,7 @@ function cmdPrepare(argv) {
   const id = newReleaseId(SPRINT.releases);
   const now = nowIso();
   const release = {
-    schema: "warpos/sprint/release/v1",
+    schema: "mc/sprint/release/v1",
     id,
     sprint: current.id,
     title: f.title || current.title || "Sprint release",
@@ -248,7 +249,7 @@ function cmdPrepare(argv) {
       artifact_id: id,
       artifact_path: releasePath(id),
       sprint: current.id,
-      model: process.env.WARPOS_RECORDING_MODEL || "claude:claude-opus-4-8",
+      model: mcEnv.readEnv("RECORDING_MODEL") || "claude:claude-opus-4-8",
       recorded_by: "/sprint:release",
       allow_single_vendor: true,
       auto_override: true,

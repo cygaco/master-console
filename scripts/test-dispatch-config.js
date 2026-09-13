@@ -91,7 +91,7 @@ check(".claude/manifest.json", () => {
 
 // 4. scaffold-core.js — NEW products are born agy-only, never with a gemini block.
 check("scaffold-core.js", () => {
-  const src = read("scripts/warpos/scaffold-core.js");
+  const src = read("scripts/mc/scaffold-core.js");
   const block = src.match(/openai:\s*\{[\s\S]*?antigravity:\s*\{[\s\S]*?\}/);
   if (!block) throw new Error("could not locate generated providers block (expected antigravity)");
   if (/cli:\s*"gemini"/.test(src))
@@ -141,7 +141,7 @@ check("antigravity primary-model agreement", () => {
       /antigravity:\s*\{[\s\S]*?default_model:\s*process\.env\.ANTIGRAVITY_MODEL\s*\|\|\s*"([^"]+)"/, "providers.antigravity.default_model"),
     grab("scripts/dispatch/catalog.js",
       /id:\s*"antigravity",[\s\S]*?defaultModel:\s*"([^"]+)"/, "catalog.antigravity.defaultModel"),
-    grab("scripts/warpos/scaffold-core.js",
+    grab("scripts/mc/scaffold-core.js",
       /antigravity:\s*\{[\s\S]*?default_model:\s*"([^"]+)"/, "scaffold.antigravity.default_model"),
     grab(".claude/agents/engineering/security/reviewer.md",
       /provider_model:\s*(\S+)/, "security-reviewer.provider_model"),

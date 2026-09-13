@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint-full-autonomy/v1",
-  "title": "WarpOS /sprint:full — Autonomy Preset Bundle",
+  "$id": "mc/sprint-full-autonomy/v1",
+  "title": "MC /sprint:full — Autonomy Preset Bundle",
   "description": "Operator-editable preset bundle for /sprint:full. Three default presets (conservative/moderate/aggressive) shipped at .claude/agents/00-alex/.system/policy/sprint-full-autonomy.json. The orchestrator loads the bundle once at start. hard_ceilings[] is informational only — scripts/sprint/full.js has a hardcoded enum that is authoritative; no preset may bypass it.",
   "type": "object",
   "required": ["$schema", "version", "presets", "hard_ceilings"],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string", "const": "warpos/sprint-full-autonomy/v1" },
+    "$schema": { "type": "string", "const": "mc/sprint-full-autonomy/v1" },
     "version": { "type": "integer", "const": 1 },
     "comment": { "type": "string" },
     "presets": {

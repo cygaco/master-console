@@ -51,7 +51,7 @@ function throwawayLiveGrant(extra = {}) {
   const authPath = path.join(dir, "authorization.json");
   const grantedAt = new Date(Date.now() - 90 * 60 * 1000).toISOString(); // 90m ago
   const grant = {
-    schema: "warpos/auth/v1",
+    schema: "mc/auth/v1",
     scopes: ["manifest-edit", "write-jsonl", "node-e-fs"],
     ttl_min: 180,
     granted_at: grantedAt,

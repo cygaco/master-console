@@ -57,7 +57,7 @@ function test_retro_surfaces_goal_verification_counts() {
   const tmpl = fs.readFileSync(
     path.join(
       REPO,
-      "_warpos",
+      "_mc",
       "templates",
       "sprint",
       "retrospective",

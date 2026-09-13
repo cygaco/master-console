@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * role-resolver.test.js — the live derived-not-settable role-binding resolver (SP-20260718-004
  * Phase 2, G2.1/ED-216 + ED-220). Includes the REQUIRED-PRESENT falsifiability fixture (i):
@@ -67,27 +68,27 @@ test("FIXTURE (i) — ENV VECTOR (β rider): a worker that setenv's WARPOS_BOUND
   // β's design→build load-bearing rider: WARPOS_BOUND_ROLE/WARPOS_ACTOR_KIND are the TRANSPORT of the
   // parent's pre-spawn decision (the worker's self-knowledge), never the AUTHORITY source. A worker OWNS its
   // own env and can setenv them mid-life — deriveBinding must ignore that entirely (it reads {channel, role}).
-  const saved = { br: process.env.WARPOS_BOUND_ROLE, ak: process.env.WARPOS_ACTOR_KIND };
+  const saved = { br: mcEnv.readEnv("BOUND_ROLE"), ak: mcEnv.readEnv("ACTOR_KIND") };
   try {
-    process.env.WARPOS_BOUND_ROLE = "President";
-    process.env.WARPOS_ACTOR_KIND = "top_level_session";
+    mcEnv.setEnv("BOUND_ROLE", "President");
+    mcEnv.setEnv("ACTOR_KIND", "top_level_session");
     const b = deriveBinding({ channel: "dispatch-claude", role: "backend-builder" }, { rb: RB, knownRoles: KNOWN });
     assert.strictEqual(b.actor_kind, "dispatched_worker", "hostile env WARPOS_ACTOR_KIND must NOT override the channel-derived actor_kind");
     assert.strictEqual(b.boundRole, "backend-builder", "hostile env WARPOS_BOUND_ROLE must NOT override the derived role");
     // A President dispatch is still refused regardless of the hostile env.
     assert.strictEqual(deriveBinding({ channel: "dispatch-claude", role: "President" }, { rb: RB, knownRoles: KNOWN }).ok, false);
   } finally {
-    if (saved.br === undefined) delete process.env.WARPOS_BOUND_ROLE; else process.env.WARPOS_BOUND_ROLE = saved.br;
-    if (saved.ak === undefined) delete process.env.WARPOS_ACTOR_KIND; else process.env.WARPOS_ACTOR_KIND = saved.ak;
+    if (saved.br === undefined) mcEnv.unsetEnv("BOUND_ROLE"); else mcEnv.setEnv("BOUND_ROLE", saved.br);
+    if (saved.ak === undefined) mcEnv.unsetEnv("ACTOR_KIND"); else mcEnv.setEnv("ACTOR_KIND", saved.ak);
   }
 });
 
 test("FIXTURE (i) — ENV-vector SOURCE GUARD: role-resolver.js never READS WARPOS_ACTOR_KIND/WARPOS_BOUND_ROLE as authority", () => {
   // The invariant that makes the env-vector inert BY CONSTRUCTION: the resolver derives, it never re-reads the
-  // transport env vars. A future `if (process.env.WARPOS_ACTOR_KIND === 'top_level_session') allow()` would
+  // transport env vars. A future `if (mcEnv.readEnv("ACTOR_KIND") === 'top_level_session') allow()` would
   // re-open the phantom-one-layer-up hole — this source guard catches it.
   const src = require("node:fs").readFileSync(require("node:path").join(__dirname, "role-resolver.js"), "utf8");
-  assert.ok(!/process\.env\.WARPOS_(ACTOR_KIND|BOUND_ROLE)/.test(src), "role-resolver.js must not read the identity transport env vars as authority");
+  assert.ok(!/process\.env\.MC_(ACTOR_KIND|BOUND_ROLE)/.test(src), "role-resolver.js must not read the identity transport env vars as authority");
 });
 
 test("FIXTURE (i) — structural: deriveBinding's ONLY inputs are {channel, role}; a worker-set field cannot reach it", () => {

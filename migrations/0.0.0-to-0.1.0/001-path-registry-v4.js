@@ -15,7 +15,7 @@ module.exports = {
   from: "0.0.0",
   to: "0.1.0",
   description:
-    "Rebuild .claude/paths.json from framework/paths.registry.json with $schema warpos/paths/v4.",
+    "Rebuild .claude/paths.json from framework/paths.registry.json with $schema mc/paths/v4.",
   destructive: false,
 
   async plan() {
@@ -25,7 +25,7 @@ module.exports = {
         target: ".claude/paths.json",
         via: "scripts/paths/build.js",
         reason:
-          "Schema bumped to warpos/paths/v4 — derived artifact must be rebuilt.",
+          "Schema bumped to mc/paths/v4 — derived artifact must be rebuilt.",
       },
       {
         op: "regenerate",

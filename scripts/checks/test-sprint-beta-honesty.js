@@ -20,6 +20,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -680,9 +681,9 @@ console.log("\n(n) CLI EXIT CODES — subprocess tests:");
       encoding: "utf8",
       env: {
         ...process.env,
-        WARPOS_EVENTS_FILE: tmpEvents,
-        WARPOS_SPRINT_DATES_JSON: "{}",
-        WARPOS_FULLREPORTS_DIR: tmpDir, // tmpDir is empty (contains only events.jsonl file)
+        ...mcEnv.envPair("EVENTS_FILE", tmpEvents),
+        ...mcEnv.envPair("SPRINT_DATES_JSON", "{}"),
+        ...mcEnv.envPair("FULLREPORTS_DIR", tmpDir), // tmpDir is empty (contains only events.jsonl file)
       },
     });
     ok(
@@ -717,10 +718,10 @@ console.log("\n(n) CLI EXIT CODES — subprocess tests:");
       encoding: "utf8",
       env: {
         ...process.env,
-        WARPOS_EVENTS_FILE: tmpEvents,
+        ...mcEnv.envPair("EVENTS_FILE", tmpEvents),
         // Sprint date 2026-05-26 >= cutoff 2026-05-25 → applicable
-        WARPOS_SPRINT_DATES_JSON: JSON.stringify({ "SP-CLI-FINDING-001": POST_CUTOFF_DATE }),
-        WARPOS_FULLREPORTS_DIR: tmpDir, // no report files → no corroboration
+        ...mcEnv.envPair("SPRINT_DATES_JSON", JSON.stringify({ "SP-CLI-FINDING-001": POST_CUTOFF_DATE })),
+        ...mcEnv.envPair("FULLREPORTS_DIR", tmpDir), // no report files → no corroboration
       },
     });
     ok(
@@ -780,9 +781,9 @@ console.log("\n(n2) --since MISSING VALUE — no value or flag-as-value → exit
       encoding: "utf8",
       env: {
         ...process.env,
-        WARPOS_EVENTS_FILE: tmpEvents,
-        WARPOS_SPRINT_DATES_JSON: "{}",
-        WARPOS_FULLREPORTS_DIR: tmpDir,
+        ...mcEnv.envPair("EVENTS_FILE", tmpEvents),
+        ...mcEnv.envPair("SPRINT_DATES_JSON", "{}"),
+        ...mcEnv.envPair("FULLREPORTS_DIR", tmpDir),
       },
     });
     ok(
@@ -796,9 +797,9 @@ console.log("\n(n2) --since MISSING VALUE — no value or flag-as-value → exit
       encoding: "utf8",
       env: {
         ...process.env,
-        WARPOS_EVENTS_FILE: tmpEvents,
-        WARPOS_SPRINT_DATES_JSON: "{}",
-        WARPOS_FULLREPORTS_DIR: tmpDir,
+        ...mcEnv.envPair("EVENTS_FILE", tmpEvents),
+        ...mcEnv.envPair("SPRINT_DATES_JSON", "{}"),
+        ...mcEnv.envPair("FULLREPORTS_DIR", tmpDir),
       },
     });
     ok(

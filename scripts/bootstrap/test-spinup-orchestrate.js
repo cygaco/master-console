@@ -4,7 +4,7 @@
 /**
  * scripts/bootstrap/test-spinup-orchestrate.js — per-step seam + anti-degrade +
  * headless-contract test for the step-driven bootstrap:spinup orchestrator
- * (WARPOS-PROMPT §7). The named enforcer of the consumer dispatch contract.
+ * (MC-PROMPT §7). The named enforcer of the consumer dispatch contract.
  *
  * Proves WITHOUT real research spend and WITHOUT a degrade shortcut:
  *   - driver: planSteps (default/positional/--resume) + phase-state round-trip + seedCarry.

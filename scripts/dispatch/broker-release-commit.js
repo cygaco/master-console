@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * broker-release-commit.js — #6, REGEN / BOOKKEEPING COMMIT ROUTING
  * (SP-20260721-001, D-4 INC-1, unit MIG).
@@ -60,7 +61,7 @@ const TARGET_DEFAULT = "refs/heads/main";
  */
 function buildReleaseCommit(args = {}) {
   const { gitRoot, head, message, add } = args;
-  const tmpIndex = path.join(os.tmpdir(), `warpos-release-index-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const tmpIndex = path.join(os.tmpdir(), `mc-release-index-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const env = { GIT_INDEX_FILE: tmpIndex };
   try {
     // Seed the temp index from the TARGET head's tree — the only legitimate baseline for a main-forward commit.
@@ -133,7 +134,7 @@ function brokerReleaseCommit(input = {}, opts = {}, seams = {}) {
   }
 
   // ── (3) the conductor lease ────────────────────────────────────────────────────────────────────────
-  const spId = opts.spId || process.env.WARPOS_SP_ID || null;
+  const spId = opts.spId || mcEnv.readEnv("SP_ID") || null;
   const held = dog.ensureLease(spId, opts.leaseRoot, seams.lease);
   if (!held.ok) {
     return finish({ ok: false, decision: "BLOCKED", reason: "lease-not-held", detail: `conductor lease unavailable for ${spId || "(no --sp-id)"}: ${held.state}` }, { gitRoot, targetRef, head, newHead: releaseCommit, opts, seams, emit });

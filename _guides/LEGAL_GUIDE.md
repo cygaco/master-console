@@ -257,4 +257,4 @@ LEGAL (beyond privacy — see PRIVACY_GDPR_GUIDE for the data half)
 
 ---
 
-*This guide is part of the **WarpOS launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, `PRIVACY_GDPR_GUIDE.md` for the data/privacy half of the law, and `PAYMENTS_GUIDE.md` for subscription billing. **Last reviewed: 2026-06.** Laws, rules, and court rulings change constantly — the official sources above are the source of truth, and **this guide is not legal advice.***
+*This guide is part of the **MC launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, `PRIVACY_GDPR_GUIDE.md` for the data/privacy half of the law, and `PAYMENTS_GUIDE.md` for subscription billing. **Last reviewed: 2026-06.** Laws, rules, and court rulings change constantly — the official sources above are the source of truth, and **this guide is not legal advice.***

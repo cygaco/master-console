@@ -3,20 +3,20 @@
 // preview-failclear.test.js — SP-20260614-002 S-1 / AC-R1c.
 //
 // Two bindings:
-//   1. ::resolved-target-warpos-root-refused-precondition — if the resolved
-//      target is the WarpOS canonical tree (path match, OR a canonical signal via
-//      the shared resolver's isCanonicalDir: _warpos/MANIFEST.json /
-//      warpos.source==="self" / project.slug==="warpos" / version.json#name —
-//      NOTE a consumer's own warpos install-record block, source != "self", is
-//      NOT a signal), refuseIfTargetIsWarpOS refuses BEFORE any scaffold/boot,
+//   1. ::resolved-target-mc-root-refused-precondition — if the resolved
+//      target is the MC canonical tree (path match, OR a canonical signal via
+//      the shared resolver's isCanonicalDir: _mc/MANIFEST.json /
+//      mc.source==="self" / project.slug==="mc" / version.json#name —
+//      NOTE a consumer's own mc install-record block, source != "self", is
+//      NOT a signal), refuseIfTargetIsMC refuses BEFORE any scaffold/boot,
 //      and run() returns non-ok with no side effects. (ED-009: detection routed
-//      through scripts/warpos/repo-role.js; β DECIDE 0.88, session/2026-06-15.)
+//      through scripts/mc/repo-role.js; β DECIDE 0.88, session/2026-06-15.)
 //   2. ::missing-precondition-exact-message-nonzero — preconditions fail CLEAR
 //      with the exact missing step + remediation, exiting non-zero (no silent
 //      hang, no open against a dead server, no orphaned child).
 //
 // Seam: the dev-server/scaffold are NOT spawned here — we drive the pure guard
-// + the run() WarpOS short-circuit, and assert the failure-message contracts
+// + the run() MC short-circuit, and assert the failure-message contracts
 // from the source for the timeout/install paths (no real npm run dev in corpus).
 // ─────────────────────────────────────────────────────────────────────────────
 "use strict";
@@ -50,59 +50,59 @@ function tmpDir(label) {
 
 async function main() {
   // ── refusal: WARPOS_ROOT by path equality ──────────────────────────────────
-  await ok("resolved-target-warpos-root-refused-precondition: path equality refuses", () => {
-    const g = preview.refuseIfTargetIsWarpOS(preview.WARPOS_ROOT);
+  await ok("resolved-target-mc-root-refused-precondition: path equality refuses", () => {
+    const g = preview.refuseIfTargetIsMC(preview.WARPOS_ROOT);
     assert.strictEqual(g.refuse, true, "the canonical root must be refused by path");
     assert.ok(/canonical root/i.test(g.reason), "reason names the canonical root");
   });
 
-  // ── NOT refused: a consumer's own warpos install-record block ──────────────
-  // EVERY scaffolded consumer carries a top-level `warpos:{...,source:<provenance>}`
+  // ── NOT refused: a consumer's own mc install-record block ──────────────
+  // EVERY scaffolded consumer carries a top-level `mc:{...,source:<provenance>}`
   // block (scaffold-core.js:542) — refusing on its mere PRESENCE would refuse the
   // very products admin:preview targets (the latent over-refusal bug ED-053's
   // deferred live run never hit). Detection now flows through the shared resolver's
   // signals-only isCanonicalDir (ED-009): a consumer block (source != "self") is
   // NOT a canonical signal, so it is NOT refused. (β DECIDE 0.88.)
-  await ok("consumer warpos: block (source != self, slug != warpos) is NOT refused", () => {
-    const dir = tmpDir("warpos-consumer-block");
+  await ok("consumer mc: block (source != self, slug != mc) is NOT refused", () => {
+    const dir = tmpDir("mc-consumer-block");
     fs.mkdirSync(path.join(dir, ".claude"), { recursive: true });
     fs.writeFileSync(
       path.join(dir, ".claude", "manifest.json"),
-      JSON.stringify({ project: { slug: "someproduct" }, warpos: { version: "x", installed: true, source: "github:acme/someproduct" } }),
+      JSON.stringify({ project: { slug: "someproduct" }, mc: { version: "x", installed: true, source: "github:acme/someproduct" } }),
     );
-    const g = preview.refuseIfTargetIsWarpOS(dir);
-    assert.strictEqual(g.refuse, false, "a consumer's own warpos install-record must NOT be refused");
+    const g = preview.refuseIfTargetIsMC(dir);
+    assert.strictEqual(g.refuse, false, "a consumer's own mc install-record must NOT be refused");
   });
 
-  // ── refusal: manifest warpos.source === "self" (the canonical self-identity) ─
+  // ── refusal: manifest mc.source === "self" (the canonical self-identity) ─
   // Signal 3c — the field that distinguishes the canonical dev repo from a
   // consumer (consumers carry source:<provenance>, the dev repo carries "self").
-  await ok("manifest warpos.source==='self' refuses (canonical self-identity)", () => {
-    const dir = tmpDir("warpos-self");
+  await ok("manifest mc.source==='self' refuses (canonical self-identity)", () => {
+    const dir = tmpDir("mc-self");
     fs.mkdirSync(path.join(dir, ".claude"), { recursive: true });
     fs.writeFileSync(
       path.join(dir, ".claude", "manifest.json"),
-      JSON.stringify({ project: { slug: "someproduct" }, warpos: { source: "self" } }),
+      JSON.stringify({ project: { slug: "someproduct" }, mc: { source: "self" } }),
     );
-    const g = preview.refuseIfTargetIsWarpOS(dir);
-    assert.strictEqual(g.refuse, true, "warpos.source==='self' is the canonical self-identity → refuse");
+    const g = preview.refuseIfTargetIsMC(dir);
+    assert.strictEqual(g.refuse, true, "mc.source==='self' is the canonical self-identity → refuse");
     assert.ok(/canonical (tree|signal|root)/i.test(g.reason), "reason names the canonical detection");
   });
 
-  // ── refusal: project.slug === "warpos" ─────────────────────────────────────
-  await ok("manifest project.slug==='warpos' refuses", () => {
-    const dir = tmpDir("warpos-slug");
+  // ── refusal: project.slug === "mc" ─────────────────────────────────────
+  await ok("manifest project.slug==='mc' refuses", () => {
+    const dir = tmpDir("mc-slug");
     fs.mkdirSync(path.join(dir, ".claude"), { recursive: true });
     fs.writeFileSync(
       path.join(dir, ".claude", "manifest.json"),
-      JSON.stringify({ project: { slug: "warpos" } }),
+      JSON.stringify({ project: { slug: "mc" } }),
     );
-    const g = preview.refuseIfTargetIsWarpOS(dir);
-    assert.strictEqual(g.refuse, true, "project.slug==='warpos' must be refused");
+    const g = preview.refuseIfTargetIsMC(dir);
+    assert.strictEqual(g.refuse, true, "project.slug==='mc' must be refused");
     assert.ok(/canonical (tree|signal|root)/i.test(g.reason), "reason names the canonical detection");
   });
 
-  // ── NOT refused: ordinary product, no warpos markers ───────────────────────
+  // ── NOT refused: ordinary product, no mc markers ───────────────────────
   await ok("ordinary product instance is NOT refused (no getWarpProduct false-positive)", () => {
     const dir = tmpDir("product-ok");
     fs.mkdirSync(path.join(dir, ".claude"), { recursive: true });
@@ -110,20 +110,20 @@ async function main() {
       path.join(dir, ".claude", "manifest.json"),
       JSON.stringify({ project: { slug: "admin-preview-instance" } }),
     );
-    const g = preview.refuseIfTargetIsWarpOS(dir);
+    const g = preview.refuseIfTargetIsMC(dir);
     assert.strictEqual(g.refuse, false, "an ordinary product must NOT be refused");
   });
 
-  // ── run(): WarpOS target → non-ok, no side effects, exact remediation ──────
-  await ok("run() refuses a WarpOS-root target before any scaffold (no side effects)", async () => {
+  // ── run(): MC target → non-ok, no side effects, exact remediation ──────
+  await ok("run() refuses a MC-root target before any scaffold (no side effects)", async () => {
     const res = await preview.run(["--instance-dir", preview.WARPOS_ROOT]);
-    assert.strictEqual(res.ok, false, "run() must fail on a WarpOS target");
+    assert.strictEqual(res.ok, false, "run() must fail on a MC target");
     assert.ok(
-      /refusing to preview the WarpOS canonical root/i.test(res.error),
+      /refusing to preview the MC canonical root/i.test(res.error),
       "fail-clear message names the refusal",
     );
     assert.ok(
-      /targets a PRODUCT app, never WarpOS itself/i.test(res.error),
+      /targets a PRODUCT app, never MC itself/i.test(res.error),
       "remediation states the boundary",
     );
   });

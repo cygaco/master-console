@@ -1559,9 +1559,9 @@
           "modified": "2026-06-10T13:54:45.235Z"
         },
         {
-          "id": "tool:warpos-sync-run09",
-          "name": "warpos-sync-run09.js",
-          "path": "scripts/warpos-sync-run09.js",
+          "id": "tool:mc-sync-run09",
+          "name": "mc-sync-run09.js",
+          "path": "scripts/mc-sync-run09.js",
           "type": "script",
           "exists": true,
           "size": 4731,

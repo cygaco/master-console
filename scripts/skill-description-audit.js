@@ -23,13 +23,14 @@
  */
 
 "use strict";
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
 
 const PROJECT =
   process.env.CLAUDE_PROJECT_DIR ||
-  process.env.WARPOS_PROJECT_DIR ||
+  mcEnv.readEnv("PROJECT_DIR") ||
   process.cwd();
 const PATHS = JSON.parse(
   fs.readFileSync(path.join(PROJECT, ".claude", "paths.json"), "utf8"),

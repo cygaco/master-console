@@ -7,7 +7,7 @@
  * transitions, enforces lock semantics, and emits the enriched schema:
  *
  *   {
- *     "$schema": "warpos/mode-marker/v2",
+ *     "$schema": "mc/mode-marker/v2",
  *     "mode": "solo" | "adhoc" | "oneshot",
  *     "enteredAt": "<ISO8601>",
  *     "enteredBy": "alpha" | "beta" | "delta" | "user" | "<agent>",
@@ -250,7 +250,7 @@ function buildMarker(mode, opts, current) {
       ? current.enteredAt
       : new Date().toISOString();
   return {
-    $schema: "warpos/mode-marker/v2",
+    $schema: "mc/mode-marker/v2",
     mode,
     enteredAt,
     enteredBy: opts.by,

@@ -1,16 +1,26 @@
 ---
-description: Verify framework-installed.json reflects actual disk state (no missing files, no hash drift)
+description: "[deprecated alias → /scan:mc-manifest-honesty] Forwards to /scan:mc-manifest-honesty. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-manifest-honesty
+# /scan:warpos-manifest-honesty — DEPRECATED, use /scan:mc-manifest-honesty
 
-Walks `framework-installed.json` and verifies every framework-owned asset exists on disk and matches its install-time hash. `owner: "project"` files are ignored (allowed to drift).
+This skill is a thin alias that forwards to **`/scan:mc-manifest-honesty`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-```bash
-node scripts/checks/warpos-manifest-honesty.js
+## Deprecation notice (one-time)
+
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
+
+> `/scan:warpos-manifest-honesty` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-manifest-honesty`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-manifest-honesty $ARGUMENTS
 ```
 
-Refine the hash-drift threshold via:
-```
-/reasoning:run "What thresholds distinguish 'expected local edit' from 'broken install' for hash drift on framework-owned files?"
-```
+## Removal
+
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-manifest-honesty` → `/scan:mc-manifest-honesty`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

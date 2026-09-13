@@ -30,9 +30,9 @@ module.exports = {
       ok: false,
       status: "failed",
       message:
-        "install incomplete or not a WarpOS repo (/scan:install exit " +
+        "install incomplete or not a MC repo (/scan:install exit " +
         res.code +
-        ") — refusing to proceed. Run /warp:setup (or fix the gaps) first.",
+        ") — refusing to proceed. Run /mc:setup (or fix the gaps) first.",
       data: { exit: res.code },
     };
   },

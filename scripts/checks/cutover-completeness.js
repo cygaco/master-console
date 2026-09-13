@@ -173,9 +173,9 @@ const LIVE_SCRIPT_FILES = [
   "scripts/dispatch-claude.js",
   "scripts/phase0-verify.js",
   "scripts/test-sprint.js",
-  "scripts/warpos/manifest/build.js",
-  "scripts/warpos/manifest/test-bootstrap.js",
-  "scripts/warpos/codemod-docs-to-requirements.js",
+  "scripts/mc/manifest/build.js",
+  "scripts/mc/manifest/test-bootstrap.js",
+  "scripts/mc/codemod-docs-to-requirements.js",
 ];
 const KEYSTONE_REGISTRIES = [
   ".claude/agents/_principles/registry.json",

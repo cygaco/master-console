@@ -24,7 +24,7 @@ function readManifest() {
   if (!fs.existsSync(MANIFEST_PATH)) {
     const err = new Error(
       `.claude/manifest.json not found at ${MANIFEST_PATH}\n` +
-        `  fix: run \`/warp:setup\` to create it from project scan\n` +
+        `  fix: run \`/mc:setup\` to create it from project scan\n` +
         `  manifest-patch.js operates on an existing manifest — it does not create one`,
     );
     err.code = "MANIFEST_MISSING";
@@ -36,7 +36,7 @@ function readManifest() {
   } catch (e) {
     const err = new Error(
       `.claude/manifest.json unreadable (${MANIFEST_PATH}): ${e.message}\n` +
-        `  fix: check file permissions or restore from .claude/.warpos-backup/`,
+        `  fix: check file permissions or restore from .claude/.mc-backup/`,
     );
     err.code = "MANIFEST_UNREADABLE";
     throw err;
@@ -47,7 +47,7 @@ function readManifest() {
   } catch (e) {
     const err = new Error(
       `.claude/manifest.json is not valid JSON (${MANIFEST_PATH}): ${e.message}\n` +
-        `  fix: restore from .claude/.warpos-backup/ or re-run /warp:setup`,
+        `  fix: restore from .claude/.mc-backup/ or re-run /mc:setup`,
     );
     err.code = "MANIFEST_INVALID";
     throw err;

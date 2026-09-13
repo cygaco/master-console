@@ -53,7 +53,25 @@
       "view|_warpos/MANIFEST.json",
       "view|scripts/hooks/lib/paths.generated.js"
     ],
-    "amendments": []
+    "amendments": [
+      { "key": "pin|scripts/open-source/assert-evidence.js|tag warpos@0.1.4 still resolves|", "warrant": "T3 pre-apply self-reference audit: git-tag DATA (BUILD-SPEC SEPARATE INVARIANTS — warpos@* tags are kept forever); rewriting the doc line desyncs it from the pinned TAG constant" },
+      { "key": "pin|scripts/open-source/assert-evidence.js|\"tag warpos@0.1.4 commit|", "warrant": "T3 pre-apply self-reference audit: evidence-map label naming the real historical tag; a rewrite relabels the anchor commit with a tag that never existed" },
+      { "key": "pin|scripts/open-source/assert-evidence.js|const TAG = \"warpos@0.1.4\";|", "warrant": "T3 pre-apply self-reference audit: the SHA-preservation assertion resolves the REAL tag warpos@0.1.4; a rewrite to mc@0.1.4 makes gate G2 assert a nonexistent tag and fail" },
+      { "key": "pin|scripts/checks/framework-purity.js|\"warpos-to-update.md\",|", "warrant": "T3 pre-apply self-reference audit (resolves denylist openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA; a rewrite makes the detector watch for a relic name that never existed" },
+      { "key": "pin|scripts/checks/framework-purity.js|\".warpos-sync.json\",|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA for the retired sync ledger; the old filename is what a returning relic carries" },
+      { "key": "pin|scripts/checks/framework-purity.js|\".warpos-sync-commit-msg.txt\",|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA for the retired sync commit-message file" },
+      { "key": "pin|scripts/checks/framework-purity.js|\"warpos-promoted-archive.md\",|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_FILES relic-watch DATA for the retired promoted-archive doc" },
+      { "key": "pin|scripts/checks/framework-purity.js|/\\bwarposFlagLedger\\b/,|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_REGEX detector pattern for the retired paths key; a rewrite makes the regex search for its own replacement and read green forever" },
+      { "key": "pin|scripts/checks/framework-purity.js|/\\bwarposPromotedArchive\\b/,|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_REGEX detector pattern for the retired paths key" },
+      { "key": "pin|scripts/checks/framework-purity.js|/\\bwarposPromoteReports\\b/,|", "warrant": "T3 pre-apply self-reference audit (openQuestion 2): PROMOTE_RELIC_REGEX detector pattern for the retired paths key" },
+      { "key": "future|scripts/checks/warpos-*.js", "warrant": "T3 compat layer (BUILD-SPEC lane B): the one-release deprecated alias shims at every renamed check script's LEGACY name; declared before they are created so their legacy filenames are never re-planned as renames by an idempotent re-run" },
+      { "key": "future|.claude/commands/scan/warpos-*.md", "warrant": "T3 compat layer (AC-2.1): the one-release deprecated-alias skills at the legacy scan: skill names; their bodies quote the legacy invocation as DATA" },
+      { "key": "future|scripts/open-source/mc-alias-map.json", "warrant": "T3 compat layer (AC-2.2): the committed alias MAP enumerates every legacy -> mc alias, so it quotes the legacy names as DATA" },
+      { "key": "pin|scripts/checks/mc-tracked-transients.js|prefix: \".warpos/\",|", "warrant": "T3 apply: the legacy per-install audit-log dir stays FORBIDDEN beside the new .mc/ rule for the 2.0.x compat window (existing installs still write it; never auto-moved)" },
+      { "key": "glob|migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js", "warrant": "T3 part 1c (skill-namespace): the 0.0.0->0.1.0 migration OPERATES on the literal /warp:sync + /warp:update skill names as its DATA (alias body + idempotency marker for installs still on 0.0.0); the warp:->mc: transform would break it, so it is historical Class-3 data, verbatim" },
+      { "key": "future|.claude/commands/warp/*.md", "warrant": "T3 part 2 compat layer: the one-release deprecated-alias skills re-created at the legacy warp: skill paths vacated by part 1c; their bodies quote the legacy /warp:<skill> invocation as DATA, and declaring them Class-3 keeps an idempotent --apply-skill-namespace from re-planning them as moves" },
+      { "key": "pin|scripts/hooks/lib/mc-env.js|\"warpos\"|const LEGACY_SLUG = ", "warrant": "T3 part 4a read-both helper (AC-3.1/AC-3.2): the ONE legacy slug literal the shipped compat helper derives the legacy env prefix (and, 4c/5, the legacy dir + HOME names) from, for the one-release window removed in mc@2.1.0; rewriting it makes the helper read MC_ twice and silently drop every legacy fallback" }
+    ]
   },
 
   "generatedViews": [
@@ -67,6 +85,7 @@
   "pathGlobs": [
     { "pattern": ".github/**", "class": 2, "writeProtected": true, "warrant": "α auto-mode classifier denies every edit under .github/workflows (CI Bypass rule, 2026-09-12); operator-gated, not codemod-touched" },
 
+    { "pattern": "migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js", "class": 3, "writeProtected": true, "warrant": "T3 part 1c: this migration OPERATES on the literal /warp:sync + /warp:update skill names as its DATA (the alias body it writes and its idempotency marker, for installs still on 0.0.0); a warp:->mc: rewrite breaks the migration, so it is historical data kept verbatim" },
     { "pattern": "migrations/0.1.x-to-0.2.0/**", "class": 3, "writeProtected": true, "warrant": "the 001-rename-warpos-to-framework.js migration OPERATES on the literal string 'warpos' as its DATA describing a past rename; that data is the historical record, not live identifier surface" },
     { "pattern": "scripts/open-source/rename-mc.denylist.json", "class": 3, "writeProtected": true, "warrant": "the partition artifact itself: its pins and globs quote the legacy slug as DATA; an --apply rewrite would turn every pin's matchText into its own replacement and silently empty the partition (T2 finding)" },
     { "pattern": "scripts/open-source/rename-mc.js", "class": 3, "writeProtected": true, "warrant": "the codemod's match/rename rules ARE the legacy-slug literals it searches for; rewriting them makes an idempotency re-run (AC-1.2) search for its own output and pass vacuously (T2 finding)" },
@@ -96,6 +115,18 @@
     { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/manifest/promote.js\",", "warrant": "same relic-watch pin as scripts/warpos/promote.js" },
     { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG_NEEDLE = ", "warrant": "the live-dir legacy-slug detector's own search literal (R1); rewriting it makes the detector search for its own replacement and read green forever" },
 
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos-to-update.md\",", "warrant": "PROMOTE_RELIC_FILES relic-watch DATA (openQuestion 2, pinned at T3 pre-apply audit): the detector watches for the RETIRED legacy relic name; a rewrite watches for a name that never existed" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\".warpos-sync.json\",", "warrant": "same relic-watch pin as warpos-to-update.md, for the retired sync ledger filename" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\".warpos-sync-commit-msg.txt\",", "warrant": "same relic-watch pin as warpos-to-update.md, for the retired sync commit-message filename" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos-promoted-archive.md\",", "warrant": "same relic-watch pin as warpos-to-update.md, for the retired promoted-archive doc" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "/\\bwarposFlagLedger\\b/,", "warrant": "PROMOTE_RELIC_REGEX detector pattern for a retired paths key; rewriting it makes the regex search for its own replacement and read green forever" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "/\\bwarposPromotedArchive\\b/,", "warrant": "same PROMOTE_RELIC_REGEX detector pin as warposFlagLedger" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "/\\bwarposPromoteReports\\b/,", "warrant": "same PROMOTE_RELIC_REGEX detector pin as warposFlagLedger" },
+
+    { "file": "scripts/open-source/assert-evidence.js", "matchText": "tag warpos@0.1.4 still resolves", "warrant": "git-tag DATA (BUILD-SPEC SEPARATE INVARIANTS: warpos@* tags kept forever); doc line kept verbatim so it matches the pinned TAG constant" },
+    { "file": "scripts/open-source/assert-evidence.js", "matchText": "\"tag warpos@0.1.4 commit", "warrant": "evidence-map label naming the real historical tag commit; a rewrite labels the anchor with a tag that never existed" },
+    { "file": "scripts/open-source/assert-evidence.js", "matchText": "const TAG = \"warpos@0.1.4\";", "warrant": "the SHA-preservation assertion (gate G2) resolves the REAL tag warpos@0.1.4; a rewrite to mc@0.1.4 asserts a nonexistent tag and fails" },
+
     { "file": "scripts/checks/cutover-completeness.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG_NEEDLE = ", "warrant": "the suppressed-count emission's own search literal (AC-7.1); rewriting it zeroes every emitted count — the one defense against the allow-list silent catch-all" },
 
     { "file": "scripts/checks/leak-gate.js", "matchText": "\"scripts/checks/warpos-tracked-transients.js\"", "warrant": "the frozen gate name for the compat-shim alias; leak-gate.test.js asserts the workflow-synced literal, and leak-gate.yml is unedited per AC-4.1 — the codemod must never touch this occurrence (S-4/AC-4.2)" },
@@ -103,7 +134,11 @@
     { "file": "scripts/dispatch/safe-spawn.js", "matchText": "\".codex-warpos\"", "warrant": "isolated CODEX_HOME directory name (RI-009); an existing operator's ~/.codex-warpos on disk must keep resolving after the rebrand, so the literal segment is pinned, not renamed to .codex-mc" },
 
     { "file": "scripts/portfolio/registry.js", "matchText": "\".warpos\"", "warrant": "HOME-anchored legacy path segment (~/.warpos/portfolio.json); BUILD-SPEC HOME-ANCHORED STATE requires T3 to read ~/.mc then fall back to ~/.warpos, NEVER auto-move in 2.0.0 -- this occurrence is the fallback read, pinned rather than replaced" },
-    { "file": "scripts/portfolio/registry.js", "matchText": "~/.warpos/", "anchor": "// Creates ", "warrant": "comment documenting the same HOME-anchored legacy path as the pinned path.join segment; kept verbatim so the comment matches the pinned code" }
+    { "file": "scripts/portfolio/registry.js", "matchText": "~/.warpos/", "anchor": "// Creates ", "warrant": "comment documenting the same HOME-anchored legacy path as the pinned path.join segment; kept verbatim so the comment matches the pinned code" },
+
+    { "file": "scripts/checks/mc-tracked-transients.js", "matchText": "prefix: \".warpos/\",", "warrant": "T3 apply: the legacy per-install audit-log dir stays FORBIDDEN beside the new .mc/ rule for the 2.0.x compat window (existing installs still write it; never auto-moved)" },
+
+    { "file": "scripts/hooks/lib/mc-env.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG = ", "warrant": "T3 part 4a read-both helper (AC-3.1/AC-3.2): the ONE legacy slug literal the shipped compat helper derives the legacy env prefix (and, 4c/5, the legacy dir + HOME names) from, for the one-release window removed in mc@2.1.0; rewriting it makes the helper read MC_ twice and silently drop every legacy fallback" }
   ],
 
   "openQuestions": [
@@ -113,6 +148,10 @@
 
   "futureEntries": [
     { "pattern": "migrations/1.2.0-to-2.0.0/**", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "the 2.0.0 downstream migration OPERATES on _warpos/.warpos/WARPOS_ literals as its DATA (what it migrates FROM); those literals are its payload, not live identifier surface, and must survive the codemod's own later re-runs unchanged" },
-    { "pattern": "scripts/checks/warpos-tracked-transients.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "one-line alias shim (old name requiring the new mc-tracked-transients.js) landing in the SAME commit as the rename per AC-4.1; the shim's old filename is permanently retained for the 2.0.x compat window, never re-renamed by an idempotent re-run" }
+    { "pattern": "scripts/checks/warpos-tracked-transients.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "one-line alias shim (old name requiring the new mc-tracked-transients.js) landing in the SAME commit as the rename per AC-4.1; the shim's old filename is permanently retained for the 2.0.x compat window, never re-renamed by an idempotent re-run" },
+    { "pattern": "scripts/checks/warpos-*.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (BUILD-SPEC lane B): the one-release deprecated alias shims at every renamed check script's LEGACY name; declared before they are created so their legacy filenames are never re-planned as renames by an idempotent re-run" },
+    { "pattern": ".claude/commands/scan/warpos-*.md", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (AC-2.1): the one-release deprecated-alias skills at the legacy scan: skill names; their bodies quote the legacy invocation as DATA" },
+    { "pattern": "scripts/open-source/mc-alias-map.json", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (AC-2.2): the committed alias MAP enumerates every legacy -> mc alias, so it quotes the legacy names as DATA" },
+    { "pattern": ".claude/commands/warp/*.md", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 part 2 compat layer: the one-release deprecated-alias skills at the legacy warp: skill paths vacated by part 1c; their bodies quote the legacy /warp:<skill> invocation as DATA and must never be re-planned as skill moves" }
   ]
 }

@@ -205,11 +205,11 @@ test("LIVE — the flip-trigger is GREEN, and the two flagship writers are handl
   // #2 release-canonical.js — every raw commit/merge/update-ref call-site is gone (migrated to the brokered
   // transport); classifyFile therefore reports it writes.length===0. It still SELECTS main (mainLines>0),
   // proving the recognizer still sees the file — it is genuinely clean, not a false negative.
-  const relCanon = classifyFile(path.resolve("scripts/warpos/release-canonical.js"), process.cwd());
+  const relCanon = classifyFile(path.resolve("scripts/mc/release-canonical.js"), process.cwd());
   assert.strictEqual(relCanon.writes.length, 0, "#2 release-canonical.js must have ZERO raw write call-sites left");
   assert.ok(relCanon.mainLines.length > 0, "#2 release-canonical.js must still be recognized as main-selecting (not a scan miss)");
   assert.match(
-    fs.readFileSync(path.resolve("scripts/warpos/release-canonical.js"), "utf8"),
+    fs.readFileSync(path.resolve("scripts/mc/release-canonical.js"), "utf8"),
     /integrateBranchMerge/,
     "#2 release-canonical.js must document routing through integrateBranchMerge (the brokered transport)",
   );

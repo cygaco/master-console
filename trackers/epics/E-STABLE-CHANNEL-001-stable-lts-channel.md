@@ -7,9 +7,9 @@
 - **Title:** Stable / LTS Release Channel
 - **Owner:** President Agent
 - **Parent roadmap area:** ../../ROADMAP.md § Epics → Planned epics (E-STABLE-CHANNEL-001; detail in the deprecated-milestone block `🟡 0.18.0`)
-- **Goal:** WarpOS stops being one rolling `latest`. Releases flow `edge → latest → stable → lts`, and a release earns `stable`/`lts` only by passing the full regression seed + an artifact-first downstream contract test + a soak window. Products pin to a channel and choose stability over freshness.
+- **Goal:** MC stops being one rolling `latest`. Releases flow `edge → latest → stable → lts`, and a release earns `stable`/`lts` only by passing the full regression seed + an artifact-first downstream contract test + a soak window. Products pin to a channel and choose stability over freshness.
 - **Background:** Downstream products track a single rolling "latest" and inherit hollow-rung (capsule-gap) and regressed releases; there is no known-good channel to pin to. The operator's driving complaint is instability — a release that ships green can still carry a missing capsule or a fresh regression, and a consumer has no way to say "give me only the proven ones." This epic adds the channel taxonomy and the promotion gate that makes "stable" mean something earned, not assumed.
-- **Scope:** A `channel` field on `version.json` / the release capsule; `release-build.js` tags the channel; channel-aware `/warp:check` + `/warp:update`; the stable-promotion gate (regression seed + contract test + migration/quorum checks + soak window); channel-aware update + pinning + downgrade-protection. Portfolio products default to `stable`.
+- **Scope:** A `channel` field on `version.json` / the release capsule; `release-build.js` tags the channel; channel-aware `/mc:check` + `/mc:update`; the stable-promotion gate (regression seed + contract test + migration/quorum checks + soak window); channel-aware update + pinning + downgrade-protection. Portfolio products default to `stable`.
 - **Out of scope:** Building the regression seed itself (E-TEST-SUITE-001) and the executable consumer-contract gate itself (E-GOLDEN-FLOW-001) — this epic CONSUMES both at the promotion boundary; it does not build them.
 - **Current state:** Planned
 - **Percent completion:** 0% — Planned, no work started. Activates only after E-TEST-SUITE-001 (the regression seed that defines "stable") and E-GOLDEN-FLOW-001 (the executable contract gate that is the promotion-boundary substance) both land.
@@ -18,7 +18,7 @@
 <!-- Concrete, checkable criteria. Nothing reaches 100% until all are satisfied + evidenced (§20, §27). -->
 - [ ] A release carries a channel label — `version.json` / the release capsule has a `channel` field (`edge`/`latest`/`stable`/`lts`) and `release-build.js` tags it.
 - [ ] The stable-promotion gate REFUSES to label a release `stable`/`lts` unless the regression seed (E-TEST-SUITE-001) + the contract test (E-GOLDEN-FLOW-001) + migration/quorum checks are all green AND the soak window has elapsed — fail-closed.
-- [ ] `/warp:update --channel stable` installs only stable releases; portfolio products default to `stable`; pinning + downgrade-protection hold.
+- [ ] `/mc:update --channel stable` installs only stable releases; portfolio products default to `stable`; pinning + downgrade-protection hold.
 - [ ] A synthetic attempt to promote a hollow-rung release (missing capsule) to `stable` is REFUSED — proven against a deliberately capsule-gapped release.
 
 ## Related definitions
@@ -31,7 +31,7 @@
 <!-- Link each sprint tracker in /trackers/sprints/ -->
 - Release-channel-model — Planned — add the `channel` field to `version.json` / the capsule and have `release-build.js` tag it.
 - Stable-promotion-gate — Planned — the fail-closed gate that consumes the regression seed + contract test + migration/quorum checks + soak window.
-- Channel-aware-update+pinning — Planned — channel-aware `/warp:check` + `/warp:update --channel`, product pinning, and downgrade-protection.
+- Channel-aware-update+pinning — Planned — channel-aware `/mc:check` + `/mc:update --channel`, product pinning, and downgrade-protection.
 
 ## Dependencies
 - E-TEST-SUITE-001 — Active — the regression seed defines what "stable" means; must land first.

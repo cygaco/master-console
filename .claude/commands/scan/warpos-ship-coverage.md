@@ -1,16 +1,26 @@
 ---
-description: Verify every framework-owned path under the consumer-essential roots is actually shipped (enumerated in framework-manifest.json) — catches "framework code that ships to nobody" (the B1/E3 downstream-broken class).
+description: "[deprecated alias → /scan:mc-ship-coverage] Forwards to /scan:mc-ship-coverage. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-ship-coverage
+# /scan:warpos-ship-coverage — DEPRECATED, use /scan:mc-ship-coverage
 
-Asserts that every framework-owned path the consumer install needs is actually a shipped manifest asset — the enforcer behind the recurring "downstream is missing X" class (a framework script/skill exists in canonical but was never enumerated in `framework-manifest.json`, so `install.ps1` / `/warp:setup` never copies it). 2026-05-30 reconcile surfaced two live instances this gate now covers: `scripts/package.json` (module-scope insulation, B1) and `scripts/bootstrap/`+`scripts/canon/` backing scripts (dead-skill class, E3).
+This skill is a thin alias that forwards to **`/scan:mc-ship-coverage`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-`status: green` — every consumer-essential framework-owned path is enumerated + shipped.
-`status: red` — a framework-owned path under a consumer-essential root is missing from the manifest; `remediation` names the path + the ASSET_DIRS/TOP_LEVEL entry to add in `scripts/generate-framework-manifest.js`.
+## Deprecation notice (one-time)
 
-```bash
-node scripts/checks/warpos-ship-coverage.js [--json]
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
+
+> `/scan:warpos-ship-coverage` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-ship-coverage`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-ship-coverage $ARGUMENTS
 ```
 
-Pairs with `/scan:warpos-manifest-coverage` (ownership↔shipping reconciliation) and `/scan:warpos-manifest-honesty` (installed-hash drift). Run as part of `/scan:full` Tier 3 (WarpOS distribution integrity).
+## Removal
+
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-ship-coverage` → `/scan:mc-ship-coverage`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

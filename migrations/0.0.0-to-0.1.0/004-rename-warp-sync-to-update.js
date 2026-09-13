@@ -27,11 +27,11 @@ user-invocable: true
 This skill is a one-line wrapper that calls \`/warp:update\` with the same
 arguments. The canonical entry point is **/warp:update**.
 
-\`/warp:sync\` was the original name for "pull latest WarpOS into this project."
+\`/warp:sync\` was the original name for "pull latest MC into this project."
 Phase 4 split that operation into update (apply incoming) + promote (push
 outgoing), with /warp:update being the canonical update path. The old name
 remains so docs, READMEs, and habit don't break — but expect a removal at
-warpos@1.0.0.
+mc@1.0.0.
 
 ## Behavior
 
@@ -42,7 +42,7 @@ Forward to /warp:update with all arguments preserved.
 If you want the old "fetch + apply in one step" behavior, that's exactly
 what /warp:update does by default. No flag changes are required.
 
-If you want only the new outbound direction (this repo → WarpOS canonical),
+If you want only the new outbound direction (this repo → MC canonical),
 you want /warp:promote instead — /warp:sync was never that.
 `;
 

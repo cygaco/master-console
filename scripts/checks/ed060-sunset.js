@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * ed060-sunset.js — the executable ED-060 sunset enforcer (SP-20260718-003 D9, AC-17).
  *
@@ -54,8 +55,8 @@ function loadLive() {
   // sunset date / resolved state through the REAL main() → exit code, WITHOUT mutating the shipped
   // manifest. Never set in production. This is what makes AC-17 a falsifiable INTEGRATION tooth (a
   // past-date fixture must make the actual CLI exit non-zero), not merely a pure-function assertion.
-  if (process.env.WARPOS_ED060_SUNSET_DATE_TEST) sunsetDate = process.env.WARPOS_ED060_SUNSET_DATE_TEST;
-  if (process.env.WARPOS_ED060_RESOLVED_TEST != null) resolved = process.env.WARPOS_ED060_RESOLVED_TEST === "true";
+  if (mcEnv.readEnv("ED060_SUNSET_DATE_TEST")) sunsetDate = mcEnv.readEnv("ED060_SUNSET_DATE_TEST");
+  if (mcEnv.readEnv("ED060_RESOLVED_TEST") != null) resolved = mcEnv.readEnv("ED060_RESOLVED_TEST") === "true";
   return { sunsetDate, resolved };
 }
 

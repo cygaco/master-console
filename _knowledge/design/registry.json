@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/design-guides/v0.1",
+  "$schema": "mc/design-guides/v0.1",
   "version": "v0.1",
   "note": "Machine-readable index of the design-knowledge library: 19 design-PRINCIPLE guides + 1 component-PATTERN doc (INPUT_COMPOSER_PATTERN, shape:pattern). anchor:none for all — these are AGENT-GROUNDING training references, not bootstrap launch guides. Built from each guide's frontmatter. Regenerate by re-reading _knowledge/design/*.md frontmatter; keep in sync with the 20 docs. design_quality_axes / visual_review_categories below are the canonical target vocabularies the maps_to fields reference.",
   "design_quality_axes": ["design-tokens", "component-usage", "visual-hierarchy", "mobile-responsive", "accessibility", "design-handoff"],

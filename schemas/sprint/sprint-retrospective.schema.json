@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/sprint-retrospective/v1",
-  "title": "WarpOS Sprint v0.2 — Sprint Retrospective",
+  "$id": "mc/sprint/sprint-retrospective/v1",
+  "title": "MC Sprint v0.2 — Sprint Retrospective",
   "description": "Per-sprint analytical artifact written by /sprint:retrospective. Lives at paths.sprintHistory/<sprint-id>/retro.yaml alongside the frozen sprint-history.yaml. Sibling to sprint-history.schema.json — history is the registry of closed sprints (frozen archive), retro is the analytical synthesis (wins, misses, friction, action items). See PRD SP-20260513-004 Design Decision #1.",
   "type": "object",
   "required": [
@@ -21,7 +21,7 @@
   "properties": {
     "schema": {
       "type": "string",
-      "const": "warpos/sprint/sprint-retrospective/v1"
+      "const": "mc/sprint/sprint-retrospective/v1"
     },
     "sprint_id": {
       "type": "string",

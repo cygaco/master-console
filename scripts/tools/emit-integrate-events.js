@@ -29,7 +29,7 @@ const INTEGRATIONS = [
   },
   {
     id: 142,
-    target: "skill:warp:setup",
+    target: "skill:mc:setup",
     reason:
       "5-signal state-machine resumable setup skill (commit c65e163); re-run safe, repair mode, no early-exit on partial install",
   },

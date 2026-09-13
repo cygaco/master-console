@@ -3,9 +3,15 @@
 // denylist.test.js — S-OS-06 / S-1 (T1). Regression coverage for the committed
 // Class-3/4 deny-list artifact: its own header question, the 5 generated views +
 // framework/releases/** being present and write-protected, and (read-only,
-// against the REAL tree) that a naive rename of those paths would be REFUSED.
+// against the REAL tree) the codemod plan's rename-candidacy / write-permission split.
 // The actual thrown-refusal behavior via execution lives in codemod.test.js
-// (sandboxed fixtures only — this ticket never runs --apply against ROOT).
+// (sandboxed fixtures only).
+//
+// T3 (post-apply): the real tree has been through the one serial --apply. The pre-apply
+// view MOVE (_warpos/MANIFEST.json -> _mc/MANIFEST.json planned as a generatedViewMove) is
+// proven on a fixture by F5 GREEN; on the real tree this file now asserts the APPLIED state:
+// the moved view resolves to its declared entry at its post-rename path, and no rename remains
+// (AC-1.2 idempotency on the real tree).
 //
 //   AC-1.3 denylist-frozen-blocks-generated-views
 // ─────────────────────────────────────────────────────────────────────────────
@@ -62,25 +68,52 @@ ok("denylist-frozen-blocks-generated-views", () => {
     const cls = partition.classifyPath(gv);
     assert.strictEqual(cls.kind, "generated-view", `${gv} must classify as a generated-view`);
     assert.strictEqual(cls.writeProtected, true, `${gv} must be write-protected`);
-    assert.ok(fs.existsSync(path.join(ROOT, gv)), `${gv} must actually exist in the tracked tree`);
+    // The view lives at EXACTLY ONE of its identities (declared, or the codemod's rename of it), and that
+    // path resolves to the SAME declared entry — write-protected, never a default Class-1 file.
+    const present = partition.viewPathCandidates(cls.entry).filter((p) => fs.existsSync(path.join(ROOT, p)));
+    assert.strictEqual(present.length, 1, `${gv} must exist at exactly one of its identities, found ${JSON.stringify(present)}`);
+    const at = partition.classifyPath(present[0]);
+    assert.strictEqual(at.kind, "generated-view", `${present[0]} (where ${gv} lives) must classify as a generated-view`);
+    assert.strictEqual(at.entry, cls.entry, `${present[0]} must resolve to the declared ${gv} entry`);
+    assert.strictEqual(at.writeProtected, true, `${present[0]} must be write-protected`);
   }
+  // Post-apply: the one moved view lives at its post-rename path, not the declared one.
+  assert.strictEqual(fs.existsSync(path.join(ROOT, "_warpos", "MANIFEST.json")), false, "the applied tree has no _warpos/MANIFEST.json");
+  assert.strictEqual(fs.existsSync(path.join(ROOT, "_mc", "MANIFEST.json")), true, "the applied tree carries the moved view at _mc/MANIFEST.json");
 
   const releasesGlob = partition.classifyPath("framework/releases/1.0.0/release.json");
   assert.strictEqual(releasesGlob.class, 4, "framework/releases/** must classify as Class 4");
   assert.strictEqual(releasesGlob.writeProtected, true, "framework/releases/** must be write-protected");
 });
 
-ok("refused-renames-on-the-real-tree-never-leak-into-pathRenames", () => {
-  // Read-only against ROOT: buildLedgerAndPlan performs no writes. Confirms the
-  // real tree's own write-protected paths that WOULD be touched by a naive rename
-  // (e.g. _warpos/MANIFEST.json) are captured as refusals, never as applied renames.
+ok("real-tree-plan-splits-rename-candidacy-from-write-permission", () => {
+  // Read-only against ROOT: buildLedgerAndPlan performs no writes. T3 part 0 ruling:
+  // Class-3/4 paths are never rename candidates (keptHistoricalPaths, names verbatim); a
+  // generated view moving with its Class-1 directory rename is a permitted MOVE in pathRenames
+  // (fixture-proven by F5 GREEN); the real tree carries no genuine refusal.
   const partition = loadPartition({ forceReload: true });
   const built = RENAME_MC.buildLedgerAndPlan({ root: ROOT, partition });
-  const protectedInPathRenames = built.pathRenames.filter((r) => partition.classifyPath(r.from).writeProtected);
-  assert.strictEqual(protectedInPathRenames.length, 0, "no write-protected path may appear in pathRenames");
+  assert.strictEqual(built.refusedRenames.length, 0, `no genuine refusal on the real tree: ${JSON.stringify(built.refusedRenames.slice(0, 3))}`);
 
-  const generatedViewRefusals = built.refusedRenames.filter((r) => r.kind === "generated-view");
-  assert.ok(generatedViewRefusals.length > 0, "expected at least one generated-view refusal on the current tree (_warpos/MANIFEST.json)");
+  const historicalInPathRenames = built.pathRenames.filter((r) => [3, 4].includes(partition.classifyPath(r.from).class));
+  assert.strictEqual(historicalInPathRenames.length, 0, "no Class-3/4 path may appear in pathRenames");
+  const protectedInPathRenames = built.pathRenames.filter((r) => partition.classifyPath(r.from).writeProtected);
+  assert.ok(
+    protectedInPathRenames.every((r) => r.generatedViewMove === true && partition.classifyPath(r.from).kind === "generated-view"),
+    `the only write-protected sources in pathRenames are generated-view directory moves: ${JSON.stringify(protectedInPathRenames)}`
+  );
+  // T3 post-apply: the 458 renames (incl. the _warpos/MANIFEST.json view move) are done — none remains planned.
+  assert.deepStrictEqual(built.pathRenames, [], `the applied real tree plans no further rename: ${JSON.stringify(built.pathRenames.slice(0, 5))}`);
+  assert.ok(
+    built.ledger.some((r) => r.file === "_mc/MANIFEST.json" && r.disposition === "derived") &&
+      built.ledger.filter((r) => r.file === "_mc/MANIFEST.json").every((r) => r.disposition === "derived"),
+    "the moved view's occurrences stay DERIVED at _mc/MANIFEST.json (never re-planned as rewritten)"
+  );
+  assert.ok(
+    built.keptHistoricalPaths.some((k) => k.path === "_planning/warpos-lifecycle-plan.md" && k.class === 4),
+    "the Class-4 _planning/warpos-lifecycle-plan.md keeps its name (keptHistoricalPaths)"
+  );
+  assert.ok(built.keptHistoricalPaths.every((k) => [3, 4].includes(k.class)), "keptHistoricalPaths holds Class-3/4 paths only");
 });
 
 ok("denylist-consumed-only-through-the-loader", () => {

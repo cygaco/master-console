@@ -32,7 +32,7 @@ function loadRegistry(rootOverride) {
  */
 function buildPathsJson(registry) {
   const out = {
-    $schema: "warpos/paths/v" + registry.version,
+    $schema: "mc/paths/v" + registry.version,
     version: registry.version,
   };
   for (const [key, entry] of Object.entries(registry.paths)) {
@@ -43,10 +43,10 @@ function buildPathsJson(registry) {
 }
 
 /**
- * Read warpos version.json. Used by installer + manifest writer to stamp
+ * Read mc version.json. Used by installer + manifest writer to stamp
  * the canonical version into per-project manifests instead of guessing.
  */
-function readWarpOSVersion(rootOverride) {
+function readMCVersion(rootOverride) {
   const file = rootOverride
     ? path.join(rootOverride, "version.json")
     : path.join(ROOT, "version.json");
@@ -59,5 +59,5 @@ function readWarpOSVersion(rootOverride) {
 module.exports = {
   loadRegistry,
   buildPathsJson,
-  readWarpOSVersion,
+  readMCVersion,
 };

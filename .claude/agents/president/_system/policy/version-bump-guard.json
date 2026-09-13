@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/policy/version-bump-guard/v1",
+  "$schema": "mc/policy/version-bump-guard/v1",
   "version": 1,
   "_doc": "Policy for scripts/hooks/version-bump-guard.js. The guard refuses (warn or block) git commits that stage framework-prefix files while framework/releases/<version.json#version>/ already has a minted capsule. Forces a version bump before more framework changes can ship — closes the 2026-05-20 capsule-staleness gap (28 assets + 179 SHA drifts accumulated against 0.8.0 over 5 days without a bump).",
   "enforcement": {
@@ -9,7 +9,7 @@
   },
   "bypass": {
     "env_var": "WARPOS_VERSION_GUARD=off",
-    "sentinel_file": ".warpos/version-bump-guard-disable",
+    "sentinel_file": ".mc/version-bump-guard-disable",
     "_note": "Both bypass mechanisms log to stderr so misuse is observable."
   }
 }

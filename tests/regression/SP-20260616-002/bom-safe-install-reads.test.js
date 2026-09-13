@@ -7,14 +7,14 @@
  * `JSON.parse(fs.readFileSync(f, "utf8"))` with NO BOM strip, so a BOM'd file
  * either misclassified the repo (readJSON returns fallback) or threw
  * un-recoverably (rollback readers). The fix adds a module-level `stripBom`
- * helper in scripts/warpos/update.js + scripts/warpos/transaction.js and wraps
+ * helper in scripts/mc/update.js + scripts/mc/transaction.js and wraps
  * every such read.
  *
  * This test:
  *   (a) writes a BOM-prefixed JSON file to a temp dir,
  *   (b) proves the OLD raw pattern THROWS on it (planted-violation half),
  *   (c) proves JSON.parse(stripBom(...)) parses it correctly,
- *   (d) requires scripts/warpos/transaction.js, greps its source to assert
+ *   (d) requires scripts/mc/transaction.js, greps its source to assert
  *       readHeader/readSnapshot strip BOM, AND calls the exported
  *       readHeader/readSnapshot on a BOM'd header.json/snapshot.json and
  *       asserts success.
@@ -42,7 +42,7 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bom-safe-reads-"));
 
 try {
   // ── (a) write a BOM-prefixed JSON file ──────────────────────────
-  const payload = { repoRole: "canonical", warpos: { source: "/x" }, n: 42 };
+  const payload = { repoRole: "canonical", mc: { source: "/x" }, n: 42 };
   const jsonText = JSON.stringify(payload, null, 2);
   const bomFile = path.join(tmp, "bommed.json");
   fs.writeFileSync(bomFile, BOM + jsonText, "utf8");
@@ -71,7 +71,7 @@ try {
   ok("(c) JSON.parse(stripBom(fs.readFileSync(f,'utf8'))) parses BOM'd JSON");
 
   // ── (d1) source-grep: transaction.js readers now strip BOM ──────
-  const txPath = path.resolve(__dirname, "..", "..", "..", "scripts", "warpos", "transaction.js");
+  const txPath = path.resolve(__dirname, "..", "..", "..", "scripts", "mc", "transaction.js");
   assert.ok(fs.existsSync(txPath), "transaction.js must exist at " + txPath);
   const txSrc = fs.readFileSync(txPath, "utf8");
   // A module-level stripBom helper must be defined.
@@ -115,7 +115,7 @@ try {
   ok("(d2) exported readHeader/readSnapshot parse BOM'd header.json/snapshot.json");
 
   // ── (d3) source-grep: update.js installs the same defense ───────
-  const updPath = path.resolve(__dirname, "..", "..", "..", "scripts", "warpos", "update.js");
+  const updPath = path.resolve(__dirname, "..", "..", "..", "scripts", "mc", "update.js");
   const updSrc = fs.readFileSync(updPath, "utf8");
   assert.ok(
     /const\s+stripBom\s*=/.test(updSrc),

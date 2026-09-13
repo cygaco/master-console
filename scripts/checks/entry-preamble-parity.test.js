@@ -80,9 +80,9 @@ t("one-character semantic edit inside a region -> drift finding", () => {
     const p = path.join(root, "CODEX.md");
     let txt = fs.readFileSync(p, "utf8");
     const beginIdx = txt.indexOf("BEGIN v1 -->");
-    const cut = txt.indexOf("WarpOS", beginIdx); // first WarpOS INSIDE the region
-    assert.ok(cut > beginIdx, "fixture precondition: WarpOS inside region");
-    txt = txt.slice(0, cut) + "WarpOX" + txt.slice(cut + "WarpOS".length);
+    const cut = txt.indexOf("MC", beginIdx); // first MC INSIDE the region
+    assert.ok(cut > beginIdx, "fixture precondition: MC inside region");
+    txt = txt.slice(0, cut) + "WarpOX" + txt.slice(cut + "MC".length);
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
     const f = findingFor(findings, "CODEX.md");
@@ -112,7 +112,7 @@ t("trailing blank line inside a region stays GREEN", () => {
   try {
     const p = path.join(root, "CODEX.md");
     let txt = fs.readFileSync(p, "utf8");
-    txt = txt.replace(/(\n<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:END)/, "\n\n\n$1"); // blank lines before END, inside region
+    txt = txt.replace(/(\n<!--\s*MC:ENTERING-AGENT-PREAMBLE:END)/, "\n\n\n$1"); // blank lines before END, inside region
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
     assert.ok(!findingFor(findings, "CODEX.md"), "trailing-blank-line reformat must not drift: " + JSON.stringify(findings));
@@ -155,7 +155,7 @@ t("absent shared region (markers stripped) -> finding", () => {
   const root = makeFixture();
   try {
     const p = path.join(root, "CODEX.md");
-    const txt = fs.readFileSync(p, "utf8").replace(/<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:(?:BEGIN[^>]*|END)\s*-->/g, "");
+    const txt = fs.readFileSync(p, "utf8").replace(/<!--\s*MC:ENTERING-AGENT-PREAMBLE:(?:BEGIN[^>]*|END)\s*-->/g, "");
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
     const f = findingFor(findings, "CODEX.md");
@@ -171,7 +171,7 @@ t("bytes appended to a marker line -> finding (no silent escape)", () => {
   try {
     const p = path.join(root, "CODEX.md");
     let txt = fs.readFileSync(p, "utf8");
-    txt = txt.replace(/(<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN[^>]*-->)/, "$1 SNEAKY-APPENDED-BYTES");
+    txt = txt.replace(/(<!--\s*MC:ENTERING-AGENT-PREAMBLE:BEGIN[^>]*-->)/, "$1 SNEAKY-APPENDED-BYTES");
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
     assert.ok(findingFor(findings, "CODEX.md"), "appended bytes on a marker line must be caught, got " + JSON.stringify(findings));
@@ -188,8 +188,8 @@ t("bytes before --> inside a marker -> finding (exact-marker match)", () => {
     const p = path.join(root, "CODEX.md");
     let txt = fs.readFileSync(p, "utf8");
     txt = txt.replace(
-      /<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1\s*-->/,
-      "<!-- WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1 IGNORE-CANONICAL -->",
+      /<!--\s*MC:ENTERING-AGENT-PREAMBLE:BEGIN v1\s*-->/,
+      "<!-- MC:ENTERING-AGENT-PREAMBLE:BEGIN v1 IGNORE-CANONICAL -->",
     );
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
@@ -205,7 +205,7 @@ t("a second marked block -> finding (multi-pair not ignored)", () => {
   try {
     const p = path.join(root, "CODEX.md");
     let txt = fs.readFileSync(p, "utf8");
-    txt += "\n\n<!-- WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->\nCONTRADICTORY SECOND BLOCK\n<!-- WARPOS:ENTERING-AGENT-PREAMBLE:END -->\n";
+    txt += "\n\n<!-- MC:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->\nCONTRADICTORY SECOND BLOCK\n<!-- MC:ENTERING-AGENT-PREAMBLE:END -->\n";
     fs.writeFileSync(p, txt);
     const { findings } = runParity({ repoRoot: root });
     const f = findingFor(findings, "CODEX.md");
@@ -223,8 +223,8 @@ t("sole-oracle: mutating ONLY canonical makes every embedder mismatch", () => {
     const cp = path.join(root, CANONICAL_REL);
     let txt = fs.readFileSync(cp, "utf8");
     const beginIdx = txt.indexOf("BEGIN v1 -->");
-    const cut = txt.indexOf("WarpOS", beginIdx);
-    txt = txt.slice(0, cut) + "WarpOX" + txt.slice(cut + "WarpOS".length);
+    const cut = txt.indexOf("MC", beginIdx);
+    txt = txt.slice(0, cut) + "WarpOX" + txt.slice(cut + "MC".length);
     fs.writeFileSync(cp, txt);
     const { findings } = runParity({ repoRoot: root });
     for (const rel of ["CODEX.md", "ANTIGRAVITY.md", "AGENTS.md"]) {

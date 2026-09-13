@@ -27,7 +27,7 @@
 //   false-greens `node x.js && calc`).
 //
 // fail-CLOSED (exit 2, BEFORE any row check): an unreadable / non-JSON registry, a wrong
-// `$schema` (!= "warpos/panel-registry/v1"), or a missing/non-object `panels`. A coverage
+// `$schema` (!= "mc/panel-registry/v1"), or a missing/non-object `panels`. A coverage
 // check that reads green on its own malformed input is the bug we're preventing
 // (BC-16 / enforcer-honesty).
 //
@@ -46,7 +46,7 @@ const DISPATCH_SKILL = path.join(ROOT, "scripts", "dispatch-skill.js");
 
 // The schema the registry MUST carry — a mismatch is fail-closed (could-not-run), never a
 // silent green (AC-R5b).
-const EXPECTED_SCHEMA = "warpos/panel-registry/v1";
+const EXPECTED_SCHEMA = "mc/panel-registry/v1";
 
 // run_context enum (AC-R1b): the in-app-vs-CLI distinction lives here, not in a `route`.
 const RUN_CONTEXTS = new Set(["in_app", "cli"]);

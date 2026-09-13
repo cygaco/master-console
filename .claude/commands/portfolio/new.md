@@ -1,13 +1,13 @@
 ---
-description: Scaffold a new product repo (sibling to WarpOS) with the framework installed and committed, then register it — local-only by default. Open it in its own session and create the GitHub remote yourself, or pass --github to also create+push a private repo.
+description: Scaffold a new product repo (sibling to MC) with the framework installed and committed, then register it — local-only by default. Open it in its own session and create the GitHub remote yourself, or pass --github to also create+push a private repo.
 user-invocable: true
 ---
 
 # /portfolio:new — Scaffold a new product
 
-Creates a fresh product repo as a sibling directory to WarpOS on disk, installs the WarpOS framework inside it, commits the scaffold, and registers it in `~/.warpos/portfolio.json`. **Local-only by default** — no GitHub remote is created. You open the product in its own session and create/push the remote when you want.
+Creates a fresh product repo as a sibling directory to MC on disk, installs the MC framework inside it, commits the scaffold, and registers it in `~/.mc/portfolio.json`. **Local-only by default** — no GitHub remote is created. You open the product in its own session and create/push the remote when you want.
 
-> **Why local-only is the default.** You work in each product's *own* session, not *through* WarpOS. And the agent is gated from pushing to a brand-new remote in auto mode (the harness flags an agent push to a new repo as data-exfiltration — operator approval relayed in chat does not clear it). Keeping the default local means new-product creation runs entirely within agent autonomy; creating the remote is a one-line operator step, when you're ready.
+> **Why local-only is the default.** You work in each product's *own* session, not *through* MC. And the agent is gated from pushing to a brand-new remote in auto mode (the harness flags an agent push to a new repo as data-exfiltration — operator approval relayed in chat does not clear it). Keeping the default local means new-product creation runs entirely within agent autonomy; creating the remote is a one-line operator step, when you're ready.
 
 ## Usage
 
@@ -24,12 +24,12 @@ Creates a fresh product repo as a sibling directory to WarpOS on disk, installs 
 ## What it does
 
 1. Validates slug (IN-1 regex + reserved-name guard — exits 2 before any filesystem ops).
-2. Resolves sibling path: `path.resolve(<warposRoot>, '..', <slug>)`.
-3. Creates the directory, runs `git init`, copies scaffold templates from `_warpos/templates/portfolio/`, makes an initial commit.
-4. Runs `/warp:setup` inside the new directory.
+2. Resolves sibling path: `path.resolve(<mcRoot>, '..', <slug>)`.
+3. Creates the directory, runs `git init`, copies scaffold templates from `_mc/templates/portfolio/`, makes an initial commit.
+4. Runs `/mc:setup` inside the new directory.
 5. Registers the slug via `scripts/portfolio/register.js`.
 6. If `--from-brief` given, moves the brief files in (the folded-in adopt step).
-7. **Scaffolds the app (S0.3, default on):** materializes the pinned Next.js+Tailwind v4+shadcn/ui+Radix+Lucide scaffold (`scripts/scaffold/app.js` → `_warpos/templates/app-scaffold`) into the repo — a real component library + design tokens + security-header baseline + a smoke e2e. Skipped with `--no-scaffold`; `--install` also runs `npm install`. Fail-open (a scaffold error never invalidates the repo + warp install).
+7. **Scaffolds the app (S0.3, default on):** materializes the pinned Next.js+Tailwind v4+shadcn/ui+Radix+Lucide scaffold (`scripts/scaffold/app.js` → `_mc/templates/app-scaffold`) into the repo — a real component library + design tokens + security-header baseline + a smoke e2e. Skipped with `--no-scaffold`; `--install` also runs `npm install`. Fail-open (a scaffold error never invalidates the repo + warp install).
 8. Commits the full scaffold (warp install + app scaffold + brief) so the repo opens clean and ready.
 9. **Default:** prints local-only next-steps (install + open it manually + how to create a remote). **With `--github`:** pre-checks `gh repo view`, then `gh repo create <slug> --private --source=. --remote=origin --push`, and persists `github_url` to the registry.
 10. Emits `portfolio_new` trace event (TR-7), recording the `github` flag.
@@ -37,10 +37,10 @@ Creates a fresh product repo as a sibling directory to WarpOS on disk, installs 
 ## Output (default — local-only)
 
 ```
-scaffolding <slug> at <path>... running /warp:setup... done.
+scaffolding <slug> at <path>... running /mc:setup... done.
   scaffold: N file(s) created, M preserved
 
-Local repo ready — WarpOS installed, app scaffolded, committed, no remote:
+Local repo ready — MC installed, app scaffolded, committed, no remote:
   <path>
 Install deps and see it on screen (the scaffold ships pinned deps, not node_modules):
   cd "<path>" && npm install && npm run dev
@@ -58,7 +58,7 @@ With `--github`, additionally creates + pushes the private remote and prints the
 |------|---------|
 | 0 | Success |
 | 2 | Validation failure (bad slug, reserved name) |
-| 4 | Filesystem error (path not writable, warp:setup failed) |
+| 4 | Filesystem error (path not writable, mc:setup failed) |
 
 ## Procedure
 

@@ -7,7 +7,7 @@
  *
  *   1. Schema validity. Any *.yaml under paths.sprintRoot (except under
  *      paths.sprintHistory and *.report.md) MUST validate against its
- *      declared schema (warpos/sprint/<name>/v1). Block on schema
+ *      declared schema (mc/sprint/<name>/v1). Block on schema
  *      mismatch.
  *
  *   2. History immutability. paths.sprintHistory/* is append-only.
@@ -158,7 +158,7 @@ function inferSchemaKind(filePath) {
 
 function emitAutoInject(filePath, kind, content) {
   // Prepend the schema header. Newline-safe.
-  const header = `schema: warpos/sprint/${kind}/v1\n`;
+  const header = `schema: mc/sprint/${kind}/v1\n`;
   const newContent = header + content;
   try {
     const { logEvent } = require("./lib/logger");
@@ -173,7 +173,7 @@ function emitAutoInject(filePath, kind, content) {
     /* logger optional */
   }
   process.stderr.write(
-    `[sprint-tracker-guard] auto-injected schema: warpos/sprint/${kind}/v1 → ${filePath}\n`,
+    `[sprint-tracker-guard] auto-injected schema: mc/sprint/${kind}/v1 → ${filePath}\n`,
   );
   // PreToolUse mutation: emit hookSpecificOutput.updatedInput with the
   // mutated tool input. Claude Code's PreToolUse hook contract supports
@@ -451,14 +451,14 @@ function main() {
     // keep prior warn-only behavior so we never accidentally break a
     // write to a sprint file we don't recognize.
     emitWarn(
-      `${target.file_path}: no schema: field detected${kind ? ` (would auto-inject warpos/sprint/${kind}/v1 on Write — Edit is warn-only)` : " and path doesn't match any known sprint-kind rule"}. ` +
+      `${target.file_path}: no schema: field detected${kind ? ` (would auto-inject mc/sprint/${kind}/v1 on Write — Edit is warn-only)` : " and path doesn't match any known sprint-kind rule"}. ` +
         "Sprint tracker yaml MUST declare its schema. Allowing (warn-only). " +
         "If this is a new sprint artifact type, add a SCHEMA_KIND_RULES entry to sprint-tracker-guard.js.",
     );
     process.exit(0);
   }
 
-  if (!schemaId.startsWith("warpos/sprint/")) {
+  if (!schemaId.startsWith("mc/sprint/")) {
     // Not a sprint-managed schema. Allow.
     process.exit(0);
   }

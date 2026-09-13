@@ -5,13 +5,13 @@
 // Proves scripts/checks/admin-suite-coverage.js:
 //   - resolves all admin skills (via an injected resolver),
 //   - flags orphan/phantom registry openers,
-//   - asserts the refuseIfTargetIsWarpOS guard in preview.js,
+//   - asserts the refuseIfTargetIsMC guard in preview.js,
 //   - is fail-CLOSED on a malformed registry,
 //   - is TOLERANT (skip-with-note) when targets are absent in the worktree, so it reads
 //     green pre-integration but enforces every check once present.
 // Uses the exported evaluate() with injected { registry, resolve, exists, read } seams —
 // NO real dispatch-skill subprocess, NO real preview.js needed (post-integration safe).
-//   verified_by ::resolves-all-skills-no-orphan-rows-asserts-warpos-guard-failclosed
+//   verified_by ::resolves-all-skills-no-orphan-rows-asserts-mc-guard-failclosed
 // ─────────────────────────────────────────────────────────────────────────────
 "use strict";
 
@@ -39,7 +39,7 @@ function ok(name, fn) {
 console.log("admin-suite-coverage.test.js — AC-R5a");
 
 const GOOD_REGISTRY = {
-  $schema: "warpos/admin-panel-registry/v1",
+  $schema: "mc/admin-panel-registry/v1",
   panels: {
     admin: { route: "/admin", opener: "node scripts/admin/preview.js", description: "Founder admin home" },
     readiness: { route: "/admin/readiness", opener: "node scripts/admin/preview.js --route /admin/readiness", description: "Launch-readiness" },
@@ -102,11 +102,11 @@ ok("FINDING (BLOCKER #3) — opener injection is UNSAFE-rejected, not first-toke
     "expected unsafe_opener for an opener carrying a shell metacharacter (&&)");
 });
 
-ok("FINDING — missing refuseIfTargetIsWarpOS guard when preview.js is PRESENT", () => {
+ok("FINDING — missing refuseIfTargetIsMC guard when preview.js is PRESENT", () => {
   const seams = { ...integratedSeams, read: (rel) => (rel === "scripts/admin/preview.js" ? "function preview(){}" : null) };
   const { findings } = evaluate({ registry: GOOD_REGISTRY, ...seams });
-  assert(findings.some((f) => f.finding_type === "missing_warpos_guard"),
-    "expected missing_warpos_guard when preview.js lacks the token");
+  assert(findings.some((f) => f.finding_type === "missing_mc_guard"),
+    "expected missing_mc_guard when preview.js lacks the token");
 });
 
 ok("FINDING (BLOCKER #4) — guard token PRESENT but CALLED AFTER a seam → call-order finding", () => {
@@ -114,8 +114,8 @@ ok("FINDING (BLOCKER #4) — guard token PRESENT but CALLED AFTER a seam → cal
     ? `async function run(argv){ resolveOrScaffold({}); const g = ${WARPOS_GUARD_TOKEN}(instanceDir); }`
     : null) };
   const { findings } = evaluate({ registry: GOOD_REGISTRY, ...seams });
-  assert(findings.some((f) => f.finding_type === "warpos_guard_call_order"),
-    "expected warpos_guard_call_order when a side-effecting seam runs before the guard");
+  assert(findings.some((f) => f.finding_type === "mc_guard_call_order"),
+    "expected mc_guard_call_order when a side-effecting seam runs before the guard");
 });
 
 ok("FINDING (MEDIUM #6) — resolver infra failure is resolver_error, NOT skill_unresolved", () => {

@@ -15,6 +15,7 @@
 //       to keepalive:true (and the keepalive lifecycle never schedules an exit).
 // ─────────────────────────────────────────────────────────────────────────────
 "use strict";
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const assert = require("assert");
 const http = require("http");
@@ -49,9 +50,9 @@ async function main() {
   ok("parseArgs(--review-mode) → keepalive", parseArgs(["--review-mode"]).keepalive === true, "review-mode not keepalive");
   ok("parseArgs(--no-auto-shutdown) → keepalive", parseArgs(["--no-auto-shutdown"]).keepalive === true, "no-auto-shutdown not keepalive");
   {
-    process.env.WARPOS_GUI_KEEPALIVE = "1";
+    mcEnv.setEnv("GUI_KEEPALIVE", "1");
     const k = parseArgs([]).keepalive;
-    delete process.env.WARPOS_GUI_KEEPALIVE;
+    mcEnv.unsetEnv("GUI_KEEPALIVE");
     ok("WARPOS_GUI_KEEPALIVE env → keepalive", k === true, "env not honored");
   }
   ok("parseArgs([]) → NOT keepalive (normal mode default)", parseArgs([]).keepalive === false, "default unexpectedly keepalive");

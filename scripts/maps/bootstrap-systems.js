@@ -181,12 +181,12 @@ const ENRICH = {
     health: "paths.sprintTemplates exists with at least the seven core docs.",
     files: () =>
       relList(
-        walkExt(path.join(PROJECT, "_warpos", "templates", "sprint"), ".md"),
+        walkExt(path.join(PROJECT, "_mc", "templates", "sprint"), ".md"),
       ),
   },
   installer: {
     description:
-      "WarpOS installer surface — scripts/warp-setup.js, install.ps1, version.json.",
+      "MC installer surface — scripts/warp-setup.js, install.ps1, version.json.",
     depends_on: [],
     test: "Run /scan:install on a fresh clone.",
     health: "All three installer entry-points exist and version.json parses.",

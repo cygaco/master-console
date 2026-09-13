@@ -1,31 +1,26 @@
 ---
-description: Catch transient state accidentally committed (.warpos/, qa-*.png, runtime/qa-*/, runtime/**/*.{jsonl,log,diff,err,out}, oversized runtime/**/*.txt, the beta mining output dir)
+description: "[deprecated alias → /scan:mc-tracked-transients] Forwards to /scan:mc-tracked-transients. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-tracked-transients
+# /scan:warpos-tracked-transients — DEPRECATED, use /scan:mc-tracked-transients
 
-Scans `git ls-files` **and** the staged index for paths that should never be tracked. Exit 0 = green; 1 = tracked/staged transients found; 2 = the allowlist is unreadable or malformed (fail-closed). One of the five `/scan:leak-gate` gates; CI runs it on every push.
+This skill is a thin alias that forwards to **`/scan:mc-tracked-transients`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-```bash
-node scripts/checks/warpos-tracked-transients.js
-node scripts/checks/warpos-tracked-transients.js --json
+## Deprecation notice (one-time)
+
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
+
+> `/scan:warpos-tracked-transients` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-tracked-transients`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-tracked-transients $ARGUMENTS
 ```
 
-Rules (`FORBIDDEN` in the script):
+## Removal
 
-| Rule | Why |
-|---|---|
-| `.warpos/` anywhere | per-install transactional audit log |
-| `qa-*.png`, `runtime/qa-*/`, `runtime/research/`, `runtime/logs/` | regenerable QA/research output |
-| `*/beta/events.jsonl`, `*/events.jsonl`, `*/tools.jsonl`, `*/skill-usage.jsonl` | owner=runtime append-only logs (G5.7) |
-| `.claude/agents/president/_system/beta/mined/**` | β mining output — verbatim operator prompts mined from ignored logs (S-OS-04 / ED-417) |
-| `runtime/**/*.jsonl`, `*.log`, `*.diff`, `*.err`, `*.out` | per-run artifacts under `runtime/` (S-OS-04 / ED-417) |
-| `runtime/**/*.txt` larger than 200 KB | transcript-like text (S-OS-04 / ED-417) |
-
-**Allowlist:** a tracked path that matches a rule but is genuinely needed goes in `scripts/checks/warpos-tracked-transients.allowlist.json` as `{ "path", "reason" }`. It is empty and should stay that way — an entry is a claim that a per-run artifact ships on purpose. A malformed entry (no reason) fails the gate closed.
-
-**Why this exists:** the 2026-05-03 cleanup found 100+ `.warpos/transactions/` backup files committed by mistake; the 2026-09-02 open-source review found tracked `.jsonl`/`.log`/`.diff` per-run artifacts under `runtime/`. This check makes both regressions impossible.
-
-**Fix when failing:** `git rm --cached <file>` (tracked) or `git reset HEAD <file>` (staged) and verify `.gitignore` covers the pattern (`runtime/**/*.{jsonl,log,diff,err,out}` and the mining dir are already listed).
-
-Enforcer of this skill's own contract: `scripts/checks/warpos-tracked-transients.test.js` (planted tracked `runtime/*.jsonl` in a throwaway repo must exit 1; oversized `.txt`, β-mined file and allowlist semantics covered; the live tree must exit 0).
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-tracked-transients` → `/scan:mc-tracked-transients`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

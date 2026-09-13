@@ -1,13 +1,26 @@
 ---
-description: Verify installed framework has the structural skeleton dirs canonical declares
+description: "[deprecated alias → /scan:mc-structure-parity] Forwards to /scan:mc-structure-parity. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-structure-parity
+# /scan:warpos-structure-parity — DEPRECATED, use /scan:mc-structure-parity
 
-Catches the gap that opened the 2026-05-03 cleanup: canonical had `_shared/`, `_standards/`, `_audits/` etc. but the installer never created them in consumer projects, so structural changes never propagated.
+This skill is a thin alias that forwards to **`/scan:mc-structure-parity`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-```bash
-node scripts/checks/warpos-structure-parity.js
+## Deprecation notice (one-time)
+
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
+
+> `/scan:warpos-structure-parity` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-structure-parity`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-structure-parity $ARGUMENTS
 ```
 
-**Fix when failing:** `/warp:update --apply` to pull canonical's structure.
+## Removal
+
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-structure-parity` → `/scan:mc-structure-parity`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

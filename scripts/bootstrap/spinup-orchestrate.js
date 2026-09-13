@@ -2,7 +2,7 @@
 "use strict";
 /**
  * scripts/bootstrap/spinup-orchestrate.js — the step-driven bootstrap:spinup
- * driver (WARPOS-PROMPT §1/§2). Each step is INDEPENDENTLY dispatchable, idempotent,
+ * driver (MC-PROMPT §1/§2). Each step is INDEPENDENTLY dispatchable, idempotent,
  * and resumable; LLM steps return `needs_orchestration` with a machine-readable
  * `orchestration_prompt` so any consumer — an in-loop Alpha session OR a product-side
  * headless runner (the Master Console cockpit) — can drive one step = one turn.
@@ -111,7 +111,16 @@ function resolveResearch(args) {
 }
 
 function stateFile(args) {
-  return args.state || path.join(args.repoRoot, ".warpos", "spinup-state.json");
+  return args.state || mcProjectPath(args.repoRoot, ".mc/spinup-state.json");
+}
+
+// S-OS-06 T3 4c: `.mc/` first, else an existing legacy state file IN PLACE (never moved). Guarded require.
+function mcProjectPath(root, rel) {
+  try {
+    return require("../hooks/lib/mc-dirs").resolveProjectPath(root, rel);
+  } catch {
+    return path.join(root, rel);
+  }
 }
 
 function loadState(args) {
@@ -120,7 +129,7 @@ function loadState(args) {
     try { return JSON.parse(fs.readFileSync(f, "utf8")); }
     catch { /* fall through to fresh */ }
   }
-  return { schema: "warpos/bootstrap/spinup-state/v2", completed: [], phases: {} };
+  return { schema: "mc/bootstrap/spinup-state/v2", completed: [], phases: {} };
 }
 
 function saveState(args, state) {

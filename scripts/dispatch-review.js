@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * dispatch-review.js — multi-provider review FIRING (E-DISPATCH-PERFECT-001 W1).
  *
@@ -167,8 +168,8 @@ async function main() {
   // stamp the separately-summoned in-process hunter with the SAME id) could not correlate the hunter into
   // the panel run without an out-of-band ledger-extraction workaround. Now: inherit if set, else mint —
   // and EXPOSE the id on the merged envelope (merged.panel_run_id below) so the caller can always read it.
-  const panelRunId = process.env.WARPOS_PANEL_RUN_ID || `panel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-  process.env.WARPOS_PANEL_RUN_ID = panelRunId;
+  const panelRunId = mcEnv.readEnv("PANEL_RUN_ID") || `panel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  mcEnv.setEnv("PANEL_RUN_ID", panelRunId);
   const runnerStartMs = Date.now();
   // FIRE every pass in PARALLEL — each child is an independent reap-safe single-pass dispatch.
   const settled = await Promise.all(passes.map((p) => spawnPass(role, promptFile, p, domain, laneOutDir)));
@@ -249,7 +250,7 @@ async function main() {
   // BLOCKED-ON-OPERATOR binding exit (the D8 SAME-RUN attestation is the ε-conductor's panel-exit cert).
   if (panelLanes && isSecurityPanelRole(role)) {
     const panelGate = applyPanelGate(panelLanes, lanes, {
-      sprintId: process.env.WARPOS_SPRINT_ID || null,
+      sprintId: mcEnv.readEnv("SPRINT_ID") || null,
       sinceMs: runnerStartMs,
       panelRunId,
       requireSignature: true, // live path: a lane record must carry a valid origin-proof sig (SR-R2-002)
@@ -328,9 +329,9 @@ function applyPanelGate(panelLanes, lanes, ctx = {}) {
   }
   const manifest = loadManifest();
 
-  const sprintId = ctx.sprintId || process.env.WARPOS_SPRINT_ID || null;
+  const sprintId = ctx.sprintId || mcEnv.readEnv("SPRINT_ID") || null;
   const sinceMs = ctx.sinceMs || 0;
-  const panelRunId = ctx.panelRunId || process.env.WARPOS_PANEL_RUN_ID || null;
+  const panelRunId = ctx.panelRunId || mcEnv.readEnv("PANEL_RUN_ID") || null;
   const readLedger = ctx.readLedger || defaultReadLedger;
   // SP-20260718-004 gauntlet R2 (SR-R2-002): a panel LANE record must also carry a valid origin-proof
   // signature — this liveness reader previously trusted field-only records, so a forged/edited record could

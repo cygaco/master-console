@@ -75,7 +75,7 @@ function isBlock(out) {
 }
 
 function setupProject() {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-sprint-hooks-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-sprint-hooks-"));
   // copy paths.json, schemas, sprint scripts so the hooks can load them
   function copyDir(src, dst) {
     fs.mkdirSync(dst, { recursive: true });
@@ -127,7 +127,7 @@ function testTrackerAllowsValid() {
     );
     fs.mkdirSync(path.dirname(fp), { recursive: true });
     const content = [
-      "schema: warpos/sprint/ticket/v1",
+      "schema: mc/sprint/ticket/v1",
       'id: "T-20260511-001"',
       'title: "Test ticket"',
       "type: feature",
@@ -202,7 +202,7 @@ function testTrackerBlocksMalformed() {
     );
     fs.mkdirSync(path.dirname(fp), { recursive: true });
     const content = [
-      "schema: warpos/sprint/ticket/v1",
+      "schema: mc/sprint/ticket/v1",
       'id: "not-a-valid-id"', // fails pattern ^T-[0-9]{8}-[0-9]{3}$
       'title: "Bad ticket"',
       "type: feature",
@@ -247,7 +247,7 @@ function testTrackerBlocksHistoryEdit() {
       "sprint-history.yaml",
     );
     fs.mkdirSync(path.dirname(fp), { recursive: true });
-    fs.writeFileSync(fp, "schema: warpos/sprint/sprint-history/v1\n", "utf8");
+    fs.writeFileSync(fp, "schema: mc/sprint/sprint-history/v1\n", "utf8");
     const out = dispatch(
       "sprint-tracker-guard.js",
       {
@@ -326,7 +326,7 @@ function testTrackerAllowsPerSprintSubdirCurrent() {
     );
     fs.mkdirSync(path.dirname(fp), { recursive: true });
     const content = [
-      "schema: warpos/sprint/current-sprint/v1",
+      "schema: mc/sprint/current-sprint/v1",
       `id: "${sid}"`,
       'title: "Per-sprint subdir test"',
       'objective: "Test that the guard accepts the new layout."',
@@ -463,7 +463,7 @@ function testTrackerBlocksMalformedPerSprintSubdir() {
     );
     fs.mkdirSync(path.dirname(fp), { recursive: true });
     const content = [
-      "schema: warpos/sprint/current-sprint/v1",
+      "schema: mc/sprint/current-sprint/v1",
       'id: "not-a-valid-sprint-id"', // violates ^SP-[0-9]{8}-[0-9]{3}$
       'title: "Bad"',
       "",
@@ -491,7 +491,7 @@ function testTrackerAllowsValidActiveSprints() {
     const fp = path.join(tmp, ".claude/project/sprint/active-sprints.yaml");
     fs.mkdirSync(path.dirname(fp), { recursive: true });
     const content = [
-      "schema: warpos/sprint/active-sprints/v1",
+      "schema: mc/sprint/active-sprints/v1",
       'primary: "SP-20991231-001"',
       "sprints:",
       '  - id: "SP-20991231-001"',
@@ -532,7 +532,7 @@ function testTrackerBlocksMalformedActiveSprints() {
     fs.mkdirSync(path.dirname(fp), { recursive: true });
     // missing required `primary` field
     const content = [
-      "schema: warpos/sprint/active-sprints/v1",
+      "schema: mc/sprint/active-sprints/v1",
       "sprints: []",
       `created_at: "${nowIso()}"`,
       `updated_at: "${nowIso()}"`,
@@ -571,7 +571,7 @@ function testTrackerKillSwitch() {
       {
         tool_input: {
           file_path: fp,
-          content: "schema: warpos/sprint/ticket/v1\nid: bad\n",
+          content: "schema: mc/sprint/ticket/v1\nid: bad\n",
         },
       },
       { CLAUDE_PROJECT_DIR: tmp, SPRINT_GUARD: "off" },
@@ -617,7 +617,7 @@ function setupRelease(tmp, { releaseId, approvalRef, approvalState }) {
   fs.mkdirSync(releaseDir, { recursive: true });
   fs.mkdirSync(approvalsDir, { recursive: true });
   writeYaml(path.join(releaseDir, `${releaseId}.yaml`), {
-    schema: "warpos/sprint/release/v1",
+    schema: "mc/sprint/release/v1",
     id: releaseId,
     sprint: "SP-20260511-001",
     title: "Test release",
@@ -629,7 +629,7 @@ function setupRelease(tmp, { releaseId, approvalRef, approvalState }) {
   });
   if (approvalRef && !approvalRef.endsWith(".yaml")) {
     writeYaml(path.join(approvalsDir, `${approvalRef}.yaml`), {
-      schema: "warpos/sprint/approval/v1",
+      schema: "mc/sprint/approval/v1",
       id: approvalRef,
       sprint: "SP-20260511-001",
       level: "release_approval_required",
@@ -766,7 +766,7 @@ function testInitTemplateValidates() {
   const tmp = setupProject();
   try {
     const { spawnSync } = require("child_process");
-    // also need _warpos/templates/sprint/init/* so init.js can render
+    // also need _mc/templates/sprint/init/* so init.js can render
     function copyDir(src, dst) {
       fs.mkdirSync(dst, { recursive: true });
       for (const f of fs.readdirSync(src)) {
@@ -777,8 +777,8 @@ function testInitTemplateValidates() {
       }
     }
     copyDir(
-      path.join(REPO, "_warpos/templates/sprint"),
-      path.join(tmp, "_warpos/templates/sprint"),
+      path.join(REPO, "_mc/templates/sprint"),
+      path.join(tmp, "_mc/templates/sprint"),
     );
     const initRes = spawnSync(
       process.execPath,
@@ -1086,8 +1086,8 @@ function testTwoSprintsIsolation() {
       }
     }
     copyDir(
-      path.join(REPO, "_warpos/templates/sprint"),
-      path.join(tmp, "_warpos/templates/sprint"),
+      path.join(REPO, "_mc/templates/sprint"),
+      path.join(tmp, "_mc/templates/sprint"),
     );
     // First init creates SP-A.
     spawnSync(
@@ -1111,7 +1111,7 @@ function testTwoSprintsIsolation() {
     fs.mkdirSync(sprintBDir, { recursive: true });
     fs.writeFileSync(
       path.join(sprintBDir, "current.yaml"),
-      "schema: warpos/sprint/current-sprint/v1\nid: " +
+      "schema: mc/sprint/current-sprint/v1\nid: " +
         idB +
         '\ntitle: "B"\nobjective: "B"\nstatus: not_started\n' +
         'created_at: "2099-12-31T00:00:00.000Z"\nupdated_at: "2099-12-31T00:00:00.000Z"\n' +
@@ -1142,7 +1142,7 @@ function testSprintFlagAcceptsKnownId() {
   const tmp = setupProject();
   try {
     const { spawnSync } = require("child_process");
-    // Need _warpos/templates/sprint to init + a real sprint registry.
+    // Need _mc/templates/sprint to init + a real sprint registry.
     function copyDir(src, dst) {
       fs.mkdirSync(dst, { recursive: true });
       for (const f of fs.readdirSync(src)) {
@@ -1153,8 +1153,8 @@ function testSprintFlagAcceptsKnownId() {
       }
     }
     copyDir(
-      path.join(REPO, "_warpos/templates/sprint"),
-      path.join(tmp, "_warpos/templates/sprint"),
+      path.join(REPO, "_mc/templates/sprint"),
+      path.join(tmp, "_mc/templates/sprint"),
     );
     spawnSync(
       process.execPath,
@@ -1196,8 +1196,8 @@ function testSprintFlagRejectsUnknownId() {
       }
     }
     copyDir(
-      path.join(REPO, "_warpos/templates/sprint"),
-      path.join(tmp, "_warpos/templates/sprint"),
+      path.join(REPO, "_mc/templates/sprint"),
+      path.join(tmp, "_mc/templates/sprint"),
     );
     spawnSync(
       process.execPath,
@@ -1245,8 +1245,8 @@ function testSprintFlagOmittedDefaultsToPrimary() {
       }
     }
     copyDir(
-      path.join(REPO, "_warpos/templates/sprint"),
-      path.join(tmp, "_warpos/templates/sprint"),
+      path.join(REPO, "_mc/templates/sprint"),
+      path.join(tmp, "_mc/templates/sprint"),
     );
     spawnSync(
       process.execPath,
@@ -1287,8 +1287,8 @@ function testSprintStatusListsActiveSprints() {
       }
     }
     copyDir(
-      path.join(REPO, "_warpos/templates/sprint"),
-      path.join(tmp, "_warpos/templates/sprint"),
+      path.join(REPO, "_mc/templates/sprint"),
+      path.join(tmp, "_mc/templates/sprint"),
     );
     spawnSync(
       process.execPath,
@@ -1350,7 +1350,7 @@ function testSprintStatusListsActiveSprints() {
 function setupTwoSprints(tmp, surfacesA, surfacesB) {
   // active-sprints.yaml
   const reg = [
-    "schema: warpos/sprint/active-sprints/v1",
+    "schema: mc/sprint/active-sprints/v1",
     'primary: "SP-A"',
     "sprints:",
     '  - id: "SP-A"',
@@ -1402,7 +1402,7 @@ function setupTwoSprints(tmp, surfacesA, surfacesB) {
       )
       .join("\n");
     const pc = [
-      "schema: warpos/sprint/plan-contract/v1",
+      "schema: mc/sprint/plan-contract/v1",
       `id: "PC-${id}"`,
       `created_at: "${nowIso()}"`,
       `updated_at: "${nowIso()}"`,
@@ -1477,7 +1477,7 @@ function setupTwoSprints(tmp, surfacesA, surfacesB) {
     ].join("\n");
     fs.writeFileSync(pcPath, pc, "utf8");
     const current = [
-      "schema: warpos/sprint/current-sprint/v1",
+      "schema: mc/sprint/current-sprint/v1",
       `id: "${id}"`,
       `title: "${id}"`,
       `objective: ""`,
@@ -1636,7 +1636,7 @@ function testConflictCheckAllowOverlap() {
 function makeWorktreeSprint(tmp, sid, laneValue) {
   // Minimal active-sprints registry + current.yaml with worktree lane.
   const reg = [
-    "schema: warpos/sprint/active-sprints/v1",
+    "schema: mc/sprint/active-sprints/v1",
     `primary: "${sid}"`,
     "sprints:",
     `  - id: "${sid}"`,
@@ -1660,7 +1660,7 @@ function makeWorktreeSprint(tmp, sid, laneValue) {
   const dir = path.join(tmp, `.claude/project/sprint/sprints/${sid}`);
   fs.mkdirSync(dir, { recursive: true });
   const current = [
-    "schema: warpos/sprint/current-sprint/v1",
+    "schema: mc/sprint/current-sprint/v1",
     `id: "${sid}"`,
     `title: "${sid}"`,
     `objective: ""`,
@@ -1813,7 +1813,7 @@ function testEsdGate() {
     );
     fs.mkdirSync(esdDir, { recursive: true });
     writeYaml(path.join(esdDir, "ESD-20260511-001.yaml"), {
-      schema: "warpos/sprint/external-service-dependency/v1",
+      schema: "mc/sprint/external-service-dependency/v1",
       id: "ESD-20260511-001",
       sprint: "SP-20260511-001",
       service_name: "Stripe",

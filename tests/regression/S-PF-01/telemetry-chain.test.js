@@ -11,7 +11,7 @@ const {
 } = require("../../../scripts/checks/scaffold-coverage-scan");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
-const telemetryDir = path.join(REPO_ROOT, "_warpos/templates/app-scaffold/src/lib/telemetry");
+const telemetryDir = path.join(REPO_ROOT, "_mc/templates/app-scaffold/src/lib/telemetry");
 const events = fs.readFileSync(path.join(telemetryDir, "events.ts.tmpl"), "utf8");
 const chain = fs.readFileSync(path.join(telemetryDir, "chain.ts.tmpl"), "utf8");
 

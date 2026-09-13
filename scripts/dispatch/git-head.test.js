@@ -21,7 +21,7 @@ function test(name, fn) {
 
 const SHA = "abcdef0123456789abcdef0123456789abcdef01";
 function mkRepo(fn) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-githead-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "mc-githead-"));
   const gitDir = path.join(root, ".git");
   fs.mkdirSync(gitDir, { recursive: true });
   try { return fn(root, gitDir); } finally { try { fs.rmSync(root, { recursive: true, force: true }); } catch { /* best effort */ } }
@@ -76,7 +76,7 @@ test("R6-BE-001: malformed loose ref + VALID packed fallback → '' (loose is au
   });
 });
 test("no .git → '' (fail-closed, not a crash)", () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-nogit-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "mc-nogit-"));
   try { assert.equal(readGitHead(root), ""); } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
 

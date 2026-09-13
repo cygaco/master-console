@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * skills-test.js — the §13.6 "earn-it" HARNESS for subprocess skill dispatch.
@@ -71,7 +72,7 @@ const { spawnSync } = require("child_process");
 
 const PROJECT =
   process.env.CLAUDE_PROJECT_DIR ||
-  process.env.WARPOS_PROJECT_DIR ||
+  mcEnv.readEnv("PROJECT_DIR") ||
   path.resolve(__dirname, "..");
 
 const DEFAULT_REGISTRY = path.join(PROJECT, ".claude", "runtime", "skill-weight.json");
@@ -277,7 +278,7 @@ function testPing(slug, declaredExecution) {
   // SP-20260718-004 R4 same-session choke-point: the backing record must be a VERIFIED liveness record —
   // a forged/unsigned ok:true row cannot prove a skill ran. Default-on (WARPOS_LIVENESS_REQUIRE_SIG=0 opt-out).
   const { isVerifiedLivenessRecord } = require("./dispatch/verified-liveness-read");
-  const _reqSig = process.env.WARPOS_LIVENESS_REQUIRE_SIG !== "0";
+  const _reqSig = mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0";
   const backing = comps.find(
     (c) =>
       c &&

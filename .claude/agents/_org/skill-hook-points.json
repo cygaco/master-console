@@ -1,18 +1,18 @@
 {
-  "$schema": "warpos/skill-hook-points/v0.1",
+  "$schema": "mc/skill-hook-points/v0.1",
   "_doc": "M1 §8 — skill→manager hook-in registry. Config-driven agent routing for SKILLS, the sibling of the sprint hook-point registry (_org/sprint-hook-points.json). Each row binds a skill's dispatch HOOK POINT to an agent ROLE that is resolved AT CALL TIME from the role-registry keystone (_org/role-registry.json) — never a hardcoded name in skill prose. A role rename/swap = ONE edit here (the `role` id) + the registry, not N edits across skill bodies. Resolver: scripts/skills/skill-hook-points.js (pure, CLI: `node scripts/skills/skill-hook-points.js <skill> [hook_point]`). Enforcer: scan:skill-hook-coverage (bidirectional, mirrors scan:sprint-hook-coverage) — every agent-calling skill has an entry · every entry resolves to a real role · no skill hardcodes a role name. Conditional rows (a skill that routes to different roles by scope) carry a `condition`; exactly one row per (skill,hook_point) may set `default:true` as the no-regression fallback when the condition is ambiguous.",
   "version": "v0.1",
   "role_registry": "_org/role-registry.json",
   "condition_forms": [
     "always — the single role for this hook point (no `condition` field)",
     "single-product — scope is one product's execution-level backlog/sequencing",
-    "strategic — cross-product / lifecycle-phase / portfolio-altitude (the standing default for WarpOS's own framework roadmap)"
+    "strategic — cross-product / lifecycle-phase / portfolio-altitude (the standing default for MC's own framework roadmap)"
   ],
   "skills": {
     "roadmap:create": {
       "domain": "product",
       "hooks": [
-        { "hook_point": "author", "role": "director-of-product", "condition": "strategic", "default": true, "note": "roadmap creation is inherently strategic — sets the milestone arc; standing default incl. WarpOS's own framework roadmap" },
+        { "hook_point": "author", "role": "director-of-product", "condition": "strategic", "default": true, "note": "roadmap creation is inherently strategic — sets the milestone arc; standing default incl. MC's own framework roadmap" },
         { "hook_point": "author", "role": "product-lead", "condition": "single-product", "note": "only when scoped to a single product's execution-level backlog with the strategic arc already set" }
       ]
     },

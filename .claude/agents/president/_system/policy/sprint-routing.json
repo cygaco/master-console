@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/sprint-routing/v1",
+  "$schema": "mc/sprint-routing/v1",
   "version": 1,
   "comment": "Sprint Workflow v0.2 routing policy. Declarative — runProvider still controls actual provider selection. Honored by /sprint:plan, /sprint:design, /sprint:execute, /sprint:release where a model class is needed (planning, review, scoping, judgment). No new SDK installs; routing intent is preserved by class even when provider-fallback.json drives an actual swap. v0.2 adds the `concurrency` block — advisory knobs for parallel-sprint lanes.",
   "concurrency": {
@@ -12,7 +12,7 @@
     "mode": "warn",
     "rolled_out_at": "2026-05-14T21:00:00Z",
     "soft_rollout_until": "2026-05-21T21:00:00Z",
-    "rationale": "SP-20260514-002 soft-rollout — sprint-routing-guard hook emits warnings instead of blocking until 2026-05-21. After that, /warp:health raises a yellow advisory if mode is still 'warn'. Flip to 'block' once smoke confidence is high.",
+    "rationale": "SP-20260514-002 soft-rollout — sprint-routing-guard hook emits warnings instead of blocking until 2026-05-21. After that, /mc:health raises a yellow advisory if mode is still 'warn'. Flip to 'block' once smoke confidence is high.",
     "valid_modes": ["warn", "block"]
   },
   "policies": {

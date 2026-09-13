@@ -15,15 +15,15 @@ ground their lifecycle-aware judgment (Principle #2) in it.
 - **Persistent (the SoT):** edit the `**Stage:**` value above and commit. ← do this on a real transition.
 - **Quick override:** set the `WARPOS_LIFECYCLE_STAGE` env var (session / CI, or
   `.claude/settings.json#env` for persistence). It takes precedence over this file.
-- **Resolve it anywhere:** `node scripts/warpos/lifecycle-stage.js` (env → this file → `unknown`).
+- **Resolve it anywhere:** `node scripts/mc/lifecycle-stage.js` (env → this file → `unknown`).
   Subagents can't read env, so the orchestrator resolves the stage and passes it on dispatch.
-- *(Optional mirror: `productStage`/`warpos.version`-adjacent fields in `.claude/manifest.json` may mirror this for tooling; this file + the resolver are authoritative.)*
+- *(Optional mirror: `productStage`/`mc.version`-adjacent fields in `.claude/manifest.json` may mirror this for tooling; this file + the resolver are authoritative.)*
 
 ---
 
-## WarpOS — current stage: `pre-mvp`
+## MC — current stage: `pre-mvp`
 
-Operator-declared 2026-05-29. WarpOS (and the Master Console product it is the engine
+Operator-declared 2026-05-29. MC (and the Master Console product it is the engine
 for) is **pre-MVP / Early Development**: building 0-to-1 toward a productized MVP. Judge
 work by Principle #1 (Lean) at **maximum intensity** and Principle #2 (the cold-start /
 FTUE path is where it's won).
@@ -51,8 +51,8 @@ real users. Lean, throwaway-OK, no scale/edge/hardening for its own sake.
 - Complex abstractions for hypothetical future scale; performance work with no real complaint.
 - Feature breadth — depth on the core loop beats surface breadth.
 
-> **Engine-vs-product reliability carve-out (WarpOS-specific; operator-ruled 2026-05-30, DP-gap #30):**
-> WarpOS is the *engine* under Master Console. Even at `pre-mvp`, work that keeps the engine
+> **Engine-vs-product reliability carve-out (MC-specific; operator-ruled 2026-05-30, DP-gap #30):**
+> MC is the *engine* under Master Console. Even at `pre-mvp`, work that keeps the engine
 > reliable *enough to not break the imminent Master Console launch* (the artifact-first
 > contract slice + the install/release/dispatch path products actually hit) is **core-loop
 > work, not gold-plating** — because the "user" of the engine artifact is the launching

@@ -3,7 +3,7 @@
 **Date:** 2026-07-20
 **Status:** accepted
 **Class:** B (dispatch/security architecture — provider removal + role reroute + new enforcer)
-**Context:** WarpOS 1.0 operator directive ("no more wiring to Google's Gemini anywhere") + the 2026-07-20 no-presupposition agy diagnostic
+**Context:** MC 1.0 operator directive ("no more wiring to Google's Gemini anywhere") + the 2026-07-20 no-presupposition agy diagnostic
 **Extends:** ADR-0020 (panel lane contract) · ADR-0027 (agy same-user-spawn strategy) · ED-243 (routing/enforcer) · ED-060 · ED-230
 **β consult:** DECIDE B/0.90, OPEN_ADR:true, 2026-07-20 (grep-verified both premises; four binding rulings; logged `paths.betaEvents`, reply_to 71775b4e).
 
@@ -49,7 +49,7 @@ An independent GPT cross-check (gpt-5.6-terra; `runtime/agy-adr-evidence/gpt-che
 - **point-2 openai-floor caveat (pre-existing, NOT resolved here):** the security-reviewer/redteam role DEFAULT resolves to `antigravity` (registry derivation), not the `openai` literal floor point 2 intends — the floor has no enforcer and is silently overridden. The binding-verdict-on-verifiable-lane invariant still holds in practice (agy is blocked-advisory → the antigravity primary can't serve → the openai/claude passes bind). Pre-existing state (inherited from merged SP-20260719-001), tracked as enforcement debt — NOT claimed resolved.
 
 ## References
-- Consolidated plan: `_planning/warpos-1.0-plan/GEMINI-DEEPCLEAN-AND-AGY-MIGRATION.md`
+- Consolidated plan: `_planning/mc-1.0-plan/GEMINI-DEEPCLEAN-AND-AGY-MIGRATION.md`
 - Inventory: `runtime/agy-adr-evidence/GEMINI-DEEPCLEAN-INVENTORY-20260720.md`
 - β ruling: `paths.betaEvents` 2026-07-20 (DECIDE B/0.90)
 - Branch: `sprint/gemini-deepclean-20260720`
@@ -70,7 +70,7 @@ because scoped-allow is *insufficient* but because it is **absent**.
   restrictions — a coarse restrict, not a per-tool allow), and `--mode plan|accept-edits` (execution modes, not an
   allowlist). There is NO `--allowedTools`, NO `--permissions-file`, NO `--permission-mode allowlist`.
 - agy settings (`~/.gemini/settings.json`, `~/.gemini/antigravity-cli/settings.json`, `~/.gemini/trustedFolders.json`):
-  ONLY folder-trust (`trustedWorkspaces` / `trustedFolders` — already trusting WarpOS). NO `permissions.allow` /
+  ONLY folder-trust (`trustedWorkspaces` / `trustedFolders` — already trusting MC). NO `permissions.allow` /
   `allowedTools` schema exists for agy to read.
 
 **Resolution:** the agy AGENTIC headless tool-permission wall stays **BLOCKED-ADVISORY** (the honest 2-family floor,

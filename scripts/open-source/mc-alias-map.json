@@ -1,0 +1,242 @@
+{
+  "$question": "Which legacy (pre-mc@2.0.0) names are deprecated aliases of which mc names, and when are they removed? Every legacy -> mc alias S-OS-06 T3 created: skill-namespace aliases (warp:<skill> -> mc:<skill>; scan:<legacy>-<x> -> scan:mc-<x>) and check-script shims (scripts/checks/<legacy>-<x>.js -> scripts/checks/mc-<x>.js). Enforced by tests/regression/S-OS-06/alias-map.test.js.",
+  "sprint": "S-OS-06",
+  "introducedIn": "2.0.0",
+  "removeIn": "2.1.0",
+  "skills": [
+    {
+      "legacy": "warp:check",
+      "canonical": "mc:check",
+      "legacyPath": ".claude/commands/warp/check.md",
+      "canonicalPath": ".claude/commands/mc/check.md"
+    },
+    {
+      "legacy": "warp:deprecate",
+      "canonical": "mc:deprecate",
+      "legacyPath": ".claude/commands/warp/deprecate.md",
+      "canonicalPath": ".claude/commands/mc/deprecate.md"
+    },
+    {
+      "legacy": "warp:diff",
+      "canonical": "mc:diff",
+      "legacyPath": ".claude/commands/warp/diff.md",
+      "canonicalPath": ".claude/commands/mc/diff.md"
+    },
+    {
+      "legacy": "warp:doctor",
+      "canonical": "mc:doctor",
+      "legacyPath": ".claude/commands/warp/doctor.md",
+      "canonicalPath": ".claude/commands/mc/doctor.md"
+    },
+    {
+      "legacy": "warp:flag",
+      "canonical": "mc:flag",
+      "legacyPath": ".claude/commands/warp/flag.md",
+      "canonicalPath": ".claude/commands/mc/flag.md"
+    },
+    {
+      "legacy": "warp:health",
+      "canonical": "mc:health",
+      "legacyPath": ".claude/commands/warp/health.md",
+      "canonicalPath": ".claude/commands/mc/health.md"
+    },
+    {
+      "legacy": "warp:md",
+      "canonical": "mc:md",
+      "legacyPath": ".claude/commands/warp/md.md",
+      "canonicalPath": ".claude/commands/mc/md.md"
+    },
+    {
+      "legacy": "warp:reconcile",
+      "canonical": "mc:reconcile",
+      "legacyPath": ".claude/commands/warp/reconcile.md",
+      "canonicalPath": ".claude/commands/mc/reconcile.md"
+    },
+    {
+      "legacy": "warp:release",
+      "canonical": "mc:release",
+      "legacyPath": ".claude/commands/warp/release.md",
+      "canonicalPath": ".claude/commands/mc/release.md"
+    },
+    {
+      "legacy": "warp:setup",
+      "canonical": "mc:setup",
+      "legacyPath": ".claude/commands/warp/setup.md",
+      "canonicalPath": ".claude/commands/mc/setup.md"
+    },
+    {
+      "legacy": "warp:sync",
+      "canonical": "mc:sync",
+      "legacyPath": ".claude/commands/warp/sync.md",
+      "canonicalPath": ".claude/commands/mc/sync.md"
+    },
+    {
+      "legacy": "warp:tour",
+      "canonical": "mc:tour",
+      "legacyPath": ".claude/commands/warp/tour.md",
+      "canonicalPath": ".claude/commands/mc/tour.md"
+    },
+    {
+      "legacy": "warp:uninstall",
+      "canonical": "mc:uninstall",
+      "legacyPath": ".claude/commands/warp/uninstall.md",
+      "canonicalPath": ".claude/commands/mc/uninstall.md"
+    },
+    {
+      "legacy": "warp:update",
+      "canonical": "mc:update",
+      "legacyPath": ".claude/commands/warp/update.md",
+      "canonicalPath": ".claude/commands/mc/update.md"
+    },
+    {
+      "legacy": "scan:warpos-applied-migrations",
+      "canonical": "scan:mc-applied-migrations",
+      "legacyPath": ".claude/commands/scan/warpos-applied-migrations.md",
+      "canonicalPath": ".claude/commands/scan/mc-applied-migrations.md"
+    },
+    {
+      "legacy": "scan:warpos-capsule-resolvable",
+      "canonical": "scan:mc-capsule-resolvable",
+      "legacyPath": ".claude/commands/scan/warpos-capsule-resolvable.md",
+      "canonicalPath": ".claude/commands/scan/mc-capsule-resolvable.md"
+    },
+    {
+      "legacy": "scan:warpos-install-baseline",
+      "canonical": "scan:mc-install-baseline",
+      "legacyPath": ".claude/commands/scan/warpos-install-baseline.md",
+      "canonicalPath": ".claude/commands/scan/mc-install-baseline.md"
+    },
+    {
+      "legacy": "scan:warpos-layer-diff",
+      "canonical": "scan:mc-layer-diff",
+      "legacyPath": ".claude/commands/scan/warpos-layer-diff.md",
+      "canonicalPath": ".claude/commands/scan/mc-layer-diff.md"
+    },
+    {
+      "legacy": "scan:warpos-manifest-coverage",
+      "canonical": "scan:mc-manifest-coverage",
+      "legacyPath": ".claude/commands/scan/warpos-manifest-coverage.md",
+      "canonicalPath": ".claude/commands/scan/mc-manifest-coverage.md"
+    },
+    {
+      "legacy": "scan:warpos-manifest-honesty",
+      "canonical": "scan:mc-manifest-honesty",
+      "legacyPath": ".claude/commands/scan/warpos-manifest-honesty.md",
+      "canonicalPath": ".claude/commands/scan/mc-manifest-honesty.md"
+    },
+    {
+      "legacy": "scan:warpos-migration-coverage",
+      "canonical": "scan:mc-migration-coverage",
+      "legacyPath": ".claude/commands/scan/warpos-migration-coverage.md",
+      "canonicalPath": ".claude/commands/scan/mc-migration-coverage.md"
+    },
+    {
+      "legacy": "scan:warpos-migration-presence",
+      "canonical": "scan:mc-migration-presence",
+      "legacyPath": ".claude/commands/scan/warpos-migration-presence.md",
+      "canonicalPath": ".claude/commands/scan/mc-migration-presence.md"
+    },
+    {
+      "legacy": "scan:warpos-path-resolution",
+      "canonical": "scan:mc-path-resolution",
+      "legacyPath": ".claude/commands/scan/warpos-path-resolution.md",
+      "canonicalPath": ".claude/commands/scan/mc-path-resolution.md"
+    },
+    {
+      "legacy": "scan:warpos-ship-coverage",
+      "canonical": "scan:mc-ship-coverage",
+      "legacyPath": ".claude/commands/scan/warpos-ship-coverage.md",
+      "canonicalPath": ".claude/commands/scan/mc-ship-coverage.md"
+    },
+    {
+      "legacy": "scan:warpos-staleness",
+      "canonical": "scan:mc-staleness",
+      "legacyPath": ".claude/commands/scan/warpos-staleness.md",
+      "canonicalPath": ".claude/commands/scan/mc-staleness.md"
+    },
+    {
+      "legacy": "scan:warpos-structure-parity",
+      "canonical": "scan:mc-structure-parity",
+      "legacyPath": ".claude/commands/scan/warpos-structure-parity.md",
+      "canonicalPath": ".claude/commands/scan/mc-structure-parity.md"
+    },
+    {
+      "legacy": "scan:warpos-tracked-transients",
+      "canonical": "scan:mc-tracked-transients",
+      "legacyPath": ".claude/commands/scan/warpos-tracked-transients.md",
+      "canonicalPath": ".claude/commands/scan/mc-tracked-transients.md"
+    },
+    {
+      "legacy": "scan:warpos-version-quorum",
+      "canonical": "scan:mc-version-quorum",
+      "legacyPath": ".claude/commands/scan/warpos-version-quorum.md",
+      "canonicalPath": ".claude/commands/scan/mc-version-quorum.md"
+    }
+  ],
+  "checkScripts": [
+    {
+      "legacy": "scripts/checks/warpos-applied-migrations.js",
+      "canonical": "scripts/checks/mc-applied-migrations.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-capsule-resolvable.js",
+      "canonical": "scripts/checks/mc-capsule-resolvable.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-enforcer-shippability.js",
+      "canonical": "scripts/checks/mc-enforcer-shippability.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-install-baseline.js",
+      "canonical": "scripts/checks/mc-install-baseline.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-layer-diff.js",
+      "canonical": "scripts/checks/mc-layer-diff.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-manifest-honesty.js",
+      "canonical": "scripts/checks/mc-manifest-honesty.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-migration-coverage.js",
+      "canonical": "scripts/checks/mc-migration-coverage.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-migration-presence.js",
+      "canonical": "scripts/checks/mc-migration-presence.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-path-resolution.js",
+      "canonical": "scripts/checks/mc-path-resolution.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-promote-coverage.js",
+      "canonical": "scripts/checks/mc-promote-coverage.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-roundtrip.js",
+      "canonical": "scripts/checks/mc-roundtrip.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-ship-coverage.js",
+      "canonical": "scripts/checks/mc-ship-coverage.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-staleness.js",
+      "canonical": "scripts/checks/mc-staleness.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-structure-parity.js",
+      "canonical": "scripts/checks/mc-structure-parity.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-tracked-transients.js",
+      "canonical": "scripts/checks/mc-tracked-transients.js"
+    },
+    {
+      "legacy": "scripts/checks/warpos-version-quorum.js",
+      "canonical": "scripts/checks/mc-version-quorum.js"
+    }
+  ]
+}

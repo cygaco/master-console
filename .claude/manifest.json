@@ -1,19 +1,19 @@
 {
-  "$schema": "warpos/manifest/v1",
+  "$schema": "mc/manifest/v1",
   "repoRole": "canonical",
   "project": {
-    "name": "WarpOS",
-    "slug": "warpos",
-    "description": "WarpOS canonical — autonomous AI operating system framework (Alex Alpha + multi-provider agent dispatch).",
+    "name": "MC",
+    "slug": "mc",
+    "description": "MC canonical — autonomous AI operating system framework (Alex Alpha + multi-provider agent dispatch).",
     "techStack": [
       "node"
     ],
-    "framework": "warpos"
+    "framework": "mc"
   },
   "git": {
     "mainBranch": "main"
   },
-  "warpos": {
+  "mc": {
     "version": "1.2.0",
     "installed": true,
     "source": "self",

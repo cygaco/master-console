@@ -23,7 +23,7 @@
  *
  * Injectable source root (for tests + alt checkouts): --root <dir> or the
  * WARPOS_ROADMAP_ROOT env var override the default repo root (resolved from this
- * module's own __dirname, mirroring scripts/warpos/repo-role.js). This lets a test
+ * module's own __dirname, mirroring scripts/mc/repo-role.js). This lets a test
  * feed FIXTURES without touching the real repo files (read-only proof).
  *
  * CLI:
@@ -35,12 +35,13 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
 
 // Default repo root resolved from this module's location (scripts/panel/../.. =
-// project root). Mirrors scripts/warpos/repo-role.js — no paths.X dependency.
+// project root). Mirrors scripts/mc/repo-role.js — no paths.X dependency.
 const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
 
 // A NUL byte, built so no literal control byte ever lives in THIS source file.
@@ -59,7 +60,7 @@ function resolveRoot(argv) {
   if (i !== -1 && argv[i + 1]) {
     return path.resolve(argv[i + 1]);
   }
-  const env = (process.env.WARPOS_ROADMAP_ROOT || "").trim();
+  const env = (mcEnv.readEnv("ROADMAP_ROOT") || "").trim();
   if (env) {
     return path.resolve(env);
   }

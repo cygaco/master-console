@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 // scan:mode-lifecycle-hooks-coverage — coverage of the VIRTUAL mode-lifecycle
 // EVENT registry (.claude/agents/_org/mode-lifecycle-hooks.json, paths.modeLifecycleHooks).
@@ -269,7 +270,7 @@ function computeCoverage(registry, emitted, pending) {
 function main() {
   const registryPath = flagVal("--registry", DEFAULT_REGISTRY);
   const allowlistPath = flagVal("--allowlist", DEFAULT_ALLOWLIST);
-  const eventsPath = flagVal("--events", process.env.WARPOS_EVENTS_FILE || PATHS.eventsFile);
+  const eventsPath = flagVal("--events", mcEnv.readEnv("EVENTS_FILE") || PATHS.eventsFile);
 
   // Load + validate the registry — FAIL-CLOSED (exit 2) on unreadable/parse/broken.
   let registry;

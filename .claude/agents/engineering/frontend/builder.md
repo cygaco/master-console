@@ -104,7 +104,7 @@ exist, do NOT build it inline — emit a note for the backend builder / the inte
    `_requirements/01-design-system/COMPONENT_LIBRARY.md` (variants, tokens, patterns) +
    `COLOR_SEMANTICS.md` (color rules) + `UX_PRINCIPLES.md` + `FEEDBACK_PATTERNS.md`.
    **Greenfield:** if these are absent, read the repo-root `DESIGN_SYSTEM.md` instead
-   (the S0.3 component-library + token source every WarpOS-scaffolded product ships:
+   (the S0.3 component-library + token source every MC-scaffolded product ships:
    `src/components/ui/` shadcn primitives + `src/lib/utils.ts` `cn` + tokens in
    `src/app/globals.css`).
 7. **The `design_brief` (S0.2 contract, when one drives the build):** its `visual_hierarchy`

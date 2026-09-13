@@ -39,7 +39,7 @@
  *
  * Schema:
  *   {
- *     "schema": "warpos/spec-graph/v1",
+ *     "schema": "mc/spec-graph/v1",
  *     "generatedAt": "<ISO>",
  *     "nodes": [{ "id", "source", "kind", "sprint"? }],
  *     "edges": [{ "from", "to", "kind", "source" }]
@@ -409,7 +409,7 @@ function main() {
   );
 
   const out = {
-    schema: "warpos/spec-graph/v1",
+    schema: "mc/spec-graph/v1",
     generatedAt: ISO,
     sources: {
       sprintRequirements: relPath(SPRINT_REQS),

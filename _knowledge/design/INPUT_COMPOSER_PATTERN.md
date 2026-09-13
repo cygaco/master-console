@@ -20,7 +20,7 @@ _A reusable, product-agnostic reference for building a ChatGPT-style bottom **co
 "type or speak, then send" input surface that morphs on focus, records voice, and routes everything
 through one save path. This is a **component pattern** doc (not a design principle) — it trains the
 design-review roster to recognize a good composer and it is the reference the `frontend-builder` builds
-against. The house reference implementation ships in `_warpos/templates/app-scaffold`
+against. The house reference implementation ships in `_mc/templates/app-scaffold`
 (`src/components/composer/`). Product-specific names from the source project are called out inline;
 everything else is portable._
 
@@ -235,7 +235,7 @@ A product that ships the composer without running all three has not met this pat
 
 ### 7.2 OWED DEBT — the reference component's own IDLE taste pass
 
-⚠️ The **house reference component** (`_warpos/templates/app-scaffold/src/components/composer/`) has **not
+⚠️ The **house reference component** (`_mc/templates/app-scaffold/src/components/composer/`) has **not
 itself cleared the taste gate** this sprint — there is no running app in the framework repo to squint at,
 so the by-eye IDLE pass could not run against a live render. This is recorded as **OWED debt**, NOT a clean
 pass: **the reference component's IDLE taste pass MUST be discharged (throwaway mount → screenshot →
@@ -264,5 +264,5 @@ pattern was written to prevent. Discharge condition: a recorded IDLE eye-check p
 
 _Source project: doogle (`src/components/capture/CaptureComposer.tsx`, `RecordingBar.tsx`,
 `VoiceRecorder.tsx`). Every gotcha in §5 is a real review round that shipped a fix. The house reference
-implementation lives in `_warpos/templates/app-scaffold/src/components/composer/`. Keep this doc updated
+implementation lives in `_mc/templates/app-scaffold/src/components/composer/`. Keep this doc updated
 when a new failure mode is found._

@@ -7,13 +7,13 @@
  * this epic ships: the founders in-app readiness panel + the in-app guide content.
  *
  * Rule (2026-09-02 ruling, E-OPEN-SOURCE-001 — supersedes project_masterconsole_branding_boundary):
- *   The engine and its UI share ONE public brand, Master Console; "formerly WarpOS" is
+ *   The engine and its UI share ONE public brand, Master Console; "formerly MC" is
  *   allowed wherever history is referenced, and the engine's own docs (README, CHANGELOG,
  *   docs/PROVENANCE.md) are NOT in this scanner's scope. What this scanner still protects
  *   is the SCAFFOLDED PRODUCT's surface: a product built with the engine shows its OWN
- *   brand to its founder/users, so the engine's identifier ("warpos" — the pre-2.0.0
+ *   brand to its founder/users, so the engine's identifier ("mc" — the pre-2.0.0
  *   slug; "mc" after S-OS-06) must not leak into that product's visible copy. The
- *   readiness `warpos/readiness/v1` schema id is allowed in the MACHINE layer (server-only
+ *   readiness `mc/readiness/v1` schema id is allowed in the MACHINE layer (server-only
  *   constants, JSON payloads consumed by code) but must NEVER reach the visible DOM that
  *   a founder reads.
  *
@@ -23,9 +23,9 @@
  *   - the guide viewer route:          src/app/admin/guides/[ref]/page.tsx.tmpl
  *
  * What FAILS:
- *   - the engine identifier "warpos" (any casing) anywhere in the scaffolded product's
+ *   - the engine identifier "mc" (any casing) anywhere in the scaffolded product's
  *     visible surface — it is the engine's slug, never the product's brand
- *   - the `warpos/readiness/v1` schema id appearing in VISIBLE DOM (JSX text /
+ *   - the `mc/readiness/v1` schema id appearing in VISIBLE DOM (JSX text /
  *     attribute values / markdown body) rather than staying server-only
  *
  * What is ALLOWED (machine layer, NOT a leak):
@@ -41,12 +41,12 @@ const path = require("path");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 
-const SCHEMA_ID = "warpos/readiness/v1";
+const SCHEMA_ID = "mc/readiness/v1";
 // Product-facing engine-brand token. Case-insensitive; the boundary forbids any casing.
-const BRAND_TOKEN_RE = /warpos/i;
+const BRAND_TOKEN_RE = /mc/i;
 
 function scaffoldDir() {
-  const fallback = path.join(REPO_ROOT, "_warpos", "templates", "app-scaffold");
+  const fallback = path.join(REPO_ROOT, "_mc", "templates", "app-scaffold");
   try {
     const reg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, ".claude", "paths.json"), "utf8"));
     return reg.appScaffoldTemplates ? path.join(REPO_ROOT, reg.appScaffoldTemplates) : fallback;
@@ -107,7 +107,7 @@ function evaluateBrandLeak(dir = scaffoldDir()) {
 
   // FAIL-CLOSED (AC-brand / project_enforcer_falsegreen_gauntlet): the scan dir MUST exist and
   // be readable. Pointed at a missing/unreadable scaffold dir, a vacuous ok:true scanned:0 is the
-  // exact false-green class WarpOS hardens against — a brand leak would pass undetected because
+  // exact false-green class MC hardens against — a brand leak would pass undetected because
   // nothing was scanned. So a missing/unreadable scan dir is a hard FAIL, never a pass.
   try {
     fs.readdirSync(dir); // throws if the dir is missing or unreadable
@@ -155,13 +155,13 @@ function evaluateBrandLeak(dir = scaffoldDir()) {
     const rel = path.relative(dir, file).replace(/\\/g, "/");
     const visible = kind === "md" ? visibleFromMd(raw) : visibleFromTsx(raw);
 
-    // (1) Product-facing engine-brand "WarpOS" anywhere in the visible surface FAILS —
+    // (1) Product-facing engine-brand "MC" anywhere in the visible surface FAILS —
     //     UNLESS the only hit is the machine-layer schema id (handled separately below).
     //     Strip the schema id first so it is not double-reported as a generic brand hit.
     const visibleNoSchema = visible.split(SCHEMA_ID).join("");
     if (BRAND_TOKEN_RE.test(visibleNoSchema)) {
       const line = firstMatchLine(visibleNoSchema, BRAND_TOKEN_RE);
-      errors.push(`product-facing engine brand "WarpOS" in visible surface: ${rel}${line}`);
+      errors.push(`product-facing engine brand "MC" in visible surface: ${rel}${line}`);
     }
 
     // (2) The schema id must stay machine-layer — it must NOT appear in the visible DOM.
@@ -188,7 +188,7 @@ function emit(json, result) {
     return result.ok ? 0 : 1;
   }
   if (result.ok) {
-    process.stdout.write(`OK brand-leak: ${result.scanned} visible surface(s) clean — no product-facing "WarpOS", schema id machine-layer only\n`);
+    process.stdout.write(`OK brand-leak: ${result.scanned} visible surface(s) clean — no product-facing "MC", schema id machine-layer only\n`);
     return 0;
   }
   process.stderr.write(`FAIL brand-leak (${result.errors.length}):\n${result.errors.map((e) => `  - ${e}`).join("\n")}\n`);

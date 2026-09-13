@@ -94,7 +94,7 @@ Fix cycle: on any FAIL, build a unified fix brief, dispatch the appropriate fixe
 Call β at the gauntlet→release boundary.
 
 ### 5. release
-Dispatch release reviewers per the registry. Follow the `warp:release` protocol. Emit release ledger entry. Commit + push only after all gates green (per autonomy table: push requires ask-first; surface to operator before pushing).
+Dispatch release reviewers per the registry. Follow the `mc:release` protocol. Emit release ledger entry. Commit + push only after all gates green (per autonomy table: push requires ask-first; surface to operator before pushing).
 
 Call β at the release→retro boundary.
 

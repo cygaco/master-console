@@ -1,5 +1,5 @@
 ---
-description: Seed warm-start data (founder-allowlist session, sample events, FOUNDERS_CHECKLIST.md) into the live admin-preview instance so the in-app founder panel renders non-empty. READS the instance pointer written by admin:preview; never scaffolds its own instance and never targets WarpOS itself.
+description: Seed warm-start data (founder-allowlist session, sample events, FOUNDERS_CHECKLIST.md) into the live admin-preview instance so the in-app founder panel renders non-empty. READS the instance pointer written by admin:preview; never scaffolds its own instance and never targets MC itself.
 user-invocable: true
 namespace: admin
 reads: [scripts/admin/seed.js, .claude/runtime/admin-preview.json, scripts/scaffold/founders-checklist.js]
@@ -34,8 +34,8 @@ node scripts/admin/seed.js --json   # machine-readable result
   instance.
 - **Idempotent.** Running twice produces no duplicate checklist, founder session,
   or sample events.
-- **Never WarpOS.** The same `refuseIfTargetIsWarpOS` guard applies to the seed
-  target — it refuses if the resolved instance dir is the WarpOS canonical root.
+- **Never MC.** The same `refuseIfTargetIsMC` guard applies to the seed
+  target — it refuses if the resolved instance dir is the MC canonical root.
 
 Run `/admin:preview` first to boot the throwaway instance, then `/admin:seed` to
 warm it, then `/admin:readiness` or `/admin:guides` to open a sub-route.

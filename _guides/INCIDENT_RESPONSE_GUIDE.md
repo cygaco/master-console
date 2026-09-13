@@ -222,4 +222,4 @@ INCIDENT RESPONSE — MINIMUM VIABLE
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Breach deadlines, AG thresholds, and the per-state patchwork change frequently — treat the 72-hour GDPR clock and "the notify call is a lawyer's" as the durable rules, and confirm the per-jurisdiction specifics against the sources above (and your own lawyer) before you rely on them. This guide is not legal advice.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Breach deadlines, AG thresholds, and the per-state patchwork change frequently — treat the 72-hour GDPR clock and "the notify call is a lawyer's" as the durable rules, and confirm the per-jurisdiction specifics against the sources above (and your own lawyer) before you rely on them. This guide is not legal advice.*

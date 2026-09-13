@@ -2,10 +2,10 @@
 "use strict";
 /**
  * scripts/bootstrap/phases/setup.js — the `setup` step of the step-driven
- * bootstrap:spinup pipeline (WARPOS-PROMPT §1, §3, §4). DETERMINISTIC — no LLM.
+ * bootstrap:spinup pipeline (MC-PROMPT §1, §3, §4). DETERMINISTIC — no LLM.
  *
  * Folds the former `preflight` + `intent` phases into one deterministic step:
- *   create (when the target isn't a WarpOS repo yet) + app scaffold (platform-aware,
+ *   create (when the target isn't a MC repo yet) + app scaffold (platform-aware,
  *   §3) + register + capture RAW intake into the INTENT/brief artifact ONLY
  *   (raw → intent is correct; canon synthesizes the substance) + the /scan:install
  *   preflight gate. Reuses portfolio:new's create()/scaffold() callables (§4) — no
@@ -33,7 +33,7 @@ const { spawnSync } = require("child_process");
 const { scaffoldProductApp, createProductRepo } = require("../../portfolio/new-lib");
 
 // §3 platform targets. v1 every target scaffolds the web/PWA baseline (native
-// packaging is a follow-on epic + a /warp:flag); the target is RECORDED honestly.
+// packaging is a follow-on epic + a /mc:flag); the target is RECORDED honestly.
 const PLATFORMS = new Set(["android", "ios", "web", "desktop-pc", "desktop-mac"]);
 const DEFAULT_PLATFORM = "web";
 const NATIVE_PLATFORMS = new Set(["android", "ios", "desktop-pc", "desktop-mac"]);
@@ -179,7 +179,7 @@ async function run(ctx) {
   }
   const platform = resolvePlatform(ctx);
 
-  // ── create (when the target isn't a WarpOS repo yet) ─────────────────────
+  // ── create (when the target isn't a MC repo yet) ─────────────────────
   // In-place is the common path (spinup runs inside an installed repo). When the
   // target doesn't exist / isn't installed AND a name/slug is given, create it via
   // the shared createProductRepo callable (§4) and continue against the new repo.
@@ -192,7 +192,7 @@ async function run(ctx) {
       return {
         ok: false,
         status: "failed",
-        message: `setup needs a product --name to create a new repo at ${repoRoot} (or point --repo-root at an installed WarpOS repo)`,
+        message: `setup needs a product --name to create a new repo at ${repoRoot} (or point --repo-root at an installed MC repo)`,
       };
     }
     if (dryRun) {
@@ -218,7 +218,7 @@ async function run(ctx) {
       }
     }
     if (NATIVE_PLATFORMS.has(platform)) {
-      log(`note: --where ${platform} recorded; v1 scaffolds the web/PWA baseline. Native packaging is a follow-on epic (see /warp:flag native-scaffold).`);
+      log(`note: --where ${platform} recorded; v1 scaffolds the web/PWA baseline. Native packaging is a follow-on epic (see /mc:flag native-scaffold).`);
     }
   }
 
@@ -284,7 +284,7 @@ async function run(ctx) {
     return {
       ok: false,
       status: "failed",
-      message: `install incomplete or not a WarpOS repo (/scan:install exit ${pf.code}) — refusing to proceed. Run /warp:setup (or fix the gaps) first.`,
+      message: `install incomplete or not a MC repo (/scan:install exit ${pf.code}) — refusing to proceed. Run /mc:setup (or fix the gaps) first.`,
       data: { exit: pf.code, intentFile, platform },
     };
   }

@@ -86,7 +86,7 @@ h.violation("buildEpic: empty-DoD payload is refused (blank required section)", 
 
 // ── END-TO-END: the CLI writes both artifacts, is idempotent, refuses clobber ─
 h.test("end-to-end: plan.js emits both artifacts into a sealed root; idempotent + read-before-write", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-eplan-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-eplan-"));
   try {
     const payloadFile = path.join(tmp, "payload.json");
     fs.writeFileSync(payloadFile, JSON.stringify(goodPayload()), "utf8");

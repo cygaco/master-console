@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/cert-cli-pins/v1",
+  "$schema": "mc/cert-cli-pins/v1",
   "_doc": "§7 certification-gate CLI version PINS (DISPATCH.md §7 'CLI binaries are standalone — pin + checksum the version you verified'; ADR-0016). These are the CLI versions verified live on this machine (2026-07-16) that the dispatch model-spread migration was validated against. The dispatch CLIs are standalone binaries (NOT npm) whose bundled model registries rot — a version drift can silently change which models are servable. cert-attest.js captures the LIVE CLI behavior per probe (the effective-model artifact is the real drift witness); this file records the verified baseline. ENFORCEMENT DEBT: a live-version-vs-pin drift check is not yet wired (candidate: cert-attest.js records the live `--version` into each artifact + a check compares). Logged so the pin is not merely aspirational.",
   "verified_on": "2026-07-16",
   "verified_by": "SP-20260716-001 (E-DISPATCH-MODELSPREAD-001)",

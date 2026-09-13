@@ -14,7 +14,7 @@ This is a thin wrapper over the existing **Dispatch Console** (`scripts/dispatch
 which writes `.claude/manifest.json` + the matching agent frontmatter atomically with a
 backup ring — so a route change is safe and revertible.
 
-> In WarpOS, **the routable unit is the role** (the "command" that runs in the build
+> In MC, **the routable unit is the role** (the "command" that runs in the build
 > chain), not an individual slash-command. Skills/commands dispatch *through* roles, so
 > routing a role re-points every command that uses it. Valid roles are listed by
 > `node scripts/dispatch.js show`.

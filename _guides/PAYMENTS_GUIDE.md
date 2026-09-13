@@ -351,4 +351,4 @@ GO LIVE (deliberate 🔴 action)
 
 ---
 
-*This guide is part of the WarpOS launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed: 2026-05. Processor policies, fees, and tax rules change; the official sources above are the source of truth.*
+*This guide is part of the MC launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed: 2026-05. Processor policies, fees, and tax rules change; the official sources above are the source of truth.*

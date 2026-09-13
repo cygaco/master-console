@@ -123,7 +123,7 @@ const CORE_TERMS = [
   ["Validator", "A deterministic, fail-closed check that refuses a tracker that has drifted from reality (`scripts/trackers/validate.js`)."],
   ["Path", "A repo-relative file or directory location referenced by the tracker; required paths must exist on disk."],
   ["Known gap", "An acknowledged missing enforcer or unbuilt piece, recorded so its absence is visible rather than hidden."],
-  ["Agentic OS", "The autonomous agent operating system this tracker governs — the WarpOS framework substrate."],
+  ["Agentic OS", "The autonomous agent operating system this tracker governs — the MC framework substrate."],
 ];
 
 // ── arg parsing ───────────────────────────────────────────────────────────────

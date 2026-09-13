@@ -87,7 +87,7 @@ function makeFullRoot() {
   fs.writeFileSync(
     path.join(sprintDir, "active-sprints.yaml"),
     [
-      "schema: warpos/sprint/active-sprints/v1",
+      "schema: mc/sprint/active-sprints/v1",
       "primary: SP-LIVE",
       "sprints:",
       "  - id: SP-LIVE",
@@ -102,7 +102,7 @@ function makeFullRoot() {
   fs.writeFileSync(
     path.join(sdir, "current.yaml"),
     [
-      "schema: warpos/sprint/current-sprint/v1",
+      "schema: mc/sprint/current-sprint/v1",
       "id: SP-LIVE",
       'title: "Live sprint"',
       "status: in_progress",

@@ -1,17 +1,17 @@
 {
-  "$schema": "warpos/framework-installed/v2",
+  "$schema": "mc/framework-installed/v2",
   "installedVersion": "0.0.0",
   "installedCommit": "0000000",
   "installedAt": "2026-01-01T00:00:00.000Z",
   "source": "fixture",
   "target": "fixtures/update-from-0.0.0-clean",
   "pathRegistryVersion": "v3",
-  "manifestSchema": "warpos/framework-manifest/v1",
+  "manifestSchema": "mc/framework-manifest/v1",
   "assets": [],
   "generated": [
     ".claude/paths.json",
     ".claude/manifest.json",
     ".claude/framework-installed.json"
   ],
-  "_fixtureNote": "Phase 4G fixture. Empty assets[] simulates a clean 0.0.0 install with no per-asset hashes recorded. /warp:update --dry-run --to 0.1.0 against this should classify everything as ADD_SAFE (or LOCAL_ONLY for files present in the fixture root)."
+  "_fixtureNote": "Phase 4G fixture. Empty assets[] simulates a clean 0.0.0 install with no per-asset hashes recorded. /mc:update --dry-run --to 0.1.0 against this should classify everything as ADD_SAFE (or LOCAL_ONLY for files present in the fixture root)."
 }

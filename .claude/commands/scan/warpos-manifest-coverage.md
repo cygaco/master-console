@@ -1,28 +1,26 @@
 ---
-description: Verify every on-disk path is enumerated in _warpos/MANIFEST.json — catches "added framework content, forgot to register" before downstream installs silently break.
+description: "[deprecated alias → /scan:mc-manifest-coverage] Forwards to /scan:mc-manifest-coverage. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-manifest-coverage
+# /scan:warpos-manifest-coverage — DEPRECATED, use /scan:mc-manifest-coverage
 
-Runs the manifest validator in `--strict` mode. Fails if ANY of:
+This skill is a thin alias that forwards to **`/scan:mc-manifest-coverage`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-- A path on disk isn't enumerated in `_warpos/MANIFEST.json` (`unmanifested`)
-- A manifest path isn't on disk (`missing`)
-- A framework entry's sha256 drifted (`drift`)
-- A user-modified framework file (`user_modified`)
-- A schema-shape violation (`schema_violation`)
+## Deprecation notice (one-time)
 
-```bash
-node scripts/warpos/manifest/validate.js --strict
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
+
+> `/scan:warpos-manifest-coverage` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-manifest-coverage`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-manifest-coverage $ARGUMENTS
 ```
 
-Wires into:
-- `/warp:update --status` reports (lists `unmanifested` paths the operator should sweep)
-- Pre-release CI (refuses a capsule build with coverage gaps)
-- The recurring downstream-install bug class where the installer claimed completeness but missed asset directories — manifests now refuse the run if anything is unenumerated.
+## Removal
 
-Modes:
-- default — strict (any soft finding fails)
-- without `--strict` — soft findings (drift, user_modified, unmanifested) report but don't block; hard findings (missing, schema_violation) still block
-
-Schema: `schemas/warpos-manifest.schema.json` (v1). Generator: `scripts/warpos/manifest/build.js`. See also: `/scan:framework-views-fresh`, `/scan:framework-purity`.
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-manifest-coverage` → `/scan:mc-manifest-coverage`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

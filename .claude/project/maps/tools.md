@@ -180,7 +180,7 @@ Scripts: **178** | npm scripts: **0** | External CLIs: **3**
 | verify-drift-detector.js | 808 | 2026-05-30T01:25:39.689Z |
 | verify-ui.js | 5832 | 2026-05-30T01:25:39.689Z |
 | warp-setup.js | 42488 | 2026-06-10T13:54:45.235Z |
-| warpos-sync-run09.js | 4731 | 2026-05-30T01:25:39.690Z |
+| mc-sync-run09.js | 4731 | 2026-05-30T01:25:39.690Z |
 | write-market-research-fix-1-brief.js | 6620 | 2026-05-30T01:25:39.710Z |
 | write-mr-fix1-brief.js | 7402 | 2026-05-30T01:25:39.711Z |
 | write-onboarding-fix-1-brief.js | 3941 | 2026-05-30T01:25:39.711Z |

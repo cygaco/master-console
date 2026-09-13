@@ -56,7 +56,7 @@ enforced — a dossier that violates them is rejected, not waved through:
 ## Audience-mining pipeline — DESIGN (not full implementation)
 
 How a dossier gets *built*. This is the **design** the S2.1 lane is asked to produce, not a
-finished implementation — it reuses existing WarpOS machinery rather than inventing a
+finished implementation — it reuses existing MC machinery rather than inventing a
 scraper, and it is bounded by the plan's anti-surveillance guardrail
 (*"don't mine everything → surveillance"*, FINAL-PLAN §5/§8).
 

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/release/v1",
-  "title": "WarpOS Release Capsule",
-  "description": "Self-contained snapshot of one WarpOS release — framework manifest, migrations, checksums, changelog. Phase 4A artifact.",
+  "$id": "mc/release/v1",
+  "title": "MC Release Capsule",
+  "description": "Self-contained snapshot of one MC release — framework manifest, migrations, checksums, changelog. Phase 4A artifact.",
   "type": "object",
   "required": [
     "schema",
@@ -15,7 +15,7 @@
     "postUpdateChecks"
   ],
   "properties": {
-    "schema": { "type": "string", "const": "warpos/release/v1" },
+    "schema": { "type": "string", "const": "mc/release/v1" },
     "version": {
       "type": "string",
       "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"

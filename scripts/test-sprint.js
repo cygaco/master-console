@@ -43,7 +43,7 @@ function fail(name, err) {
 }
 
 function withTempProject(fn) {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-sprint-test-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-sprint-test-"));
   const origCwd = process.env.CLAUDE_PROJECT_DIR;
   process.env.CLAUDE_PROJECT_DIR = tmp;
   // Drop our paths.json + schemas + templates symlinked into the temp project
@@ -52,7 +52,7 @@ function withTempProject(fn) {
   for (const rel of [
     ".claude/paths.json",
     "schemas/sprint",
-    "_warpos/templates/sprint",
+    "_mc/templates/sprint",
     ".claude/agents/president/_system/policy/sprint-routing.json",
   ]) {
     const src = path.join(repoRoot, rel);
@@ -201,7 +201,7 @@ function testCheckpoint() {
     const validate = freshRequire("./sprint/validate.js");
     fsHelpers.ensureDir(SPRINT.root);
     const cp = {
-      schema: "warpos/sprint/sprint-progress/v1",
+      schema: "mc/sprint/sprint-progress/v1",
       sprint: "SP-20260511-001",
       updated_at: fsHelpers.nowIso(),
       current_phase: "execute",
@@ -247,7 +247,7 @@ function testTicket() {
     const id = ids.ticketId(SPRINT.tickets);
     const now = fsHelpers.nowIso();
     const ticket = {
-      schema: "warpos/sprint/ticket/v1",
+      schema: "mc/sprint/ticket/v1",
       id,
       title: "Implement Stripe checkout session",
       type: "integration",
@@ -315,7 +315,7 @@ function testIssue() {
     const id = ids.issueId(SPRINT.issues);
     const now = fsHelpers.nowIso();
     const issue = {
-      schema: "warpos/sprint/issue/v1",
+      schema: "mc/sprint/issue/v1",
       id,
       title: "Stripe checkout fails for users with billing-country=US-NY",
       status: "open",
@@ -362,7 +362,7 @@ function testESD() {
     const id = ids.esdId(SPRINT.externalServices);
     const now = fsHelpers.nowIso();
     const esd = {
-      schema: "warpos/sprint/external-service-dependency/v1",
+      schema: "mc/sprint/external-service-dependency/v1",
       id,
       sprint: "SP-20260511-001",
       related_ticket: "T-20260511-001",

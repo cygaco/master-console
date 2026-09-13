@@ -6,7 +6,7 @@
 const FRAMEWORK_SURFACES = [
   ".claude/",
   "scripts/hooks/",
-  "scripts/warpos/",
+  "scripts/mc/",
   "scripts/paths/",
   "scripts/agents/",
   "install.ps1",
@@ -25,7 +25,7 @@ function requiredGates(files) {
     "node scripts/paths/gate.js",
     "node scripts/hooks/test.js --all",
     "node scripts/generate-framework-manifest.js --check",
-    "node scripts/warpos/safety.js",
+    "node scripts/mc/safety.js",
   ];
 }
 

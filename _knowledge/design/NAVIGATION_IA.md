@@ -28,7 +28,7 @@ Two laws govern this:
 - **Jakob's Law:** users spend most of their time on *other* products, so they expect yours to work like the ones they already know. Their mental model of "where the nav goes" and "what a breadcrumb does" is pre-installed; matching it is free usability, defying it is a tax you make every user pay.
 - **Match between system and the real world** (NN/g heuristic #2): the structure and labels should speak the user's language and follow real-world/logical order — not the org chart, not internal jargon, not the database schema.
 
-For the WarpOS designer agents:
+For the MC designer agents:
 
 - **design-lead** owns the **start-path** and journey lens (`map-user-journey`, `cold-vs-warm-start`/`ftue-nux`). Navigation is how a first-time user gets oriented and how a returning user gets to their goal fast. A buried entry point or a confusing IA breaks the cold-start experience the design-lead is responsible for. Labels are also a `clear-iconography`/clarity concern — a navigation label is a signifier.
 - **design-quality** judges `visual-hierarchy` (the primary nav and current-location cue are prominent and clear) and `component-usage` (nav is built from real, consistent primitives). A nav where you can't tell which item is active is a hierarchy finding.

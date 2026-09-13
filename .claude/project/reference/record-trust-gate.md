@@ -101,7 +101,7 @@ guard cannot read must be refused, not silently accepted. (Enforcer class: ED-35
 
 **Citation verification is TWO passes, and pass 1 passing is not verification (2026-08).**
 Pass 1 = the cited paths RESOLVE. Pass 2 = **read the contents against the claimed role**. Pass 1
-cleared all five port citations in one review; pass 2 found that one cited file was a WarpOS install
+cleared all five port citations in one review; pass 2 found that one cited file was a MC install
 gate that would have made the product refuse every stranger repo, and that a bare basename matched
 three unrelated wrong files. Pass 2 is the verification; pass 1 is only its prerequisite. (Companion
 to ED-362 — a read-scope-limited lane's finding must be checked against the full file.)

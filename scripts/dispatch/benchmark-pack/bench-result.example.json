@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/skill-dispatch/bench-result/v1",
+  "schema": "mc/skill-dispatch/bench-result/v1",
   "_SCAFFOLD_NOTICE": "ILLUSTRATIVE EXAMPLE ONLY — heavy §13.7 A/B measurement is DEFERRED. Every token count below is a SYNTHETIC placeholder showing the SHAPE skills-bench.js consumes; it is NOT a real measurement of scan:references (or any skill). The judge verdict here is a STUB, not a real cross-provider grading. No skill is finalized from this file. See README.md.",
   "skill": "scan:references",
   "subprocess_verified_prereq": false,

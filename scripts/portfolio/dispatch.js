@@ -6,7 +6,7 @@
  * Cross-repo skill dispatch. Resolves <slug> from registry, spawns a fresh
  * `claude -p` subprocess with CLAUDE_PROJECT_DIR set to the target's
  * repo_path, invokes the requested skill, surfaces stdout/stderr back to
- * the WarpOS terminal.
+ * the MC terminal.
  *
  * Sources of truth:
  *   - Granular story:        requirements/SP-20260521-001/granular-stories.md S-7
@@ -16,7 +16,7 @@
  *   - Inputs:                requirements/SP-20260521-001/inputs.md IN-3, IN-6
  *
  * HARD NON-GOAL (ticket description + AC-7.2): never retarget the current
- * Claude session. Always a fresh subprocess. The parent WarpOS session's
+ * Claude session. Always a fresh subprocess. The parent MC session's
  * CLAUDE_PROJECT_DIR is never mutated.
  *
  * Beta design-review addendum (IN-7-style metacharacter guard):

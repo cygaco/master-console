@@ -47,7 +47,7 @@ const FIXED_NOW = Date.parse("2026-07-16T12:00:00.000Z");
 
 /** A TRUSTED root: temp dir with a `.claude/runtime` (so isTrustedRoot passes). */
 function mkTrustedRoot(label) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), `warpos-retention-${label}-`));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), `mc-retention-${label}-`));
   fs.mkdirSync(path.join(root, ".claude", "runtime"), { recursive: true });
   return root;
 }
@@ -184,7 +184,7 @@ test("a symlink under runtime whose target escapes root is never archived", (t) 
   const root = mkTrustedRoot("symlink");
   try {
     const runtimeDir = path.join(root, ".claude", "runtime");
-    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-retention-outside-"));
+    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-retention-outside-"));
     const outsideTarget = path.join(outsideDir, "secret.md");
     fs.writeFileSync(outsideTarget, "should never be touched\n", "utf8");
 
@@ -310,7 +310,7 @@ test("keep-recent (amendment #4): a RECENT handoff-live beyond newest-N is still
 
 // ── 6. F-RET-2: untrusted root is REFUSED ───────────────────────────────────
 test("F-RET-2: apply REFUSES a root without a .claude/ (untrusted)", () => {
-  const untrusted = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-untrusted-"));
+  const untrusted = fs.mkdtempSync(path.join(os.tmpdir(), "mc-untrusted-"));
   try {
     ensureDir(path.join(untrusted, "runtime"));
     touch(path.join(untrusted, "runtime", "s-pf-03-security-review.err.log"), FIXED_NOW - 1 * DAY_MS);

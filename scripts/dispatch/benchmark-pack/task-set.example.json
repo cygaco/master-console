@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/skill-dispatch/benchmark-task-set/v1",
+  "schema": "mc/skill-dispatch/benchmark-task-set/v1",
   "_SCAFFOLD_NOTICE": "ILLUSTRATIVE EXAMPLE ONLY — heavy §13.7 A/B measurement is DEFERRED. This file shows the SHAPE of a task set; it carries NO real measurements. The skill below is NOT subprocess_verified. Do not read any number here as a result. See README.md.",
   "skill": "scan:references",
   "subprocess_verified_prereq": false,

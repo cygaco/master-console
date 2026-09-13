@@ -27,6 +27,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -239,7 +240,7 @@ function scaffold(args) {
   ensureDir(outDir);
 
   // WG-10: fail loudly when the requirements templates are absent (a fresh or
-  // partial install whose _warpos/templates/sprint/requirements/ was never
+  // partial install whose _mc/templates/sprint/requirements/ was never
   // shipped). Previously the per-template loop below just warned and continued,
   // writing NOTHING while the phase still reported "scaffolded" — a silent
   // no-op that left the design phase hollow (the headline /sprint:full
@@ -249,8 +250,8 @@ function scaffold(args) {
     process.stderr.write(
       `sprint requirements templates missing at ${tmplRoot} — the design ` +
         `phase cannot scaffold a requirements bundle (no PRD / acceptance ` +
-        `criteria / stories). Run /warp:update to restore ` +
-        `_warpos/templates/sprint/requirements/, then re-run /sprint:design.\n`,
+        `criteria / stories). Run /mc:update to restore ` +
+        `_mc/templates/sprint/requirements/, then re-run /sprint:design.\n`,
     );
     return 1;
   }
@@ -364,7 +365,7 @@ function scaffold(args) {
     process.stderr.write(
       `design phase wrote 0 of ${expected} requirement documents — all ` +
         `templates missing under ${path.join(SPRINT.templates, "requirements")}. ` +
-        `Run /warp:update to restore the sprint templates, then re-run.\n`,
+        `Run /mc:update to restore the sprint templates, then re-run.\n`,
     );
     return 1;
   }
@@ -428,7 +429,7 @@ function scaffold(args) {
       artifact_id: `design:${current.id}`,
       artifact_path: path.join(SPRINT.requirements, current.id),
       sprint: current.id,
-      model: process.env.WARPOS_RECORDING_MODEL || "claude:claude-opus-4-8",
+      model: mcEnv.readEnv("RECORDING_MODEL") || "claude:claude-opus-4-8",
       recorded_by: "/sprint:design",
       allow_single_vendor: true,
       auto_override: true,

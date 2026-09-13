@@ -5,7 +5,7 @@ user-invocable: true
 
 # /session:takenotes — Take a Quick Note
 
-Append a dated note to a per-topic markdown file under `paths.runtime/notes/<topic-slug>.md`. Use this while working to jot things down that don't belong in events, memory, or handoffs — e.g. "WarpOS issues found this session," "decisions deferred," "things to try next."
+Append a dated note to a per-topic markdown file under `paths.runtime/notes/<topic-slug>.md`. Use this while working to jot things down that don't belong in events, memory, or handoffs — e.g. "MC issues found this session," "decisions deferred," "things to try next."
 
 Each topic gets its own file. First note for a topic creates the file; subsequent notes append. The file has an `# <topic>` header followed by timestamped bullets — newest at the bottom.
 
@@ -13,7 +13,7 @@ Each topic gets its own file. First note for a topic creates the file; subsequen
 
 `/session:takenotes <topic-slug> <note body>`
 
-- **topic-slug** — first whitespace-separated token, slugified (lowercase, non-alphanumerics → `-`, collapse runs of `-`). Examples: `warpos-issues-found`, `launch-day-observations`, `deferred`.
+- **topic-slug** — first whitespace-separated token, slugified (lowercase, non-alphanumerics → `-`, collapse runs of `-`). Examples: `mc-issues-found`, `launch-day-observations`, `deferred`.
 - **note body** — everything after the first token. Multi-line welcome. Markdown inside a bullet works.
 
 If topic or body is missing, print usage and stop.
@@ -98,10 +98,10 @@ Before this skill update, notes were appended to a single `.claude/runtime/notes
 ## Example
 
 ```
-/session:takenotes warpos-issues-found fav:list reads favorites.md without delimiters — stored prompt injection risk
+/session:takenotes mc-issues-found fav:list reads favorites.md without delimiters — stored prompt injection risk
 ```
 
-Creates (or appends to) `.claude/runtime/notes/warpos-issues-found.md`.
+Creates (or appends to) `.claude/runtime/notes/mc-issues-found.md`.
 
 ```
 /session:takenotes deferred redteam full audit — wait until after launch

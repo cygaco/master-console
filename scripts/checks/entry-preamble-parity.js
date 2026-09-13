@@ -7,7 +7,7 @@
  *
  * The shared entering-agent block lives ONCE, canonically, at
  * `.claude/project/reference/entry-preamble.md` between a pair of HTML-comment markers
- * (`WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN`/`:END`). Every provider-neutral entry doc — `CODEX.md`,
+ * (`MC:ENTERING-AGENT-PREAMBLE:BEGIN`/`:END`). Every provider-neutral entry doc — `CODEX.md`,
  * `ANTIGRAVITY.md`, and a section of `AGENTS.md` — embeds that block VERBATIM. This
  * enforcer keys on REAL FILE BYTES only (never a self-declared field): it re-extracts the marked
  * region from each embedder, hashes it, and compares against the hash of the canonical source's own
@@ -57,8 +57,8 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 // hashed region and the thinness delta — the gauntlet-r2 evasion. These literal forms close it: any
 // extra byte (before OR after `-->`) makes the line NOT a marker -> region-not-found finding. Bumping
 // the block version = update the `v1` literal here + re-embed every shim.
-const BEGIN_LINE = /^<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1\s*-->$/;
-const END_LINE = /^<!--\s*WARPOS:ENTERING-AGENT-PREAMBLE:END\s*-->$/;
+const BEGIN_LINE = /^<!--\s*MC:ENTERING-AGENT-PREAMBLE:BEGIN v1\s*-->$/;
+const END_LINE = /^<!--\s*MC:ENTERING-AGENT-PREAMBLE:END\s*-->$/;
 
 // Tier bounds apply to the DELTA — the file's bytes/lines OUTSIDE the marked region (everything
 // except the region between-and-including the markers). The shared block is identical everywhere

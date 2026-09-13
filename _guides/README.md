@@ -6,7 +6,7 @@ timing: reference
 lead_time: "none"
 ---
 
-# WarpOS Launch Guides — for total newbies
+# MC Launch Guides — for total newbies
 
 > You built (or are building) an app and you're ready to launch it **for real** — accounts, sign-in, data, email, payments, privacy. These guides walk you through each piece in plain language, from zero, assuming little or no technical background.
 >
@@ -92,4 +92,4 @@ Throughout the guides: **🔴 YOU MUST DO THIS** = a step the AI can't do for yo
 
 ---
 
-*The WarpOS launch-guide library — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed: May 2026. Rules, fees, and free tiers change; each guide's "Official sources" section is the source of truth.*
+*The MC launch-guide library — a reusable, plain-language launch playbook for newbie vibe coders. Last reviewed: May 2026. Rules, fees, and free tiers change; each guide's "Official sources" section is the source of truth.*

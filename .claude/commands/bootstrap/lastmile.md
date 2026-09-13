@@ -11,15 +11,15 @@ database, accounts, payments, conversion funnel, deployment, security/privacy,
 analytics — and injects the work into the roadmap/sprint system so it actually
 ships, not just gets advised.
 
-Built for **vibe coders**: you describe the product, WarpOS infers the technical
+Built for **vibe coders**: you describe the product, MC infers the technical
 implementation, chooses practical defaults, asks only the high-leverage
 questions, and **gates every risky production action behind explicit human
 approval**. The shortest *safe* path to a paid launch wins — this skill refuses
 to overbuild.
 
 > **Framework skill, product-side outputs.** Like spinup, this skill is shipped
-> by WarpOS but *runs inside a product repo*. Its engine + templates + reference
-> playbooks live in canonical WarpOS; the **reports it produces** (gap report,
+> by MC but *runs inside a product repo*. Its engine + templates + reference
+> playbooks live in canonical MC; the **reports it produces** (gap report,
 > launch plan, etc.) are written into the **consumer product's own tree**
 > (`paths.docsRoot`/last-mile/, `paths.requirementsRoot`/last-mile/,
 > `last-mile-handoff.md`). Canonical never commits a product's filled-in
@@ -34,7 +34,7 @@ to overbuild.
 - **`--profile <name>`** — skip profile inference (see Profiles below). Omit to let the audit infer it from the repo + a minimal intake.
 - **`--phase <name>`** — run/re-run a single phase (e.g. regenerate the gap report: `--phase audit`).
 - **`--module <name>`** — scope a phase to one module (`database|auth|payments|crm|website|deployment|security|analytics`), e.g. `--phase plan --module payments`.
-- **`--resume`** — continue a partially-completed last-mile run from its last phase (durable state in `.warpos/lastmile-state.json`).
+- **`--resume`** — continue a partially-completed last-mile run from its last phase (durable state in `.mc/lastmile-state.json`).
 - **`--research deep`** — opt into `/research:deep` for the funnel/monetization/security modules (real API spend — see Research below; default `off` uses the baked-in v1 playbooks).
 
 ## Pipeline (prototype → paid launch)
@@ -184,7 +184,7 @@ If the product handles **health, finance, children (under-13), education,
 location, biometrics, employment, regulated content, or otherwise sensitive
 data**, the security module **stops and escalates for legal/security review**
 before any launch-readiness claim. The gap report flags it; the score caps the
-privacy/security dimensions until review is recorded. WarpOS produces a
+privacy/security dimensions until review is recorded. MC produces a
 *compliance-by-default implementation plan*, never a legal guarantee.
 
 <!-- guide-anchor:PRIVACY_GDPR anchor:lastmile:gate/privacy shape:notice -->
@@ -202,7 +202,7 @@ privacy/security dimensions until review is recorded. WarpOS produces a
 ## Phase 3 — Roadmap injection + sprint minting
 
 Last-mile is not advice — it produces **sprint-ready** artifacts and injects them
-into the existing WarpOS sprint system:
+into the existing MC sprint system:
 
 - Mint **last-mile epics + stories + acceptance criteria** (each AC carries a
   `verified_by:` line per the SP-20260518-007 convention) + **QA plan** + **launch checklist**.
@@ -247,7 +247,7 @@ uses v1 — no spend, no blocking.
 - `paths.docsRoot`/last-mile/platform-deployment-plan.md
 - `paths.docsRoot`/last-mile/analytics-event-plan.md
 - `paths.requirementsRoot`/last-mile/*.md (or the repo's canonical requirement location)
-- ROADMAP/sprint entries via the current WarpOS sprint workflow
+- ROADMAP/sprint entries via the current MC sprint workflow
 - `last-mile-handoff.md` (product root)
 
 ## Execution — the orchestrator driver
@@ -261,7 +261,7 @@ node scripts/bootstrap/lastmile/orchestrate.js \
 
 - Always runs `preflight` first (hard gate — refuses a gappy install via `/scan:install`).
 - Deterministic phases run in-process; LLM steps exit **3 (`needs_orchestration`)** with an `orchestration_prompt` for the skill body to fulfill, then `--resume`.
-- Phase-state persists to `.warpos/lastmile-state.json`.
+- Phase-state persists to `.mc/lastmile-state.json`.
 - Fixture e2e: `node scripts/bootstrap/lastmile/test-orchestrate.js` proves the chain + the readiness detectors + the holdout cases WITHOUT standing up a real product (canonical proves the chain; real launch is product-side).
 
 ## Holdout fixtures (completeness, fixture-backed)
@@ -283,13 +283,13 @@ audit catches the gap:
 
 Repeated last-mile gaps (e.g. "Stripe without webhook verification" recurring
 across products) graduate into reusable checklist items, hooks, or future
-WarpOS defaults via `/learn:integrate`. The reference playbooks are the durable
+MC defaults via `/learn:integrate`. The reference playbooks are the durable
 home for these.
 
 ## Relationship
 
 - `bootstrap:spinup` — the prequel (idea → on screen). lastmile picks up at "it runs."
-- `portfolio:run` — dispatch lastmile into another product from WarpOS.
+- `portfolio:run` — dispatch lastmile into another product from MC.
 - `/sprint:plan` / `/sprint:design` / `/sprint:execute` — the engines Phase 3–4 inject into.
 - `/redteam:full`, `/qa:audit` — reused by the security module.
 

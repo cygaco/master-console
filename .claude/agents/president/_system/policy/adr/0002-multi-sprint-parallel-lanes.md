@@ -8,7 +8,7 @@
 
 ## Decision
 
-WarpOS Sprint Workflow lifts the single-current-sprint constraint by (1) replacing the two singleton tracker yamls with a top-level `active-sprints.yaml` registry plus per-sprint subdirs `sprints/<SP-id>/{current,progress}.yaml`, and (2) introducing a `lane` field on Plan Contract / current-sprint that lets `/sprint:execute` run Ralph loops inside a git worktree when isolation is needed.
+MC Sprint Workflow lifts the single-current-sprint constraint by (1) replacing the two singleton tracker yamls with a top-level `active-sprints.yaml` registry plus per-sprint subdirs `sprints/<SP-id>/{current,progress}.yaml`, and (2) introducing a `lane` field on Plan Contract / current-sprint that lets `/sprint:execute` run Ralph loops inside a git worktree when isolation is needed.
 
 Concurrency is advisory in v0.2 (`max_lanes: 2` in `sprint-routing.json`); no coordinator process, no cross-sprint dependency graph, no lane-aware Beta. Those land in a follow-up sprint if the two-lane case proves valuable.
 
@@ -18,7 +18,7 @@ Sprint Workflow v0.1 (shipped 2026-05-11) encoded a single-active-sprint design 
 
 The founder request (2026-05-12) was literal: "A way to run multiple sprints in parallel." Two senses needed disentangling — (a) multiple sprints *open* at once (paused/active) and (b) multiple sprints *executing* simultaneously without colliding on tracker state or git history. Beta consultation at plan time (EVT-s-sp-20260512-001-beta-001, DECIDE confidence 0.82) ruled that (b) is the intended reading; (a)-only would generate a follow-up complaint.
 
-The constraint set: WarpOS is at MVP stage (`paths.currentStage`) — simplicity and reversibility dominate. No new dependencies. Reuse existing isolation primitives (the `Agent(isolation: "worktree")` flow proven by oneshot/builders).
+The constraint set: MC is at MVP stage (`paths.currentStage`) — simplicity and reversibility dominate. No new dependencies. Reuse existing isolation primitives (the `Agent(isolation: "worktree")` flow proven by oneshot/builders).
 
 ## Options considered
 

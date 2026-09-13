@@ -113,15 +113,24 @@ function parseArgs(argv) {
   return out;
 }
 
-// Durable phase-state. Default location is product-side scratch under .warpos/;
+// Durable phase-state. Default location is product-side scratch under .mc/;
 // the e2e overrides via --state to a temp file.
 function stateFile(args) {
-  return args.state || path.join(args.repoRoot, ".warpos", "lastmile-state.json");
+  return args.state || mcProjectPath(args.repoRoot, ".mc/lastmile-state.json");
+}
+
+// S-OS-06 T3 4c: `.mc/` first, else an existing legacy state file IN PLACE (never moved). Guarded require.
+function mcProjectPath(root, rel) {
+  try {
+    return require("../../hooks/lib/mc-dirs").resolveProjectPath(root, rel);
+  } catch {
+    return path.join(root, rel);
+  }
 }
 
 function freshState() {
   return {
-    schema: "warpos/bootstrap/lastmile-state/v1",
+    schema: "mc/bootstrap/lastmile-state/v1",
     completed: [],
     phases: {},
     awaiting: null,

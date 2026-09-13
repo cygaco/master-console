@@ -31,7 +31,7 @@ ok("each-forwarder-delegates-no-duplicated-opener-logic", () => {
 
 ok("forwarder-references-target-by-name-only-survives-target-internal-change", () => {
   const admin = body("admin");
-  assert.ok(!/refuseIfTargetIsWarpOS|resolveOrScaffold|detectReady|READY_SIGNAL/.test(admin),
+  assert.ok(!/refuseIfTargetIsMC|resolveOrScaffold|detectReady|READY_SIGNAL/.test(admin),
     "admin forwarder does NOT reproduce keystone internals (defers to it)");
   for (const name of ["readiness", "models", "admin", "roadmap"]) {
     const b = body(name);

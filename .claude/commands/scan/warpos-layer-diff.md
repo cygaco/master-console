@@ -1,40 +1,26 @@
 ---
-description: Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer products (product layer) vs which stay framework-internal and never ship (dev-tooling layer), with summary counts. Cross-references _warpos/MANIFEST.json (ownership) × .claude/framework-manifest.json (shipped). Informational, never a gate.
+description: "[deprecated alias → /scan:mc-layer-diff] Forwards to /scan:mc-layer-diff. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Removed in mc@2.1.0."
+tags: [deprecated, alias, mc]
 ---
 
-# /scan:warpos-layer-diff — Product vs dev-tooling layer diff
+# /scan:warpos-layer-diff — DEPRECATED, use /scan:mc-layer-diff
 
-A read-only observability view of the WarpOS framework/product boundary. It answers, at a glance: **of everything WarpOS owns as `framework`, which paths actually SHIP to consumer products (the product layer) and which stay framework-internal (the dev-tooling layer)?**
+This skill is a thin alias that forwards to **`/scan:mc-layer-diff`**. The `scan:warpos-*` skills were renamed to `scan:mc-*` in mc@2.0.0 (S-OS-06). Behavior is identical; only the canonical name changed.
 
-This is the read-only **complement** to `/scan:warpos-ship-coverage`: ship-coverage is the *fail-closed gate* ("every framework-owned path under the essential roots must ship or be allowlisted; `_guides` ships, `_planning`/`_reports` never ship"); this scan just **shows the split** without judging it.
+## Deprecation notice (one-time)
 
-## Run
+Before forwarding, show this notice ONCE per session (skip it if it was already shown this session):
 
-```bash
-node scripts/checks/warpos-layer-diff.js          # human-readable report
-node scripts/checks/warpos-layer-diff.js --json   # machine-readable
-node scripts/checks/warpos-layer-diff.js --root <dir>   # scan another install
+> `/scan:warpos-layer-diff` is deprecated and will be removed in mc@2.1.0. Use `/scan:mc-layer-diff`.
+
+## Implementation
+
+Reads `$ARGUMENTS` and dispatches:
+
+```
+/scan:mc-layer-diff $ARGUMENTS
 ```
 
-## Output
+## Removal
 
-Three sections (plus a glanceable count header):
-
-1. **PRODUCT LAYER** — `owner=framework` paths that are in the shipped manifest (reach consumer products via `/warp:setup` + `/warp:update`).
-2. **DEV-TOOLING LAYER** — `owner=framework` paths NOT in the shipped manifest (framework-internal: tests, dev-only top-level scripts, one-off tooling, etc.).
-3. **SUMMARY** — counts (product · dev-tooling · total framework-owned).
-
-`--json` emits `{ product_layer: [...], dev_tooling_layer: [...], summary: {...} }`.
-
-## Semantics
-
-- **Data sources:** `_warpos/MANIFEST.json` (the per-path ownership truth) × `.claude/framework-manifest.json` (the shipped-asset truth). No new data — same inputs `scan:warpos-ship-coverage` reads.
-- **Read-only:** writes nothing.
-- **Exit codes:** `0` = report emitted (regardless of the split — it is informational, not a gate); `2` = setup error (a manifest is missing or invalid). A missing manifest fails loudly rather than printing a misleading empty diff.
-- Only `owner=framework` paths are considered (the "WarpOS layers"); `generated`/`project`/`runtime` paths are out of scope by design.
-
-## Reference
-
-- Script: `scripts/checks/warpos-layer-diff.js`
-- Sibling gate: `/scan:warpos-ship-coverage` (fail-closed ship boundary, SP-20260531-002, ADR-0005)
-- Sprint: `SP-20260531-003`
+Scheduled for removal at `mc@2.1.0`. Update any docs, scripts, or skill references that still call `/scan:warpos-layer-diff` → `/scan:mc-layer-diff`. Every legacy → mc alias is listed in `scripts/open-source/mc-alias-map.json`.

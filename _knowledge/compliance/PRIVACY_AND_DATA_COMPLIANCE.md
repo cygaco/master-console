@@ -176,4 +176,4 @@ Each rule: **[ID] severity — assertion → maps_to → detection (observed vs 
 
 ---
 
-*This is a `qa-reviewer` grounding reference in the WarpOS `_knowledge/compliance/` library. It states checkable rules and FLAGS the items that need human/legal judgment. **It is not legal advice.** Laws and platform policies change; the official sources above are the source of truth.*
+*This is a `qa-reviewer` grounding reference in the MC `_knowledge/compliance/` library. It states checkable rules and FLAGS the items that need human/legal judgment. **It is not legal advice.** Laws and platform policies change; the official sources above are the source of truth.*

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/checks/duplicate-doc-drift.js — S-6 / D-4 duplicate-doc-drift enforcer.
@@ -267,7 +268,7 @@ function run() {
 
 function main() {
   const asJson = process.argv.includes("--json");
-  const enforce = process.argv.includes("--enforce") || process.env.WARPOS_DUPLICATE_DOC_DRIFT_ENFORCE === "block";
+  const enforce = process.argv.includes("--enforce") || mcEnv.readEnv("DUPLICATE_DOC_DRIFT_ENFORCE") === "block";
   let res;
   try {
     res = run();

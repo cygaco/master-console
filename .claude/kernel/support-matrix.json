@@ -1,12 +1,12 @@
 {
-  "schema": "warpos/kernel/support-matrix/v1",
+  "schema": "mc/kernel/support-matrix/v1",
   "_doc": "D4 — provider x capability x helm-level support matrix (SP-20260718-001 Phase 0). Companion to top-level-runtime-contract.md §4. Consumed by conformance-matrix.js (gate 'support-matrix') and, from Phase-3 exit, becomes the BINDING G0.3 gate (ED-214).",
-  "_encoding_note": "Each row's capabilities map gives, per capability, the set of packet-16 helm-levels (0-3) at which that capability is PROVEN supported today, plus an evidence_ref. Level 3 (WarpOS Master Console, packet-16: 'long-term target') is NOT built for ANY helm yet — no row's supported_levels includes 3. That is a Phase-2+ deliverable (RATIFIED-PLAN Phase 2: per-helm trusted bindings), not a Phase-0 fabrication. This is the Phase-0 SEED granularity; Phase-1 F3 refines with the prompt-shape dimension (RATIFIED-PLAN Phase 1).",
+  "_encoding_note": "Each row's capabilities map gives, per capability, the set of packet-16 helm-levels (0-3) at which that capability is PROVEN supported today, plus an evidence_ref. Level 3 (MC Master Console, packet-16: 'long-term target') is NOT built for ANY helm yet — no row's supported_levels includes 3. That is a Phase-2+ deliverable (RATIFIED-PLAN Phase 2: per-helm trusted bindings), not a Phase-0 fabrication. This is the Phase-0 SEED granularity; Phase-1 F3 refines with the prompt-shape dimension (RATIFIED-PLAN Phase 1).",
   "helm_levels": {
-    "0": "chat-only (plan/review only, cannot safely operate WarpOS alone)",
+    "0": "chat-only (plan/review only, cannot safely operate MC alone)",
     "1": "file-aware (reads repo, produces patches; no command execution)",
     "2": "tool-capable (reads/writes files AND runs commands)",
-    "3": "WarpOS Master Console (provider-neutral top-level UI/API; long-term target, not yet built for any helm)"
+    "3": "MC Master Console (provider-neutral top-level UI/API; long-term target, not yet built for any helm)"
   },
   "capabilities": [
     "read-files",
