@@ -29,6 +29,13 @@
  *       (a transport write genuinely has no ResultEnvelope, so an envelope-shape tripwire has nothing to
  *       inspect). ANY additional entry, any changed reason, or an unfrozen table turns the pinned suite
  *       into a dead gate one skip at a time. Widening is flagged here as a visible, reviewable finding.
+ *       HOUSING (e5cd99b6, 2026-07-23, β DECIDE B/0.90 precommit-skip-alignment): the frozen literal was
+ *       RE-HOUSED out of the controller into `scripts/dispatch/transport-skip-allowlist.js` so the
+ *       non-authoritative pre-commit hook binds to the SAME single source. The guard therefore accepts
+ *       exactly two shapes and no other: the literal INLINE in the controller, or the controller binding
+ *       `TRANSPORT_SKIP_ALLOWED` via `require()` to THAT pinned module — in which case the frozen literal
+ *       is checked THERE. A require re-pointed at any other module, a dangling require, or an unfrozen
+ *       table in the housing module is a G3 finding (a moved definition must not become an unguarded one).
  *
  * RELATIONSHIP TO THE FALSIFIERS: this guard proves the SHAPE of the source (no third fence site, no
  * caller-reachable token, no widened skip). The falsifiers prove the BEHAVIOR (a forged token is refused,
@@ -47,6 +54,8 @@ function resolveRoot() {
 }
 const ROOT = resolveRoot();
 const CONTROLLER_REL = "scripts/dispatch/trusted-controller.js";
+/** The ONE sanctioned housing for the re-housed skip allowance (see G3 HOUSING above). */
+const SKIP_ALLOWLIST_REL = "scripts/dispatch/transport-skip-allowlist.js";
 
 /** The EXACT sanctioned fence call sites, by enclosing function. A third is a violation. */
 const SANCTIONED_FENCE_CALLERS = Object.freeze(["integrateInternal", "fencedRefUpdateInternal"]);
@@ -75,6 +84,47 @@ function enclosingFunction(src, index) {
     name = m[1];
   }
   return name;
+}
+
+const SKIP_LITERAL_RE = /const\s+TRANSPORT_SKIP_ALLOWED\s*=\s*Object\.freeze\(\s*\{([^}]*)\}/;
+const SKIP_REQUIRE_RE = /const\s+\{\s*TRANSPORT_SKIP_ALLOWED\s*\}\s*=\s*require\(\s*["'`]([^"'`]+)["'`]\s*\)/;
+
+/**
+ * Where does the controller get TRANSPORT_SKIP_ALLOWED from, and what is the frozen literal there?
+ * Returns { source, literal, violation }:
+ *   source    — repo-relative file that DEFINES the literal (the controller, or the pinned housing module)
+ *   literal   — the RegExp match of the frozen literal in that file (comment-stripped), or null
+ *   violation — a G3 finding when the binding itself is untrustworthy (re-pointed / dangling require)
+ */
+function locateSkipAllowance(root, controllerSrc) {
+  const inline = controllerSrc.match(SKIP_LITERAL_RE);
+  if (inline) return { source: CONTROLLER_REL, literal: inline, violation: null };
+
+  const req = controllerSrc.match(SKIP_REQUIRE_RE);
+  if (!req) return { source: CONTROLLER_REL, literal: null, violation: null };
+
+  // Resolve the require target the way Node would (relative to the controller's directory), then
+  // express it repo-relative so it can be compared to the ONE pinned housing.
+  const controllerDir = path.dirname(path.join(root, CONTROLLER_REL));
+  let target = path.resolve(controllerDir, req[1]);
+  if (!/\.(c|m)?js$/.test(target)) target += ".js";
+  const rel = path.relative(root, target).split(path.sep).join("/");
+  if (rel !== SKIP_ALLOWLIST_REL) {
+    return {
+      source: rel,
+      literal: null,
+      violation: `G3: TRANSPORT_SKIP_ALLOWED is required from \`${req[1]}\` (=> ${rel}), not the pinned housing ${SKIP_ALLOWLIST_REL} — a re-pointed allowance is an unreviewed allowance`,
+    };
+  }
+  if (!fs.existsSync(target)) {
+    return {
+      source: rel,
+      literal: null,
+      violation: `G3: the skip-allowance housing ${SKIP_ALLOWLIST_REL} is MISSING — the controller's require would throw and the allowance cannot be verified (FAIL-CLOSED)`,
+    };
+  }
+  const housingSrc = stripComments(fs.readFileSync(target, "utf8"));
+  return { source: rel, literal: housingSrc.match(SKIP_LITERAL_RE), violation: null };
 }
 
 function check(root = ROOT) {
@@ -173,10 +223,18 @@ function check(root = ROOT) {
   }
 
   // ── G3 — the frozen skip allowance is exactly the pinned pair. ────────────────────────────────────────
-  const skipMatch = src.match(/const\s+TRANSPORT_SKIP_ALLOWED\s*=\s*Object\.freeze\(\s*\{([^}]*)\}/);
-  if (!skipMatch) {
-    violations.push("G3: TRANSPORT_SKIP_ALLOWED is missing or not Object.freeze({...}) — an unfrozen skip table can be widened silently");
-  } else {
+  // The literal may live INLINE in the controller or in the ONE pinned housing module it `require`s
+  // (re-housed by e5cd99b6). Either way it must be an Object.freeze({...}) literal, and it must be the
+  // pinned pair. A require pointing anywhere else is a finding: the definition moved, the guard follows.
+  const housing = locateSkipAllowance(root, src);
+  observed.transport_skip_allowed_source = housing.source;
+  if (housing.violation) violations.push(housing.violation);
+  const skipMatch = housing.literal;
+  if (!housing.violation && !skipMatch) {
+    violations.push(
+      `G3: TRANSPORT_SKIP_ALLOWED is missing or not Object.freeze({...}) in ${housing.source} — an unfrozen skip table can be widened silently`,
+    );
+  } else if (skipMatch) {
     const pairs = {};
     for (const p of skipMatch[1].matchAll(/["'`]([^"'`]+)["'`]\s*:\s*["'`]([^"'`]+)["'`]/g)) pairs[p[1]] = p[2];
     observed.transport_skip_allowed = pairs;
@@ -218,7 +276,7 @@ function main(argv) {
   console.log(`transport-record-trust-guard — ${CONTROLLER_REL}`);
   console.log(`  fence call sites: ${res.observed.fence_call_sites.map((c) => `L${c.line} in ${c.in}`).join(" · ")}`);
   console.log(`  TRANSPORT_OPT_KEYS: [${(res.observed.transport_opt_keys || []).join(", ")}]`);
-  console.log(`  TRANSPORT_SKIP_ALLOWED: ${JSON.stringify(res.observed.transport_skip_allowed || {})}`);
+  console.log(`  TRANSPORT_SKIP_ALLOWED: ${JSON.stringify(res.observed.transport_skip_allowed || {})} (defined in ${res.observed.transport_skip_allowed_source})`);
   if (res.ok) {
     console.log("\nOK — fence token is lease-store-resolved, fence sites are exactly the 2 sanctioned ones, skip allowance un-widened.");
     return 0;
@@ -228,6 +286,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { check, SANCTIONED_FENCE_CALLERS, FORBIDDEN_OPT_KEYS, PINNED_SKIP_ALLOWANCE, CONTROLLER_REL };
+module.exports = { check, SANCTIONED_FENCE_CALLERS, FORBIDDEN_OPT_KEYS, PINNED_SKIP_ALLOWANCE, CONTROLLER_REL, SKIP_ALLOWLIST_REL };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
