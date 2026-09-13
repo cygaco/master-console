@@ -157,9 +157,16 @@ function archive(srcPath, opts) {
     if (!srcAbs) return { ok: false, reason: "escapes-root" };
 
     // Regular-file only, no symlink-follow (defense against a swapped target).
+    // lstat the LEXICAL source path, not the realpath'd `srcAbs`: on a platform
+    // where the symlink exists (POSIX), realpath already followed the link, so
+    // lstat(srcAbs) would report the TARGET as a regular file and the move would
+    // archive the target through the link — the exact shape this branch refuses.
+    // (Bug surfaced on the Linux CI runner 2026-09-12; Windows never created the
+    // link — EPERM — so the branch was never exercised there.)
+    const srcLexical = path.resolve(srcPath);
     let st;
     try {
-      st = fs.lstatSync(srcAbs);
+      st = fs.lstatSync(srcLexical);
     } catch {
       return { ok: false, reason: "missing" };
     }

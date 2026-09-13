@@ -2,7 +2,7 @@
   "$schema": "warpos/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T06:08:33.257Z",
+  "generatedAt": "2026-09-13T06:13:12.286Z",
   "generatedBy": "scripts/warpos/manifest/build.js",
   "warposVersion": "1.2.0",
   "migrations": [],
@@ -9296,8 +9296,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/hooks/lib/archive.js",
-      "sha256": "68ac3cb4f8eed9b6bf2a39bcb59fbec4e5af2b5179f6d35d02e500cd46529196",
-      "installedSha": "68ac3cb4f8eed9b6bf2a39bcb59fbec4e5af2b5179f6d35d02e500cd46529196"
+      "sha256": "d9b9f71142616aff0eda6e8874b5dc485cc243da6a16737967af5e11206c94bb",
+      "installedSha": "d9b9f71142616aff0eda6e8874b5dc485cc243da6a16737967af5e11206c94bb"
     },
     "scripts/hooks/lib/archive.test.js": {
       "owner": "framework",

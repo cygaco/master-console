@@ -1,8 +1,8 @@
 {
   "$schema": "warpos/framework-installed/v2",
   "installedVersion": "1.2.0",
-  "installedCommit": "0e5b281a2560cd36e3e971fdea5face887c0697d",
-  "installedAt": "2026-09-13T06:08:32.755Z",
+  "installedCommit": "b008c8963cc755382547044e757eba444a17ae6b",
+  "installedAt": "2026-09-13T06:13:11.808Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -5384,8 +5384,8 @@
       "dest": "scripts/hooks/lib/archive.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "68ac3cb4f8eed9b6bf2a39bcb59fbec4e5af2b5179f6d35d02e500cd46529196",
-      "currentHashAtInstall": "68ac3cb4f8eed9b6bf2a39bcb59fbec4e5af2b5179f6d35d02e500cd46529196",
+      "installedHash": "d9b9f71142616aff0eda6e8874b5dc485cc243da6a16737967af5e11206c94bb",
+      "currentHashAtInstall": "d9b9f71142616aff0eda6e8874b5dc485cc243da6a16737967af5e11206c94bb",
       "introducedIn": "0.0.0"
     },
     {

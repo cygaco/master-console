@@ -6533,7 +6533,7 @@
         "src": "scripts/hooks/lib/archive.js",
         "dest": "scripts/hooks/lib/archive.js",
         "kind": "hook_lib",
-        "sha256": "68ac3cb4f8eed9b6bf2a39bcb59fbec4e5af2b5179f6d35d02e500cd46529196",
+        "sha256": "d9b9f71142616aff0eda6e8874b5dc485cc243da6a16737967af5e11206c94bb",
         "owner": "framework",
         "mergeStrategy": "replace_if_unmodified",
         "introducedIn": "0.0.0",
