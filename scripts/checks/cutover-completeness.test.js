@@ -9,9 +9,16 @@
  * the `was:` history or the alias table itself would be un-shippable.
  *
  * Plus: a unit test of the disk extractor's comment/`was:` classification
- * (extractFile on a temp file), and an integration check that the real enforcer
- * runs on the live tree, exits 1 (the known keystone debt is REAL — that's the
- * point of ED-026), and emits a recognizable verdict (never crashes / exit 2).
+ * (extractFile on a temp file), and two end-to-end checks of the real enforcer:
+ *   • SELF-HOST — the live tree lints CLEAN (exit 0) with a recognizable verdict
+ *     and never exit 2. (The ED-026 keystone debt this test originally pinned as
+ *     "must exit 1" was discharged — only `was:` history remains in the
+ *     registries — so a clean tree is the invariant now; a re-introduced stale
+ *     ref turns this red, which is the point.)
+ *   • PLANTED — a sealed temp tree (CLAUDE_PROJECT_DIR) whose keystone
+ *     registries carry a live dead-tree path + a renamed-away role exits 1 and
+ *     names both, while a `was:` field in the same tree is NOT flagged. This is
+ *     the bite proof, independent of whatever the live tree happens to contain.
  *
  *   node scripts/checks/cutover-completeness.test.js
  */
@@ -189,27 +196,72 @@ test("extractFile: a JSON `was:` field line marks wasField=true", () => {
   }
 });
 
-// ── 11. INTEGRATION — the real enforcer on the live tree: exit 1 (known keystone
-//     debt is REAL — ED-026's whole point) + a recognizable verdict; NEVER exit 2. ──
-test("integration: real enforcer runs, flags the live keystone debt, exits 1 (not 2)", () => {
+// ── Shared runner for the end-to-end checks: spawn the real CLI, capture exit + output. ──
+function runEnforcer({ root, env }) {
   let out = "";
   let status = 0;
   try {
     out = execFileSync(process.execPath, [path.join(__dirname, "cutover-completeness.js")], {
       encoding: "utf8",
-      cwd: path.resolve(__dirname, "..", ".."),
+      cwd: root,
+      env: { ...process.env, ...(env || {}) },
+      stdio: ["ignore", "pipe", "pipe"], // capture stderr (don't echo the planted FAIL into the test log)
     });
   } catch (e) {
     status = e.status;
     out = `${e.stdout || ""}${e.stderr || ""}`;
   }
-  assert.strictEqual(status, 1, `enforcer must exit 1 on the live tree (real keystone debt), got ${status}: ${out.slice(0, 400)}`);
-  assert.ok(/\[cutover-completeness\]/.test(out), `expected a cutover-completeness verdict line, got: ${out.slice(0, 200)}`);
-  // The named keystone instances must be among the findings (the spec's flag set).
-  assert.ok(/_principles\/registry\.json/.test(out), "expected the _principles registry dead-key debt to be flagged");
-  assert.ok(/role-registry\.json/.test(out), "expected role-registry current_spec debt to be flagged");
+  return { status, out };
+}
+
+// ── 11. SELF-HOST — the real enforcer on the live tree lints CLEAN: exit 0 + a
+//     recognizable verdict; NEVER exit 2 (runner error is not a pass). The ED-026
+//     keystone debt was discharged (the registries carry only `was:` history), so
+//     the live invariant is "no live-stale ref" — a re-introduced one turns this red. ──
+test("self-host: real enforcer runs on the live tree, lints clean (exit 0), never exit 2", () => {
+  const { status, out } = runEnforcer({ root: path.resolve(__dirname, "..", "..") });
+  assert.notStrictEqual(status, 2, `runner error (exit 2) is never a pass: ${out.slice(0, 400)}`);
+  assert.strictEqual(status, 0, `enforcer must exit 0 on the live tree (no live-stale ref), got ${status}: ${out.slice(0, 600)}`);
+  assert.ok(/PASS \[cutover-completeness\]/.test(out), `expected a PASS verdict line, got: ${out.slice(0, 200)}`);
+  assert.ok(/0 live-stale/.test(out), `expected the verdict to report 0 live-stale, got: ${out.slice(0, 200)}`);
   // The allowlisted alias table must NOT appear as a finding.
   assert.ok(!/FAIL[\s\S]*role-aliases\.js/.test(out), "role-aliases.js must NOT be flagged (it's allowlisted)");
+});
+
+// ── 12. PLANTED — a sealed temp tree whose KEYSTONE registries carry a live dead-tree
+//     path (`03-managers`) and a renamed-away role (`product-designer`) must exit 1 and
+//     name both files + both literals; the `was:` field beside them must NOT flag.
+//     This proves the end-to-end disk path bites regardless of the live tree's state. ──
+test("planted: a sealed tree with live-stale keystone refs exits 1 and names them (was: field not flagged)", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "cutover-planted-"));
+  try {
+    const principles = path.join(root, ".claude", "agents", "_principles");
+    const org = path.join(root, ".claude", "agents", "_org");
+    fs.mkdirSync(principles, { recursive: true });
+    fs.mkdirSync(org, { recursive: true });
+    fs.writeFileSync(
+      path.join(principles, "registry.json"),
+      '{\n  "alpha": { "spec": ".claude/agents/03-managers/alpha.md" }\n}\n',
+    );
+    fs.writeFileSync(
+      path.join(org, "role-registry.json"),
+      [
+        "{",
+        '  "design-lead": { "spec": ".claude/agents/product/product-designer.md", "status": "rename",',
+        '    "was": "growth-lead" }',
+        "}",
+        "",
+      ].join("\n"),
+    );
+    const { status, out } = runEnforcer({ root, env: { CLAUDE_PROJECT_DIR: root } });
+    assert.strictEqual(status, 1, `planted live-stale refs must exit 1, got ${status}: ${out.slice(0, 600)}`);
+    assert.ok(/FAIL \[cutover-completeness\] 2 live-stale ref\(s\)/.test(out), `expected exactly 2 live-stale findings, got: ${out.slice(0, 400)}`);
+    assert.ok(/_principles\/registry\.json:2/.test(out) && /'03-managers'/.test(out), "the dead-tree path in _principles/registry.json must be named");
+    assert.ok(/_org\/role-registry\.json:2/.test(out) && /'product-designer'/.test(out), "the renamed-away role in role-registry.json must be named");
+    assert.ok(!/live-stale 'growth-lead'/.test(out), "the `was:` field value must NOT be flagged");
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });
 
 if (failures.length) {

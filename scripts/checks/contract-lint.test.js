@@ -5,6 +5,18 @@
  * (malformed / unresolvable-ref / missing-ed / core-waived-by-ed, AC-4/AC-5)
  * plus the positive self-host assertion (the real contract must lint clean).
  *
+ * LEDGER FIXTURES: the enforcement-debt ledger (paths.enforcementDebt =
+ * .claude/project/memory/enforcement-debt.jsonl) is a PER-MACHINE, gitignored
+ * file — a fresh clone / the CI runner never has it. The CHECK stays fail-closed
+ * on an unreadable ledger (structural, exit 2 — its documented decision), so the
+ * TESTS must never lean on the live machine's ledger: every run() below passes
+ * an explicit temp ledger seeded with exactly the ED ids the fixture/document
+ * cites. The self-host runs on a ledger seeded from the real contract's own ED
+ * citations (every structural/policy lane except "does the ED exist" is proven
+ * everywhere); the ED-existence lane is proven against the REAL ledger where one
+ * is present (probe-gated, reported in the OK line) and against a synthetic
+ * fixture (missing-ed.md) everywhere.
+ *
  *   node scripts/checks/contract-lint.test.js
  */
 const assert = require("assert");
@@ -33,16 +45,37 @@ function readFixture(name) {
   return fs.readFileSync(path.join(FIXTURES_DIR, name), "utf8");
 }
 
+// ── Ledger fixtures (see the header): never the live machine's ledger. ──
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "contract-lint-test-"));
+function makeLedger(name, ids) {
+  const p = path.join(TMP_DIR, name);
+  const lines = [...ids].map((id) => JSON.stringify({ id, policy: "test fixture", status: "open" }));
+  fs.writeFileSync(p, lines.join("\n") + "\n");
+  return p;
+}
+// The negative fixtures under .claude/kernel/fixtures/contract-lint cite ED-060 (only).
+const FIXTURE_LEDGER = makeLedger("fixture-ledger.jsonl", ["ED-060"]);
+const runFx = (opts) => run({ ledgerPath: FIXTURE_LEDGER, ...(opts || {}) });
+
+const REAL_DOC = path.join(ROOT, ".claude", "kernel", "top-level-runtime-contract.md");
+const REAL_LEDGER = path.join(ROOT, ".claude", "project", "memory", "enforcement-debt.jsonl");
+// Self-host ledger: seeded with every ED id the REAL contract cites (fail-closed:
+// a missing real contract throws here and the whole test file goes red).
+const CITED_EDS = new Set(fs.readFileSync(REAL_DOC, "utf8").match(/ED-\d+/g) || []);
+const SELF_HOST_LEDGER = makeLedger("self-host-ledger.jsonl", CITED_EDS);
+const selfHost = () => run({ ledgerPath: SELF_HOST_LEDGER });
+const skipped = [];
+
 // ── R1 negative fixtures (AC-4): malformed / unresolvable-ref / missing-ed → exit 2, DISTINCT from clean 0. ──
 
 test("malformed.md: zero policy blocks -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "malformed.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "malformed.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(res.structural.some((s) => s.reason === "no-policy-blocks"), JSON.stringify(res.structural));
 });
 
 test("unresolvable-ref.md: Enforcer ref does not resolve -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "unresolvable-ref.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "unresolvable-ref.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "unresolvable-enforcer"),
@@ -51,18 +84,22 @@ test("unresolvable-ref.md: Enforcer ref does not resolve -> exit 2 (structural, 
 });
 
 test("missing-ed.md: cited ED absent from ledger -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "missing-ed.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "missing-ed.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "missing-ed" && s.ed === "ED-999999"),
     JSON.stringify(res.structural),
+  );
+  assert.ok(
+    !res.structural.some((s) => s.reason === "ledger-unreadable"),
+    "the fixture ledger IS readable — missing-ed must be the sole cause, not an unreadable ledger: " + JSON.stringify(res.structural),
   );
 });
 
 // ── R1/AC-5 negative fixture: core-waived-by-ed -> exit 1 (POLICY fail, distinct from the exit-2 structural trio). ──
 
 test("core-waived-by-ed.md: CORE block waived by a Deferred ED -> exit 1 (policy-FAIL, NOT exit 2)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "core-waived-by-ed.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "core-waived-by-ed.md") });
   assert.strictEqual(res.exitCode, 1, JSON.stringify(res));
   assert.strictEqual(res.structural.length, 0, "this fixture must NOT trip a structural failure: " + JSON.stringify(res.structural));
   assert.ok(
@@ -74,10 +111,10 @@ test("core-waived-by-ed.md: CORE block waived by a Deferred ED -> exit 1 (policy
 // ── The four negative cases must never share the same "clean" exit code, and the trio must be distinct from the ED-5 policy case. ──
 
 test("all four R1 negative fixtures are non-zero AND the structural trio is distinct from the policy-fail case", () => {
-  const malformed = run({ docPath: path.join(FIXTURES_DIR, "malformed.md") });
-  const unresolvable = run({ docPath: path.join(FIXTURES_DIR, "unresolvable-ref.md") });
-  const missingEd = run({ docPath: path.join(FIXTURES_DIR, "missing-ed.md") });
-  const coreWaived = run({ docPath: path.join(FIXTURES_DIR, "core-waived-by-ed.md") });
+  const malformed = runFx({ docPath: path.join(FIXTURES_DIR, "malformed.md") });
+  const unresolvable = runFx({ docPath: path.join(FIXTURES_DIR, "unresolvable-ref.md") });
+  const missingEd = runFx({ docPath: path.join(FIXTURES_DIR, "missing-ed.md") });
+  const coreWaived = runFx({ docPath: path.join(FIXTURES_DIR, "core-waived-by-ed.md") });
   for (const r of [malformed, unresolvable, missingEd, coreWaived]) {
     assert.notStrictEqual(r.exitCode, 0, "must never clean-pass on a negative fixture");
   }
@@ -92,7 +129,7 @@ test("all four R1 negative fixtures are non-zero AND the structural trio is dist
 // be silently accepted or silently absorbed as another block's content. ──
 
 test("N-1: malformed-heading.md — a heading missing the delimiter/title -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "malformed-heading.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "malformed-heading.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "malformed-heading" && s.attemptedId === "P1.1"),
@@ -140,7 +177,7 @@ test("N-1 (pure-core): a malformed heading is never silently absorbed as body co
 // never be masked by the correct duplicate. ──
 
 test("N-6: core-waived-with-correct-duplicate.md — a waived CORE-1 instance FAILs even though a correct duplicate exists -> exit 1", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "core-waived-with-correct-duplicate.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "core-waived-with-correct-duplicate.md") });
   assert.strictEqual(res.exitCode, 1, JSON.stringify(res));
   assert.strictEqual(
     res.structural.length,
@@ -194,10 +231,41 @@ test("N-6 (pure-core): a core_id declared correctly TWICE never trips core-waive
 // ── Positive self-host: the REAL contract must lint clean. ──
 
 test("self-host: the real top-level-runtime-contract.md lints clean (exit 0)", () => {
-  const res = run();
+  const res = selfHost();
   assert.strictEqual(res.exitCode, 0, JSON.stringify({ structural: res.structural, policy: res.policy }));
   assert.strictEqual(res.structural.length, 0);
   assert.strictEqual(res.policy.length, 0);
+  assert.ok(CITED_EDS.size > 0, "the real contract cites at least one ED (otherwise the self-host ledger lane is vacuous)");
+});
+
+// ── Ledger-absent lane (every machine, incl. CI): with NO ledger readable the check
+// must stay fail-closed (exit 2) AND honest — the ONLY structural findings are the
+// ledger-derived ones (ledger-unreadable + a missing-ed per cited ED), zero policy
+// findings, and no phantom ED ids. Proves a fresh clone's exit 2 hides no other defect. ──
+test("self-host (ledger-absent lane): an unreadable ledger is the SOLE reason the real contract fails closed", () => {
+  const res = run({ ledgerPath: path.join(TMP_DIR, "does-not-exist.jsonl") });
+  assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
+  assert.ok(res.structural.some((s) => s.reason === "ledger-unreadable"), JSON.stringify(res.structural));
+  const other = res.structural.filter((s) => s.reason !== "ledger-unreadable" && s.reason !== "missing-ed");
+  assert.deepStrictEqual(other, [], "no non-ledger structural finding may hide behind the ledger failure: " + JSON.stringify(other));
+  assert.strictEqual(res.policy.length, 0, "no policy finding may hide behind the ledger failure: " + JSON.stringify(res.policy));
+  for (const s of res.structural.filter((x) => x.reason === "missing-ed")) {
+    assert.ok(CITED_EDS.has(s.ed), `phantom missing-ed ${s.ed} — the real contract does not cite it`);
+  }
+});
+
+// ── Real-ledger lane (probe-gated): where this machine HAS the per-machine ledger,
+// the real contract must also lint clean against it — i.e. every ED it cites really
+// exists. Cannot exist on a fresh clone / CI (gitignored file), so it is skipped there
+// on an explicit existence probe and the OK line says so. ──
+test("self-host (real-ledger lane): every ED the real contract cites exists in the per-machine ledger", () => {
+  if (!fs.existsSync(REAL_LEDGER)) {
+    skipped.push("real-ledger lane: per-machine ledger absent (fresh clone / CI) — ED existence verified via missing-ed.md fixture only");
+    return;
+  }
+  const res = run({ ledgerPath: REAL_LEDGER });
+  assert.strictEqual(res.exitCode, 0, JSON.stringify({ structural: res.structural, policy: res.policy }));
+  assert.ok(!res.structural.some((s) => s.reason === "missing-ed"), JSON.stringify(res.structural));
 });
 
 // ── Pure-core unit coverage on findBlocks + evaluate, independent of fs. ──
@@ -409,7 +477,7 @@ test("R3-2 (end-to-end): a document whose Enforcer trailer points to a directory
 // line of the block is malformed (structural, exit 2), never a silent pass. ──
 
 test("S-1: trailer-not-terminal.md — trailer followed by more content -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "trailer-not-terminal.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "trailer-not-terminal.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "trailer-not-terminal" && s.block === "P1.1"),
@@ -452,7 +520,7 @@ test("C-1: a manifest read failure (missing file) is structural (exit 2), never 
     fs.writeFileSync(docPath, doc + "\n" + H1_SENTENCE + "\n");
     const res = run({
       docPath,
-      ledgerPath: path.join(ROOT, ".claude", "project", "memory", "enforcement-debt.jsonl"),
+      ledgerPath: FIXTURE_LEDGER,
       manifestPath: path.join(tmpDir, "does-not-exist-manifest.json"),
     });
     assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
@@ -479,7 +547,7 @@ test("C-1: a manifest with unparseable JSON is structural (exit 2), never fixtur
     fs.writeFileSync(manifestPath, "{ this is not valid json");
     const res = run({
       docPath,
-      ledgerPath: path.join(ROOT, ".claude", "project", "memory", "enforcement-debt.jsonl"),
+      ledgerPath: FIXTURE_LEDGER,
       manifestPath,
     });
     assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
@@ -520,7 +588,7 @@ test("C-1 (pure-core): a manifest that reads fine with a legitimately-zero count
 // AND its register row were removed together) are all structural (exit 2). ──
 
 test("R3-4: register-block-removed.md — a registered block whose heading was removed -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "register-block-removed.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "register-block-removed.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "register-block-missing" && s.block === "P3.1"),
@@ -607,7 +675,7 @@ test("R3-4 (pure-core): a register that exactly matches its document's blocks tr
 });
 
 test("R3-4: self-host — the real contract's §7 register exactly enumerates its actual policy blocks (no drift, no gaps)", () => {
-  const res = run();
+  const res = selfHost();
   assert.strictEqual(res.exitCode, 0, JSON.stringify({ structural: res.structural, policy: res.policy }));
   assert.ok(
     !res.structural.some((s) => /^register-/.test(s.reason)),
@@ -623,7 +691,7 @@ test("R3-4: self-host — the real contract's §7 register exactly enumerates it
 // (wrong trailer kind) and from any structural exit-2 case. ──
 
 test("R4-2: core-no-enforcer.md — a CORE block with only Core: non-waivable and no Enforcer ref -> exit 1 (policy-FAIL, aspirational)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "core-no-enforcer.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "core-no-enforcer.md") });
   assert.strictEqual(res.exitCode, 1, JSON.stringify(res));
   assert.strictEqual(res.structural.length, 0, "this fixture must NOT trip a structural failure: " + JSON.stringify(res.structural));
   assert.ok(
@@ -700,7 +768,7 @@ test("R4-2 (pure-core): a CORE block mixing Core: AND Deferred: together is an u
 });
 
 test("R4-2: self-host — every CORE block in the real contract names >=1 resolving Enforcer alongside Core: non-waivable", () => {
-  const res = run();
+  const res = selfHost();
   assert.strictEqual(res.exitCode, 0, JSON.stringify({ structural: res.structural, policy: res.policy }));
   assert.ok(!res.policy.some((p) => p.reason === "core-unenforced"), JSON.stringify(res.policy));
 });
@@ -712,7 +780,7 @@ test("R4-2: self-host — every CORE block in the real contract names >=1 resolv
 // check caught missing/orphaned/gap ids but never a RE-SEEN one. ──
 
 test("R4-4: duplicate-block-id.md — two blocks declaring the SAME id -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "duplicate-block-id.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "duplicate-block-id.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "duplicate-block-id" && s.block === "P3.1"),
@@ -721,7 +789,7 @@ test("R4-4: duplicate-block-id.md — two blocks declaring the SAME id -> exit 2
 });
 
 test("R4-4: duplicate-register-row.md — the §7 register lists the SAME id twice -> exit 2 (structural, fail-closed)", () => {
-  const res = run({ docPath: path.join(FIXTURES_DIR, "duplicate-register-row.md") });
+  const res = runFx({ docPath: path.join(FIXTURES_DIR, "duplicate-register-row.md") });
   assert.strictEqual(res.exitCode, 2, JSON.stringify(res));
   assert.ok(
     res.structural.some((s) => s.reason === "duplicate-register-row" && s.block === "P3.1"),
@@ -758,7 +826,7 @@ test("R4-4 (pure-core): distinct block ids never spuriously trip duplicate-block
 });
 
 test("R4-4: self-host — the real contract has zero duplicate block ids and zero duplicate register rows", () => {
-  const res = run();
+  const res = selfHost();
   assert.strictEqual(res.exitCode, 0, JSON.stringify({ structural: res.structural, policy: res.policy }));
   assert.ok(
     !res.structural.some((s) => s.reason === "duplicate-block-id" || s.reason === "duplicate-register-row"),
@@ -766,8 +834,10 @@ test("R4-4: self-host — the real contract has zero duplicate block ids and zer
   );
 });
 
+fs.rmSync(TMP_DIR, { recursive: true, force: true });
 if (failures.length) {
   process.stderr.write(`FAIL [contract-lint.test] ${failures.length} failure(s):\n${failures.map((f) => `  - ${f}`).join("\n")}\n`);
   process.exit(1);
 }
-process.stdout.write(`OK   [contract-lint.test] ${passed} passed\n`);
+const skipNote = skipped.length ? ` (${skipped.length} probe-gated lane(s) skipped: ${skipped.join("; ")})` : "";
+process.stdout.write(`OK   [contract-lint.test] ${passed} passed${skipNote}\n`);
