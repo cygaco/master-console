@@ -21,6 +21,7 @@
  *   1 — CLI failed, result.fallback === true, caller should retry via Claude
  */
 
+const mcEnv = require("./mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
@@ -620,7 +621,7 @@ function buildProviderArgv(providerName, model, reasoningArgs = [], opts = {}) {
     // dispatching review-scale payloads needs longer before first output (2026-07-25: 31KB security
     // review died "timeout waiting for response" at 90s). Env override, validated against the same
     // duration grammar safe-spawn's ARG_POLICY enforces; malformed values fall back to 90s.
-    const agyTimeoutRaw = process.env.WARPOS_AGY_PRINT_TIMEOUT || "90s";
+    const agyTimeoutRaw = mcEnv.readEnv("AGY_PRINT_TIMEOUT") || "90s";
     const agyTimeout = /^[0-9]+(ms|s|m|h)?$/.test(agyTimeoutRaw) ? agyTimeoutRaw : "90s";
     return { toolId: "agy", argv: ["--model", agyModel, "--print-timeout", agyTimeout, "-p", opts.prompt || ""], usesStdin: false };
   }
@@ -955,7 +956,7 @@ function runProvider(role, prompt, opts = {}) {
     };
   } finally {
     // Cleanup temp file unless debugging
-    if (!process.env.WARPOS_PROVIDER_DEBUG) {
+    if (!mcEnv.readEnv("PROVIDER_DEBUG")) {
       try {
         fs.unlinkSync(promptFile);
       } catch {

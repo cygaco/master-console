@@ -31,17 +31,7 @@ const LEG = `${H.SLUG.toUpperCase()}_`;
 // prettier-ignore
 const PENDING_RAW_ENV_FILES = [
   // 4b batch scripts/dispatch — DONE (T3 part 4b batch scripts/dispatch)
-  // 4b batch scripts/hooks
-  "scripts/hooks/dispatch-route-guard.js",
-  "scripts/hooks/framework-manifest-guard.js",
-  "scripts/hooks/framework-purity-guard.js",
-  "scripts/hooks/lib/logger.js",
-  "scripts/hooks/lib/providers.js",
-  "scripts/hooks/skill-catalog-regen.js",
-  "scripts/hooks/sprint-routing-guard.js",
-  "scripts/hooks/team-guard.js",
-  "scripts/hooks/untrusted-content-firewall.js",
-  "scripts/hooks/version-bump-guard.js",
+  // 4b batch scripts/hooks — DONE (T3 part 4b-2)
   // 4b batch scripts/sprint
   "scripts/sprint/design.js",
   "scripts/sprint/epsilon-runtime.js",

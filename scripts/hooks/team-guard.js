@@ -9,6 +9,7 @@
 // This restriction ONLY applies during mode:adhoc (active team session).
 // Solo mode = no restrictions.
 
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 
@@ -391,7 +392,7 @@ process.stdin.on("end", () => {
     // footprint is bounded even during an extended debug session. Was
     // unbounded + always-on; grew unbounded with no rotation.
     try {
-      if (process.env.WARPOS_TEAM_GUARD_DEBUG === "1") {
+      if (mcEnv.readEnv("TEAM_GUARD_DEBUG") === "1") {
         const logDir = path.resolve(__dirname, "..", "..", ".claude", "runtime");
         fs.mkdirSync(logDir, { recursive: true });
         const logPath = path.join(logDir, "team-guard-debug.log");
@@ -644,10 +645,10 @@ process.stdin.on("end", () => {
       // the durable escape; the heartbeat + fail-open guard against false-blocks.
       // The old WARPOS_TEAM_GATE_HARD / .team-gate-hard opt-IN is retained as a
       // belt-and-suspenders force-on, but absence no longer disables the gate.
-      const hardGate = process.env.WARPOS_TEAM_GATE_SOFT !== "1";
+      const hardGate = mcEnv.readEnv("TEAM_GATE_SOFT") !== "1";
       // AC-1.4: resolve WHICH kill-switch fired (for the loud attestation) — not
       // just a boolean. A bypass must never be silent.
-      const killSwitchEnv = process.env.WARPOS_DISABLE_TEAM_GATE === "1";
+      const killSwitchEnv = mcEnv.readEnv("DISABLE_TEAM_GATE") === "1";
       const killSwitchMarker = fs.existsSync(
         path.join(projectDir, ".claude", "runtime", ".team-gate-off"),
       );

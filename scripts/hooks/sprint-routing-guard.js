@@ -34,6 +34,7 @@
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -282,7 +283,7 @@ function lookupSprintStatus(PROJECT, PATHS, sprintId) {
 // ── Diagnostics ────────────────────────────────────────
 
 function debugLog(msg) {
-  if (process.env.WARPOS_DEBUG === "1") {
+  if (mcEnv.readEnv("DEBUG") === "1") {
     process.stderr.write(`routing-guard (debug): ${msg}\n`);
   }
 }

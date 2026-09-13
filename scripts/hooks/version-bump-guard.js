@@ -57,6 +57,7 @@
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -145,7 +146,7 @@ function run(event) {
   if (!command) return process.exit(0);
   if (!DETECT_GIT_COMMIT.test(command)) return process.exit(0);
 
-  if (process.env.WARPOS_VERSION_GUARD === "off") {
+  if (mcEnv.readEnv("VERSION_GUARD") === "off") {
     process.stderr.write(
       "[version-bump-guard] bypass: WARPOS_VERSION_GUARD=off (logged)\n",
     );

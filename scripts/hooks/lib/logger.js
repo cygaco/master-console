@@ -36,6 +36,7 @@
  *   const recent = query({ cat: "inbox", since: Date.now() - 86400000, limit: 5 });
  */
 
+const mcEnv = require("./mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 const { PROJECT, PATHS } = require("./paths");
@@ -174,7 +175,7 @@ function ensureDir() {
 // Sprint Workflow v0.2 tags every event with `sprint_id` when one is
 // known. Resolution order:
 //   1. opts.sprint_id (explicit)
-//   2. process.env.WARPOS_SPRINT_ID
+//   2. mcEnv.readEnv("SPRINT_ID")
 //   3. null (event is sprint-agnostic — e.g. a Bash hook firing
 //      outside any sprint helper)
 //
@@ -185,7 +186,7 @@ function resolveSprintId(opts) {
     return opts.sprint_id;
   }
   if (opts && opts.sprint_id === null) return null;
-  if (process.env.WARPOS_SPRINT_ID) return process.env.WARPOS_SPRINT_ID;
+  if (mcEnv.readEnv("SPRINT_ID")) return mcEnv.readEnv("SPRINT_ID");
   return null;
 }
 
@@ -257,7 +258,7 @@ function logEvent(type, actor, action, target, detail, meta) {
   if (meta && typeof meta === "object" && Object.keys(meta).length > 0) {
     data.meta = meta;
   }
-  // Sprint context auto-picks from process.env.WARPOS_SPRINT_ID; callers
+  // Sprint context auto-picks from mcEnv.readEnv("SPRINT_ID"); callers
   // inside a sprint helper can also pass meta.sprint_id to override.
   const opts = { actor: actor || "unknown" };
   if (meta && typeof meta.sprint_id === "string") {

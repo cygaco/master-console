@@ -29,6 +29,7 @@
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -56,7 +57,7 @@ function isCanonicalRepo() {
   return resolveRepoRole({ root: PROJECT_DIR }).role === "canonical";
 }
 
-if (process.env.WARPOS_PURITY_GUARD === "off") process.exit(0);
+if (mcEnv.readEnv("PURITY_GUARD") === "off") process.exit(0);
 
 if (fs.existsSync(SENTINEL_PATH)) {
   try {

@@ -21,6 +21,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const HOOK = path.join(__dirname, "team-guard.js");
 
@@ -84,7 +85,7 @@ function runGuard(opts = {}) {
       CLAUDE_PROJECT_DIR: proj,
       HOME: home,
       USERPROFILE: home,
-      WARPOS_TEAM_GATE_SOFT: "1",
+      ...mcEnv.envPair("TEAM_GATE_SOFT", "1"),
     },
     encoding: "utf8",
   });

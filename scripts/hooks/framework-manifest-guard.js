@@ -26,6 +26,7 @@
  */
 
 "use strict";
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -49,7 +50,7 @@ const SENTINEL_PATH = path.join(
 );
 
 // Kill switch for emergencies (harness env, not Bash-inline)
-if (process.env.WARPOS_MANIFEST_GUARD === "off") process.exit(0);
+if (mcEnv.readEnv("MANIFEST_GUARD") === "off") process.exit(0);
 
 // Repo-local sentinel escape hatch — log every bypass for audit.
 if (fs.existsSync(SENTINEL_PATH)) {
