@@ -16,8 +16,8 @@
   verified_by: tests/regression/S-OS-06/codemod.test.js::codemod-idempotent
 - AC-1.3: Given the frozen Class-3/4 deny-list (its own committed file with a header stating its question, incl. the 5 generated views), when `--apply` would rewrite a deny-listed path, then it refuses.
   verified_by: tests/regression/S-OS-06/denylist.test.js::denylist-frozen-blocks-generated-views
-- AC-1.4: Given a Class-1 file containing a Class-3 `warpos` literal, when the codemod runs, then every `warpos` hit is rewritten OR pinned in the committed occurrence ledger and it prints `unpinned-unrewritten=0`.
-  verified_by: tests/regression/S-OS-06/occurrence-ledger.test.js::two-grain-partition-total
+- AC-1.4: Given a Class-1 file containing a `warpos` occurrence, when the codemod runs, then every hit has exactly one disposition — REWRITTEN, PINNED (occurrence ledger), or DERIVED (a generated-view occurrence permitted iff it maps to a Class-3 pin, computed from the pin set, asserted AFTER manifest regen) — and it prints `unpinned-unrewritten-underived=0`. Generated views are never allow-listed (β r3 OPEN 1).
+  verified_by: tests/regression/S-OS-06/occurrence-ledger.test.js::three-disposition-partition-total
 
 ## S-2 — deprecated-alias skills (R-2)
 
@@ -64,9 +64,9 @@
   verified_by: tests/regression/S-OS-06/cutover-gate.test.js::gate-emits-suppressed-counts
 - AC-7.2: Given framework-purity, when it runs, then it FAILS on `warpos` in any LIVE dir and PASSES on allow-listed historical dirs.
   verified_by: tests/regression/S-OS-06/purity.test.js::purity-fails-live-passes-historical
-- AC-7.3: Given the record-trust falsifier fixtures F1-F8, when the suite runs, then each is present and fails CLOSED as specified (a missing F1-F6 blocks build-entry).
+- AC-7.3: Given the record-trust falsifier fixtures F1-F8, when the suite runs, then each is present and fails CLOSED with a non-zero exit as specified; the BLOCKING tier is F1-F6 PLUS F8 (β r3: the freeze F8 guards matters from T2); F7 has a non-zero exit or is relabeled a report (β r3: "surfaced" cannot be observed red).
   verified_by: tests/regression/S-OS-06/falsifiers.test.js::all-falsifiers-present-and-fail-closed
-- AC-7.4: Given the release, when gates run, then `npm test` + `npm run leak-gate` + readme-drift are green, version=2.0.0, CHANGELOG has a `[2.0.0]` entry naming the alias-removal release (2.1.0), and both manifests are regenerated LAST (fm→installed→_mc).
+- AC-7.4: Given the release, when gates run, then `npm test` + `npm run leak-gate` + readme-drift are green, version=2.0.0, the CHANGELOG `[2.0.0]` entry states the DEPRECATION POLICY ("aliases supported through 2.0.x and removed in 2.1.0" — a policy, not a bare assertion about an unshipped release; β r3 nit), and both manifests are regenerated LAST (fm→installed→_mc).
   verified_by: tests/regression/S-OS-06/release-gates.test.js::release-gates-green
 - AC-7.5: Given the invariants, when checked, then `warpos@*` tags still exist (git tag, not grep) and HOME-anchored state reads `~/.mc` then `~/.warpos` without auto-move.
   verified_by: tests/regression/S-OS-06/invariants.test.js::tags-and-home-state
