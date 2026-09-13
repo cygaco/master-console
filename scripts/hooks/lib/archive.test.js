@@ -117,28 +117,87 @@ h.test("archive refuses a source outside root", () => {
   }
 });
 
-h.test("archive refuses a symlink source (no-follow)", (/* platform-tolerant */) => {
-  const fx = sealedDir({}, "archive-symlink");
+// Symlink cases need symlink privileges. Linux CI always has them; a default
+// Windows session does not (EPERM without Developer Mode / SeCreateSymbolicLink),
+// so those two cases self-skip on an EXPLICIT probe and say so. The lstat
+// no-follow branch is still exercised on every platform by the directory-source
+// case below, which needs no symlink at all.
+function trySymlink(target, link) {
+  try {
+    fs.symlinkSync(target, link, "file");
+    return true;
+  } catch (e) {
+    process.stderr.write(
+      `  (skip: this host cannot create file symlinks — ${e && e.code}; the lstat branch is covered by the directory-source case)\n`,
+    );
+    return false;
+  }
+}
+
+// A symlink whose TARGET ESCAPES root is caught by realpath containment
+// (containResolved) BEFORE the lstat check — that is the documented check order
+// ("must resolve inside root AND be a regular file"), so the reason is
+// `escapes-root`. CI run 34737673901 proved this on Linux; the old expectation
+// (`not-a-regular-file`) was only ever green because Windows skipped the case.
+h.test("archive refuses a symlink source whose target escapes root (realpath containment)", () => {
+  const fx = sealedDir({}, "archive-symlink-out");
   const outside = sealedDir({}, "archive-symlink-target");
   try {
     seedRuntime(fx);
     const target = path.join(outside.dir, "secret.md");
     fs.writeFileSync(target, "secret\n", "utf8");
     const link = path.join(fx.dir, ".claude", "runtime", "events.jsonl");
-    let symlinkOk = true;
-    try {
-      fs.symlinkSync(target, link, "file");
-    } catch {
-      symlinkOk = false;
-    }
-    if (!symlinkOk) return; // platform without symlink perms — skip gracefully
+    if (!trySymlink(target, link)) return;
     const res = archive.archive(link, { root: fx.dir, reason: "x" });
-    assert.strictEqual(res.ok, false, "a symlink source must be refused (not-a-regular-file)");
-    assert.strictEqual(res.reason, "not-a-regular-file");
+    assert.strictEqual(res.ok, false, "a symlink out of root must be refused");
+    assert.strictEqual(res.reason, "escapes-root", "realpath containment fires first");
     assert.ok(fs.existsSync(target), "the symlink target survives");
+    assert.ok(fs.lstatSync(link).isSymbolicLink(), "the link itself is left in place (never moved)");
+    assert.strictEqual(archive.readIndex(fx.dir).length, 0, "nothing indexed");
   } finally {
     fx.cleanup();
     outside.cleanup();
+  }
+});
+
+// A symlink whose target stays INSIDE root passes containment; the lstat
+// no-follow branch is what refuses it (`not-a-regular-file`) — a swapped
+// target must never be archived through a link.
+h.test("archive refuses a symlink source whose target is inside root (lstat no-follow)", () => {
+  const fx = sealedDir({}, "archive-symlink-in");
+  try {
+    seedRuntime(fx);
+    const target = path.join(fx.dir, ".claude", "runtime", "real.jsonl");
+    fs.writeFileSync(target, "real\n", "utf8");
+    const link = path.join(fx.dir, ".claude", "runtime", "events.jsonl");
+    if (!trySymlink(target, link)) return;
+    const res = archive.archive(link, { root: fx.dir, reason: "x" });
+    assert.strictEqual(res.ok, false, "a symlink source must be refused");
+    assert.strictEqual(res.reason, "not-a-regular-file", "lstat sees the link, not the target");
+    assert.strictEqual(fs.readFileSync(target, "utf8"), "real\n", "the in-root target is untouched");
+    assert.ok(fs.lstatSync(link).isSymbolicLink(), "the link itself is left in place (never moved)");
+    assert.strictEqual(archive.readIndex(fx.dir).length, 0, "nothing indexed");
+  } finally {
+    fx.cleanup();
+  }
+});
+
+// Platform-neutral cover for the same lstat branch: a DIRECTORY is inside root
+// and exists, but is not a regular file — refused, never moved.
+h.test("archive refuses a directory source (not-a-regular-file, no symlink needed)", () => {
+  const fx = sealedDir({}, "archive-dir-source");
+  try {
+    seedRuntime(fx);
+    const dirSrc = path.join(fx.dir, ".claude", "runtime", "events.jsonl");
+    fs.mkdirSync(dirSrc);
+    fs.writeFileSync(path.join(dirSrc, "child.txt"), "c\n", "utf8");
+    const res = archive.archive(dirSrc, { root: fx.dir, reason: "x" });
+    assert.strictEqual(res.ok, false, "a directory source must be refused");
+    assert.strictEqual(res.reason, "not-a-regular-file");
+    assert.ok(fs.existsSync(path.join(dirSrc, "child.txt")), "the directory and its content survive");
+    assert.strictEqual(archive.readIndex(fx.dir).length, 0, "nothing indexed");
+  } finally {
+    fx.cleanup();
   }
 });
 

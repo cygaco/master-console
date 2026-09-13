@@ -84,6 +84,27 @@ function run() {
     lastHits[0] && lastHits[0].payload.seq === 2,
   );
 
+  // 3b. same-millisecond ordering (CI regression, run 34737673901): a tight
+  // burst of posts lands several files in ONE epoch-ms on a fast runner. The
+  // filename stamp must stay monotonic so lexical order == post order — the
+  // random suffix must never decide which record `--last 1` / wait() returns.
+  const BURST = 40;
+  for (let i = 0; i < BURST; i++) {
+    board.post("sprint-y/burst", { seq: i }, { from: "eps" }, opts);
+  }
+  const burst = board.read("sprint-y/burst", opts);
+  const burstSeqs = burst.map((r) => r.payload.seq);
+  check("burst: every post is read back", burstSeqs.length === BURST);
+  check(
+    "burst: read order == post order even within one millisecond",
+    burstSeqs.every((s, i) => s === i),
+  );
+  const burstLast = board.read("sprint-y/burst", { ...opts, last: 1 });
+  check(
+    "burst: last-1 is the most recently posted signal",
+    burstLast.length === 1 && burstLast[0].payload.seq === BURST - 1,
+  );
+
   // 4. empty board reads clean (no throw, empty array)
   const empty = board.read("no/such/topic", opts);
   check("empty topic reads as []", Array.isArray(empty) && empty.length === 0);
