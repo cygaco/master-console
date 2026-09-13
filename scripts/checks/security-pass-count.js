@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 // security-pass-count (E-DISPATCH-PERFECT-001 W1) — the NAMED pass-count enforcer for the
 // 3-provider security review (β DECIDE 0.88 condition d: "name a pass-count enforcer that asserts
 // the stamps, OR /enforcement:log the gap"). It guarantees the multi-provider security review is
@@ -91,7 +92,7 @@ function evaluateRuntime(records, expectedCount) {
     // SP-20260718-004 R4 (β DIRECTIVE): a PASS only counts if the ok:true record carries a valid
     // origin-proof signature — a forged/unsigned record cannot inflate the pass count. Same-session
     // choke-point; default-on (WARPOS_LIVENESS_REQUIRE_SIG=0 for the fixture tests).
-    if (isVerifiedLivenessRecord(r, { requireSignature: process.env.WARPOS_LIVENESS_REQUIRE_SIG !== "0" }) && r.provider)
+    if (isVerifiedLivenessRecord(r, { requireSignature: mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0" }) && r.provider)
       g.okProviders.add(r.provider);
   }
   for (const [key, g] of groups) {

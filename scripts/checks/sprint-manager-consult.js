@@ -32,6 +32,7 @@
 // See .claude/commands/scan/sprint-manager-consult.md for the full spec.
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -567,7 +568,7 @@ if (require.main === module) {
   // 1. Read and parse events.jsonl (missing file → graceful empty)
   let rawEvents = [];
   let malformedCount = 0;
-  const eventsPath = process.env.WARPOS_EVENTS_FILE || PATHS.eventsFile;
+  const eventsPath = mcEnv.readEnv("EVENTS_FILE") || PATHS.eventsFile;
   try {
     const raw = fs.readFileSync(eventsPath, "utf8");
     for (const line of raw.split(/\r?\n/)) {
@@ -585,7 +586,7 @@ if (require.main === module) {
   // 2. Load dispatch completion records for F-1 backing-record check
   let dispatchRecords = [];
   const dispatchPath =
-    process.env.WARPOS_DISPATCH_COMPLETIONS_FILE ||
+    mcEnv.readEnv("DISPATCH_COMPLETIONS_FILE") ||
     PATHS.dispatchCompletionsFile ||
     path.join(PATHS.runtime || "", "dispatch-completions.jsonl");
   try {
@@ -598,9 +599,9 @@ if (require.main === module) {
 
   // 3. Load sprint start dates
   let sprintDates;
-  if (process.env.WARPOS_SPRINT_DATES_JSON) {
+  if (mcEnv.readEnv("SPRINT_DATES_JSON")) {
     try {
-      sprintDates = JSON.parse(process.env.WARPOS_SPRINT_DATES_JSON);
+      sprintDates = JSON.parse(mcEnv.readEnv("SPRINT_DATES_JSON"));
     } catch {
       sprintDates = {};
     }

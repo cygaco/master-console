@@ -12,6 +12,7 @@
 // See .claude/commands/scan/sprint-beta-honesty.md for full spec.
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -810,7 +811,7 @@ function computeFindings(events, sprintDates = {}, cutoff = SP003_SHIP_DATE, rep
 function loadAuditContext() {
   let rawEvents = [];
   let malformedCount = 0;
-  const eventsPath = process.env.WARPOS_EVENTS_FILE || PATHS.eventsFile;
+  const eventsPath = mcEnv.readEnv("EVENTS_FILE") || PATHS.eventsFile;
   try {
     const raw = fs.readFileSync(eventsPath, "utf8");
     for (const line of raw.split(/\r?\n/)) {
@@ -826,9 +827,9 @@ function loadAuditContext() {
   }
 
   let sprintDates;
-  if (process.env.WARPOS_SPRINT_DATES_JSON) {
+  if (mcEnv.readEnv("SPRINT_DATES_JSON")) {
     try {
-      sprintDates = JSON.parse(process.env.WARPOS_SPRINT_DATES_JSON);
+      sprintDates = JSON.parse(mcEnv.readEnv("SPRINT_DATES_JSON"));
     } catch {
       sprintDates = {};
     }
@@ -837,7 +838,7 @@ function loadAuditContext() {
   }
 
   const reportsData = loadFullReportsData(
-    process.env.WARPOS_FULLREPORTS_DIR || undefined,
+    mcEnv.readEnv("FULLREPORTS_DIR") || undefined,
   );
 
   return { rawEvents, malformedCount, sprintDates, reportsData };
@@ -845,7 +846,7 @@ function loadAuditContext() {
 
 /** Resolve the waiver-ledger path (env override → paths.betaHonestyWaivers). */
 function waiverLedgerPath() {
-  return process.env.WARPOS_BETA_HONESTY_WAIVERS || PATHS.betaHonestyWaivers;
+  return mcEnv.readEnv("BETA_HONESTY_WAIVERS") || PATHS.betaHonestyWaivers;
 }
 
 // ── CLI entry point ───────────────────────────────────────────────────────────

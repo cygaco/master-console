@@ -10,6 +10,7 @@
  *
  * Usage: node scripts/checks/mc-staleness.js [--json]
  */
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 
@@ -28,8 +29,8 @@ function cmp(a, b) {
 }
 
 function findCanonicalVersionFile(installedSource) {
-  if (process.env.WARPOS_CANONICAL) {
-    return path.join(process.env.WARPOS_CANONICAL, "version.json");
+  if (mcEnv.readEnv("CANONICAL")) {
+    return path.join(mcEnv.readEnv("CANONICAL"), "version.json");
   }
   if (!installedSource) return null;
   // installedSource looks like ".../MC/framework/releases/0.1.2"

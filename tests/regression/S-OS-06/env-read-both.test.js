@@ -35,14 +35,7 @@ const PENDING_RAW_ENV_FILES = [
   // 4b batch scripts/sprint — DONE (T3 part 4b-3)
   // 4b batch scripts/checks
   // (4b-4a DONE: adhoc-team-hygiene … mc-install-baseline)
-  "scripts/checks/mc-staleness.js",
-  "scripts/checks/mode-lifecycle-hooks-coverage.js",
-  "scripts/checks/provider-api-policy.js",
-  "scripts/checks/security-pass-count.js",
-  "scripts/checks/security-pass-count.test.js",
-  "scripts/checks/sprint-beta-honesty.js",
-  "scripts/checks/sprint-hook-coverage.js",
-  "scripts/checks/sprint-manager-consult.js",
+  // (4b-4b DONE: mc-staleness … sprint-manager-consult)
   // 4b batch rest
   "scripts/decisions/ledger.js",
   "scripts/dispatch-agent.js",

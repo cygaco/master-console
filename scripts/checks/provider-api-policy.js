@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * provider-api-policy.js — N-2: the CLI-vs-API policy enforcer.
@@ -240,7 +241,7 @@ function run() {
 
 function main() {
   const asJson = process.argv.includes("--json");
-  const enforce = process.argv.includes("--strict") || process.env.WARPOS_PROVIDER_API_POLICY_ENFORCE === "block";
+  const enforce = process.argv.includes("--strict") || mcEnv.readEnv("PROVIDER_API_POLICY_ENFORCE") === "block";
   let res;
   try {
     res = run();
