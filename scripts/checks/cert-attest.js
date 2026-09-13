@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * cert-attest.js — §7 certification-gate effective-model ATTESTATION (DISPATCH.md §7; ADR-0016).
  *
@@ -476,7 +477,7 @@ function main(argv) {
   }
 
   // THIS is the sanctioned probe path — declare it to the guards process-internally.
-  process.env.WARPOS_PROVIDER_PROBE = "1";
+  mcEnv.setEnv("PROVIDER_PROBE", "1");
   // (a) SP-20260718-003 / ADR-0020-amend: agy emits NO served-model id in stdout ("PROBE OK" only). The LAST
   // avenue is agy's --log-file — capture the CLI log and FOLD it into the attestation input, so IF agy records
   // the served model there, §7 concludes. If it records it NOWHERE, §7 stays honestly INCONCLUSIVE (a TRUE

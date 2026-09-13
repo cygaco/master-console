@@ -34,18 +34,7 @@ const PENDING_RAW_ENV_FILES = [
   // 4b batch scripts/hooks — DONE (T3 part 4b-2)
   // 4b batch scripts/sprint — DONE (T3 part 4b-3)
   // 4b batch scripts/checks
-  "scripts/checks/adhoc-team-hygiene.js",
-  "scripts/checks/cert-attest-panel.test.js",
-  "scripts/checks/cert-attest.js",
-  "scripts/checks/coverage-gate-scan.js",
-  "scripts/checks/dispatch-timeout-sanity.test.js",
-  "scripts/checks/doc-ref-integrity.js",
-  "scripts/checks/duplicate-doc-drift.js",
-  "scripts/checks/ed060-sunset.js",
-  "scripts/checks/epsilon-liveness.js",
-  "scripts/checks/epsilon-paired-waiter.test.js",
-  "scripts/checks/framework-purity.js",
-  "scripts/checks/mc-install-baseline.js",
+  // (4b-4a DONE: adhoc-team-hygiene … mc-install-baseline)
   "scripts/checks/mc-staleness.js",
   "scripts/checks/mode-lifecycle-hooks-coverage.js",
   "scripts/checks/provider-api-policy.js",

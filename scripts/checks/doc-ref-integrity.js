@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/checks/doc-ref-integrity.js — S-13b doc-reference-integrity enforcer.
@@ -313,7 +314,7 @@ function run() {
 function main() {
   const asJson = process.argv.includes("--json");
   const enforce =
-    process.argv.includes("--enforce") || process.env.WARPOS_DOC_REF_INTEGRITY_ENFORCE === "block";
+    process.argv.includes("--enforce") || mcEnv.readEnv("DOC_REF_INTEGRITY_ENFORCE") === "block";
   let res;
   try {
     res = run();

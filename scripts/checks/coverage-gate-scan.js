@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * coverage-gate-scan.js — the LIVE CALLER for coverage-gate.js evaluate()
@@ -69,7 +70,7 @@ function resolveExpected(expectedSource, runId, runRecs) {
   }
   // claimed = the legacy self-derive (distinct roles with a VERIFIED ok:true record in this run — a
   // forged/unsigned record can't inject a phantom claimed role; SP-20260718-004 R4 same-session choke-point).
-  const _reqSig = process.env.WARPOS_LIVENESS_REQUIRE_SIG !== "0";
+  const _reqSig = mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0";
   const claimed = [
     ...new Set(runRecs.filter((r) => r && r.role && isVerifiedLivenessRecord(r, { requireSignature: _reqSig })).map((r) => r.role)),
   ];
@@ -132,8 +133,8 @@ function runtimeExpectedForRun(_runId, runRecs, opts = {}) {
     if (r.phase_id) phases.add(String(r.phase_id));
     if (r.step) phases.add(String(r.step));
   }
-  if (!sprintIds.size && process.env.WARPOS_SPRINT_ID) sprintIds.add(process.env.WARPOS_SPRINT_ID);
-  if (!phases.size && process.env.WARPOS_PHASE_ID) phases.add(process.env.WARPOS_PHASE_ID);
+  if (!sprintIds.size && mcEnv.readEnv("SPRINT_ID")) sprintIds.add(mcEnv.readEnv("SPRINT_ID"));
+  if (!phases.size && mcEnv.readEnv("PHASE_ID")) phases.add(mcEnv.readEnv("PHASE_ID"));
   if (!sprintIds.size || !phases.size) return [];
 
   const deps = opts.deps || runtimeDeps();

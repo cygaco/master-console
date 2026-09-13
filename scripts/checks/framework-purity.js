@@ -62,6 +62,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -71,8 +72,8 @@ const { execSync } = require("child_process");
 // WARPOS_PURITY_ROOT is a test-only seam: it lets the test suite point the
 // scanner at a throwaway git repo so the modes can be exercised hermetically
 // without a false-RED on the real working tree.
-const REPO_ROOT = process.env.WARPOS_PURITY_ROOT
-  ? path.resolve(process.env.WARPOS_PURITY_ROOT)
+const REPO_ROOT = mcEnv.readEnv("PURITY_ROOT")
+  ? path.resolve(mcEnv.readEnv("PURITY_ROOT"))
   : path.resolve(__dirname, "..", "..");
 
 // ── Legacy-slug live-dir detector (S-OS-06 T2, resolution R1) ────────

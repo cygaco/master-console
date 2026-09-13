@@ -39,7 +39,9 @@ const REL = {
   cutoverAllowlist: "scripts/checks/cutover-completeness.allowlist.json",
 };
 
-const COPIED = [REL.loader, REL.codemod, REL.purity, REL.cutover, REL.cutoverAllowlist];
+// The read-both env helper (+ its decision core) travels with the gates: framework-purity.js requires it (T3 4b).
+const ENV_HELPER = ["scripts/hooks/lib/mc-env.js", "scripts/hooks/lib/split-brain-core.js"];
+const COPIED = [REL.loader, REL.codemod, REL.purity, REL.cutover, REL.cutoverAllowlist, ...ENV_HELPER];
 
 /** The standard fixture tree: one clean live file, one pinned live literal, Class-3/4 data, one generated view. */
 function baseFiles() {
@@ -80,7 +82,7 @@ function basePartition({ mutate, freeze = true } = {}) {
 function cleanEnv(root, extra) {
   const env = { ...process.env };
   for (const k of Object.keys(env)) {
-    if (k.startsWith("GIT_") || k === "WARPOS_PURITY_ROOT" || k === "NODE_TEST_CONTEXT") delete env[k];
+    if (k.startsWith("GIT_") || k === `${SLUG.toUpperCase()}_PURITY_ROOT` || k === "MC_PURITY_ROOT" || k === "NODE_TEST_CONTEXT") delete env[k];
   }
   env.CLAUDE_PROJECT_DIR = root;
   return { ...env, ...(extra || {}) };

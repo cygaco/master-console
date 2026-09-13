@@ -47,6 +47,7 @@
  * Linked: SP-20260513-005 / S-4 / AC-S-4.2 / R-4 / C-1 / F-4 / C-8 / doogle WG-1 / S-LC-12 / T-296
  */
 
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 
@@ -133,8 +134,8 @@ function runGuardRemediationCheck() {
   // WARPOS_GUARD_REMEDIATION_ROOT is a test-only seam: point the scan at a
   // throwaway tree so the RED path can be exercised hermetically without a
   // false-RED on the real guard set.
-  const scanRoot = process.env.WARPOS_GUARD_REMEDIATION_ROOT
-    ? path.resolve(process.env.WARPOS_GUARD_REMEDIATION_ROOT)
+  const scanRoot = mcEnv.readEnv("GUARD_REMEDIATION_ROOT")
+    ? path.resolve(mcEnv.readEnv("GUARD_REMEDIATION_ROOT"))
     : REPO_ROOT;
   const hooksDir = path.join(scanRoot, "scripts", "hooks");
   let files = [];
@@ -395,8 +396,8 @@ function runShipCoverageCheck() {
 
   // Collect guard-mandated remediation paths via the same scan as --guard-remediation.
   // WARPOS_GUARD_REMEDIATION_ROOT is the test-only seam (same as --guard-remediation).
-  const scanRoot = process.env.WARPOS_GUARD_REMEDIATION_ROOT
-    ? path.resolve(process.env.WARPOS_GUARD_REMEDIATION_ROOT)
+  const scanRoot = mcEnv.readEnv("GUARD_REMEDIATION_ROOT")
+    ? path.resolve(mcEnv.readEnv("GUARD_REMEDIATION_ROOT"))
     : REPO_ROOT;
   const hooksDir = path.join(scanRoot, "scripts", "hooks");
   let files = [];

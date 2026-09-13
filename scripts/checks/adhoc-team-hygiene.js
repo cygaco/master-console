@@ -25,6 +25,7 @@
 // but otherwise-valid team does not red the gate — pass --strict to fail on it.
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -36,7 +37,7 @@ const STRICT = process.argv.includes("--strict");
 // WITHOUT touching the real machine-global ~/.claude/teams (which holds other
 // projects' live teams). Shared with scripts/teams/lifecycle.js.
 const TEAMS_DIR =
-  process.env.WARPOS_TEAMS_DIR_OVERRIDE ||
+  mcEnv.readEnv("TEAMS_DIR_OVERRIDE") ||
   path.join(os.homedir(), ".claude", "teams");
 
 // Staleness threshold — mirrors session-start.js's 24h `.team-marker` warning
