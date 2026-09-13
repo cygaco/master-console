@@ -6,10 +6,12 @@
  * loader update.js calls (scripts/mc/migrations-loader.js#applyAll / #planAll).
  *
  * CEILING (stated, not implied): ONLY the fixture product is exercised. No portfolio product's repository is opened or
- * migrated. Portfolio coverage (test 6) classifies each registry product from its RECORDED registry version against
- * the loader's migration chain; a product that cannot reach this migration must be RECORDED not-live with its
- * registry line (runtime/S-OS-06/portfolio-coverage.json). With no portfolio registry on the machine, test 6 covers
- * zero products and says so in its diagnostic.
+ * migrated. Portfolio coverage (test 6) runs the committed generator scripts/open-source/portfolio-coverage.js, which
+ * classifies each registry product (HOME read-both registry) from its RECORDED registry version against the loader's
+ * migration chain; a product that cannot reach this migration is RECORDED not-live with its registry line. The record
+ * (runtime/S-OS-06/portfolio-coverage.json) names private products, so it is GITIGNORED and never committed — test 6
+ * asserts that, re-derives every disposition independently, and fails a zero-product registry as vacuous. With no
+ * portfolio registry on the machine (CI), test 6 is an explicit SKIP with its reason — never a zero-product pass.
  *
  * FIXTURE: fixtureSeed() below is the ONE source of the fake 1.2.0 product shell. Every run re-materializes it at
  * runtime/S-OS-06/fixture-product/ (the evidence copy; runtime/ is never committed) and composes TEMP roots from that
@@ -31,6 +33,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { spawnSync } = require("child_process");
 const H = require("./falsifier-harness");
 
 const ROOT = H.REAL_ROOT;
@@ -39,6 +42,7 @@ const transaction = require(path.join(ROOT, "scripts", "mc", "transaction.js"));
 const mcDirs = require(path.join(ROOT, "scripts", "hooks", "lib", "mc-dirs.js"));
 const mcEnv = require(path.join(ROOT, "scripts", "hooks", "lib", "mc-env.js"));
 const registry = require(path.join(ROOT, "scripts", "portfolio", "registry.js"));
+const portfolioCoverage = require(path.join(ROOT, "scripts", "open-source", "portfolio-coverage.js"));
 
 const LEG = H.SLUG; // the legacy slug
 const UP = LEG.toUpperCase();
@@ -559,12 +563,14 @@ test("migration (5): an unparseable settings file halts the chain before 003 (up
 
 // ── (6) portfolio coverage ───────────────────────────────────────────────────────────────────────────────────────
 
-/** A registry entry as a stable one-line record: keys sorted, local paths / remote URLs redacted. */
+/** A registry entry as a stable one-line record: keys sorted, local paths / remote URLs redacted (the test's own oracle). */
 function registryLine(entry) {
   const out = {};
   for (const k of Object.keys(entry).sort()) out[k] = k === "repo_path" || k === "github_url" ? (entry[k] == null ? entry[k] : "<redacted>") : entry[k];
   return JSON.stringify(out);
 }
+
+const SEMVER_RE = /^(\d+)\.(\d+)\.(\d+)$/;
 
 test("migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)", (t) => {
   const migFiles = loader.listMigrations("1.2.0", "2.0.0").map((f) => toPosix(path.relative(ROOT, f)));
@@ -572,37 +578,57 @@ test("migration (6): every portfolio-registry product upgrades via this migratio
 
   const rp = registry.registryPath();
   if (!fs.existsSync(rp)) {
-    t.diagnostic("CEILING: no portfolio registry on this machine — 0 products classified; only the fixture product is exercised");
+    // An explicit, reported SKIP — never a zero-product pass that reads green while classifying nothing.
+    t.skip("no portfolio registry on this machine — downstream-product coverage not applicable here; the fixture migration tests 1-5 prove the migration mechanism");
     return;
   }
+
+  // The committed generator produces the record; the record (it names private products) is gitignored, never committed.
+  const recordAbs = abs(ROOT, RECORD_REL);
+  const gen = portfolioCoverage.writeCoverage({ registryPath: rp, out: recordAbs, root: ROOT });
+  const ignored = spawnSync("git", ["-C", ROOT, "check-ignore", "-q", "--", RECORD_REL], { encoding: "utf8" });
+  assert.strictEqual(ignored.status, 0, `${RECORD_REL} must be gitignored — it names private portfolio products (git check-ignore exit ${ignored.status})`);
+  const tracked = spawnSync("git", ["-C", ROOT, "ls-files", "--", RECORD_REL], { encoding: "utf8" });
+  assert.strictEqual(tracked.status, 0, tracked.stderr);
+  assert.strictEqual(tracked.stdout.trim(), "", `${RECORD_REL} is tracked — the private coverage record must never be committed`);
+
   const doc = JSON.parse(fs.readFileSync(rp, "utf8").replace(/^﻿/, ""));
   const products = Object.entries(doc.products || {});
-  assert.ok(exists(ROOT, RECORD_REL), `the portfolio registry lists ${products.length} product(s) but ${RECORD_REL} is missing — record each product's disposition, never infer it silently`);
+  assert.ok(products.length > 0, `NON-VACUOUS: the portfolio registry is present but lists zero products — a zero-product coverage is not coverage (generator: ${gen.reason})`);
+  assert.strictEqual(gen.written, true, `the generator did not write ${RECORD_REL}: ${gen.reason}`);
   const record = JSON.parse(readText(ROOT, RECORD_REL));
   const recorded = record.products || {};
 
-  const summary = { migrates: [], notLive: [] };
+  // Independently re-derive each disposition from the registry + the loader chain; the record must agree.
+  const summary = { migrates: [], atTarget: [], notLive: [] };
   for (const [slug, entry] of products) {
     const version = entry.mc_version || entry[`${LEG}_version`] || null;
-    let chain = [];
-    try {
-      chain = loader.listMigrationsBetween(version, "2.0.0").map((f) => toPosix(path.relative(ROOT, f)));
-    } catch {
-      chain = []; // an unparseable/absent version cannot reach the migration
-    }
-    const reaches = migFiles.every((f) => chain.includes(f));
     const rec = recorded[slug];
-    assert.ok(rec, `portfolio product ${slug} (registry version ${version}) has no coverage record in ${RECORD_REL}`);
-    if (reaches) {
-      assert.strictEqual(rec.disposition, "migrates", `${slug}: the loader chain from ${version} reaches 1.2.0-to-2.0.0, record says ${rec.disposition}`);
-      summary.migrates.push(`${slug}@${version}`);
+    assert.ok(rec, `a portfolio product (registry version ${version}) has no disposition in ${RECORD_REL}`);
+    const m = typeof version === "string" ? version.match(SEMVER_RE) : null;
+    const atTarget = !!m && loader.compareSemver(version, "2.0.0") >= 0;
+    let chain = [];
+    if (m && !atTarget) chain = loader.listMigrationsBetween(version, "2.0.0").map((f) => toPosix(path.relative(ROOT, f)));
+    const reaches = migFiles.every((f) => chain.includes(f));
+    if (atTarget) {
+      assert.strictEqual(rec.disposition, "at-target", `a product recorded at ${version} (>= 2.0.0) must be at-target (record says ${rec.disposition})`);
+      summary.atTarget.push(version);
+    } else if (reaches) {
+      assert.strictEqual(rec.disposition, "migrates", `the loader chain from ${version} reaches 1.2.0-to-2.0.0, record says ${rec.disposition}`);
+      summary.migrates.push(version);
     } else {
-      assert.strictEqual(rec.disposition, "not-live", `${slug}: no migration chain from ${version} reaches 2.0.0, so it must be RECORDED not-live (record says ${rec.disposition})`);
-      assert.strictEqual(rec.registryLine, registryLine(entry), `${slug}: the recorded registry line is stale — the registry entry changed since it was recorded not-live`);
-      summary.notLive.push(`${slug}@${version}`);
+      assert.strictEqual(rec.disposition, "not-live", `no migration chain from ${version} reaches 2.0.0, so the product must be RECORDED not-live (record says ${rec.disposition})`);
+      assert.strictEqual(rec.registryLine, registryLine(entry), `a not-live product (registry version ${version}) must carry its current registry line`);
+      summary.notLive.push(version);
     }
   }
   const stale = Object.keys(recorded).filter((slug) => !(doc.products || {})[slug]);
-  assert.deepStrictEqual(stale, [], "the coverage record names no product the registry no longer lists");
-  t.diagnostic(`CEILING: only the fixture product is exercised. portfolio products=${products.length} migrates=[${summary.migrates}] recorded-not-live=[${summary.notLive}]`);
+  assert.strictEqual(stale.length, 0, "the coverage record names no product the registry no longer lists");
+  assert.strictEqual(Object.keys(recorded).length, products.length, "every registry product has exactly one disposition");
+  assert.strictEqual(summary.migrates.length + summary.atTarget.length + summary.notLive.length, products.length, "non-vacuous: every product was classified");
+  // Counts + versions only: product names never reach test output (it can be pasted into committed evidence).
+  t.diagnostic(
+    `CEILING: only the fixture product is exercised. portfolio products=${products.length} migrates=${summary.migrates.length}[${summary.migrates}] ` +
+      `at-target=${summary.atTarget.length} recorded-not-live=${summary.notLive.length}[${summary.notLive}] record=${RECORD_REL} (gitignored)`
+  );
 });

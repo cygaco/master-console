@@ -179,5 +179,64 @@ try {
   if (gatedFixtureDir) rmrf(gatedFixtureDir);
 }
 
+// 7C-001: the raw-legacy-env-read guard matches case-INSENSITIVELY (aligned with categorizeOccurrence's env detection)
+// and applies in EVERY category, so an any-cased process.env legacy read is REFUSED (no mechanical transform) — never
+// literal-swapped to process.env.Mc_* by the generic rewrite, which would silently drop the read-both legacy fallback.
+const RAW_LEGACY_ENV_READS = [
+  ["mixed-case dot read", "const home = process.env.Warpos_Home;"],
+  ["lower-case dot read", "const home = process.env.warpos_home || null;"],
+  ["lower-case bracket read", 'const home = process.env["warpos_home"];'],
+  ["mixed-case bracket read", "const home = process.env[ 'Warpos_Home' ];"],
+  ["upper-case dot read (control: refused before and after)", "const home = process.env.WARPOS_HOME;"],
+];
+for (const [label, line] of RAW_LEGACY_ENV_READS) {
+  ok(`raw-legacy-env-read-refused: ${label}`, () => {
+    const dec = RENAME_MC.computeLineCategoryDecision("src/reader.js", line, false);
+    assert.strictEqual(dec.computable, true, `${label}: category ${dec.category} must be computable`);
+    assert.strictEqual(dec.outcome, "untransformed", `${label} must be refused (untransformed), got ${dec.outcome} -> ${JSON.stringify(dec.after)}`);
+    assert.strictEqual(dec.after, null, `${label} must have NO mechanical transform, got ${JSON.stringify(dec.after)}`);
+  });
+}
+
+ok("raw-legacy-env-read-guard: a mixed-case dot read is categorized env (categorizer and guard casing agree)", () => {
+  assert.strictEqual(RENAME_MC.categorizeOccurrence("src/reader.js", "const home = process.env.Warpos_Home;"), "env");
+});
+
+ok("raw-legacy-env-read-guard: legacy mentions that are NOT raw env reads still transform (no over-refusal)", () => {
+  for (const line of ['const KEY = "WARPOS_HOME"; // an env NAME constant', "the warpos home directory", "const warposHome = 1;"]) {
+    const dec = RENAME_MC.computeLineCategoryDecision("src/reader.js", line, false);
+    assert.strictEqual(dec.outcome, "transformed", `${JSON.stringify(line)} [${dec.category}] must still transform, got ${dec.outcome}`);
+  }
+});
+
+let envReadFixtureDir;
+try {
+  envReadFixtureDir = makeBareFixture("rename-mc-env-read-fixture-");
+  const READER_REL = "src/reader.js";
+  const READER_BODY = 'const a = process.env.Warpos_Home;\nconst b = process.env["warpos_home"];\n';
+  fs.mkdirSync(path.join(envReadFixtureDir, "src"), { recursive: true });
+  fs.writeFileSync(path.join(envReadFixtureDir, ...READER_REL.split("/")), READER_BODY, "utf8");
+  git(["add", "-A"], envReadFixtureDir);
+
+  ok("apply-refuses-an-any-cased-raw-legacy-env-read (env AND prose-bucketed)", () => {
+    let err = null;
+    try {
+      RENAME_MC.runApply({ root: envReadFixtureDir });
+    } catch (e) {
+      err = e;
+    }
+    assert.ok(err, "runApply must throw rather than literal-swap an any-cased raw legacy env read");
+    assert.match(err.message, /rename-mc --apply refused \(β r3c structural delta\)/, err.message);
+    assert.match(err.message, /category env: delta=1/, `the mixed-case dot read is refused in category env: ${err.message}`);
+    assert.match(err.message, /category prose: delta=1/, `the lower-case bracket read is refused in category prose: ${err.message}`);
+  });
+
+  ok("apply-refusal-leaves-the-raw-env-reads-unswapped", () => {
+    assert.strictEqual(fs.readFileSync(path.join(envReadFixtureDir, ...READER_REL.split("/")), "utf8"), READER_BODY, "the reads are byte-identical after the refused apply");
+  });
+} finally {
+  if (envReadFixtureDir) rmrf(envReadFixtureDir);
+}
+
 console.log(`\ncodemod: ${pass}/${pass + fail} pass`);
 process.exit(fail ? 1 : 0);
