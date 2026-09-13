@@ -493,14 +493,23 @@ function run(opts) {
       ]
     : [];
 
+  // T5 F3: the PATH-NAME tally beside the content tally — every scanned path whose NAME carries the legacy slug,
+  // classified through the same partition into the same dispositions. A live Class-1 path (or an expired compat
+  // member) still named with the slug is a violation of its own kind (kept apart from the content findings).
+  const pathTally = partition.tallyLegacySlugPathNames(files, LEGACY_SLUG_NEEDLE, { version: readRootVersion() });
+  findings.legacy_slug_path = slugMode.enforce
+    ? pathTally.liveUnallowedPaths.map((x) => ({ path: x.path, pattern: `path-name live-unallowed: ${x.reason}` }))
+    : [];
+
   // root_leak + domain_vocab are ADVISORY and deliberately excluded from the
-  // violation count — they must never flip the exit code. legacy_slug counts only
-  // when ENFORCING (package.json >= 2.0.0, or --enforce).
+  // violation count — they must never flip the exit code. legacy_slug (content AND
+  // path-name) counts only when ENFORCING (package.json >= 2.0.0, or --enforce).
   const violationCount =
     findings.client_slug.length +
     findings.abs_path.length +
     findings.promote_relic.length +
-    findings.legacy_slug.length;
+    findings.legacy_slug.length +
+    findings.legacy_slug_path.length;
 
   return {
     ok: violationCount === 0,
@@ -513,6 +522,7 @@ function run(opts) {
       abs_path: findings.abs_path.length,
       promote_relic: findings.promote_relic.length,
       legacy_slug: slugTally.pendingTotal + slugUnscanned.length, // a violation only when enforcing
+      legacy_slug_path: pathTally.byDisposition.liveUnallowed, // path-name residue; a violation only when enforcing
       root_leak: findings.root_leak.length, // advisory, not a violation
       domain_vocab: findings.domain_vocab.length, // advisory, not a violation
     },
@@ -539,6 +549,18 @@ function run(opts) {
       derived_by_view: slugTally.derivedByView,
       pending_by_file: slugTally.pendingByFile,
       formatted: partition.formatLegacySlugTally(slugTally, { indent: "    ", maxPending: slugMode.enforce ? 0 : 10 }),
+      // T5 F3: the PATH-NAME tally (tracked paths with the slug in the NAME), beside the content tally above.
+      path_names: {
+        total: pathTally.total,
+        dispositions: pathTally.byDisposition,
+        by_entry: pathTally.byEntry,
+        compat_by_surface: pathTally.compatBySurface,
+        compat_expired_by_surface: pathTally.compatExpiredBySurface,
+        live_unallowed: pathTally.byDisposition.liveUnallowed,
+        live_unallowed_paths: pathTally.liveUnallowedPaths,
+        compat_clock: pathTally.versionReason,
+        formatted: partition.formatPathNameTally(pathTally, { indent: "    " }),
+      },
     },
     findings,
   };
@@ -631,6 +653,10 @@ function formatHuman(r) {
     lines.push("  legacy slug partition tally:");
     lines.push(...ls.formatted);
     if (ls.unscanned.length) lines.push(`    unscanned live files (too large): ${ls.unscanned.length}`);
+    if (ls.path_names) {
+      lines.push(`    legacy_slug_path: ${r.summary.legacy_slug_path}  [${ls.enforce ? "ENFORCING" : "REPORT-ONLY"}]`);
+      lines.push(...ls.path_names.formatted);
+    }
   }
   lines.push("");
   lines.push(`  advisory (report-only, does NOT affect exit code):`);

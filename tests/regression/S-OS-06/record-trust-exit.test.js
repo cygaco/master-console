@@ -108,7 +108,7 @@ function withTempCopy(fn) {
     .finally(cleanup);
 }
 
-test("record-trust-exit GREEN: the real clean tree -> exit 0, all four items PASS, the committed ledger unchanged", { timeout: 25 * 60 * 1000 }, () => {
+test("record-trust-exit GREEN: the real clean tree -> exit 0, all five items PASS, the committed ledger unchanged", { timeout: 25 * 60 * 1000 }, () => {
   const ledgerBefore = fs.readFileSync(H.LOADER.COMMITTED_LEDGER_PATH, "utf8");
   const r = spawnEnforcer(ENFORCER, H.REAL_ROOT, 20 * 60 * 1000);
   const lines = itemLines(r.stdout);
@@ -118,10 +118,15 @@ test("record-trust-exit GREEN: the real clean tree -> exit 0, all four items PAS
     [2, "guard", "PASS"],
     [3, "deny-list", "PASS"],
     [4, "dry-run", "PASS"],
+    [5, "category-delta", "PASS"],
   ]);
-  assert.match(r.stdout, /^record-trust-exit: PASS \(4\/4 items pass\)$/m);
+  assert.match(r.stdout, /^record-trust-exit: PASS \(5\/5 items pass\)$/m);
   assert.match(lines[3].detail, /unclassified=0; unpinned-unrewritten-underived=0; derived set within the 5 generated views at their resolved paths/);
   assert.match(lines[3].detail, /refusedRenames=0/);
+  // β r3c: EVERY owned category is named with delta 0 (a category missing from the detail is not a zero).
+  const { OCCURRENCE_CATEGORIES } = require(path.join(H.REAL_ROOT, ...H.REL.codemod.split("/")));
+  for (const c of OCCURRENCE_CATEGORIES) assert.match(lines[4].detail, new RegExp(`(^|; )${c}=0 \\[categorized \\d+ = pinned \\d+ \\+ transformed \\d+\\]`));
+  assert.match(lines[4].detail, /uncomputable=0/);
   assert.strictEqual(fs.readFileSync(H.LOADER.COMMITTED_LEDGER_PATH, "utf8"), ledgerBefore, "the exit gate must not change the committed ledger");
 });
 
@@ -239,7 +244,8 @@ test("record-trust-exit RED (CLI): the copied CLI exits 1 with the planted items
     const r = spawnEnforcer(cx.enforcerFile, cx.dir, 4 * 60 * 1000);
     assert.strictEqual(r.status, 1, `${r.stdout}\n${r.stderr}`);
     const byId = Object.fromEntries(itemLines(r.stdout).map((l) => [l.id, l]));
-    assert.deepStrictEqual(Object.keys(byId).sort(), ["deny-list", "dry-run", "fixtures", "guard"]);
+    assert.deepStrictEqual(Object.keys(byId).sort(), ["category-delta", "deny-list", "dry-run", "fixtures", "guard"]);
+    assert.strictEqual(byId["category-delta"].verdict, "FAIL", "the copy carries no codemod: the delta is uncomputable -> FAIL, never a zero");
     assert.strictEqual(byId.fixtures.verdict, "FAIL");
     assert.match(byId.fixtures.detail, /missing required falsifier fixture\(s\): F3\b/);
     assert.strictEqual(byId["deny-list"].verdict, "FAIL");

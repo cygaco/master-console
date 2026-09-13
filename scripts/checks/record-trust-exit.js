@@ -43,6 +43,13 @@
  *                this item's detail (reviewed as numbers), compatExpired must be 0 (a registered window
  *                whose expiry the tree version reached is a FAIL), and the compat count must agree across
  *                stdout, the committed ledger header, and the committed ledger's compat rows.
+ *   5 category-delta  β r3c STRUCTURAL remedy for the categorize-then-skip handoff gap: through the codemod's own
+ *                plan builder (in-process, read-only), for EVERY category the categorizer owns
+ *                (OCCURRENCE_CATEGORIES), categorized-lines − (pinned-lines + transformed-lines) == 0, where
+ *                "transformed" is decided by the SAME CATEGORY_TRANSFORMS table --apply rewrites with. A category
+ *                with no registered transform, a slug line whose category is uncomputable, a missing delta slot or
+ *                an arithmetic disagreement is a FAIL (never read as 0). Purity is a DETECTOR of this gap; this item
+ *                is its MEASURE.
  *
  * Exit: 0 = every item PASS · 1 = any item FAIL · 2 = usage / internal error (never green).
  *
@@ -52,7 +59,7 @@
  * Everything resolves from REPO_ROOT (two levels above this file), so a test may copy this
  * module into a temp tree and run it there without touching the real tree. There is no CLI
  * flag that skips an item: the exported `runRecordTrustExit({ items })` selector exists for
- * those tests; the CLI always runs all four.
+ * those tests; the CLI always runs all five.
  *
  *   node scripts/checks/record-trust-exit.js
  */
@@ -90,8 +97,66 @@ const ITEMS = [
   { n: 2, id: "guard", run: checkGuard },
   { n: 3, id: "deny-list", run: checkDenylist },
   { n: 4, id: "dry-run", run: checkDryRun },
+  { n: 5, id: "category-delta", run: checkCategoryDelta },
 ];
 const ITEM_IDS = ITEMS.map((i) => i.id);
+
+// ── item 5: per-category structural delta (β r3c) ────────────────────────────
+// Computed IN-PROCESS through the codemod's own exported plan builder (read-only — no second dry-run racing item
+// 4's plan/ledger writes). For EVERY category the categorizer owns: categorized-lines == pinned + transformed
+// lines (delta 0). A category with no registered transform, a line whose category is uncomputable, a missing
+// delta slot, or an arithmetic disagreement is a FAIL — never read as 0.
+function checkCategoryDelta({ root }) {
+  const codemodAbs = absOf(root, CODEMOD_REL);
+  if (!fs.existsSync(codemodAbs)) return fail(`${CODEMOD_REL} is missing — the per-category delta cannot be computed (fail-closed)`);
+  const loader = loaderAt(root);
+  const codemod = require(codemodAbs);
+  const cats = codemod.OCCURRENCE_CATEGORIES;
+  const transforms = codemod.CATEGORY_TRANSFORMS;
+  if (!Array.isArray(cats) || cats.length === 0) return fail("the codemod exports no OCCURRENCE_CATEGORIES — the categorizer's category set is uncomputable (fail-closed)");
+  if (!transforms || typeof transforms !== "object") return fail("the codemod exports no CATEGORY_TRANSFORMS — no category is computable (fail-closed)");
+  if (typeof codemod.buildLedgerAndPlan !== "function") return fail("the codemod exports no buildLedgerAndPlan (fail-closed)");
+
+  const problems = [];
+  const noTransform = cats.filter((c) => typeof transforms[c] !== "function");
+  if (noTransform.length) problems.push(`categor${noTransform.length === 1 ? "y" : "ies"} with no registered transform (uncomputable): ${noTransform.join(", ")}`);
+  const unowned = Object.keys(transforms).filter((c) => !cats.includes(c));
+  if (unowned.length) problems.push(`transform(s) registered for categories the categorizer does not own: ${unowned.join(", ")}`);
+
+  const built = codemod.buildLedgerAndPlan({ root, partition: loader.loadPartition({ forceReload: true }) });
+  const delta = built && built.categoryDelta;
+  if (!delta || typeof delta !== "object") return fail(problems.concat("buildLedgerAndPlan returned no categoryDelta (fail-closed, never read as 0)").join("; "));
+  const strays = Object.keys(delta).filter((c) => !cats.includes(c));
+  if (strays.length) problems.push(`delta slots for categories outside the owned set: ${strays.join(", ")}`);
+
+  const parts = [];
+  for (const c of cats) {
+    const s = delta[c];
+    if (!s || ![s.categorized, s.pinned, s.transformed, s.delta].every(Number.isInteger)) {
+      problems.push(`category ${c}: delta not computed (fail-closed)`);
+      continue;
+    }
+    const recomputed = s.categorized - (s.pinned + s.transformed);
+    if (recomputed !== s.delta) {
+      problems.push(`category ${c}: arithmetic disagreement (categorized ${s.categorized} − pinned ${s.pinned} − transformed ${s.transformed} = ${recomputed}, reported delta ${s.delta})`);
+    }
+    if (s.delta !== 0) {
+      const samples = (built.categoryUntransformed || [])
+        .filter((x) => x.category === c)
+        .slice(0, 3)
+        .map((x) => `${x.file}:${x.line}`)
+        .join(", ");
+      problems.push(`category ${c}: delta=${s.delta} categorized line(s) neither transformed nor pinned (${samples || "no samples"})`);
+    }
+    parts.push(`${c}=${s.delta} [categorized ${s.categorized} = pinned ${s.pinned} + transformed ${s.transformed}]`);
+  }
+  const unc = built.categoryUncomputable;
+  if (!Array.isArray(unc)) problems.push("the plan carries no categoryUncomputable list (fail-closed)");
+  else if (unc.length) problems.push(`${unc.length} slug line(s) with an uncomputable category: ${unc.slice(0, 3).map((x) => `${x.file}:${x.line} (${x.category})`).join(", ")}`);
+
+  if (problems.length) return fail(problems.join("; "));
+  return pass(`per-category delta == 0 for all ${cats.length} categories the categorizer owns; uncomputable=0; ${parts.join("; ")}`);
+}
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 

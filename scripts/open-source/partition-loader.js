@@ -558,6 +558,92 @@ function buildPartition(denylist) {
     return lines;
   }
 
+  // ── PATH-NAME tally (T5 F3): tracked paths whose NAME carries the legacy slug, by disposition ──
+  /**
+   * The content tally reads file BODIES; a file NAMED with the legacy slug is a separate leak surface (a shipped
+   * alias skill, a migration's own filename, an archived plan). Every such tracked path gets exactly one of the
+   * same dispositions, classified through the SAME partition:
+   *   derived                  generated view (its name is the view's declared identity)
+   *   compat                   registered compat MEMBER (per surface; RED once that window's expiry is reached)
+   *   pinned                   Class-3 path entry (historical-in-live DATA names: migrations, the codemod's own data)
+   *   historical-allow-listed  Class-4 path entry, or the Class-2 operator-gated tree
+   *   live-unallowed           anything else (a Class-1 live path still carrying the slug in its name) — a violation
+   * `rewritten` never appears: a renamed path no longer carries the slug. -> a tally object (numbers + named paths).
+   */
+  function tallyLegacySlugPathNames(trackedPaths, needle, { version } = {}) {
+    if (!Array.isArray(trackedPaths)) throw new TypeError("tallyLegacySlugPathNames: trackedPaths must be an array");
+    if (typeof needle !== "string" || !needle) throw new TypeError("tallyLegacySlugPathNames: needle must be a non-empty string");
+    const clock =
+      version === undefined
+        ? readTreeVersion(PARTITION_ROOT)
+        : parseSemver(version)
+          ? { version, reason: `version ${version}` }
+          : { version: null, reason: `version ${JSON.stringify(version)} unknown/unparseable — every compat window reads EXPIRED (fail closed)` };
+    const re = new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    const t = {
+      total: 0,
+      byDisposition: { pinned: 0, derived: 0, compat: 0, historicalAllowListed: 0, liveUnallowed: 0 },
+      byEntry: {},
+      compatBySurface: {},
+      compatExpiredBySurface: {},
+      liveUnallowedPaths: [],
+      version: clock.version,
+      versionReason: clock.reason,
+    };
+    const bump = (obj, key) => {
+      obj[key] = (obj[key] || 0) + 1;
+    };
+    for (const raw of trackedPaths) {
+      const p = _toPosix(raw);
+      if (!re.test(p)) continue;
+      t.total += 1;
+      const cls = classifyPath(p);
+      if (cls.kind === "generated-view") {
+        t.byDisposition.derived += 1;
+        bump(t.byEntry, `derived (generated view) ${p}`);
+      } else if (cls.kind === "compat") {
+        const label = compatLabel(cls.entry);
+        if (isCompatExpired(cls.entry.expires, clock.version)) {
+          t.byDisposition.liveUnallowed += 1;
+          bump(t.compatExpiredBySurface, label);
+          t.liveUnallowedPaths.push({ path: p, reason: `compat window ${label} EXPIRED at tree version ${clock.version === null ? "<unknown>" : clock.version}` });
+        } else {
+          t.byDisposition.compat += 1;
+          bump(t.compatBySurface, label);
+          bump(t.byEntry, `compat ${label}`);
+        }
+      } else if (!VALID_CLASSES.includes(cls.class)) {
+        t.byDisposition.liveUnallowed += 1;
+        t.liveUnallowedPaths.push({ path: p, reason: `unclassified (entry class ${JSON.stringify(cls.class)})` });
+      } else if (cls.class === 3) {
+        t.byDisposition.pinned += 1;
+        bump(t.byEntry, `class-3 ${cls.entry ? cls.entry.pattern : cls.kind}`);
+      } else if (cls.class === 4 || cls.class === 2) {
+        t.byDisposition.historicalAllowListed += 1;
+        bump(t.byEntry, `class-${cls.class} ${cls.entry ? cls.entry.pattern : cls.kind}`);
+      } else {
+        t.byDisposition.liveUnallowed += 1;
+        t.liveUnallowedPaths.push({ path: p, reason: `live Class-1 path (${cls.kind}) still carries the legacy slug in its NAME` });
+      }
+    }
+    return t;
+  }
+
+  function formatPathNameTally(t, { indent = "    ", maxLive = 50 } = {}) {
+    const d = t.byDisposition;
+    const lines = [];
+    lines.push(`${indent}path-name tally (tracked paths with the legacy slug in the NAME — review as NUMBERS):`);
+    const rows = Object.entries(t.byEntry).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
+    if (rows.length === 0) lines.push(`${indent}  (none)`);
+    for (const [k, v] of rows) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
+    for (const [k, v] of Object.entries(t.compatExpiredBySurface)) lines.push(`${indent}  ${String(v).padStart(7)}  compat-EXPIRED ${k} (counted live-unallowed)`);
+    lines.push(
+      `${indent}path-name dispositions (5): pinned=${d.pinned} derived=${d.derived} compat=${d.compat} historical-allow-listed=${d.historicalAllowListed} · live-unallowed=${d.liveUnallowed} · total=${t.total} · compat clock: ${t.versionReason}`
+    );
+    for (const x of t.liveUnallowedPaths.slice(0, maxLive)) lines.push(`${indent}  LIVE ${x.path} — ${x.reason}`);
+    return lines;
+  }
+
   // ── F2 (+ schema): every entry carries a one-line warrant ──────────────
   function validateEntries() {
     const problems = [];
@@ -923,6 +1009,8 @@ function buildPartition(denylist) {
     createLegacySlugTally,
     tallyLegacySlug,
     formatLegacySlugTally,
+    tallyLegacySlugPathNames,
+    formatPathNameTally,
     dispositionSummary,
     validateEntries,
     checkStale,

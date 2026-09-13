@@ -373,6 +373,72 @@ function categorizeOccurrence(file, lineText) {
   return "prose";
 }
 
+// ── per-category transform table + structural delta (β r3c) ─────────────────
+// ONE table drives BOTH --apply's content rewrite AND the per-category delta assertion, so "what the codemod
+// categorizes" and "what the codemod transforms" cannot drift apart silently (the env categorize-then-skip gap:
+// T1 categorized WARPOS_* lines "env", --apply skipped them, T3 rewrote only process.env reads, and the
+// constants/prose fell through both). For EVERY category the categorizer owns:
+//     delta(C) = categorized-lines(C) − (pinned-lines(C) + transformed-lines(C))
+// where a line is "transformed" iff its category's transform returns text carrying NO legacy slug. delta != 0
+// for ANY category, or a line whose category has no registered transform (uncomputable), makes --dry-run exit
+// non-zero and --apply REFUSE before touching anything — never a silent skip.
+
+const LEGACY_SLUG_ANY_RE = /warpos/i;
+
+/** The generic slug rewrite shared by every transformable category (case-preserving for the spellings in the tree). */
+function genericSlugRewrite(lineText) {
+  return lineText
+    .replace(/WARPOS/g, "MC")
+    .replace(/WarpOS/g, "MC")
+    .replace(/Warpos/g, "Mc")
+    .replace(/warpos/g, "mc");
+}
+
+// A raw process.env read of a legacy-named variable has NO mechanical transform: the literal WARPOS_->MC_ swap
+// silently drops the one-release legacy fallback, and the correct rewrite (a read-both helper CALL + its require)
+// is not a line-local edit. Such a line is untransformable -> counted in the delta -> the codemod refuses.
+const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:\.\s*WARPOS_|\[\s*["'`]WARPOS_)/;
+
+/** category -> (lineText) => rewritten line, or null when that line has no mechanical transform. */
+const CATEGORY_TRANSFORMS = Object.freeze({
+  "paths-registry": genericSlugRewrite,
+  env: (lineText) => (RAW_LEGACY_ENV_READ_RE.test(lineText) ? null : genericSlugRewrite(lineText)),
+  "skill-namespace": genericSlugRewrite,
+  dir: genericSlugRewrite,
+  identifier: genericSlugRewrite,
+  prose: genericSlugRewrite,
+});
+
+/** Every category the categorizer can return. A category missing from CATEGORY_TRANSFORMS is uncomputable (refuse). */
+const OCCURRENCE_CATEGORIES = Object.freeze(["paths-registry", "env", "skill-namespace", "dir", "identifier", "prose"]);
+
+function emptyCategoryDelta() {
+  const out = {};
+  for (const c of OCCURRENCE_CATEGORIES) out[c] = { categorized: 0, pinned: 0, transformed: 0, delta: 0 };
+  return out;
+}
+
+/**
+ * One slug-carrying LINE's structural decision: its category, and whether it is pinned / transformed / neither.
+ * Returns { category, computable, outcome: "pinned" | "transformed" | "untransformed", after }.
+ */
+function computeLineCategoryDecision(relPath, lineText, pinned) {
+  let category;
+  try {
+    category = categorizeOccurrence(relPath, lineText);
+  } catch (e) {
+    return { category: `<categorizer threw: ${e.message}>`, computable: false, outcome: "untransformed", after: null };
+  }
+  const transform = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, category) ? CATEGORY_TRANSFORMS[category] : null;
+  if (!OCCURRENCE_CATEGORIES.includes(category) || typeof transform !== "function") {
+    return { category: String(category), computable: false, outcome: "untransformed", after: null };
+  }
+  if (pinned) return { category, computable: true, outcome: "pinned", after: lineText };
+  const after = transform(lineText);
+  if (typeof after === "string" && !LEGACY_SLUG_ANY_RE.test(after)) return { category, computable: true, outcome: "transformed", after };
+  return { category, computable: true, outcome: "untransformed", after: typeof after === "string" ? after : null };
+}
+
 // ── path rename planning (segment-level; Class-1 only) ──────────────────────
 
 function renamePath(relPath) {
@@ -522,6 +588,10 @@ function buildLedgerAndPlan({ root, partition }) {
     if (isCompatExpired(w.expires, treeVersion.version)) compatExpired.push({ file, line, matchText, surface: w.surface, expires: w.expires });
   };
   const underived = []; // defensive: occurrences that got NONE of the four codemod dispositions
+  // β r3c structural delta: per category, categorized LINES vs pinned + transformed lines (see CATEGORY_TRANSFORMS).
+  const categoryDelta = emptyCategoryDelta();
+  const categoryUncomputable = []; // a slug line whose category has no registered transform (or the categorizer threw)
+  const categoryUntransformed = []; // a categorized, unpinned line its category's transform leaves carrying the slug
 
   for (const { relPath, writeProtected } of class1Files) {
     const absPath = path.join(root, relPath);
@@ -540,6 +610,24 @@ function buildLedgerAndPlan({ root, partition }) {
 
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
+      // Structural delta — ONE decision per slug-carrying LINE of a live, non-derived file. Compat-claimed lines are
+      // the compat disposition (never categorized for a rewrite); pinned lines count as pinned in their category.
+      if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText) && !partition.findCompatOccurrence(relPath, lineText)) {
+        const linePinned = Boolean(partition.findOccurrencePin(relPath, lineText)) || (isChangelog && changelogHistoricalLines.has(lineNum));
+        const dec = computeLineCategoryDecision(relPath, lineText, linePinned);
+        if (!dec.computable) {
+          categoryUncomputable.push({ file: relPath, line: lineNum, category: dec.category });
+        } else {
+          const slot = categoryDelta[dec.category];
+          slot.categorized += 1;
+          if (dec.outcome === "pinned") slot.pinned += 1;
+          else if (dec.outcome === "transformed") slot.transformed += 1;
+          else {
+            slot.delta += 1;
+            categoryUntransformed.push({ file: relPath, line: lineNum, category: dec.category, text: lineText.trim().slice(0, 160) });
+          }
+        }
+      }
       const re = /warpos/gi;
       let m;
       while ((m = re.exec(lineText)) !== null) {
@@ -554,10 +642,11 @@ function buildLedgerAndPlan({ root, partition }) {
           warrant = "generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)";
           derivedCount += 1;
         } else {
-          // β r3b: a registered compat occurrence is checked BEFORE pins (the loader refuses a line claimed by both).
+          // β r3b: a registered compat occurrence is checked BEFORE pins in the chain below (the loader refuses a
+          // line claimed by both, so computing the pin unconditionally never changes a disposition).
           const comp = partition.findCompatOccurrence(relPath, lineText);
-          // R4: a pin binds (file, matchText [, anchor]) — never a line number.
-          const pin = comp ? null : partition.findOccurrencePin(relPath, lineText);
+          // R4: a pin binds (file, matchText [, anchor]) — never a line number. This line is THE pin lever F6 mutates.
+          const pin = partition.findOccurrencePin(relPath, lineText);
           if (comp) {
             disposition = "compat";
             rule = `compat:${comp.window.surface}`;
@@ -627,7 +716,36 @@ function buildLedgerAndPlan({ root, partition }) {
     compatExpired,
     treeVersion,
     underived,
+    categoryDelta,
+    categoryUncomputable,
+    categoryUntransformed,
   };
+}
+
+/** Structural-delta verdict over a built plan: every owned category delta 0 and nothing uncomputable. */
+function categoryDeltaProblems(built) {
+  const problems = [];
+  const delta = built && built.categoryDelta;
+  if (!delta || typeof delta !== "object") return ["no categoryDelta computed (fail-closed)"];
+  for (const c of OCCURRENCE_CATEGORIES) {
+    const s = delta[c];
+    if (!s) {
+      problems.push(`category ${c}: no delta slot (uncomputable)`);
+      continue;
+    }
+    if (s.categorized - (s.pinned + s.transformed) !== s.delta) problems.push(`category ${c}: arithmetic disagreement`);
+    if (s.delta !== 0) problems.push(`category ${c}: delta=${s.delta}`);
+  }
+  if (!Array.isArray(built.categoryUncomputable)) problems.push("no categoryUncomputable list (fail-closed)");
+  else if (built.categoryUncomputable.length) problems.push(`${built.categoryUncomputable.length} line(s) with an uncomputable category`);
+  return problems;
+}
+
+function describeCategoryDelta(delta) {
+  return OCCURRENCE_CATEGORIES.map((c) => {
+    const s = delta[c] || {};
+    return `${c}=${s.delta} (categorized=${s.categorized} pinned=${s.pinned} transformed=${s.transformed})`;
+  }).join("; ");
 }
 
 // ── occurrence-ledger split: full (runtime) vs committed (warranted only) ──
@@ -697,6 +815,12 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     compatExpiredOccurrences: built.compatExpired.slice(0, 50),
     unpinnedUnrewrittenUnderived: underivedCount,
     underivedOccurrences: built.underived.slice(0, 50),
+    // β r3c structural delta (per owned category): categorized lines == pinned + transformed; delta 0 everywhere.
+    categoryDelta: built.categoryDelta,
+    categoryDeltaProblems: categoryDeltaProblems(built),
+    categoryUncomputable: built.categoryUncomputable.length,
+    categoryUncomputableLines: built.categoryUncomputable.slice(0, 50),
+    categoryUntransformedLines: built.categoryUntransformed.slice(0, 50),
     skillNamespace: skillNs,
     openQuestions: partition.openQuestions,
     occurrenceLedgerPath: COMMITTED_LEDGER_REL,
@@ -727,6 +851,10 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(`  unclassified=${unclassifiedCount}`);
   console.log(`  oversizedUnscanned=${built.oversizedUnscanned.length} (tracked non-binary files over MAX_SCAN_BYTES=${MAX_SCAN_BYTES})`);
   console.log(`  per-category (rewritten occurrences): ${JSON.stringify(built.categoryCounts)}`);
+  // β r3c: the STRUCTURAL per-category delta (lines), every owned category named — a missing category is not a zero.
+  const deltaTotal = OCCURRENCE_CATEGORIES.reduce((a, c) => a + ((built.categoryDelta[c] && built.categoryDelta[c].delta) || 0), 0);
+  console.log(`  per-category delta (categorized-lines − pinned − transformed): ${describeCategoryDelta(built.categoryDelta)}`);
+  console.log(`  categoryDeltaTotal=${deltaTotal} uncomputableCategoryLines=${built.categoryUncomputable.length}`);
   // `derived=` stays LAST on this line (record-trust-exit reads it anchored at end of line).
   console.log(
     `  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} compat=${built.dispositionCounts.compat} derived=${built.dispositionCounts.derived}`
@@ -760,8 +888,16 @@ function runDryRun({ root = REPO_ROOT } = {}) {
 
   const oversizedCount = built.oversizedUnscanned.length;
   const compatExpiredCount = built.compatExpired.length;
-  const ok = unclassifiedCount === 0 && underivedCount === 0 && oversizedCount === 0 && compatExpiredCount === 0;
+  const deltaProblems = plan.categoryDeltaProblems;
+  const ok = unclassifiedCount === 0 && underivedCount === 0 && oversizedCount === 0 && compatExpiredCount === 0 && deltaProblems.length === 0;
   if (!ok) {
+    if (deltaProblems.length > 0) {
+      console.error(
+        `rename-mc --dry-run FAILED (β r3c structural delta): ${deltaProblems.join("; ")} — every categorized line must be transformed by its category's transform or pinned; the codemod refuses, never skips:`
+      );
+      built.categoryUncomputable.slice(0, 25).forEach((x) => console.error(`  - uncomputable ${x.file}:${x.line} [category ${x.category}]`));
+      built.categoryUntransformed.slice(0, 25).forEach((x) => console.error(`  - untransformed ${x.file}:${x.line} [${x.category}] ${x.text}`));
+    }
     if (compatExpiredCount > 0) {
       console.error(
         `rename-mc --dry-run FAILED: ${compatExpiredCount} compat occurrence(s) sit in a window whose expiry the tree version (${built.treeVersion.version === null ? "<unknown>" : built.treeVersion.version}) has reached — remove them or re-register through a warranted amendment:`
@@ -816,6 +952,17 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
     );
   }
 
+  // β r3c: refuse BEFORE any rename or write when a categorized line would be left untransformed-and-unpinned
+  // (e.g. a raw process.env legacy read) or a line's category has no registered transform. Never skip-and-continue.
+  const deltaProblems = categoryDeltaProblems(built);
+  if (deltaProblems.length > 0) {
+    const first = built.categoryUncomputable[0] || built.categoryUntransformed[0];
+    throw new Error(
+      `rename-mc --apply refused (β r3c structural delta): ${deltaProblems.join("; ")}` +
+        (first ? `; first offender ${first.file}:${first.line} [${first.category}]` : "")
+    );
+  }
+
   let renamed = 0;
   for (const { from, to } of built.pathRenames) {
     const absFrom = path.join(root, from);
@@ -835,12 +982,12 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
   }
 
   // Rewrite content for `rewritten`-disposition occurrences only. Rebuild file-by-file
-  // from the ledger so pinned/derived lines are never touched. `env` category is
-  // skipped — its target is a read-both helper CALL that does not exist until T3.
+  // from the ledger so pinned/derived lines are never touched. Every category — env included —
+  // is rewritten through its CATEGORY_TRANSFORMS entry (the same table the delta above proved
+  // complete); a raw process.env legacy read has no transform, so it refused above instead.
   const rowsByFile = new Map();
   for (const row of built.ledger) {
     if (row.disposition !== "rewritten") continue;
-    if (row.rule === "env") continue; // T3 owns the helper-call rewrite
     if (!rowsByFile.has(row.file)) rowsByFile.set(row.file, []);
     rowsByFile.get(row.file).push(row);
   }
@@ -854,16 +1001,18 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
     if (!fs.existsSync(absTarget)) continue;
 
     const lines = fs.readFileSync(absTarget, "utf8").split(/\r?\n/);
-    const linesToRewrite = new Set(rows.map((r) => r.line));
+    const ruleByLine = new Map(rows.map((r) => [r.line, r.rule]));
     let changed = false;
-    for (const lineNum of linesToRewrite) {
+    for (const [lineNum, rule] of ruleByLine) {
       const idx = lineNum - 1;
       if (idx < 0 || idx >= lines.length) continue;
       const before = lines[idx];
-      const after = before
-        .replace(/WARPOS/g, "MC")
-        .replace(/WarpOS/g, "MC")
-        .replace(/warpos/g, "mc");
+      const transform = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, rule) ? CATEGORY_TRANSFORMS[rule] : null;
+      const after = transform ? transform(before) : null;
+      if (typeof after !== "string") {
+        // Unreachable after the delta refusal above; kept fail-closed so a table/categorizer drift can never skip a line.
+        throw new Error(`rename-mc --apply refused: ${file}:${lineNum} [${rule}] has no mechanical transform`);
+      }
       if (after !== before) {
         lines[idx] = after;
         changed = true;
@@ -986,6 +1135,12 @@ module.exports = {
   MAX_SCAN_BYTES,
   computeChangelogHistoricalLines,
   categorizeOccurrence,
+  OCCURRENCE_CATEGORIES,
+  CATEGORY_TRANSFORMS,
+  genericSlugRewrite,
+  computeLineCategoryDecision,
+  categoryDeltaProblems,
+  describeCategoryDelta,
   renamePath,
   buildLedgerAndPlan,
   buildCommittedLedger,
