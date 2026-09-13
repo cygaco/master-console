@@ -44,6 +44,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -185,7 +186,7 @@ function resolveRepoRole(opts) {
   // ── (b) Env override ─────────────────────────────────────────────────────
   // Same domain validation: invalid env values fall through rather than
   // contaminating the result with a non-enum role token.
-  const envVal = (process.env.WARPOS_REPO_ROLE || "").trim();
+  const envVal = (mcEnv.readEnv("REPO_ROLE") || "").trim();
   if (envVal) {
     const normalized = envVal.toLowerCase();
     if (ROLES.includes(normalized)) {

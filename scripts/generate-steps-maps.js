@@ -23,6 +23,7 @@
  * generated per-product at bootstrap:spinup into _requirements/00-canonical/.
  */
 
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 
@@ -31,8 +32,8 @@ const path = require("path");
 // lets the absence-tolerance regression test point the resolver at a throwaway
 // repo — both the absent-canon case (no STEPS.json → no-op exit 0) and the
 // present-canon happy path. Unset in production → identical behavior.
-const PROJECT = process.env.WARPOS_STEPS_ROOT
-  ? path.resolve(process.env.WARPOS_STEPS_ROOT)
+const PROJECT = mcEnv.readEnv("STEPS_ROOT")
+  ? path.resolve(mcEnv.readEnv("STEPS_ROOT"))
   : path.resolve(__dirname, "..");
 const STEPS_PATH = path.join(PROJECT, "_requirements/00-canonical/STEPS.json");
 

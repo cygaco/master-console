@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Isolated test for events-compact.js — the C1 EVENT COMPACTOR (SP-20260718-002,
@@ -20,7 +21,7 @@
  */
 
 // TEST-ONLY: enable the crashAfter seam-abort hook for this process.
-process.env.WARPOS_COMPACT_ALLOW_CRASH = "1";
+mcEnv.setEnv("COMPACT_ALLOW_CRASH", "1");
 
 const fs = require("fs");
 const path = require("path");

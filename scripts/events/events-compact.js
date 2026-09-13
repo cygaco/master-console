@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * events-compact.js — the C1 EVENT COMPACTOR (SP-20260718-002, D-1 CORE-4).
@@ -173,7 +174,7 @@ function containedReal(rootAbs, candidate) {
 // argument). Belt-and-suspenders: even a programmatic caller cannot trip a seam
 // abort in production unless WARPOS_COMPACT_ALLOW_CRASH is set.
 function crashEnabled() {
-  return process.env.WARPOS_COMPACT_ALLOW_CRASH === "1";
+  return mcEnv.readEnv("COMPACT_ALLOW_CRASH") === "1";
 }
 function crashReturn(seam, extra) {
   return Object.assign({ ok: false, reason: "test-crash-injected", crashedAfter: seam }, extra || {});

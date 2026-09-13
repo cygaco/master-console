@@ -27,6 +27,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -77,7 +78,7 @@ function fromFile() {
 }
 
 function resolve() {
-  const env = process.env.WARPOS_LIFECYCLE_STAGE;
+  const env = mcEnv.readEnv("LIFECYCLE_STAGE");
   if (env && env.trim()) {
     const c = canonical(env);
     return { stage: c, source: "env:WARPOS_LIFECYCLE_STAGE", valid: STAGES.includes(c) };

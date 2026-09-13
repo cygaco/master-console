@@ -37,18 +37,7 @@ const PENDING_RAW_ENV_FILES = [
   // (4b-4a DONE: adhoc-team-hygiene … mc-install-baseline)
   // (4b-4b DONE: mc-staleness … sprint-manager-consult)
   // 4b batch rest
-  "scripts/decisions/ledger.js",
-  "scripts/dispatch-agent.js",
-  "scripts/dispatch-claude.js",
-  "scripts/dispatch-review.js",
-  "scripts/events/events-compact.js",
-  "scripts/events/events-compact.test.js",
-  "scripts/generate-skill-catalog.js",
-  "scripts/generate-steps-maps.js",
-  "scripts/mc/lib/update-events.js",
-  "scripts/mc/lifecycle-stage.js",
-  "scripts/mc/release-canonical.js",
-  "scripts/mc/repo-role.js",
+  // (4b-5a DONE: decisions/ledger … mc/repo-role)
   "scripts/mc/test-repo-role.js",
   "scripts/mc/test-scaffold-all-ways.js",
   "scripts/mc/test-upgrade-current-to-new.js",

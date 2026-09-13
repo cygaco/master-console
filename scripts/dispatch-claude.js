@@ -53,6 +53,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 // Reuse the canonical telemetry helpers — SAME ledger gauntlet-verify reads.
 const {
@@ -342,7 +343,7 @@ try {
   // backend r2 #7: a missing/broken heuristic module must NOT silently disable the BLOCKING gate under
   // enforce — report + exit non-zero (fail-closed). Advisory (non-enforce) stays fail-open: never break a
   // live dispatch on the advisory. Read the env directly (the module that exposes enforceEnabled failed).
-  const enforceOn = process.env.WARPOS_BUILDER_SIZE_ENFORCE === "1" || process.env.WARPOS_BUILDER_SIZE_ENFORCE === "true";
+  const enforceOn = mcEnv.readEnv("BUILDER_SIZE_ENFORCE") === "1" || mcEnv.readEnv("BUILDER_SIZE_ENFORCE") === "true";
   if (enforceOn) {
     process.stderr.write(`[dispatch-claude] BLOCKED (ED-257 right-sizing): enforce is ON but the heuristic module failed to load (${e && e.message ? e.message : e}) — refusing (fail-closed).\n`);
     process.exit(2);
@@ -424,8 +425,8 @@ const childEnv = { ...process.env, CLAUDE_PROJECT_DIR: AGENT_ROOT };
 // __binding was derived ONCE, PRE-SPAWN, at prompt-load above (the President-leak refusal + the
 // worker-identity prompt override live there). A dispatched worker is ALWAYS actor_kind=
 // dispatched_worker (never President), regardless of ambient worktree CLAUDE.md text.
-childEnv.WARPOS_ACTOR_KIND = __binding.actor_kind || "dispatched_worker";
-if (__binding.ok && __binding.boundRole) childEnv.WARPOS_BOUND_ROLE = __binding.boundRole;
+mcEnv.setEnv("ACTOR_KIND", __binding.actor_kind || "dispatched_worker", childEnv);
+if (__binding.ok && __binding.boundRole) mcEnv.setEnv("BOUND_ROLE", __binding.boundRole, childEnv);
 if (!__binding.ok && __binding.reason && __binding.reason !== "not-derived") {
   process.stderr.write(`[dispatch-claude] role-binding advisory (not President-leak): ${__binding.reason}\n`);
 }
@@ -587,7 +588,7 @@ try {
     // WARPOS_DISABLE_SHAPE_DOOR=1.
     // Per-wrapper env is a TRUE kill (W2 gauntlet MED-1): report → force report via reportOnlyPin
     // (beats a global enforce); unset → enforceDefault. sanctioned is preserved in BOTH branches.
-    const killThis = /^(report|off|0)$/i.test(String(process.env.WARPOS_SHAPE_DOOR_DISPATCH_CLAUDE || ""));
+    const killThis = /^(report|off|0)$/i.test(String(mcEnv.readEnv("SHAPE_DOOR_DISPATCH_CLAUDE") || ""));
     const door = shapeDoor("subprocess-claude", { kind: "agent", id: role }, process.env, killThis ? { sanctioned: fallbackSanctioned, reportOnlyPin: true } : { sanctioned: fallbackSanctioned, enforceDefault: true });
     if (door.mismatch && door.mismatch.mismatch && !door.suppressed) {
       // β#4: the report-mode advisory string stays BYTE-IDENTICAL to the pre-door legacy

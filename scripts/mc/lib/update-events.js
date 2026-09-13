@@ -21,6 +21,7 @@
  * Linked: SP-20260513-005 / S-11 / T-061 / AC-S-11.{1,2} / IN-1 / R-22.
  */
 
+const mcEnv = require("../../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -28,8 +29,8 @@ const crypto = require("crypto");
 function resolveEventsFile(targetRoot) {
   const candidates = [];
   // 1. Explicit env var trumps everything.
-  if (process.env.WARPOS_EVENTS_FILE) {
-    candidates.push(process.env.WARPOS_EVENTS_FILE);
+  if (mcEnv.readEnv("EVENTS_FILE")) {
+    candidates.push(mcEnv.readEnv("EVENTS_FILE"));
   }
   // 2. targetRoot/.claude/paths.json → events file
   const roots = [];

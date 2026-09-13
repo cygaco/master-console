@@ -27,6 +27,7 @@
  *   node scripts/dispatch-agent.js evaluator /tmp/eval-prompt.txt
  */
 
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -225,10 +226,10 @@ function cmdlineChecksum(role, provider, promptBytes) {
 // enough to propagate sprint_id uniformly with no per-wrapper duplication.
 function runContext() {
   return {
-    run_id: process.env.WARPOS_RUN_ID || null,
-    phase_id: process.env.WARPOS_PHASE_ID || null,
-    plan_item_id: process.env.WARPOS_PLAN_ITEM_ID || null,
-    sprint_id: process.env.WARPOS_SPRINT_ID || null,
+    run_id: mcEnv.readEnv("RUN_ID") || null,
+    phase_id: mcEnv.readEnv("PHASE_ID") || null,
+    plan_item_id: mcEnv.readEnv("PLAN_ITEM_ID") || null,
+    sprint_id: mcEnv.readEnv("SPRINT_ID") || null,
   };
 }
 
@@ -370,7 +371,7 @@ function recordCompletion(record) {
   // are AUTHORITATIVE — a caller-supplied value that CONFLICTS is a forged-provenance attempt (or a real bug):
   // the writer does NOT produce a valid SIGNED record for it (fail-closed, visible), never silently prefers one
   // (α ED-231 ruling — supersedes the pre-ED-231 caller-explicit-wins model record-provenance.test enshrined).
-  const derivedRun = process.env.WARPOS_PANEL_RUN_ID || null;
+  const derivedRun = mcEnv.readEnv("PANEL_RUN_ID") || null;
   const derivedSha = currentCodeSha() || null;
   const callerRun = record.panel_run_id;
   const callerSha = record.code_sha;
@@ -443,7 +444,7 @@ function recordDeath(record) {
  *
  * Resolution order (mode-agnostic now — the same role spec serves every mode;
  * the conducting face γ/δ/ε supplies the mode context):
- *   1. process.env.WARPOS_MODE explicit (kept for detectMode() callers)
+ *   1. mcEnv.readEnv("MODE") explicit (kept for detectMode() callers)
  *   2. `president/<role>.md` for the faces (alpha/beta/gamma/delta/epsilon)
  *   3. DFS over the whole department tree — match by frontmatter `name:` or stem.
  *      Since workers are no longer duplicated, the first stem/name match is
@@ -463,7 +464,7 @@ function readModeFromProjectRoot(root) {
 }
 
 function detectMode() {
-  const explicit = process.env.WARPOS_MODE;
+  const explicit = mcEnv.readEnv("MODE");
   if (explicit && VALID_MODES.has(String(explicit).toLowerCase()))
     return String(explicit).toLowerCase();
   const envRoot = process.env.CLAUDE_PROJECT_DIR
@@ -696,8 +697,8 @@ if (!role || !promptArg) {
 try {
   const { deriveBinding } = require("./dispatch/role-resolver");
   const __b = deriveBinding({ channel: "dispatch-agent", role });
-  process.env.WARPOS_ACTOR_KIND = __b.actor_kind || "dispatched_worker";
-  if (__b.ok && __b.boundRole) process.env.WARPOS_BOUND_ROLE = __b.boundRole;
+  mcEnv.setEnv("ACTOR_KIND", __b.actor_kind || "dispatched_worker");
+  if (__b.ok && __b.boundRole) mcEnv.setEnv("BOUND_ROLE", __b.boundRole);
   // Fail-CLOSED on any TRUSTED-KERNEL INTEGRITY failure (gauntlet R1 SR-ID-001/BE-CQ-001/002): corrupt/
   // unreadable control, ED-220 value failure, unknown channel, President-identity role, bogus top-level
   // default → failClosed:true → REFUSE. A benign unrecognized role (failClosed:false) proceeds stamped
@@ -839,7 +840,7 @@ try {
   // The per-wrapper env is a TRUE kill (W2 gauntlet MED-1): when set to report, force report via
   // reportOnlyPin (which beats even a global WARPOS_SHAPE_DOOR=enforce) — not merely clear the
   // flip. Unset → enforceDefault (the per-wrapper ramp default).
-  const killThis = /^(report|off|0)$/i.test(String(process.env.WARPOS_SHAPE_DOOR_DISPATCH_AGENT || ""));
+  const killThis = /^(report|off|0)$/i.test(String(mcEnv.readEnv("SHAPE_DOOR_DISPATCH_AGENT") || ""));
   const door = shapeDoor("subprocess-cross-provider", { kind: "agent", id: role }, process.env, killThis ? { reportOnlyPin: true } : { enforceDefault: true });
   if (door.mismatch && door.mismatch.mismatch && !door.suppressed) {
     // β#4: report-mode advisory string stays BYTE-IDENTICAL to the pre-door legacy (no `(mode)`

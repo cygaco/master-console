@@ -53,6 +53,7 @@
  * Slash entry point: /mc:release (see .claude/commands/mc/release.md).
  */
 
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
@@ -84,10 +85,10 @@ function parseArgs(argv) {
     // Threaded through to brokerMerge() (stage 9) — the INC-1 brokered land onto main. spId defaults to a
     // fixed pseudo-sprint id (not tied to any sprint ceremony) so an ad-hoc release run always holds a
     // lease without requiring the operator to be mid-sprint.
-    spId: get("--sp-id") || process.env.WARPOS_SP_ID || "warpos-release-canonical",
+    spId: get("--sp-id") || mcEnv.readEnv("SP_ID") || "warpos-release-canonical",
     leaseRoot: get("--lease-root") || null,
-    bundleManifestPath: get("--bundle-manifest") || process.env.WARPOS_PINNED_BUNDLE_MANIFEST || null,
-    bundleRoot: get("--bundle-root") || process.env.WARPOS_PINNED_BUNDLE_ROOT || null,
+    bundleManifestPath: get("--bundle-manifest") || mcEnv.readEnv("PINNED_BUNDLE_MANIFEST") || null,
+    bundleRoot: get("--bundle-root") || mcEnv.readEnv("PINNED_BUNDLE_ROOT") || null,
     noBrokerFallback: argv.includes("--no-broker-fallback"),
   };
 }
@@ -886,7 +887,7 @@ function stageCommit(opts, canonical, next) {
  */
 function brokerFastForwardMain(gitRoot, newHead, opts) {
   const targetRef = "refs/heads/main";
-  const spId = opts.spId || process.env.WARPOS_SP_ID || null;
+  const spId = opts.spId || mcEnv.readEnv("SP_ID") || null;
   const held = dog.ensureLease(spId, opts.leaseRoot);
   if (!held.ok) {
     return brokerSyncFinish(
