@@ -55,12 +55,13 @@
 - 2026-09-02 — History rewrite is targeted: profanity + Gmail only; dossier and operator name stay in history.
 - 2026-09-02 — Story framing is editorial: 'they didn't steal it, they shipped it louder'; industry analogs stay as footnotes.
 - 2026-09-02 — Reverses prior rulings 'engine is the moat' and 'WarpOS never product-facing' (open-core: engine open, UI sellable).
+- 2026-09-13 — Slug CONFIRMED `mc` for commands/dirs/env/tags. Operator verbatim this session: "Confirmed: the identifier slug is `mc`." Resolves the S-OS-03 open question; S-OS-06 (identifier layer, mc@2.0.0) authorized to run as a real sprint.
 - 2026-09-02 — S-OS-03 decisions A + B, operator-delegated ("feel welcome to do you with the cleanup snapshot, whatever you want to do … I just want to make sure we have evidence of what I built before Anthropic and other labs, plus all the stuff we don't want people to see be cleaned up"): A = git-filter-repo (operator installs Python), range-limited `--refs ^de9ba8eb --all`; B = DELETE the public `pre-cleanup-snapshot` release/tag after the force-push, keep the private mirror + captured GitHub JSON (`runtime/open-source/anchor/`) as the timestamp record, file the GitHub Support purge request. Evidence guarantee = the range limit (nothing before 2026-05-13 re-imported; April commits + tag SHAs unchanged on the public repo).
 
 ## Open questions
 - S-OS-03 decision A (2026-09-02): rewrite tool — git-filter-repo needs Python installed by the operator (`winget install Python.Python.3.12`, `pip install git-filter-repo`); fallback is a dependency-free Node fast-export/fast-import stream rewrite. Recommendation: filter-repo.
 - S-OS-03 decision B (2026-09-02): the public `pre-cleanup-snapshot` release/tag keeps the pre-rewrite objects fetchable from the public repo; recommendation: delete it after the force-push (the private mirror + the captured release JSON under `runtime/open-source/anchor/` remain the timestamp record) and file the GitHub Support purge request. Finding behind the plan's range limit: commit `db6292e2` (2026-04-18) is GitHub-signed and an ancestor of the tag commit, so the rewrite must exclude everything reachable from `de9ba8eb` (`--refs ^de9ba8eb --all`) or the tag SHA changes.
-- Slug confirmation: `mc` for commands/dirs/env/tags (proposed; operator has not explicitly confirmed).
+- ~~Slug confirmation: `mc` for commands/dirs/env/tags (proposed; operator has not explicitly confirmed).~~ RESOLVED 2026-09-13 — operator confirmed `mc` (see § Decisions).
 - Optional trademark search on 'Master Console' before announce.
 - Which of the 8 downstream products are still live and need the re-clone / migration (portfolio registry check).
 - Whether the trimmed β profile stays as a public feature demo (operator said 'part of the story is fine') — final wording at S-OS-02.
