@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * T-303 (N8) — run-context env-export test.
@@ -45,43 +46,43 @@ const h = harness("run-context-n8");
 
 // ── A. runContext() returns sprint_id from env ─────────────────────────────
 h.test("runContext() returns sprint_id when WARPOS_SPRINT_ID is set", () => {
-  const prev = process.env.WARPOS_SPRINT_ID;
-  process.env.WARPOS_SPRINT_ID = "SP-20260610-006";
+  const prev = mcEnv.readEnv("SPRINT_ID");
+  mcEnv.setEnv("SPRINT_ID", "SP-20260610-006");
   try {
     const ctx = runContext();
     if (ctx.sprint_id !== "SP-20260610-006") {
       throw new Error(`expected sprint_id='SP-20260610-006', got '${ctx.sprint_id}'`);
     }
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_SPRINT_ID;
-    else process.env.WARPOS_SPRINT_ID = prev;
+    if (prev === undefined) mcEnv.unsetEnv("SPRINT_ID");
+    else mcEnv.setEnv("SPRINT_ID", prev);
   }
 });
 
 h.test("runContext() returns null sprint_id when WARPOS_SPRINT_ID is unset", () => {
-  const prev = process.env.WARPOS_SPRINT_ID;
-  delete process.env.WARPOS_SPRINT_ID;
+  const prev = mcEnv.readEnv("SPRINT_ID");
+  mcEnv.unsetEnv("SPRINT_ID");
   try {
     const ctx = runContext();
     if (ctx.sprint_id !== null) {
       throw new Error(`expected sprint_id=null, got '${ctx.sprint_id}'`);
     }
   } finally {
-    if (prev !== undefined) process.env.WARPOS_SPRINT_ID = prev;
+    if (prev !== undefined) mcEnv.setEnv("SPRINT_ID", prev);
   }
 });
 
 h.test("runContext() returns run_id from WARPOS_RUN_ID when set", () => {
-  const prev = process.env.WARPOS_RUN_ID;
-  process.env.WARPOS_RUN_ID = "run-test-00000001";
+  const prev = mcEnv.readEnv("RUN_ID");
+  mcEnv.setEnv("RUN_ID", "run-test-00000001");
   try {
     const ctx = runContext();
     if (ctx.run_id !== "run-test-00000001") {
       throw new Error(`expected run_id='run-test-00000001', got '${ctx.run_id}'`);
     }
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_RUN_ID;
-    else process.env.WARPOS_RUN_ID = prev;
+    if (prev === undefined) mcEnv.unsetEnv("RUN_ID");
+    else mcEnv.setEnv("RUN_ID", prev);
   }
 });
 
@@ -97,21 +98,20 @@ h.test("generated run_id matches run-<base36>-<4-byte-hex> shape", () => {
 // ── C. Inherited WARPOS_RUN_ID is respected ────────────────────────────────
 h.test("inherited WARPOS_RUN_ID is not overwritten by the generation guard", () => {
   const inherited = "run-inherited-aabbccdd";
-  const prev = process.env.WARPOS_RUN_ID;
-  process.env.WARPOS_RUN_ID = inherited;
+  const prev = mcEnv.readEnv("RUN_ID");
+  mcEnv.setEnv("RUN_ID", inherited);
   try {
     // Simulate the full.js + spawnAgent guard: only generate when absent.
-    if (!process.env.WARPOS_RUN_ID) {
-      process.env.WARPOS_RUN_ID =
-        "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex");
+    if (!mcEnv.readEnv("RUN_ID")) {
+      mcEnv.setEnv("RUN_ID", "run-" + Date.now().toString(36) + "-" + crypto.randomBytes(4).toString("hex"));
     }
     const ctx = runContext();
     if (ctx.run_id !== inherited) {
       throw new Error(`inherited run_id overwritten: expected '${inherited}', got '${ctx.run_id}'`);
     }
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_RUN_ID;
-    else process.env.WARPOS_RUN_ID = prev;
+    if (prev === undefined) mcEnv.unsetEnv("RUN_ID");
+    else mcEnv.setEnv("RUN_ID", prev);
   }
 });
 

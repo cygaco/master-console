@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * attest-signing.test.js — origin-proof signing seam (ED-231/ADR-0025) + SP-20260718-005 BE-3
  * (workorder_digest appended to SIGNED_FIELDS, AC-12). This file did not previously exist; it is a fresh
@@ -15,9 +16,9 @@
 const os = require("node:os");
 const path = require("node:path");
 const fs = require("node:fs");
-process.env.WARPOS_ATTEST_SECRET_FILE = path.join(
-  os.tmpdir(),
-  `attest-signing-secret-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+mcEnv.setEnv(
+  "ATTEST_SECRET_FILE",
+  path.join(os.tmpdir(), `attest-signing-secret-${Date.now()}-${Math.random().toString(36).slice(2)}`),
 );
 
 const test = require("node:test");

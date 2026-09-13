@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * scripts/dispatch/provider-breaker.test.js — Planted-violation tests (P5, β-MANDATORY).
@@ -29,7 +30,7 @@ const path = require("path");
 // Point both the breaker AND providers.js at a temp file so no test contaminates
 // the real runtime state or depends on an existing provider-down.json.
 const tmpFile = path.join(os.tmpdir(), `provider-breaker-test-${process.pid}.json`);
-process.env.WARPOS_PROVIDER_DOWN_FILE = tmpFile;
+mcEnv.setEnv("PROVIDER_DOWN_FILE", tmpFile);
 
 // Clear the temp file before starting
 try { fs.unlinkSync(tmpFile); } catch { /* ok if absent */ }

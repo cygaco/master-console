@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * broker-merge.js — #5, the α-MERGE DOGFOOD HELPER (SP-20260721-001, D-4 INC-1, unit MIG).
  *
@@ -121,7 +122,7 @@ function brokerMerge(input = {}, opts = {}, seams = {}) {
   }
 
   // ── (3) the conductor lease ────────────────────────────────────────────────────────────────────────
-  const spId = opts.spId || process.env.WARPOS_SP_ID || null;
+  const spId = opts.spId || mcEnv.readEnv("SP_ID") || null;
   const held = dog.ensureLease(spId, opts.leaseRoot, seams.lease);
   if (!held.ok) {
     // No lease ⇒ the broker will refuse with `lease-not-held`, a SECURITY reason. Report it in the broker's

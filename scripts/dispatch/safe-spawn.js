@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * safe-spawn.js — the dispatch SAFETY KERNEL (PLAN §16.3 / §17.3 / §17.4).
@@ -62,7 +63,7 @@ const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
 // dispatch-agent, ...); the raw `codex exec`-from-Bash route is separately blocked by
 // dispatch-route-guard, so the two together cover both routes (lib-only-fix pairing).
 const DEFAULT_CODEX_HOME =
-  process.env.WARPOS_CODEX_HOME || path.join(os.homedir(), ".codex-warpos");
+  mcEnv.readEnv("CODEX_HOME") || path.join(os.homedir(), ".codex-warpos");
 const _codexHomeSeeded = new Set();
 
 // Seed the isolated home ONCE per process: copy-if-MISSING auth.json + config.toml from
@@ -442,7 +443,7 @@ function which(cmd) {
  */
 function resolveTool(toolId, opts = {}) {
   if (!TOOL_IDS.has(toolId)) return { ok: false, reason: `tool-id '${toolId}' is not in the allowlist` };
-  const p = opts.path || process.env[`WARPOS_TOOL_${toolId.toUpperCase()}_PATH`] || which(toolId);
+  const p = opts.path || mcEnv.readEnv(`TOOL_${toolId.toUpperCase()}_PATH`) || which(toolId);
   if (!p) return { ok: false, reason: `tool '${toolId}' not found on PATH` };
   let real;
   try {
@@ -457,7 +458,7 @@ function resolveTool(toolId, opts = {}) {
   if (real === tmp || real.startsWith(tmp + path.sep)) {
     return { ok: false, reason: `resolved '${toolId}' under the OS temp dir (${real}) — refusing (writable-hijack guard)` };
   }
-  const approved = (process.env.WARPOS_APPROVED_TOOL_ROOTS || "").split(path.delimiter).filter(Boolean);
+  const approved = (mcEnv.readEnv("APPROVED_TOOL_ROOTS") || "").split(path.delimiter).filter(Boolean);
   if (approved.length && !approved.some((root) => real === root || real.startsWith(root + path.sep))) {
     return { ok: false, reason: `resolved '${toolId}' (${real}) is under no WARPOS_APPROVED_TOOL_ROOTS entry` };
   }

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * dispatch-shape.js — the LIVE dispatch-shape RESOLVER (PLAN §16/§17 north star).
@@ -308,9 +309,9 @@ function shapeMismatch(actualShape, unit) {
 function shapeDoor(actualShape, unit, env, opts) {
   const e = env || process.env;
   const o = opts || {};
-  const killed = /^(1|true|yes)$/i.test(String(e.WARPOS_DISABLE_SHAPE_DOOR || ""));
+  const killed = /^(1|true|yes)$/i.test(String(mcEnv.readEnv("DISABLE_SHAPE_DOOR", e) || ""));
   const pinned = o.reportOnlyPin === true;
-  const legacyBlock = String(e.WARPOS_DISPATCH_CONTRACT_ENFORCE || "") === "block";
+  const legacyBlock = String(mcEnv.readEnv("DISPATCH_CONTRACT_ENFORCE", e) || "") === "block";
   // W2 per-wrapper ENFORCE ramp (N2): a wrapper opts into enforce as its DEFAULT via
   // opts.enforceDefault (the persistent, committed per-wrapper flip), so wrappers ramp ONE
   // AT A TIME, lowest-blast first — instead of a single global all-or-nothing switch. The
@@ -319,7 +320,7 @@ function shapeDoor(actualShape, unit, env, opts) {
   //   WARPOS_SHAPE_DOOR=enforce (or legacy block) → force enforce fleet-wide
   //   WARPOS_SHAPE_DOOR=report                    → force report fleet-wide (kills the flip)
   //   else (env unset)                            → the wrapper's enforceDefault decides
-  const globalRaw = String(e.WARPOS_SHAPE_DOOR || "").toLowerCase(); // "" = unset
+  const globalRaw = String(mcEnv.readEnv("SHAPE_DOOR", e) || "").toLowerCase(); // "" = unset
   const wrapperEnforce = o.enforceDefault === true;
   // (1) kill-switch / pin checked FIRST — they beat enforce unconditionally (safe side).
   // FIX (W2 gauntlet HIGH-2): an EXPLICIT WARPOS_SHAPE_DOOR=report is the operator's fleet kill

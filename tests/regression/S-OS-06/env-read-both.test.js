@@ -30,26 +30,7 @@ const LEG = `${H.SLUG.toUpperCase()}_`;
 
 // prettier-ignore
 const PENDING_RAW_ENV_FILES = [
-  // 4b batch scripts/dispatch
-  "scripts/dispatch/attest-signing.js",
-  "scripts/dispatch/attest-signing.test.js",
-  "scripts/dispatch/broker-merge.js",
-  "scripts/dispatch/broker-release-commit.js",
-  "scripts/dispatch/coverage-gate.js",
-  "scripts/dispatch/dispatch-contract.js",
-  "scripts/dispatch/gauntlet-verify-signing.test.js",
-  "scripts/dispatch/gauntlet-verify.js",
-  "scripts/dispatch/harness-spawn-model.js",
-  "scripts/dispatch/provider-breaker.js",
-  "scripts/dispatch/provider-breaker.test.js",
-  "scripts/dispatch/record-provenance.test.js",
-  "scripts/dispatch/role-resolver.test.js",
-  "scripts/dispatch/run-context-n8.test.js",
-  "scripts/dispatch/safe-spawn.js",
-  "scripts/dispatch/safe-spawn.test.js",
-  "scripts/dispatch/skill-weight.js",
-  "scripts/dispatch/timeout-policy.js",
-  "scripts/dispatch/verified-liveness-read.test.js",
+  // 4b batch scripts/dispatch — DONE (T3 part 4b batch scripts/dispatch)
   // 4b batch scripts/hooks
   "scripts/hooks/dispatch-route-guard.js",
   "scripts/hooks/framework-manifest-guard.js",

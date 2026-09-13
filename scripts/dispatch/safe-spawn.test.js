@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Isolated P5 test for safe-spawn.js (the dispatch safety kernel). Proves:
@@ -422,8 +423,8 @@ h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-mc", () => ({
 h.pass("withCodexHome: codex defaulted, explicit wins, other tools untouched, no env mutation", () => {
   const fx = sealedDir({}, "codexhome");
   const home = fx.dir;
-  const prev = process.env.WARPOS_CODEX_HOME;
-  process.env.WARPOS_CODEX_HOME = home;
+  const prev = mcEnv.readEnv("CODEX_HOME");
+  mcEnv.setEnv("CODEX_HOME", home);
   delete require.cache[require.resolve("./safe-spawn")];
   try {
     const ss = require("./safe-spawn");
@@ -441,8 +442,8 @@ h.pass("withCodexHome: codex defaulted, explicit wins, other tools untouched, no
       input.CODEX_HOME === undefined; // (4) no mutation of the caller's env
     return { ok };
   } finally {
-    if (prev === undefined) delete process.env.WARPOS_CODEX_HOME;
-    else process.env.WARPOS_CODEX_HOME = prev;
+    if (prev === undefined) mcEnv.unsetEnv("CODEX_HOME");
+    else mcEnv.setEnv("CODEX_HOME", prev);
     delete require.cache[require.resolve("./safe-spawn")];
     require("./safe-spawn"); // restore the canonical module instance in the require cache
     fx.cleanup();

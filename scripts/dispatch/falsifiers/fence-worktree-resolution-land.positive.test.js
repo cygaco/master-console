@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * fence-worktree-resolution-land.positive.test.js — ED-261 / ADR-0035 AVAILABILITY companion.
  *
@@ -114,9 +115,9 @@ test("ED-261 LAND — from a linked-worktree cwd, a VALID fenced refs/heads/main
     assert.ok(acq && acq.ok && acq.token != null, `lease acquire must succeed: ${JSON.stringify(acq)}`);
     const env = {
       ...process.env,
-      WARPOS_CONTROLLER_FENCE_TOKEN: String(acq.token),
-      WARPOS_CONTROLLER_FENCE_SPID: spId,
-      WARPOS_CONTROLLER_FENCE_LEASE_ROOT: leaseRoot,
+      ...mcEnv.envPair("CONTROLLER_FENCE_TOKEN", String(acq.token)),
+      ...mcEnv.envPair("CONTROLLER_FENCE_SPID", spId),
+      ...mcEnv.envPair("CONTROLLER_FENCE_LEASE_ROOT", leaseRoot),
     };
     const hook = path.join(dir, ".git", "hooks", "reference-transaction");
     const code = runHook(hook, wt, "refs/heads/main", env);
@@ -132,9 +133,7 @@ test("ED-261 DISCRIMINATION — the SAME worktree refs/heads/main write with NO 
   const { dir, wt } = setup("disc");
   try {
     const env = { ...process.env };
-    delete env.WARPOS_CONTROLLER_FENCE_TOKEN;
-    delete env.WARPOS_CONTROLLER_FENCE_SPID;
-    delete env.WARPOS_CONTROLLER_FENCE_LEASE_ROOT;
+    for (const s of ["CONTROLLER_FENCE_TOKEN", "CONTROLLER_FENCE_SPID", "CONTROLLER_FENCE_LEASE_ROOT"]) mcEnv.unsetEnv(s, env);
     const hook = path.join(dir, ".git", "hooks", "reference-transaction");
     const code = runHook(hook, wt, "refs/heads/main", env);
     assert.notStrictEqual(code, 0, "an UN-fenced protected write from a worktree cwd MUST be refused by the real verifier");

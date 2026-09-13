@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * attest-signing.js — ORIGIN-PROOF for the binding security-panel attestation (SP-20260718-003, ED-231;
  * α RULING option (A) + (C)-honesty; ADR-0025).
@@ -34,7 +35,7 @@ const ROOT = process.env.CLAUDE_PROJECT_DIR || path.resolve(__dirname, "..", "..
 // Gitignored runtime secret (same dir as the ledger — .claude/runtime/ is gitignored). Created once, reused by
 // every process this session. A dedicated test secret path is honored so a bite-test never touches the real one.
 const SECRET_FILE =
-  process.env.WARPOS_ATTEST_SECRET_FILE || path.join(ROOT, ".claude", "runtime", ".attest-session-secret");
+  mcEnv.readEnv("ATTEST_SECRET_FILE") || path.join(ROOT, ".claude", "runtime", ".attest-session-secret");
 
 // The CANONICAL fields the signature covers — the fields the attestation AND the liveness readers key their
 // trust on. Order is FIXED (signer + verifier must agree byte-for-byte). Binds IDENTITY + PROVENANCE + the

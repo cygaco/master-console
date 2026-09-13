@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * Isolated P5 test for dispatch-contract.js (the §17.1 keystone reader/validator).
@@ -125,7 +126,7 @@ h.violation("a contract with a bogus shape FAILS validateContractFile (via path-
   const fx = sealedDir({ "dispatch-contract.json": JSON.stringify(real) }, "brokencontract");
   try {
     const r = spawnSync(process.execPath, [path.join(__dirname, "dispatch-contract.js"), "validate"], {
-      env: { ...process.env, WARPOS_DISPATCH_CONTRACT_PATH: fx.file("dispatch-contract.json") },
+      env: { ...process.env, ...mcEnv.envPair("DISPATCH_CONTRACT_PATH", fx.file("dispatch-contract.json")) },
       encoding: "utf8",
     });
     // ok:true only if the broken contract wrongly passed (exit 0).
@@ -146,7 +147,7 @@ h.violation("a build-chain role via in-process-agent is rejected EVEN with a con
   const fx = sealedDir({ "dispatch-contract.json": JSON.stringify(real) }, "reallowcontract");
   try {
     const r = spawnSync(process.execPath, [path.join(__dirname, "dispatch-contract.js"), "check", "frontend-builder", "in-process-agent"], {
-      env: { ...process.env, WARPOS_DISPATCH_CONTRACT_PATH: fx.file("dispatch-contract.json") },
+      env: { ...process.env, ...mcEnv.envPair("DISPATCH_CONTRACT_PATH", fx.file("dispatch-contract.json")) },
       encoding: "utf8",
     });
     // ok:true only if the misconfigured contract WRONGLY let it through (exit 0).

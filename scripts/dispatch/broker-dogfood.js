@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * broker-dogfood.js — the SHARED pre-flip dogfood layer for the INC-1 brokered transport
  * (SP-20260721-001, D-4, unit MIG). Used by `broker-merge.js` (#5) and `broker-release-commit.js` (#6).
@@ -468,8 +469,8 @@ function loadBroker(injected) {
  *     is suspicious and must NOT fall back to the ordinary route.
  */
 function resolveBundleConfig(opts = {}, env = process.env) {
-  const manifest = opts.bundleManifestPath || env.WARPOS_PINNED_BUNDLE_MANIFEST || null;
-  const bundleRoot = opts.bundleRoot || env.WARPOS_PINNED_BUNDLE_ROOT || (manifest ? path.dirname(manifest) : null);
+  const manifest = opts.bundleManifestPath || mcEnv.readEnv("PINNED_BUNDLE_MANIFEST", env) || null;
+  const bundleRoot = opts.bundleRoot || mcEnv.readEnv("PINNED_BUNDLE_ROOT", env) || (manifest ? path.dirname(manifest) : null);
   if (!manifest) return { ok: false, reason: "no-pinned-bundle-configured", detail: "set --bundle-manifest or WARPOS_PINNED_BUNDLE_MANIFEST (a PROMOTED, out-of-tree bundle)" };
   if (!fs.existsSync(manifest)) return { ok: false, reason: "bundle-load-failed", detail: `configured bundle manifest is missing or unstatable: ${manifest}` };
   return { ok: true, bundleManifestPath: manifest, bundleRoot };

@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * broker-release-commit.js — #6, REGEN / BOOKKEEPING COMMIT ROUTING
  * (SP-20260721-001, D-4 INC-1, unit MIG).
@@ -133,7 +134,7 @@ function brokerReleaseCommit(input = {}, opts = {}, seams = {}) {
   }
 
   // ── (3) the conductor lease ────────────────────────────────────────────────────────────────────────
-  const spId = opts.spId || process.env.WARPOS_SP_ID || null;
+  const spId = opts.spId || mcEnv.readEnv("SP_ID") || null;
   const held = dog.ensureLease(spId, opts.leaseRoot, seams.lease);
   if (!held.ok) {
     return finish({ ok: false, decision: "BLOCKED", reason: "lease-not-held", detail: `conductor lease unavailable for ${spId || "(no --sp-id)"}: ${held.state}` }, { gitRoot, targetRef, head, newHead: releaseCommit, opts, seams, emit });
