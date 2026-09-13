@@ -62,7 +62,12 @@ const BINARY_EXTENSIONS = new Set([
   ".pyc", ".node", ".wasm",
 ]);
 
-const MAX_SCAN_BYTES = 5 * 1024 * 1024; // 5MB — skip larger blobs, they aren't hand-authored source
+// Size cap for whole-file content scans. Crossing it is NEVER a silent skip (T5-C, the β fail-open
+// class): a tracked TEXT file over the cap would have its `warpos` occurrences go unledgered and
+// unrewritten while the dry-run reads green. So an oversized non-binary tracked file makes --dry-run
+// FAIL naming it, and makes --apply / --apply-skill-namespace refuse. Binary files (by extension or a
+// NUL byte in the first 8KB) stay a legitimate skip at any size.
+const MAX_SCAN_BYTES = 5 * 1024 * 1024; // 5MB
 
 // ── tracked-file enumeration ────────────────────────────────────────────────
 
@@ -78,21 +83,62 @@ function listTrackedFiles(root) {
   return r.stdout.split(NUL).filter(Boolean).map((p) => p.split(path.sep).join("/"));
 }
 
-function looksBinary(absPath) {
+/**
+ * One file's content-scan status: "binary" (extension or NUL in the first 8KB — a legitimate skip),
+ * "unreadable" (missing / not a regular file / read error — nothing to scan), "oversized" (a TEXT file
+ * over maxBytes — never silently skipped, see MAX_SCAN_BYTES) or "text" (scan it). The binary sniff runs
+ * BEFORE the size cap, so a large binary blob is not misreported as an oversized text file.
+ */
+function scanStatus(absPath, maxBytes = MAX_SCAN_BYTES) {
   const ext = path.extname(absPath).toLowerCase();
-  if (BINARY_EXTENSIONS.has(ext)) return true;
+  if (BINARY_EXTENSIONS.has(ext)) return "binary";
+  let stat;
   try {
-    const stat = fs.statSync(absPath);
-    if (stat.size > MAX_SCAN_BYTES) return true;
-    if (stat.size === 0) return false;
-    const fd = fs.openSync(absPath, "r");
-    const buf = Buffer.alloc(Math.min(8192, stat.size));
-    fs.readSync(fd, buf, 0, buf.length, 0);
-    fs.closeSync(fd);
-    return buf.includes(0);
+    stat = fs.statSync(absPath);
   } catch {
-    return true; // unreadable -> treat as opaque, skip content scan
+    return "unreadable";
   }
+  if (!stat.isFile()) return "unreadable";
+  if (stat.size === 0) return "text";
+  const buf = Buffer.alloc(Math.min(8192, stat.size));
+  try {
+    const fd = fs.openSync(absPath, "r");
+    try {
+      fs.readSync(fd, buf, 0, buf.length, 0);
+    } finally {
+      fs.closeSync(fd);
+    }
+  } catch {
+    return "unreadable";
+  }
+  if (buf.includes(0)) return "binary";
+  return stat.size > maxBytes ? "oversized" : "text";
+}
+
+/** True when the content scan does not read this file. An oversized text file is excluded here AND named by listOversizedUnscanned(). */
+function looksBinary(absPath) {
+  return scanStatus(absPath) !== "text";
+}
+
+/** Tracked, non-binary files over the scan cap — each one is an unverifiable scan gap the dry-run must fail on. */
+function listOversizedUnscanned(root, trackedFiles, maxBytes = MAX_SCAN_BYTES) {
+  const out = [];
+  for (const rel of trackedFiles) {
+    const abs = path.join(root, rel);
+    let size;
+    try {
+      size = fs.statSync(abs).size;
+    } catch {
+      continue;
+    }
+    if (size <= maxBytes) continue; // cheap stat first; only over-cap files pay the binary sniff
+    if (scanStatus(abs, maxBytes) === "oversized") out.push({ file: rel, bytes: size });
+  }
+  return out;
+}
+
+function describeOversized(o) {
+  return `${o.file} (${o.bytes} bytes > MAX_SCAN_BYTES ${MAX_SCAN_BYTES}; non-binary, so its content cannot be verified)`;
 }
 
 // ── CHANGELOG.md historical-section special case ────────────────────────────
@@ -521,6 +567,7 @@ function buildLedgerAndPlan({ root, partition }) {
     trackedFileCount: trackedFiles.length,
     classCounts,
     unclassified,
+    oversizedUnscanned: listOversizedUnscanned(root, trackedFiles),
     pathRenames,
     refusedRenames,
     keptHistoricalPaths,
@@ -582,6 +629,9 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     classCounts: built.classCounts,
     unclassified: unclassifiedCount,
     unclassifiedPaths: built.unclassified.slice(0, 50),
+    maxScanBytes: MAX_SCAN_BYTES,
+    oversizedUnscanned: built.oversizedUnscanned.length,
+    oversizedUnscannedFiles: built.oversizedUnscanned,
     pathRenames: built.pathRenames,
     refusedRenames: built.refusedRenames,
     keptHistoricalPathCount: built.keptHistoricalPaths.length,
@@ -618,6 +668,7 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(`rename-mc --dry-run: ${built.trackedFileCount} tracked files`);
   console.log(`  class counts: 1(live)=${built.classCounts[1]} 2(gated)=${built.classCounts[2]} 3(historical-in-live)=${built.classCounts[3]} 4(historical)=${built.classCounts[4]}`);
   console.log(`  unclassified=${unclassifiedCount}`);
+  console.log(`  oversizedUnscanned=${built.oversizedUnscanned.length} (tracked non-binary files over MAX_SCAN_BYTES=${MAX_SCAN_BYTES})`);
   console.log(`  per-category (rewritten occurrences): ${JSON.stringify(built.categoryCounts)}`);
   console.log(`  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} derived=${built.dispositionCounts.derived}`);
   console.log(`  unpinned-unrewritten-underived=${underivedCount}`);
@@ -643,8 +694,13 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     built.refusedRenames.slice(0, 50).forEach((r) => console.error(`  - ${describeRefusal(r)} [${r.reason}]`));
   }
 
-  const ok = unclassifiedCount === 0 && underivedCount === 0;
+  const oversizedCount = built.oversizedUnscanned.length;
+  const ok = unclassifiedCount === 0 && underivedCount === 0 && oversizedCount === 0;
   if (!ok) {
+    if (oversizedCount > 0) {
+      console.error(`rename-mc --dry-run FAILED: ${oversizedCount} tracked non-binary file(s) exceed MAX_SCAN_BYTES and were NOT scanned:`);
+      built.oversizedUnscanned.forEach((o) => console.error(`  - ${describeOversized(o)}`));
+    }
     if (unclassifiedCount > 0) {
       console.error(`rename-mc --dry-run FAILED: unclassified paths (showing up to 50):`);
       built.unclassified.slice(0, 50).forEach((p) => console.error(`  - ${p}`));
@@ -667,6 +723,12 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
   if (built.unclassified.length > 0) {
     throw new Error(
       `rename-mc --apply refused: ${built.unclassified.length} unclassified path(s) — fix the partition before applying`
+    );
+  }
+  if (built.oversizedUnscanned.length > 0) {
+    throw new Error(
+      `rename-mc --apply refused: ${describeOversized(built.oversizedUnscanned[0])}; ` +
+        `${built.oversizedUnscanned.length} oversized tracked text file(s) would be skipped unscanned`
     );
   }
 
@@ -749,7 +811,15 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
 
 function runApplySkillNamespace({ root = REPO_ROOT, useGitMv = true } = {}) {
   const partition = loadPartition({ forceReload: true });
-  const plan = planSkillNamespace({ root, partition });
+  const tracked = listTrackedFiles(root);
+  const oversized = listOversizedUnscanned(root, tracked);
+  if (oversized.length > 0) {
+    throw new Error(
+      `rename-mc --apply-skill-namespace refused: ${describeOversized(oversized[0])}; ` +
+        `${oversized.length} oversized tracked text file(s) would be skipped unscanned`
+    );
+  }
+  const plan = planSkillNamespace({ root, partition, trackedFiles: tracked });
 
   if (plan.refusedMoves.length > 0) {
     const first = plan.refusedMoves[0];
@@ -840,6 +910,9 @@ function main() {
 module.exports = {
   listTrackedFiles,
   looksBinary,
+  scanStatus,
+  listOversizedUnscanned,
+  MAX_SCAN_BYTES,
   computeChangelogHistoricalLines,
   categorizeOccurrence,
   renamePath,
