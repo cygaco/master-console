@@ -37,6 +37,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 // Lazy/guarded requires — a hook must never crash at load time on a bad module.
 let lifecycle = null;
@@ -103,7 +104,7 @@ function extractModeTarget(event) {
 function killReason(projectDir, env) {
   try {
     const e = env || process.env;
-    if (String(e.WARPOS_DISABLE_MODE_GUARD || "") === "1") return "env";
+    if (String(mcEnv.readEnv("DISABLE_MODE_GUARD", e) || "") === "1") return "env";
     const runtimeDir = path.join(projectDir, ".claude", "runtime");
     if (safeExists(path.join(runtimeDir, MARKER_OFF))) return "marker";
     if (safeExists(path.join(runtimeDir, MARKER_BOOTSTRAP))) return "bootstrap";
@@ -297,7 +298,7 @@ function gitLabels(cwd) {
 function turboLabel(projectDir, env) {
   try {
     const e = env || process.env;
-    if (String(e.WARPOS_TURBO || "") === "1") return "on";
+    if (String(mcEnv.readEnv("TURBO", e) || "") === "1") return "on";
     if (safeExists(path.join(projectDir, ".claude", "runtime", ".turbo")))
       return "on";
     return "off";
