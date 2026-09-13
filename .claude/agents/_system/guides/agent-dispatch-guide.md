@@ -561,8 +561,49 @@ session start and is surfaced in `/mc:health` §12.5.
 
 ## §10 — Worktree isolation (build-chain only)
 
-Builders and fixers run in `.worktrees/wt-<feature>` (built from current HEAD).
-Reviewers don't need worktree isolation — they're read-only.
+Builders and fixers run in `.worktrees/wt-<feature>`. Reviewers are read-only and do not need an
+isolation worktree — **but read-only is not cwd-agnostic; see §10.1.**
+
+### §10.1 — Two cwd traps, both confirmed live 2026-09-13 (S-OS-06)
+
+Read this before dispatching any builder with `-w`, or any reviewer at all.
+
+**Trap 1 — `-w` does NOT cut from HEAD.** The manual `git worktree add … HEAD` pattern below does;
+the wrapper's `-w` flag does not. `scripts/hooks/create-worktree-from-head.js` — the hook that would
+make it — is `enabled: false` with `registrations: []` in `framework/hooks.registry.json`, so the
+CLI cuts the worktree from the sprint BASE (`origin/main`). Harmless for an additive ticket whose
+new files merge cleanly; **fatal for any ticket that must READ prior in-sprint work** — a builder
+lands in a tree where the earlier tickets' code simply is not there, then stops cleanly on the
+missing prerequisite and reports `ok:true` with zero work done (the false-green of ED-427).
+
+> Pre-create the worktree at the head and pass it explicitly:
+> `git worktree add <path> -b <branch> <head>` then dispatch with `--worktree <path>`.
+> Verify before trusting: the worktree's HEAD must equal the branch head you intended.
+
+Policy row: **ED-381** (isolation worktree must be cut from current HEAD — 3 instances).
+Disabled-enforcer row: **ED-433**.
+
+**Trap 2 — an in-process Agent-tool reviewer inherits the SESSION cwd.** It does *not* pick up a
+worktree path named in its brief; naming the path in prose changes nothing. On 2026-09-13 a
+`backend-reviewer` spawned via the Agent tool read the main tree, reviewed pre-fix code, and
+returned a correct FAIL *on what it could see* — which was the wrong tree. It then PASSed at 98 on
+the merged head.
+
+> Either (a) review AFTER the fix merges to the branch the session is sitting on, or (b) pass the
+> worktree's ABSOLUTE path and require the reviewer to `git -C <path>` every command.
+> **Never override such a FAIL** — a verdict from the wrong tree is not a false positive to be
+> waived, it is an unevaluated lane. Re-run it on the merged head and keep that verdict.
+
+Row: **ED-429**. This is the in-process sibling of ED-363 (which covers the CLI-wrapper lane only —
+its named enforcer cannot reach an Agent-tool spawn, because there is no wrapper to inject cwd).
+
+**Related transport trap — the gemini/`agy` argv ceiling.** The route assembles the whole prompt into
+argv and BLOCKS (does not truncate) above ~32,000 assembled characters. A ~30KB gate file plus its
+brief exceeds it, so a mandatory Gemini-corpus security pass over large gate files cannot run inline
+at all and must be replaced by a stdin-capable route (GPT/codex) with the corpus residual stated
+explicitly in the release consult. File-heavy review of gates needs a file-handle transport, not
+inline packets. Row: **ED-430**. (The ceiling is on ASSEMBLED argv — file + brief + instructions —
+not on the file alone; do not size-check the file and conclude you are under it.)
 
 ### Builder pattern
 

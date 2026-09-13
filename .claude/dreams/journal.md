@@ -1149,3 +1149,130 @@ pending-validation set; `paths.betaEvents` rows 319–462; events/tools/git 08-3
 - **Enforcement sweep (Phase 4.5): 69 candidates → 26 FILE (8 rows ED-419…ED-426), 20 TRACEABLE, 23 TRIAGE;
   dup-lint OK; ledger 395 → 403 lines.** The sweep's `REPORT.md` write was refused by the harness
   (subagent report-file rule); the full sweep report lives in `runtime/session-end/2026-09-12-cognitive-chain.md`.
+
+---
+
+# Sleep Journal — 2026-09-13
+
+Run inside `/session:end` Phases 2–4.5 after the S-OS-06 conduct session (mc@2.0.0 identifier-layer
+rebrand). Sources: 9 new `learnings.jsonl` rows, `paths.betaEvents` rows 463–467, 60+ commits on
+`open-source/S-OS-06`, 1,202 tool events, 7 prompt events. **No sprint retro and no `_reports/` entry
+dated 2026-09-13 exist** — `.claude/project/sprint/history/` holds nothing for S-OS-06 — so the
+retro lens is *absent, not empty*, and nothing was extracted from it.
+
+## NREM Consolidation
+
+- **Learnings: 242 → 242** (0 pruned, 0 merged, 9 tagged + validated). Store is at 242/1000; per the
+  standing "bias toward KEEPING" rule nothing was pruned below the max.
+- **Importance audit: 9 tagged (8 HIGH / 1 MEDIUM / 0 LOW)** — signals: 5 `error_prevention`,
+  3 `surprising`, 1 `user_correction`. Store now at **0 rows missing `importance`** (was 9).
+- **Selective replay:** all 9 of today's HIGH/MEDIUM rows were checked against artifacts and
+  **9/9 promoted to validated** with `validated_by` naming the artifact checked (registry field,
+  β row, commit, or file).
+- **Deduplication: 0 merge candidates.** Keyword-overlap scan of today's 9 against the prior 233
+  produced no pair above 0.30 — this session's material is genuinely new, not a re-statement.
+- **Decay applied: 0 entries removed.** 30 rows are `score:0 + pending_validation` older than 14d and
+  23 are `effective:null` older than 21d, but the store sits at 242/1000 and the standing rule prunes
+  only above the max. **Observed and retained, not silently dropped.**
+- **Conflicts resolved: 1.** `LRN-2026-09-13-agy-argv-ceiling-blocks-gate-file-review` cited
+  "record-trust-exit.js = 32,403 B". No committed blob of that file is 32,403 B — the day's blobs run
+  18,611 → 20,725 → 21,436 → 25,210 → 27,163 → **31,859 B max**, which is *below* the ceiling. The
+  ceiling is on **assembled argv** (file + brief + instructions), not on the file. A `correction`
+  field now carries this; the mechanism claim stands, the figure does not.
+- **Promotions: 0 patterns → permanent rules.** No learning reached the 3×-effective bar this cycle.
+- **Retroactive reclassification: 0 traces re-scored — and that is the finding.** `paths.tracesFile`
+  holds **10 rows, last written 2026-06-09 (96 days ago)** while `CLAUDE.md § Reasoning` still says
+  "Log every reasoning decision." Covered by **ED-367** (store liveness); tonight is its sharpest
+  live instance and an amendment was filed.
+- **β decision review: 5 consults (rows 463–467), 4 DECIDE + 1 DIRECTIVE, 0 escalated, 0 overridden**,
+  confidence band 0.90–0.92. All five are >24h-unoverridden only as of tomorrow; marked tentatively
+  validated. Confidence changes staged (not applied): one NEW row proposed at 0.90.
+
+## Cleanup (Glymphatic)
+
+- **Session files cleared:** none required — no orphan temp files under `.claude/`.
+- **Events compacted:** not run. `events.jsonl` is 8,953 lines; compaction is a destructive rewrite of
+  a store owned by another lane this session, deliberately deferred rather than half-applied.
+- **STALE markers:** none found.
+- **Handoffs pruned:** 0 — deferred, `DUMP.md`/handoff files are owned by another agent this session.
+- **Git housekeeping:** `git gc --auto` not forced. **146 uncommitted paths** in the working tree
+  (expected: the sprint's runtime artifacts are untracked by design). **61 registered worktrees,
+  0 prunable** — every one has a live directory, so this is real accumulation rather than stale
+  metadata. Flagged as a cleanup item for a session that owns the worktree lane; **not** filed as
+  enforcement debt (housekeeping, not a policy without an enforcer).
+- **Requirement drift:** 1,224 staged rows, **0 pending** after last-write-wins. Clean.
+- **Recurring system issues: 10 open.** RI-004 (build-chain dispatch silent-death via harness reap)
+  last seen 2026-06-11 — past the 30-day mark, and a *demotion* candidate by the letter of the rule,
+  but today produced 3 builder false-greens and a 40-minute conductor stall in the same family.
+  **Recommend it stays open**; the clock says quiet, the evidence says otherwise.
+
+## Replay (Spindle)
+
+- **Today's real goal:** not "rename WarpOS to mc". It was **prove the rename can be shown complete** —
+  every tracked path in exactly one disposition, every disposition closed by a registered artifact,
+  every count emitted. The rename was the easy half.
+- **Achieved:** T1→T5 + fix-r1 all merged; 2.0.0 cut; 5 dispositions ratified; purity GREEN at 2.0.0;
+  7 compat surfaces registered with per-entry 2.1.0 expiry.
+- **Blind spots:**
+  1. **Liveness of the arc** — every watcher was scoped to a dispatch; the gap between dispatches was
+     unwatched for 40 minutes (see tonight's dream).
+  2. **`paths.tracesFile` dead 96 days** while the policy that feeds it is still written in CLAUDE.md.
+  3. **Vacuous assertion loops** — the sprint *fixed one* (migration test 6) and *shipped four
+     siblings* with the identical defect, in tests written the same day.
+  4. **A disabled hook is an absent hook** — 4 registry entries sit `enabled:false`, one of them
+     (`ref-checker`) named by CLAUDE.md as the enforcer for the delete-reference rule.
+- **Unused skills this window:** `/reasoning:log` and `/reasoning:run` (directly explaining blind spot
+  2), `/scan:full`, `/qa:audit`, `/redteam:full`.
+- **User style notes:** 3 prompts in 11 hours — a brief, a liveness probe, a close. The operator
+  supervises **by exception**, and the exception they reach for is *"is it still alive, and why didn't
+  the system notice?"* — not *"is the output correct?"* (staged as P-151).
+
+## REM Dreams
+
+- **The stall:** *The Lighthouse That Only Lit For Ships It Had Already Seen* — every watcher attached
+  to a ship, none to the harbour; the eyes close **on success**, so the system is blindest right after
+  it does something right.
+- **The gate defects:** *One Corridor, Two Doors, And The Guard Who Was Asked The Wrong Question* — the
+  permissive answer wins by **shape**, not by policy, whenever two predicates collapse into one field.
+- **Cross-pollination:** the dead traces store is the lighthouse at another scale (declared store,
+  written policy, nothing attached to the arc); the 4 vacuous test loops are the two-doors defect in
+  another substrate.
+- **Schema formation: `SCHEMA-2026-09-13-empty-subject-green`** — *an assertion whose subject can be
+  empty is not an assertion.* Zero ships, zero rows, zero iterations, zero writes all fold to GREEN
+  because "nothing violated it" and "nothing was checked" are indistinguishable from the inside.
+  **Staged for operator ruling, not applied.**
+- **Dream paintings: 2** saved to `.claude/dreams/2026-09-13.md`, each with a Deep Read.
+- **Subconscious learnings: 2** carried forward — *the eye that closes on success*; *the gap is always
+  at the join, and the join is always the thing nobody owns.*
+
+## Repair
+
+- **Security:** CLEAN. Secret scan (API-key, Google-key, GitHub-token, PEM-private-key patterns) over
+  today's tracked changed files: 0 hits.
+- **Dependencies:** **UNVERIFIABLE.** `npm audit` refuses — `ENOLOCK`, no lockfile in the repo. Not a
+  vulnerability finding; a finding that the vulnerability check cannot run at all.
+- **Architecture drift:** 68 hooks registered, **all scripts present on disk**, 0 enabled-with-zero-
+  registrations. The drift is the other way: **4 hooks disabled** — `smart-context` (deliberate, per
+  the v1-rebuild scope), `create-worktree-from-head`, `pre-commit-steps-check`, `ref-checker` — the
+  last three all carrying `registrations: []`.
+- **Hooks:** the `create-worktree-from-head` finding is **root cause**, not correlation: it is the hook
+  that would make `-w` cut a builder worktree from HEAD, and with it off, two builder worktrees were
+  cut from the sprint base and one ticket could not read prior in-sprint work.
+- **Mode:** dark. Repairs to `scripts/` and `.claude/commands/` were **out of this agent's lane** by
+  instruction, so every repair above is filed as debt rather than applied.
+
+## Growth
+
+- **System strength: STRENGTHENING, with one honest asterisk.** The sprint produced a genuinely new
+  enforcement primitive (the 5-disposition partition with registered closure and emitted counts) and
+  β operated at 0.90–0.92 with zero overrides. The asterisk: the same session shipped four vacuous
+  tests and ran on watchers that could not see its own 40-minute silence — **the gate-building got
+  better faster than the gate-watching did.**
+- **Biggest leverage point:** *arm one detector whose lifetime is the sprint, not the step.* Three of
+  tonight's five filed rows (stall, false-green, reviewer-cwd) are the same failure — supervision
+  scoped to a unit smaller than the thing that can fail.
+- **Morning briefing:** appended to `.claude/dreams/coaching.md`.
+- **False memory check: 9 learnings verified against disk/registry/ledger; 1 figure corrected**
+  (the 32,403 B claim); 0 rows removed.
+- **Enforcement sweep (Phase 4.5):** results recorded in the same-night report at
+  `runtime/session-end/2026-09-13-cognitive-chain.md`.

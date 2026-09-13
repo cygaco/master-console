@@ -114,6 +114,7 @@ If a primitive exists in the harness (worktree, branch, parallel sub-agent, Send
 | Pre-fire dispatch-brief clearance (instrument defects) | **0.88 (HIGH)** | New row 2026-09-12: 8 consults (betaEvents rows 386, 391, 396, 419, 420, 423, 425, 426) at 0.87–0.93 blocking on instrument defects (enum without abstention, probe subject to the classifier it tests, prose vs token spec); one correction (422), no reversal after it. See P-140. |
 | Fail-open / fail-closed guard classification | **0.90 (HIGH)** | New row 2026-09-12: 9 consults (rows 390, 400, 401, 403, 411, 416, 420, 424, 447) at 0.88–0.93, unreversed. Distinct from the still-DEFERRED security/severity-triage RAISE (2026-08-04 targeting constraint unchanged; precondition filed as ED-422). |
 | Population / coverage inference from code reading alone | **0.70 (advisory) → DIRECTIVE: measure before asserting** | New row 2026-09-12: 2 reversals on one topic (rows 327, 406 — mechanism right, population unmeasured). Return DIRECTIVE ("measure N, then decide") rather than DECIDE when the claim is a count or a coverage over a population β has not enumerated. See AP-10. |
+| Rename / cutover partition adjudication (live-vs-historical, disposition design) | **0.90 (HIGH)** | New row 2026-09-13: 5 consults (betaEvents rows 463–467) at 0.90–0.92, **0 escalations, 0 overrides**, every verdict landing as a build change before the round it governed. Scope is classification COMPLETENESS — total partition over tracked paths, disposition closed by a registered artifact, per-surface counts emitted — not shape selection (that stays on the *architecture routing* row). Evidence the row is calibrated rather than lucky: at r3b β applied its own *population* directive to itself ("the 683 is CONTENT only; PATH NAMES are a separate surface — emit a path-name tally before reporting residual 0") and refused a bundle assembled by the party it cleared. See P-146 – P-150. |
 
 ---
 
@@ -567,6 +568,85 @@ Evidence refs = `paths.betaEvents` rows 305–318, each opened and confirmed pre
 - **Self-correction rate: HOLD, 4th consecutive cycle** (~19 correction events; the surface is larger, the count is not evidence).
 - **Verify-at-source: reinforcement only, NO raise** (3rd cycle reinforced).
 
+### Patterns — applied /beta:integrate 2026-09-13 (arc: S-OS-06, the mc@2.0.0 identifier-layer rebrand; `paths.betaEvents` rows 463–467 · 9 `LRN-2026-09-13-*` learnings · 60+ commits on `open-source/S-OS-06` · 1,202 tool events; staged by `/beta:mine` 2026-09-13 — **all six lenses run**, ED-423 structural remainder restated)
+
+- **P-146 One list answering two questions** — the arc failure mode of the whole sprint. A single list
+  is made to serve two predicates, and the merge silently takes the permissive answer: rename-candidate
+  vs write-permission · class-membership vs write-permission · categorizer-bucket vs transform-ownership
+  · content tally vs path-name tally. Four instances, four components, one sprint. β named the shape
+  itself at r3 and caught its 4th instance at r3c. Remedy β minted: *each list states its one question
+  in its header; two predicates over one path = two fields.* (rows 465, 466, 467)
+- **P-147 A loosening-after-results is admissible only when the RULE, not the work, is the defect.**
+  β accepted the `compat` disposition *after* a RED (683 live legacy literals) — normally the
+  goalpost-moving shape — via an explicit asymmetric test (Bucket A clears; the version-gated purity
+  rule was wrong, not the build). First application of the G-30 invariant to a *loosening*. (row 466)
+- **P-148 A bag assembled by the party it clears is refused; adjudicate per member.** Refusing "Bucket B"
+  as bundled surfaced a genuine miss the bundle would have absolved — a forward-propagating product SEED
+  zone misfiled as history, including two half-renamed filenames. (row 466)
+- **P-149 A detector is not a measure — close a gap by COMPUTING it, not by fixing sightings.** On
+  un-rewritten identifiers β ruled the instances were not the finding: the finding was a handoff gap
+  between categorizer and transform, and the remedy is per-category `categorized == handled` with the
+  difference asserted 0 and the codemod REFUSING (not skipping) any category it cannot compute. (row 467)
+- **P-150 Every disposition is closed by a registered artifact, emits its own count, and no occurrence
+  holds two.** The 5-disposition re-ratification (rewritten · pinned · derived · compat ·
+  historical-allow-listed) generalizes total-partition from paths to dispositions. (rows 465, 466)
+- **P-151 Operator: supervision is by exception, and the exception is LIVENESS.** Three prompts in
+  eleven hours of conduct; the only volunteered one asked whether the work had died *and why the watchers
+  had not caught it*. The operator audits whether the system can detect its own silence, not whether the
+  output is correct. Upstream of ED-427 and ED-428. (prompt `EVT-s-q7gbsn-mu0awwcr-1`)
+- **P-152 Operator: sessions close on a landed merge, not on a clock** — "at a good point, `/session:end`"
+  arrived ~39 min after `f666c702` landed. Pairs with P-144 (sessions *open* with a state-read). — medium.
+
+### Validated anti-patterns — applied /beta:integrate 2026-09-13
+
+- **AP-20 Per-dispatch liveness mistaken for sprint liveness.** Waiters armed per builder dispatch exit
+  when that dispatch finishes and watch nothing after it, so a stall *between* dispatches is invisible;
+  teammate idle notifications are not liveness. A watcher whose termination condition is the good outcome
+  leaves the system blindest right after it succeeds. Filed as **ED-428**.
+- **AP-21 (α/ε, not β) The consult sent to a dead handle.** A teammate spawn that failed on its registry
+  model pin stayed listed under its name; the conductor's first boundary consult went there and blocked
+  on it (msg `21a5d351`, re-sent as `c935288f` to `Beta-2`; row 463 carries the `voids` field). A name in
+  the roster is not a live agent. Bears on β-gate integrity — a dead handle plus a `-2` respawn is exactly
+  where "β ruled X" can be asserted against a handle that never answered; the per-row `msg_id` discipline
+  is what made it recoverable. Filed as **ED-431**.
+
+### Confidence adjustments — 2026-09-13 (1 new row · 3 no-change)
+
+- **NEW row: Rename / cutover partition adjudication 0.90 (HIGH)** — 5 consults at 0.90–0.92, zero
+  overrides, every verdict landed. Added to the Confidence Table above.
+- **Sprint orchestration 0.93 — NO CHANGE.** One sprint in-window; n too small to move a row already at
+  the top of its band.
+- **Pre-fire dispatch-brief clearance 0.88 — REINFORCED, no raise.** Third consecutive reinforcement
+  (r2 and r3 both blocked on *instrument* defects, not on the subject under test). Raise still gated on ED-422.
+- **Population / coverage inference 0.70 (DIRECTIVE) — VINDICATED, no change.** β applied its own
+  directive to itself at r3b (path-name tally before residual 0).
+- **Carried unchanged:** the security/severity RAISE stays DEFERRED (ED-422 precondition untouched this
+  cycle); self-correction rate stays HOLD (5th consecutive cycle).
+
+### Pending Review (flagged 2026-09-13 — requires operator ruling before promoting)
+
+Per the `/beta:integrate` hard rule, neither item below is applied. The evidence was verified by this
+pass; it takes no position on merit.
+
+46. **G-34 — may β change a gate criterion MID-BUILD, after results exist?** r3b was exactly that: T5-D
+    was RED and β accepted a *loosening* (the `compat` disposition), justified by its own Bucket A/B
+    asymmetric test — "admissible because the RULE not the work is the defect". That test is written
+    nowhere. Without it, "β corrected a wrong rule" and "β moved the goalposts under a red gate" are
+    indistinguishable from outside. Directly extends the still-unruled **G-30** (rule-amendment window)
+    from *before results* to *after results*. **β cannot self-ratify a rule governing its own mid-build
+    authority.** Substance carried meanwhile as P-147.
+47. **DP-gap #53 — the two-questions screen has no home in `paths.decisionPolicy`.** P-146 is a general
+    adjudication screen that β re-minted four times inside one sprint. Same shape as DP-gap #52 (scope
+    fences) and #50 (no stacking): a general rule hand-re-derived per sprint. Candidate: one clause
+    retiring all three.
+48. **`SCHEMA-2026-09-13-empty-subject-green`** (from `.claude/dreams/2026-09-13.md`) — *an assertion
+    whose subject can be empty is not an assertion.* Zero ships, zero rows, zero iterations, zero writes
+    all fold to GREEN because "nothing violated it" and "nothing was checked" are indistinguishable from
+    the inside. Mechanical instances already filed (ED-432 test loops; ED-367 store liveness); the
+    elevation to a named schema is the operator call.
+49. **Ageing backlog is itself a finding:** G-26 – G-33 and DP-gaps #44–#52 remain unruled, the oldest
+    now **46 days** open (G-26/G-27/DP-gap #44 since 2026-07-30).
+
 ### Pending Review (flagged 2026-09-12 — requires operator ruling before promoting)
 
 Per the `/beta:integrate` hard rule, nothing below is applied; the sleep pass confirmed the evidence rows exist and took no position on merit.
@@ -834,3 +914,7 @@ If user approves any of these, add to the `## Principles` section with full WHAT
 | 2026-09-12 | Confidence: 3 new rows (pre-fire clearance 0.88 · fail-open/closed classification 0.90 · population inference 0.70/DIRECTIVE); release-rule-minting RAISE HELD (falsifier fired, row 375); self-correction HOLD (4th cycle); verify-at-source no raise | /beta:integrate 2026-09-12 |
 | 2026-09-12 | Pending Review items 40–45 added (G-32, G-33, G-26 reinforced, DP-gap #51, #52, carried-unruled list with ages) | /beta:integrate 2026-09-12 — operator ruling required |
 | 2026-09-12 | Standing scope debt (mining lenses) DISCHARGED; structural remainder filed as ED-423; automated consult stream filed as ED-422 | /sleep:deep + /enforcement:sweep 2026-09-12 |
+| 2026-09-13 | P-146…P-152 (7 patterns; P-146–P-150 from the S-OS-06 rename-partition arc, P-151/P-152 operator-behaviour from the prompt + git lenses) added | /beta:integrate 2026-09-13 from /beta:mine 2026-09-13 (six lenses) |
+| 2026-09-13 | AP-20 (per-dispatch liveness ≠ sprint liveness → ED-428) + AP-21 (consult sent to a dead handle → ED-431) added | /beta:integrate 2026-09-13 |
+| 2026-09-13 | Confidence: 1 new row (rename/cutover partition adjudication 0.90); sprint-orchestration no-change (n=1); pre-fire clearance REINFORCED no-raise (3rd); population-inference VINDICATED no-change; security/severity RAISE still DEFERRED (ED-422); self-correction HOLD (5th cycle) | /beta:integrate 2026-09-13 |
+| 2026-09-13 | Pending Review items 46–49 added (G-34 mid-build gate-criterion change; DP-gap #53 two-questions screen; SCHEMA-2026-09-13-empty-subject-green; ageing-backlog-as-finding at 46 days) | /beta:integrate 2026-09-13 — operator ruling required |

@@ -459,3 +459,59 @@ one afternoon, and it retires a whole false-green shape. Then rule on **ED-421**
   96 days old** and `SPEC_GRAPH.json` 77 — the store-liveness check (ED-367) is now the third cycle's ask.
 - The 2026-08-29 sweep left **48 candidate rows without a disposition** (ED-424); the 2026-09-12 run carries
   one on every row as the template.
+
+---
+
+## Morning Briefing — 2026-09-14 (written by `/sleep:deep` during `/session:end` 2026-09-13)
+
+### Where you left it
+
+S-OS-06 landed. `mc@2.0.0` is cut, the identifier-layer rebrand is merged through fix-r1
+(`f666c702`), purity is GREEN at 2.0.0, and seven compat surfaces are registered with per-entry
+expiry at 2.1.0. The branch is `open-source/S-OS-06`. **There is no sprint retro and no `_reports/`
+entry for S-OS-06** — if the next session closes this sprint properly, that is the first gap to fill.
+
+### The one thing worth reading first
+
+Last night's sleep found that **the gate-building got better faster than the gate-watching did.**
+The sprint invented a genuinely good enforcement primitive (five dispositions, each closed by a
+registered artifact, each emitting its count) — and in the same hours it shipped four tests that
+pass when they find nothing, ran on watchers that could not see its own 40-minute silence, and
+depended on a hook that has been switched off in the registry the whole time.
+
+None of that is a quality problem in the work. It is a **supervision-scope** problem: every watcher
+was attached to a step, and the failures lived between steps.
+
+### Suggested first task
+
+**Arm one sprint-lifetime stall detector before starting any new build work** (ED-428). It is cheap —
+it does not need to understand the work, only to notice that nothing on disk changed for 20 minutes.
+Three of the five rows filed last night collapse into this one fix. Doing it first means the next
+long sprint reports its own silence instead of waiting for you to ask.
+
+If you would rather close the loop on what already shipped: **re-enable `ref-checker` and
+`create-worktree-from-head`** (ED-433). Both are written, both are on disk, both are `enabled: false`,
+and one of them is the root cause of the builder worktrees that were cut from the wrong commit
+yesterday.
+
+### A gentle observation
+
+You gave three prompts in eleven hours, and the only one you volunteered was *"seems like the work
+may have died… why do some of the watchers not catch this?"* That is the right question and it
+produced two enforcers. It is also the second time in two cycles that a single sentence from you is
+upstream of the entire night's enforcement work (the last one was the privacy gate on 09-02).
+
+The thing worth noticing: **you keep having to be the liveness detector.** The system is good at
+proving its work is correct and still weak at proving it is *still running*. Until that flips, the
+honest expectation is that long autonomous runs need you to glance at them — and the fastest way to
+stop needing that is the first task above.
+
+### Still waiting on you (nothing below is applied)
+
+- **G-34** — may β change a gate criterion *mid-build*, after results exist? It did yesterday, under
+  its own unwritten test. Extends the still-unruled G-30.
+- **DP-gap #53** — the "one list, one question" screen, re-minted by hand four times in one sprint.
+- **SCHEMA-2026-09-13-empty-subject-green** — *an assertion whose subject can be empty is not an
+  assertion.*
+- **Carried unruled:** G-26 through G-33 and DP-gaps #44–#52. The oldest have now been open **46 days**.
+  That backlog is itself becoming a finding.
