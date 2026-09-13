@@ -120,7 +120,7 @@ test("record-trust-exit GREEN: the real clean tree -> exit 0, all four items PAS
     [4, "dry-run", "PASS"],
   ]);
   assert.match(r.stdout, /^record-trust-exit: PASS \(4\/4 items pass\)$/m);
-  assert.match(lines[3].detail, /unclassified=0; unpinned-unrewritten-underived=0; derived set == the 5 generated views at their resolved paths/);
+  assert.match(lines[3].detail, /unclassified=0; unpinned-unrewritten-underived=0; derived set within the 5 generated views at their resolved paths/);
   assert.match(lines[3].detail, /refusedRenames=0/);
   assert.strictEqual(fs.readFileSync(H.LOADER.COMMITTED_LEDGER_PATH, "utf8"), ledgerBefore, "the exit gate must not change the committed ledger");
 });
@@ -129,6 +129,38 @@ test("record-trust-exit: every required falsifier id is present in the real fixt
   const { REQUIRED_FALSIFIERS } = require(ENFORCER);
   const ids = realFixtures().map((f) => f.id);
   for (const id of REQUIRED_FALSIFIERS) assert.ok(ids.includes(id), `real fixture set lacks ${id}`);
+});
+
+test("record-trust-exit: derived rule (T4 revisit) — derived OR regenerated-clean views pass; non-derived hits, missing views, out-of-view derived rows and an unreadable full ledger FAIL", () => {
+  const { derivedRuleProblems } = require(ENFORCER);
+  const views = ["a/view1.json", "b/view2.js", "c/view3.json"];
+  const fullRows = [
+    { file: "a/view1.json", disposition: "derived" },
+    { file: "src/live.js", disposition: "rewritten" },
+  ];
+  const all = () => true;
+
+  const green = derivedRuleProblems({ views, derivedFiles: ["a/view1.json"], fullRows, viewExists: all });
+  assert.deepStrictEqual(green.problems, [], "a derived view + two views with zero full-ledger rows is green");
+  assert.deepStrictEqual(green.cleanViews, ["b/view2.js", "c/view3.json"]);
+
+  const pinnedInView = derivedRuleProblems({
+    views,
+    derivedFiles: ["a/view1.json"],
+    fullRows: fullRows.concat({ file: "b/view2.js", disposition: "pinned" }),
+    viewExists: all,
+  });
+  assert.match(pinnedInView.problems.join("; "), /generated view\(s\) with no derived occurrence: b\/view2\.js \(1 occurrence\(s\) disposed pinned\)/);
+
+  const missing = derivedRuleProblems({ views, derivedFiles: ["a/view1.json"], fullRows, viewExists: (v) => v !== "c/view3.json" });
+  assert.match(missing.problems.join("; "), /generated view\(s\) missing on disk: c\/view3\.json/);
+
+  const outside = derivedRuleProblems({ views, derivedFiles: ["a/view1.json", "src/live.js"], fullRows, viewExists: all });
+  assert.match(outside.problems.join("; "), /derived occurrences outside the generated views: src\/live\.js/);
+
+  const noFull = derivedRuleProblems({ views, derivedFiles: ["a/view1.json"], fullRows: null, viewExists: all });
+  assert.match(noFull.problems.join("; "), /cannot be verified clean \(full occurrence ledger unavailable\): b\/view2\.js, c\/view3\.json/);
+  assert.deepStrictEqual(noFull.cleanViews, [], "no view is ever read as clean without the full ledger (fail-closed)");
 });
 
 test("record-trust-exit: an empty or partial result set never yields exit 0", () => {
