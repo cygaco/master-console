@@ -29,7 +29,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `commands` | `.claude/commands` | dir | framework | no | 0.0.0 |  |
 | `content` | `.claude/content` | dir | runtime | yes | 0.0.0 |  |
 | `contractsFixtures` | `scripts/contracts/fixtures` | dir | framework | yes | 0.12.0 | Valid + invalid artifact fixtures proving the validator's fa |
-| `contractsSchemas` | `schemas/contracts` | dir | framework | yes | 0.12.0 | Product-studio artifact-contract schemas v0.1 (mc/contra |
+| `contractsSchemas` | `schemas/contracts` | dir | framework | yes | 0.12.0 | Product-studio artifact-contract schemas v0.1 (mc/contracts/ |
 | `contractsSpec` | `_requirements/10-contracts/ARTIFACT-CONTRACTS.md` | file | framework | yes | 0.12.0 | Human-readable artifact-contract spec v0.1 (the chain, the s |
 | `contractsValidator` | `scripts/contracts/validate-artifact.js` | file | framework | yes | 0.12.0 | Fail-closed validator for the artifact contracts — rejects u |
 | `contractsValidatorTest` | `scripts/contracts/test-validate-artifact.js` | file | framework | yes | 0.12.0 | Validator self-test (proves pass-valid / reject-invalid); th |
@@ -50,7 +50,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `events` | `.claude/project/events` | dir | runtime | yes | 0.0.0 |  |
 | `eventsFile` | `.claude/project/events/events.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
 | `favorites` | `.claude/content/favorites` | dir | runtime | yes | 0.0.0 |  |
-| `frameworkRoot` | `framework` | dir | framework | yes | 0.2.0 | Track B 2026-05-03 renamed mc -> framework (JTBD: framew |
+| `frameworkRoot` | `framework` | dir | framework | yes | 0.2.0 | Track B 2026-05-03 renamed mc -> framework (JTBD: framework  |
 | `handoffLatest` | `.claude/runtime/handoff.md` | md | runtime | yes | 0.0.0 |  |
 | `handoffs` | `.claude/runtime/handoffs` | dir | runtime | yes | 0.0.0 |  |
 | `hookLib` | `scripts/hooks/lib` | dir | framework | no | 0.0.0 |  |
@@ -61,7 +61,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `judgmentModel` | `.claude/agents/president/_system/beta/judgement-model.md` | md | framework | yes | 0.0.0 |  |
 | `judgmentRecommendations` | `.claude/agents/president/_system/beta/judgement-model-recommendations.md` | md | runtime | yes | 0.0.0 |  |
 | `karpathyRuns` | `_docs/karpathy-auto-research` | dir | runtime | yes | 0.0.0 |  |
-| `kernel` | `.claude/kernel` | dir | framework | yes | 0.17.0 | MC 1.0 kernel governance home (SP-20260718-001 Phase 0): |
+| `kernel` | `.claude/kernel` | dir | framework | yes | 0.17.0 | MC 1.0 kernel governance home (SP-20260718-001 Phase 0): the |
 | `learningsFile` | `.claude/project/memory/learnings.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
 | `lexicon` | `.claude/agents/president/_system/lexicon.md` | md | framework | yes | 0.0.0 |  |
 | `loggerLib` | `scripts/hooks/lib/logger.js` | js | framework | no | 0.0.0 |  |
