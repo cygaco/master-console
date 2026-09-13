@@ -4,10 +4,11 @@
     "rewritten": 0,
     "pinned": 206,
     "derived": 215,
-    "compat": 75
+    "compat": 76
   },
   "compatBySurface": {
     "env-allow-rule (expires 2.1.0)": 1,
+    "doc-ref-legacy-rename (expires 2.1.0)": 1,
     "env-helper (expires 2.1.0)": 1,
     "clone-dir-fallback (expires 2.1.0)": 1,
     "home-read-both (expires 2.1.0)": 2,
@@ -16,7 +17,7 @@
   "rowsPersisted": {
     "pinned": 206,
     "derived": 215,
-    "compat": 75
+    "compat": 76
   },
   "fullLedgerPath": "runtime/S-OS-06/rename-occurrences.full.json",
   "rows": [
@@ -395,6 +396,7 @@
     {"file":"_mc/MANIFEST.json","line":22715,"rule":"generated-view","matchText":"warpos","disposition":"derived","warrant":"generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)"},
     {"file":"_mc/MANIFEST.json","line":22718,"rule":"generated-view","matchText":"warpos","disposition":"derived","warrant":"generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)"},
     {"file":"scripts/checks/cutover-completeness.js","line":60,"rule":"occurrence-pin","matchText":"warpos","disposition":"pinned","warrant":"the suppressed-count emission's own search literal (AC-7.1); rewriting it zeroes every emitted count — the one defense against the allow-list silent catch-all"},
+    {"file":"scripts/checks/doc-ref-integrity.js","line":82,"rule":"compat:doc-ref-legacy-rename","matchText":"warpos","disposition":"compat","warrant":"doc-ref-integrity's compat-registered legacy-rename tolerance (T5-E2d, alpha ruling): a canon-doc citation of a pre-rename path counts as allowed-renamed (a printed count) ONLY while its mc-renamed counterpart exists on disk; the checker's ONE legacy slug literal drives it and the checker switches the tolerance OFF at this window's expiry, so those citations are broken refs again in 2.1.0"},
     {"file":"scripts/checks/framework-purity.js","line":83,"rule":"occurrence-pin","matchText":"warpos","disposition":"pinned","warrant":"the live-dir legacy-slug detector's own search literal (R1); rewriting it makes the detector search for its own replacement and read green forever"},
     {"file":"scripts/checks/framework-purity.js","line":194,"rule":"occurrence-pin","matchText":"warpos","disposition":"pinned","warrant":"PROMOTE_RELIC_FILES relic-watch list; the old path is the DATA framework-purity checks for (a relic to detect), not a live import path to rewrite"},
     {"file":"scripts/checks/framework-purity.js","line":195,"rule":"occurrence-pin","matchText":"warpos","disposition":"pinned","warrant":"same relic-watch pin as scripts/warpos/promote.js"},

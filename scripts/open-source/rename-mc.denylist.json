@@ -105,6 +105,7 @@
       { "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-tracked-transients.js", "warrant": "T5 (T-20260913-364) β r3b compat register, surface check-shims (expires 2.1.0): the one-release scripts/checks/warpos-*.js alias shims (BUILD-SPEC lane B / AC-4.1): each spawns or re-exports its mc-*.js twin; warpos-tracked-transients.js is also named by the frozen leak-gate.yml, so its 2.1.0 removal is an operator-gated workflow edit" },
       { "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-version-quorum.js", "warrant": "T5 (T-20260913-364) β r3b compat register, surface check-shims (expires 2.1.0): the one-release scripts/checks/warpos-*.js alias shims (BUILD-SPEC lane B / AC-4.1): each spawns or re-exports its mc-*.js twin; warpos-tracked-transients.js is also named by the frozen leak-gate.yml, so its 2.1.0 removal is an operator-gated workflow edit" },
       { "key": "compat|clone-dir-fallback|2.1.0|occ|scripts/mc/manifest/bootstrap.js|\"Warpos\"|const candidates = ", "warrant": "T5 (T-20260913-364) β r3b compat register, surface clone-dir-fallback (expires 2.1.0): bootstrap sibling-clone discovery still probes a legacy-named canonical clone dir (../Warpos, case-insensitive on Windows) for pre-2.0.0 layouts; a directory fallback removed in 2.1.0" },
+      { "key": "compat|doc-ref-legacy-rename|2.1.0|occ|scripts/checks/doc-ref-integrity.js|\"warpos\"|const LEGACY_PATH_SLUG = ", "warrant": "T5-E2d (alpha ruling) β r3b compat register, surface doc-ref-legacy-rename (expires 2.1.0): the doc-ref-integrity checker's ONE legacy slug literal drives its legacy-rename tolerance — a pre-rename path citation is allowed-renamed (printed count) only while the mc counterpart exists on disk — and the checker switches that tolerance OFF at this expiry (fail closed), so the citations are broken refs again in 2.1.0; falsifier tests/regression/S-OS-06/falsify-doc-ref-legacy-rename.test.js" },
       { "key": "compat|env-allow-rule|2.1.0|occ|.claude/settings.json|WARPOS_DISPATCH_BACKGROUND=1|Bash(", "warrant": "T5 (T-20260913-364) β r3b compat register, surface env-allow-rule (expires 2.1.0): the operator's legacy-named Bash allow-rule for a backgrounded build dispatch (WARPOS_DISPATCH_BACKGROUND=1 node scripts/dispatch-claude.js); honoured by the read-both helper through 2.0.x, removed in 2.1.0" },
       { "key": "compat|env-helper|2.1.0|occ|scripts/hooks/lib/mc-env.js|\"warpos\"|const LEGACY_SLUG = ", "warrant": "T5 (T-20260913-364) β r3b compat register, surface env-helper (expires 2.1.0): the read-both env/dir helper's ONE legacy slug literal (AC-3.1/3.2): the legacy WARPOS_* env prefix and _warpos//.warpos/ dir names derive from it; the legacy names stop being read in mc@2.1.0" },
       { "key": "compat|home-read-both|2.1.0|occ|scripts/portfolio/registry.js|\".warpos\"|", "warrant": "T5 (T-20260913-364) β r3b compat register, surface home-read-both (expires 2.1.0): HOME-anchored legacy registry fallback (~/.warpos/portfolio.json read-both, never auto-moved in 2.0.0 — BUILD-SPEC HOME-ANCHORED STATE); removed with the other directory fallbacks in 2.1.0" },
@@ -382,6 +383,13 @@
       "warrant": "bootstrap sibling-clone discovery still probes a legacy-named canonical clone dir (../Warpos, case-insensitive on Windows) for pre-2.0.0 layouts; a directory fallback removed in 2.1.0",
       "occurrences": [
         { "file": "scripts/mc/manifest/bootstrap.js", "matchText": "\"Warpos\"", "anchor": "const candidates = " }
+      ]
+    },
+    {
+      "surface": "doc-ref-legacy-rename", "expires": "2.1.0",
+      "warrant": "doc-ref-integrity's compat-registered legacy-rename tolerance (T5-E2d, alpha ruling): a canon-doc citation of a pre-rename path counts as allowed-renamed (a printed count) ONLY while its mc-renamed counterpart exists on disk; the checker's ONE legacy slug literal drives it and the checker switches the tolerance OFF at this window's expiry, so those citations are broken refs again in 2.1.0",
+      "occurrences": [
+        { "file": "scripts/checks/doc-ref-integrity.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_PATH_SLUG = " }
       ]
     }
   ]
