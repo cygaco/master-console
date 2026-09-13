@@ -855,6 +855,7 @@ Every sprint that has been planned, executed, released, or retrospected — one 
 
 | Sprint | Title | Status | Started | Closed | Release |
 |---|---|---|---|---|---|
+| [S-OS-06](.claude/project/sprint/sprints/S-OS-06/) | Rebrand identifier layer: Master Console slug mc, mc@2.0.0 with one-release aliases + downstream migration | planning | 2026-09-13T10:25:50.488Z |  |  |
 | [SP-20260830-001](.claude/project/sprint/sprints/SP-20260830-001/) | Enforcer successor: wire the gate, close the label/position/indexical families, and emit the sets the enumerations owe | planning | 2026-08-30T07:18:48.145Z |  |  |
 | [S-VLADW1-06](.claude/project/sprint/sprints/S-VLADW1-06/) | Vlad Wave-1: the truthfulness question, carried as an emitted list (successor to S-VLADW1-05's unreleased close) | planning | 2026-08-30T03:25:41.543Z |  |  |
 | [S-VLADW1-05](.claude/project/sprint/sprints/S-VLADW1-05/) | Vlad Wave-1: one transform, both sites (coverage stated at the granularity the mechanism has) | planning | 2026-08-29T20:24:02.261Z |  |  |

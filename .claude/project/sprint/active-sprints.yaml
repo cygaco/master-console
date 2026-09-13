@@ -1,5 +1,5 @@
 schema: warpos/sprint/active-sprints/v1
-primary: SP-20260830-001
+primary: S-OS-06
 sprints:
   - id: SP-20260512-001
     title: Multi-sprint parallelism for Sprint Workflow
@@ -1376,5 +1376,16 @@ sprints:
     pointer: ".claude/project/sprint/sprints/SP-20260830-001"
     created_at: "2026-08-30T07:18:48.145Z"
     updated_at: "2026-08-30T07:18:48.145Z"
+  - id: S-OS-06
+    title: "Rebrand identifier layer: Master Console slug mc, mc@2.0.0 with one-release aliases + downstream migration"
+    status: planning
+    lane:
+      type: default
+      value: null
+      isolation_notes: ""
+    layout: per_sprint_subdir
+    pointer: ".claude/project/sprint/sprints/S-OS-06"
+    created_at: "2026-09-13T10:25:50.488Z"
+    updated_at: "2026-09-13T10:25:50.488Z"
 created_at: "2026-05-12T22:57:35.667Z"
-updated_at: "2026-08-30T07:18:48.145Z"
+updated_at: "2026-09-13T10:25:50.488Z"
