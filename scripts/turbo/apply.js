@@ -46,6 +46,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -578,7 +579,7 @@ function main() {
   // When set, classifier-hard-denied scopes (node-e-fs) are dropped with a note
   // instead of failing the apply. Absent/0 = honor explicit opt-in as before.
   const autoMode = /^(1|true|yes)$/i.test(
-    String(process.env.WARPOS_AUTO_MODE || ""),
+    String(mcEnv.readEnv("AUTO_MODE") || ""),
   );
   const scopes = normalizeScopes(args.scopes, { autoMode });
   if (scopes.length === 0) {

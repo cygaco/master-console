@@ -12,6 +12,7 @@
  */
 
 "use strict";
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -95,15 +96,15 @@ check("unknown role returns null", unknown === null, String(unknown));
 
 // detectMode still honours WARPOS_MODE (the mode signal persists even though
 // resolution is mode-agnostic — the conducting face uses it for orchestration).
-const prev = process.env.WARPOS_MODE;
-process.env.WARPOS_MODE = "oneshot";
+const prev = mcEnv.readEnv("MODE");
+mcEnv.setEnv("MODE", "oneshot");
 check("detectMode honours WARPOS_MODE=oneshot", dispatch.detectMode() === "oneshot");
-process.env.WARPOS_MODE = "adhoc";
+mcEnv.setEnv("MODE", "adhoc");
 check("detectMode honours WARPOS_MODE=adhoc", dispatch.detectMode() === "adhoc");
-process.env.WARPOS_MODE = "sprint";
+mcEnv.setEnv("MODE", "sprint");
 check("detectMode honours WARPOS_MODE=sprint", dispatch.detectMode() === "sprint");
-if (prev === undefined) delete process.env.WARPOS_MODE;
-else process.env.WARPOS_MODE = prev;
+if (prev === undefined) mcEnv.unsetEnv("MODE");
+else mcEnv.setEnv("MODE", prev);
 
 const prevProjectDir = process.env.CLAUDE_PROJECT_DIR;
 const modeProject = fs.mkdtempSync(path.join(os.tmpdir(), "dispatch-agent-mode-"));

@@ -39,15 +39,7 @@ const PENDING_RAW_ENV_FILES = [
   // 4b batch rest
   // (4b-5a DONE: decisions/ledger … mc/repo-role)
   // (4b-5b DONE: mc/test-repo-role … skill-adherence-report)
-  "scripts/skill-description-audit.js",
-  "scripts/skills-bench.js",
-  "scripts/skills-test.js",
-  "scripts/teams/lifecycle.js",
-  "scripts/teams/signal-board.js",
-  "scripts/test-dispatch-agent-resolution.js",
-  "scripts/turbo/apply.js",
-  "tests/regression/SP-20260615-002/gui-lifecycle.test.js",
-  "tests/regression/SP-20260616-001/wrapper-door.test.js",
+  // (4b-5c DONE: skill-description-audit … wrapper-door) — ratchet EMPTY: AC-3.3 end state, no allowance left
 ];
 
 const FIXTURE_RE = /^(?:MC|[A-Z]+)_SOS06_/;

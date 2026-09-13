@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 /**
  * skills-bench.js — the §13.7 "is it WORTH IT + are the results GOOD?" A/B harness.
@@ -75,7 +76,7 @@ const path = require("path");
 
 const PROJECT =
   process.env.CLAUDE_PROJECT_DIR ||
-  process.env.WARPOS_PROJECT_DIR ||
+  mcEnv.readEnv("PROJECT_DIR") ||
   path.resolve(__dirname, "..");
 
 const DEFAULT_REGISTRY = path.join(PROJECT, ".claude", "runtime", "skill-weight.json");

@@ -33,6 +33,7 @@
 // slug-scoped, still best-effort, still never a claimed guaranteed kill.
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const os = require("os");
@@ -52,7 +53,7 @@ function homeDir() {
 function teamsRoot(opts = {}) {
   return (
     opts.teamsRoot ||
-    process.env.WARPOS_TEAMS_DIR_OVERRIDE ||
+    mcEnv.readEnv("TEAMS_DIR_OVERRIDE") ||
     path.join(homeDir(), ".claude", "teams")
   );
 }
@@ -62,7 +63,7 @@ function teamsRoot(opts = {}) {
 function stateDir(opts = {}) {
   return (
     opts.stateDir ||
-    process.env.WARPOS_TEAM_STATE_DIR_OVERRIDE ||
+    mcEnv.readEnv("TEAM_STATE_DIR_OVERRIDE") ||
     path.join(homeDir(), ".claude", "runtime")
   );
 }
