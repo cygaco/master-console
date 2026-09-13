@@ -40,6 +40,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const { spawnSync } = require("child_process");
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const REPO = path.resolve(__dirname, "..", "..");
 const SPRINT = require("./paths");
@@ -173,7 +174,7 @@ function runPlan(tmp, payloadPath, extraArgs) {
   const planJs = path.join(REPO, "scripts", "sprint", "plan.js");
   const env = { ...process.env };
   env.CLAUDE_PROJECT_DIR = tmp;
-  delete env.WARPOS_SPRINT_ID;
+  mcEnv.unsetEnv("SPRINT_ID", env);
   return spawnSync(
     process.execPath,
     [planJs, "--payload", payloadPath, ...(extraArgs || [])],

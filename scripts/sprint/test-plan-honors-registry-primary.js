@@ -35,6 +35,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const { spawnSync } = require("child_process");
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const REPO = path.resolve(__dirname, "..", "..");
 
@@ -163,7 +164,7 @@ function runPlan(tmp, payloadPath, extraArgs) {
   // worktree we're invoked from.
   env.CLAUDE_PROJECT_DIR = tmp;
   // Don't carry over a stale sprint id from a prior test or the host shell.
-  delete env.WARPOS_SPRINT_ID;
+  mcEnv.unsetEnv("SPRINT_ID", env);
   const r = spawnSync(
     process.execPath,
     [planJs, "--payload", payloadPath, ...(extraArgs || [])],
