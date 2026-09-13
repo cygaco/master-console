@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
-  "installedVersion": "1.2.0",
-  "installedCommit": "e4726920cc8d2951a47860f472f74240b614f1cd",
-  "installedAt": "2026-09-13T16:41:12.668Z",
+  "installedVersion": "2.0.0",
+  "installedCommit": "f6fa520ad1aefc2002475b7687ad1d17d58ffb36",
+  "installedAt": "2026-09-13T17:36:18.176Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -7014,8 +7014,8 @@
       "dest": "scripts/checks/brand-leak-scan.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "f350bba937f8ec867154b34ea894162cafc463c10738894e599c9fa6b478fdab",
-      "currentHashAtInstall": "f350bba937f8ec867154b34ea894162cafc463c10738894e599c9fa6b478fdab",
+      "installedHash": "df76842fd0ae1ad7e898bf8c818a789a23be6bca2951e46b5fdc4a4cb2120125",
+      "currentHashAtInstall": "df76842fd0ae1ad7e898bf8c818a789a23be6bca2951e46b5fdc4a4cb2120125",
       "introducedIn": "0.0.0"
     },
     {
@@ -7634,8 +7634,8 @@
       "dest": "scripts/checks/framework-purity.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "d60229222f71070340238e2c1424a64b845e260ebcfe642170ab83b16e863875",
-      "currentHashAtInstall": "d60229222f71070340238e2c1424a64b845e260ebcfe642170ab83b16e863875",
+      "installedHash": "2dbc19723430b6a14bb42d55c773ec0fb0409b7fe8f3b9546c499255b5bc90c7",
+      "currentHashAtInstall": "2dbc19723430b6a14bb42d55c773ec0fb0409b7fe8f3b9546c499255b5bc90c7",
       "introducedIn": "0.0.0"
     },
     {
@@ -17974,8 +17974,8 @@
       "dest": "version.json",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "9cad6e24598d5e12cf0c885245d2bfbc24ef2fec3d3080ae6f5cc7e834789d65",
-      "currentHashAtInstall": "9cad6e24598d5e12cf0c885245d2bfbc24ef2fec3d3080ae6f5cc7e834789d65",
+      "installedHash": "a6b6889fbfedd45e598e063ae615a32d2fe0eddff77c1f75f79be32241320114",
+      "currentHashAtInstall": "a6b6889fbfedd45e598e063ae615a32d2fe0eddff77c1f75f79be32241320114",
       "introducedIn": "0.0.0"
     },
     {
@@ -17984,8 +17984,8 @@
       "dest": "install.ps1",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "4b249521a7ff48062acc88bbbf634f0fdd47c158c25527ce9ef03d2bbb517f65",
-      "currentHashAtInstall": "4b249521a7ff48062acc88bbbf634f0fdd47c158c25527ce9ef03d2bbb517f65",
+      "installedHash": "f93f1e09ddc67549256949bdc65e0d6e0ab735449765690f69d155698822391a",
+      "currentHashAtInstall": "f93f1e09ddc67549256949bdc65e0d6e0ab735449765690f69d155698822391a",
       "introducedIn": "0.0.0"
     },
     {

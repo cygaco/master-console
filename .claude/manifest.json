@@ -14,7 +14,7 @@
     "mainBranch": "main"
   },
   "mc": {
-    "version": "1.2.0",
+    "version": "2.0.0",
     "installed": true,
     "source": "self",
     "features": [
