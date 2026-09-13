@@ -270,11 +270,20 @@ test("runChecks with string defaultMs → ok:false (FAIL-CLOSED)", () => {
 // ── 7. Standalone CLI exits 0 ────────────────────────────────────────────────
 console.log("\n(7) Standalone CLI exit code:");
 
+// Hermetic child env: the CLI must be judged on its FOREGROUND bounds, so strip BOTH read-both names of the
+// background signal from the inherited env (an operator shell that exports it — current or legacy name — would
+// otherwise un-clamp every wrapper and red this test for an environmental reason, not a defect).
+function foregroundChildEnv() {
+  const env = { ...process.env };
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND", env);
+  return env;
+}
+
 test("node dispatch-timeout-sanity.js exits 0 (all wrappers ≤ ceiling)", () => {
   const r = spawnSync(process.execPath, [
     path.join(__dirname, "dispatch-timeout-sanity.js"),
     "--json",
-  ], { encoding: "utf8", timeout: 10000 });
+  ], { encoding: "utf8", timeout: 10000, env: foregroundChildEnv() });
   assert.strictEqual(r.status, 0,
     `Expected exit 0, got ${r.status}. stdout: ${r.stdout.slice(0, 500)}`);
   const out = JSON.parse(r.stdout);
@@ -286,7 +295,7 @@ test("node dispatch-timeout-sanity.js --json output is valid JSON with checks ar
   const r = spawnSync(process.execPath, [
     path.join(__dirname, "dispatch-timeout-sanity.js"),
     "--json",
-  ], { encoding: "utf8", timeout: 10000 });
+  ], { encoding: "utf8", timeout: 10000, env: foregroundChildEnv() });
   assert.doesNotThrow(() => JSON.parse(r.stdout), "Output must be valid JSON");
   const out = JSON.parse(r.stdout);
   assert(Array.isArray(out.checks), "Expected checks to be an array");
@@ -303,10 +312,17 @@ console.log("\n(7) fix-cycle pin — runProvider (providers.js) is a covered wra
 test("WRAPPER_DEFAULTS includes 'run-provider' (the cross-provider runProvider route)", () => {
   assert(Object.prototype.hasOwnProperty.call(WRAPPER_DEFAULTS, "run-provider"),
     "run-provider must stay in WRAPPER_DEFAULTS — removing it silently drops the 4th G8 wrapper from the sanity sweep");
-  assert(
-    foregroundAwareTimeout(WRAPPER_DEFAULTS["run-provider"], {}) <= FOREGROUND_CEILING_MS,
-    "run-provider foreground bound must clamp to the ceiling",
-  );
+  // Foreground judgement: clear BOTH names of the background signal for this assertion (exact restore after).
+  const snap = mcEnv.snapshotEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
+  try {
+    assert(
+      foregroundAwareTimeout(WRAPPER_DEFAULTS["run-provider"], {}) <= FOREGROUND_CEILING_MS,
+      "run-provider foreground bound must clamp to the ceiling",
+    );
+  } finally {
+    mcEnv.restoreEnv(snap);
+  }
 });
 test("providers.js loads and reaches timeout-policy (no broken require path)", () => {
   const providers = require("../hooks/lib/providers.js");

@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T18:56:53.639Z",
+  "generatedAt": "2026-09-13T19:09:56.636Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -11604,8 +11604,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/dispatch-timeout-sanity.test.js",
-      "sha256": "7ab4e56d623d702bfba52e7c55e1fe743e42e1f43195d824326cee8da6ff7877",
-      "installedSha": "7ab4e56d623d702bfba52e7c55e1fe743e42e1f43195d824326cee8da6ff7877"
+      "sha256": "29a9d1659c96555721f6d5fccd900b9be85a320a1c957c2ff2f3316c6508dfba",
+      "installedSha": "29a9d1659c96555721f6d5fccd900b9be85a320a1c957c2ff2f3316c6508dfba"
     },
     "scripts/checks/doc-ref-integrity.allowlist.json": {
       "owner": "framework",
