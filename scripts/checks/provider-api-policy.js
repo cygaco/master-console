@@ -41,7 +41,7 @@
  *   - the deep-research pipeline (scripts/research/openai-deep-research.js,
  *     scripts/research/gemini-deep-research.js, .claude/commands/research/deep.md),
  *   - the policy doc ITSELF (agent-dispatch-guide.md states the whitelist),
- *   - the WARPOS gap-register (a curl verify-hint), and a defensive
+ *   - the MC gap-register (a curl verify-hint), and a defensive
  *     rate-limiting code-EXAMPLE in _knowledge — these NAME the literals to
  *     document, not to dispatch.
  *

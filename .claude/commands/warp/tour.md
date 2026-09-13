@@ -1,10 +1,10 @@
 ---
-description: Guided introduction to WarpOS — explains everything in simple language, no jargon
+description: Guided introduction to MC — explains everything in simple language, no jargon
 ---
 
-# /warp:tour — Welcome to WarpOS
+# /warp:tour — Welcome to MC
 
-A friendly, conversational walkthrough of everything WarpOS can do. Written for someone who's never seen this system before.
+A friendly, conversational walkthrough of everything MC can do. Written for someone who's never seen this system before.
 
 ## Procedure
 
@@ -12,9 +12,9 @@ A friendly, conversational walkthrough of everything WarpOS can do. Written for 
 
 Say something like:
 
-"Welcome to WarpOS! I'm Alex — your AI development partner. Let me show you around.
+"Welcome to MC! I'm Alex — your AI development partner. Let me show you around.
 
-WarpOS turns Claude Code from a chat tool into a full development system. Think of it like hiring a small team of specialists that live inside your project. They remember what happened last session, learn from mistakes, and can build features while you grab coffee.
+MC turns Claude Code from a chat tool into a full development system. Think of it like hiring a small team of specialists that live inside your project. They remember what happened last session, learn from mistakes, and can build features while you grab coffee.
 
 Let me walk you through what you've got."
 
@@ -56,7 +56,7 @@ Right now you're in solo mode. Try `/mode:adhoc` when you're ready to build your
 - `/session:handoff` — Save everything about this session so the next one picks up where we left off.
 - `/sleep:quick` — Let me consolidate what I've learned (takes about 2 minutes).
 - `/research:simple` — Need to research something? I'll query multiple AI models and synthesize the results.
-- `/portfolio:list` — Manage a portfolio of products from this WarpOS home base. The `/portfolio:*` suite (`list`, `status`, `open`, `new`, `adopt`, `register`, `dispatch`, `sync`, `bootstrap`, `clone`, `import`, `ponder`) is your one namespace for everything product-related. Each product lives in its own private GitHub repo side-by-side with WarpOS on disk; `/portfolio:open <slug> --spawn` opens a fresh Claude session inside it without leaving WarpOS."
+- `/portfolio:list` — Manage a portfolio of products from this MC home base. The `/portfolio:*` suite (`list`, `status`, `open`, `new`, `adopt`, `register`, `dispatch`, `sync`, `bootstrap`, `clone`, `import`, `ponder`) is your one namespace for everything product-related. Each product lives in its own private GitHub repo side-by-side with MC on disk; `/portfolio:open <slug> --spawn` opens a fresh Claude session inside it without leaving MC."
 
 Type `/` in the chat to see all available commands."
 

@@ -299,4 +299,4 @@ DATA REQUESTS — MINIMUM VIABLE
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. The verification-is-over-collection rule, the store mandates, and the GDPR/ICO doctrines are primary-source verified; statutory day-counts and per-state effective dates move, and retention durations are sensible defaults — check the official sources above and your jurisdiction before launch. This is an operations playbook, not legal advice; for health/finance/children/biometric data, see the red box in `PRIVACY_GDPR_GUIDE.md` and get a lawyer.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. The verification-is-over-collection rule, the store mandates, and the GDPR/ICO doctrines are primary-source verified; statutory day-counts and per-state effective dates move, and retention durations are sensible defaults — check the official sources above and your jurisdiction before launch. This is an operations playbook, not legal advice; for health/finance/children/biometric data, see the red box in `PRIVACY_GDPR_GUIDE.md` and get a lawyer.*

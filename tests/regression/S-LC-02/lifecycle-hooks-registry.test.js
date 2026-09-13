@@ -2,7 +2,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lifecycle-hooks-registry.test.js — S-LC-02 / WI-1. The VIRTUAL mode-lifecycle
 // EVENT registry (.claude/agents/_org/mode-lifecycle-hooks.json) is well-formed:
-//   - parses; sibling schema string warpos/mode-lifecycle-hooks/v0.1
+//   - parses; sibling schema string mc/mode-lifecycle-hooks/v0.1
 //   - every event row has event / when / mode / payload_fields
 //   - mode ∈ {block, advisory}
 //   - harness_fires is the literal false on EVERY row (virtual invariant, β refinement)
@@ -49,7 +49,7 @@ function ok(name, fn) {
 const doc = JSON.parse(fs.readFileSync(REGISTRY, "utf8"));
 
 ok("registry-parses-with-sibling-schema", () => {
-  assert.strictEqual(doc.$schema, "warpos/mode-lifecycle-hooks/v0.1", "sibling schema string");
+  assert.strictEqual(doc.$schema, "mc/mode-lifecycle-hooks/v0.1", "sibling schema string");
   assert.ok(Array.isArray(doc.events), "events is an array");
 });
 

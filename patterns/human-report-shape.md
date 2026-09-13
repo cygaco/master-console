@@ -26,8 +26,8 @@ Reports use: verdict, what changed, why, risks remaining, what was rejected, wha
 
 ## Validation
 
-`scripts/warpos/report-format.js` centralizes the human-facing shape for release/update/promote command output.
+`scripts/mc/report-format.js` centralizes the human-facing shape for release/update/promote command output.
 
 ## Owner
 
-WarpOS command layer.
+MC command layer.

@@ -33,7 +33,7 @@ const now = new Date().toISOString();
 // `reg.primary = id` assignment below then yields a valid registry (primary
 // points at the present, newly-created sprint).
 const reg = readYamlMaybe(regPath) || {
-  schema: "warpos/sprint/active-sprints/v1",
+  schema: "mc/sprint/active-sprints/v1",
   primary: null,
   sprints: [],
   created_at: now,
@@ -118,7 +118,7 @@ try {
 process.stdout.write(`added ${id} as primary\n`);
 
 // ── WG-14 fallbacks: minimal schema-valid trackers when templates are absent.
-// Mirror _warpos/templates/sprint/init/{current-sprint,sprint-progress}.yaml.tmpl.
+// Mirror _mc/templates/sprint/init/{current-sprint,sprint-progress}.yaml.tmpl.
 // writeYaml injects the `schema:` header from the file path, so it is omitted here.
 function minimalCurrent(id, title, now) {
   return {

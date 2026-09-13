@@ -140,7 +140,7 @@ System capabilities achieved and roadmap for what comes next. Ordered by depende
 - [ ] Stable regeneration across long time horizons
 
 ### Phase 7: Platform
-- [ ] Cross-project reusable infrastructure (WarpOS proven)
+- [ ] Cross-project reusable infrastructure (MC proven)
 - [ ] Business workflows, not just coding workflows
 - [ ] Organization-scale agent platform
 - [ ] Product factory mode

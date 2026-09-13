@@ -18,7 +18,7 @@ const os = require("os");
 const path = require("path");
 const { PassThrough } = require("stream");
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-status-smoke-"));
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "mc-status-smoke-"));
 const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 
 // Set BEFORE requiring registry/status — registryPath() reads env on every call.
@@ -58,7 +58,7 @@ function assertContains(name, got, sub) {
 // ── Test 1: empty registry ────────────────────────────────
 (async () => {
   console.log("\n--- Test 1: empty registry ---");
-  reg.save({ schema: "warpos/portfolio-registry/v1", products: {} });
+  reg.save({ schema: "mc/portfolio-registry/v1", products: {} });
   const b = makeBuffers();
   const r = await statusForRegistry({ stdout: b.ostream, stderr: b.estream });
   assertEq("empty.exitCode", r.exitCode, 0);
@@ -81,7 +81,7 @@ function assertContains(name, got, sub) {
   const stalePath = path.join(TMP_DIR, "stale-does-not-exist");
   const nowIso = new Date().toISOString();
   reg.save({
-    schema: "warpos/portfolio-registry/v1",
+    schema: "mc/portfolio-registry/v1",
     products: {
       valid: { slug: "valid", repo_path: validRepo, role: "product", last_synced: nowIso },
       stale: { slug: "stale", repo_path: stalePath, role: "product", last_synced: nowIso },

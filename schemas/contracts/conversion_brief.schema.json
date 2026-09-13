@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/contracts/conversion_brief/v0.1",
-  "title": "WarpOS Product-Studio Contract — Conversion Brief (v0.1)",
+  "$id": "mc/contracts/conversion_brief/v0.1",
+  "title": "MC Product-Studio Contract — Conversion Brief (v0.1)",
   "description": "The conversion hypothesis + objection handling for the converting artifact. Derives from the message_brief.",
   "version": "v0.1",
   "precedence_note": "v0.1 ranks are revisable post-pilot (global integer rank; β EVT-sp20260530-001-before-plan-beta-001).",

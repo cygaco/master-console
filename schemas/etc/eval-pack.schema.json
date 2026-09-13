@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/etc/eval-pack/v0.1",
-  "title": "WarpOS /etc Eval-Pack (v0.1)",
+  "$id": "mc/etc/eval-pack/v0.1",
+  "title": "MC /etc Eval-Pack (v0.1)",
   "description": "Structured eval-pack for the /etc authoring+eval harness. Captures procedures, a rubric with mechanical checks, and examples/counterexamples for a skill or prompt artifact. Anti-CoT: every field is structured JSON — no free-text reasoning dumps.",
   "type": "object",
   "required": ["id", "target", "rubric"],

@@ -1,12 +1,12 @@
 ---
-description: Diff canonical WarpOS against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.
+description: Diff canonical MC against an installed product — version/staleness, framework-file drift (stale vs locally-modified), coverage gaps, and skills/agents/hooks delta. Read-only; reports on the product, never edits it.
 ---
 
 # /warp:diff — Canonical ↔ Product Divergence Report
 
-Show exactly how an installed product's WarpOS differs from **this** canonical checkout: what version it's on, which framework-owned files have drifted (and whether the product is just *stale* or has *locally modified* them), which framework files/skills/agents/hooks it's missing or carries extra.
+Show exactly how an installed product's MC differs from **this** canonical checkout: what version it's on, which framework-owned files have drifted (and whether the product is just *stale* or has *locally modified* them), which framework files/skills/agents/hooks it's missing or carries extra.
 
-**Read-only and canonical-side.** This reads the product repo to compute the diff; it **never writes** to it (the WarpOS-only / products-operate-in-their-own-session boundary — see `[[feedback_warpos_only_no_cross_project]]`). To actually update a product, run `/warp:update` *inside that product's own session*.
+**Read-only and canonical-side.** This reads the product repo to compute the diff; it **never writes** to it (the MC-only / products-operate-in-their-own-session boundary — see `[[feedback_mc_only_no_cross_project]]`). To actually update a product, run `/warp:update` *inside that product's own session*.
 
 ## Usage
 
@@ -23,7 +23,7 @@ Show exactly how an installed product's WarpOS differs from **this** canonical c
 Run the engine — it does all the work:
 
 ```
-node scripts/warpos/diff.js <slug|--product PATH> [--json]
+node scripts/mc/diff.js <slug|--product PATH> [--json]
 ```
 
 Then summarize the report for the operator. The engine compares:
@@ -45,5 +45,5 @@ Then summarize the report for the operator. The engine compares:
 ## Boundaries
 
 - Never edits the product. If the diff reveals work to do, hand it off (`/portfolio:open <slug>` then `/warp:update` there).
-- Builds on `/portfolio:status`, `/warp:check`, and the `/scan:warpos-*` family — this is the **divergence** view that unifies "how stale" + "how diverged" + "what's missing" into one report.
+- Builds on `/portfolio:status`, `/warp:check`, and the `/scan:mc-*` family — this is the **divergence** view that unifies "how stale" + "how diverged" + "what's missing" into one report.
 - Exit code is `0` even when divergence is found (divergence is informational); `2` only on a usage/resolution error (no slug+path, product has no readable `.claude/framework-installed.json`).

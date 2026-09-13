@@ -68,7 +68,7 @@ You are running in an isolated environment (worktree) on branch agent/fix/{{FEAT
 <!-- knowledge:security role:security-fixer (grounding — training references, do not weaken existing grounding) -->
 ### Security knowledge library (training references)
 
-Ground your fix in the WarpOS **application-security knowledge library** (`_knowledge/security/` · index `_knowledge/security/registry.json` · overview `_knowledge/security/README.md`) — framework-generic references (OWASP Top 10 2025, API/LLM Top 10, Supabase RLS) on authz/RLS, secrets/config, rate-limiting/abuse, prompt-injection/LLM, input-validation/injection, and web headers/CSRF/CORS + supply-chain. When repairing a finding, apply the matching ref's §6 RULES (`AUTHZ-*`/`SECRET-*`/`RATE-*`/`PINJ-*`/`INVAL-*`/`WEBSEC-*`) so the fix closes the issue without re-opening another. This block GROUNDS your fix with references; it never widens your one-brief scope or weakens the rules below.
+Ground your fix in the MC **application-security knowledge library** (`_knowledge/security/` · index `_knowledge/security/registry.json` · overview `_knowledge/security/README.md`) — framework-generic references (OWASP Top 10 2025, API/LLM Top 10, Supabase RLS) on authz/RLS, secrets/config, rate-limiting/abuse, prompt-injection/LLM, input-validation/injection, and web headers/CSRF/CORS + supply-chain. When repairing a finding, apply the matching ref's §6 RULES (`AUTHZ-*`/`SECRET-*`/`RATE-*`/`PINJ-*`/`INVAL-*`/`WEBSEC-*`) so the fix closes the issue without re-opening another. This block GROUNDS your fix with references; it never widens your one-brief scope or weakens the rules below.
 <!-- /knowledge:security role:security-fixer -->
 
 ## Rules

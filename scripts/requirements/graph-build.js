@@ -407,7 +407,7 @@ function buildGraph() {
     version: GRAPH_VERSION,
     generatedAt: new Date().toISOString(),
     generatedFromCommit: headSha,
-    schemaUrl: "warpos/requirements-graph/v1",
+    schemaUrl: "mc/requirements-graph/v1",
     counts: {
       features: Object.keys(features).length,
       requirements: Object.keys(requirements).length,

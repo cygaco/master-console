@@ -36,7 +36,7 @@ const DETECT_STATUSES = ["present", "partial", "absent"];
 // A minimal synthetic state for shape-validation (no real repo needed).
 function sampleState() {
   return {
-    schema: "warpos/bootstrap/lastmile-state/v1",
+    schema: "mc/bootstrap/lastmile-state/v1",
     repoRoot: ".",
     isNodeProject: true,
     framework: "nextjs",

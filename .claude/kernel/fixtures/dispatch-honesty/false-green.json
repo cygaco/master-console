@@ -15,5 +15,5 @@
     "reason": "a ResultEnvelope claiming status:passed with zero files_changed, zero commits, zero tests_run, and zero evidence_paths is invalid (packet-06 Mandatory validation: 'claims passed without evidence' / 'claims changed files but lists none' / 'claims tests passed with no command output/evidence'). This is the false-green class -- ok:true with no real work."
   },
   "kernel_scope": "IN",
-  "note": "Harvested from packet-13/15 hidden-eval 'dispatch false-green fixtures' + WarpOS's own recurring RI-004/ED-018 tiny-fake-green-prompt failure class."
+  "note": "Harvested from packet-13/15 hidden-eval 'dispatch false-green fixtures' + MC's own recurring RI-004/ED-018 tiny-fake-green-prompt failure class."
 }

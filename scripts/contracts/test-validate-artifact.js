@@ -49,7 +49,7 @@ test("schemas-valid-and-declare-contract-meta", () => {
   ];
   for (const t of want) assert(reg[t], `missing schema for ${t}`);
   for (const [t, s] of Object.entries(reg)) {
-    assert(s.$id === `warpos/contracts/${t}/v0.1`, `${t} bad $id: ${s.$id}`);
+    assert(s.$id === `mc/contracts/${t}/v0.1`, `${t} bad $id: ${s.$id}`);
     assert(
       s.contract && typeof s.contract.owner_domain === "string",
       `${t} missing contract.owner_domain`,

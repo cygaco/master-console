@@ -53,7 +53,7 @@ const GATES = [
   {
     id: "publish-legal-docs",
     action: "Publish privacy policy / terms as FINAL legal documents",
-    why: "These are legal commitments; WarpOS drafts compliance-by-default, not law.",
+    why: "These are legal commitments; MC drafts compliance-by-default, not law.",
     requires: "operator (or counsel) review + explicit approval to publish as final",
   },
 ];

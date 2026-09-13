@@ -87,7 +87,7 @@ test("FIXTURE (i) — ENV-vector SOURCE GUARD: role-resolver.js never READS WARP
   // transport env vars. A future `if (process.env.WARPOS_ACTOR_KIND === 'top_level_session') allow()` would
   // re-open the phantom-one-layer-up hole — this source guard catches it.
   const src = require("node:fs").readFileSync(require("node:path").join(__dirname, "role-resolver.js"), "utf8");
-  assert.ok(!/process\.env\.WARPOS_(ACTOR_KIND|BOUND_ROLE)/.test(src), "role-resolver.js must not read the identity transport env vars as authority");
+  assert.ok(!/process\.env\.MC_(ACTOR_KIND|BOUND_ROLE)/.test(src), "role-resolver.js must not read the identity transport env vars as authority");
 });
 
 test("FIXTURE (i) — structural: deriveBinding's ONLY inputs are {channel, role}; a worker-set field cannot reach it", () => {

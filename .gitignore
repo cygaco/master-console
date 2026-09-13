@@ -16,7 +16,7 @@ Thumbs.db
 *.swp
 *.swo
 
-# WarpOS Runtime (session-specific, DO NOT commit)
+# MC Runtime (session-specific, DO NOT commit)
 .claude/project/events/
 .claude/project/decisions/provider-trace.jsonl
 .claude/project/memory/
@@ -51,20 +51,20 @@ Thumbs.db
 # `DUMP.md` also matched .claude/commands/session/dump.md on case-insensitive filesystems.
 /DUMP.md
 # Operator-requested session export/report (local handoff, not a shipped artifact —
-# was tripping warpos-ship-coverage as an unclassified root .md). E-DISPATCH-PERFECT-001 W5.
+# was tripping mc-ship-coverage as an unclassified root .md). E-DISPATCH-PERFECT-001 W5.
 REPORT-JULY-18.md
 REPORT-*.md
 
-# WarpOS runtime/transaction/consult scratch — all per-machine transient (G5.7).
+# MC runtime/transaction/consult scratch — all per-machine transient (G5.7).
 # Broad ignore so consult outputs, fixtures, ping prompts, etc. are never tracked.
-.warpos/
+.mc/
 # (specific historical entries retained below; the broad rule above already covers them)
-.warpos/transactions/
+.mc/transactions/
 # Plan-payload scratch input to /sprint:plan + /sprint:full orchestrator.
 # Durable record lives at paths.sprintPlanContracts/PC-*.yaml; these scratch
 # files often carry product slugs from the brief and would trip the
 # framework-purity guard if committed.
-.warpos/plan-payload-*.json
+.mc/plan-payload-*.json
 runtime/qa-warp-update/
 
 # Portfolio briefs + clones — local-only until adopted into private sibling repos
@@ -95,18 +95,18 @@ runtime/etc/consults/*
 runtime/growth/spend-approval.token
 
 # Install matrix ephemeral fixtures (SP-20260524-001). The runner creates a
-# per-scenario timestamped dir under .warpos/test-fixtures/install-matrix/;
-# failed scenarios are moved to .warpos/test-fixtures/install-matrix/_failed/.
+# per-scenario timestamped dir under .mc/test-fixtures/install-matrix/;
+# failed scenarios are moved to .mc/test-fixtures/install-matrix/_failed/.
 # All ephemeral — should never be committed.
-.warpos/test-fixtures/
+.mc/test-fixtures/
 
-# Ad-hoc throwaway WarpOS installs from manual install-gap testing (git-init'd
-# temp dirs, e.g. .warpos/_gh3/). Ephemeral — never commit. (Prefer
-# .warpos/test-fixtures/ for new throwaways; this covers stray manual ones.)
-.warpos/_gh*/
+# Ad-hoc throwaway MC installs from manual install-gap testing (git-init'd
+# temp dirs, e.g. .mc/_gh3/). Ephemeral — never commit. (Prefer
+# .mc/test-fixtures/ for new throwaways; this covers stray manual ones.)
+.mc/_gh*/
 
 # Operator scratch — downstream gap registers (gap-fix landed; kept for reference, not framework content)
-WarpOS-Update/
+MC-Update/
 
 # research:deep per-run scratch under _docs/research — deliverables (*.md/*.json) kept, scratch transient
 _docs/research/.tmp-*
@@ -129,7 +129,7 @@ runtime/agent-system-plan/*
 # These patterns stop any in-repo key/secret/backup from ever being swept in (cf. the
 # 2026-06-08 `git add -A` scratch-leak). Example/sample/template variants are placeholders,
 # not secrets, and don't match these patterns, so they stay tracked
-# (e.g. _warpos/templates/app-scaffold/.env.local.example.tmpl).
+# (e.g. _mc/templates/app-scaffold/.env.local.example.tmpl).
 *.key
 *.pem
 *.p12
@@ -156,14 +156,14 @@ credentials.json
 
 # ── Crud-sweep 2026-07-16 (GITIGNORE-ONLY lever, β 4×DECIDE) ──
 # Close the `git add -A` public-push exposure for runtime scratch, .codex config,
-# CODEX-LOG.md (cited Evidence — never delete), and the WarpOS-v1/ v1-rebuild
-# charter corpus (also walk-skipped in scripts/warpos/manifest/walk-skip.js so it
+# CODEX-LOG.md (cited Evidence — never delete), and the MC-v1/ v1-rebuild
+# charter corpus (also walk-skipped in scripts/mc/manifest/walk-skip.js so it
 # clears the --strict FAIL). Patterns are SCOPED to avoid shadowing the tracked
 # runtime fixtures (agent-system-plan/, diagnostic/, models-research/, notes/,
-# warpos-v1-discovery/, sp002-dispatch/WSG*, sp-dp-*/*-out.md|*-prompt.md, etc.).
+# mc-v1-discovery/, sp002-dispatch/WSG*, sp-dp-*/*-out.md|*-prompt.md, etc.).
 .codex/
 CODEX-LOG.md
-WarpOS-v1/
+MC-v1/
 # runtime root-level scratch dotfiles + one-shot append scripts + session dirs
 runtime/.??*
 runtime/_*.js
@@ -224,7 +224,7 @@ _planning/ingest/
 _planning/vlad-*.md
 _planning/reviews/*.log
 _docs/*-brief-v4.*
-_warpos/BASELINE/_docs/*-brief-v4.*
+_mc/BASELINE/_docs/*-brief-v4.*
 runtime/vlad-w1/
 runtime/enforcement-sweep/
 runtime/sp004-gauntlet/
@@ -247,11 +247,11 @@ runtime/**/*.out
 # Private product trees + origin-product specs removed from the INDEX only (files stay on
 # disk; the private mirror holds history). Enforcer: scripts/checks/framework-purity.js
 # (full-tree, fail-closed on the private slugs) + scripts/checks/leak-denylist.js.
-_warpos/EXAMPLES/
+_mc/EXAMPLES/
 _docs/research/*-staffing-layer/
-_warpos/BASELINE/_docs/research/*-staffing-layer/
+_mc/BASELINE/_docs/research/*-staffing-layer/
 _docs/research/2026-05-21-product-clone-*-postmortem.md
-_warpos/BASELINE/_docs/research/2026-05-21-product-clone-*-postmortem.md
+_mc/BASELINE/_docs/research/2026-05-21-product-clone-*-postmortem.md
 scripts/delta-*.txt
 scripts/write-mr-fix1-brief.js
 # History-rewrite originals (the plaintext rules + hit lists) live under _private/rewrite/
@@ -261,7 +261,7 @@ runtime/open-source/rewrite/*.orig
 runtime/open-source/rewrite/*unredacted*
 runtime/open-source/rewrite/originals/
 # β mining output (verbatim operator prompts) — re-asserted; enforcer:
-# scripts/checks/warpos-tracked-transients.js (fails on any tracked file under it).
+# scripts/checks/mc-tracked-transients.js (fails on any tracked file under it).
 .claude/agents/president/_system/beta/mined/
 
 # per-machine harness permissions (was only ignored via the operator global excludes; repo-level since 2026-09-12)

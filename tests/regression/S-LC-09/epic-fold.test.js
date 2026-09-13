@@ -110,7 +110,7 @@ h.test("conflict is FLAGGED in the Change log; Scope/Decisions are NOT silently 
 
 // ── END-TO-END CLI: append (exit 0) · conflict (exit 4) · missing epic (exit 3)
 h.test("end-to-end CLI: fold appends provenance (0); conflict exits 4; missing epic exits 3", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-efold-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-efold-"));
   try {
     const epicFile = path.join(tmp, "E-FOLD-001-fold-fixture.md");
     fs.writeFileSync(epicFile, makeEpic(), "utf8");

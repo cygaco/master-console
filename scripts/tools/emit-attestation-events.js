@@ -88,7 +88,7 @@ const CURRENT = [
   { id: 113, target: "code:scripts/hooks/lib/providers.js#modelsMatch" },
   { id: 115, target: "hook:memory-guard#cmdForRedirectCheck" },
   { id: 118, target: "script:scripts/warp-setup.js#seedSystems" },
-  { id: 120, target: "rule:PROJECT.md#Cross-repo parity with WarpOS" },
+  { id: 120, target: "rule:PROJECT.md#Cross-repo parity with MC" },
   { id: 121, target: "memory:feedback_save_plans" },
 ];
 

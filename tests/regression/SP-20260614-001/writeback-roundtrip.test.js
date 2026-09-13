@@ -22,7 +22,7 @@ const Module = require("module");
 const ROOT = path.resolve(__dirname, "..", "..", "..");
 const TMPL = path.join(
   ROOT,
-  "_warpos",
+  "_mc",
   "templates",
   "app-scaffold",
   "src",
@@ -110,8 +110,8 @@ const { patchChecklistItem } = loadWriteback();
 
 // ── Fixture: a realistic FOUNDERS_CHECKLIST.md with the things parse() drops ──
 const FIXTURE = [
-  "<!-- warpos:founders-checklist v1 -->",
-  "schema: warpos/founders-checklist/v1",
+  "<!-- mc:founders-checklist v1 -->",
+  "schema: mc/founders-checklist/v1",
   "declared_stack_source: _requirements/00-canonical/DATA_AND_ACCOUNTS.md",
   "declared_stack: auth=clerk, payments=stripe, hosting=vercel",
   "",
@@ -127,7 +127,7 @@ const FIXTURE = [
   "",
   "- [ ] id=auth.clerk.production dim=security source=declared-stack:auth=clerk Create Clerk production instance and allowed domains",
   "- [x] id=payments.stripe.identity dim=monetization source=declared-stack:payments=stripe Verify Stripe identity and live-mode payouts",
-  "<!-- /warpos:founders-checklist -->",
+  "<!-- /mc:founders-checklist -->",
   "",
 ].join("\n");
 
@@ -184,14 +184,14 @@ ok("roundtrip-preserves-annotations-and-flips-one-bit", () => {
   assert.strictEqual(changedLineIdxs.length, 1, "exactly one raw line changed");
 
   // Note, header, metadata, BOTH markers survive byte-for-byte.
-  assert.ok(afterRaw.includes("<!-- warpos:founders-checklist v1 -->"), "open marker survives");
-  assert.ok(afterRaw.includes("<!-- /warpos:founders-checklist -->"), "close marker survives");
+  assert.ok(afterRaw.includes("<!-- mc:founders-checklist v1 -->"), "open marker survives");
+  assert.ok(afterRaw.includes("<!-- /mc:founders-checklist -->"), "close marker survives");
   assert.ok(afterRaw.includes("## Human-only launch gates"), "section header survives");
   assert.ok(
     afterRaw.includes("<!-- NOTE: payouts owner is Jordan; legal entity filed 2026-05-01"),
     "human note survives byte-for-byte",
   );
-  assert.ok(afterRaw.includes("schema: warpos/founders-checklist/v1"), "schema metadata survives");
+  assert.ok(afterRaw.includes("schema: mc/founders-checklist/v1"), "schema metadata survives");
   assert.ok(
     afterRaw.includes("declared_stack: auth=clerk, payments=stripe, hosting=vercel"),
     "declared_stack metadata survives",
@@ -268,14 +268,14 @@ ok("duplicate-id-fails-closed-no-write", () => {
 
   // Two lines share id=provider.accounts — a corrupt-checklist signal.
   const dup = [
-    "<!-- warpos:founders-checklist v1 -->",
-    "schema: warpos/founders-checklist/v1",
+    "<!-- mc:founders-checklist v1 -->",
+    "schema: mc/founders-checklist/v1",
     "",
     "## Human-only launch gates",
     "- [ ] id=provider.accounts dim=product source=core Create production developer accounts",
     "- [x] id=domain.dns dim=deployment source=core Confirm domain ownership and DNS access",
     "- [ ] id=provider.accounts dim=product source=core DUPLICATE id — corrupt checklist",
-    "<!-- /warpos:founders-checklist -->",
+    "<!-- /mc:founders-checklist -->",
     "",
   ].join("\n");
   fs.writeFileSync(file, dup, "utf8");
@@ -310,14 +310,14 @@ ok("crlf-mixed-eol-preserved-only-one-byte-changes", () => {
   // Deliberately MIXED: header block CRLF, the item lines LF, the close marker CRLF, and a final
   // line with NO trailing newline. The target line itself ends in LF.
   const mixed =
-    "<!-- warpos:founders-checklist v1 -->\r\n" +
-    "schema: warpos/founders-checklist/v1\r\n" +
+    "<!-- mc:founders-checklist v1 -->\r\n" +
+    "schema: mc/founders-checklist/v1\r\n" +
     "\r\n" +
     "## Human-only launch gates\r\n" +
     "<!-- NOTE: keep my CRLF endings intact -->\r\n" +
     "- [ ] id=provider.accounts dim=product source=core Create production accounts\n" +
     "- [x] id=domain.dns dim=deployment source=core Confirm domain ownership\n" +
-    "<!-- /warpos:founders-checklist -->\r\n" +
+    "<!-- /mc:founders-checklist -->\r\n" +
     "trailing line with no newline";
   fs.writeFileSync(file, mixed, "utf8");
 

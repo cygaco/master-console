@@ -62,7 +62,7 @@ const SKIP_REL_SEGMENTS = [
   "authority-pollution", // the committed G2.3 fixture subtree (see fixtures/authority-pollution/)
 ];
 // Relative-path substrings for dirs whose NAME carries the marker (backups, the v1 rebuild WIP).
-const SKIP_REL_SUBSTR = [".warpos-backup", "warpos-v1", path.sep + "backup"];
+const SKIP_REL_SUBSTR = [".mc-backup", "mc-v1", path.sep + "backup"];
 
 // The neutral surfaces (basenames) + which is EXEMPT at the canonical root.
 const NEUTRAL_BASENAMES = new Set(["AGENTS.md", "GEMINI.md", "CLAUDE.md"]);

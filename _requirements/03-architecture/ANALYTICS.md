@@ -1,6 +1,6 @@
 # Analytics and Product Event Taxonomy
 
-WarpOS-generated apps use a small, stable event vocabulary. Events describe user or system outcomes, not implementation details.
+MC-generated apps use a small, stable event vocabulary. Events describe user or system outcomes, not implementation details.
 
 ## Standard Events
 

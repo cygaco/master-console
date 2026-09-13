@@ -1,7 +1,7 @@
-# Top-Level Runtime Contract — WarpOS Kernel
+# Top-Level Runtime Contract — MC Kernel
 
 **D1 — SP-20260718-001 Phase 0.** This is the merged packet-04/packet-16 Top-Level Runtime Contract:
-the provider-independent trust boundary + runtime portability contract everything else in WarpOS 1.0
+the provider-independent trust boundary + runtime portability contract everything else in MC 1.0
 binds to. Home: `.claude/kernel/` (`paths.kernel`). Companions: `role-binding.json` (D3),
 `support-matrix.json` (D4), `workorder-min.schema.json` (D5), `fixtures/` + `fixtures/manifest.json` (D6).
 ADR: `.claude/agents/president/_system/policy/adr/0018-durable-company-ephemeral-executors.md` (D2).
@@ -27,7 +27,7 @@ and self-hosts (it lints this very file to exit 0).
 
 ## §0 — Definition of Done Preamble (D8)
 
-The H-1 sentence, verbatim (also the plan's DoD — this is the yardstick the whole of WarpOS 1.0,
+The H-1 sentence, verbatim (also the plan's DoD — this is the yardstick the whole of MC 1.0,
 not just Phase 0, is built against):
 
 > 1.0 is done when a clean installed product moves idea→canon→roadmap→sprint→build→gauntlet→launch-readiness→release→retro→learning-promotion without relying on chat memory, stale trackers, manual Alpha heroics, or unverified agent claims.
@@ -41,7 +41,7 @@ G0.4 asserts the sentence appears verbatim; it carries no trailer of its own).
 ## §1 — Trust-Boundary Statement
 
 Any provider — Claude, Codex/GPT, Antigravity, or a future model — MAY propose or orchestrate work
-at the top level of WarpOS. That is the entire point of the interoperability system (packet-04): the
+at the top level of MC. That is the entire point of the interoperability system (packet-04): the
 company is not the model. But exactly one thing must NOT be provider-negotiable: a single,
 PROVIDER-INDEPENDENT TRUSTED layer SOLELY owns:
 
@@ -132,7 +132,7 @@ A runtime's ability to host the top-level Alpha role is classified into four lev
 | 0 | Chat-only | Plan, write prompts, review copied outputs. No file/tool access. | Strategy, architecture review, prompt generation, decision support. | Direct repo mutation, dispatch execution, liveness management, release/update operations. |
 | 1 | File-aware | Reads repo, produces patches. Cannot run commands. | Docs/plans/templates, code generation for human/automation-applied patches. | Anything requiring live command execution or self-verification. |
 | 2 | Tool-capable | Reads/writes files AND runs commands (Bash/CLI). | Hosting Alpha today, IF wrappers/gates exist. | Acting as the sole trusted integration principal (that's still Phase 4, regardless of level). |
-| 3 | WarpOS Master Console | Provider-neutral top-level UI/API that binds Alpha to any model and dispatches through adapters. | The long-term interoperability target. | N/A — not built for any helm yet. |
+| 3 | MC Master Console | Provider-neutral top-level UI/API that binds Alpha to any model and dispatches through adapters. | The long-term interoperability target. | N/A — not built for any helm yet. |
 
 Today, Claude Code and Codex CLI both operate at **Level 2** (proven, live). Antigravity/agy is
 contracted as a Level-2+ helm but is currently DOWN (ED-060) — see §4. No helm operates at Level 3

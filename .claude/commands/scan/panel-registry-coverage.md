@@ -52,7 +52,7 @@ point every row is enforced (no skips). A target absent **outside** a parallel l
 - `1` — ≥1 hard finding (`malformed_panel_row`, `bad_run_context`, `unsafe_opener`,
   `unrecognized_opener`, `orphan_opener`, `resolver_error`).
 - `2` — **fail-CLOSED**: the enforcer's OWN input is corrupt — `framework/panel-registry.json`
-  is unreadable, not valid JSON, carries the wrong `$schema` (≠ `warpos/panel-registry/v1`),
+  is unreadable, not valid JSON, carries the wrong `$schema` (≠ `mc/panel-registry/v1`),
   or has no `panels` object. Could-not-run is **NOT green** and is **distinct** from a clean
   pass (`0`) and from an orphan-row finding (`1`). (Opposite of the R-4 roadmap *generator*,
   which fails SOFT on its human-authored inputs — do not let one leak into the other.)

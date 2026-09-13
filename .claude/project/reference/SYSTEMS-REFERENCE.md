@@ -395,7 +395,7 @@ reasoning       4   Problem classification + tracing     Stub
 fix             2   Bug diagnosis (fast + deep)          Untested
 hooks           5   Hook management + friction analysis  Mixed
 status          2   System + project dashboards          Active
-warp            3   Cross-product sync (WarpOS)          Dormant
+warp            3   Cross-product sync (MC)          Dormant
 deploy          1   Pre-deploy checklist + push          Dormant
 reconcile       2   Spec staleness scanning              Dormant
 fav             2   Favorite moments collection          Dormant

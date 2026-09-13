@@ -9,15 +9,15 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
 const frameworkManifest = JSON.parse(
   fs.readFileSync(path.join(REPO_ROOT, ".claude/framework-manifest.json"), "utf8"),
 );
-const warposManifest = JSON.parse(
-  fs.readFileSync(path.join(REPO_ROOT, "_warpos/MANIFEST.json"), "utf8"),
+const mcManifest = JSON.parse(
+  fs.readFileSync(path.join(REPO_ROOT, "_mc/MANIFEST.json"), "utf8"),
 );
 
 const REQUIRED = [
-  "_warpos/templates/app-scaffold/src/lib/telemetry/events.ts.tmpl",
-  "_warpos/templates/app-scaffold/src/lib/telemetry/sink.ts.tmpl",
-  "_warpos/templates/app-scaffold/src/lib/telemetry/track.ts.tmpl",
-  "_warpos/templates/app-scaffold/src/lib/telemetry/chain.ts.tmpl",
+  "_mc/templates/app-scaffold/src/lib/telemetry/events.ts.tmpl",
+  "_mc/templates/app-scaffold/src/lib/telemetry/sink.ts.tmpl",
+  "_mc/templates/app-scaffold/src/lib/telemetry/track.ts.tmpl",
+  "_mc/templates/app-scaffold/src/lib/telemetry/chain.ts.tmpl",
 ];
 
 function flattenFrameworkAssets(manifest) {
@@ -39,12 +39,12 @@ function flattenWarposPaths(manifest) {
 }
 
 const frameworkPaths = flattenFrameworkAssets(frameworkManifest);
-const warposPaths = flattenWarposPaths(warposManifest);
+const mcPaths = flattenWarposPaths(mcManifest);
 
 try {
   for (const rel of REQUIRED) {
     assert(frameworkPaths.has(rel), `framework manifest missing ${rel}`);
-    assert(warposPaths.has(rel), `warpos manifest missing ${rel}`);
+    assert(mcPaths.has(rel), `mc manifest missing ${rel}`);
   }
   console.log("PASS telemetry-templates-ship");
   console.log("manifest-shipping: 1 passed, 0 failed");

@@ -105,7 +105,7 @@ Rule: Read-only consumption. Step UIs display the score, never modify scoring lo
 
 ## Cost Summary
 
-One row per billable operation: the operation, the model task/prompt key it maps to, its cost, and the owning feature. Pull the real cost allocation from the product's config (e.g. `.warpos/config.json` or the product manifest) rather than hardcoding it here.
+One row per billable operation: the operation, the model task/prompt key it maps to, its cost, and the owning feature. Pull the real cost allocation from the product's config (e.g. `.mc/config.json` or the product manifest) rather than hardcoding it here.
 
 | Operation        | Task Key       | Cost  | Feature        |
 | ---------------- | -------------- | ----- | -------------- |

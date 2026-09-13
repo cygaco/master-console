@@ -20,7 +20,7 @@
  *
  * Scope — deliberate memory commits only (high-frequency logs excluded):
  *   - <…>/.claude/projects/<…>/memory/*.md   (Claude Code auto-memory; MEMORY.md index excluded)
- *   - <…>/learnings.jsonl                      (WarpOS semantic memory)
+ *   - <…>/learnings.jsonl                      (MC semantic memory)
  * Excluded: events.jsonl, traces.jsonl, enforcement-debt.jsonl (logs / the
  * debt ledger itself).
  *

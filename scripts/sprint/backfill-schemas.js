@@ -38,7 +38,7 @@ function* walkYaml(dir) {
 }
 
 function hasSchemaHeader(text) {
-  return /^schema:\s*warpos\/sprint\/[a-z-]+\/v\d+\s*$/m.test(text);
+  return /^schema:\s*mc\/sprint\/[a-z-]+\/v\d+\s*$/m.test(text);
 }
 
 let scanned = 0;
@@ -61,7 +61,7 @@ for (const file of walkYaml(SPRINT_DIR)) {
   needed += 1;
   if (samples.needed.length < 5) samples.needed.push(`${rel} → ${kind}`);
   if (APPLY) {
-    const header = `schema: warpos/sprint/${kind}/v1\n`;
+    const header = `schema: mc/sprint/${kind}/v1\n`;
     fs.writeFileSync(file, header + text, "utf8");
     injected += 1;
   }

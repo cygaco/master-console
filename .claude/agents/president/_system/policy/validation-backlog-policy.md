@@ -3,7 +3,7 @@
 
 ## 1. Purpose
 
-This policy defines how WarpOS controls the validation backlog created by Requirements Change Object (RCO) staging.
+This policy defines how MC controls the validation backlog created by Requirements Change Object (RCO) staging.
 It prevents operational drift: staged entries persist after their context is gone, then stale requirements pollute gates and reviews.
 An unbounded backlog of `requirements-staged.jsonl` entries makes the Freshness Gate noise > signal.
 The policy defines lifecycle states, expiration, batch review, operator overrides, metrics, and review triggers.

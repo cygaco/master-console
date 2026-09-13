@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/approval/v1",
-  "title": "WarpOS Sprint v0.1 — Approval Record",
+  "$id": "mc/sprint/approval/v1",
+  "title": "MC Sprint v0.1 — Approval Record",
   "description": "Durable record of an approval decision. Lives under paths.sprintApprovals.",
   "type": "object",
   "required": [
@@ -16,7 +16,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/approval/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/approval/v1" },
     "id": { "type": "string", "pattern": "^AP-[0-9]{8}-[0-9]{3}$" },
     "sprint": { "type": "string" },
     "level": {

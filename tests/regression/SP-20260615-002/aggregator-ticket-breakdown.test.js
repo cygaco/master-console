@@ -49,7 +49,7 @@ function makeRoot(activeRows, records) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agg-breakdown-"));
   fs.mkdirSync(path.join(dir, ".claude", "project", "sprint"), { recursive: true });
 
-  const lines = ["schema: warpos/sprint/active-sprints/v1", "primary: null", "sprints:"];
+  const lines = ["schema: mc/sprint/active-sprints/v1", "primary: null", "sprints:"];
   for (const r of activeRows) {
     lines.push(`  - id: ${r.id}`);
     lines.push(`    status: ${r.status}`);
@@ -76,7 +76,7 @@ function currentYaml(id, columns) {
     "reopened", "superseded",
   ];
   const lines = [
-    "schema: warpos/sprint/current-sprint/v1",
+    "schema: mc/sprint/current-sprint/v1",
     `id: ${id}`,
     `title: "Fixture ${id}"`,
     "status: in_progress",

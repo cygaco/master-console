@@ -36,7 +36,7 @@ JSON: array of `{ path, title, size, mtime }`.
 
 ## Empty-state behavior
 
-If no `.md` files found, stderr `no docs found under <roots>` and exit 1. (A WarpOS install always has reference docs; absence is failure.)
+If no `.md` files found, stderr `no docs found under <roots>` and exit 1. (A MC install always has reference docs; absence is failure.)
 
 ## Example
 

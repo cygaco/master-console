@@ -29,14 +29,14 @@ JSON.
 
 ## Empty-state behavior
 
-If `paths.manifest` does not exist, stderr `manifest not found: <path>` and exit 1. (A WarpOS install always has a manifest; absence is failure.)
+If `paths.manifest` does not exist, stderr `manifest not found: <path>` and exit 1. (A MC install always has a manifest; absence is failure.)
 
 ## Example
 
 ```bash
 $ node scripts/manifest/cli.js show | head -3
 {
-  "$schema": "warpos/manifest/v1",
+  "$schema": "mc/manifest/v1",
   "project": {
 ```
 

@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/policy/ledger-presence/v1",
+  "$schema": "mc/policy/ledger-presence/v1",
   "version": 1,
   "description": "Policy for scripts/hooks/ledger-presence-guard.js. Soft rollout during the first 14 days from sprint SP-20260519-001 release — flips to block after smoke validation per SP-20260514-002 routing-trace precedent.",
   "enforcement": {
@@ -32,7 +32,7 @@
       "scope": "sprint"
     },
     {
-      "match": "scripts/warpos/release-canonical.js",
+      "match": "scripts/mc/release-canonical.js",
       "expected_section": "RELEASES.md#versions",
       "expected_event": "ledger.write",
       "scope": "version"

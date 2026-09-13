@@ -1,5 +1,5 @@
 ---
-description: "Create a guarded WarpOS deprecation proposal for an agent, skill, hook, path, requirement, pattern, or generated file."
+description: "Create a guarded MC deprecation proposal for an agent, skill, hook, path, requirement, pattern, or generated file."
 user-invocable: true
 ---
 
@@ -10,14 +10,14 @@ Create a deprecation proposal that follows the Phase 6 removal policy. This comm
 ## Usage
 
 ```bash
-node scripts/warpos/deprecate.js <id> --type <kind> --replacement <id-or-none> --removal-version <version> --reason "<why>"
+node scripts/mc/deprecate.js <id> --type <kind> --replacement <id-or-none> --removal-version <version> --reason "<why>"
 ```
 
 Examples:
 
 ```bash
-node scripts/warpos/deprecate.js warp.sync --type skill --replacement warp.update --removal-version 1.0.0 --reason "Renamed to update."
-node scripts/warpos/deprecate.js old.path.key --type path --replacement new.path.key --removal-version 0.3.0 --reason "Path registry consolidation."
+node scripts/mc/deprecate.js warp.sync --type skill --replacement warp.update --removal-version 1.0.0 --reason "Renamed to update."
+node scripts/mc/deprecate.js old.path.key --type path --replacement new.path.key --removal-version 0.3.0 --reason "Path registry consolidation."
 ```
 
 ## Output

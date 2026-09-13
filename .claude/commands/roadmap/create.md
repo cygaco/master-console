@@ -20,7 +20,7 @@ Detect what grounding the project actually has and pick the richest available,
    FAILURE_STATES). Mine those and reason through the **role-routed product persona**
    (see **Role routing** — the Director of Product by default): sequence by
    user value × evidence × leverage; name the bet each epic makes. This is the
-   fuller WarpOS 0.14.0 "Managerial Agent Layer" shape.
+   fuller MC 0.14.0 "Managerial Agent Layer" shape.
 2. **Clone + brief (fallback):** no `00-canonical/*`, but a competitor clone
    brief (`_docs/clones/<slug>/<slug>.clone.md` — JTBDs, scored features,
    gaps `G-*`, opportunities `O-*`) and/or `PROJECT.md` exist. Mine those.
@@ -39,7 +39,7 @@ by the **altitude of that reasoning** (FINAL-PLAN §11 R2, β
   strategic: it sets the epic arc, names lifecycle bets, and sequences by user
   value × evidence × leverage — a strategic / lifecycle-phase call. This is the
   "Director-of-PM lens" the canonical-grounded path already invokes, now made an
-  explicit dispatch. The Director is also the standing default for WarpOS's own
+  explicit dispatch. The Director is also the standing default for MC's own
   framework roadmap.
 - **The **product-lead** persona** only when the bootstrap is explicitly scoped to a
   *single product's* execution-level backlog/sequencing with the strategic arc already

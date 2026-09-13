@@ -23,7 +23,7 @@ function fakeReport(slug, { completed, total, open, blocked }) {
   return {
     present: true,
     report: {
-      schema: "warpos/readiness/v1", product_id: slug, composite: total ? Math.round((completed / total) * 100) : 0,
+      schema: "mc/readiness/v1", product_id: slug, composite: total ? Math.round((completed / total) * 100) : 0,
       summary: { total, completed, open, blocked, owner_action: total, sprint_work: 0, waiver: blocked },
       items: [{ id: "provider.accounts", status: "open", owner_class: "owner-action" }],
     },
@@ -44,7 +44,7 @@ console.log("AC-B10 — portfolio board over N products:");
     "gamma-app": fakeReport("gamma-app", { completed: 0, total: 0, open: 0, blocked: 0 }),
   };
   const board = buildBoard({ products, generated_at: GEN_AT, reportFor: (p) => reports[p.slug] });
-  ok("schema is warpos/readiness-board/v1", board.schema === BOARD_SCHEMA);
+  ok("schema is mc/readiness-board/v1", board.schema === BOARD_SCHEMA);
   ok("product_count = 3", board.product_count === 3, `got ${board.product_count}`);
   ok("present_count = 3", board.present_count === 3);
   ok("blocked_count aggregates (0+2+0=2)", board.blocked_count === 2, `got ${board.blocked_count}`);
@@ -93,7 +93,7 @@ console.log("\nDeterminism:");
 console.log("\nreadRegistry shapes:");
 {
   const tmp = path.join(os.tmpdir(), `cockpit-reg-${process.pid}.json`);
-  // object-keyed (the real ~/.warpos/portfolio.json shape)
+  // object-keyed (the real ~/.mc/portfolio.json shape)
   fs.writeFileSync(tmp, JSON.stringify({ schema: "x", products: { foo: { repo_path: "/x/foo" }, bar: { repo_path: "/x/bar" } } }));
   const objForm = readRegistry(tmp);
   ok("object-keyed registry → 2 products with slug+repo_path", objForm.length === 2 && objForm.every((p) => p.slug && p.repo_path), JSON.stringify(objForm));
@@ -108,7 +108,7 @@ console.log("\nreadRegistry shapes:");
 // ── Real registry smoke (read-only): does not throw, returns rows ────────────────
 console.log("\nReal registry smoke (read-only):");
 {
-  // Uses the actual ~/.warpos/portfolio.json + real repos (read-only). Just assert no throw.
+  // Uses the actual ~/.mc/portfolio.json + real repos (read-only). Just assert no throw.
   let threw = false, board;
   try { board = buildBoard({ generated_at: GEN_AT }); } catch { threw = true; }
   ok("buildBoard over the real registry does not throw", !threw);

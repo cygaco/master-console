@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/ticket/v1",
-  "title": "WarpOS Sprint v0.1 — Ticket",
+  "$id": "mc/sprint/ticket/v1",
+  "title": "MC Sprint v0.1 — Ticket",
   "description": "Smallest unit of executable sprint work. Lives below requirements/stories/COPY/INPUTS/TRACE/acceptance-criteria. Reopenable with history.",
   "type": "object",
   "required": [
@@ -22,7 +22,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/ticket/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/ticket/v1" },
     "id": { "type": "string", "pattern": "^T-[0-9]{8}-[0-9]{3}$" },
     "title": { "type": "string" },
     "type": {

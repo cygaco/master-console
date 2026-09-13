@@ -4,7 +4,7 @@
  *
  * generate-steps-maps.js is FRAMEWORK tooling. After W4 the product canon
  * (STEPS.json + the 3 canonical step-table docs) is relocated out of canonical
- * _requirements/ into the per-product slot — so in WarpOS-canonical the file is
+ * _requirements/ into the per-product slot — so in MC-canonical the file is
  * ABSENT. The generator (and its --check / CI mode, run by the blocking
  * pre-commit-steps-check.js hook) must NO-OP with exit 0 rather than crash on
  * the missing STEPS.json (the prior unconditional readFileSync threw ENOENT).

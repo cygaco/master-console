@@ -26,7 +26,7 @@ function test(name, fn) {
 }
 
 function withLedger(env, fn) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-ledger-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-ledger-"));
   const saved = {};
   const setEnv = { DISPATCH_LEDGER_DIR: dir, ...env };
   for (const k of Object.keys(setEnv)) { saved[k] = process.env[k]; process.env[k] = setEnv[k]; }
@@ -68,7 +68,7 @@ test("SR-013: recordCompletion persists a non-empty code_sha (git HEAD)", () => 
 //    A clean record (no conflict) is SIGNED (origin-proof). β's forged-set fixtures in cert-attest-panel.test
 //    are the stronger replacement teeth for the retired caller-explicit-wins assertion. ──
 test("ED-231: a caller code_sha that CONFLICTS with the writer-derived HEAD → overridden + provenance_mismatch + UNSIGNED", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-ledger-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-ledger-"));
   const savedDir = process.env.DISPATCH_LEDGER_DIR, savedRun = process.env.WARPOS_PANEL_RUN_ID;
   process.env.DISPATCH_LEDGER_DIR = dir; process.env.WARPOS_PANEL_RUN_ID = "panel-real";
   try {

@@ -18,8 +18,8 @@
  * GUARDS:
  *   - No live pointer  → fail CLEAR ("run /admin:preview first"), non-zero, no
  *     scaffold of a second instance.
- *   - WarpOS-refusal   → if the resolved seed target is the WarpOS canonical
- *     root, refuse before any write (refuseIfTargetIsWarpOS), non-zero.
+ *   - MC-refusal   → if the resolved seed target is the MC canonical
+ *     root, refuse before any write (refuseIfTargetIsMC), non-zero.
  *   - Idempotent       → running twice produces no duplicate checklist, no
  *     duplicate founder session, no duplicate sample events.
  *
@@ -37,7 +37,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { isCanonicalDir } = require("../warpos/repo-role");
+const { isCanonicalDir } = require("../mc/repo-role");
 
 // Repo root resolved from this module's location (scripts/admin/../.. = root).
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -100,25 +100,25 @@ function readPointer(pointerPath) {
 }
 
 /**
- * refuseIfTargetIsWarpOS(targetDir) → { warpos: boolean, reason?: string }
- * Mirrors the keystone guard (preview.js): never seed into the WarpOS canonical
+ * refuseIfTargetIsMC(targetDir) → { mc: boolean, reason?: string }
+ * Mirrors the keystone guard (preview.js): never seed into the MC canonical
  * tree. Detection is target-LOCAL and unforgeable — path identity OR
  * isCanonicalDir(), the env-IMMUNE signals-only detector in
- * scripts/warpos/repo-role.js (the single source per ED-009). isCanonicalDir
+ * scripts/mc/repo-role.js (the single source per ED-009). isCanonicalDir
  * intentionally ignores WARPOS_REPO_ROLE, so the safety floor cannot be
  * env-spoofed (xprovider review HIGH #5 — the concern that previously pushed this
  * guard to hand-roll its own detection). Routing through the resolver keeps the
  * single-source invariant without losing the env-immunity property.
  */
-function refuseIfTargetIsWarpOS(targetDir) {
+function refuseIfTargetIsMC(targetDir) {
   const resolved = path.resolve(targetDir);
   if (resolved === ROOT) {
-    return { warpos: true, reason: `resolved seed target is the WarpOS canonical root (${resolved})` };
+    return { mc: true, reason: `resolved seed target is the MC canonical root (${resolved})` };
   }
   if (isCanonicalDir(resolved)) {
-    return { warpos: true, reason: `seed target resolves to the WarpOS canonical tree (repo-role canonical signal at ${resolved})` };
+    return { mc: true, reason: `seed target resolves to the MC canonical tree (repo-role canonical signal at ${resolved})` };
   }
-  return { warpos: false };
+  return { mc: false };
 }
 
 function ensureDir(dir) {
@@ -149,7 +149,7 @@ function writeJsonIdempotent(file, value) {
 /**
  * writeChecklistIdempotent(file) → "created" | "unchanged"
  * Renders FOUNDERS_CHECKLIST.md via the shared producer (lazy require). If the
- * file already carries the warpos checklist markers, leave it as-is (idempotent —
+ * file already carries the mc checklist markers, leave it as-is (idempotent —
  * never duplicate the block).
  */
 function writeChecklistIdempotent(file) {
@@ -188,10 +188,10 @@ function seed(opts = {}) {
 
   const instanceDir = path.resolve(p.instanceDir);
 
-  // WarpOS-refusal on the seed target BEFORE any write.
-  const guard = refuseIfTargetIsWarpOS(instanceDir);
-  if (guard.warpos) {
-    return { ok: false, error: `refused: ${guard.reason} — admin:seed never writes into WarpOS itself` };
+  // MC-refusal on the seed target BEFORE any write.
+  const guard = refuseIfTargetIsMC(instanceDir);
+  if (guard.mc) {
+    return { ok: false, error: `refused: ${guard.reason} — admin:seed never writes into MC itself` };
   }
 
   if (!safeExists(instanceDir)) {
@@ -204,14 +204,14 @@ function seed(opts = {}) {
   const actions = {};
   // Founder-allowlist session marker.
   actions.session = writeJsonIdempotent(path.join(instanceDir, SESSION_FILE), {
-    schema: "warpos/admin-preview-session/v1",
+    schema: "mc/admin-preview-session/v1",
     allowlist: FOUNDER_ALLOWLIST,
     activeFounder: FOUNDER_ALLOWLIST[0],
     seededBy: "admin:seed",
   });
   // Sample events.
   actions.events = writeJsonIdempotent(path.join(instanceDir, EVENTS_FILE), {
-    schema: "warpos/admin-preview-events/v1",
+    schema: "mc/admin-preview-events/v1",
     events: SAMPLE_EVENTS,
   });
   // Warm-start launch-readiness checklist.
@@ -251,7 +251,7 @@ if (require.main === module) {
 module.exports = {
   seed,
   readPointer,
-  refuseIfTargetIsWarpOS,
+  refuseIfTargetIsMC,
   DEFAULT_POINTER_REL,
   SESSION_FILE,
   EVENTS_FILE,

@@ -8,7 +8,7 @@
 
 ## Decision
 
-WarpOS's DURABLE state — RoleSpec, StateCard, SprintRoom, the WorkOrder/ResultEnvelope ledger,
+MC's DURABLE state — RoleSpec, StateCard, SprintRoom, the WorkOrder/ResultEnvelope ledger,
 DecisionRecords, event streams, trackers, handoffs, the Founder Panel store — IS the company. Live
 model runtimes (Claude sessions, Codex runs, Gemini/Antigravity runs, reviewers, builders, fixers,
 lane pods, live conductors) are EPHEMERAL, LEASED EXECUTORS of that state, never the state itself.
@@ -23,9 +23,9 @@ worktrees, false liveness signals, tiny fake-green prompts, missing completion/d
 tracker drift, and founder-launch gaps — all symptoms of the same mistake: treating live model
 processes as the durable company.
 
-WarpOS already runs this way de facto (trackers, event logs, the dispatch ledger, decision records
+MC already runs this way de facto (trackers, event logs, the dispatch ledger, decision records
 all persist independent of any one session), but the doctrine had never been ratified. Phase 0 of
-the WarpOS 1.0 kernel work (SP-20260718-001) needs this ADR as its Top-Level Runtime Contract's
+the MC 1.0 kernel work (SP-20260718-001) needs this ADR as its Top-Level Runtime Contract's
 foundation: the contract's trust boundary (CORE-2) and role-binding precedence (CORE-1/CORE-3) both
 presuppose that "the company" is durable on-disk state a provider-neutral trusted layer can reason
 about — not whichever model happens to be running.
@@ -56,7 +56,7 @@ The desired jobs remain valid and are NOT what this ADR changes:
 | Provider portability (any AI can sit at top-level) | high | low | low |
 | False-green detectability | high (state is inspectable, provider-independent) | low (truth lives inside a live, opaque session) | low (nothing to inspect) |
 | Token/context efficiency | high (scoped per WorkOrder) | low | medium |
-| Migration cost from current WarpOS | low (already de-facto true) | high (would require UNDOING existing ledger/tracker infra) | high (would require DELETING existing ledger/tracker infra) |
+| Migration cost from current MC | low (already de-facto true) | high (would require UNDOING existing ledger/tracker infra) | high (would require DELETING existing ledger/tracker infra) |
 
 ## Why this option won
 
@@ -138,7 +138,7 @@ Never reap a worker on process absence alone. A reaper must weigh ALL of:
 - hard timeout
 - ping/nudge attempts
 
-(Ten signals total, per packet-03's original eight plus WarpOS's live `hard timeout` and
+(Ten signals total, per packet-03's original eight plus MC's live `hard timeout` and
 `ping/nudge attempts` practice — process absence is deliberately NOT on this list as a sole trigger.)
 
 ### Role identity
@@ -166,8 +166,8 @@ company's memory does not end when a contractor leaves.
 - `.claude/kernel/top-level-runtime-contract.md` (D1) — CORE-1/CORE-2/CORE-3 (§7) directly implement
   this ADR's durable-state/ephemeral-executor split.
 - `.claude/kernel/role-binding.json` (D3) — the role-identity triple's binding precedence.
-- `_planning/warpos-1.0-plan/packet-original/03-ADR-DURABLE-COMPANY-EPHEMERAL-EXECUTORS.md` — the
+- `_planning/mc-1.0-plan/packet-original/03-ADR-DURABLE-COMPANY-EPHEMERAL-EXECUTORS.md` — the
   original packet source this ADR ratifies (folded, not verbatim-adopted — see decision criteria).
-- `_planning/warpos-1.0-plan/RATIFIED-PLAN.md` § Phase 0 — the ratifying plan.
+- `_planning/mc-1.0-plan/RATIFIED-PLAN.md` § Phase 0 — the ratifying plan.
 - ADR-0017 (`0017-retention-contain-via-archive-over-atomic-delete.md`) — CORE-4's sibling ratification
   (archive-not-delete is durable-state discipline applied to logs specifically).

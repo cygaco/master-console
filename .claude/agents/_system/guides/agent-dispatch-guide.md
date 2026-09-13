@@ -505,7 +505,7 @@ late-landing artifact before writing a lane off. Canonical doctrine:
 
 ## §9.5 — Orchestration doctrine: in-process subagents vs OS subprocesses (E-TEAMS-MIGRATION-001)
 
-WarpOS dispatch runs across **two distinct lanes**. Conflating them is the root of a recurring
+MC dispatch runs across **two distinct lanes**. Conflating them is the root of a recurring
 class of confusion ("are ε/β subprocesses?", "why did the dispatch vanish?"). Know which lane you
 are in before you dispatch.
 

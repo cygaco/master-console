@@ -591,7 +591,7 @@ process.stdin.on("end", () => {
         const smokePath = path.join(
           __dirname,
           "..",
-          "warpos",
+          "mc",
           "provider-smoke.js",
         );
         const { perRoleProbe, classifyPerRole, PER_ROLE_BUILD_CHAIN } =

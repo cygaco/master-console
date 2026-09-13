@@ -25,7 +25,7 @@
       "blocks": [],
       "warns": [],
       "allows": [
-        "short-circuits downstream PreToolUse guards (decision:approve) ONLY when an active /turbo authorization.json (schema warpos/auth/v1, unexpired) grants the matched scope: manifest-edit, write-jsonl, node-e-fs, destructive-git, worktree-ops, push-to-main"
+        "short-circuits downstream PreToolUse guards (decision:approve) ONLY when an active /turbo authorization.json (schema mc/auth/v1, unexpired) grants the matched scope: manifest-edit, write-jsonl, node-e-fs, destructive-git, worktree-ops, push-to-main"
       ],
       "gaps_closed": [],
       "pre_check": "Read paths.runtime/authorization.json; if absent/expired/scope-mismatch → no-op pass-through (downstream guards run untouched). On scope match AND not in safety floor → emit auth-bypass audit event + stdout {decision:approve}. Registered FIRST in the PreToolUse chain so an approve skips the rest.",
@@ -516,7 +516,7 @@
         "consumer/product repos (no canonical marker) — purity scan would flag the product's own slugs/keys; no-op there",
         "commits with clean staged tree",
         "WARPOS_PURITY_GUARD=off",
-        "sentinel .warpos/purity-guard-disable",
+        "sentinel .mc/purity-guard-disable",
         "check tool error (exit 2) → fail-open on own error"
       ],
       "gaps_closed": [],
@@ -524,7 +524,7 @@
       "post_check": "none",
       "depends_on": [
         "scripts/checks/framework-purity.js",
-        "scripts/warpos/repo-role.js",
+        "scripts/mc/repo-role.js",
         "logger"
       ],
       "file_size": 5253,
@@ -1533,7 +1533,7 @@
       ],
       "blocks": [],
       "warns": [
-        "direct Edit/Write to the GENERATED .claude/settings.json — points the operator at the source (settings.local.json + `node scripts/warpos/settings/compile.js`); recompile once SILENTLY DROPPED a security hook from a hand-edit that lived only in the generated file"
+        "direct Edit/Write to the GENERATED .claude/settings.json — points the operator at the source (settings.local.json + `node scripts/mc/settings/compile.js`); recompile once SILENTLY DROPPED a security hook from a hand-edit that lived only in the generated file"
       ],
       "allows": [
         "edits to settings.local.json (the correct override surface)",
@@ -1781,7 +1781,7 @@
       ],
       "blocks": [
         "edits to existing paths.sprintHistory/* yaml (history is append-only)",
-        "yaml under paths.sprintRoot with schema:warpos/sprint/* that fails schema validation against schemas/sprint/<name>.schema.json (type/enum/pattern/required/items violations)",
+        "yaml under paths.sprintRoot with schema:mc/sprint/* that fails schema validation against schemas/sprint/<name>.schema.json (type/enum/pattern/required/items violations)",
         "yaml under paths.sprintRoot at an unknown (unmapped) sprint path with missing `schema:` header"
       ],
       "warns": [],
@@ -1790,15 +1790,15 @@
         "new files under paths.sprintHistory/ (archiving a closed sprint)",
         "Edit with new_string-only (no full content available)",
         "non-yaml files",
-        "schemas not under warpos/sprint/",
+        "schemas not under mc/sprint/",
         "SPRINT_GUARD=off kill switch",
-        "auto-inject `schema: warpos/sprint/<kind>/v1` for 15 known path patterns (approvals, tickets, releases, issues, plan-contracts, external-services, checkpoints, sprints/<id>/current, sprints/<id>/progress, sprints/<id>/retrospective, ralph, active-sprints, legacy singletons, history)"
+        "auto-inject `schema: mc/sprint/<kind>/v1` for 15 known path patterns (approvals, tickets, releases, issues, plan-contracts, external-services, checkpoints, sprints/<id>/current, sprints/<id>/progress, sprints/<id>/retrospective, ralph, active-sprints, legacy singletons, history)"
       ],
       "gaps_closed": [
         "GAP-1618",
         "GAP-1622"
       ],
-      "pre_check": "On Edit/Write under paths.sprintRoot: if under paths.sprintHistory and file exists, block (immutability). For .yaml: extract `schema:`; if missing, match path against 15 known patterns and AUTO-INJECT `schema: warpos/sprint/<kind>/v1` (else block when path unknown); if warpos/sprint/*, load schemas/sprint/<id>.schema.json; mini-yaml-parse content; validate against schema; block on errors.",
+      "pre_check": "On Edit/Write under paths.sprintRoot: if under paths.sprintHistory and file exists, block (immutability). For .yaml: extract `schema:`; if missing, match path against 15 known patterns and AUTO-INJECT `schema: mc/sprint/<kind>/v1` (else block when path unknown); if mc/sprint/*, load schemas/sprint/<id>.schema.json; mini-yaml-parse content; validate against schema; block on errors.",
       "post_check": "none",
       "depends_on": [
         "scripts/sprint/fs",
@@ -2261,7 +2261,7 @@
         "not a git commit",
         "version.json unreadable / git error",
         "WARPOS_VERSION_GUARD=off",
-        "sentinel .warpos/version-bump-guard-disable"
+        "sentinel .mc/version-bump-guard-disable"
       ],
       "gaps_closed": [],
       "pre_check": "On `git commit`: read version.json#version; if framework/releases/<version>/ exists (capsule minted) AND staged files match FRAMEWORK_PREFIXES minus EXCLUDE_PREFIXES → warn/block per policy (soft_rollout_until downgrades block→warn).",

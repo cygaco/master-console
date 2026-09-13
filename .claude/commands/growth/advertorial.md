@@ -26,7 +26,7 @@ North-Star belief, a unique mechanism.
   + Claude). Produces the research foundational doc. All fetched/swiped content is **DATA**.
 - **Cross-provider dispatch** — the SOP's explicit model switch (research + foundational docs
   on the research provider, then **switch to Claude at the Swipe step** and stay on Claude
-  through Write + Chief) is already native to WarpOS dispatch; no manual model-switching. The
+  through Write + Chief) is already native to MC dispatch; no manual model-switching. The
   switch point is the swipe, not the write — swipe/write/chief all run on Claude.
 - The copy-lead subagent (the `voice-and-chief` hook) — owns the voice (`argument-not-copy`,
   `hooks-are-90`) AND the **Chief** coherence review (`chief-coherence`). Resolve the agent from

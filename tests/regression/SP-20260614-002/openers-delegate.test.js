@@ -45,7 +45,7 @@ const HARNESS_LEAK_TOKENS = [
   "scaffoldProductApp",
   "openInBrowser",
   "started server on",
-  "refuseIfTargetIsWarpOS",
+  "refuseIfTargetIsMC",
   "child.stdout",
   "setTimeout",
 ];

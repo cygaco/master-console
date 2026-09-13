@@ -97,7 +97,7 @@ If the natural ponder surfaced a policy/convention that lacks a named enforcer (
 
 ## Worked example
 
-`RT-011` in `paths.tracesFile` is canonical. Invoked when the user asked "ponder this project." Natural ponder surfaced 8 observations (recursion / framework-as-product drift, aspirational-vs-enforced as a class, β bypass diagnosis, accumulation-without-validation, hollow-ladder rungs, alternative single-binary shape, JTBD drift, velocity-vs-cohesion). Structured pass ran in Deep mode with JTBD + Eisenhower + Second-order. Forcing question: *"Is WarpOS the framework-for-product or the product itself?"* — the answer reorders everything else.
+`RT-011` in `paths.tracesFile` is canonical. Invoked when the user asked "ponder this project." Natural ponder surfaced 8 observations (recursion / framework-as-product drift, aspirational-vs-enforced as a class, β bypass diagnosis, accumulation-without-validation, hollow-ladder rungs, alternative single-binary shape, JTBD drift, velocity-vs-cohesion). Structured pass ran in Deep mode with JTBD + Eisenhower + Second-order. Forcing question: *"Is MC the framework-for-product or the product itself?"* — the answer reorders everything else.
 
 ## Related
 

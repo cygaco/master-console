@@ -239,7 +239,7 @@ function scaffold(args) {
   ensureDir(outDir);
 
   // WG-10: fail loudly when the requirements templates are absent (a fresh or
-  // partial install whose _warpos/templates/sprint/requirements/ was never
+  // partial install whose _mc/templates/sprint/requirements/ was never
   // shipped). Previously the per-template loop below just warned and continued,
   // writing NOTHING while the phase still reported "scaffolded" — a silent
   // no-op that left the design phase hollow (the headline /sprint:full
@@ -250,7 +250,7 @@ function scaffold(args) {
       `sprint requirements templates missing at ${tmplRoot} — the design ` +
         `phase cannot scaffold a requirements bundle (no PRD / acceptance ` +
         `criteria / stories). Run /warp:update to restore ` +
-        `_warpos/templates/sprint/requirements/, then re-run /sprint:design.\n`,
+        `_mc/templates/sprint/requirements/, then re-run /sprint:design.\n`,
     );
     return 1;
   }

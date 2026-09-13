@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/skill-dispatch/bench-result/v1",
+  "$id": "mc/skill-dispatch/bench-result/v1",
   "title": "Skill-dispatch §13.7 benchset / bench-result (SCAFFOLD — no real measurements shipped yet)",
   "description": "The MEASURED side of §13.7, consumed + produced by scripts/skills-bench.js. The task-set (task-set.schema.json) is the INPUT (tasks + thresholds); this carries the per-task A/B token MEASUREMENTS (the orchestrator-side inline vs envelope token counts) plus the two-axis verdict the harness computes. A skill earns `execution: subprocess` (subprocess_verified:true) ONLY when BOTH axes pass; otherwise it stays inline (PLAN §13.7 + §17.5). For the FIXTURE path the measurements are SYNTHETIC and the judge is STUBBED (no real replay, no spend).",
   "type": "object",
   "required": ["schema", "skill", "thresholds", "measurements"],
   "additionalProperties": true,
   "properties": {
-    "schema": { "const": "warpos/skill-dispatch/bench-result/v1" },
+    "schema": { "const": "mc/skill-dispatch/bench-result/v1" },
     "skill": {
       "type": "string",
       "description": "The skill under measurement. Must be a `subprocess` candidate in the registry under test, and §13.6-runnable, before §13.7 finalization is meaningful."

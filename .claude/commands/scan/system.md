@@ -1,5 +1,5 @@
 ---
-description: System inventory — enumerate every active WarpOS system, diff against manifest, report drift and gaps
+description: System inventory — enumerate every active MC system, diff against manifest, report drift and gaps
 ---
 
 # /scan:system — System Inventory
@@ -36,7 +36,7 @@ If any of these keys are missing from `paths.json`, flag it — the registry is 
 
 ## System categories to inventory
 
-These are the canonical WarpOS system categories. Scan each, produce a list, compare to manifest.
+These are the canonical MC system categories. Scan each, produce a list, compare to manifest.
 
 ### 1. Identity & doctrine
 - `CLAUDE.md` — Alex identity rules
@@ -94,7 +94,7 @@ These are the canonical WarpOS system categories. Scan each, produce a list, com
 - `paths.store` — build system state
 - `paths.specGraph` — staleness dependency graph
 
-### 11. Product skeleton (WarpOS-only)
+### 11. Product skeleton (MC-only)
 - `paths.requirements/**` — spec templates (00-canonical → 99-audits)
 - `paths.patterns/*.md` — engineering pattern library
 - `warp-setup.js`, `install.ps1`, `version.json` — installer

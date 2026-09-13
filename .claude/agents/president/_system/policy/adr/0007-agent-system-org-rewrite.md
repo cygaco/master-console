@@ -8,7 +8,7 @@
 
 ## Decision
 
-Rewrite the WarpOS agent system from four mode-coupled folders (`00-alex/`, `01-adhoc/`, `02-oneshot/`, `03-managers/`) into **one department-mirroring tree** (`president/ · product/ · engineering/ · growth/ · _system/`) of **mode-agnostic** roles, governed by a single **role registry** (the keystone every router and enforcer reads from) carrying each role's `name · call_sign · true_name? · home · tier · provider/model/effort · dispatch authority · review scope · enforcer · spec path · multiplicity`.
+Rewrite the MC agent system from four mode-coupled folders (`00-alex/`, `01-adhoc/`, `02-oneshot/`, `03-managers/`) into **one department-mirroring tree** (`president/ · product/ · engineering/ · growth/ · _system/`) of **mode-agnostic** roles, governed by a single **role registry** (the keystone every router and enforcer reads from) carrying each role's `name · call_sign · true_name? · home · tier · provider/model/effort · dispatch authority · review scope · enforcer · spec path · multiplicity`.
 
 - **Alex = the President**; α/β/γ/δ/ε are his mode-selected **faces** (α run · β check · γ adhoc-deliver · δ oneshot-deliver · ε sprint-deliver), not separate org titles. `"Alex"` is the hidden true-name.
 - Three **departments** report to the President: **Product** (ζ Director · κ Product Lead · μ Design Lead · θ Quality Lead), **Engineering** (η Director · Frontend/Backend/Security Leads → each dispatches Builder + Reviewer + Fixer), **Growth** (ι Director · λ Research · ν Copy · ο Conversion · ξ Marketing Leads). Shared `_knowledge/` is DATA fed by the leads.
@@ -31,7 +31,7 @@ The live agent system grew mode-first and is now structurally unsafe to extend:
 
 The org was designed 2026-06-03 over many operator passes and **design-locked**. The complete, self-contained, deep-audited implementation spec is `runtime/notes/agent-system-rewrite-plan.md` (org §1 · folders §2 · diff §3 · checklist §4 · the §4.5 open model decision · build sequence §5 · blast-radius §6/TIER-6 · strategy §7 · skill-hook-in registry §8). This ADR records the **decision**; that plan is the **implementation**. It **supersedes the org portions** of `runtime/notes/agent-org-sprint-mode-spec.md` and the σ/COO/Chief-of-Staff naming of `runtime/notes/sprint-hook-points-design.md` (whose hook-point *mechanics* are retained for Phase D).
 
-What changed that made this necessary: WarpOS is now the engine under Master Console's imminent launch and the build/maintain engine for every portfolio product — the agent system has to be reliable and renamable-by-registry, not a tangle of mode-coupled hardcodes.
+What changed that made this necessary: MC is now the engine under Master Console's imminent launch and the build/maintain engine for every portfolio product — the agent system has to be reliable and renamable-by-registry, not a tangle of mode-coupled hardcodes.
 
 ## Options considered
 

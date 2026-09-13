@@ -184,7 +184,7 @@ function listTeams(opts = {}) {
 // E-TEAMS-MIGRATION-001: Claude Code v2.1.178 (2026-06-15) made teams IMPLICIT +
 // session-scoped — the harness now names a team `session-<uuid>` (NOT the
 // `<slug>-<mode>` handle session-start mints). So the name-slug arm ALONE silently
-// stops matching our own team: every WarpOS team reads as FOREIGN, projectTeams()
+// stops matching our own team: every MC team reads as FOREIGN, projectTeams()
 // goes empty, verify() falsely reports "no team live", AND teardown never reaps the
 // real team (it's mistaken for another project's). The harness STILL writes
 // members[] with each member's `cwd`, so we add a member-CWD arm (mirrors
@@ -207,7 +207,7 @@ function teamBelongsToProject(team, slug, projectDir) {
     .toLowerCase();
   const s = String(slug || "").toLowerCase();
   // (a) legacy name-slug arm. The trailing "-" stops prefix bleed (slug "warp"
-  // must NOT match "warpos-sprint"; "warpos" must NOT match "warposx-sprint").
+  // must NOT match "mc-sprint"; "mc" must NOT match "mcx-sprint").
   if (s && name && (name === s || name.startsWith(s + "-"))) return true;
   // (b) member-cwd arm (v2.1.178 session-<uuid> teams). STRICT containment only.
   const normProject = String(projectDir || "").replace(/\\/g, "/").toLowerCase();
@@ -363,7 +363,7 @@ function detectOrphansStale(opts = {}) {
     }
     // Orphaned: a fresh handle whose lead session is not advertising liveness.
     // HONEST CORRELATION ONLY: the `.team-live-<sid>` markers are keyed by the
-    // WarpOS short session id (`s-…`), NOT the harness UUID a team's
+    // MC short session id (`s-…`), NOT the harness UUID a team's
     // leadSessionId usually carries. We therefore ONLY attempt the orphan
     // correlation when the leadSessionId is in the SAME (`s-…`) namespace — for
     // a UUID-keyed lead the correlation is impossible, so we do NOT claim orphan

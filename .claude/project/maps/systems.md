@@ -20,7 +20,7 @@ Total: **90** systems across **2** categories. Files referenced: 89, missing on 
 | skill-_report_skill_tmp | File an ELI5 report (sprint \| milestone \| session \| checkpoint) into _reports | untested | 1 |
 | skill-admin-preview | Open/preview a PRODUCT's in-app founder admin panel in the browser. Scaffolds (o | untested | 1 |
 | skill-bootstrap-lastmile | "Prototype → monetizable product. Drives the 'last mile': readiness audit → laun | untested | 1 |
-| skill-bootstrap-spinup | "From 'just WarpOS' to something on screen — one in-project command: intent (gui | untested | 1 |
+| skill-bootstrap-spinup | "From 'just MC' to something on screen — one in-project command: intent (gui | untested | 1 |
 | skill-cockpit-readiness | The launch-readiness cockpit — show how close every registered product is to lau | untested | 1 |
 | skill-discover-orphaned | Discover orphaned work — find every deferred, forgotten, or abandoned task acros | untested | 1 |
 | skill-etc-author | Author or refine a skill/prompt in standard format, producing a sibling eval-pac | untested | 1 |
@@ -59,8 +59,8 @@ Total: **90** systems across **2** categories. Files referenced: 89, missing on 
 | skill-panel-readiness | Open the cross-product launch-readiness board. A thin /panel:* forwarder to the  | untested | 1 |
 | skill-panel-roadmap | Open the roadmap "what's next" board — ranked next-action + in-flight sprints +  | untested | 1 |
 | skill-playbook-add | Append a play to the Playbook (.claude/project/reference/playbook.md) — a named, | untested | 1 |
-| skill-portfolio-new | Scaffold a new product repo (sibling to WarpOS) with the framework installed and | untested | 1 |
-| skill-portfolio-spinup | "From WarpOS, run the idea→on-screen on-ramp against a registered product: dispa | untested | 1 |
+| skill-portfolio-new | Scaffold a new product repo (sibling to MC) with the framework installed and | untested | 1 |
+| skill-portfolio-spinup | "From MC, run the idea→on-screen on-ramp against a registered product: dispa | untested | 1 |
 | skill-qa-check | Passive QA scan on recent git diff changes — checks for 7 failure-mode signature | untested | 1 |
 | skill-reasoning-run | Reason through a problem or decision — auto-detects quick triage vs deep deliber | untested | 1 |
 | skill-report | File an ELI5 report (sprint \| epic \| session \| checkpoint) into _reports/ — t | untested | 1 |
@@ -77,21 +77,21 @@ Total: **90** systems across **2** categories. Files referenced: 89, missing on 
 | skill-scan-framework-purity | Refuse product-content leaks in canonical — scans for client slugs, maintainer a | untested | 1 |
 | skill-scan-full | Run every scan in parallel — a full system scan across project health, governanc | untested | 1 |
 | skill-scan-ingest-firewall | Audit the ingest stores (_docs/research, _docs/imports, _docs/briefs, _docs/clon | untested | 1 |
-| skill-scan-install | Verify a fresh WarpOS install — manifest, paths, agents, hooks, version, setting | untested | 1 |
+| skill-scan-install | Verify a fresh MC install — manifest, paths, agents, hooks, version, setting | untested | 1 |
 | skill-scan-model-chain | The named enforcer (ED-058) for the role-registry model/effort CHAIN — opus-4.8  | untested | 1 |
 | skill-scan-panel-registry-coverage | Coverage enforcer for the panel-registry (the /panel:* suite) — every `panels` r | untested | 1 |
 | skill-scan-role-parity | The one check that owns role parity across the org map, the dispatch catalog, an | untested | 1 |
-| skill-scan-scaffold-coverage | Verify the WarpOS app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is comp | untested | 1 |
+| skill-scan-scaffold-coverage | Verify the MC app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is comp | untested | 1 |
 | skill-scan-scan-coverage | Scan-suite self-inventory — asserts every /scan:* skill is delegated by /scan:fu | untested | 1 |
 | skill-scan-skill-hook-coverage | Bidirectional coverage of the skill hook-point registry — REVERSE (registry cohe | untested | 1 |
 | skill-scan-sprint-beta-honesty | Audits Beta consultation honesty across post-cutoff /sprint:full runs (missing c | untested | 1 |
 | skill-scan-sprint-hook-coverage | Bidirectional coverage of the sprint hook-point registry — FORWARD (every matche | untested | 1 |
 | skill-scan-sprint-manager-consult | Audits manager-consult coverage across post-cutoff /sprint:full runs — asserts t | untested | 1 |
-| skill-scan-system | System inventory — enumerate every active WarpOS system, diff against manifest,  | untested | 1 |
+| skill-scan-system | System inventory — enumerate every active MC system, diff against manifest,  | untested | 1 |
 | skill-scan-version-coherence | Verify version + schema-label coherence — product version agrees across ALL mani | untested | 1 |
-| skill-scan-warpos-install-baseline | Verify a WarpOS install baseline exists (.claude/framework-installed.json presen | untested | 1 |
-| skill-scan-warpos-layer-diff | Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths  | untested | 1 |
-| skill-scan-warpos-ship-coverage | Verify every framework-owned path under the consumer-essential roots is actually | untested | 1 |
+| skill-scan-mc-install-baseline | Verify a MC install baseline exists (.claude/framework-installed.json presen | untested | 1 |
+| skill-scan-mc-layer-diff | Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths  | untested | 1 |
+| skill-scan-mc-ship-coverage | Verify every framework-owned path under the consumer-essential roots is actually | untested | 1 |
 | skill-session-dump | Write a prescriptive handoff to DUMP.md at project root — context, session progr | untested | 1 |
 | skill-session-end | Full session wrap-up — cognitive maintenance (learn/mine/sleep/integrate) → fres | untested | 1 |
 | skill-session-resume | Pick up the previous session and KEEP GOING — load the handoff, re-establish mod | untested | 1 |
@@ -103,9 +103,9 @@ Total: **90** systems across **2** categories. Files referenced: 89, missing on 
 | skill-sprint-design | Turn an approved Plan Contract into PRD, stories, COPY, INPUTS, TRACE, acceptanc | untested | 1 |
 | skill-sprint-full | Single-invocation execution of the full sprint pipeline (plan→design→execute→rel | untested | 1 |
 | skill-sprint-plan | Turn a brief plain-language request into a structured sprint plan and durable Pl | untested | 1 |
-| skill-warp-diff | Diff canonical WarpOS against an installed product — version/staleness, framewor | untested | 1 |
-| skill-warp-health | Verify WarpOS installation — checks every system, reports green/yellow/red with  | untested | 1 |
-| skill-warp-reconcile | Reconcile downstream-flagged WarpOS gaps into canonical — discover every product | untested | 1 |
+| skill-warp-diff | Diff canonical MC against an installed product — version/staleness, framewor | untested | 1 |
+| skill-warp-health | Verify MC installation — checks every system, reports green/yellow/red with  | untested | 1 |
+| skill-warp-reconcile | Reconcile downstream-flagged MC gaps into canonical — discover every product | untested | 1 |
 
 ### uncategorized (1)
 

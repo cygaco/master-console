@@ -18,7 +18,7 @@ test("FIX-6 class-closer verified-by-dangling-reference — a scratch prd.md nam
   try {
     const manifestPath = path.join(scratchDir, "record-trust-gate.manifest.json");
     const manifest = {
-      schema: "warpos/record-trust-gate/v1",
+      schema: "mc/record-trust-gate/v1",
       trust_anchor_forbidden_for_cross_session: [],
       surfaces: [
         {
@@ -64,7 +64,7 @@ test("FIX-6 class-closer verified-by-dangling-reference — CONTROL: a prd.md wh
     const manifestPath = path.join(scratchDir, "record-trust-gate.manifest.json");
     fs.writeFileSync(
       manifestPath,
-      JSON.stringify({ schema: "warpos/record-trust-gate/v1", trust_anchor_forbidden_for_cross_session: [], surfaces: [] }, null, 2),
+      JSON.stringify({ schema: "mc/record-trust-gate/v1", trust_anchor_forbidden_for_cross_session: [], surfaces: [] }, null, 2),
     );
     const prdPath = path.join(scratchDir, "prd.md");
     // Names a REAL file (this very falsifier), so the extracted path resolves relative to the REPO ROOT
@@ -91,7 +91,7 @@ test("FIX-6 class-closer verified-by-dangling-reference — a manifest with NO s
     const manifestPath = path.join(scratchDir, "record-trust-gate.manifest.json");
     fs.writeFileSync(
       manifestPath,
-      JSON.stringify({ schema: "warpos/record-trust-gate/v1", trust_anchor_forbidden_for_cross_session: [], surfaces: [] }, null, 2),
+      JSON.stringify({ schema: "mc/record-trust-gate/v1", trust_anchor_forbidden_for_cross_session: [], surfaces: [] }, null, 2),
     );
     const loaded = rtg.loadManifest(manifestPath);
     const res = rtg.evaluate(loaded.manifest, { manifestPath });

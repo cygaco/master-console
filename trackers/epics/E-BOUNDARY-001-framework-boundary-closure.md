@@ -7,16 +7,16 @@
 - **Title:** Framework Boundary Closure
 - **Owner:** President Agent
 - **Parent roadmap area:** Epics → Planned epics — see ../../ROADMAP.md (detail under the `🟡 0.10.0` deprecated-milestone block)
-- **Goal:** Move the framework/product boundary from "documented" to "enforced at write-time" — relocate the WarpOS-as-product specs to a private repo, flip `ROOT_LEAK_PENDING_SCRUB=false`, and have `framework-purity-guard` hard-refuse any reintroduction.
+- **Goal:** Move the framework/product boundary from "documented" to "enforced at write-time" — relocate the MC-as-product specs to a private repo, flip `ROOT_LEAK_PENDING_SCRUB=false`, and have `framework-purity-guard` hard-refuse any reintroduction.
 - **Background:** `_requirements/00-canonical/*` and product-titled `_requirements/03-architecture/*` currently live at canonical root; the `ROOT_LEAK_PENDING_SCRUB=true` flag keeps `framework-purity.js` from rejecting them. The framework cannot self-execute the repo move — it is operator-scoped — so the boundary is documented but not yet enforced.
-- **Scope:** `/portfolio:new --slug warpos-as-product` + move `_requirements/00-canonical/*`, product-titled `_requirements/03-architecture/*`, and `_docs/research|briefs|clones|imports/*` into the new private repo; flip the flag to `false` in `framework-purity.js`; regenerate the manifest; `/scan:framework-purity --full` clean; verify a post-scrub install writes no product-titled paths.
-- **Out of scope:** The WarpOS-as-product deep-dogfooding bet (parked E-WARPOS-DOGFOOD) — this epic only creates the private workspace, not the dogfooding programme.
+- **Scope:** `/portfolio:new --slug mc-as-product` + move `_requirements/00-canonical/*`, product-titled `_requirements/03-architecture/*`, and `_docs/research|briefs|clones|imports/*` into the new private repo; flip the flag to `false` in `framework-purity.js`; regenerate the manifest; `/scan:framework-purity --full` clean; verify a post-scrub install writes no product-titled paths.
+- **Out of scope:** The MC-as-product deep-dogfooding bet (parked E-MC-DOGFOOD) — this epic only creates the private workspace, not the dogfooding programme.
 - **Current state:** Planned
 - **Percent completion:** 0% — Planned; no scrub, flag flip, or enforcement hardening performed yet. Operator-gated on the repo move.
 
 ## Definition of Done
 <!-- Concrete, checkable criteria. Nothing reaches 100% until all are satisfied + evidenced (§20, §27). -->
-- [ ] Private `warpos-as-product` repo exists with the relocated specs + a first ROADMAP entry
+- [ ] Private `mc-as-product` repo exists with the relocated specs + a first ROADMAP entry
 - [ ] `grep -rn "00-canonical\|jobzooka\|dreamteam\|aiweb\|companycam" .` in canonical returns hits only in ROADMAP archive references + version-history
 - [ ] `framework-purity-guard` rejects a synthetic `_requirements/00-canonical/foo.md` write attempt on canonical
 - [ ] A fresh `/warp:setup` of canonical into a new product writes zero product-titled paths
@@ -35,7 +35,7 @@
 - Operator runs the repo creation + spec move — the framework cannot self-execute it · blocking
 
 ## Blockers
-- Operator-scoped repo move not yet performed — next action: operator runs `/portfolio:new --slug warpos-as-product` + relocates the specs.
+- Operator-scoped repo move not yet performed — next action: operator runs `/portfolio:new --slug mc-as-product` + relocates the specs.
 
 ## Risks
 - None currently recorded.

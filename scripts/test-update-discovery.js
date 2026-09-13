@@ -3,12 +3,12 @@
 /**
  * scripts/test-update-discovery.js — Test 0.4.1's canonical auto-discovery.
  *
- * Exercises scripts/warpos/update.js#discoverCanonical against synthetic
+ * Exercises scripts/mc/update.js#discoverCanonical against synthetic
  * product-repo layouts. Verifies:
  *
- *   1. Sibling ../WarpOS hit
- *   2. Sibling ../warpos hit
- *   3. .claude/manifest.json#warpos.source hit
+ *   1. Sibling ../MC hit
+ *   2. Sibling ../mc hit
+ *   3. .claude/manifest.json#mc.source hit
  *   4. .claude/framework-installed.json#source hit
  *   5. Missing-target-capsule miss (returns null)
  *   6. Non-existent candidate skipped silently
@@ -21,7 +21,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { discoverCanonical } = require("./warpos/update");
+const { discoverCanonical } = require("./mc/update");
 
 const CANONICAL = path.resolve(__dirname, "..");
 
@@ -81,17 +81,17 @@ function mkSiblingCanonical(parentDir, name) {
   return dir;
 }
 
-function testSiblingWarpOS() {
+function testSiblingMC() {
   const parent = fs.mkdtempSync(path.join(os.tmpdir(), "wpu-disc-parent-"));
-  const sibling = mkSiblingCanonical(parent, "WarpOS");
+  const sibling = mkSiblingCanonical(parent, "MC");
   const product = path.join(parent, "product");
   fs.mkdirSync(product, { recursive: true });
   try {
     const found = discoverCanonical(product, "0.4.1");
     if (found && path.resolve(found) === path.resolve(sibling)) {
-      ok("sibling ../WarpOS discovered");
+      ok("sibling ../MC discovered");
     } else {
-      fail("sibling ../WarpOS discovered", `got: ${found}`);
+      fail("sibling ../MC discovered", `got: ${found}`);
     }
   } finally {
     rm(parent);
@@ -99,11 +99,11 @@ function testSiblingWarpOS() {
 }
 
 function testSiblingLowercase() {
-  // On Windows the filesystem is case-insensitive so ../WarpOS and
-  // ../warpos resolve to the same directory; on Linux/macOS they don't.
+  // On Windows the filesystem is case-insensitive so ../MC and
+  // ../mc resolve to the same directory; on Linux/macOS they don't.
   // Verify discovery succeeds either way; case-insensitive compare.
   const parent = fs.mkdtempSync(path.join(os.tmpdir(), "wpu-disc-parent-"));
-  const sibling = mkSiblingCanonical(parent, "warpos");
+  const sibling = mkSiblingCanonical(parent, "mc");
   const product = path.join(parent, "product");
   fs.mkdirSync(product, { recursive: true });
   try {
@@ -111,8 +111,8 @@ function testSiblingLowercase() {
     const eq =
       found &&
       path.resolve(found).toLowerCase() === path.resolve(sibling).toLowerCase();
-    if (eq) ok("sibling ../warpos discovered (case-insensitive)");
-    else fail("sibling ../warpos discovered", `got: ${found}`);
+    if (eq) ok("sibling ../mc discovered (case-insensitive)");
+    else fail("sibling ../mc discovered", `got: ${found}`);
   } finally {
     rm(parent);
   }
@@ -121,14 +121,14 @@ function testSiblingLowercase() {
 function testManifestHint() {
   // Use the real canonical for the manifest hint
   const product = mkProduct({
-    manifest: { warpos: { source: CANONICAL } },
+    manifest: { mc: { source: CANONICAL } },
   });
   try {
     const found = discoverCanonical(product, "0.4.1");
     if (found && path.resolve(found) === path.resolve(CANONICAL)) {
-      ok("manifest.json#warpos.source hit");
+      ok("manifest.json#mc.source hit");
     } else {
-      fail("manifest.json#warpos.source hit", `got: ${found}`);
+      fail("manifest.json#mc.source hit", `got: ${found}`);
     }
   } finally {
     rm(product);
@@ -187,12 +187,12 @@ function testFirstHitWins() {
   // Sibling AND manifest both point at canonicals — sibling should win
   // (walk order: sibling first, then hints)
   const parent = fs.mkdtempSync(path.join(os.tmpdir(), "wpu-disc-parent-"));
-  const sibling = mkSiblingCanonical(parent, "WarpOS");
+  const sibling = mkSiblingCanonical(parent, "MC");
   const product = path.join(parent, "product");
   fs.mkdirSync(path.join(product, ".claude"), { recursive: true });
   fs.writeFileSync(
     path.join(product, ".claude", "manifest.json"),
-    JSON.stringify({ warpos: { source: CANONICAL } }),
+    JSON.stringify({ mc: { source: CANONICAL } }),
   );
   try {
     const found = discoverCanonical(product, "0.4.1");
@@ -213,7 +213,7 @@ function main() {
   process.stdout.write(
     "scripts/test-update-discovery.js — 0.4.1 canonical auto-discovery\n",
   );
-  testSiblingWarpOS();
+  testSiblingMC();
   testSiblingLowercase();
   testManifestHint();
   testInstalledHint();

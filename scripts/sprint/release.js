@@ -76,7 +76,7 @@ function emitGate(kind, data) {
 // The named enforcer for the per-sprint test-suite convention
 // (_docs/sprint/TESTSUITE.md), applied at SPRINT CLOSE. Before this, the
 // regression-seed enforcer ran ONLY at /warp:release
-// (scripts/warpos/release-gates.js) — so a sprint could close (mint a release
+// (scripts/mc/release-gates.js) — so a sprint could close (mint a release
 // record) carrying a NEW regression in a covered class (the BC-15
 // aspirational-vs-enforced gap captured in commit 5870a0c).
 //
@@ -186,7 +186,7 @@ function cmdPrepare(argv) {
   const id = newReleaseId(SPRINT.releases);
   const now = nowIso();
   const release = {
-    schema: "warpos/sprint/release/v1",
+    schema: "mc/sprint/release/v1",
     id,
     sprint: current.id,
     title: f.title || current.title || "Sprint release",

@@ -39,9 +39,9 @@ function gitStagedFiles() {
 // Delegated to the shared repo-role resolver (ED-009). All canonical signals
 // are checked there. Fail-safe preserved: resolver falls through to non-canonical
 // on any read/parse error (same "safer = strict" guarantee as before).
-const { resolveRepoRole } = require("../warpos/repo-role");
+const { resolveRepoRole } = require("../mc/repo-role");
 function isCanonicalRepo() {
-  // Canonical WarpOS dev repo: the framework itself, which has no PRODUCT
+  // Canonical MC dev repo: the framework itself, which has no PRODUCT
   // requirements (its _requirements/ are templates, scrub-pending). A fresh,
   // empty requirements graph is the EXPECTED state there — not a merge blocker.
   return resolveRepoRole({ root: path.resolve(__dirname, "..", "..") }).role === "canonical";

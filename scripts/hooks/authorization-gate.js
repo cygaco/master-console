@@ -4,7 +4,7 @@
  * guards when an active `/turbo` authorization covers the tool call.
  *
  * Pairs with `scripts/turbo/apply.js`. Reads `paths.runtime/authorization.json`
- * (schema warpos/auth/v1). If absent, expired, or scope-mismatched: no-op
+ * (schema mc/auth/v1). If absent, expired, or scope-mismatched: no-op
  * pass-through. Existing BLOCK guards run untouched.
  *
  * When scope matches AND not in safety floor:
@@ -312,7 +312,7 @@ function readAuth() {
   try {
     if (!fs.existsSync(AUTH_PATH)) return null;
     const auth = JSON.parse(fs.readFileSync(AUTH_PATH, "utf8"));
-    if (!auth || auth.schema !== "warpos/auth/v1") return null;
+    if (!auth || auth.schema !== "mc/auth/v1") return null;
     if (!Array.isArray(auth.scopes)) return null;
     if (!auth.expires_at) return null;
     const ms = new Date(auth.expires_at).getTime() - Date.now();

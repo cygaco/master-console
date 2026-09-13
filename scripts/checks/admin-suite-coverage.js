@@ -20,8 +20,8 @@
 //         `node scripts/admin/*.js` opener whose script is absent in THIS worktree is
 //         SKIPPED-with-note — preview.js is built by another builder in the parallel gauntlet.)
 //
-//   (iii) WARPOS GUARD — scripts/admin/preview.js source contains the `refuseIfTargetIsWarpOS`
-//         assertion (the never-run-against-WarpOS-itself precondition). (Tolerant: SKIPPED-with-
+//   (iii) MC GUARD — scripts/admin/preview.js source contains the `refuseIfTargetIsMC`
+//         assertion (the never-run-against-MC-itself precondition). (Tolerant: SKIPPED-with-
 //         note when preview.js is absent in this worktree; a PRESENT preview.js missing the
 //         guard is a hard finding.)
 //
@@ -43,8 +43,8 @@ const COMMANDS_DIR = path.join(ROOT, ".claude", "commands");
 // The four admin:* skills the suite must ship (AC-R5a).
 const ADMIN_SKILLS = ["preview", "readiness", "guides", "seed"];
 
-// The WarpOS-refusal token preview.js must contain (AC-R5a iii).
-const WARPOS_GUARD_TOKEN = "refuseIfTargetIsWarpOS";
+// The MC-refusal token preview.js must contain (AC-R5a iii).
+const WARPOS_GUARD_TOKEN = "refuseIfTargetIsMC";
 
 const JSON_OUT = process.argv.includes("--json");
 
@@ -202,12 +202,12 @@ function evaluate({ registry, resolve, exists, read }) {
     }
   }
 
-  // (iii) WARPOS GUARD — preview.js's run() must CALL refuseIfTargetIsWarpOS BEFORE any
+  // (iii) MC GUARD — preview.js's run() must CALL refuseIfTargetIsMC BEFORE any
   // side-effecting seam. A bare token check false-greens a comment/dead-code mention
   // (xprovider review BLOCKER #4) — verify call ORDER on the comment-stripped run() body.
   const previewSrc = read("scripts/admin/preview.js");
   if (previewSrc == null) {
-    skipped.push({ check: "warpos_guard", reason: "scripts/admin/preview.js absent in this worktree (keystone lane)" });
+    skipped.push({ check: "mc_guard", reason: "scripts/admin/preview.js absent in this worktree (keystone lane)" });
   } else {
     checked++;
     const body = (() => {
@@ -215,17 +215,17 @@ function evaluate({ registry, resolve, exists, read }) {
       const i = stripped.search(/(?:async\s+)?function\s+run\s*\(/);
       return i >= 0 ? stripped.slice(i) : "";
     })();
-    const guardCall = body.search(/refuseIfTargetIsWarpOS\s*\(/);
+    const guardCall = body.search(/refuseIfTargetIsMC\s*\(/);
     const firstSeam = body.search(/\b(?:_?resolveOrScaffold|_?ensureDeps|_?startDevAndWaitReady|writePointer|_?openInBrowser)\s*\(/);
     if (guardCall < 0) {
       findings.push({
-        finding_type: "missing_warpos_guard",
-        evidence: `scripts/admin/preview.js run() does not CALL refuseIfTargetIsWarpOS(...) — token presence is insufficient`,
+        finding_type: "missing_mc_guard",
+        evidence: `scripts/admin/preview.js run() does not CALL refuseIfTargetIsMC(...) — token presence is insufficient`,
       });
     } else if (firstSeam >= 0 && guardCall > firstSeam) {
       findings.push({
-        finding_type: "warpos_guard_call_order",
-        evidence: `scripts/admin/preview.js run() invokes a side-effecting seam BEFORE refuseIfTargetIsWarpOS — the WarpOS refusal must run first`,
+        finding_type: "mc_guard_call_order",
+        evidence: `scripts/admin/preview.js run() invokes a side-effecting seam BEFORE refuseIfTargetIsMC — the MC refusal must run first`,
       });
     }
   }
@@ -238,7 +238,7 @@ function evaluate({ registry, resolve, exists, read }) {
 function loadRegistry() {
   const raw = fs.readFileSync(REGISTRY_FILE, "utf8");
   const reg = JSON.parse(raw);
-  if (reg.$schema !== "warpos/admin-panel-registry/v1") {
+  if (reg.$schema !== "mc/admin-panel-registry/v1") {
     throw new Error(`unexpected $schema: ${reg.$schema}`);
   }
   return reg;

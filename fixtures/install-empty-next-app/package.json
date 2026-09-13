@@ -1,5 +1,5 @@
 {
-  "name": "warpos-install-empty-next-app-fixture",
+  "name": "mc-install-empty-next-app-fixture",
   "private": true,
   "scripts": {
     "build": "echo fixture"

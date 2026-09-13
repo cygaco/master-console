@@ -1,6 +1,6 @@
 # Contributing to Master Console
 
-Thanks for looking. Master Console (formerly WarpOS) is a single-maintainer project that is being opened up; the process below is what keeps it honest, and it applies to the maintainer's own changes too.
+Thanks for looking. Master Console (formerly MC) is a single-maintainer project that is being opened up; the process below is what keeps it honest, and it applies to the maintainer's own changes too.
 
 ## Ground rules
 
@@ -14,7 +14,7 @@ Thanks for looking. Master Console (formerly WarpOS) is a single-maintainer proj
 
 ```
 git clone https://github.com/cygaco/master-console.git
-cd WarpOS
+cd MC
 node --version                                    # 20 or newer
 ```
 
@@ -29,9 +29,9 @@ There are no npm dependencies. Everything is plain Node.js and markdown.
 | A hook | `scripts/hooks/<name>.js`, wired through `.claude/settings.json`; `/hooks:add` scaffolds one, `/hooks:test` exercises them |
 | An enforcer / check | `scripts/checks/<name>.js` with a sibling `<name>.test.js`; wire it into `/scan:full` (`.claude/commands/scan/full.md`) |
 | A project path | `framework/paths.registry.json` (the **source**), then `node scripts/paths/build.js`. Never hand-edit `.claude/paths.json` — it is generated and your edit is discarded on the next build. Refer to paths in prose as `paths.<key>` |
-| The installer / updater / release engine | `scripts/warp-setup.js`, `install.ps1`, `scripts/warpos/` |
+| The installer / updater / release engine | `scripts/warp-setup.js`, `install.ps1`, `scripts/mc/` |
 | The sprint lifecycle runtime | `scripts/sprint/` (`epsilon-runtime.js` and the hook-point registry under `.claude/agents/_org/`) |
-| Spec templates | `_requirements/` and `_warpos/templates/` |
+| Spec templates | `_requirements/` and `_mc/templates/` |
 
 ## Running the tests
 
@@ -55,7 +55,7 @@ Run these before you push. They are the same gates CI runs (the workflow is land
 | Paths build | `npm run paths:build` | A registry edit whose generated views were not rebuilt |
 | Full scan | `/scan:full` in Claude Code | Everything above plus the enforcer suite |
 
-If you edit anything hash-tracked (`scripts/**`, `.claude/commands/**`, `ROADMAP.md`, the framework docs), regenerate the manifests **last**, before the commit: `node scripts/generate-framework-manifest.js`, `node scripts/warpos/snapshot-installed.js`, `node scripts/warpos/manifest/build.js`. A stale manifest fails the release gates.
+If you edit anything hash-tracked (`scripts/**`, `.claude/commands/**`, `ROADMAP.md`, the framework docs), regenerate the manifests **last**, before the commit: `node scripts/generate-framework-manifest.js`, `node scripts/mc/snapshot-installed.js`, `node scripts/mc/manifest/build.js`. A stale manifest fails the release gates.
 
 ## Branches, commits, pull requests
 
@@ -75,7 +75,7 @@ Three rules with a bug history behind each, from [CLAUDE.md](CLAUDE.md):
 
 ## The rebrand
 
-The brand is Master Console; identifiers are still `warpos` / `warp:*` / `WARPOS_*` / `_warpos/` until the `2.0.0` release. Please do not rename identifiers piecemeal — that migration is one coordinated sprint with aliases for downstream installs. Brand-level prose (READMEs, docs) should say Master Console, and "formerly WarpOS" where history is referenced.
+The brand is Master Console; identifiers are still `mc` / `warp:*` / `MC_*` / `_mc/` until the `2.0.0` release. Please do not rename identifiers piecemeal — that migration is one coordinated sprint with aliases for downstream installs. Brand-level prose (READMEs, docs) should say Master Console, and "formerly MC" where history is referenced.
 
 ## Questions
 

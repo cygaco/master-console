@@ -240,7 +240,7 @@ function writeYaml(file, value) {
     const kind = inferSprintSchemaKind(file);
     if (kind) {
       // Object spread preserves key order; schema lands first.
-      out = { schema: `warpos/sprint/${kind}/v1`, ...out };
+      out = { schema: `mc/sprint/${kind}/v1`, ...out };
     }
   }
   const body = yamlDump(out, 0) + "\n";

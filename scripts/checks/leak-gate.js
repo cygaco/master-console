@@ -13,7 +13,7 @@
  * Gates (name → command):
  *   privacy             node scripts/check/privacy.js
  *   framework-purity    node scripts/checks/framework-purity.js --full
- *   tracked-transients  node scripts/checks/warpos-tracked-transients.js
+ *   tracked-transients  node scripts/checks/mc-tracked-transients.js
  *   leak-denylist       node scripts/checks/leak-denylist.js
  *   readme-drift        node scripts/checks/readme-drift.js
  *

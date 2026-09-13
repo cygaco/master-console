@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * scripts/check/install.js — Verify a fresh WarpOS install is complete.
+ * scripts/check/install.js — Verify a fresh MC install is complete.
  *
  * Runs a series of presence + structural checks. Bails early if .claude/manifest.json
- * is missing — that's the signal we're not in a WarpOS-installed repo.
+ * is missing — that's the signal we're not in a MC-installed repo.
  *
  * Usage:
  *   node scripts/check/install.js                  full audit
@@ -11,7 +11,7 @@
  *
  * Exit:
  *   0 — install complete
- *   1 — install incomplete OR not a WarpOS repo
+ *   1 — install incomplete OR not a MC repo
  *   2 — usage error
  */
 const fs = require("fs");
@@ -53,7 +53,7 @@ function main() {
   // Bail-out check first
   if (!exists(".claude/manifest.json")) {
     const msg =
-      "not a WarpOS-installed repo (no .claude/manifest.json) — run /warp:setup first";
+      "not a MC-installed repo (no .claude/manifest.json) — run /warp:setup first";
     if (asJson) {
       process.stdout.write(
         JSON.stringify({ ok: false, bailed: true, reason: msg }) + "\n",
@@ -77,17 +77,17 @@ function main() {
       exists(".claude/framework-manifest.json"),
     ),
     check("version.json present", () => exists("version.json")),
-    check("manifest.warpos.installed === true", () => {
-      if (!manifest || !manifest.warpos)
-        return { ok: false, detail: "no warpos block" };
-      return manifest.warpos.installed === true;
+    check("manifest.mc.installed === true", () => {
+      if (!manifest || !manifest.mc)
+        return { ok: false, detail: "no mc block" };
+      return manifest.mc.installed === true;
     }),
-    check("manifest.warpos.version is semver", () => {
-      const v = manifest && manifest.warpos && manifest.warpos.version;
+    check("manifest.mc.version is semver", () => {
+      const v = manifest && manifest.mc && manifest.mc.version;
       return typeof v === "string" && /^\d+\.\d+\.\d+$/.test(v);
     }),
-    check("manifest.warpos.version matches version.json", () => {
-      const v = manifest && manifest.warpos && manifest.warpos.version;
+    check("manifest.mc.version matches version.json", () => {
+      const v = manifest && manifest.mc && manifest.mc.version;
       const vjPath = path.join(REPO_ROOT, "version.json");
       if (!fs.existsSync(vjPath))
         return { ok: false, detail: "version.json missing" };
@@ -188,18 +188,18 @@ function main() {
       }
     }),
     check("sprint templates present (init + requirements)", () => {
-      const base = path.join(REPO_ROOT, "_warpos", "templates", "sprint");
+      const base = path.join(REPO_ROOT, "_mc", "templates", "sprint");
       const missing = ["init", "requirements"].filter(
         (d) => !fs.existsSync(path.join(base, d)),
       );
       if (missing.length)
         return {
           ok: false,
-          detail: `_warpos/templates/sprint/{${missing.join(",")}} missing — design phase would write a hollow bundle (WG-10). Run /warp:update.`,
+          detail: `_mc/templates/sprint/{${missing.join(",")}} missing — design phase would write a hollow bundle (WG-10). Run /warp:update.`,
         };
       return true;
     }),
-    // WG-9 / W-005: ESM/CJS collision. WarpOS framework scripts are CommonJS
+    // WG-9 / W-005: ESM/CJS collision. MC framework scripts are CommonJS
     // (require()). If the PRODUCT root package.json declares "type":"module",
     // Node treats every .js under it as ESM — so `node "$CLAUDE_PROJECT_DIR/
     // scripts/hooks/foo.js"` throws "require is not defined in ES module scope"

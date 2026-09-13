@@ -1,4 +1,4 @@
-# Issues — WarpOS
+# Issues — MC
 
 > **What this is.** This file is `paths.sprintIssuesLedger` — a lightweight human-readable issue ledger kept in sync with per-issue YAML files under `.claude/project/sprint/issues/` by `scripts/sprint/issue.js`. Lives at repo root because the `paths.json` binding points here.
 
@@ -13,7 +13,7 @@ or `/sprint:execute` to surface and promote issues to tickets.
 > Scope: PRODUCT issues — bugs, regressions, edge cases, deferred work,
 > rejected fixes — discovered while running sprints for **this** project.
 >
-> SYSTEM-level recurring issues (WarpOS framework, hooks, agent system)
+> SYSTEM-level recurring issues (MC framework, hooks, agent system)
 > still go to `paths.recurringIssuesFile` via `/issues:log`.
 
 ## Open

@@ -58,7 +58,7 @@ function discover() {
       }
     }
   }
-  // 3b. scripts/warpos/test-*.js (SP-20260528-001 / #438)
+  // 3b. scripts/mc/test-*.js (SP-20260528-001 / #438)
   // Framework/install-pipeline regression tests that should run on every lint
   // pass alongside the sprint tests. EXCLUDE heavy integration tests that have
   // their own on-demand/CI registration — test-install-matrix.js (~22s,
@@ -77,13 +77,13 @@ function discover() {
     "test-install-matrix.js",
     "test-hash-back-compat.js",
   ]);
-  if (fs.existsSync("scripts/warpos")) {
-    for (const f of fs.readdirSync("scripts/warpos")) {
+  if (fs.existsSync("scripts/mc")) {
+    for (const f of fs.readdirSync("scripts/mc")) {
       if (f.startsWith("test-") && f.endsWith(".js") && !WARPOS_TEST_EXCLUDE.has(f)) {
         const stem = f.replace(/\.js$/, "");
         linters.push({
-          name: `warpos-${stem}`,
-          cmd: `node scripts/warpos/${f}`,
+          name: `mc-${stem}`,
+          cmd: `node scripts/mc/${f}`,
         });
       }
     }

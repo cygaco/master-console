@@ -1,4 +1,4 @@
-# WarpOS — Your Agent Company
+# MC — Your Agent Company
 
 > Plain-language map of who's who. Snapshot: 2026-07-16. (Source files at the bottom; the keystone is `.claude/agents/_org/role-registry.json`, with the org & runtime & model-spread decisions recorded in ADR-0007 / ADR-0009 / ADR-0016 under `president/_system/policy/adr/`.)
 

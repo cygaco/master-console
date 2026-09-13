@@ -1,10 +1,10 @@
 ---
-description: Verify WarpOS installation — checks every system, reports green/yellow/red with plain-English fixes
+description: Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes
 ---
 
 # /warp:health — Installation Health Check
 
-Verify that WarpOS is properly installed and all systems are functional. Reports each system as green (working), yellow (degraded), or red (broken) with clear fix instructions.
+Verify that MC is properly installed and all systems are functional. Reports each system as green (working), yellow (degraded), or red (broken) with clear fix instructions.
 
 ## Procedure
 
@@ -23,7 +23,7 @@ Check these directories exist:
 - `scripts/hooks/` — hook implementations
 - `scripts/hooks/lib/` — shared hook libraries
 
-If any missing: RED — "Run the WarpOS installer again or create the directory manually."
+If any missing: RED — "Run the MC installer again or create the directory manually."
 
 ### 2. Core Files
 Check these files exist:
@@ -112,7 +112,7 @@ For each missing: INFO — "Optional. Install for enhanced features."
 
 ### 11. Provider Health — Dispatch Readiness (Phase 0)
 
-Run `node scripts/warpos/provider-smoke.js --per-role`.
+Run `node scripts/mc/provider-smoke.js --per-role`.
 
 This performs a **full dispatch-readiness sweep**: it probes each configured
 provider for CLI presence + auth, AND resolves each build-chain role's
@@ -151,7 +151,7 @@ States recognised — **provider-level** (per `scripts/hooks/lib/provider-health
 `stale_cli_registry`, `trusted_directory_required`, `provider_timeout`,
 `unknown_error`.
 
-States recognised — **per-role** (per `scripts/warpos/provider-smoke.js#classifyPerRole`):
+States recognised — **per-role** (per `scripts/mc/provider-smoke.js#classifyPerRole`):
 `ok` (reachable), `resolved` (--no-ping: provider+model resolved, ping skipped),
 `fellback` (YELLOW — ran but silently downgraded to claude, loses diff-model coverage),
 `model_unavailable` (RED — model pinned in role spec is not served on this account),
@@ -184,7 +184,7 @@ reachability. (Pass `--strict` to make it exit 2 on any FAIL for a CI gate.)
 
 ### 11.6 Provider Tier Readiness — T1/T2/T3 (S-LC-10)
 
-Run `node scripts/warpos/provider-tier-check.js`.
+Run `node scripts/mc/provider-tier-check.js`.
 
 This **layers a tier grade over** Sections 11/11.5's health stack (it reuses
 `dispatch-readiness.js` + `auth-resolver.js`, never duplicating them) and answers
@@ -225,7 +225,7 @@ nothing when nothing is dead.
 ### 12.5 Orphaned Dispatch Subprocesses (E-TEAMS-MIGRATION-001)
 
 Run `node scripts/dispatch/reap-orphans.js` (DRY-RUN — reports, kills nothing).
-This detects ORPHANED WarpOS dispatch subprocesses: a provider CLI (claude /
+This detects ORPHANED MC dispatch subprocesses: a provider CLI (claude /
 codex / gemini) whose `dispatch-*.js` wrapper was reaped by the harness (the
 ED-039 / RI-004 reap class) and is still running with no completion record —
 holding a model session + slot + memory. Distinct from §12: prune-dead-locks
@@ -233,7 +233,7 @@ clears the dead lock FILE; this finds the orphaned PROCESS.
 
 Report `scanned` + `orphanCount` + the per-orphan `pid`/`age`/`cmd` lines. It is
 **conservative by construction + fail-open** — a process is flagged ONLY when its
-command line matches a WarpOS dispatch signature AND its parent is dead/reparented
+command line matches a MC dispatch signature AND its parent is dead/reparented
 AND it is older than ~20min AND it holds no fresh concurrency lock AND it is not
 this session's own tree; any ambiguity ⇒ it is SKIPPED (a missed orphan is cheap;
 killing a live builder loses uncommitted work).
@@ -247,7 +247,7 @@ killing a live builder loses uncommitted work).
 ## Output Format
 
 ```
-WarpOS Health Check
+MC Health Check
 ═══════════════════
 
   ✓  Directory structure         All 10 directories present

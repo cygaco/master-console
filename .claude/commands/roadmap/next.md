@@ -12,7 +12,7 @@ Pick the consulting persona by the **scope** of the "what next" question, per th
 
 - **Single-product / within-sprint next pick** → the **product-lead** persona. Signals: the single highest-leverage next item for *one* product's backlog or current sprint; `$ARGUMENTS` scoped to one product.
 - **Strategic / cross-product / lifecycle-phase-shift next pick** → the **director-of-product** persona. Signals: the program's next bet, a portfolio-level or lifecycle/pivot call.
-- **Fallback (R2 — no regression):** when the Product Lead *would* be chosen but scope is ambiguous, **default to `director-of-product`** (also the standing default for WarpOS's own framework roadmap). Defaulting up never regresses — the Lead inherits the Director's principles (R4).
+- **Fallback (R2 — no regression):** when the Product Lead *would* be chosen but scope is ambiguous, **default to `director-of-product`** (also the standing default for MC's own framework roadmap). Defaulting up never regresses — the Lead inherits the Director's principles (R4).
 
 ## Input
 

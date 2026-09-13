@@ -13,16 +13,16 @@
 The D-4 standing standard demanded a REAL, BLOCKING release gate that runs the three shipped
 scaffold paths (`/portfolio:new`, manual `/warp:setup`, the shipped `install.ps1`) for real, instead
 of the two pre-existing cosmetic gates that only asserted a fixture DIRECTORY exists
-(`fresh_install_fixture`, `customized_install_fixture` — `scripts/warpos/release-gates.js`, never
+(`fresh_install_fixture`, `customized_install_fixture` — `scripts/mc/release-gates.js`, never
 ran an install). A gate that shells real installers 3x is also a gate that can corrupt canonical if
 built carelessly — a real canonical-corruption incident earlier this session made the sandbox-isolation
 property the #1 correctness requirement, ahead of the install assertions themselves.
 
 ## Decision
 
-Ship `scripts/warpos/test-scaffold-all-ways.js` (the engine) + `gate("fresh_scaffold_all_ways", ...)`
+Ship `scripts/mc/test-scaffold-all-ways.js` (the engine) + `gate("fresh_scaffold_all_ways", ...)`
 + `gate("install_matrix", ...)` (wiring the previously-orphaned `test-install-matrix.js`) in
-`scripts/warpos/release-gates.js`, plus a `parentDir` test/sandbox seam on
+`scripts/mc/release-gates.js`, plus a `parentDir` test/sandbox seam on
 `scripts/portfolio/new-lib.js#createProductRepo`.
 
 ### Sandbox isolation (the binding property)
@@ -35,7 +35,7 @@ Four leak vectors, each sandbox-scoped:
 2. **Portfolio registry** — reuses the EXISTING, already-tested `WARPOS_PORTFOLIO_REGISTRY` env seam
    (`scripts/portfolio/registry.js#registryPath()`, covered by `registry-path.test.js`) rather than
    inventing a second seam. The engine points it at a sandbox doc for Leg 1's duration, restores it,
-   and asserts the REAL `~/.warpos/portfolio.json` is byte-identical before/after.
+   and asserts the REAL `~/.mc/portfolio.json` is byte-identical before/after.
 3. **install.ps1 side-effects** — confirmed by inspection: every write in `install.ps1` is
    `Join-Path $Target ...`; reads from `$Source` are read-only.
 4. **Git ops** — every git call in the engine is cwd-scoped to a sandbox, or is a pre-existing
@@ -44,7 +44,7 @@ Four leak vectors, each sandbox-scoped:
 **Mechanized proof (R1a):** `git status --porcelain --untracked-files=all` snapshotted before/after
 the whole run; asserted byte-identical. This is a NO-DELTA proof, not absolute-clean — robust to a
 legitimately-dirty dev host. Empirically confirmed during design: this snapshot form already excludes
-every gitignored scratch path the engine's own telemetry/scratch writes land in (`.warpos/`,
+every gitignored scratch path the engine's own telemetry/scratch writes land in (`.mc/`,
 `.claude/runtime/`, `.claude/project/events/`) — a real leak (a modified tracked file, or a new
 untracked NON-ignored path) is the only thing that can produce a delta.
 
@@ -77,7 +77,7 @@ Leg 3 (install.ps1) vs Leg 2 (manual `/warp:setup`) is a full-tree PATH-SET diff
 re-deriving a second normalization set. That allowlist already enumerates + justifies each entry
 (timestamps live inside files, not the path set; `.claude/framework-installed.json` carries a
 per-install id + hashes; `.claude/framework-manifest.json` is legitimately install.ps1-only;
-`.git`/`.warpos`/runtime/event/memory dirs are per-install scratch).
+`.git`/`.mc`/runtime/event/memory dirs are per-install scratch).
 
 ## Consequences
 
@@ -87,9 +87,9 @@ per-install id + hashes; `.claude/framework-manifest.json` is legitimately insta
 - **Two pre-existing, unrelated defects were surfaced (not introduced) by this build** — flagged as
   FOUNDATION-UPDATE-REQUESTs in the build's return notes, NOT fixed here (out of this unit's file
   scope):
-  1. `scripts/warpos/manifest/build.js`'s `_warpos/MANIFEST.json` classifier currently fails with
+  1. `scripts/mc/manifest/build.js`'s `_mc/MANIFEST.json` classifier currently fails with
      "43 unclassified path(s)" against canonical's OWN tree today (reproduces with zero changes from
-     this build: `node scripts/warpos/manifest/build.js`) — needs classification rules for newer
+     this build: `node scripts/mc/manifest/build.js`) — needs classification rules for newer
      `.claude/kernel/*` / workorder-schema paths.
   2. `install.ps1`'s Stage 1 asset-copy uses `Test-Path`/`Copy-Item` without `-LiteralPath`, so
      PowerShell wildcard-interprets bracket characters in asset paths (e.g. Next.js dynamic-route
@@ -97,12 +97,12 @@ per-install id + hashes; `.claude/framework-manifest.json` is legitimately insta
      exists — a real install.ps1-vs-`/warp:setup` divergence the R4 parity check catches for the
      first time. This is EXACTLY the kind of real regression a wired-in real gate is supposed to
      surface (mirrors R6's "resolve what surfaces, don't dodge it" principle) — but fixing
-     `install.ps1`/the manifest classifier is outside this unit's scope (`scripts/warpos/
+     `install.ps1`/the manifest classifier is outside this unit's scope (`scripts/mc/
      test-scaffold-all-ways.js` + `release-gates.js` + `test-install-matrix.js` wiring +
      `new-lib.js` seam only). GATE-A will legitimately RED on Leg 3 until those are fixed — that is
      the gate doing its job, not a defect in this build.
    - **Amendment (post-design, α-ratified gate-mode option b):** the straight-RED design above was
-     superseded during the ED-249 window by a REPORT-ONLY ramp (the WarpOS report-only→enforce
+     superseded during the ED-249 window by a REPORT-ONLY ramp (the MC report-only→enforce
      discipline). A real-install LEG failure now surfaces as `yellow` (reported, non-blocking) naming
      the ED-249 flip-trigger; a SANDBOX-ISOLATION no-delta LEAK still `red`s UNCONDITIONALLY (checked
      first, never softened). `install_matrix` shares the same ED-249 window. FLIP both to hard
@@ -114,8 +114,8 @@ per-install id + hashes; `.claude/framework-manifest.json` is legitimately insta
 
 ## Enforcer
 
-`scripts/warpos/test-gate-wiring.js` — proves the GATES array composition itself (both new gates
+`scripts/mc/test-gate-wiring.js` — proves the GATES array composition itself (both new gates
 present and reachable, both retired gates absent, `update_fixture_from_previous` still present), fast
-and hermetic (canned `spawnSync` payloads, no real installs). `scripts/warpos/
+and hermetic (canned `spawnSync` payloads, no real installs). `scripts/mc/
 test-scaffold-all-ways.js --self-test` proves the engine's own reachability + sandbox-isolation teeth
 (R7 + R1a/R1b) without running the real 3-leg install.

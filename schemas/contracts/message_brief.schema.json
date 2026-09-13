@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/contracts/message_brief/v0.1",
-  "title": "WarpOS Product-Studio Contract — Message Brief (v0.1) — THE SPINE",
+  "$id": "mc/contracts/message_brief/v0.1",
+  "title": "MC Product-Studio Contract — Message Brief (v0.1) — THE SPINE",
   "description": "The winning message. THE central/spine artifact: every downstream artifact derives from a message_brief via derived_from_message_brief. Marketing owns the market promise here.",
   "version": "v0.1",
   "precedence_note": "v0.1 ranks are revisable post-pilot (global integer rank; β EVT-sp20260530-001-before-plan-beta-001).",

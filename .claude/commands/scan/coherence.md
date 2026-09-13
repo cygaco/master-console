@@ -1,5 +1,5 @@
 ---
-description: Run the WarpOS system coherence graph across 15 drift types.
+description: Run the MC system coherence graph across 15 drift types.
 user-invocable: true
 ---
 

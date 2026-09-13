@@ -3,15 +3,15 @@
 /**
  * scripts/schemas/validate.js — config $schema validation (Phase 2E).
  *
- * Validates that each WarpOS-managed JSON config declares its `$schema`
+ * Validates that each MC-managed JSON config declares its `$schema`
  * field and uses a supported version.
  *
  * Files checked:
- *   .claude/manifest.json             expected: warpos/manifest/v1
- *   .claude/paths.json                expected: warpos/paths/v<registry-version>
+ *   .claude/manifest.json             expected: mc/manifest/v1
+ *   .claude/paths.json                expected: mc/paths/v<registry-version>
  *   .claude/settings.json             expected: https://json.schemastore.org/claude-code-settings.json
- *   .claude/framework-manifest.json   expected: warpos/framework-manifest/v2
- *   .claude/framework-installed.json  expected: warpos/framework-installed/v2 (only if file exists)
+ *   .claude/framework-manifest.json   expected: mc/framework-manifest/v2
+ *   .claude/framework-installed.json  expected: mc/framework-installed/v2 (only if file exists)
  *
  * Usage:
  *   node scripts/schemas/validate.js              # report
@@ -78,11 +78,11 @@ function validateFile(rel, expected, optional = false) {
 function main() {
   const registryVersion = getRegistryVersion();
   const expectedPathsSchema = registryVersion
-    ? `warpos/paths/v${registryVersion}`
+    ? `mc/paths/v${registryVersion}`
     : null;
 
   const checks = [
-    validateFile(".claude/manifest.json", "warpos/manifest/v1"),
+    validateFile(".claude/manifest.json", "mc/manifest/v1"),
     expectedPathsSchema
       ? validateFile(".claude/paths.json", expectedPathsSchema)
       : {
@@ -95,12 +95,12 @@ function main() {
       "https://json.schemastore.org/claude-code-settings.json",
     ),
     validateFile(".claude/framework-manifest.json", [
-      "warpos/framework-manifest/v1",
-      "warpos/framework-manifest/v2",
+      "mc/framework-manifest/v1",
+      "mc/framework-manifest/v2",
     ]),
     validateFile(
       ".claude/framework-installed.json",
-      "warpos/framework-installed/v2",
+      "mc/framework-installed/v2",
       true,
     ),
   ];

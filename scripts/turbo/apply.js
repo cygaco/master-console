@@ -7,7 +7,7 @@
  *
  *   1. Additively merges curated entries into `.claude/settings.json#permissions.allow`
  *      so the harness classifier auto-allows the listed patterns.
- *   2. Writes `paths.runtime/authorization.json` (schema warpos/auth/v1) so the
+ *   2. Writes `paths.runtime/authorization.json` (schema mc/auth/v1) so the
  *      project-side PreToolUse hook `scripts/hooks/authorization-gate.js` can
  *      short-circuit downstream guards for the matching scope.
  *
@@ -403,7 +403,7 @@ function writeAuthorization(scopes, ttlMin, reason, spendCeilingUsd, opts = {}) 
       : null) ||
     now.toISOString();
   const auth = {
-    schema: "warpos/auth/v1",
+    schema: "mc/auth/v1",
     scopes,
     ttl_min: ttlMin,
     granted_at: now.toISOString(),

@@ -4,7 +4,7 @@ description: Scan-suite self-inventory — asserts every /scan:* skill is delega
 
 # /scan:scan-coverage — Does the suite scan itself?
 
-The `/scan:*` suite grew one-enforcer-per-sprint to 40+ skills, and `/scan:full` is a **hand-maintained** tier list. It drifts: a scan gets built but never added to `/scan:full`, so the full-system health check silently skips it. `full.md` documents exactly this failure — `warpos-ship-coverage` existed and passed but was never delegated ("the enforcer exists but isn't on the path"). This scan is the suite **auditing itself**, so that gap can't recur silently.
+The `/scan:*` suite grew one-enforcer-per-sprint to 40+ skills, and `/scan:full` is a **hand-maintained** tier list. It drifts: a scan gets built but never added to `/scan:full`, so the full-system health check silently skips it. `full.md` documents exactly this failure — `mc-ship-coverage` existed and passed but was never delegated ("the enforcer exists but isn't on the path"). This scan is the suite **auditing itself**, so that gap can't recur silently.
 
 ## Run
 
@@ -24,7 +24,7 @@ Exit `0` clean · `1` findings · `2` setup error (**fail-closed** — a self-in
 
 ## The exclusion allowlist
 
-`scripts/checks/scan-coverage.allowlist.json` lists scans intentionally NOT in `/scan:full`, each with a reason. An exclusion is a *claim* that the scan has no go/no-go signal for a full-system pass — e.g. `warpos-layer-diff` is a read-only informational view (exit 0 always), not a health gate. Keep it **small**: prefer adding a scan to `/scan:full` over excluding it.
+`scripts/checks/scan-coverage.allowlist.json` lists scans intentionally NOT in `/scan:full`, each with a reason. An exclusion is a *claim* that the scan has no go/no-go signal for a full-system pass — e.g. `mc-layer-diff` is a read-only informational view (exit 0 always), not a health gate. Keep it **small**: prefer adding a scan to `/scan:full` over excluding it.
 
 ## When to run
 

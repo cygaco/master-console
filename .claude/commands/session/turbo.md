@@ -13,7 +13,7 @@ Two layers in one command, for when you want a fast work session:
    over `scripts/turbo/apply.js` (snapshots `.claude/settings.json`, writes a
    runtime state file with a TTL, pairs with `scripts/hooks/authorization-gate.js`).
 2. **Speed cadence** (added 2026-05-25, RT-speed-analysis) — the build levers that
-   cut the round-trips observed building WarpOS 0.15.0. See "Speed cadence" below.
+   cut the round-trips observed building MC 0.15.0. See "Speed cadence" below.
 
 > Relocated from the root `/turbo` into the `session:` namespace (it's a
 > session-scoped mode). `/turbo` remains as a thin alias so `/mode:*` `--turbo`
@@ -48,7 +48,7 @@ Two layers in one command, for when you want a fast work session:
 ## Speed cadence (the build levers)
 
 When `--speed` is active (or `/sprint:full --autonomy turbo`), bias the build toward
-these levers — each one removes a class of round-trip observed building WarpOS 0.15.0
+these levers — each one removes a class of round-trip observed building MC 0.15.0
 (see RT speed analysis 2026-05-25 + `/issues:list` RI-001):
 
 1. **Parallel builds by default.** Fan out independent tickets / modules to

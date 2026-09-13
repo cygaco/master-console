@@ -1,10 +1,10 @@
-# WarpOS — Project Context
+# MC — Project Context
 
-> Project-specific context for WarpOS itself. For the framework instructions an agent operates under, see [CLAUDE.md](CLAUDE.md). For the agent system router, see [AGENTS.md](AGENTS.md).
+> Project-specific context for MC itself. For the framework instructions an agent operates under, see [CLAUDE.md](CLAUDE.md). For the agent system router, see [AGENTS.md](AGENTS.md).
 
-## What WarpOS is
+## What MC is
 
-WarpOS is an AI operating system for Claude Code. It gives a single developer a multi-agent engineering team (Alex α/β/γ/δ/ε), a registry of slash-command skills, a pipeline of automated hooks, an enforced sprint workflow, and learning/memory infrastructure that persists across sessions.
+MC is an AI operating system for Claude Code. It gives a single developer a multi-agent engineering team (Alex α/β/γ/δ/ε), a registry of slash-command skills, a pipeline of automated hooks, an enforced sprint workflow, and learning/memory infrastructure that persists across sessions.
 
 You install it into a project, open Claude Code, and you stop talking to a single assistant — you talk to a team that plans, builds, reviews, and learns.
 

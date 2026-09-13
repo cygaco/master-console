@@ -6,8 +6,8 @@
  * Dry:   prints what would change; doesn't modify files.
  *
  * EXCLUDED PATHS:
- *   node_modules, .next, runtime, .warpos, playwright-report, backups,
- *   .git, warpos/releases/* (historical capsules — never modify)
+ *   node_modules, .next, runtime, .mc, playwright-report, backups,
+ *   .git, mc/releases/* (historical capsules — never modify)
  */
 const fs = require("fs");
 const path = require("path");
@@ -15,19 +15,19 @@ const path = require("path");
 const ROOT = path.resolve(__dirname, "..", "..");
 const DRY = process.argv.includes("--dry");
 
-// Round 4: warpos/ → framework/ rename (top-level only — not scripts/warpos/).
-// IMPORTANT: only matches "warpos/X" where X is paths|hooks|releases|version etc.
+// Round 4: mc/ → framework/ rename (top-level only — not scripts/mc/).
+// IMPORTANT: only matches "mc/X" where X is paths|hooks|releases|version etc.
 const SUBS = [
-  // warpos/ → framework/ (only top-level — scripts/warpos/ stays)
-  ['"warpos", "paths.registry.json"', '"framework", "paths.registry.json"'],
-  ['"warpos", "hooks.registry.json"', '"framework", "hooks.registry.json"'],
-  ['"warpos", "releases"', '"framework", "releases"'],
-  // bare "warpos" intentionally NOT matched (it's the framework name in version.json, schema URI prefix, etc.)
-  ["warpos/paths.registry.json", "framework/paths.registry.json"],
-  ["warpos/hooks.registry.json", "framework/hooks.registry.json"],
-  ["warpos/releases/", "framework/releases/"],
-  ["warpos/releases", "framework/releases"],
-  ["warpos/installer/", "framework/installer/"],
+  // mc/ → framework/ (only top-level — scripts/mc/ stays)
+  ['"mc", "paths.registry.json"', '"framework", "paths.registry.json"'],
+  ['"mc", "hooks.registry.json"', '"framework", "hooks.registry.json"'],
+  ['"mc", "releases"', '"framework", "releases"'],
+  // bare "mc" intentionally NOT matched (it's the framework name in version.json, schema URI prefix, etc.)
+  ["mc/paths.registry.json", "framework/paths.registry.json"],
+  ["mc/hooks.registry.json", "framework/hooks.registry.json"],
+  ["mc/releases/", "framework/releases/"],
+  ["mc/releases", "framework/releases"],
+  ["mc/installer/", "framework/installer/"],
   // path.join split-arg patterns (longest first)
   ['"requirements", "04-architecture"', '"requirements", "03-architecture"'],
   ['"requirements", "05-features"', '"requirements", "04-features"'],
@@ -65,18 +65,18 @@ const SUBS = [
   ["docs/audit-reports", "requirements/_audits"],
 ];
 
-// Files to skip even within otherwise-scanned dirs. SCRIPTS_WARPOS_KEEP: the
-// scripts/warpos/* machinery dir intentionally keeps its name; do not rewrite
-// any 'warpos/' inside it that's actually 'scripts/warpos/'-relative.
+// Files to skip even within otherwise-scanned dirs. SCRIPTS_MC_KEEP: the
+// scripts/mc/* machinery dir intentionally keeps its name; do not rewrite
+// any 'mc/' inside it that's actually 'scripts/mc/'-relative.
 function isScriptsWarposPath(s) {
-  return /\bscripts\/warpos\//.test(s);
+  return /\bscripts\/mc\//.test(s);
 }
 
 const EXCLUDE = new Set([
   "node_modules",
   ".next",
   "runtime",
-  ".warpos",
+  ".mc",
   "playwright-report",
   "backups",
   ".git",
@@ -85,11 +85,11 @@ const EXCLUDE = new Set([
   "codex-bin",
 ]);
 const EXCLUDE_PATHS = [
-  "warpos/releases/", // historical release capsules — never modify
-  ".warpos/",
+  "mc/releases/", // historical release capsules — never modify
+  ".mc/",
   "runtime/",
   "scripts/one-off/codemod-track-b5.js", // don't self-modify
-  "scripts/warpos/codemod-docs-to-requirements.js", // deprecated codemod, retired separately
+  "scripts/mc/codemod-docs-to-requirements.js", // deprecated codemod, retired separately
   "tests/fixtures/manifest-migrate/", // fixtures intentionally hold historical paths
   "framework/releases/", // historical capsule manifests; never modify
   "framework/paths.registry.json", // registry source-of-truth; deprecation lists must NOT be rewritten
@@ -98,7 +98,7 @@ const EXCLUDE_PATHS = [
   "schemas/paths.schema.json", // generated FROM registry; rebuild via paths/build.js
   "requirements/03-architecture/PATH_KEYS.md", // generated FROM registry; rebuild via paths/build.js
   "docs/research/", // research artifacts (.tmp/ scripts have unrelated docs/ paths)
-  ".claude/project/reference/warpos-system-updates-2026-04-15.md", // historical record
+  ".claude/project/reference/mc-system-updates-2026-04-15.md", // historical record
 ];
 
 const ALLOWED_EXT = new Set([

@@ -158,7 +158,7 @@ const CREEP_BACK_ALLOWLIST = {
   "scripts/dispatch/gauntlet-verify.js": { type: "reference-only", reason: "a comment naming the dispatch-agent.js completion ledger it READS; not a dispatch." },
   "scripts/hooks/dispatch-route-guard.js": { type: "reference-only", reason: "the ROUTING GUARD names the canonical `node scripts/dispatch-agent.js` route it ENFORCES; the enforcer, not a caller." },
   "scripts/hooks/lib/providers.js": { type: "reference-only", reason: "the transport lib names security-reviewer in provider-config comments; runProvider is the transport, not a single-pass security dispatch." },
-  "scripts/warpos/provider-smoke.js": { type: "reference-only", reason: "require()s dispatch-agent.js as a MODULE for getRoleModel (a ping smoke test); not a spawn of dispatch-agent.js with security-reviewer." },
+  "scripts/mc/provider-smoke.js": { type: "reference-only", reason: "require()s dispatch-agent.js as a MODULE for getRoleModel (a ping smoke test); not a spawn of dispatch-agent.js with security-reviewer." },
 };
 // The caller SHAPE: dispatch-agent.js inside a spawn-args ARRAY literal. Used to CONTENT-QUALIFY the
 // reference-only allowlist (gauntlet R-4: a file-wide suppress would hide a future real caller ADDED to a

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/ralph-progress/v1",
-  "title": "WarpOS Sprint v0.1 — Ralph Loop Progress",
+  "$id": "mc/sprint/ralph-progress/v1",
+  "title": "MC Sprint v0.1 — Ralph Loop Progress",
   "description": "Persistent state for a Ralph-style plan/act/test/review/record/checkpoint loop. Written/updated by /sprint:execute. Read on resume.",
   "type": "object",
   "required": [
@@ -16,7 +16,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/ralph-progress/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/ralph-progress/v1" },
     "sprint": { "type": "string" },
     "ticket": { "type": ["string", "null"] },
     "current_loop": { "type": "integer", "minimum": 0 },

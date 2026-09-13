@@ -13,7 +13,7 @@
  *   - AC-1.2.2: regression-fixture YAML with empty justification + reproduction_kind=not_applicable is rejected
  *   - AC-1.3.1: .claude/paths.json has sprintRegressionCorpus
  *   - AC-1.3.2: scripts/hooks/lib/paths.js exposes sprintRegressionCorpus in lockstep
- *   - AC-2.1.1: _warpos/templates/sprint/requirements/acceptance-criteria.md.tmpl documents verified_by:
+ *   - AC-2.1.1: _mc/templates/sprint/requirements/acceptance-criteria.md.tmpl documents verified_by:
  *
  * Convention (Sprint A): bespoke node script with passed/failed counters
  * + per-case lines (`ok    <name>` / `FAIL  <name>`). Same as
@@ -74,7 +74,7 @@ function test_empty_justification_treated_as_missing() {
   // The yaml writer in the helpers uses scripts/sprint/fs.js writeYaml; here we
   // write raw YAML directly for the test.
   const yaml = [
-    'schema: "warpos/sprint/plan-contract/v1"',
+    'schema: "mc/sprint/plan-contract/v1"',
     'id: "PC-99999999-9999"',
     'created_at: "2026-05-18T00:00:00Z"',
     'updated_at: "2026-05-18T00:00:00Z"',
@@ -156,7 +156,7 @@ function test_regression_fixture_schema_parses() {
     );
   }
   const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
-  if (schema.$id !== "warpos/sprint/regression-fixture/v1") {
+  if (schema.$id !== "mc/sprint/regression-fixture/v1") {
     return fail(
       "test_regression_fixture_schema_parses",
       `$id mismatch: ${schema.$id}`,
@@ -170,7 +170,7 @@ function test_valid_fixture_passes_and_empty_justification_fails() {
   // Valid case: reproduction_kind=executable, full fields.
   const tmpValid = path.join(os.tmpdir(), `sp007-rf-valid-${Date.now()}.yaml`);
   const validYaml = [
-    'schema: "warpos/sprint/regression-fixture/v1"',
+    'schema: "mc/sprint/regression-fixture/v1"',
     'id: "RF-20260518-001"',
     'sprint_id: "SP-20260518-007"',
     'origin: { kind: "ticket_id", ref: "T-20260518-103" }',
@@ -199,7 +199,7 @@ function test_valid_fixture_passes_and_empty_justification_fails() {
   // Empty-justification case.
   const tmpBad = path.join(os.tmpdir(), `sp007-rf-bad-${Date.now()}.yaml`);
   const badYaml = [
-    'schema: "warpos/sprint/regression-fixture/v1"',
+    'schema: "mc/sprint/regression-fixture/v1"',
     'id: "RF-20260518-002"',
     'sprint_id: "SP-20260518-007"',
     'origin: { kind: "ticket_id", ref: "T-20260518-103" }',
@@ -282,7 +282,7 @@ function test_ac_template_documents_verified_by_convention() {
   const tmpl = fs.readFileSync(
     path.join(
       REPO,
-      "_warpos",
+      "_mc",
       "templates",
       "sprint",
       "requirements",

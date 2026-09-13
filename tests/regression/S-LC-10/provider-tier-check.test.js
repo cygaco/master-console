@@ -24,9 +24,9 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..", "..", "..");
-const ENGINE = path.join(ROOT, "scripts", "warpos", "provider-tier-check.js");
+const ENGINE = path.join(ROOT, "scripts", "mc", "provider-tier-check.js");
 const tier = require(ENGINE);
-const cfgLib = require(path.join(ROOT, "scripts", "warpos", "lib", "provider-tier-config.js"));
+const cfgLib = require(path.join(ROOT, "scripts", "mc", "lib", "provider-tier-config.js"));
 
 let pass = 0;
 let fail = 0;

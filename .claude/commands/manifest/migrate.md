@@ -1,5 +1,5 @@
 ---
-description: Migrate the manifest to a target WarpOS version. Dry-run by default; --apply to write.
+description: Migrate the manifest to a target MC version. Dry-run by default; --apply to write.
 user-invocable: true
 namespace: manifest
 reads: [paths.manifest]
@@ -11,7 +11,7 @@ migrates:
 
 # /manifest:migrate
 
-Apply a chain of one-step migrations to bring the manifest from the current `warpos.version` to a target.
+Apply a chain of one-step migrations to bring the manifest from the current `mc.version` to a target.
 
 ## Semantics (frozen contract)
 

@@ -30,4 +30,4 @@ Use `paths.eventsFile` in prose and `PATHS.eventsFile` in code. Edit `framework/
 
 ## Owner
 
-WarpOS framework.
+MC framework.

@@ -2,7 +2,7 @@
 /**
  * settings-edit-guard.js — PreToolUse Edit|Write hook (WI-33).
  *
- * `.claude/settings.json` is a GENERATED artifact: scripts/warpos/settings/
+ * `.claude/settings.json` is a GENERATED artifact: scripts/mc/settings/
  * compile.js produces it from a defaults layer + .claude/settings.local.json
  * (the per-project override layer the operator is meant to edit). A direct
  * hand-edit to settings.json is a footgun — the next `compile` overwrites it,
@@ -82,15 +82,15 @@ process.stdin.on("end", () => {
     process.stderr.write(
       [
         "[settings-edit-guard] You are editing the GENERATED .claude/settings.json directly.",
-        "  This file is compiled by scripts/warpos/settings/compile.js from:",
+        "  This file is compiled by scripts/mc/settings/compile.js from:",
         "    - the framework defaults layer, and",
         "    - .claude/settings.local.json (the per-project override layer).",
         "  A direct edit here is OVERWRITTEN on the next compile — and a recompile",
         "  once silently DROPPED a security hook this way. Edit the SOURCE instead:",
         "    1. Edit .claude/settings.local.json (permissions / hooks / env overrides), then",
-        "    2. node scripts/warpos/settings/compile.js   # regenerate settings.json",
+        "    2. node scripts/mc/settings/compile.js   # regenerate settings.json",
         "  Verify nothing drifted:",
-        "    node scripts/warpos/settings/compile.js --check",
+        "    node scripts/mc/settings/compile.js --check",
         "  (Advisory only — this edit is NOT blocked. For an emergency hand-edit,",
         "   mirror the change into settings.local.json afterward so compile keeps it.)",
         "",

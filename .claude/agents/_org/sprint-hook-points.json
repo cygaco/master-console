@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/sprint-hook-points/v0.1",
+  "schema": "mc/sprint-hook-points/v0.1",
   "_note": "Declarative agent->sprint-step attachment registry (ADR-0007 / Phase D foundation). ONE row per attachment: which role fires at which lifecycle step, under what condition, advisory or blocking. `role` references .claude/agents/_org/role-registry.json by id. Adding/swapping an agent = editing a ROW, never the orchestrator (same proven pattern as _guides/registry.json). Consumed by scripts/sprint/hook-points.js (the composition->agent-set router) and the bidirectional scan:sprint-hook-coverage enforcer (forward: every matched row ran or logged debt; reverse: every dispatching role is registered, no step orphaned). Rows are the current-roster translation of sprint-hook-points-design.md sec.5 (which used pre-ADR-0007 names: product-designer->design-lead, DoQA->quality-lead, redteam->security-reviewer, qa+compliance->qa-reviewer).",
   "lifecycle": ["plan", "design", "build", "gauntlet", "release", "retro"],
   "phase_map": {

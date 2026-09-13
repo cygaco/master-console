@@ -19,14 +19,14 @@
 // the caller (the CLI), so the same inputs always produce byte-identical output (AC-1 --json
 // deterministic). Everything is injectable via opts for fixture-driven testing.
 //
-// Schema: warpos/readiness/v1. The schema id stays in the machine layer — it is NEVER
+// Schema: mc/readiness/v1. The schema id stays in the machine layer — it is NEVER
 // product-facing copy (brand boundary, R-6 — project_masterconsole_branding_boundary).
 
 const fs = require("fs");
 const path = require("path");
 const { readFoundersChecklist } = require("./founders-checklist");
 
-const READINESS_SCHEMA = "warpos/readiness/v1";
+const READINESS_SCHEMA = "mc/readiness/v1";
 
 // ── Static lead-time map (slow-clock human work) ────────────────────────────────
 // Keyed by checklist/gate id. Seeded from project_dev_setup_guide_day_zero (Apple ~2d,
@@ -101,7 +101,7 @@ function resolveDeepLink(item, guideFiles) {
 }
 
 /**
- * Build the readiness report (warpos/readiness/v1) for a product repo.
+ * Build the readiness report (mc/readiness/v1) for a product repo.
  *
  * @param {string} repoRoot         product repo root (CLI default: process.cwd()).
  * @param {object} [opts]

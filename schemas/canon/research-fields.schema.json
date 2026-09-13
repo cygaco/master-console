@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/canon/research-fields/v1",
+  "$id": "mc/canon/research-fields/v1",
   "title": "Canon research-fields cap",
   "description": "THE research cap (SP-20260525-022, β Q4 conf 0.83). The canon engine may invoke research:* ONLY to fill the named fields enumerated here — never open-ended discovery. The engine builds its research query set from these field names, and validates the research response against this schema. additionalProperties:false at every level is the bound: a research backend returning fields outside this set is rejected (its extra output is discarded, not silently merged). Every filled field MUST carry a `sources[]` (citations); a field with no sources is treated as THIN (validation WARNING, never a silent pass — per β's before_execute directive).",
   "type": "object",

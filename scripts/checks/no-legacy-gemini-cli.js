@@ -45,7 +45,7 @@ const FORBIDDEN = [
   // Workspace-trust env / flag for the dead CLI.
   { form: "gemini-trust", re: /\bGEMINI_CLI_TRUST\w*\b|(^|[^\w-])--skip-trust\b/, desc: "GEMINI_CLI_TRUST* / --skip-trust" },
   // The removed key/oauth loaders + trust-bypass opt.
-  { form: "gemini-loaders", re: /\bloadGeminiApiKey\b|\bhasValidGeminiOAuth\b|\bgeminiTrustBypass\b|\bWARPOS_GEMINI_(TRUST_BYPASS|PREFER_OAUTH|FORCE_KEY)\b/, desc: "removed gemini key/oauth loaders" },
+  { form: "gemini-loaders", re: /\bloadGeminiApiKey\b|\bhasValidGeminiOAuth\b|\bgeminiTrustBypass\b|\bMC_GEMINI_(TRUST_BYPASS|PREFER_OAUTH|FORCE_KEY)\b/, desc: "removed gemini key/oauth loaders" },
   // A `gemini <cli-flag>` invocation string. (Matches the dead CLI's own flags; the model-id
   // "gemini-3.1-…" has a hyphen immediately after "gemini", so `gemini\s+<flag>` never matches it.)
   { form: "gemini-cli-call", re: /\bgemini\s+(models\s+list|--version|auth\b|-m\b|-p\b|--model\b|exec\b)/, desc: "a `gemini <flag>` CLI invocation" },

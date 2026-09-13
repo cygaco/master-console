@@ -13,7 +13,7 @@ const {
 } = require("../../../scripts/checks/scaffold-coverage-scan");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
-const REAL_SCAFFOLD = path.join(REPO_ROOT, "_warpos", "templates", "app-scaffold");
+const REAL_SCAFFOLD = path.join(REPO_ROOT, "_mc", "templates", "app-scaffold");
 
 const tests = [];
 function test(name, fn) {
@@ -21,7 +21,7 @@ function test(name, fn) {
 }
 
 function fixture(mutator) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-spf01-scaffold-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-spf01-scaffold-"));
   fs.cpSync(REAL_SCAFFOLD, dir, { recursive: true });
   if (mutator) mutator(dir);
   return dir;

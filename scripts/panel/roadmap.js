@@ -23,7 +23,7 @@
  *
  * Injectable source root (for tests + alt checkouts): --root <dir> or the
  * WARPOS_ROADMAP_ROOT env var override the default repo root (resolved from this
- * module's own __dirname, mirroring scripts/warpos/repo-role.js). This lets a test
+ * module's own __dirname, mirroring scripts/mc/repo-role.js). This lets a test
  * feed FIXTURES without touching the real repo files (read-only proof).
  *
  * CLI:
@@ -40,7 +40,7 @@ const fs = require("fs");
 const path = require("path");
 
 // Default repo root resolved from this module's location (scripts/panel/../.. =
-// project root). Mirrors scripts/warpos/repo-role.js — no paths.X dependency.
+// project root). Mirrors scripts/mc/repo-role.js — no paths.X dependency.
 const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
 
 // A NUL byte, built so no literal control byte ever lives in THIS source file.

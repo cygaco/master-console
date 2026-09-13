@@ -44,7 +44,7 @@ const OUT_SETTINGS = path.join(ROOT, ".claude", "settings.json");
 function readRegistry() {
   const raw = fs.readFileSync(REGISTRY_FILE, "utf8");
   const reg = JSON.parse(raw);
-  if (reg.$schema !== "warpos/hooks-registry/v1") {
+  if (reg.$schema !== "mc/hooks-registry/v1") {
     throw new Error(`Unexpected registry $schema: ${reg.$schema}`);
   }
   return reg;
@@ -101,7 +101,7 @@ function buildHookManifest(registry) {
     /* fall through */
   }
   return {
-    $schema: "warpos/hook-manifest/v1",
+    $schema: "mc/hook-manifest/v1",
     generatedFrom: "framework/hooks.registry.json",
     updatedAt,
     hooks,

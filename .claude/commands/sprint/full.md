@@ -80,10 +80,10 @@ Before invoking `scripts/sprint/full.js`, the skill body (this file)
 sets up state that the orchestrator can't infer:
 
 1. **Construct the Plan Contract payload** from the verbatim
-   `$ARGUMENTS` request. Write to `.warpos/plan-payload-<slug>.json`
+   `$ARGUMENTS` request. Write to `.mc/plan-payload-<slug>.json`
    matching `schemas/sprint/plan-contract.schema.json` (per
    `/sprint:plan` Step 9). The orchestrator's Phase 1 picks up the
-   most recent matching file in `.warpos/`.
+   most recent matching file in `.mc/`.
 2. **Ensure a sprint id exists.** If the operator didn't pass
    `--sprint <SP-id>`, run `node scripts/sprint/add-sprint.js --id
    <new-id> --title "<derived>"` to mint a new sprint in the
@@ -314,7 +314,7 @@ Report:
 |---|---|
 | Halt report | `paths.sprintFullReports/<SP-id>/halt-<ISO>.md` |
 | Final report | `paths.sprintFullReports/<SP-id>/sprint-full-report.md` |
-| Plan payload | `.warpos/plan-payload-<slug>.json` (constructed by skill body) |
+| Plan payload | `.mc/plan-payload-<slug>.json` (constructed by skill body) |
 | Plan Contract | `paths.sprintPlanContracts/<PC-id>.yaml` |
 | Requirements bundle | `paths.sprintRequirements/<SP-id>/*.md` |
 | Tickets | `paths.sprintTickets/T-*.yaml` |

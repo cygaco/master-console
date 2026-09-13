@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/fence-falsifier-suite/v1",
+  "schema": "mc/fence-falsifier-suite/v1",
   "_note": "The Seam-E protected-ref fence STANDING falsifier suite (ED-264 / ADR-0035, 1.0 ceremony). Consumed by scripts/checks/falsifier-liveness.js --manifest, wired as a release-gate (release-gates.js gate `fence_falsifier_liveness`). This manifest IS the expected-set: falsifier-liveness runs EACH file per-file (>=1 test, skipped===0, fail===0) and BLOCKS on any file that is missing, skipped, or red — so the suite can never pass graceful-empty (a deleted/renamed fence falsifier fails liveness, not silently drops). Non-record-trust schema, so the record-trust-gate --built step is not applicable (falsifier-liveness skips it by schema).",
   "surfaces": [
     {

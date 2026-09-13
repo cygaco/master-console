@@ -118,7 +118,7 @@ function main() {
   }
   const existing = normalizeExisting(readYamlMaybe(SPRINT.progress) || {});
   const next = {
-    schema: "warpos/sprint/sprint-progress/v1",
+    schema: "mc/sprint/sprint-progress/v1",
     sprint: a.sprint,
     updated_at: nowIso(),
     current_phase: a.phase || existing.current_phase || "idle",

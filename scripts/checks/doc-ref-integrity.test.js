@@ -132,7 +132,7 @@ ok("PER-MACHINE: refs to gitignored/per-machine targets are allowed-absent under
   const allowlist = mod.loadAllowlist();
   const refs = [
     { file: ".claude/agents/president/beta.md", line: 1, target: ".claude/agents/president/_system/beta/mined/beta-source-data.md", exists: false },
-    { file: "trackers/epics/E-X.md", line: 1, target: "../../_planning/ingest/warpos-lifecycle.md", exists: false },
+    { file: "trackers/epics/E-X.md", line: 1, target: "../../_planning/ingest/mc-lifecycle.md", exists: false },
     { file: ".claude/commands/permissions/authorized.md", line: 1, target: ".claude/settings.local.json", exists: false },
   ];
   const { findings, allowed } = mod.evaluate({ refs, allowlist });

@@ -5,11 +5,11 @@
  * Why: PowerShell's default text encoding (Out-File / Set-Content / `>` on
  * Windows PowerShell 5.1) prepends a UTF-8 BOM (EF BB BF). Node's JSON.parse
  * rejects a leading BOM, so a BOM'd JSON silently breaks every Node consumer
- * (e.g. ~/.warpos/portfolio.json once broke /portfolio:list — exit 2
+ * (e.g. ~/.mc/portfolio.json once broke /portfolio:list — exit 2
  * "registry corrupt"). This is a recurring Windows-migration corruption class;
  * see MIGRATION.md §1 and registry.js load() BOM-tolerance.
  *
- * Enforcer for: "no WarpOS-tracked JSON carries a BOM." Auto-discovered by
+ * Enforcer for: "no MC-tracked JSON carries a BOM." Auto-discovered by
  * scripts/linters/run.js (lint-*.js) → runs under /linters:run and /scan:full.
  *
  * Exit 0 = clean. Exit 1 = at least one tracked .json has a BOM.

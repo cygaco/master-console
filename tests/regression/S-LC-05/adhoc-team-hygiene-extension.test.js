@@ -76,7 +76,7 @@ function runScan(teamsRoot, extraArgs = []) {
 // ── AC-5.6 — -N accretion is a HARD finding (exit 1) ─────────────────────────
 ok("AC-5.6 -N accretion duplicate → exit 1 (hard)", () => {
   const teamsRoot = freshTeams();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma", "gamma-2"]);
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma", "gamma-2"]);
   const r = runScan(teamsRoot);
   assert.strictEqual(r.status, 1, `expected exit 1, got ${r.status}`);
   assert.ok(r.json && r.json.hardFindings >= 1, "no hard finding reported");
@@ -91,7 +91,7 @@ ok("AC-5.6 -N accretion duplicate → exit 1 (hard)", () => {
 // ── AC-5.7 — stale-team is ADVISORY ──────────────────────────────────────────
 ok("AC-5.7 stale-team → advisory: exit 0 by default", () => {
   const teamsRoot = freshTeams();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"], {
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"], {
     ageHours: 48,
   });
   const r = runScan(teamsRoot);
@@ -108,7 +108,7 @@ ok("AC-5.7 stale-team → advisory: exit 0 by default", () => {
 
 ok("AC-5.7b stale-team under --strict → exit 1", () => {
   const teamsRoot = freshTeams();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"], {
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"], {
     ageHours: 48,
   });
   const r = runScan(teamsRoot, ["--strict"]);
@@ -118,7 +118,7 @@ ok("AC-5.7b stale-team under --strict → exit 1", () => {
 // ── AC-5.8 — clean fixture → exit 0 (gate stays green) ───────────────────────
 ok("AC-5.8 fresh, clean team → exit 0", () => {
   const teamsRoot = freshTeams();
-  plantTeam(teamsRoot, "warpos-adhoc", ["team-lead", "beta", "gamma"]);
+  plantTeam(teamsRoot, "mc-adhoc", ["team-lead", "beta", "gamma"]);
   const r = runScan(teamsRoot);
   assert.strictEqual(r.status, 0, `clean team should be exit 0, got ${r.status}`);
   assert.strictEqual(r.json.hardFindings, 0);

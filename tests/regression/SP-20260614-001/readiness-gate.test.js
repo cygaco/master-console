@@ -16,7 +16,7 @@ const path = require("path");
 const assert = require("assert");
 
 const REPO = process.cwd();
-const SCAFFOLD = path.join(REPO, "_warpos", "templates", "app-scaffold");
+const SCAFFOLD = path.join(REPO, "_mc", "templates", "app-scaffold");
 const PAGE = path.join(SCAFFOLD, "src", "app", "admin", "readiness", "page.tsx.tmpl");
 const GUIDE = path.join(SCAFFOLD, "src", "app", "admin", "guides", "[ref]", "page.tsx.tmpl");
 const CONFIG = path.join(SCAFFOLD, "src", "lib", "admin", "config.ts.tmpl");

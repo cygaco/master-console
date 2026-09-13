@@ -104,7 +104,7 @@ builds may still use the flag — /warp:health Section 3.5 reports it as informa
 
 2.1 There is **no explicit team-create call** — the first named background subagent (Step 2.2)
 implicitly creates the session team.
-- Convention: prefix the teammate `name` with the project slug (`warpos-adhoc`,
+- Convention: prefix the teammate `name` with the project slug (`mc-adhoc`,
   `jobhunter-adhoc`, etc.) to avoid global-namespace collisions with sibling-project `adhoc`
   members in `~/.claude/teams/`.
 - Clean slate: there is no `TeamDelete` tool. Teams are session-scoped, so a fresh session

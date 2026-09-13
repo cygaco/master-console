@@ -198,4 +198,4 @@ This is the other species: messaging people who **opted in** to hear from you.
 
 ---
 
-*This guide is part of the WarpOS launch-guide library (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. Last reviewed: 2026-05. Provider tiers and email/anti-spam laws change; the official sources above are the source of truth.*
+*This guide is part of the MC launch-guide library (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. Last reviewed: 2026-05. Provider tiers and email/anti-spam laws change; the official sources above are the source of truth.*

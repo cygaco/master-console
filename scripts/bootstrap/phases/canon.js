@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 /**
- * scripts/bootstrap/phases/canon.js — the `canon` step (WARPOS-PROMPT §1, §2).
+ * scripts/bootstrap/phases/canon.js — the `canon` step (MC-PROMPT §1, §2).
  *
  * AI-SYNTHESIS step, anti-degrade. The canon step can NEVER report success while
  * any raw `{{token}}` OR any un-synthesized `*needs input: <field>*` marker survives

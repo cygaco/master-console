@@ -81,12 +81,12 @@ const OTHER_ID = "S-VLADW1-02";
 
 function buildProject() {
   const tmp = fs.mkdtempSync(
-    path.join(os.tmpdir(), "warpos-plan-target-channel-"),
+    path.join(os.tmpdir(), "mc-plan-target-channel-"),
   );
   for (const rel of [
     ".claude/paths.json",
     "schemas/sprint",
-    "_warpos/templates/sprint",
+    "_mc/templates/sprint",
     ROUTING_REL,
   ]) {
     const src = path.join(REPO, rel);
@@ -111,7 +111,7 @@ function buildProject() {
   }
 
   const reg = [
-    "schema: warpos/sprint/active-sprints/v1",
+    "schema: mc/sprint/active-sprints/v1",
     `primary: ${PRIMARY_ID}`,
     "sprints:",
     `  - id: ${PRIMARY_ID}`,

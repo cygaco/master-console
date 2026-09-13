@@ -70,7 +70,7 @@ pixel matches that token's value.
 <!-- knowledge:design role:visual-review (grounding — training references, do not weaken existing review) -->
 ## Design-principles guides (training references) — each category's owning guides
 
-Ground each finding category in the WarpOS **design-principles guide library**
+Ground each finding category in the MC **design-principles guide library**
 (`_knowledge/design/` · index `_knowledge/design/registry.json` · overview `_knowledge/design/README.md`).
 These framework-generic, self-contained teachable principles (NN/g, Laws of UX, Gestalt,
 Refactoring UI, WCAG 2.2, Baymard/CXL, web.dev) back your seven finding categories via each

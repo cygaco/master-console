@@ -13,7 +13,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `agentDispatchGuide` | `.claude/agents/_system/guides/agent-dispatch-guide.md` | md | framework | no | 0.3.0 |  |
 | `agents` | `.claude/agents` | dir | framework | no | 0.0.0 |  |
 | `agentSystem` | `.claude/agents/president/_system` | dir | framework | no | 0.0.0 |  |
-| `appScaffoldTemplates` | `_warpos/templates/app-scaffold` | dir | framework | yes | 0.12.0 | S0.3 (product-studio) — pinned Next.js+Tailwind v4+shadcn/ui |
+| `appScaffoldTemplates` | `_mc/templates/app-scaffold` | dir | framework | yes | 0.12.0 | S0.3 (product-studio) — pinned Next.js+Tailwind v4+shadcn/ui |
 | `architectureRoot` | `_requirements/03-architecture` | dir | framework | yes | 0.2.0 | Track B 2026-05-03 introduced this key to replace many hardc |
 | `auditsRoot` | `_requirements/_audits` | dir | framework | yes | 0.2.0 |  |
 | `betaEvents` | `.claude/agents/president/_system/beta/events.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
@@ -29,7 +29,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `commands` | `.claude/commands` | dir | framework | no | 0.0.0 |  |
 | `content` | `.claude/content` | dir | runtime | yes | 0.0.0 |  |
 | `contractsFixtures` | `scripts/contracts/fixtures` | dir | framework | yes | 0.12.0 | Valid + invalid artifact fixtures proving the validator's fa |
-| `contractsSchemas` | `schemas/contracts` | dir | framework | yes | 0.12.0 | Product-studio artifact-contract schemas v0.1 (warpos/contra |
+| `contractsSchemas` | `schemas/contracts` | dir | framework | yes | 0.12.0 | Product-studio artifact-contract schemas v0.1 (mc/contra |
 | `contractsSpec` | `_requirements/10-contracts/ARTIFACT-CONTRACTS.md` | file | framework | yes | 0.12.0 | Human-readable artifact-contract spec v0.1 (the chain, the s |
 | `contractsValidator` | `scripts/contracts/validate-artifact.js` | file | framework | yes | 0.12.0 | Fail-closed validator for the artifact contracts — rejects u |
 | `contractsValidatorTest` | `scripts/contracts/test-validate-artifact.js` | file | framework | yes | 0.12.0 | Validator self-test (proves pass-valid / reject-invalid); th |
@@ -50,7 +50,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `events` | `.claude/project/events` | dir | runtime | yes | 0.0.0 |  |
 | `eventsFile` | `.claude/project/events/events.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
 | `favorites` | `.claude/content/favorites` | dir | runtime | yes | 0.0.0 |  |
-| `frameworkRoot` | `framework` | dir | framework | yes | 0.2.0 | Track B 2026-05-03 renamed warpos -> framework (JTBD: framew |
+| `frameworkRoot` | `framework` | dir | framework | yes | 0.2.0 | Track B 2026-05-03 renamed mc -> framework (JTBD: framew |
 | `handoffLatest` | `.claude/runtime/handoff.md` | md | runtime | yes | 0.0.0 |  |
 | `handoffs` | `.claude/runtime/handoffs` | dir | runtime | yes | 0.0.0 |  |
 | `hookLib` | `scripts/hooks/lib` | dir | framework | no | 0.0.0 |  |
@@ -61,7 +61,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `judgmentModel` | `.claude/agents/president/_system/beta/judgement-model.md` | md | framework | yes | 0.0.0 |  |
 | `judgmentRecommendations` | `.claude/agents/president/_system/beta/judgement-model-recommendations.md` | md | runtime | yes | 0.0.0 |  |
 | `karpathyRuns` | `_docs/karpathy-auto-research` | dir | runtime | yes | 0.0.0 |  |
-| `kernel` | `.claude/kernel` | dir | framework | yes | 0.17.0 | WarpOS 1.0 kernel governance home (SP-20260718-001 Phase 0): |
+| `kernel` | `.claude/kernel` | dir | framework | yes | 0.17.0 | MC 1.0 kernel governance home (SP-20260718-001 Phase 0): |
 | `learningsFile` | `.claude/project/memory/learnings.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
 | `lexicon` | `.claude/agents/president/_system/lexicon.md` | md | framework | yes | 0.0.0 |  |
 | `loggerLib` | `scripts/hooks/lib/logger.js` | js | framework | no | 0.0.0 |  |
@@ -83,12 +83,12 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `portfolioCommands` | `.claude/commands/portfolio` | dir | framework | no | 0.8.3 | Portfolio skill suite (/portfolio:* — bootstrap, clone, impo |
 | `portfolioHome` | `.claude/portfolio` | dir | project | yes | 0.9.0 | Portfolio root directory holding the registry (paths.portfol |
 | `portfolioScripts` | `scripts/portfolio` | dir | framework | no | 0.8.3 | Portfolio skill backing scripts (bootstrap.js, clone.js, dis |
-| `portfolioTemplates` | `_warpos/templates/portfolio` | dir | framework | no | 0.8.3 | Portfolio skill templates (README.md.tmpl etc). Documented i |
-| `providerAutofixLib` | `scripts/warpos/lib/provider-autofix.js` | js | framework | no | 0.5.1 |  |
+| `portfolioTemplates` | `_mc/templates/portfolio` | dir | framework | no | 0.8.3 | Portfolio skill templates (README.md.tmpl etc). Documented i |
+| `providerAutofixLib` | `scripts/mc/lib/provider-autofix.js` | js | framework | no | 0.5.1 |  |
 | `providerFailureModes` | `.claude/agents/president/_system/policy/provider-failure-modes.json` | json | framework | no | 0.5.1 | Provider failure-mode catalog (SP-20260513-002). 10 entries, |
 | `providerFallbackPolicy` | `.claude/agents/president/_system/policy/provider-fallback.json` | json | framework | no | 0.3.0 |  |
-| `providerRcaLib` | `scripts/warpos/lib/provider-rca.js` | js | framework | no | 0.5.1 |  |
-| `providerSmokeSkill` | `scripts/warpos/provider-smoke.js` | js | framework | no | 0.5.1 | Provider smoke driver (SP-20260513-002). Run direct or via p |
+| `providerRcaLib` | `scripts/mc/lib/provider-rca.js` | js | framework | no | 0.5.1 |  |
+| `providerSmokeSkill` | `scripts/mc/provider-smoke.js` | js | framework | no | 0.5.1 | Provider smoke driver (SP-20260513-002). Run direct or via p |
 | `providerTierConfig` | `.claude/runtime/provider-tier-config.json` | json | runtime | yes | 0.19.0 | S-LC-10 (E-LIFECYCLE-001) preferred-tier config: per-provide |
 | `providerTmp` | `.claude/runtime/.provider-tmp` | dir | runtime | yes | 0.3.0 |  |
 | `providerTrace` | `.claude/project/decisions/provider-trace.jsonl` | jsonl | runtime | yes | 0.1.0 |  |
@@ -135,11 +135,11 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 | `sprintRouting` | `.claude/agents/president/_system/policy/sprint-routing.json` | json | framework | no | 0.4.0 |  |
 | `sprintSchemas` | `schemas/sprint` | dir | framework | no | 0.4.0 |  |
 | `sprintSprints` | `.claude/project/sprint/sprints` | dir | runtime | yes | 0.5.0 | Sprint Workflow v0.2 — directory containing per-sprint subdi |
-| `sprintTemplates` | `_warpos/templates/sprint` | dir | framework | no | 0.4.0 |  |
+| `sprintTemplates` | `_mc/templates/sprint` | dir | framework | no | 0.4.0 |  |
 | `sprintTickets` | `.claude/project/sprint/tickets` | dir | runtime | yes | 0.4.0 |  |
 | `store` | `.claude/agents/store.json` | json | runtime | yes | 0.0.0 |  |
 | `systemsFile` | `.claude/project/memory/systems.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
-| `testInstallMatrix` | `scripts/warpos/test-install-matrix.js` | file | framework | no | 0.9.0 | Install fixture CI matrix runner — 5-scenario regression sui |
+| `testInstallMatrix` | `scripts/mc/test-install-matrix.js` | file | framework | no | 0.9.0 | Install fixture CI matrix runner — 5-scenario regression sui |
 | `toolsFile` | `.claude/project/events/tools.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
 | `tracesFile` | `.claude/project/memory/traces.jsonl` | jsonl | runtime | yes | 0.0.0 |  |
 
@@ -151,7 +151,7 @@ Markdown convention: reference paths as `paths.X` in prose. Code: `const { PATHS
 
 ## Owner classification
 
-- **framework** — shipped by WarpOS. `/warp:update` may regenerate or merge.
+- **framework** — shipped by MC. `/warp:update` may regenerate or merge.
 - **generated** — produced by tooling. Do not hand-edit; regenerate from source.
 - **runtime** — written by sessions during normal operation. Excluded from publish.
 - **project** — owned by the user/team. Never overwritten by `/warp:update`.

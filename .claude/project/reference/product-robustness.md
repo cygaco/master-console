@@ -2,7 +2,7 @@
 
 A **living** checklist (operator-refined) of the cross-cutting quality issues every product must design for and test against — independent of its feature set. These are the silent retention-killers: they rarely show in a feature demo, but surface the moment real users touch the product on real devices and real networks. **Most acute at Launch → Finding-PMF** (see `.claude/project/reference/product-lifecycle.md`), where they are exactly the "glaring but easily fixable" problems that tank D0/D7 retention if missed.
 
-> **Status: living.** The operator will refine and extend this list. Treat it as canon-in-progress: the Director of Product applies it as a **robustness lens**, and it is a candidate to bake into product `sprint:design` / QA as a per-product robustness suite — the product-side analog of WarpOS's own regression seed.
+> **Status: living.** The operator will refine and extend this list. Treat it as canon-in-progress: the Director of Product applies it as a **robustness lens**, and it is a candidate to bake into product `sprint:design` / QA as a per-product robustness suite — the product-side analog of MC's own regression seed.
 
 ## 1. Product re-entry / lifecycle states
 How the app behaves when resumed or re-entered — the single richest source of real-world bugs. Cover the matrix:

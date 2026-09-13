@@ -1,14 +1,14 @@
 {
   "schema": "deep-research-manifest/1",
   "slug": "operational-compliance-for-a-solo-newbie",
-  "outdir": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\_docs\\research\\operational-compliance-for-a-solo-newbie",
-  "brief": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\_docs\\research\\operational-compliance-for-a-solo-newbie\\brief.json",
-  "BRIEF": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\_docs\\research\\operational-compliance-for-a-solo-newbie\\BRIEF.md",
+  "outdir": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\MC\\_docs\\research\\operational-compliance-for-a-solo-newbie",
+  "brief": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\MC\\_docs\\research\\operational-compliance-for-a-solo-newbie\\brief.json",
+  "BRIEF": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\MC\\_docs\\research\\operational-compliance-for-a-solo-newbie\\BRIEF.md",
   "openai": {
     "status": "completed",
     "model": "o3-deep-research",
     "phases_completed": 4,
-    "report": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\_docs\\research\\operational-compliance-for-a-solo-newbie\\openai-report.md"
+    "report": "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\MC\\_docs\\research\\operational-compliance-for-a-solo-newbie\\openai-report.md"
   },
   "gemini": {
     "status": "skipped"

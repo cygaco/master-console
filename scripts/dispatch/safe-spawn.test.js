@@ -251,7 +251,7 @@ h.test("treeKill reaps a parent + child + GRANDCHILD process tree (not just the 
   // process-group kill reaches them; on win32 `taskkill /T` walks the live tree.
   // Each level appends its own PID to a sealed temp file (deterministic handoff that
   // doesn't depend on stdio inheritance across spawn hops).
-  const pidFile = path.join(os.tmpdir(), `warpos-treekill-${process.pid}-${Date.now()}.txt`);
+  const pidFile = path.join(os.tmpdir(), `mc-treekill-${process.pid}-${Date.now()}.txt`);
   fs.writeFileSync(pidFile, "");
   const fj = JSON.stringify(pidFile);
   const detached = process.platform !== "win32";
@@ -411,9 +411,9 @@ h.failClosed("safeSpawnFile fails closed on an arg violation (NO spawn, NO file)
 });
 
 // ── withCodexHome — the isolated CODEX_HOME seam (RI-009 codex cache multi-writer collision) ──
-// The default is the isolated ~/.codex-warpos (reading the constant does NOT seed).
-h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-warpos", () => ({
-  ok: typeof DEFAULT_CODEX_HOME === "string" && /[\\/]\.codex-warpos$/.test(DEFAULT_CODEX_HOME),
+// The default is the isolated ~/.codex-mc (reading the constant does NOT seed).
+h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-mc", () => ({
+  ok: typeof DEFAULT_CODEX_HOME === "string" && /[\\/]\.codex-mc$/.test(DEFAULT_CODEX_HOME),
 }));
 
 // Behavior: codex spawns get the isolated CODEX_HOME; an explicit CODEX_HOME wins; non-codex

@@ -158,7 +158,7 @@ const cases = [
     name: "ticket WITH schema header → no inject (existing validation still applies)",
     rel: ".claude/project/sprint/tickets/T-20991231-002.yaml",
     content:
-      "schema: warpos/sprint/ticket/v1\nid: T-20991231-002\nsprint: SP-test\n",
+      "schema: mc/sprint/ticket/v1\nid: T-20991231-002\nsprint: SP-test\n",
     // Existing protection-1 schema validation correctly blocks a minimal
     // ticket missing required fields. We only assert that auto-inject is
     // NOT triggered for files that already have a schema: header.
@@ -181,7 +181,7 @@ for (const c of cases) {
   const cls = classify(r);
   let ok = cls.result === c.expect;
   if (ok && c.expect === "inject") {
-    ok = cls.detail.includes(`warpos/sprint/${c.expectedKind}/v1`);
+    ok = cls.detail.includes(`mc/sprint/${c.expectedKind}/v1`);
   }
   if (ok) {
     pass++;

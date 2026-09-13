@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/spec-graph/v1",
+  "schema": "mc/spec-graph/v1",
   "generatedAt": "2026-06-28T02:37:50.493Z",
   "sources": {
     "sprintRequirements": ".claude/project/sprint/requirements",

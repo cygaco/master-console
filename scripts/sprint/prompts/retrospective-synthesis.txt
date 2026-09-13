@@ -1,4 +1,4 @@
-You are synthesizing a post-sprint retrospective for the WarpOS sprint
+You are synthesizing a post-sprint retrospective for the MC sprint
 workflow. Your output MUST be a single JSON object matching the
 sprint-retrospective schema fields the host will merge into a
 retro.yaml. The host wraps each tracker artifact in delimiter blocks

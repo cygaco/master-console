@@ -12,7 +12,7 @@ Pick the consulting persona by the **scope** of the idea generation, per the alt
 
 - **Single-product / within-sprint candidate generation** → the **product-lead** persona. Signals: candidates for *one* product's backlog or next sprint, `--lens active` on a single product's thread, `$ARGUMENTS` scoped to one product.
 - **Strategic / cross-product / lifecycle-phase-shift candidate generation** → the **director-of-product** persona. Signals: the **vision** lens, portfolio-wide ideas, lifecycle-phase or pivot bets, program-altitude direction.
-- **Fallback (R2 — no regression):** when the Product Lead *would* be chosen but scope is ambiguous, **default to `director-of-product`** (also the standing default for WarpOS's own framework roadmap). Defaulting up never regresses — the Lead inherits the Director's principles (R4).
+- **Fallback (R2 — no regression):** when the Product Lead *would* be chosen but scope is ambiguous, **default to `director-of-product`** (also the standing default for MC's own framework roadmap). Defaulting up never regresses — the Lead inherits the Director's principles (R4).
 
 Whole-slate runs (all four lenses, no product scoping) default to the **Director of Product** — the vision lens alone makes the run strategic-altitude.
 

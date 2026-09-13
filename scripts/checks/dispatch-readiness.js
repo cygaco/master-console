@@ -15,7 +15,7 @@
  *                              per provider — the WI-19 axis surfaced as a column
  *
  * It deliberately does NOT ping the providers (no token spend, no network) — that
- * is `scripts/warpos/provider-smoke.js --per-role`'s job. This check is the fast,
+ * is `scripts/mc/provider-smoke.js --per-role`'s job. This check is the fast,
  * cheap, offline complement that catches the static failures (ghost model, bad
  * effort, missing CLI, no auth) the live smoke would otherwise burn a dispatch to
  * discover. Run it first; run smoke when this is green.
@@ -321,7 +321,7 @@ function renderHuman(model) {
     );
   }
   out.push("");
-  out.push("Static checks only. Run `node scripts/warpos/provider-smoke.js --per-role`");
+  out.push("Static checks only. Run `node scripts/mc/provider-smoke.js --per-role`");
   out.push("for a live reachability ping when this is green.");
   return out.join("\n") + "\n";
 }

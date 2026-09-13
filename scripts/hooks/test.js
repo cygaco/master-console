@@ -134,7 +134,7 @@ function discover() {
     ];
   }
   return {
-    $schema: "warpos/hook-manifest/v1",
+    $schema: "mc/hook-manifest/v1",
     generatedFrom: ".claude/settings.json",
     // Content-derived, never wall-clock — same determinism contract as
     // build.js#updatedAt (GATE-B 3c): regen == copy on identical sources.

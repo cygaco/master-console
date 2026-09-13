@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * reap-orphans.js — detect + (optionally) reap ORPHANED WarpOS dispatch
+ * reap-orphans.js — detect + (optionally) reap ORPHANED MC dispatch
  * subprocesses (E-TEAMS-MIGRATION-001, operator-flagged).
  *
  * THE PROBLEM (the reap / bg-drop class — ED-039 / RI-004):
@@ -367,7 +367,7 @@ function classify(input) {
   for (const p of procs) {
     // GATE 0 — a valid PID > 1 (HIGH-6 defense in depth; enum already drops these).
     if (!Number.isInteger(p.pid) || p.pid <= 1) continue;
-    // GATE 1 — signature: must be a WarpOS dispatch subprocess. Prefer the real argv
+    // GATE 1 — signature: must be a MC dispatch subprocess. Prefer the real argv
     // ARRAY (un-flattened); fall back to the cmd string (back-compat for test
     // fixtures that only set `cmd` — isDispatchProc tokenizes a string best-effort).
     const sigInput = Array.isArray(p.argv) ? p.argv : p.cmd;
@@ -401,7 +401,7 @@ function classify(input) {
 }
 
 // ── Signature match (HIGH-5 r3: STRUCTURAL on the argv ARRAY, per-token). ─────
-/** Does this process identify as a WarpOS dispatch subprocess? Decides on the argv
+/** Does this process identify as a MC dispatch subprocess? Decides on the argv
  *  ARRAY (never a flattened string — a flattened-then-retokenized cmdline lets a
  *  single argv value containing whitespace forge a separate wrapper/marker token,
  *  the r2 HIGH). ONE sound, conservative rule (r3 redesign — the marker-in-argv
@@ -450,7 +450,7 @@ function isDispatchProc(input) {
  *  skip flags and find a "later operand" can promote a flag VALUE or a post-mode-switch
  *  token to "the executed script" and false-match (`node --import <w>`, `node --test=x
  *  <w>`, `node --eval=<code> <w>`). So we do NOT model node's grammar at all. We use
- *  the verified FACT that REAL WarpOS dispatch is ALWAYS `node <wrapper> <args…>` —
+ *  the verified FACT that REAL MC dispatch is ALWAYS `node <wrapper> <args…>` —
  *  the wrapper is argv[1], with NO node flag before it (every dispatch site is
  *  `node scripts/dispatch-{claude,agent}.js <role> <prompt>`). So the operand is
  *  argv[1] iff argv[1] is not a flag; otherwise there is NO operand we will trust

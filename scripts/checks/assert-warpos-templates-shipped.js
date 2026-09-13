@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 "use strict";
 /**
- * assert-warpos-templates-shipped.js — anti-value-inversion proof for the
- * SP-20260618-001 framework/templates → _warpos/templates migration.
+ * assert-mc-templates-shipped.js — anti-value-inversion proof for the
+ * SP-20260618-001 framework/templates → _mc/templates migration.
  *
  * ship-coverage proves "no owner=framework path is unshipped". This asserts the
  * STRONGER, migration-specific invariant the quality-lead made binding (addendum §2):
  * a single `src` entry for the dir is NOT enough — every one of the 108 template
  * files across all 9 subtrees must actually land in the shipped set (count +
- * membership, not a one-string smoke). Plus the NEGATIVE: _warpos build-outputs
+ * membership, not a one-string smoke). Plus the NEGATIVE: _mc build-outputs
  * (MANIFEST.json, settings/) must NOT be shipped (proves the carve was surgical).
  *
  * Run pre-delete AND post-delete (both must pass). Exit 0 = all assertions hold; 1 = fail.
@@ -17,7 +17,7 @@ const fs = require("fs");
 const path = require("path");
 const ROOT = process.cwd();
 
-const TEMPLATES_REL = "_warpos/templates";
+const TEMPLATES_REL = "_mc/templates";
 const EXPECTED_SUBTREES = [
   "app-scaffold", "canonical", "lastmile", "portfolio", "product-bootstrap",
   "product-clone", "product-import", "report", "sprint",
@@ -34,7 +34,7 @@ function toRel(p) {
 }
 
 // Flatten framework-manifest assets into the shipped src/dest path set (same walk
-// as warpos-ship-coverage.js#shippedPathSet — the authoritative shipped set).
+// as mc-ship-coverage.js#shippedPathSet — the authoritative shipped set).
 function shippedPathSet(fm) {
   const set = new Set();
   const walk = (v) => {
@@ -101,22 +101,22 @@ function main() {
     console.log(`POSITIVE: ${onDisk.length} files on disk, ${shippedTemplateCount} ${TEMPLATES_REL}/* paths in shipped set, ${EXPECTED_SUBTREES.length} subtrees checked`);
   }
 
-  // ── NEGATIVE: _warpos build-outputs must NOT ship ─────────────────────────
-  const mustNotShip = ["_warpos/MANIFEST.json", "_warpos/settings/defaults.json"];
+  // ── NEGATIVE: _mc build-outputs must NOT ship ─────────────────────────
+  const mustNotShip = ["_mc/MANIFEST.json", "_mc/settings/defaults.json"];
   for (const p of mustNotShip) {
     if (shipped.has(p)) failures.push(`NEGATIVE: ${p} IS in the shipped set (carve not surgical)`);
   }
-  if ([...shipped].some((p) => p.startsWith("_warpos/settings/"))) {
-    failures.push(`NEGATIVE: a _warpos/settings/* path IS in the shipped set`);
+  if ([...shipped].some((p) => p.startsWith("_mc/settings/"))) {
+    failures.push(`NEGATIVE: a _mc/settings/* path IS in the shipped set`);
   }
-  // _warpos/BASELINE/ is owner=project build-output (per-install seed snapshot for the
+  // _mc/BASELINE/ is owner=project build-output (per-install seed snapshot for the
   // deferred validate.js seed-drift consumer) — NOT a shipped asset. Pin it symmetrically
   // so a future accidental BASELINE ship fails this enforcer (gauntlet qa-reviewer LOW,
   // SP-20260618-001).
-  if ([...shipped].some((p) => p.startsWith("_warpos/BASELINE/"))) {
-    failures.push(`NEGATIVE: a _warpos/BASELINE/* path IS in the shipped set`);
+  if ([...shipped].some((p) => p.startsWith("_mc/BASELINE/"))) {
+    failures.push(`NEGATIVE: a _mc/BASELINE/* path IS in the shipped set`);
   }
-  console.log(`NEGATIVE: confirmed _warpos/MANIFEST.json + _warpos/settings/* + _warpos/BASELINE/* NOT shipped`);
+  console.log(`NEGATIVE: confirmed _mc/MANIFEST.json + _mc/settings/* + _mc/BASELINE/* NOT shipped`);
 
   if (failures.length) {
     console.error(`\nFAIL (${failures.length}):\n - ${failures.join("\n - ")}`);

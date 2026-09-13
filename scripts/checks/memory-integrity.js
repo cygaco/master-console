@@ -639,7 +639,7 @@ function run(opts) {
     }
   } else {
     // DEFAULT scope: every immediate subdir of .claude/agent-memory/ with a MEMORY.md.
-    // SKIP-on-absent (a WarpOS-only surface must not RED a downstream /scan).
+    // SKIP-on-absent (a MC-only surface must not RED a downstream /scan).
     const memRootAbs = path.join(ROOT, DEFAULT_MEMORY_ROOT);
     let rootStat;
     try {

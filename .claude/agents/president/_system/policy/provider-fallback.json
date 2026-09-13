@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/provider-fallback/v1",
+  "$schema": "mc/provider-fallback/v1",
   "version": 1,
   "comment": "UNENFORCED legacy scaffold (Phase 0 workstream E). The LIVE fallback authority is now WG-11(b) family-aware routing in scripts/hooks/lib/providers.js (suggestFallbackProvider + PROVIDER_FAMILY) — a quota/outage fallback lands in a DIFFERENT model family, never same-family. This file's per-role policies below still carry PRE-ADR-0007 role keys (reviewer/compliance/qa) and PRE-DISPATCH.md-§8 model ids (gpt-5.5, claude-sonnet-4-6); they are documentation only and no consumer routes off them. The SUNSET individual `gemini` CLI targets were repointed to antigravity (agy) in the 2026-07-20 deep-clean. A full rewrite to the new roster (security-reviewer/frontend-reviewer/qa-reviewer + gpt-5.6/sonnet-5) is deferred with the ADR-0007 scaffold-cleanup. Do not treat the ids below as authoritative.",
   "policies": {

@@ -71,14 +71,14 @@ function copyDirSync(src, dst) {
 function buildProject(opts) {
   const { withPrimary = true } = opts || {};
   const tmp = fs.mkdtempSync(
-    path.join(os.tmpdir(), "warpos-plan-registry-primary-"),
+    path.join(os.tmpdir(), "mc-plan-registry-primary-"),
   );
   // Minimal project skeleton — just what plan.js needs to resolve paths,
   // templates, and schemas.
   for (const rel of [
     ".claude/paths.json",
     "schemas/sprint",
-    "_warpos/templates/sprint",
+    "_mc/templates/sprint",
     ROUTING_REL,
   ]) {
     const src = path.join(REPO, rel);
@@ -109,7 +109,7 @@ function buildProject(opts) {
   const sprintId = "SP-20260518-001";
   if (withPrimary) {
     const reg = [
-      "schema: warpos/sprint/active-sprints/v1",
+      "schema: mc/sprint/active-sprints/v1",
       `primary: ${sprintId}`,
       "sprints:",
       `  - id: ${sprintId}`,

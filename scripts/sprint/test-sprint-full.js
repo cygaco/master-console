@@ -395,7 +395,7 @@ function testFinalReportReadsCurrentYaml() {
     fs.mkdirSync(sprintsRoot, { recursive: true });
 
     yamlLib.writeYaml(path.join(sprintsRoot, "current.yaml"), {
-      schema: "warpos/sprint/current-sprint/v1",
+      schema: "mc/sprint/current-sprint/v1",
       id: sprintId,
       title: "synthetic final-report test",
       tickets: {
@@ -1155,7 +1155,7 @@ function testReleaseRecordIdempotencyAndModerateGate() {
   try {
     fs.mkdirSync(releasesDir, { recursive: true });
     yamlLib.writeYaml(stagingPath, {
-      schema: "warpos/sprint/release/v1",
+      schema: "mc/sprint/release/v1",
       id: rlStaging,
       sprint: sprintWithRelease,
       status: "preparing",
@@ -1164,7 +1164,7 @@ function testReleaseRecordIdempotencyAndModerateGate() {
     });
     // A production record for the SAME sprint must never be matched.
     yamlLib.writeYaml(prodPath, {
-      schema: "warpos/sprint/release/v1",
+      schema: "mc/sprint/release/v1",
       id: rlProd,
       sprint: sprintWithRelease,
       status: "preparing",
@@ -1406,7 +1406,7 @@ function testBetaBoundaryPersistence() {
     fs.writeFileSync(
       sidecar,
       JSON.stringify({
-        schema: "warpos/sprint-full/beta-boundaries/v1",
+        schema: "mc/sprint-full/beta-boundaries/v1",
         sprint: sprintId,
         cleared: ["before_plan", "before_bogus", 42, null, "before_retro"],
         updated_at: new Date().toISOString(),

@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/sprint/release/v1",
-  "title": "WarpOS Sprint v0.1 — Release Record",
+  "$id": "mc/sprint/release/v1",
+  "title": "MC Sprint v0.1 — Release Record",
   "description": "Release artifact written by /sprint:release. Lives under paths.sprintReleases.",
   "type": "object",
   "required": ["schema", "id", "sprint", "status", "created_at", "updated_at"],
   "additionalProperties": false,
   "properties": {
-    "schema": { "type": "string", "const": "warpos/sprint/release/v1" },
+    "schema": { "type": "string", "const": "mc/sprint/release/v1" },
     "id": { "type": "string", "pattern": "^RL-[0-9]{8}-[0-9]{3}$" },
     "sprint": { "type": "string" },
     "title": { "type": "string" },

@@ -1,11 +1,11 @@
 ---
-description: Reconcile downstream-flagged WarpOS gaps into canonical — discover every product's WARPOS.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.
+description: Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify each gap @current, get a cross-provider root-cause lens, triage, drive the fixes, and record resolution canonical-side.
 ---
 
 # /warp:reconcile — Absorb downstream gap registers into canonical
 
-The canonical-side consumer of [`/warp:flag`](flag.md). Run from the **WarpOS canonical
-repo**. Every registered portfolio product accumulates a root `WARPOS.md` of
+The canonical-side consumer of [`/warp:flag`](flag.md). Run from the **MC canonical
+repo**. Every registered portfolio product accumulates a root `MC.md` of
 framework/tooling gaps found while building on the framework. This skill pulls all of
 them up, separates *what's still real* from *what's already fixed*, finds the **deeper
 root cause** behind the surface gaps, fixes what's safe, and roadmaps the rest — then
@@ -23,16 +23,16 @@ cluster).
 ## Hard invariants
 
 - **Verify-canonical-first (load-bearing).** Never build a fix before confirming the gap
-  still reproduces in canonical@current. Downstream registers reflect the WarpOS version
+  still reproduces in canonical@current. Downstream registers reflect the MC version
   *installed there* (often several releases behind), so a large fraction are already
-  fixed upstream. Building those is pure waste (WarpOS **ED-008**). Every gap gets a
+  fixed upstream. Building those is pure waste (MC **ED-008**). Every gap gets a
   REPRODUCES / FIXED / PARTIAL verdict with `file:line` evidence **before** it earns a
   fix.
 - **Never modify a downstream repo.** Sync is one-way (canonical → product); products are
-  read-only here. Do **not** edit any product's `WARPOS.md`, code, or git — even to mark
+  read-only here. Do **not** edit any product's `MC.md`, code, or git — even to mark
   a gap "fixed upstream." Resolution is recorded **canonical-side**; the register updates
   itself downstream on that product's next `/warp:update` + local re-check, or in the
-  product's own session. (Operator rule: WarpOS-only — never touch other projects.)
+  product's own session. (Operator rule: MC-only — never touch other projects.)
 - **Framework-layer only.** Reconcile framework/tooling gaps. Product bugs that leaked
   into a register get noted and left for the product.
 - **Every policy names an enforcer.** A fix that's "recommend X" without a hook / test /
@@ -42,14 +42,14 @@ cluster).
 ## Procedure
 
 ### Phase 1 — Discover
-Read the portfolio registry at `~/.warpos/portfolio.json` (the real registry the portfolio
+Read the portfolio registry at `~/.mc/portfolio.json` (the real registry the portfolio
 scripts use — `scripts/portfolio/registry.js#registryPath()`; note `portfolioRegistry (removed paths key)`
 historically pointed elsewhere). For each product `repo_path`, read (read-only):
-- the root `WARPOS.md` (the primary register),
-- known siblings: `.claude/runtime/notes/warpos-issues-found.md`, any `warpos-*.md` gap
+- the root `MC.md` (the primary register),
+- known siblings: `.claude/runtime/notes/mc-issues-found.md`, any `mc-*.md` gap
   files. (Ignore dead relics like `WARPOS_NEXT_STEPS.md`.)
-Record each product's installed WarpOS version (for the staleness lens). If a product's
-`WARPOS.md` is not a gap register (e.g. repurposed as a positioning doc), note the
+Record each product's installed MC version (for the staleness lens). If a product's
+`MC.md` is not a gap register (e.g. repurposed as a positioning doc), note the
 collision and skip it.
 
 ### Phase 2 — Consolidate & dedupe
@@ -98,7 +98,7 @@ Weight by severity × (reported-by-N products) × leverage × safety.
 Dispatch **parallel builders** for the disjoint code fixes (foreground-synchronous
 `dispatch-agent.js` or harness Agent — never detached-background-poll: that's the phantom
 class). Alpha authors the skill/agent/doc/manifest changes directly (canonical source =
-`.claude/**`, self-referential in `_warpos/MANIFEST.json`). Honor the autonomy table;
+`.claude/**`, self-referential in `_mc/MANIFEST.json`). Honor the autonomy table;
 consult **β** for Class-B/C calls. Keep file ownership disjoint to parallelize safely.
 
 ### Phase 7 — Verify & gauntlet
@@ -113,7 +113,7 @@ Record what was fixed/deferred in canonical: `/issues:log` (or resolve) for recu
 entries, `/enforcement:log` for the policy gaps, `ROADMAP.md` for deferred work, and a
 `/warp:reconcile` report under the reconcile-report path (`.claude/project/reports/`) listing every
 consolidated gap → verdict → disposition. **Do not** write back to any downstream
-`WARPOS.md`.
+`MC.md`.
 
 ### Phase 9 — Report
 Summarize: gaps discovered (by product), verified-open vs already-fixed counts, the
@@ -125,4 +125,4 @@ dispositions, and the follow-up commands. If the fixes warrant a release, point 
 - The verify pass (Phase 3) is the difference between this skill and a naive "do everything
   the registers say." Skipping it re-incurs ED-008.
 - Sibling: [`/warp:flag`](flag.md) — the downstream producer this skill consumes.
-- Pairs with `/scan:warpos-staleness` (which installs are behind) and `/portfolio:status`.
+- Pairs with `/scan:mc-staleness` (which installs are behind) and `/portfolio:status`.

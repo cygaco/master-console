@@ -2,15 +2,15 @@
 description: The launch-readiness cockpit — show how close every registered product is to launch (composite %, blocked items, owner-action work left), or drill into one product. Read-only across the portfolio. The operator's cross-product readiness board.
 user-invocable: true
 namespace: cockpit
-reads: [scripts/cockpit/readiness-board.js, scripts/scaffold/readiness-report.js, ~/.warpos/portfolio.json]
+reads: [scripts/cockpit/readiness-board.js, scripts/scaffold/readiness-report.js, ~/.mc/portfolio.json]
 writes: []
 ---
 
 # /cockpit:readiness — Launch-Readiness Cockpit
 
 The President's cross-product view of launch readiness. For every product in the portfolio
-registry (`~/.warpos/portfolio.json`) it runs the shared readiness producer
-(`scripts/scaffold/readiness-report.js`, the `warpos/readiness/v1` keystone) against that
+registry (`~/.mc/portfolio.json`) it runs the shared readiness producer
+(`scripts/scaffold/readiness-report.js`, the `mc/readiness/v1` keystone) against that
 product's repo and rolls the results into one board: composite %, done/total, open items,
 and blocked count per product — lowest-readiness products floated to the top so the ones that
 need attention are first.
@@ -22,8 +22,8 @@ New scaffolds get the in-app founder panel natively (S-PF-09a R-2); existing pro
 covered by running this skill against them.
 
 > **STRICTLY READ-ONLY across sibling repos.** It reads each product's `FOUNDERS_CHECKLIST.md`
-> and never writes to another project (the WarpOS-only boundary —
-> `feedback_warpos_only_no_cross_project`). The board is a view, not an editor.
+> and never writes to another project (the MC-only boundary —
+> `feedback_mc_only_no_cross_project`). The board is a view, not an editor.
 
 ## Inputs
 
@@ -34,8 +34,8 @@ covered by running this skill against them.
 - (no args) — **portfolio board** across every registered product (the default cockpit view).
 - `--product <slug>` — drill into one registered product (looked up in the registry).
 - `--root <path>` — readiness for an arbitrary repo path (works on an unregistered product too).
-- `--json` — machine-readable output (`warpos/readiness-board/v1` for the board, or
-  `warpos/readiness/v1` for a single product) — the stable consumer contract a future browser
+- `--json` — machine-readable output (`mc/readiness-board/v1` for the board, or
+  `mc/readiness/v1` for a single product) — the stable consumer contract a future browser
   cockpit GUI (the gui.js pattern, a follow-up) consumes.
 
 ## Procedure
@@ -70,6 +70,6 @@ covered by running this skill against them.
 ## Reference
 
 - Aggregator: `scripts/cockpit/readiness-board.js` (+ `readiness-board.test.js`, 18 cases)
-- Keystone producer: `scripts/scaffold/readiness-report.js` (the per-product `warpos/readiness/v1` object)
+- Keystone producer: `scripts/scaffold/readiness-report.js` (the per-product `mc/readiness/v1` object)
 - Plan: `.claude/project/sprint/sprints/S-PF-09a/plan-product-lead.md` (R-3, S-PF-09b)
-- Registry: `~/.warpos/portfolio.json` (managed by `/portfolio:*`)
+- Registry: `~/.mc/portfolio.json` (managed by `/portfolio:*`)

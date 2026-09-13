@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * scripts/scaffold/app.js (S0.3) — materialize the WarpOS app scaffold
+ * scripts/scaffold/app.js (S0.3) — materialize the MC app scaffold
  * (Next.js App Router + Tailwind v4 + shadcn/ui + Radix + Lucide) into a target
  * product repo. This is the code path that makes "integrated but unused" UI
  * frameworks ACTUALLY land — the "kills vibe-coded" deliverable.
@@ -34,7 +34,7 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 // Resolve the template dir via the paths registry (paths.appScaffoldTemplates),
 // falling back to the documented default so an older clone still works.
 function templatesDir() {
-  const fallback = path.join(REPO_ROOT, "_warpos", "templates", "app-scaffold");
+  const fallback = path.join(REPO_ROOT, "_mc", "templates", "app-scaffold");
   try {
     const reg = JSON.parse(
       fs.readFileSync(path.join(REPO_ROOT, ".claude", "paths.json"), "utf8"),
@@ -48,9 +48,9 @@ function templatesDir() {
 
 // Managed block appended to .gitignore when absent — the Next/node entries a
 // scaffolded app needs. Deliberately does NOT touch `.claude/` (the framework
-// lives there in a WarpOS product and must stay tracked).
+// lives there in a MC product and must stay tracked).
 const GITIGNORE_BLOCK = [
-  "# --- WarpOS app-scaffold (managed) ---",
+  "# --- MC app-scaffold (managed) ---",
   "/node_modules",
   "/.next/",
   "/out/",
@@ -62,7 +62,7 @@ const GITIGNORE_BLOCK = [
   "/playwright-report/",
   "/blob-report/",
   ".DS_Store",
-  "# --- end WarpOS app-scaffold ---",
+  "# --- end MC app-scaffold ---",
 ];
 
 function defaultSlug(repoRoot) {
@@ -117,7 +117,7 @@ function materialize(srcDir, destDir, ctx, created, skipped) {
 // Returns true if it modified the file.
 function ensureGitignore(repoRoot) {
   const gi = path.join(repoRoot, ".gitignore");
-  const marker = "WarpOS app-scaffold (managed)";
+  const marker = "MC app-scaffold (managed)";
   let body = "";
   try {
     body = fs.existsSync(gi) ? fs.readFileSync(gi, "utf8") : "";
@@ -168,12 +168,12 @@ function scaffoldApp(opts) {
   if (!repoRoot || !fs.existsSync(repoRoot)) {
     return { ok: false, error: `repoRoot does not exist: ${repoRoot}` };
   }
-  // Self-protect: never materialize into the WarpOS framework repo itself (the dir
+  // Self-protect: never materialize into the MC framework repo itself (the dir
   // that OWNS the scaffold templates). Scaffolding into canonical would litter the
   // framework root with a product app and break the shipping manifest. Target a
   // product repo, never canonical.
   if (path.resolve(repoRoot) === REPO_ROOT) {
-    return { ok: false, error: "refusing to scaffold into the WarpOS repo root itself — target a product repo, not canonical" };
+    return { ok: false, error: "refusing to scaffold into the MC repo root itself — target a product repo, not canonical" };
   }
   const slug = o.slug || defaultSlug(repoRoot);
   const srcDir = o.srcDir || templatesDir();

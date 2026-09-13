@@ -193,7 +193,7 @@ function evaluate(manifestPath, opts = {}) {
   if (!loaded.ok) return { code: 2, ok: false, error: loaded.error };
 
   // record-trust-gate --built applies ONLY to a record-trust manifest; other falsifier manifests
-  // (e.g. the Seam-E fence suite, schema warpos/fence-falsifier-suite) reuse the per-file liveness
+  // (e.g. the Seam-E fence suite, schema mc/fence-falsifier-suite) reuse the per-file liveness
   // CORE (presence + per-file execution + skipped===0/fail===0) WITHOUT the record-trust --built step.
   const isRecordTrust = /record-trust-gate/.test(loaded.manifest.schema || "");
   const runBuilt =

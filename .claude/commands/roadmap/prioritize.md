@@ -12,7 +12,7 @@ Pick the consulting persona by the **scope** of the prioritization, per the alti
 
 - **Single-product backlog ranking / within-sprint sequencing** → the **product-lead** persona. Signals: a single product's open backlog, ordering candidates inside one product/epic, "what's next in *this* sprint", `$ARGUMENTS` scoped to one product or sprint range (e.g. `"rank only the Sprint 11+ candidates"`).
 - **Strategic / cross-product / lifecycle-phase-shift ranking** → the **director-of-product** persona. Signals: ranking that trades across products, a lifecycle-phase or pivot call, portfolio-level sequencing, "what should the *program* do next".
-- **Fallback (R2 — no regression):** when the Product Lead *would* be chosen but the scope is ambiguous, **default to `director-of-product`**. The Director is also the standing default for WarpOS's own framework roadmap (a single "product", but program-altitude) until a per-product Lead is explicitly in scope. Defaulting up never regresses behavior — the Lead inherits the Director's principles (R4), so a Director ranking is always at least as principled.
+- **Fallback (R2 — no regression):** when the Product Lead *would* be chosen but the scope is ambiguous, **default to `director-of-product`**. The Director is also the standing default for MC's own framework roadmap (a single "product", but program-altitude) until a per-product Lead is explicitly in scope. Defaulting up never regresses behavior — the Lead inherits the Director's principles (R4), so a Director ranking is always at least as principled.
 
 The chosen persona is read-only in both cases; this skill applies its ranking.
 
@@ -49,7 +49,7 @@ Write the consulted persona's ranking into `ROADMAP.md` **without rewriting any 
 ### Phase 4: Regenerate manifests + report
 `ROADMAP.md` is framework-tracked, so the regression-seed enforcer (BC-02/BC-05) reds on an un-regenerated edit. After applying:
 ```
-node scripts/generate-framework-manifest.js && node scripts/warpos/manifest/build.js
+node scripts/generate-framework-manifest.js && node scripts/mc/manifest/build.js
 ```
 Then verify green (`node scripts/testsuite/enforce.js`) and report: which persona was consulted (Product Lead vs Director of Product) + why, the keystone, the ranked top-N, what got deferred, the manager's confidence, and any escalated decision the operator still owes.
 
@@ -57,4 +57,4 @@ Then verify green (`node scripts/testsuite/enforce.js`) and report: which person
 - The **consulted persona is the source of the judgment** (Product Lead for execution-altitude, Director of Product for strategic — see **Role routing**); this skill is the orchestration + the content-preserving apply.
 - Pairs with `/roadmap:cleanup` (the Phase-1 audit), `/roadmap:add` (commit a new entry — role-neutral mechanical appender), `/roadmap:next` (the 1-item version of this), and `/roadmap:ideas` (generate candidates). The same R2 altitude split governs `next`/`ideas`/`create`.
 - **High blast radius** — a full reorder of a strategic doc. When `$ARGUMENTS` scopes it (e.g. "only Sprint 11+ candidates"), keep the reorder within that scope. Prefer the default dated-block apply over `--reorder` unless the operator wants the list physically resequenced.
-- Portable: ships to products too — the consulted persona grounds in *that* project's canonical, so the skill works in any WarpOS-installed repo.
+- Portable: ships to products too — the consulted persona grounds in *that* project's canonical, so the skill works in any MC-installed repo.

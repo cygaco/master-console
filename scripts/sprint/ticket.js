@@ -260,7 +260,7 @@ function cmdCreate(argv) {
   const id = newTicketId(SPRINT.tickets);
   const now = nowIso();
   const ticket = {
-    schema: "warpos/sprint/ticket/v1",
+    schema: "mc/sprint/ticket/v1",
     id,
     title: f.title,
     type: f.type,

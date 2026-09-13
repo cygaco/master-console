@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/provider-failure-modes/v1",
-  "title": "WarpOS Provider Failure-Mode Catalog v1",
-  "description": "Catalog mapping provider-health statuses to root_cause + safe_to_autofix + fix_recipe + remediation + fallback_allowed. Consumed by scripts/warpos/provider-smoke.js and scripts/warpos/lib/provider-rca.js. Authored as part of SP-20260513-002 (T-20260513-021).",
+  "$id": "mc/provider-failure-modes/v1",
+  "title": "MC Provider Failure-Mode Catalog v1",
+  "description": "Catalog mapping provider-health statuses to root_cause + safe_to_autofix + fix_recipe + remediation + fallback_allowed. Consumed by scripts/mc/provider-smoke.js and scripts/mc/lib/provider-rca.js. Authored as part of SP-20260513-002 (T-20260513-021).",
   "type": "object",
   "required": ["$schema", "version", "entries"],
   "additionalProperties": false,
   "properties": {
     "$schema": {
       "type": "string",
-      "const": "warpos/provider-failure-modes/v1"
+      "const": "mc/provider-failure-modes/v1"
     },
     "version": { "type": "integer", "minimum": 1 },
     "comment": { "type": "string" },

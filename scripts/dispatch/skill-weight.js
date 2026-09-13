@@ -164,7 +164,7 @@ function buildRegistry(commandsDir) {
     if (c.execution === "inline-required") inlineRequired++;
   }
   return {
-    schema: "warpos/skill-weight/v1",
+    schema: "mc/skill-weight/v1",
     generated_at: new Date().toISOString(),
     source: ".claude/commands",
     classification: "seeded-candidates",

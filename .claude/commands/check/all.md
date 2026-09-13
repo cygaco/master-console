@@ -6,7 +6,7 @@ tags: [deprecated, alias, scan]
 
 # /check:all — DEPRECATED, use /scan:full
 
-This skill is a thin alias that forwards to **`/scan:full`**. The `check:` namespace was renamed to `scan:` in SP-20260528-001; `scan:full` also expands the old `check:all` from 6 checks to a true full system scan (project health + governance + WarpOS distribution integrity).
+This skill is a thin alias that forwards to **`/scan:full`**. The `check:` namespace was renamed to `scan:` in SP-20260528-001; `scan:full` also expands the old `check:all` from 6 checks to a true full system scan (project health + governance + MC distribution integrity).
 
 ## Implementation
 
@@ -20,4 +20,4 @@ Behavior is identical (a superset — more scans run). Only the canonical name c
 
 ## Removal
 
-Scheduled for removal at `warpos@1.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.
+Scheduled for removal at `mc@1.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.

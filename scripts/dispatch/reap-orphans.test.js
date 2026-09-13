@@ -7,7 +7,7 @@
  * process snapshots — no real `ps`/`taskkill`, no live processes — so every safety
  * gate is proven against known inputs:
  *
- *   GATE 1 signature   — only WarpOS dispatch subprocesses are candidates.
+ *   GATE 1 signature   — only MC dispatch subprocesses are candidates.
  *   GATE 2 orphaned    — parent dead / reparented-to-init ⇒ orphan; parent alive ⇒ skip.
  *   GATE 3 age         — younger than min-age ⇒ skip (may be a live in-flight dispatch).
  *   GATE 4 live-lock   — a fresh concurrency lock for the PID ⇒ skip (alive + tracked).
@@ -59,7 +59,7 @@ h.test("a bare `node foo.js` is NOT a candidate (not even skipped)", () => {
 });
 h.test("a foreign `claude` (no telemetry marker) is NOT a candidate", () => {
   const res = run({ pid: 101, ppid: 1, ageMs: OLD, cmd: "claude -p --agent foo" });
-  assert(!isOrphan(res, 101) && !isSkipped(res, 101), "a non-WarpOS claude must not be touched");
+  assert(!isOrphan(res, 101) && !isSkipped(res, 101), "a non-MC claude must not be touched");
 });
 h.test("isDispatchProc matches only `node <abs-canonical-wrapper>` (r3 redesign)", () => {
   const wrapC = _path.resolve(_ROOT, "scripts", "dispatch-claude.js");

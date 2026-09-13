@@ -1,12 +1,12 @@
 {
-  "$schema": "warpos/framework-installed/v2",
+  "$schema": "mc/framework-installed/v2",
   "installedVersion": "0.0.0",
   "installedCommit": "fixture-0.0.0",
   "installedAt": "2026-04-30T00:00:00.000Z",
   "source": "fixture",
   "target": "fixtures/update-from-0.0.0-customized-claude-md",
   "pathRegistryVersion": "v3",
-  "manifestSchema": "warpos/framework-manifest/v1",
+  "manifestSchema": "mc/framework-manifest/v1",
   "assets": [
     {
       "id": "framework_doc.CLAUDE.md",

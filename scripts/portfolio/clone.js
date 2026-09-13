@@ -63,7 +63,7 @@ function resolveProjectRoot() {
 // ── Constants ────────────────────────────────────────────────────
 const TEMPLATE_DIR = path.join(
   PROJECT,
-  "_warpos",
+  "_mc",
   "templates",
   "product-clone",
 );
@@ -677,7 +677,7 @@ function loadSectionsConfig() {
   const okOrder = declared.every((id, i) => id === SECTION_ORDER[i]);
   if (!okOrder) {
     throw new Error(
-      `_warpos/templates/product-clone/sections.json order mismatch — expected ${JSON.stringify(SECTION_ORDER)}, got ${JSON.stringify(declared)}`,
+      `_mc/templates/product-clone/sections.json order mismatch — expected ${JSON.stringify(SECTION_ORDER)}, got ${JSON.stringify(declared)}`,
     );
   }
   return data;

@@ -1,9 +1,9 @@
 ---
-description: "Unified WarpOS diagnostic — runs every health check in one place. Like /warp:health but full-coverage."
+description: "Unified MC diagnostic — runs every health check in one place. Like /warp:health but full-coverage."
 user-invocable: true
 ---
 
-# /warp:doctor — Comprehensive WarpOS diagnostic
+# /warp:doctor — Comprehensive MC diagnostic
 
 Phase 4F entry point. Aggregates every check that exists across the system into one report. Use this when:
 
@@ -38,7 +38,7 @@ In parallel where possible:
 5. **`/scan:architecture`** — agent system + cross-layer seams.
 6. **`/hooks:test --all`** — every hook against its fixtures (Phase 5G; doctor surfaces the gap if the hook lacks fixtures).
 7. **`scripts/schemas/validate.js`** — every config validates against its `$schema`.
-8. **`scripts/warpos/release-build.js <current-version> --check`** — current capsule integrity.
+8. **`scripts/mc/release-build.js <current-version> --check`** — current capsule integrity.
 9. **Runtime-leak scan** — anything under `paths.runtime/` accidentally tracked in git.
 10. **Version consistency** — `version.json`, `framework-manifest.json`, capsule `release.json` all agree on current version.
 
@@ -71,8 +71,8 @@ When called as `/warp:doctor --gates-only`, runs only the 10 release gates:
 3. Reference Integrity — `/scan:references --json`
 4. Hook Registration — `/hooks:test --registered`
 5. Hook Fixture Tests — `/hooks:test --all` (skipped if 5G hasn't shipped fixtures yet; surfaced as YEL not RED until then)
-6. Fresh Install Fixture — `node scripts/warpos/test-fresh-install-smoke.js` (skipped if `fixtures/install-empty-next-app/` missing — Phase 4G)
-7. Update Fixture from previous — `node scripts/warpos/update.js --to <prev-version> --dry-run` against `fixtures/update-from-<prev>-clean/`
+6. Fresh Install Fixture — `node scripts/mc/test-fresh-install-smoke.js` (skipped if `fixtures/install-empty-next-app/` missing — Phase 4G)
+7. Update Fixture from previous — `node scripts/mc/update.js --to <prev-version> --dry-run` against `fixtures/update-from-<prev>-clean/`
 8. Customized Install Fixture — same engine against `fixtures/update-from-<prev>-customized/`
 9. Runtime Leak Scan — `git ls-files | grep -E '\\.claude/runtime/|\\.claude/project/events/'` empty
 10. Version Consistency — `version.json` `version` matches `framework-manifest.json` `version` matches latest capsule's `release.json` `version`

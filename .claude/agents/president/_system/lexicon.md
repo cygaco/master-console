@@ -1,4 +1,4 @@
-# WarpOS — Lexicon
+# MC — Lexicon
 
 Terms as we use them. Not industry definitions — ours.
 

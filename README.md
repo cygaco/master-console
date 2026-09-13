@@ -1,6 +1,6 @@
 # Master Console
 
-**Formerly WarpOS.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
+**Formerly MC.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
 
 **Version:** 1.2.0
 
@@ -14,12 +14,12 @@
 
 ## Naming note
 
-The brand is **Master Console**; the engine in this repository was built and released as **WarpOS** from March to July 2026. This rebrand is landing in two steps:
+The brand is **Master Console**; the engine in this repository was built and released as **MC** from March to July 2026. This rebrand is landing in two steps:
 
-1. **Brand layer (this README, the docs, the story)** — done. Where history is referenced, it says "formerly WarpOS".
-2. **Identifier layer** — not yet. The package name (`warpos`), the `warp:*` skill namespace, the `WARPOS_*` environment variables, the `_warpos/` directory, the `warpos@` release tags and the `WARPOS.md` gap register are all unchanged until the `2.0.0` release, which introduces the `mc` slug with one release of deprecated aliases. Until then, everything you type is still spelled `warp`.
+1. **Brand layer (this README, the docs, the story)** — done. Where history is referenced, it says "formerly MC".
+2. **Identifier layer** — not yet. The package name (`mc`), the `warp:*` skill namespace, the `MC_*` environment variables, the `_mc/` directory, the `mc@` release tags and the `MC.md` gap register are all unchanged until the `2.0.0` release, which introduces the `mc` slug with one release of deprecated aliases. Until then, everything you type is still spelled `warp`.
 
-The GitHub repository was renamed from `cygaco/WarpOS` to `cygaco/master-console` on 2026-09-12; GitHub redirects the old clone and web URLs, and the runbook that was followed is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because "WarpOS" collides with an unrelated project of the same name on GitHub and PyPI, and with Warp (warp.dev) products.
+The GitHub repository was renamed from `cygaco/MC` to `cygaco/master-console` on 2026-09-12; GitHub redirects the old clone and web URLs, and the runbook that was followed is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because "MC" collides with an unrelated project of the same name on GitHub and PyPI, and with Warp (warp.dev) products.
 
 ## What is this?
 
@@ -63,14 +63,14 @@ git clone https://github.com/cygaco/master-console.git
 
 # 2. Run the installer from inside your project
 cd <your-project>
-node ../WarpOS/scripts/warp-setup.js .
+node ../MC/scripts/warp-setup.js .
 
 # 3. Start Claude Code in your project and finish setup
 /warp:setup     # completes any missing step: clone, install, CLAUDE.md merge, hooks
 /warp:tour      # guided introduction
 ```
 
-The PowerShell installer is equivalent: `..\WarpOS\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/warp:update` can upgrade you later.
+The PowerShell installer is equivalent: `..\MC\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/warp:update` can upgrade you later.
 
 ### Optional: provider CLIs
 
@@ -129,10 +129,10 @@ Entering a mode only sets it up; nothing builds until you give an explicit task.
 │   ├── commands/           — the 237 skills, one .md per slash command, grouped by namespace
 │   ├── project/reference/  — reasoning frameworks, operational loop, sprint workflow reference
 │   └── settings.json       — compiled hook wiring (75 hooks)
-├── scripts/                — hooks/, dispatch/, sprint/, paths/, checks/, warpos/ (install + release engine)
+├── scripts/                — hooks/, dispatch/, sprint/, paths/, checks/, mc/ (install + release engine)
 ├── framework/              — paths registry source (framework/paths.registry.json) + release capsules
 ├── _requirements/          — spec templates: canonical brief, design system, architecture, features, ops, security, testing
-├── _warpos/                — framework zone: templates, settings defaults, ownership manifest, a synthetic example product
+├── _mc/                — framework zone: templates, settings defaults, ownership manifest, a synthetic example product
 ├── patterns/               — validated implementation patterns
 ├── trackers/               — the enforced tracker system (TRACKER.md + per-epic/sprint files + validator)
 ├── schemas/  migrations/  tests/
@@ -185,7 +185,7 @@ The installer creates `.claude/manifest.json` in your project. It tells Alex wha
 - [USER_GUIDE.md](USER_GUIDE.md) — how to actually use it day to day
 - [AGENTS.md](AGENTS.md) · [AGENT-STRUCTURE.md](AGENT-STRUCTURE.md) · [CLAUDE.md](CLAUDE.md) — the agent system and doctrine
 - [CHANGELOG.md](CHANGELOG.md) · [RELEASES.md](RELEASES.md) — what changed, release by release
-- [docs/PROVENANCE.md](docs/PROVENANCE.md) — formerly WarpOS: what was built when, with receipts
+- [docs/PROVENANCE.md](docs/PROVENANCE.md) — formerly MC: what was built when, with receipts
 - [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md) — the pending GitHub repository rename
 - [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 

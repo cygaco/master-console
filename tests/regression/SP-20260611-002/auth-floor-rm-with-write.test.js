@@ -93,7 +93,7 @@ ok("Finding 3 (E2E): with node-e-fs granted, write+rmSync(variable) yields NO ap
   fs.writeFileSync(
     path.join(proj, ".claude", "runtime", "authorization.json"),
     JSON.stringify({
-      schema: "warpos/auth/v1",
+      schema: "mc/auth/v1",
       scopes: ["node-e-fs"],
       expires_at: new Date(Date.now() + 3600 * 1000).toISOString(),
       granted_at: new Date().toISOString(),

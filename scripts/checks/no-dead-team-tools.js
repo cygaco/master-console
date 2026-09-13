@@ -5,7 +5,7 @@
  * no-dead-team-tools.js — refuse a NEW LIVE DIRECTIVE to a REMOVED Claude Code tool.
  *
  * Claude Code v2.1.178 (2026-06-15) REMOVED the `TeamCreate` and `TeamDelete`
- * tools; WarpOS migrated off them (E-TEAMS-MIGRATION-001) to the implicit,
+ * tools; MC migrated off them (E-TEAMS-MIGRATION-001) to the implicit,
  * session-scoped team — each teammate is spawned via the `Agent` tool with
  * `run_in_background: true`, and the harness auto-creates the session team. This
  * enforcer makes a REGRESSION self-detecting: a new live `TeamCreate(` /
@@ -54,7 +54,7 @@ const SKIP_PREFIXES = [
   "_docs",
   "_planning",
   "_reports",
-  "_warpos", // shipped baseline / examples / templates
+  "_mc", // shipped baseline / examples / templates
   "runtime",
   "tests/regression", // fixtures that PLANT the dead call on purpose
 ];
@@ -99,7 +99,7 @@ const DEAD_TOOL_RE = /\bTeam(?:Create|Delete)\s*\(/;
 // violation in the scanned ACTIVE layer (skills/hooks/scripts/agent specs). Legitimate
 // prose AVOIDS the call form (write "the TeamCreate call" / `TeamCreate`, never
 // "TeamCreate(…)"). The history/decision layer that NEEDS the call form (adr/, _docs,
-// _planning, _reports, _warpos, events, tests/regression) is PATH-SCOPED out
+// _planning, _reports, _mc, events, tests/regression) is PATH-SCOPED out
 // (SKIP_DIRS / SKIP_SEGMENTS). This enforcer's OWN two pattern-definition files are
 // skipped WHOLESALE by SELF_FILES in walk() — NOT by a line-level marker (which any
 // scanned file could carry to bypass the gate). lineIsExempt is therefore the empty

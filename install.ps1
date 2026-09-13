@@ -1,11 +1,11 @@
-# install.ps1 - WarpOS installer (PowerShell, Windows-first)
+# install.ps1 - MC installer (PowerShell, Windows-first)
 #
 # Phase 4 prereq (2026-04-30). Designed from scratch - no prior install.ps1
 # was preserved. Mirrors the contract documented in:
-#   - paths.json $schema "warpos/paths/v5"
-#   - framework-manifest.json $schema "warpos/framework-manifest/v2"
-#   - version.json $schema "warpos/version/v1"
-#   - sprint workflow $schema "warpos/sprint/*/v1"  (Sprint v0.1, 0.4.0)
+#   - paths.json $schema "mc/paths/v5"
+#   - framework-manifest.json $schema "mc/framework-manifest/v2"
+#   - version.json $schema "mc/version/v1"
+#   - sprint workflow $schema "mc/sprint/*/v1"  (Sprint v0.1, 0.4.0)
 #
 # Usage:
 #   .\install.ps1                    # install into current directory
@@ -17,7 +17,7 @@
 # What's installed:
 #   - Framework assets enumerated in .claude\framework-manifest.json
 #     (agents, hooks, commands, schemas, templates, reference docs,
-#     scripts/warpos, scripts/sprint, scripts/paths, scripts/hooks, etc.)
+#     scripts/mc, scripts/sprint, scripts/paths, scripts/hooks, etc.)
 #   - .claude\framework-installed.json snapshot for /warp:update
 #
 # What is NOT installed:
@@ -47,7 +47,7 @@ $Source = Split-Path -Parent $MyInvocation.MyCommand.Path
 foreach ($req in @(".claude\framework-manifest.json", ".claude\paths.json", "version.json")) {
     if (-not (Test-Path (Join-Path $Source $req))) {
         Write-Err "Source repo missing required file: $req"
-        Write-Err "Run install.ps1 from the WarpOS repo root, not a copy."
+        Write-Err "Run install.ps1 from the MC repo root, not a copy."
         exit 1
     }
 }
@@ -75,7 +75,7 @@ $ExistingInstall = Join-Path $Target ".claude\framework-installed.json"
 # before Stage 1, telling the operator to use the slash command instead.
 if ($Update) {
     if (-not (Test-Path $ExistingInstall)) {
-        Write-Err "-Update requires an existing WarpOS install at $Target. Run install.ps1 without -Update for a fresh install first."
+        Write-Err "-Update requires an existing MC install at $Target. Run install.ps1 without -Update for a fresh install first."
         exit 1
     }
     Write-Step ""
@@ -91,7 +91,7 @@ if ($Update) {
 
 if (Test-Path $ExistingInstall) {
     $Existing = Get-Content $ExistingInstall -Raw | ConvertFrom-Json
-    Write-Warn "Existing WarpOS install detected: version=$($Existing.installedVersion) commit=$($Existing.installedCommit.Substring(0, [Math]::Min(8, $Existing.installedCommit.Length)))"
+    Write-Warn "Existing MC install detected: version=$($Existing.installedVersion) commit=$($Existing.installedCommit.Substring(0, [Math]::Min(8, $Existing.installedCommit.Length)))"
     if (-not $Update -and -not $SkipPrompt) {
         $resp = Read-Host "Continue with FRESH install (overwrites)? [y/N]"
         if ($resp -ne "y") {
@@ -162,14 +162,14 @@ Write-Step "Stage 1/3 - copied $Copied, skipped $Skipped, hashed $($InstalledAss
 # Stage 2 - write framework-installed.json snapshot
 Write-Step "Stage 2/3 - writing install snapshot"
 $installRecord = [ordered]@{
-    "`$schema"          = "warpos/framework-installed/v2"
+    "`$schema"          = "mc/framework-installed/v2"
     installedVersion    = $Script:WARPOS_VERSION
     installedCommit     = (git -C $Source rev-parse HEAD 2>$null)
     installedAt         = (Get-Date -Format "o")
     source              = $Source
     target              = $Target
     pathRegistryVersion = ($VersionFile.pathRegistrySchema -split '/')[-1]
-    manifestSchema      = "warpos/framework-manifest/v2"
+    manifestSchema      = "mc/framework-manifest/v2"
     assets              = $InstalledAssets
     generated           = @(
         ".claude/paths.json",
@@ -227,28 +227,28 @@ if (Test-Path -LiteralPath $GeneratorPath) {
 # Stage 2.5 - run the SHARED product-scaffold core (SP-20260525-019 / T-220).
 # β A-006 (extract-don't-fork + cross-platform shell-out): instead of
 # re-implementing the paths.json/_requirements/_docs/ROADMAP/PROJECT.md/maps/
-# _warpos-mirror scaffolding in PowerShell, shell out to the SAME Node module
-# that warp-setup.js calls (scripts/warpos/scaffold-core.js). This runs AFTER
+# _mc-mirror scaffolding in PowerShell, shell out to the SAME Node module
+# that warp-setup.js calls (scripts/mc/scaffold-core.js). This runs AFTER
 # the file-copy (Stage 1) and manifest-regen (Stage 2) so the script + its
 # dependencies (framework/paths.registry.json, generate-roadmap-scaffold.js,
 # views/populate-source.js) are present in $Target, and the manifest it reads
-# for the _warpos/ mirror reflects the target. Result: an install.ps1 consumer
+# for the _mc/ mirror reflects the target. Result: an install.ps1 consumer
 # install ends up COMPLETE and identical to the warp-setup path.
-$ScaffoldCore = Join-Path $Target "scripts/warpos/scaffold-core.js"
+$ScaffoldCore = Join-Path $Target "scripts/mc/scaffold-core.js"
 if (Test-Path $ScaffoldCore) {
     Write-Step "Stage 2.5/3 - running shared product-scaffold core"
-    # --warpos-root $Source (canonical repo where install.ps1 lives): the
-    # scaffold's _warpos/ source mirror (populate-source.js) sources framework
-    # files — incl. _warpos/settings/defaults.json — from <warpos-root>. Without
-    # this flag the in-product copy of scaffold-core.js would default warposRoot
-    # to the fresh product (no _warpos/ yet), so defaults.json wouldn't land and
+    # --mc-root $Source (canonical repo where install.ps1 lives): the
+    # scaffold's _mc/ source mirror (populate-source.js) sources framework
+    # files — incl. _mc/settings/defaults.json — from <mc-root>. Without
+    # this flag the in-product copy of scaffold-core.js would default mcRoot
+    # to the fresh product (no _mc/ yet), so defaults.json wouldn't land and
     # the layered settings compile would never fire. Threading $Source makes the
     # mirror source from canonical, exactly like the warp-setup path.
-    & node $ScaffoldCore $Target --warpos-root "$Source"
+    & node $ScaffoldCore $Target --mc-root "$Source"
     if ($LASTEXITCODE -ne 0) {
-        Write-Warn "scaffold-core.js exited $LASTEXITCODE - product scaffold may be incomplete (paths.json/zones/ROADMAP/PROJECT.md/maps/_warpos). Re-run /warp:setup from inside the project to complete it."
+        Write-Warn "scaffold-core.js exited $LASTEXITCODE - product scaffold may be incomplete (paths.json/zones/ROADMAP/PROJECT.md/maps/_mc). Re-run /warp:setup from inside the project to complete it."
     } else {
-        Write-Step "Stage 2.5/3 - product scaffold complete (paths.json, _requirements/_docs zones, ROADMAP, PROJECT.md, maps nudge, _warpos/ mirror)"
+        Write-Step "Stage 2.5/3 - product scaffold complete (paths.json, _requirements/_docs zones, ROADMAP, PROJECT.md, maps nudge, _mc/ mirror)"
         # GATE-B 3c (beta-ceremony-freshpath-go-b089): the Stage-2 manifest regen ran BEFORE this scaffold, so it
         # did NOT count the scaffolded maps nudge (.claude/project/maps/README.md); an upgraded tree (whose
         # baseline pre-had it) does. Re-run the generator now the tree is fully scaffolded so the manifest

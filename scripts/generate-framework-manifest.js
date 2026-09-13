@@ -3,7 +3,7 @@
 /**
  * generate-framework-manifest.js — build .claude/framework-manifest.json
  *
- * Walks the WarpOS source tree, classifies every shippable asset by kind,
+ * Walks the MC source tree, classifies every shippable asset by kind,
  * and writes a single declarative manifest at .claude/framework-manifest.json.
  *
  * The installer (warp-setup.js) consumes this manifest instead of hand-coded
@@ -16,7 +16,7 @@
  * Run this:
  *   - After adding/removing/renaming any .claude/, scripts/, _requirements/,
  *     patterns/ asset
- *   - Before every WarpOS commit that touches assets (enforced by the
+ *   - Before every MC commit that touches assets (enforced by the
  *     framework-manifest-guard hook at commit time)
  *
  * Not auto-run via hook because:
@@ -46,7 +46,7 @@ const OUT = path.join(ROOT, ".claude", "framework-manifest.json");
 //   introducedIn    semver where it first shipped (read from version.json or "0.0.0")
 //   removedIn       null while alive
 //   replaces        previous id if this entry was renamed
-const MANIFEST_SCHEMA_VERSION = "warpos/framework-manifest/v2";
+const MANIFEST_SCHEMA_VERSION = "mc/framework-manifest/v2";
 
 // EXCLUDE_GLOBS — tree paths the generator must skip when walking ASSET_DIRS.
 // Phase 1C bug fix: dispatch-backups was being included, blowing up the asset
@@ -58,7 +58,7 @@ const EXCLUDE_RELATIVE_PREFIXES = [
   ".claude/agents/.system/dispatch-backups/",
   // SP-20260723-005 (β B/0.88): builder-right-size is canonical-only (a build-chain prompt-size heuristic,
   // dev-tooling, NOT invoked by any shipped skill) — exclude it from the scripts/enforcement dir-ship so it
-  // stays out of product installs. Classified in KNOWN_NOT_SHIPPED (warpos-ship-coverage.js). The prefix
+  // stays out of product installs. Classified in KNOWN_NOT_SHIPPED (mc-ship-coverage.js). The prefix
   // covers both builder-right-size.js and builder-right-size.test.js.
   "scripts/enforcement/builder-right-size",
   // ADR-0007: oneshot runtime state moved under president/_system/oneshot/.
@@ -81,7 +81,7 @@ const EXCLUDE_RELATIVE_PREFIXES = [
   ".claude/.session_index.json",
   // SP-20260514-001 R-4 / T-20260514-074 — migrations stop shipping as
   // installed assets. They are referenced via capsule release.json#migrations[]
-  // and run via scripts/warpos/migrations-loader.js. Including them in
+  // and run via scripts/mc/migrations-loader.js. Including them in
   // assets[] caused the apply→flag-stale→delete→re-copy loop.
   // The canonical migration source lives at `migrations/` (top-level), not
   // `framework/migrations/` — historical path from before the framework/
@@ -94,7 +94,7 @@ function isExcluded(relPath) {
   // snapshot and checksums inside each capsule are generated from this manifest,
   // so including them would make `manifest -> capsule -> manifest` unstable.
   if (
-    /^warpos\/releases\/[^/]+\/(framework-manifest|checksums)\.json$/.test(
+    /^mc\/releases\/[^/]+\/(framework-manifest|checksums)\.json$/.test(
       relPath,
     )
   ) {
@@ -147,7 +147,7 @@ const DEFAULT_OWNER_BY_KIND = {
 // content-hash module. Text assets are LF-normalized (extension allowlist);
 // binary assets get rawHash. destPath governs the classification so the
 // semantics travel with the on-disk path, not the canonical source path.
-const cHash = require("./warpos/lib/content-hash");
+const cHash = require("./mc/lib/content-hash");
 
 function sha256OfFile(absPath, destPath) {
   if (cHash.isTextAsset(destPath || absPath)) {
@@ -199,11 +199,11 @@ const ASSET_DIRS = [
   // schemas + migrations Phase 4 introduced were NOT shipped by the installer.
   // /warp:update couldn't materialize them because they weren't in the
   // manifest. Now they are.
-  { src: "scripts/warpos", kind: "warpos_script" },
+  { src: "scripts/mc", kind: "mc_script" },
   { src: "scripts/checks", kind: "check_tool" },
   // SP-20260723-005 (β B/0.88): ship the /scan:full-invoked enforcement lints so a product's scaffolded
   // full.md (which invokes betaevents-dedup-lint / ed-dup-id-lint / pipe-masks-gate-lint) + /enforcement:log
-  // (invokes next-ed-id) don't reference a missing script. They SKIP on an absent WarpOS ledger (product
+  // (invokes next-ed-id) don't reference a missing script. They SKIP on an absent MC ledger (product
   // state). builder-right-size (a build-chain prompt-size heuristic, NOT invoked by any shipped skill) is
   // EXCLUDED below + KNOWN_NOT_SHIPPED (canonical-only, dev-tooling).
   { src: "scripts/enforcement", kind: "check_tool" },
@@ -275,7 +275,7 @@ const ASSET_DIRS = [
   // the panels (SP-20260615-001/002), cockpit (/cockpit:readiness), and admin:* (SP-20260614-002)
   // sprints added backing scripts + panel registries but never classified them — so the SHIPPED
   // /panel:*, /cockpit:readiness, and /admin:* skills had no backing logic downstream, and
-  // warpos-ship-coverage exited 1 (2 essential-root registries + 7 framework-owned scripts shipping
+  // mc-ship-coverage exited 1 (2 essential-root registries + 7 framework-owned scripts shipping
   // to nobody). E-CONTENT-DELIVERY DoD#2 (ship-coverage GREEN) was OVERSTATED until this. They must ship.
   { src: "scripts/panel", kind: "panel_tool" },     // /panel:* unified opener namespace (list.js/roadmap.js/roadmap-gui.js)
   { src: "scripts/cockpit", kind: "cockpit_tool" }, // /cockpit:readiness board (readiness-board.js + its .test.js, mirroring scripts/checks)
@@ -294,7 +294,7 @@ const ASSET_DIRS = [
   // scripts/dispatch/workorder-schema.js mirrors by hand). Same silent-drop gap
   // the .claude/kernel entry fixed: no ASSET_DIRS root visited .claude/schemas,
   // so it shipped to nobody and its build.js framework classification pointed at
-  // an un-mirrored _warpos/schemas/ source. Placed adjacent to the top-level
+  // an un-mirrored _mc/schemas/ source. Placed adjacent to the top-level
   // `schemas` root (same `schema` kind) so regen adds entries without reordering
   // the kind-keyed output. Enumerated here so it ships + mirrors.
   { src: ".claude/schemas", kind: "schema" },
@@ -308,22 +308,22 @@ const ASSET_DIRS = [
   // shipped, so every consumer's /bootstrap:spinup + /sprint:* + /canon hit
   // missing templates. hooks.registry.json is the hook source-of-truth the hook
   // build reads; also absent. Both surfaced by the ship-coverage enforcer.
-  // SP-20260618-001: migrated framework/templates → _warpos/templates (the
+  // SP-20260618-001: migrated framework/templates → _mc/templates (the
   // SP-20260522-001 end-state home; framework/templates deleted in the same sprint).
-  { src: "_warpos/templates", kind: "template" },
+  { src: "_mc/templates", kind: "template" },
   // 2026-06-06: trackers/templates/* are the enforced-tracker (Epic) system's
   // reusable scaffolding templates — owner=framework (build.js
   // framework-trackers-templates rule). The tracker validator (validate.js §33)
   // demands them, but before this they shipped to nobody: a consumer that
   // updated to the tracker system got the validator with no templates + no way
-  // to scaffold ("shipped the referee, not the field"; warpos-enforcer-shippability).
+  // to scaffold ("shipped the referee, not the field"; mc-enforcer-shippability).
   // /trackers:init consumes these downstream.
   { src: "trackers/templates", kind: "template" },
   { src: "framework/hooks.registry.json", kind: "hooks_registry" },
-  // SP-20260531-002 (ADR-0005): `_guides/` ships WarpOS-authored,
+  // SP-20260531-002 (ADR-0005): `_guides/` ships MC-authored,
   // product-facing launch guides (e.g. DEV_SETUP_GUIDE.md) to consumer products.
   // owner=framework + managed=true (build.js framework-guides-dir rule); the
-  // fail-closed ship boundary is asserted by scan:warpos-ship-coverage.
+  // fail-closed ship boundary is asserted by scan:mc-ship-coverage.
   { src: "_guides", kind: "guide" },
   // E5 / ADR-0007: `_knowledge/` is the shared agent-grounding knowledge layer
   // (the company "brain" — the design-principles guide library + per-domain
@@ -374,7 +374,7 @@ const TOP_LEVEL_SCRIPTS = [
   // top-level test must be enumerated here or it stays un-hash-tracked (the AC-19 all-new-scripts gap).
   { src: "scripts/dispatch-agent-model-semantics.test.js", kind: "top_script" },
   // warp-setup.js is NOT shipped to target projects — it's the installer itself.
-  //   Clients invoke it from ../WarpOS/, not from their own scripts/.
+  //   Clients invoke it from ../MC/, not from their own scripts/.
 ];
 
 // Root-level Phase 4 artifacts that ship as single files (not dirs).
@@ -639,7 +639,7 @@ if (require.main === module) {
 
   // Reporting
   const pad = (s, n) => s.padEnd(n, " ");
-  console.log(`\n  WarpOS framework manifest written`);
+  console.log(`\n  MC framework manifest written`);
   console.log(`  Output: .claude/framework-manifest.json`);
   console.log(`  Version: ${version}`);
   console.log(`  Schema: ${manifest.$schema}\n`);

@@ -19,7 +19,7 @@
  *      DETECT_GIT_COMMIT below for the exact pattern).
  *   2. Gather staged file paths via `git diff --cached --name-only`.
  *   3. Filter to FRAMEWORK_PREFIXES (originally mirrored from the now-
- *      retired scripts/warpos/promote.js; since SP-20260522-001 the list
+ *      retired scripts/mc/promote.js; since SP-20260522-001 the list
  *      is canonical here. EXCLUDE_PREFIXES skipped.
  *   4. If 0 framework-prefix files staged → exit 0.
  *   5. Read version.json#version. Check if framework/releases/<version>/
@@ -32,7 +32,7 @@
  *
  * Bypass (logged via stderr):
  *   - env: WARPOS_VERSION_GUARD=off
- *   - sentinel: .warpos/version-bump-guard-disable
+ *   - sentinel: .mc/version-bump-guard-disable
  *
  * Fail-open conditions (legitimate "nothing to check" — always exit 0):
  *   - Not a `git commit` command.
@@ -65,7 +65,7 @@ const { execSync } = require("child_process");
 const DETECT_GIT_COMMIT = /\bgit(\s+-[A-Za-z][^\s]*)*\s+commit\b/;
 
 // FRAMEWORK_PREFIXES — canonical here since SP-20260522-001 retired the
-// scripts/warpos/promote.js mirror source. Edit this list when framework-
+// scripts/mc/promote.js mirror source. Edit this list when framework-
 // owned top-level dirs change.
 const FRAMEWORK_PREFIXES = [
   ".claude/agents/",
@@ -155,9 +155,9 @@ function run(event) {
   const project = resolveProject();
   if (!project) return process.exit(0);
 
-  if (fs.existsSync(path.join(project, ".warpos", "version-bump-guard-disable"))) {
+  if (fs.existsSync(path.join(project, ".mc", "version-bump-guard-disable"))) {
     process.stderr.write(
-      "[version-bump-guard] bypass: sentinel .warpos/version-bump-guard-disable present (logged)\n",
+      "[version-bump-guard] bypass: sentinel .mc/version-bump-guard-disable present (logged)\n",
     );
     return process.exit(0);
   }

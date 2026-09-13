@@ -57,7 +57,7 @@ function runGuard(opts = {}) {
     );
   }
   if (opts.activeTeam) {
-    const cfg = path.join(home, ".claude", "teams", "warpos-sprint");
+    const cfg = path.join(home, ".claude", "teams", "mc-sprint");
     fs.mkdirSync(cfg, { recursive: true });
     const members = opts.teamHasEpsilon
       ? [{ name: "epsilon", agentType: "epsilon" }, { name: "beta", agentType: "beta" }]
@@ -109,7 +109,7 @@ ok("sprint + verified team_name present => NO advisory (flowing through a team)"
   const { stdout } = runGuard({
     mode: "sprint",
     seedCount: 5,
-    teamName: "warpos-sprint",
+    teamName: "mc-sprint",
     activeTeam: true,
     teamHasEpsilon: true,
   });

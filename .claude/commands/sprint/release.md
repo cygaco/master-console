@@ -126,7 +126,7 @@ const SPRINT = require('./scripts/sprint/paths');
 const id = approvalId(SPRINT.approvals);
 const now = nowIso();
 writeYaml(require('path').join(SPRINT.approvals, id + '.yaml'), {
-  schema: 'warpos/sprint/approval/v1',
+  schema: 'mc/sprint/approval/v1',
   id,
   sprint: process.env.SPRINT_ID || 'SP-...',
   level: 'release_approval_required',
@@ -188,7 +188,7 @@ Writes `paths.sprintReleases/<RL-id>.report.md` from the template.
 When the sprint is done (closed or shipped), write a history entry:
 
 ```bash
-# Render _warpos/templates/sprint/history/sprint-history.yaml.tmpl
+# Render _mc/templates/sprint/history/sprint-history.yaml.tmpl
 # and place it at paths.sprintHistory/<sprint-id>/sprint-history.yaml.
 ```
 

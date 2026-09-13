@@ -24,7 +24,7 @@ const os = require("os");
 const path = require("path");
 const { PassThrough } = require("stream");
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-dispatch-smoke-"));
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "mc-dispatch-smoke-"));
 const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 const TMP_REPO = path.join(TMP_DIR, "fake-product");
 fs.mkdirSync(TMP_REPO, { recursive: true });
@@ -38,7 +38,7 @@ const reg = require("../../scripts/portfolio/registry");
 const { dispatchToSlug, validateInputs, SKILL_RE, SAFE_ARG_RE } = require("../../scripts/portfolio/dispatch");
 
 reg.save({
-  schema: "warpos/portfolio-registry/v1",
+  schema: "mc/portfolio-registry/v1",
   products: {
     "smoke-prod": {
       slug: "smoke-prod",

@@ -126,7 +126,7 @@ h.test("CLI --categories --file <nonexistent> fails open (exit 0)", () => {
 
 // ── --enforce flips report-only → blocking on a planted-bad artifact ──────────
 h.test("CLI default is report-only (exit 0); --enforce blocks (exit 1) on a gap", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-acc-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-acc-"));
   try {
     const f = path.join(tmp, "ac.md");
     fs.writeFileSync(f, artifactMissing([AC_CATEGORIES[0]]), "utf8");

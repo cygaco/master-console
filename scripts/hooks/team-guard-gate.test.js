@@ -74,7 +74,7 @@ function runGuard(opts = {}) {
     );
   }
   if (opts.activeTeam) {
-    const cfgDir = path.join(home, ".claude", "teams", "warpos-sprint");
+    const cfgDir = path.join(home, ".claude", "teams", "mc-sprint");
     fs.mkdirSync(cfgDir, { recursive: true });
     const members = opts.teamHasEpsilon
       ? [
@@ -152,7 +152,7 @@ ok("(4) sprint + dispatch WITH verified team_name => ALLOW (into team)", () => {
     mode: "sprint",
     hardGate: true,
     agentType: "general-purpose",
-    teamName: "warpos-sprint",
+    teamName: "mc-sprint",
     activeTeam: true,
     teamHasEpsilon: true,
   });
@@ -223,7 +223,7 @@ ok("(+) team member 'epsilon-helper' (spoof) => BLOCK worker (not real ε)", () 
   fs.writeFileSync(path.join(proj, ".claude", "runtime", ".session-id"), "s-spoof");
   fs.writeFileSync(path.join(proj, ".claude", "runtime", ".sprint-oneoff-count"), "5");
   // a team whose only "ε-ish" member is a spoof substring match
-  const cfgDir = path.join(home, ".claude", "teams", "warpos-sprint");
+  const cfgDir = path.join(home, ".claude", "teams", "mc-sprint");
   fs.mkdirSync(cfgDir, { recursive: true });
   fs.writeFileSync(
     path.join(cfgDir, "config.json"),

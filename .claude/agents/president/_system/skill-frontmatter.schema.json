@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/skill-frontmatter/v1",
-  "title": "WarpOS skill frontmatter schema",
+  "$id": "mc/skill-frontmatter/v1",
+  "title": "MC skill frontmatter schema",
   "description": "Canonical frontmatter for files under .claude/commands/<ns>/<name>.md. Enforced by /skills:create and the skill-frontmatter-guard hook.",
   "type": "object",
   "required": ["description"],

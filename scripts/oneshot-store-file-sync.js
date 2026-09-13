@@ -6,7 +6,7 @@
  * Phase 4.2 genericization (2026-04-30): the original v9 hardcoded
  * the product-specific paths (src/app/api/auth/reset/route.ts → auth feature,
  * src/lib/rockets.ts → foundation). Per §4.2 of BACKLOG, that script
- * was project-specific and not safe to ship to WarpOS. This generic version
+ * was project-specific and not safe to ship to MC. This generic version
  * derives scopes from the PRDs themselves — no per-project file paths in
  * the script. Project-specific one-off patches now live at
  * `scripts/the prior project-specific one-off`.

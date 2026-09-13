@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/manifest/v1",
+  "title": "MC Manifest — per-path ownership declaration",
+  "description": "Authored under SP-20260522-001. Lives at `_mc/MANIFEST.json` in installed products and declares per-path ownership for every framework-influenced path. Replaces the implicit ownership scheme that the now-retired /warp:promote suite carried. Built by scripts/mc/manifest/build.js; consumed by /warp:update (refuses to overwrite project-owned files), /warp:rollback (snapshot scope), /scan:mc-manifest-coverage (diff on-disk vs manifest), /scan:framework-views-fresh (generated views match source), the regenerator (.claude/commands + .claude/agents rebuilt byte-identical from _mc/), and the three-layer settings.json compiler.",
+  "type": "object",
+  "required": ["$schema", "version", "generatedAt", "generatedBy", "mcVersion", "paths"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "mc/manifest/v1",
+      "description": "Schema id pinned to v1 so consumers can refuse a manifest they don't understand."
+    },
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Integer schema version. Bumped on breaking changes; downstream consumers MUST check before reading."
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp the manifest was emitted. Compared against on-disk file mtimes by /scan:mc-manifest-honesty."
+    },
+    "generatedBy": {
+      "type": "string",
+      "description": "Pointer to the generator that wrote this file (e.g. 'scripts/mc/manifest/build.js@<sha>')."
+    },
+    "mcVersion": {
+      "type": "string",
+      "description": "Installed MC version at generation time (mirrors version.json#version)."
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "description": "Optional secondary version field for downstream migration tooling. Mirrors `version`; allows future split where the manifest spec versions independently of MC releases."
+    },
+    "migrations": {
+      "type": "array",
+      "description": "Ordered list of migration ids that have been applied to this install's manifest. Populated by scripts/mc/manifest/migrate.js as schema versions evolve.",
+      "items": { "type": "string" }
+    },
+    "paths": {
+      "type": "object",
+      "description": "Map of project-relative path → ownership declaration. Every framework-influenced path that exists on disk after /warp:setup MUST be enumerated; missing entries are caught by /scan:mc-manifest-coverage.",
+      "additionalProperties": {
+        "$ref": "#/definitions/pathEntry"
+      }
+    }
+  },
+  "definitions": {
+    "ownerClass": {
+      "type": "string",
+      "enum": ["framework", "generated", "project", "runtime"],
+      "description": "Ownership class. framework=managed copy, byte-identical to source; generated=compiled deterministically from layered inputs; project=seeded once then user-owned, never auto-overwritten on update; runtime=written by hooks/sessions, never touched on update."
+    },
+    "fileClass": {
+      "type": "string",
+      "enum": ["fillable", "reference", "guide", "code", "config", "data"],
+      "description": "Semantic class. fillable=template seeded for user to fill (CORE_BRIEF.md, etc); reference=framework reference doc (don't edit); guide=human-facing walkthrough; code=executable; config=settings/manifest; data=jsonl/json runtime data."
+    },
+    "pathEntry": {
+      "type": "object",
+      "required": ["owner"],
+      "additionalProperties": false,
+      "properties": {
+        "owner": { "$ref": "#/definitions/ownerClass" },
+        "managed": {
+          "type": "boolean",
+          "description": "True if /warp:update will overwrite this path to match the framework source. Required-by-convention for owner=framework. Always false for owner=project and owner=runtime."
+        },
+        "source": {
+          "type": "string",
+          "description": "For owner=framework: project-relative pointer to the _mc/ source-of-truth that this path mirrors (e.g. '_mc/commands/fix/fast.md'). Update reads source and writes this entry's path byte-identically."
+        },
+        "seeded_from": {
+          "type": "string",
+          "description": "For owner=project: project-relative ADVISORY provenance pointer to the resolvable seed source for this path. As of 0.16.0 the generator emits the real on-disk path (e.g. `_requirements/<x>` or the decision-policy file), not the previously-dangling `<source-prefix>/templates/...` (prefix-drift). Advisory-only — nothing dereferences it at install. The `_mc/templates/`/`_mc/BASELINE/` end-state and the `seed_drift` /warp:update contract are DEFERRED until those source dirs are built (SP-20260522-001)."
+        },
+        "compiled_from": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "For owner=generated: ordered list of project-relative input paths the compiler reads to produce this entry. First entry is the framework-default layer; subsequent entries are project-override layers. Order matters; later entries win on conflicting keys."
+        },
+        "compiler": {
+          "type": "string",
+          "description": "For owner=generated: project-relative pointer to the compiler script (e.g. 'scripts/mc/settings/compile.js'). Lets gates verify the entry by re-running the compiler and diffing output."
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 of the file content at manifest generation time. For owner=framework: should match the source file's sha256. Drift between sha256 and on-disk content is detected by /scan:mc-manifest-honesty."
+        },
+        "installedSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 at install time. Diverges from sha256 when the user modifies a project-owned file or when a framework file has drifted. Updated by /warp:setup + /warp:update only; never by runtime writes."
+        },
+        "currentSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Optional: SHA-256 of the file's current on-disk content. Populated by /warp:update --status. Useful for surfacing drift without re-walking the tree."
+        },
+        "userModified": {
+          "type": "boolean",
+          "description": "True if /warp:update has detected user modifications to a framework- or project-owned file (i.e., currentSha !== installedSha). Surfaces in update reports so the user knows their changes are at risk."
+        },
+        "class": {
+          "$ref": "#/definitions/fileClass",
+          "description": "Optional semantic file class. Lets UI tools group fillable templates separately from reference docs."
+        },
+        "introducedIn": {
+          "type": "string",
+          "description": "MC version this path first appeared in (mirrors framework/paths.registry.json convention)."
+        },
+        "removedIn": {
+          "type": ["string", "null"],
+          "description": "MC version this path was removed. Non-null entries are tombstones for the un-installer."
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["file", "dir", "jsonl", "json", "yaml", "md", "js"],
+          "description": "Filesystem entry kind. Mirrors framework/paths.registry.json. Lets gates validate that a file path doesn't get an entry expecting a directory."
+        },
+        "_note": {
+          "type": "string",
+          "description": "Free-text per-path note (rationale, gotchas, cross-references). Not interpreted; human-readable only."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "owner": { "const": "framework" } } },
+          "then": { "required": ["source", "sha256"] }
+        },
+        {
+          "if": { "properties": { "owner": { "const": "generated" } } },
+          "then": { "required": ["compiled_from"] }
+        },
+        {
+          "if": { "properties": { "owner": { "const": "project" } } },
+          "then": { "properties": { "managed": { "const": false } } }
+        },
+        {
+          "if": { "properties": { "owner": { "const": "runtime" } } },
+          "then": {
+            "properties": {
+              "managed": { "const": false },
+              "source": false,
+              "seeded_from": false,
+              "compiled_from": false
+            }
+          }
+        }
+      ]
+    }
+  }
+}

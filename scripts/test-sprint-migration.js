@@ -63,7 +63,7 @@ function copyFile(rel, tmp) {
 }
 
 function setupProject() {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-migrate-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-migrate-"));
   copyFile(".claude/paths.json", tmp);
   copyDir(path.join(REPO, "schemas/sprint"), path.join(tmp, "schemas/sprint"));
   copyDir(path.join(REPO, "scripts/sprint"), path.join(tmp, "scripts/sprint"));
@@ -89,7 +89,7 @@ function seedLegacy(tmp, sid = "SP-20991231-001") {
   fs.mkdirSync(path.join(sprintDir, "approvals"), { recursive: true });
 
   const reg = [
-    "schema: warpos/sprint/active-sprints/v1",
+    "schema: mc/sprint/active-sprints/v1",
     `primary: "${sid}"`,
     "sprints:",
     `  - id: "${sid}"`,
@@ -110,7 +110,7 @@ function seedLegacy(tmp, sid = "SP-20991231-001") {
   fs.writeFileSync(path.join(sprintDir, "active-sprints.yaml"), reg, "utf8");
 
   const current = [
-    "schema: warpos/sprint/current-sprint/v1",
+    "schema: mc/sprint/current-sprint/v1",
     `id: "${sid}"`,
     `title: "Legacy test sprint"`,
     `objective: "Verify migration"`,
@@ -158,7 +158,7 @@ function seedLegacy(tmp, sid = "SP-20991231-001") {
   );
 
   const progress = [
-    "schema: warpos/sprint/sprint-progress/v1",
+    "schema: mc/sprint/sprint-progress/v1",
     `sprint: ${sid}`,
     `updated_at: "${nowIso()}"`,
     "current_phase: execute",
@@ -199,7 +199,7 @@ function seedApproval(tmp, sid, apId = "AP-test-001") {
   const apDir = path.join(tmp, ".claude/project/sprint/approvals");
   fs.mkdirSync(apDir, { recursive: true });
   const yaml = [
-    "schema: warpos/sprint/approval/v1",
+    "schema: mc/sprint/approval/v1",
     `id: "${apId}"`,
     `sprint: "${sid}"`,
     "level: execution_approval_required",
@@ -486,12 +486,12 @@ function testVerifyCatchesMismatch() {
     fs.mkdirSync(newDir, { recursive: true });
     fs.writeFileSync(
       path.join(newDir, "current.yaml"),
-      "schema: warpos/sprint/current-sprint/v1\nid: WRONG\n",
+      "schema: mc/sprint/current-sprint/v1\nid: WRONG\n",
       "utf8",
     );
     fs.writeFileSync(
       path.join(newDir, "progress.yaml"),
-      "schema: warpos/sprint/sprint-progress/v1\nsprint: WRONG\n",
+      "schema: mc/sprint/sprint-progress/v1\nsprint: WRONG\n",
       "utf8",
     );
     const res = run(["--apply", "--i-confirm-deletion"], { cwd: tmp });

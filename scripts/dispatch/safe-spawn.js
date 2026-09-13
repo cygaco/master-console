@@ -56,7 +56,7 @@ const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
 // all share ~/.codex/models_cache.json and write INCOMPATIBLE schemas — whoever writes
 // last decides whether OUR CLI can LOAD it (intermittent "missing field
 // supports_reasoning_summaries" load failure; a read-only pin instead yields "Access is
-// denied"). Fix: give WarpOS codex spawns their OWN CODEX_HOME so the shared cache can't
+// denied"). Fix: give MC codex spawns their OWN CODEX_HOME so the shared cache can't
 // be clobbered under us. This is applied at the SINGLE kernel choke-point every codex
 // spawn routes through (providers.js runProvider, cert-attest.js, dispatch-review →
 // dispatch-agent, ...); the raw `codex exec`-from-Bash route is separately blocked by

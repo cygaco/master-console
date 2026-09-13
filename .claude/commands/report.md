@@ -41,7 +41,7 @@ If no mode is given, ask which one. If a mode needs an id and none is supplied
 
 ## The hard rule — ELI5
 
-Every report uses `_warpos/templates/report/REPORT_TEMPLATE.md` and obeys, no
+Every report uses `_mc/templates/report/REPORT_TEMPLATE.md` and obeys, no
 exceptions:
 
 1. **TL;DR first.** 2–4 sentences at the very top: what happened + why it
@@ -133,7 +133,7 @@ complete artifact set.
 
 ### Step 3 — Write the report from the template
 
-Read `_warpos/templates/report/REPORT_TEMPLATE.md`, fill every `{{placeholder}}`:
+Read `_mc/templates/report/REPORT_TEMPLATE.md`, fill every `{{placeholder}}`:
 
 - `{{type}}` → `Sprint` | `Epic` | `Session` | `Checkpoint`
 - `{{title}}` → the id, version, date, or checkpoint title
@@ -166,7 +166,7 @@ they're authoring scaffolding, not report content.
 
 ## Dual identity
 
-In canonical WarpOS, `/report` files **WarpOS's own** reports. In a downstream
+In canonical MC, `/report` files **MC's own** reports. In a downstream
 consumer project, the same skill files the **consumer's** reports into *their*
 `_reports/`. Report content is `owner=project` (per-project output) — never
 framework-manifest content. Only the template, this skill, and the `_reports/`
@@ -184,7 +184,7 @@ README seed are framework-owned and shipped. See `_reports/README.md`.
 
 ## Reference
 
-- Template: `_warpos/templates/report/REPORT_TEMPLATE.md`
+- Template: `_mc/templates/report/REPORT_TEMPLATE.md`
 - Folder + dual-identity: `_reports/README.md`
 - Design note (wiring, enforcer, paths delta):
   `runtime/notes/sp-20260531-001-reports-system.md`

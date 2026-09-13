@@ -27,7 +27,7 @@ function test(name, fn) {
   }
 }
 
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-scaffold-test-"));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-scaffold-test-"));
 function freshRepo() {
   const d = fs.mkdtempSync(path.join(tmp, "repo-"));
   return d;
@@ -87,7 +87,7 @@ try {
     assert.ok(pkg.dependencies["@radix-ui/react-slot"], "pins radix slot");
     assert.ok(pkg.dependencies["lucide-react"], "pins lucide");
     const checklist = fs.readFileSync(path.join(repo, "FOUNDERS_CHECKLIST.md"), "utf8");
-    assert.ok(checklist.includes("warpos/founders-checklist/v1"), "founders checklist schema");
+    assert.ok(checklist.includes("mc/founders-checklist/v1"), "founders checklist schema");
     // .tmpl suffix stripped everywhere
     assert.ok(!fs.existsSync(path.join(repo, "package.json.tmpl")), ".tmpl stripped");
   });
@@ -129,7 +129,7 @@ try {
     ensureGitignore(repo);
     ensureGitignore(repo);
     const gi = fs.readFileSync(path.join(repo, ".gitignore"), "utf8");
-    const count = (gi.match(/WarpOS app-scaffold \(managed\)/g) || []).length;
+    const count = (gi.match(/MC app-scaffold \(managed\)/g) || []).length;
     assert.strictEqual(count, 1, "managed marker appears exactly once");
   });
 
@@ -151,10 +151,10 @@ try {
     assert.ok(r.installed, "installed=true when seam returns 0");
   });
 
-  // 6b. self-protect: refuses to scaffold into the WarpOS repo root itself
-  test("refuses to materialize into the WarpOS repo root (leak guard)", () => {
-    const warposRoot = path.resolve(__dirname, "..", "..");
-    const r = scaffoldApp({ repoRoot: warposRoot, slug: "x", log: () => {} });
+  // 6b. self-protect: refuses to scaffold into the MC repo root itself
+  test("refuses to materialize into the MC repo root (leak guard)", () => {
+    const mcRoot = path.resolve(__dirname, "..", "..");
+    const r = scaffoldApp({ repoRoot: mcRoot, slug: "x", log: () => {} });
     assert.ok(!r.ok, "must refuse");
     assert.match(r.error || "", /repo root/i, "error names the repo-root guard");
   });

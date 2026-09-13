@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/path-lint-rules/v1",
+  "$schema": "mc/path-lint-rules/v1",
   "generated_by": "scripts/paths/build.js",
   "critical": [
     {
@@ -144,7 +144,7 @@
     },
     {
       "match": "\\.claude\\/portfolio\\/registry\\.yaml",
-      "suggestion": "~/.warpos/portfolio.json (HOME-anchored); consumer: scripts/portfolio/registry.js#registryPath()",
+      "suggestion": "~/.mc/portfolio.json (HOME-anchored); consumer: scripts/portfolio/registry.js#registryPath()",
       "why": "T-20260611-309: this project-local path was always dead; real registry is home-anchored, resolved by the consumer via os.homedir()"
     }
   ],
@@ -300,8 +300,8 @@
     ".claude/agents/.system/dispatch-backups/",
     "backups/",
     "SYSTEMS-REFERENCE.md",
-    "warpos-system-updates",
-    "warpos-roadmap.md",
+    "mc-system-updates",
+    "mc-roadmap.md",
     "ROADMAP.md",
     "framework/paths.registry.json",
     "scripts/path-lint.rules.generated.json",
@@ -315,6 +315,6 @@
     "build",
     "coverage",
     ".worktrees",
-    ".warpos-backup"
+    ".mc-backup"
   ]
 }

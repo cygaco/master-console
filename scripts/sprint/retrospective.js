@@ -49,7 +49,7 @@ const {
   yamlDump,
 } = require("./fs");
 
-const SCHEMA_ID = "warpos/sprint/sprint-retrospective/v1";
+const SCHEMA_ID = "mc/sprint/sprint-retrospective/v1";
 const WRITER_VERSION = "1.0.0";
 const RETRO_DIR_NAME = "retrospective";
 

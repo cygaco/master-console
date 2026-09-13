@@ -23,7 +23,7 @@ sources:
 
 A screen is physically flat, but users read it as layered: a card floats above the page, a modal floats above the card, a menu drops in front of content. That layering is **figure-ground perception** (see `GESTALT_GROUPING`) made tangible with light and shadow. Done as a token-backed system, depth communicates *interactivity and importance* instantly and consistently. Done ad-hoc, it produces the most common "looks unprofessional" tells: shadows pointing in different directions, a raised card that doesn't actually look raised, a modal that doesn't sit on top, an image whose text is illegible, a user avatar that blows out the layout.
 
-For the WarpOS designer agents:
+For the MC designer agents:
 
 - **design-lead** owns consistency and clarity (`clear-iconography`, `kiss`). Elevation is a *semantic* signal — "this is clickable / this is on top / this is the active surface." Inconsistent elevation is the same class of bug as inconsistent iconography: the same depth meaning two different things. Imagery handling (especially user-uploaded) is squarely the `build-for-audience-incl-limitations` and state-coverage lens — real content is messy.
 - **design-quality** judges `design-tokens` (elevation must resolve to the token set, not ad-hoc box-shadows) and `component-usage` (the right primitive carries the right elevation for its role). A hand-rolled `box-shadow: 2px 2px 4px black` instead of a token is a tokens violation even when it "looks ok."

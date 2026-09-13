@@ -11,12 +11,12 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const ROOT = path.join(__dirname, "..", "..", "..");
-const PAGE = path.join(ROOT, "_warpos/templates/app-scaffold/src/app/admin/readiness/page.tsx.tmpl");
-const ACTION = path.join(ROOT, "_warpos/templates/app-scaffold/src/app/admin/readiness/actions.ts.tmpl");
+const PAGE = path.join(ROOT, "_mc/templates/app-scaffold/src/app/admin/readiness/page.tsx.tmpl");
+const ACTION = path.join(ROOT, "_mc/templates/app-scaffold/src/app/admin/readiness/actions.ts.tmpl");
 // The page-side toggle form moved into the "use client" ToggleControl component (the
 // useActionState wrapper + never-swallow error surface). The page-side field emission
 // the action must agree with now lives there — so the contract is sourced from ToggleControl.
-const TOGGLE = path.join(ROOT, "_warpos/templates/app-scaffold/src/app/admin/readiness/ToggleControl.tsx.tmpl");
+const TOGGLE = path.join(ROOT, "_mc/templates/app-scaffold/src/app/admin/readiness/ToggleControl.tsx.tmpl");
 
 const page = fs.readFileSync(TOGGLE, "utf8");
 const action = fs.readFileSync(ACTION, "utf8");

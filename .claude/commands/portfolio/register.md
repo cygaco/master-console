@@ -1,5 +1,5 @@
 ---
-description: Register an existing local repo as a portfolio product in ~/.warpos/portfolio.json.
+description: Register an existing local repo as a portfolio product in ~/.mc/portfolio.json.
 ---
 
 # /portfolio:register — Register a Product

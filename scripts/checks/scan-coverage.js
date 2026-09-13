@@ -6,7 +6,7 @@
  *
  * The /scan:* suite grew one-enforcer-per-sprint to 40+ skills. /scan:full is a
  * HAND-MAINTAINED tier list that silently drifts from the actual scan/ directory:
- * full.md ITSELF documents the failure mode — warpos-ship-coverage existed + passed
+ * full.md ITSELF documents the failure mode — mc-ship-coverage existed + passed
  * but was never delegated by /scan:full ("the enforcer exists but isn't on the path").
  * Nothing asserted dir <-> aggregator parity. This is that enforcer — the suite
  * scanning itself.

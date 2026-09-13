@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/org-map/v0.1",
+  "$schema": "mc/org-map/v0.1",
   "_doc": "Machine-readable product-studio org (S0.1, SP-20260530-001). β referee, α orchestrator; cross-domain gauntlets. `routing` maps each S0.2 artifact `contract.owner_domain` to the org domain + owning role. Enforced by /scan:domain-routing (validates against schemas/contracts/*.schema.json). v0.1 REVISABLE.",
   "version": "v0.1",
   "role_registry": "_org/role-registry.json",

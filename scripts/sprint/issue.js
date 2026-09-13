@@ -133,7 +133,7 @@ function cmdCreate(argv) {
   const id = newIssueId(SPRINT.issues);
   const now = nowIso();
   const issue = {
-    schema: "warpos/sprint/issue/v1",
+    schema: "mc/sprint/issue/v1",
     id,
     title: f.title,
     status: "open",

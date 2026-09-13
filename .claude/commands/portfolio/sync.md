@@ -2,7 +2,7 @@
 description: Run /warp:update across every registered portfolio product sequentially. No fail-fast — failures captured in the final summary.
 ---
 
-# /portfolio:sync — Portfolio-Wide WarpOS Update
+# /portfolio:sync — Portfolio-Wide MC Update
 
 Iterate the portfolio registry and run `/warp:update` against each product. Sequential (not parallel) to avoid gh rate-limit risk per the Plan Contract.
 
@@ -12,7 +12,7 @@ Iterate the portfolio registry and run `/warp:update` against each product. Sequ
 /portfolio:sync
 ```
 
-No arguments. Reads `~/.warpos/portfolio.json` and processes every entry.
+No arguments. Reads `~/.mc/portfolio.json` and processes every entry.
 
 ## Implementation
 
@@ -22,7 +22,7 @@ node scripts/portfolio/sync.js
 
 The script:
 1. Loads the registry via `scripts/portfolio/registry.js#load()`.
-2. For each product: emits C-13 per-product line, spawns `node ../WarpOS/scripts/warpos/update.js --target <repo_path>` with a 5min timeout.
+2. For each product: emits C-13 per-product line, spawns `node ../MC/scripts/mc/update.js --target <repo_path>` with a 5min timeout.
 3. **No fail-fast** (AC-8.2) — capture per-product failure in the summary and continue.
 4. Skip rows when `repo_path` no longer exists (emit SKIP, don't abort).
 5. Print final summary table: SLUG / FROM / TO / RESULT.

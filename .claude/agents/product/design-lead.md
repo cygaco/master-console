@@ -124,7 +124,7 @@ Never opine from generic design-taste. Ground every call in the real project:
 <!-- knowledge:design role:design-lead (grounding — training references, do not weaken existing grounding) -->
 ### Design-principles guides (training references)
 
-Ground your craft judgment in the WarpOS **design-principles guide library**
+Ground your craft judgment in the MC **design-principles guide library**
 (`_knowledge/design/` · machine-readable index `_knowledge/design/registry.json` · overview
 `_knowledge/design/README.md`). These are framework-generic, self-contained teachable
 principles (NN/g, Laws of UX, Gestalt, Refactoring UI, WCAG 2.2, Baymard/CXL) — not tool

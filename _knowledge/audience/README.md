@@ -6,7 +6,7 @@ timing: reference
 lead_time: "none"
 ---
 
-# WarpOS Audience Store — per-product audience dossiers
+# MC Audience Store — per-product audience dossiers
 
 > This is a **store domain**, not a guide library: a per-product runtime data store that holds **segment-level `audience_dossier`s** — the deepest truth about *who the audience is*. Each dossier is **source-attributed, confidence-scored, and carries NO PII**. It is the most upstream artifact in the studio chain: dossiers here FEED the `message_brief` spine that every downstream marketing artifact derives from.
 >
@@ -67,4 +67,4 @@ The store therefore contains **no individual profiles, names, emails, or handles
 
 ---
 
-*A WarpOS `_knowledge/` store domain — framework-generic and canonical (no product content, no PII). Populated per product at runtime by `research-lead`; empty scaffolding in canonical. Contract: `schemas/contracts/audience_dossier.schema.json`.*
+*A MC `_knowledge/` store domain — framework-generic and canonical (no product content, no PII). Populated per product at runtime by `research-lead`; empty scaffolding in canonical. Contract: `schemas/contracts/audience_dossier.schema.json`.*

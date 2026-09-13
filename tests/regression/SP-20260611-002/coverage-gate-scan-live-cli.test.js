@@ -74,13 +74,13 @@ function runCLI(ledgerPath, extraArgs = [], extraEnv = {}) {
 }
 
 function makeSealedSprintProject() {
-  const project = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-livecli-prod-"));
+  const project = fs.mkdtempSync(path.join(os.tmpdir(), "mc-livecli-prod-"));
   fs.mkdirSync(path.join(project, ".claude", "agents", "_org"), { recursive: true });
   fs.mkdirSync(path.join(project, ".claude", "project", "sprint", "tickets"), { recursive: true });
   fs.writeFileSync(
     path.join(project, ".claude", "agents", "_org", "sprint-hook-points.json"),
     JSON.stringify({
-      schema: "warpos/sprint-hook-points/test",
+      schema: "mc/sprint-hook-points/test",
       lifecycle: ["plan", "design", "build", "gauntlet", "release", "retro"],
       phase_map: { plan: "plan", design: "design", build: "execute", gauntlet: "execute", release: "release-prep", retro: "retro" },
       rows: [
@@ -104,7 +104,7 @@ function makeSealedSprintProject() {
 // These are reused across all test cases (setup is not teardown-sensitive for
 // read-only temp files — they are named in OS temp and cleaned below).
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-livecli-g3a-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-livecli-g3a-"));
 
 // Ledger: ONLY frontend-builder produced a record; security-reviewer is absent.
 const LEDGER_PATH = path.join(tmpDir, "dispatch-completions.jsonl");
@@ -171,7 +171,7 @@ h.test("LIVE CLI gap output explicitly names security-reviewer as the missing ro
 // re-review caught: /scan:full invoked coverage-gate-scan.js with no flag.
 h.test("FIX2 production /scan shape with no --expected-source still catches omitted hook-point roles", () => {
   const project = makeSealedSprintProject();
-  const prodDir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-livecli-prod-ledger-"));
+  const prodDir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-livecli-prod-ledger-"));
   const ledger = path.join(prodDir, "prod.jsonl");
   fs.writeFileSync(
     ledger,
@@ -198,7 +198,7 @@ h.test("FIX2 production /scan shape with no --expected-source still catches omit
 
 h.pass("FIX2 production /scan shape with no --expected-source reports no gap when all block roles have records", () => {
   const project = makeSealedSprintProject();
-  const prodDir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-livecli-prod-clean-"));
+  const prodDir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-livecli-prod-clean-"));
   const ledger = path.join(prodDir, "prod-clean.jsonl");
   const base = { run_id: "run-prod-clean-g3a", sprint_id: "SP-FIX2", phase_id: "execute" };
   fs.writeFileSync(
@@ -223,7 +223,7 @@ h.pass("FIX2 production /scan shape with no --expected-source reports no gap whe
 // No false positive: when the ledger has records for BOTH roles, the live CLI
 // with the same --expected-source reports ok:true (no gap).
 h.pass("LIVE CLI with --expected-source reports no gap when BOTH expected roles have records", () => {
-  const bothDir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-livecli-g3a-both-"));
+  const bothDir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-livecli-g3a-both-"));
   const bothLedger = path.join(bothDir, "both.jsonl");
   fs.writeFileSync(
     bothLedger,
@@ -241,7 +241,7 @@ h.pass("LIVE CLI with --expected-source reports no gap when BOTH expected roles 
 // FAIL-OPEN: a malformed (non-JSON) --expected-source file must NOT crash the CLI —
 // it falls back to self-derive and exits 0 (the audit must never break /scan:full).
 h.pass("LIVE CLI with a malformed --expected-source falls back to self-derive (fail-open, exit 0)", () => {
-  const badDir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-livecli-g3a-bad-"));
+  const badDir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-livecli-g3a-bad-"));
   const badSource = path.join(badDir, "bad.json");
   fs.writeFileSync(badSource, "not json {{{{ bad", "utf8");
   try {

@@ -7,7 +7,7 @@
 - **Title:** Step-driven invocation contract + anti-degrade engine + platform target + portfolio:new reconcile + Milestone→Epic + enforcers
 - **Owner:** President
 - **Parent epic:** [E-SPINUP-STEPS-001](../epics/E-SPINUP-STEPS-001-step-driven-degrade-proof-spinup.md)
-- **Goal:** Implement WARPOS-PROMPT.md §1–§7 as one cohesive refactor of `scripts/bootstrap/spinup-orchestrate.js` + the phase modules + tests + skill body, then verify §8 acceptance.
+- **Goal:** Implement MC-PROMPT.md §1–§7 as one cohesive refactor of `scripts/bootstrap/spinup-orchestrate.js` + the phase modules + tests + skill body, then verify §8 acceptance.
 - **Scope:** §1 step-driven invocation contract (positional `<step>`, `--json` status shape, consumer contract docs, fold preflight+intent→setup / onscreen→paint); §2 anti-degrade engine; §3 platform `--where`; §4 portfolio:new reconcile (create/scaffold callables); §5 Milestone→Epic rename (live layer); §6 portfolio suite scope guard; §7 regression enforcers.
 - **Out of scope:** §8 is verification (recorded under DoD); `server/`/cockpit (MASTERCONSOLE-PROMPT — gated); native scaffolds; historical archive rewrites.
 - **Current state:** Completed
@@ -16,7 +16,7 @@
 ## Definition of Done
 - [x] §1 positional `<step>` subcommand (`setup|canon|roadmap|paint`) + folded phases; stable `--json` status; consumer dispatch contract documented + enforcer named.
 - [x] §2 `--research off`/`light` rejected non-zero; `--auto` degrade/skip removed; `canon-no-unfilled-tokens` wired as a non-opt-out fail-closed canon gate; raw input never in canon; `--allow-needs-input` audited single-field exception + `/enforcement:log` (ED-029).
-- [x] §3 `--where` accepted/threaded (brief + scaffold); web/PWA baseline for all; native-packaging epic (E-NATIVE-PACKAGING-001) + `/warp:flag` (WARPOS.md WG-1).
+- [x] §3 `--where` accepted/threaded (brief + scaffold); web/PWA baseline for all; native-packaging epic (E-NATIVE-PACKAGING-001) + `/warp:flag` (MC.md WG-1).
 - [x] §4 `portfolio:new` → `create()/scaffold()` callables reused by `setup`; no duplicated logic (`new-lib.js`).
 - [x] §5 Milestone→Epic across the live layer; `scan:roadmap-trace` green (30/30).
 - [x] §6 `portfolio:spinup` forwards `<step>`+modifiers verbatim; no new portfolio sub-skills.
@@ -40,7 +40,7 @@
 - scripts/bootstrap/phases/{setup,canon,roadmap,paint}.js (renamed from preflight/intent/canon/roadmap/onscreen)
 - scripts/bootstrap/test-spinup-orchestrate.js
 - scripts/portfolio/new.js (+ a new create/scaffold lib if extracted)
-- scripts/warpos/generate-roadmap-scaffold.js
+- scripts/mc/generate-roadmap-scaffold.js
 - scripts/check/roadmap-trace.js
 - .claude/commands/bootstrap/spinup.md
 - .claude/commands/roadmap/{create,add,ideas,next,prioritize}.md
@@ -56,10 +56,10 @@
 - `scripts/bootstrap/phases/{preflight,intent,onscreen}.js` (DELETED)
 - `scripts/bootstrap/test-spinup-orchestrate.js` (rewritten — 32/32)
 - `scripts/portfolio/new-lib.js` (NEW — create/scaffold callables) + `scripts/portfolio/new.js` (thin CLI)
-- `scripts/warpos/generate-roadmap-scaffold.js` (Milestone→Epic), `scripts/warpos/manifest/walk-skip.js` (root-doc skips)
+- `scripts/mc/generate-roadmap-scaffold.js` (Milestone→Epic), `scripts/mc/manifest/walk-skip.js` (root-doc skips)
 - `.claude/commands/bootstrap/spinup.md`, `.claude/commands/portfolio/spinup.md`, `.claude/commands/roadmap/create.md` + the §5 prose docs (roadmap/ideas|next|prioritize, report, learn/deep, session/turbo, sprint/full, director-of-product, USER_GUIDE, REPORT_TEMPLATE)
-- `WARPOS.md` (NEW — WG-1), `ROADMAP.md` (E-SPINUP + E-NATIVE-PACKAGING epics), `.claude/project/memory/enforcement-debt.jsonl` (ED-029)
-- `.claude/framework-manifest.json` + `.claude/framework-installed.json` + `_warpos/MANIFEST.json` (regenerated), `.claude/project/maps/tools.md`
+- `MC.md` (NEW — WG-1), `ROADMAP.md` (E-SPINUP + E-NATIVE-PACKAGING epics), `.claude/project/memory/enforcement-debt.jsonl` (ED-029)
+- `.claude/framework-manifest.json` + `.claude/framework-installed.json` + `_mc/MANIFEST.json` (regenerated), `.claude/project/maps/tools.md`
 
 ## Paths expected to exist
 - scripts/bootstrap/phases/setup.js, canon.js, roadmap.js, paint.js (post-rename)
@@ -93,7 +93,7 @@
 - None currently recorded.
 
 ## Session log
-### 2026-06-06 — Session warpos-spinup-sprint
+### 2026-06-06 — Session mc-spinup-sprint
 - Agent(s): President α + ε + β · Mode: sprint
 - Work performed: gap analysis; sprint registered; build started.
 - Files changed: this file (created). · Paths changed: none yet · Wirings changed: none yet
@@ -102,12 +102,12 @@
 - State change: (new) → Active · Completion change: 0% → 5%
 - Verification performed: source read. · Validation run: node scripts/trackers/validate.js · Validation result: (pending)
 - Next action: §1 step refactor + §4 reconcile.
-- Evidence/references: runtime/notes/warpos-spinup-gap-analysis.md.
+- Evidence/references: runtime/notes/mc-spinup-gap-analysis.md.
 
 ## Change log
-### 2026-06-06 — Session warpos-spinup-sprint
+### 2026-06-06 — Session mc-spinup-sprint
 - Changed: Created sprint S-SPINUP-001 (Active, 5%).
-- Reason: Execute WARPOS-PROMPT.md §1–§7.
+- Reason: Execute MC-PROMPT.md §1–§7.
 - Affected: this file; parent epic; TRACKER.md.
 - Previous state: Did not exist.
 - New state: Active, 5%.

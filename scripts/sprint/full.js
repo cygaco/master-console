@@ -656,7 +656,7 @@ function recordClearedBetaBoundary(sprintId, boundary) {
     fs.writeFileSync(
       fp,
       JSON.stringify(
-        { schema: "warpos/sprint-full/beta-boundaries/v1", sprint: sprintId, cleared, updated_at: nowIso() },
+        { schema: "mc/sprint-full/beta-boundaries/v1", sprint: sprintId, cleared, updated_at: nowIso() },
         null,
         2,
       ) + "\n",
@@ -779,7 +779,7 @@ function maybeConsultBeta(state, boundary, args) {
   // each /sprint:full resume is a SEPARATE process with state.betaConsultations
   // freshly [] (one-consult-per-resume), so the orchestrator has no prior-consult
   // history to compare against. C3/C4 are enforced fail-closed by the AUDIT layer
-  // (scripts/warpos/release-build.js betaHonestyGate + /scan:sprint-beta-honesty),
+  // (scripts/mc/release-build.js betaHonestyGate + /scan:sprint-beta-honesty),
   // which reads the full events corpus and BLOCKS the release on a duplicate.
   // Kill switch WARPOS_BETA_SUBSTANCE_GATE=off (default ON) — fail-closed, never warn-only;
   // an off-switch (like dispatch-route-guard's) is a rollout/emergency lever, not a soften.
@@ -985,28 +985,28 @@ function phase1Plan(state, args) {
   // The skill body is responsible for constructing the Plan Contract
   // payload from the verbatim request (Alpha's reasoning). The
   // orchestrator can't infer it from argv alone. So this phase
-  // requires the skill body to have written .warpos/plan-payload-<slug>.json
+  // requires the skill body to have written .mc/plan-payload-<slug>.json
   // BEFORE invoking full.js, OR the caller can pass an explicit payload
   // file path. For v0.1 we expect the skill body to have done so.
-  const payloadGlob = `${REPO_ROOT}/.warpos/plan-payload-*.json`;
+  const payloadGlob = `${REPO_ROOT}/.mc/plan-payload-*.json`;
   let payloadFile = null;
   // Use the most recent matching file by mtime as a best-effort.
   try {
     const candidates = fs
-      .readdirSync(path.join(REPO_ROOT, ".warpos"))
+      .readdirSync(path.join(REPO_ROOT, ".mc"))
       .filter((f) => f.startsWith("plan-payload-") && f.endsWith(".json"))
-      .map((f) => path.join(REPO_ROOT, ".warpos", f))
+      .map((f) => path.join(REPO_ROOT, ".mc", f))
       .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
     payloadFile = candidates[0] || null;
   } catch {
-    /* .warpos missing */
+    /* .mc missing */
   }
   if (!payloadFile) {
     return {
       ok: false,
       halt_reason: "plan_payload_missing",
       message:
-        "Phase 1 (plan) requires a payload JSON at .warpos/plan-payload-*.json constructed by Alpha from the verbatim request. None found. /sprint:full's skill body is the right place to construct this — see .claude/commands/sprint/full.md.",
+        "Phase 1 (plan) requires a payload JSON at .mc/plan-payload-*.json constructed by Alpha from the verbatim request. None found. /sprint:full's skill body is the right place to construct this — see .claude/commands/sprint/full.md.",
     };
   }
 
@@ -1024,7 +1024,7 @@ function phase1Plan(state, args) {
         message:
           `Most-recent plan-payload (${path.basename(payloadFile)}) targets sprint '${pl.sprint}', ` +
           `not '${state.sprintId}'. The skill body likely skipped Step 1.1 (write ` +
-          `.warpos/plan-payload-<slug>.json for THIS sprint) — Phase 1 would plan the WRONG sprint. ` +
+          `.mc/plan-payload-<slug>.json for THIS sprint) — Phase 1 would plan the WRONG sprint. ` +
           `Write the correct payload for ${state.sprintId}, then resume.`,
       };
     }

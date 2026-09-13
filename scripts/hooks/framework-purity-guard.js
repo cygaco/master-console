@@ -17,15 +17,15 @@
  *
  * Escape hatches (mirror framework-manifest-guard):
  *   - env: WARPOS_PURITY_GUARD=off
- *   - sentinel: .warpos/purity-guard-disable
+ *   - sentinel: .mc/purity-guard-disable
  *
  * Repo-role gate: the purity detectors only make sense in the canonical
  * framework tree — in a downstream PRODUCT repo they'd flag the product's
  * own slugs/keys and block every commit. So the guard no-ops in consumer
  * installs and only enforces in canonical. Canonical is signalled by any
- * of: _warpos/MANIFEST.json present, version.json with "name":"warpos", or
- * a .warpos-canonical marker file. A repo with .claude/framework-installed
- * .json but NO _warpos/MANIFEST.json is a consumer install (allow + note).
+ * of: _mc/MANIFEST.json present, version.json with "name":"mc", or
+ * a .mc-canonical marker file. A repo with .claude/framework-installed
+ * .json but NO _mc/MANIFEST.json is a consumer install (allow + note).
  */
 
 "use strict";
@@ -43,15 +43,15 @@ const PURITY_SCRIPT = path.join(
 );
 const SENTINEL_PATH = path.join(
   PROJECT_DIR,
-  ".warpos",
+  ".mc",
   "purity-guard-disable",
 );
 
 // ── Canonical vs consumer detection ───────────────────────────────────
 // Delegated to the shared repo-role resolver (ED-009). All canonical signals
-// (_warpos/MANIFEST.json, .warpos-canonical, manifest.json fields, version.json)
+// (_mc/MANIFEST.json, .mc-canonical, manifest.json fields, version.json)
 // are checked there in a single place. Do not re-derive inline.
-const { resolveRepoRole } = require("../warpos/repo-role");
+const { resolveRepoRole } = require("../mc/repo-role");
 function isCanonicalRepo() {
   return resolveRepoRole({ root: PROJECT_DIR }).role === "canonical";
 }
@@ -66,7 +66,7 @@ if (fs.existsSync(SENTINEL_PATH)) {
       "system",
       "framework-purity-guard-sentinel",
       "",
-      ".warpos/purity-guard-disable present",
+      ".mc/purity-guard-disable present",
     );
   } catch {
     /* logger optional */
@@ -96,7 +96,7 @@ if (!/\bgit\s+commit\b/.test(cmd)) {
   process.exit(0);
 }
 
-// Consumer install (framework-installed.json without _warpos/MANIFEST.json, or
+// Consumer install (framework-installed.json without _mc/MANIFEST.json, or
 // no canonical signal at all) — the purity scan would flag the product's own
 // content. No-op so commits flow; only canonical enforces. Checked here (after
 // the commit filter) so unrelated Bash calls in a consumer repo stay quiet.
@@ -160,7 +160,7 @@ process.stderr.write(
     "",
     "  To bypass (logged):",
     "    set WARPOS_PURITY_GUARD=off, OR",
-    "    touch .warpos/purity-guard-disable",
+    "    touch .mc/purity-guard-disable",
     "",
   ].join("\n"),
 );

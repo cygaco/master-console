@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/manager-principles/v0.1",
+  "$schema": "mc/manager-principles/v0.1",
   "_doc": "Machine-readable manager-principles ownership + inheritance (S0.1, SP-20260530-001). The single source of truth for /scan:manager-principles. Principles are identified by STABLE SLUGS, never ordinals — referring to a principle as 'DoP #7' breaks silently when the list reorders (refactor-hygiene bug class). Model: shared base -> Director -> Lead -> specialist; 'rooted_in' = where a principle is owned, inheritance propagates it down. β EVT-org-roadmap-principles-beta-001 (R4) + FINAL-PLAN §11.A.",
   "version": "v0.1",
   "base": {

@@ -2,7 +2,7 @@
   "version": 1,
   "generatedAt": "2026-07-17T19:42:08.446Z",
   "generatedFromCommit": "f30364099af68617df31ad11ea807a0b60c4db72",
-  "schemaUrl": "warpos/requirements-graph/v1",
+  "schemaUrl": "mc/requirements-graph/v1",
   "counts": {
     "features": 0,
     "requirements": 0,

@@ -8,7 +8,7 @@
 
 ## Context
 
-WarpOS modes were engineering-only; Wave 1 generalizes them to **work modes** (Solo / Adhoc / Oneshot) so the product-studio org can run in each. Directors/Leads participate differently per mode, and the hard problem is **oneshot**: a full autonomous launch with **no α and no β in the room**. FINAL-PLAN §3 requires that when contracts conflict or confidence is low, the oneshot must **fail closed to an "arbitration-needed" record — never silently green** (the oneshot stand-in for α/β escalation), and that "in autonomous mode a manager only exists as an enforcer."
+MC modes were engineering-only; Wave 1 generalizes them to **work modes** (Solo / Adhoc / Oneshot) so the product-studio org can run in each. Directors/Leads participate differently per mode, and the hard problem is **oneshot**: a full autonomous launch with **no α and no β in the room**. FINAL-PLAN §3 requires that when contracts conflict or confidence is low, the oneshot must **fail closed to an "arbitration-needed" record — never silently green** (the oneshot stand-in for α/β escalation), and that "in autonomous mode a manager only exists as an enforcer."
 
 S0.2 already shipped the **data model**: `decision_record.schema.json` (`arbitration_needed:boolean`, shape-compatible with betaEvents but a distinct file — the oneshot clean-room invariant) + the precedence model (global integer ranks; the contract validator REJECTS duplicate ranks). What remained — the S1.2 β hard-halt — was the **state-machine wiring** + the per-mode participation model.
 

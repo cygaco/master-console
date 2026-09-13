@@ -33,7 +33,7 @@ function check(name, cond, detail) {
 }
 
 function setupRepo(kind) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `warpos-mgt-${kind}-`));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `mc-mgt-${kind}-`));
   execSync("git init -q", { cwd: dir });
   execSync('git config user.email "t@t.t"', { cwd: dir });
   execSync('git config user.name "t"', { cwd: dir });
@@ -146,9 +146,9 @@ check(
 );
 
 // ── Product with sentinel: bypass entirely ──
-fs.mkdirSync(path.join(product, ".warpos"), { recursive: true });
+fs.mkdirSync(path.join(product, ".mc"), { recursive: true });
 fs.writeFileSync(
-  path.join(product, ".warpos", "manifest-guard-disable"),
+  path.join(product, ".mc", "manifest-guard-disable"),
   "bypass\n",
 );
 const r3 = runHook(product);

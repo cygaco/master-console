@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/testsuite/run.js — WarpOS regression-seed runner (0.17.0 foundation).
+ * scripts/testsuite/run.js — MC regression-seed runner (0.17.0 foundation).
  *
  * Reads the executable bug-class registry
  * (_requirements/07-testing/recurring-bug-classes.json), runs each class's
@@ -85,7 +85,7 @@ if (JSON_OUT) {
 
 if (!QUIET) {
   const mark = { pass: "PASS", fail: "FAIL", error: "ERR ", timeout: "TIME", gap: "gap ", manual: "man ", na: "n/a " };
-  process.stdout.write("\nWarpOS regression-seed suite — 26 recurring bug classes\n");
+  process.stdout.write("\nMC regression-seed suite — 26 recurring bug classes\n");
   process.stdout.write("=".repeat(72) + "\n");
   for (const r of results) {
     process.stdout.write(`  [${mark[r.result] || r.result}] ${r.id}  ${r.name.slice(0, 52).padEnd(52)} ${r.status}\n`);

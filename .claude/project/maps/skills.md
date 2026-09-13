@@ -35,7 +35,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 |---|---|---|---|
 | lastmile | "Prototype → monetizable product. Drives the 'last mile': readiness audit → launch plan → roadmap/sp | 12 | 0 |
 | ponder | Exploratory pondering of a project — surface tensions, patterns, JTBD drift, and one forcing questio | 5 | 0 |
-| spinup | "From 'just WarpOS' to something on screen — one in-project command: setup (deterministic create+sca | 5 | 2 |
+| spinup | "From 'just MC' to something on screen — one in-project command: setup (deterministic create+sca | 5 | 2 |
 
 ### check (4)
 
@@ -44,7 +44,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | all | "[deprecated alias → /scan:full] Run every scan in parallel — a full system scan. Superseded by /sca | 1 | 0 |
 | framework-purity | "[deprecated alias → /scan:framework-purity] Refuse product-content leaks in canonical. Superseded b | 1 | 0 |
 | framework-views-fresh | "[deprecated alias → /scan:framework-views-fresh] Verify .claude views are byte-identical regenerati | 1 | 0 |
-| install | "[deprecated alias → /scan:install] Verify a fresh WarpOS install. Superseded by /scan:install in th | 1 | 0 |
+| install | "[deprecated alias → /scan:install] Verify a fresh MC install. Superseded by /scan:install in th | 1 | 0 |
 
 ### cockpit (1)
 
@@ -203,7 +203,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 
 | Name | Description | Calls | Called by |
 |---|---|---|---|
-| migrate | Migrate the manifest to a target WarpOS version. Dry-run by default; --apply to write. | 0 | 0 |
+| migrate | Migrate the manifest to a target MC version. Dry-run by default; --apply to write. | 0 | 0 |
 | show | Print .claude/manifest.json (pretty by default, --json for compact). | 0 | 0 |
 | validate | Validate the current .claude/manifest.json against the v1 manifest schema and report any drift, miss | 0 | 0 |
 
@@ -253,7 +253,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 
 | Name | Description | Calls | Called by |
 |---|---|---|---|
-| admin | Open a product's in-app founder admin panel in the browser (run-in-product, never WarpOS itself). A  | 2 | 1 |
+| admin | Open a product's in-app founder admin panel in the browser (run-in-product, never MC itself). A  | 2 | 1 |
 | list | List every registered panel — the one discoverable entry for "show me a panel". Enumerates framework | 4 | 4 |
 | models | Open the model router — the Dispatch Console GUI (role → provider → model → effort). A thin /panel:* | 2 | 1 |
 | readiness | Open the cross-product launch-readiness board. A thin /panel:* forwarder to the canonical /cockpit:r | 2 | 1 |
@@ -286,13 +286,13 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 
 | Name | Description | Calls | Called by |
 |---|---|---|---|
-| list | List all registered portfolio products — slug, path, WarpOS version, last commit, dirty count, curre | 0 | 6 |
-| new | Scaffold a new product repo (sibling to WarpOS) with the framework installed and committed, then reg | 4 | 6 |
+| list | List all registered portfolio products — slug, path, MC version, last commit, dirty count, curre | 0 | 6 |
+| new | Scaffold a new product repo (sibling to MC) with the framework installed and committed, then reg | 4 | 6 |
 | open | Open a registered portfolio product — print its path and a cd hint, or spawn a new terminal window w | 0 | 3 |
-| register | Register an existing local repo as a portfolio product in ~/.warpos/portfolio.json. | 0 | 2 |
+| register | Register an existing local repo as a portfolio product in ~/.mc/portfolio.json. | 0 | 2 |
 | run | Run a skill against another portfolio product in a fresh Claude subprocess — never retargets the cur | 1 | 1 |
-| spinup | "From WarpOS, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spi | 4 | 2 |
-| status | Portfolio dashboard — per-product WarpOS version, last commit, dirty count, current sprint, GitHub r | 1 | 2 |
+| spinup | "From MC, run the idea→on-screen on-ramp against a registered product: dispatches /bootstrap:spi | 4 | 2 |
+| status | Portfolio dashboard — per-product MC version, last commit, dirty count, current sprint, GitHub r | 1 | 2 |
 | sync | Run /warp:update across every registered portfolio product sequentially. No fail-fast — failures cap | 1 | 0 |
 
 ### qa (2)
@@ -344,7 +344,7 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | adhoc-team-hygiene | Read-only probe for adhoc-team accretion — flags teams whose members carry a -N de-dup suffix or a s | 2 | 1 |
 | admin-suite-coverage | Coverage + freshness enforcer for the admin:* dev-tooling suite — each admin skill resolves, every a | 3 | 2 |
 | architecture | Architecture integrity — do the layers connect? agent system, cross-layer seams, documentation healt | 6 | 7 |
-| coherence | Run the WarpOS system coherence graph across 15 drift types. | 0 | 1 |
+| coherence | Run the MC system coherence graph across 15 drift types. | 0 | 1 |
 | cutover-completeness | ED-026 cutover gate — greps the IMPERATIVE layer + keystone registries for RAW deleted-old-tree lite | 2 | 1 |
 | design-system | Design system compliance check - scans UI code for raw colors, raw primitives, missing design docs,  | 0 | 1 |
 | dispatch-routing-parity | Assert the role→provider routing tables agree across providers.js, catalog.js, and the dispatch guid | 1 | 1 |
@@ -352,10 +352,10 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | environment | Environment readiness and tooling quality — fast go/no-go or deep audit | 8 | 3 |
 | etc-harness | Audit the /etc authoring+eval harness — fail-closed enforcer that rejects an invented authoring form | 2 | 1 |
 | framework-purity | Refuse product-content leaks in canonical — scans for client slugs, maintainer abs paths, root-level | 2 | 4 |
-| framework-views-fresh | Verify .claude/commands and .claude/agents are byte-identical regenerations of their _warpos/ source | 2 | 3 |
-| full | Run every scan in parallel — a full system scan across project health, governance, and WarpOS distri | 59 | 27 |
+| framework-views-fresh | Verify .claude/commands and .claude/agents are byte-identical regenerations of their _mc/ source | 2 | 3 |
+| full | Run every scan in parallel — a full system scan across project health, governance, and MC distri | 59 | 27 |
 | ingest-firewall | Audit the ingest stores (_docs/research, _docs/imports, _docs/briefs, _docs/clones) for un-firewalle | 0 | 1 |
-| install | Verify a fresh WarpOS install — manifest, paths, agents, hooks, version, settings. | 1 | 4 |
+| install | Verify a fresh MC install — manifest, paths, agents, hooks, version, settings. | 1 | 4 |
 | issues | Pattern-mine events.jsonl for repeat audit-block signatures — surface candidates for /issues:log | 5 | 2 |
 | model-chain | The named enforcer (ED-058) for the role-registry model/effort CHAIN — opus-4.8 is the shipped top,  | 2 | 1 |
 | node-procs | Read-only diagnostic — list Node processes on the host with PID, start-time, working-set KB, and com | 1 | 2 |
@@ -368,30 +368,30 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 | requirements | Specification consistency, coverage, and drift — static audit, change-driven propagation check, or p | 7 | 10 |
 | roadmap-trace | "Assert every done/retrospected/released sprint has BOTH a Sprints-table ledger row AND a Shipped na | 2 | 3 |
 | role-parity | The one check that owns role parity across the org map, the dispatch catalog, and team-guard — fail- | 0 | 3 |
-| scaffold-coverage | Verify the WarpOS app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is complete and coherent —  | 2 | 1 |
+| scaffold-coverage | Verify the MC app scaffold (Next+Tailwind v4+shadcn/ui+Radix+Lucide) is complete and coherent —  | 2 | 1 |
 | scan-coverage | Scan-suite self-inventory — asserts every /scan:* skill is delegated by /scan:full or explicitly exc | 1 | 7 |
 | skill-hook-coverage | Bidirectional coverage of the skill hook-point registry — REVERSE (registry coherent vs role-registr | 4 | 2 |
 | sprint-beta-honesty | Audits Beta consultation honesty across post-cutoff /sprint:full runs (missing consults, placeholder | 1 | 2 |
 | sprint-hook-coverage | Bidirectional coverage of the sprint hook-point registry — FORWARD (every matched block-row has a ma | 2 | 2 |
 | sprint-manager-consult | Audits manager-consult coverage across post-cutoff /sprint:full runs — asserts the design-quality au | 3 | 2 |
-| system | System inventory — enumerate every active WarpOS system, diff against manifest, report drift and gap | 6 | 2 |
+| system | System inventory — enumerate every active MC system, diff against manifest, report drift and gap | 6 | 2 |
 | timeline | Reconstruct a build timeline from transaction, event, and provider logs. | 0 | 1 |
 | turbo-spend | Report the turbo session's REAL cross-provider API spend against the operator-set ceiling (framework | 1 | 0 |
 | version-coherence | Verify version + schema-label coherence — product version agrees across ALL manifests (incl. the one | 2 | 1 |
-| warpos-applied-migrations | Detect already-applied WarpOS migration scripts left on disk in consumer projects | 0 | 1 |
-| warpos-capsule-resolvable | Verify the capsule for /warp:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest. | 1 | 1 |
-| warpos-install-baseline | Verify a WarpOS install baseline exists (.claude/framework-installed.json present, installedVersion  | 2 | 1 |
-| warpos-layer-diff | Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer pro | 3 | 1 |
-| warpos-manifest-coverage | Verify every on-disk path is enumerated in _warpos/MANIFEST.json — catches "added framework content, | 3 | 3 |
-| warpos-manifest-honesty | Verify framework-installed.json reflects actual disk state (no missing files, no hash drift) | 1 | 3 |
-| warpos-migration-coverage | Verify every breaking change in a WarpOS release ships with a corresponding migration script under f | 1 | 1 |
-| warpos-migration-presence | Verify every migration listed in capsule release.json#migrations[] exists in the source tree before  | 1 | 1 |
-| warpos-path-resolution | Verify every paths.json key points to an existing path (skip generated/ephemeral keys) | 1 | 1 |
-| warpos-ship-coverage | Verify every framework-owned path under the consumer-essential roots is actually shipped (enumerated | 4 | 2 |
-| warpos-staleness | Detect drift between the installed WarpOS version on disk and the latest canonical version, flagging | 1 | 2 |
-| warpos-structure-parity | Verify installed framework has the structural skeleton dirs canonical declares | 1 | 1 |
-| warpos-tracked-transients | Catch transient state accidentally committed (.warpos/, qa-*.png, runtime/qa-*/, etc.) | 0 | 1 |
-| warpos-version-quorum | Verify version.json, .claude/framework-manifest.json, .claude/framework-installed.json, and install. | 0 | 2 |
+| mc-applied-migrations | Detect already-applied MC migration scripts left on disk in consumer projects | 0 | 1 |
+| mc-capsule-resolvable | Verify the capsule for /warp:update --to <v> is resolvable from REPO_ROOT, sibling clones, manifest. | 1 | 1 |
+| mc-install-baseline | Verify a MC install baseline exists (.claude/framework-installed.json present, installedVersion  | 2 | 1 |
+| mc-layer-diff | Read-only product-vs-dev-tooling layer diff — lists which framework-owned paths SHIP to consumer pro | 3 | 1 |
+| mc-manifest-coverage | Verify every on-disk path is enumerated in _mc/MANIFEST.json — catches "added framework content, | 3 | 3 |
+| mc-manifest-honesty | Verify framework-installed.json reflects actual disk state (no missing files, no hash drift) | 1 | 3 |
+| mc-migration-coverage | Verify every breaking change in a MC release ships with a corresponding migration script under f | 1 | 1 |
+| mc-migration-presence | Verify every migration listed in capsule release.json#migrations[] exists in the source tree before  | 1 | 1 |
+| mc-path-resolution | Verify every paths.json key points to an existing path (skip generated/ephemeral keys) | 1 | 1 |
+| mc-ship-coverage | Verify every framework-owned path under the consumer-essential roots is actually shipped (enumerated | 4 | 2 |
+| mc-staleness | Detect drift between the installed MC version on disk and the latest canonical version, flagging | 1 | 2 |
+| mc-structure-parity | Verify installed framework has the structural skeleton dirs canonical declares | 1 | 1 |
+| mc-tracked-transients | Catch transient state accidentally committed (.mc/, qa-*.png, runtime/qa-*/, etc.) | 0 | 1 |
+| mc-version-quorum | Verify version.json, .claude/framework-manifest.json, .claude/framework-installed.json, and install. | 0 | 2 |
 
 ### session (11)
 
@@ -455,41 +455,41 @@ Total: **229** skills across **47** namespaces. 98 user-invocable.
 
 | Name | Description | Calls | Called by |
 |---|---|---|---|
-| check | Compare your WarpOS installation against the latest version — find stale, new, and missing items | 1 | 1 |
-| deprecate | "Create a guarded WarpOS deprecation proposal for an agent, skill, hook, path, requirement, pattern, | 0 | 0 |
-| diff | Diff canonical WarpOS against an installed product — version/staleness, framework-file drift (stale  | 6 | 0 |
-| doctor | "Unified WarpOS diagnostic — runs every health check in one place. Like /warp:health but full-covera | 9 | 2 |
-| flag | Flag a WarpOS framework/tooling gap from a downstream product — append a structured, canonical-consu | 3 | 1 |
-| health | Verify WarpOS installation — checks every system, reports green/yellow/red with plain-English fixes | 2 | 13 |
+| check | Compare your MC installation against the latest version — find stale, new, and missing items | 1 | 1 |
+| deprecate | "Create a guarded MC deprecation proposal for an agent, skill, hook, path, requirement, pattern, | 0 | 0 |
+| diff | Diff canonical MC against an installed product — version/staleness, framework-file drift (stale  | 6 | 0 |
+| doctor | "Unified MC diagnostic — runs every health check in one place. Like /warp:health but full-covera | 9 | 2 |
+| flag | Flag a MC framework/tooling gap from a downstream product — append a structured, canonical-consu | 3 | 1 |
+| health | Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes | 2 | 13 |
 | md | "Tune CLAUDE.md with project-specific context — refresh the auto-generated project block from PROJEC | 2 | 0 |
-| reconcile | Reconcile downstream-flagged WarpOS gaps into canonical — discover every product's WARPOS.md, verify | 10 | 1 |
-| release | "Drive a full WarpOS release of the canonical clone from this product repo — promote, bump, regen, b | 0 | 4 |
-| setup | Set up WarpOS end-to-end — clone, install, merge CLAUDE.md, restart, verify. Safe to re-run; auto-de | 5 | 6 |
+| reconcile | Reconcile downstream-flagged MC gaps into canonical — discover every product's MC.md, verify | 10 | 1 |
+| release | "Drive a full MC release of the canonical clone from this product repo — promote, bump, regen, b | 0 | 4 |
+| setup | Set up MC end-to-end — clone, install, merge CLAUDE.md, restart, verify. Safe to re-run; auto-de | 5 | 6 |
 | sync | "Legacy alias for /warp:update that forwards to the canonical update flow so older references and mu | 2 | 4 |
-| tour | Guided introduction to WarpOS — explains everything in simple language, no jargon | 15 | 1 |
-| uninstall | Completely remove WarpOS from a project — restores pre-install state from backup | 3 | 1 |
-| update | "Update WarpOS in this project to a target release. Default = latest. Default mode = dry-run; pass - | 5 | 14 |
+| tour | Guided introduction to MC — explains everything in simple language, no jargon | 15 | 1 |
+| uninstall | Completely remove MC from a project — restores pre-install state from backup | 3 | 1 |
+| update | "Update MC in this project to a target release. Default = latest. Default mode = dry-run; pass - | 5 | 14 |
 
 ## Cross-references
 
 Top callers (skills that invoke the most others):
 
-- `/scan:full` → /knowledge:coverage, /maps:all, /oneshot:preflight, /scan:ac-coverage, /scan:adhoc-fail-override, /scan:adhoc-team-hygiene, /scan:admin-suite-coverage, /scan:architecture, /scan:coherence, /scan:cutover-completeness, /scan:design-system, /scan:dispatch-routing-parity, /scan:docker-secrets, /scan:environment, /scan:etc-harness, /scan:framework-purity, /scan:framework-views-fresh, /scan:ingest-firewall, /scan:install, /scan:issues, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:patterns, /scan:planning-principles, /scan:privacy, /scan:references, /scan:regressions, /scan:requirements, /scan:roadmap-trace, /scan:role-parity, /scan:scaffold-coverage, /scan:scan-coverage, /scan:skill-hook-coverage, /scan:sprint-beta-honesty, /scan:sprint-hook-coverage, /scan:sprint-manager-consult, /scan:system, /scan:timeline, /scan:version-coherence, /scan:warpos-applied-migrations, /scan:warpos-capsule-resolvable, /scan:warpos-install-baseline, /scan:warpos-layer-diff, /scan:warpos-manifest-coverage, /scan:warpos-manifest-honesty, /scan:warpos-migration-coverage, /scan:warpos-migration-presence, /scan:warpos-path-resolution, /scan:warpos-ship-coverage, /scan:warpos-staleness, /scan:warpos-structure-parity, /scan:warpos-tracked-transients, /scan:warpos-version-quorum, /sleep:deep, /sprint:full, /trackers:validate, /warp:doctor, /warp:health
+- `/scan:full` → /knowledge:coverage, /maps:all, /oneshot:preflight, /scan:ac-coverage, /scan:adhoc-fail-override, /scan:adhoc-team-hygiene, /scan:admin-suite-coverage, /scan:architecture, /scan:coherence, /scan:cutover-completeness, /scan:design-system, /scan:dispatch-routing-parity, /scan:docker-secrets, /scan:environment, /scan:etc-harness, /scan:framework-purity, /scan:framework-views-fresh, /scan:ingest-firewall, /scan:install, /scan:issues, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:patterns, /scan:planning-principles, /scan:privacy, /scan:references, /scan:regressions, /scan:requirements, /scan:roadmap-trace, /scan:role-parity, /scan:scaffold-coverage, /scan:scan-coverage, /scan:skill-hook-coverage, /scan:sprint-beta-honesty, /scan:sprint-hook-coverage, /scan:sprint-manager-consult, /scan:system, /scan:timeline, /scan:version-coherence, /scan:mc-applied-migrations, /scan:mc-capsule-resolvable, /scan:mc-install-baseline, /scan:mc-layer-diff, /scan:mc-manifest-coverage, /scan:mc-manifest-honesty, /scan:mc-migration-coverage, /scan:mc-migration-presence, /scan:mc-path-resolution, /scan:mc-ship-coverage, /scan:mc-staleness, /scan:mc-structure-parity, /scan:mc-tracked-transients, /scan:mc-version-quorum, /sleep:deep, /sprint:full, /trackers:validate, /warp:doctor, /warp:health
 - `/warp:tour` → /fix:fast, /learn:deep, /maps:all, /maps:architecture, /mode:adhoc, /mode:oneshot, /mode:solo, /portfolio:list, /portfolio:open, /research:simple, /session:handoff, /session:read, /session:write, /sleep:quick, /warp:health
 - `/session:end` → /beta:integrate, /beta:mine, /commit:land, /enforcement:log, /learn:deep, /learn:integrate, /mode:adhoc, /mode:sprint, /session:checkpoint, /session:dump, /session:handoff, /sleep:deep, /sleep:quick, /trackers:validate
 - `/bootstrap:lastmile` → /guides:integrate, /learn:ingest, /learn:integrate, /qa:audit, /redteam:full, /research:deep, /roadmap:add, /scan:install, /scan:roadmap-trace, /sprint:design, /sprint:execute, /sprint:plan
 - `/maps:all` → /maps:architecture, /maps:coverage, /maps:enforcements, /maps:hooks, /maps:memory, /maps:skills, /maps:steps, /maps:systems, /maps:tools, /scan:scan-coverage
 - `/oneshot:preflight` → /mode:oneshot, /oneshot:improve, /oneshot:retro, /oneshot:start, /preflight:run, /preflight:setup, /run:sync, /scan:architecture, /scan:environment, /scan:requirements
-- `/warp:reconcile` → /enforcement:log, /fix:deep, /issues:log, /portfolio:status, /roadmap:add, /scan:full, /scan:warpos-staleness, /warp:flag, /warp:release, /warp:update
+- `/warp:reconcile` → /enforcement:log, /fix:deep, /issues:log, /portfolio:status, /roadmap:add, /scan:full, /scan:mc-staleness, /warp:flag, /warp:release, /warp:update
 - `/oneshot:retro` → /issues:log, /oneshot:improve, /oneshot:preflight, /oneshot:start, /retro:code, /retro:context, /retro:full, /scan:patterns, /scan:requirements
 - `/sprint:full` → /mode:oneshot, /mode:sprint, /scan:full, /scan:roadmap-trace, /sprint:design, /sprint:execute, /sprint:plan, /sprint:release, /sprint:retrospective
 - `/warp:doctor` → /hooks:test, /paths:lint, /scan:architecture, /scan:full, /scan:references, /scan:requirements, /warp:health, /warp:release, /warp:update
 
 Top called (skills others invoke the most):
 
-- `/scan:full` ← /bootstrap:ponder, /check:all, /commit:land, /guides:coverage, /karpathy:run, /knowledge:coverage, /learn:integrate, /maps:coverage, /scan:ac-coverage, /scan:admin-suite-coverage, /scan:cutover-completeness, /scan:dispatch-routing-parity, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:planning-principles, /scan:regressions, /scan:roadmap-trace, /scan:scan-coverage, /scan:system, /scan:turbo-spend, /scan:version-coherence, /scan:warpos-install-baseline, /scan:warpos-ship-coverage, /sprint:full, /warp:doctor, /warp:reconcile
+- `/scan:full` ← /bootstrap:ponder, /check:all, /commit:land, /guides:coverage, /karpathy:run, /knowledge:coverage, /learn:integrate, /maps:coverage, /scan:ac-coverage, /scan:admin-suite-coverage, /scan:cutover-completeness, /scan:dispatch-routing-parity, /scan:model-chain, /scan:node-procs, /scan:panel-registry-coverage, /scan:planning-principles, /scan:regressions, /scan:roadmap-trace, /scan:scan-coverage, /scan:system, /scan:turbo-spend, /scan:version-coherence, /scan:mc-install-baseline, /scan:mc-ship-coverage, /sprint:full, /warp:doctor, /warp:reconcile
 - `/sleep:deep` ← /beta:integrate, /beta:mine, /bootstrap:ponder, /learn:deep, /reasoning:score, /scan:architecture, /scan:environment, /scan:full, /scan:patterns, /scan:references, /scan:requirements, /scan:system, /session:end, /sleep:quick
-- `/warp:update` ← /commit:both, /guides:write, /portfolio:sync, /scan:warpos-capsule-resolvable, /scan:warpos-install-baseline, /scan:warpos-layer-diff, /scan:warpos-manifest-coverage, /scan:warpos-migration-presence, /scan:warpos-staleness, /scan:warpos-structure-parity, /warp:diff, /warp:doctor, /warp:reconcile, /warp:sync
+- `/warp:update` ← /commit:both, /guides:write, /portfolio:sync, /scan:mc-capsule-resolvable, /scan:mc-install-baseline, /scan:mc-layer-diff, /scan:mc-manifest-coverage, /scan:mc-migration-presence, /scan:mc-staleness, /scan:mc-structure-parity, /warp:diff, /warp:doctor, /warp:reconcile, /warp:sync
 - `/warp:health` ← /agents:test, /mode:adhoc, /mode:sprint, /scan:adhoc-team-hygiene, /scan:architecture, /scan:environment, /scan:full, /scan:system, /warp:doctor, /warp:setup, /warp:tour, /warp:uninstall, /warp:update
 - `/sprint:full` ← /learn:deep, /mode:sprint, /roadmap:create, /scan:full, /scan:roadmap-trace, /scan:sprint-beta-honesty, /scan:sprint-hook-coverage, /scan:sprint-manager-consult, /session:turbo, /sprint:cost-gate, /sprint:design, /sprint:plan
 - `/scan:requirements` ← /beta:mine, /discover:orphaned, /oneshot:preflight, /oneshot:retro, /scan:architecture, /scan:full, /session:handoff, /sleep:deep, /sleep:quick, /warp:doctor

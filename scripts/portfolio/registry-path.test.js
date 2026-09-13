@@ -7,7 +7,7 @@
  * Planted-violation test for T-20260611-309.
  *
  * Asserts:
- *  1. registry.js#registryPath() resolves to ~/.warpos/portfolio.json
+ *  1. registry.js#registryPath() resolves to ~/.mc/portfolio.json
  *     (home-anchored, NOT project-local).
  *  2. The dead project-local registry.yaml (under the project portfolio dir) is
  *     NEVER what registryPath() returns. (Literal intentionally split here and
@@ -43,13 +43,13 @@ function test(name, fn) {
 }
 
 // ── 1. Default resolution is HOME-anchored ────────────────────────────────
-test("registryPath() resolves to ~/.warpos/portfolio.json", () => {
+test("registryPath() resolves to ~/.mc/portfolio.json", () => {
   // Ensure no env override is active for this assertion
   const saved = process.env.WARPOS_PORTFOLIO_REGISTRY;
   delete process.env.WARPOS_PORTFOLIO_REGISTRY;
   try {
     const resolved = registryPath();
-    const expected = path.join(os.homedir(), ".warpos", "portfolio.json");
+    const expected = path.join(os.homedir(), ".mc", "portfolio.json");
     assert.strictEqual(
       resolved,
       expected,

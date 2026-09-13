@@ -3,19 +3,19 @@
  * scripts/checks/portfolio-installer-loud.js
  *
  * Regression detector for BC-29 — "Silent installer no-op in /portfolio:new
- * (created project has no WarpOS engine)".
+ * (created project has no MC engine)".
  *
  * WI-50 (fixed downstream in masterconsole 9451259; REINTRODUCED by the 0.15.0
- * step-driven rewrite, E-SPINUP-STEPS-001): createProductRepo installed WarpOS
+ * step-driven rewrite, E-SPINUP-STEPS-001): createProductRepo installed MC
  * into a newly-created product by calling scripts/warp-setup.js — the canonical
  * installer that is INTENTIONALLY NEVER SHIPPED (release-build.js) — guarded by
  * fs.existsSync. On any CONSUMER install the file is absent → the guard is false
  * → the install step SILENTLY no-op'd → the created project got app files but no
- * WarpOS engine (no .claude/, no scripts/ tree), dead on arrival.
+ * MC engine (no .claude/, no scripts/ tree), dead on arrival.
  *
  * Contract this detector asserts (exits 0 only when ALL hold):
- *   A. createProductRepo installs via _installWarpOS (not a bare existsSync skip).
- *   B. _installWarpOS prefers the SHIPPED installer (install.ps1).
+ *   A. createProductRepo installs via _installMC (not a bare existsSync skip).
+ *   B. _installMC prefers the SHIPPED installer (install.ps1).
  *   C. The completeness gate references .claude/framework-installed.json and the
  *      WI-50 guard marker (so the intent can't be silently stripped).
  *   D. Behavioral (with an injected spawn, NO real install):
@@ -54,8 +54,8 @@ function main() {
   }
 
   // A. createProductRepo wires the loud installer helper.
-  check(/_installWarpOS\s*\(\s*repoPath/.test(src),
-    "A: createProductRepo no longer calls _installWarpOS(repoPath) — the loud install path is gone.");
+  check(/_installMC\s*\(\s*repoPath/.test(src),
+    "A: createProductRepo no longer calls _installMC(repoPath) — the loud install path is gone.");
 
   // A'. the old silent pattern (existsSync-guarded warp-setup with no loud else)
   // must NOT be the install path. We forbid the specific reintroduction shape.
@@ -64,7 +64,7 @@ function main() {
 
   // B. prefer the shipped installer.
   check(/install\.ps1/.test(src),
-    "B: _installWarpOS does not reference the shipped installer install.ps1.");
+    "B: _installMC does not reference the shipped installer install.ps1.");
 
   // C. completeness gate + intent marker.
   check(/framework-installed\.json/.test(src),
@@ -80,8 +80,8 @@ function main() {
     console.error(`[BC-29] detector error: cannot require new-lib.js: ${e.message}`);
     process.exit(2);
   }
-  if (typeof mod._installWarpOS !== "function") {
-    console.error("[BC-29] detector error: new-lib.js does not export _installWarpOS for testing.");
+  if (typeof mod._installMC !== "function") {
+    console.error("[BC-29] detector error: new-lib.js does not export _installMC for testing.");
     process.exit(2);
   }
 
@@ -90,12 +90,12 @@ function main() {
     // D1: install "succeeds" but produces no engine record → must fail loudly.
     const noEngine = path.join(tmpBase, "no-engine");
     fs.mkdirSync(noEngine, { recursive: true });
-    const r1 = mod._installWarpOS(noEngine, { spawn: () => ({ status: 0, stdout: "", stderr: "" }) });
+    const r1 = mod._installMC(noEngine, { spawn: () => ({ status: 0, stdout: "", stderr: "" }) });
     check(r1 && r1.ok === false,
       "D1: a 'successful' install that produced no .claude/framework-installed.json was NOT rejected (silent no-op survives).");
 
     // D2: install process fails → must fail loudly.
-    const r2 = mod._installWarpOS(noEngine, { spawn: () => ({ status: 1, stdout: "", stderr: "boom" }) });
+    const r2 = mod._installMC(noEngine, { spawn: () => ({ status: 1, stdout: "", stderr: "boom" }) });
     check(r2 && r2.ok === false,
       "D2: a failed install (status!=0) was NOT rejected.");
 
@@ -104,7 +104,7 @@ function main() {
     fs.mkdirSync(path.join(withEngine, ".claude"), { recursive: true });
     fs.writeFileSync(path.join(withEngine, ".claude", "framework-installed.json"),
       JSON.stringify({ installedVersion: "test" }) + "\n");
-    const r3 = mod._installWarpOS(withEngine, { spawn: () => ({ status: 0, stdout: "", stderr: "" }) });
+    const r3 = mod._installMC(withEngine, { spawn: () => ({ status: 0, stdout: "", stderr: "" }) });
     check(r3 && r3.ok === true,
       "D3: positive control failed — a complete install (engine record present) was rejected; the gate is over-strict / detector is trivially false.");
   } finally {

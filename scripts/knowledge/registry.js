@@ -36,7 +36,7 @@ const path = require("path");
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const KNOWLEDGE_DIR = path.join(REPO_ROOT, "_knowledge");
 const REGISTRY_FILE = path.join(KNOWLEDGE_DIR, "registry.json");
-const REGISTRY_SCHEMA = "warpos/knowledge/registry/v1";
+const REGISTRY_SCHEMA = "mc/knowledge/registry/v1";
 const ROLE_REGISTRY_FILE = path.join(REPO_ROOT, ".claude/agents/_org/role-registry.json");
 
 const VALID_KINDS = ["library", "store"];

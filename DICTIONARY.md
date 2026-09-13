@@ -18,13 +18,13 @@ The mechanism by which Alpha (the architect) consults Alex β (the judgment mode
 
 ## Capsule
 
-A versioned snapshot of WarpOS shippable under `framework/releases/<X.Y.Z>/`. Each capsule carries `release.json`, a manifest snapshot, and the canonical source files needed for a downstream consumer to run `/warp:update --to X.Y.Z --apply`. A version bump in `version.json` without a corresponding capsule is a "hollow rung" — `/warp:update` will fail when downstream reaches for it.
+A versioned snapshot of MC shippable under `framework/releases/<X.Y.Z>/`. Each capsule carries `release.json`, a manifest snapshot, and the canonical source files needed for a downstream consumer to run `/warp:update --to X.Y.Z --apply`. A version bump in `version.json` without a corresponding capsule is a "hollow rung" — `/warp:update` will fail when downstream reaches for it.
 
 ## Contractless productization
 
-The root anti-pattern behind WarpOS's recurring "downstream always missing / install broken" class: there is **no hard boundary between the framework's authoring state and its shipped runtime contract**. The same `.claude/` + `scripts/` tree is at once the source, the test bed, the release artifact, and the only fully-exercised install — so what a clean consumer actually *receives and can run* is never tested as a separate thing. Symptoms: fresh-install partial wiring, two-manifest drift, version-quorum disagreement, repo-role-blind guards (a canonical-only check firing in a product, or vice-versa), and fail-open false-green. The fix is **artifact-first, contract-tested releases** — build one sealed capsule from a single bill-of-materials, install *only that capsule* into a disposable out-of-tree repo, and run an executable consumer contract (`setup → scan:install → a real sprint → dispatch telemetry → update`) under both repo roles before shipping.
+The root anti-pattern behind MC's recurring "downstream always missing / install broken" class: there is **no hard boundary between the framework's authoring state and its shipped runtime contract**. The same `.claude/` + `scripts/` tree is at once the source, the test bed, the release artifact, and the only fully-exercised install — so what a clean consumer actually *receives and can run* is never tested as a separate thing. Symptoms: fresh-install partial wiring, two-manifest drift, version-quorum disagreement, repo-role-blind guards (a canonical-only check firing in a product, or vice-versa), and fail-open false-green. The fix is **artifact-first, contract-tested releases** — build one sealed capsule from a single bill-of-materials, install *only that capsule* into a disposable out-of-tree repo, and run an executable consumer contract (`setup → scan:install → a real sprint → dispatch telemetry → update`) under both repo roles before shipping.
 
-**Example.** The 2026-05-26 WARPOS.md reconciliation: of ~50 gaps four products flagged, ~half were already fixed upstream (the registers reflect each product's *installed* version, not canonical), and the framework blocked its own maintainer twice mid-fix — framework-purity refused a commit, the requirements gate refused a merge — because both guards were repo-role-blind. Coined 2026-05-26 via `/fix:deep` + a GPT-5.5 cross-provider consult; full record at `runtime/notes/warpos-reconcile-root-cause-2026-05-26.md`.
+**Example.** The 2026-05-26 MC.md reconciliation: of ~50 gaps four products flagged, ~half were already fixed upstream (the registers reflect each product's *installed* version, not canonical), and the framework blocked its own maintainer twice mid-fix — framework-purity refused a commit, the requirements gate refused a merge — because both guards were repo-role-blind. Coined 2026-05-26 via `/fix:deep` + a GPT-5.5 cross-provider consult; full record at `runtime/notes/mc-reconcile-root-cause-2026-05-26.md`.
 
 ## DAU / MAU
 
@@ -34,7 +34,7 @@ Daily / Monthly Active Users — the usage-breadth metrics tracked from Finding-
 
 A constraint or structural setup that makes you face a decision you've been avoiding. Not a hammer or a deadline — the value isn't pressure, it's the removal of your ability to keep dodging. The output is clarity, not the artifact the forcing function produces.
 
-**Example.** Standing up an `@warpos/cli` npm-package shape of WarpOS in parallel to the current canonical-clone model. Even if the npm version is never adopted, building it forces the question *"which of our current sprints would be wasted under that shape?"* — a question easy to deflect when only the current shape exists. The parallel build doesn't have to succeed; its job is to make the comparison unavoidable.
+**Example.** Standing up an `@mc/cli` npm-package shape of MC in parallel to the current canonical-clone model. Even if the npm version is never adopted, building it forces the question *"which of our current sprints would be wasted under that shape?"* — a question easy to deflect when only the current shape exists. The parallel build doesn't have to succeed; its job is to make the comparison unavoidable.
 
 ## Funnel metrics
 
@@ -58,11 +58,11 @@ The structured artifact produced by `/sprint:plan` that turns a plain-language r
 
 ## Product lifecycle
 
-The operator's canonical five-phase model for taking a product from idea to product-market fit: **1 Research → 2 Early Development (Pre-Launch) → 3 Launch → 4 Finding PMF → 5 PMF**, plus a transient **Revenue** phase and the reality that **pivots** happen (sometimes repeatedly). WarpOS and Master Console are scoped to get products **to PMF (1→5)** — scaling is out of scope. Full model, per-phase priorities, and metrics in `.claude/project/reference/product-lifecycle.md`; the Director of Product agent's Principle #2 judges against it.
+The operator's canonical five-phase model for taking a product from idea to product-market fit: **1 Research → 2 Early Development (Pre-Launch) → 3 Launch → 4 Finding PMF → 5 PMF**, plus a transient **Revenue** phase and the reality that **pivots** happen (sometimes repeatedly). MC and Master Console are scoped to get products **to PMF (1→5)** — scaling is out of scope. Full model, per-phase priorities, and metrics in `.claude/project/reference/product-lifecycle.md`; the Director of Product agent's Principle #2 judges against it.
 
 ## Product-market fit (PMF)
 
-Phase 5 — a product that correctly solves the problem and **passes the metric check** (Launch funnel + Activation + D0/D7/D14/D30 retention + DAU/MAU + CPI/CAC + organic-growth %, at product/category-appropriate thresholds). The goal state WarpOS / Master Console drive toward; next is scale (out of scope). **Revenue** may or may not qualify PMF depending on product type. See `.claude/project/reference/product-lifecycle.md`.
+Phase 5 — a product that correctly solves the problem and **passes the metric check** (Launch funnel + Activation + D0/D7/D14/D30 retention + DAU/MAU + CPI/CAC + organic-growth %, at product/category-appropriate thresholds). The goal state MC / Master Console drive toward; next is scale (out of scope). **Revenue** may or may not qualify PMF depending on product type. See `.claude/project/reference/product-lifecycle.md`.
 
 ## Retention (D0 / D7 / D14 / D30)
 

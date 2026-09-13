@@ -16,7 +16,7 @@ function test(name, fn) {
 
 test("routing trace accepts named wave sprint ids", () => {
   const errors = routing.validateTraceRow({
-    schema: "warpos/sprint/routing-trace/v1",
+    schema: "mc/sprint/routing-trace/v1",
     sprint_id: "S-PF-01",
     phase: "planning",
     artifact_id: "PC-20260611-0075",
@@ -36,7 +36,7 @@ test("routing trace accepts named wave sprint ids", () => {
 
 test("routing trace rejects arbitrary sprint ids", () => {
   const errors = routing.validateTraceRow({
-    schema: "warpos/sprint/routing-trace/v1",
+    schema: "mc/sprint/routing-trace/v1",
     sprint_id: "S-PF",
     phase: "planning",
     artifact_id: "PC-20260611-0075",
@@ -49,7 +49,7 @@ test("routing trace rejects arbitrary sprint ids", () => {
 });
 
 test("roadmap ledger accepts named wave sprint ids", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-named-sprint-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-named-sprint-"));
   fs.writeFileSync(
     path.join(tmp, "ROADMAP.md"),
     [

@@ -2,7 +2,7 @@
 /**
  * test-guard-remediation-paths.js — C-8 / doogle WG-1 (enforcer-class) test.
  *
- * The --guard-remediation mode of warpos-install-baseline.js asserts that every
+ * The --guard-remediation mode of mc-install-baseline.js asserts that every
  * script path a guard names in a USER-FACING remediation message exists on disk
  * (the "closed dispatch trap" backstop). Tests:
  *
@@ -23,8 +23,8 @@ const path = require("path");
 const os = require("os");
 const { spawnSync } = require("child_process");
 
-const SCRIPT = path.join(__dirname, "warpos-install-baseline.js");
-const { extractRemediationPaths } = require("./warpos-install-baseline.js");
+const SCRIPT = path.join(__dirname, "mc-install-baseline.js");
+const { extractRemediationPaths } = require("./mc-install-baseline.js");
 
 let pass = 0;
 let fail = 0;

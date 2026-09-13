@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/sprint-routing/v1",
+  "$schema": "mc/sprint-routing/v1",
   "version": 1,
   "comment": "Sprint Workflow v0.2 routing policy. Declarative — runProvider still controls actual provider selection. Honored by /sprint:plan, /sprint:design, /sprint:execute, /sprint:release where a model class is needed (planning, review, scoping, judgment). No new SDK installs; routing intent is preserved by class even when provider-fallback.json drives an actual swap. v0.2 adds the `concurrency` block — advisory knobs for parallel-sprint lanes.",
   "concurrency": {

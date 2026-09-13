@@ -60,7 +60,7 @@ const TARGET_DEFAULT = "refs/heads/main";
  */
 function buildReleaseCommit(args = {}) {
   const { gitRoot, head, message, add } = args;
-  const tmpIndex = path.join(os.tmpdir(), `warpos-release-index-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const tmpIndex = path.join(os.tmpdir(), `mc-release-index-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const env = { GIT_INDEX_FILE: tmpIndex };
   try {
     // Seed the temp index from the TARGET head's tree — the only legitimate baseline for a main-forward commit.

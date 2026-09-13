@@ -57,7 +57,7 @@ h.violation("AC-2.5 BC-16: missing shape fails CLOSED", () =>
 // FAIL CLOSED under enforce in the dispatch-claude wrapper, NOT be swallowed by a broad
 // fail-open catch into a silent bypass. (The separate MODULE-LOAD path still fails OPEN.)
 h.test("AC-2.5b BLOCKER regression: malformed contract path → dispatch-claude FAILS CLOSED (exit 1) under enforce", () => {
-  const badContract = path.join(os.tmpdir(), `warpos-bad-contract-${process.pid}.json`);
+  const badContract = path.join(os.tmpdir(), `mc-bad-contract-${process.pid}.json`);
   fs.writeFileSync(badContract, "{ this is not valid json");
   try {
     const r = spawnSync("node", ["scripts/dispatch-claude.js", "backend-reviewer", __filename], {

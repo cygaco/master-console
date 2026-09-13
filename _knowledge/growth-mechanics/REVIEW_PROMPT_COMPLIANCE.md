@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Keep in-app store-review prompting compliant and effective. The widely-blogged "Are you enjoying the app?" yes→store-review / no→feedback-form pattern is **review gating**: explicitly banned on Google Play, manipulation-risk on Apple, and regulatory exposure under the FTC Consumer Review Rule. WarpOS products never build it.
+Keep in-app store-review prompting compliant and effective. The widely-blogged "Are you enjoying the app?" yes→store-review / no→feedback-form pattern is **review gating**: explicitly banned on Google Play, manipulation-risk on Apple, and regulatory exposure under the FTC Consumer Review Rule. MC products never build it.
 
 ## The policy ground truth (verified 2026-06)
 

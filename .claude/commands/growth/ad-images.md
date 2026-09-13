@@ -35,7 +35,7 @@ produced by `growth:angles`, plus:
   (the `angle-voice` hook) for hook/voice, and `node scripts/skills/skill-hook-points.js resolve growth:ad-images angle-judgment`
   (the `angle-judgment` hook) for the message/angle judgment.
 - **`content` render path** (`content:linkedin`/`content:contra` Puppeteer pattern) — the
-  EXISTING way WarpOS renders images from briefs. The Higgsfield render is an ADDITIONAL
+  EXISTING way MC renders images from briefs. The Higgsfield render is an ADDITIONAL
   generator wired later; the content render path is the available fallback today.
 - **Parallel subagents** — generate all 4 prompts (and, once wired, fan out renders) concurrently.
 

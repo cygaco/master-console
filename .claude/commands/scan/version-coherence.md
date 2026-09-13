@@ -12,8 +12,8 @@ The enforcer born from the 2026-05-30 version audit, which found two drift class
 ## What it checks
 
 - **A. Product-version quorum (extended):** `version.json#version` (truth) === `.claude/manifest.json#warpos.version` === `.claude/framework-manifest.json#version` === `.claude/framework-installed.json#installedVersion` === `install.ps1 $Script:WARPOS_VERSION`.
-- **B. Schema-label coherence (authoritative declarations):** the paths family (`framework/paths.registry.json#version` → derived `warpos/paths/vN` === `.claude/paths.json#$schema` === `schemas/paths.schema.json#$id`+`const` === `version.json#pathRegistrySchema` === `framework-installed#pathRegistryVersion`); and `version.json#frameworkManifestSchema` === `.claude/framework-manifest.json#$schema`.
-- **C. Broad sweep:** any `warpos/<family>/vN` schema family carrying >1 distinct version across operational tracked files (excludes migrations/, fixtures/, release capsules, test files, the accept-list validator, and docs — which legitimately name historical versions).
+- **B. Schema-label coherence (authoritative declarations):** the paths family (`framework/paths.registry.json#version` → derived `mc/paths/vN` === `.claude/paths.json#$schema` === `schemas/paths.schema.json#$id`+`const` === `version.json#pathRegistrySchema` === `framework-installed#pathRegistryVersion`); and `version.json#frameworkManifestSchema` === `.claude/framework-manifest.json#$schema`.
+- **C. Broad sweep:** any `mc/<family>/vN` schema family carrying >1 distinct version across operational tracked files (excludes migrations/, fixtures/, release capsules, test files, the accept-list validator, and docs — which legitimately name historical versions).
 
 `status: green` — all agree. `status: red` — drift found; each finding names the file + the disagreeing values.
 
@@ -21,4 +21,4 @@ The enforcer born from the 2026-05-30 version audit, which found two drift class
 node scripts/checks/version-coherence.js [--json]
 ```
 
-Wired into `/scan:full` Tier 3 **and** `scripts/warpos/release-gates.js` (`version_coherence` gate — RED blocks a release). The release engine (`release-canonical.js`) now bumps `manifest.warpos.version` + install.ps1's constant so a release can't re-introduce the lag. Pairs with `/scan:warpos-version-quorum` (the narrower 4-source check this supersets).
+Wired into `/scan:full` Tier 3 **and** `scripts/mc/release-gates.js` (`version_coherence` gate — RED blocks a release). The release engine (`release-canonical.js`) now bumps `manifest.mc.version` + install.ps1's constant so a release can't re-introduce the lag. Pairs with `/scan:mc-version-quorum` (the narrower 4-source check this supersets).

@@ -17,7 +17,7 @@ Hard detectors (each one fails the gate):
 
 | Detector | What it catches |
 |---|---|
-| `client_slug` | Any of the private product slugs in `CLIENT_SLUGS` (defined once, in the script) in tracked file content. The only exemptions are planning/history **records** (`trackers/`, `_planning/epics/`, `ROADMAP.md`, `RELEASES.md`, release changelogs, the dream journal, historical sprint/decision/learning records) and the derived `_warpos/MANIFEST.json`. There is no pending-scrub allow-list any more — the private trees were untracked instead. |
+| `client_slug` | Any of the private product slugs in `CLIENT_SLUGS` (defined once, in the script) in tracked file content. The only exemptions are planning/history **records** (`trackers/`, `_planning/epics/`, `ROADMAP.md`, `RELEASES.md`, release changelogs, the dream journal, historical sprint/decision/learning records) and the derived `_mc/MANIFEST.json`. There is no pending-scrub allow-list any more — the private trees were untracked instead. |
 | `abs_path` | Maintainer-home absolute paths — the old and the current Windows home forms, `/home/<u>/Desktop/`, `/Users/<u>/Desktop/` — **scoped to executable/config files** (`.js .mjs .cjs .ps1 .sh .cmd .bat .json`) under `scripts/` and `.claude/`. Docs, logs and markdown are deliberately out of scope: the operator is a public figure and an old path in prose is fine; in a script it is a portability bug and a leak. |
 | `promote_relic` | Reintroduction of any purged promote-suite path or token (see `PROMOTE_RELIC_FILES` / `PROMOTE_RELIC_REGEX` in the script). |
 

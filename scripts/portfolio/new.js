@@ -2,7 +2,7 @@
 
 /**
  * scripts/portfolio/new.js — the /portfolio:new CLI. Thin wrapper over the
- * reusable callables in new-lib.js (WARPOS-PROMPT §4 reconcile). All create +
+ * reusable callables in new-lib.js (MC-PROMPT §4 reconcile). All create +
  * scaffold logic lives in new-lib.js so the bootstrap:spinup `setup` step reuses
  * the SAME implementation — `portfolio:new` is now "the setup step composed,"
  * with no duplicated create/scaffold logic.

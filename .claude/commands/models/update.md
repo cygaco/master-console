@@ -8,7 +8,7 @@ writes: [scripts/dispatch/catalog.js, .claude/manifest.json, .claude/agents, .cl
 
 # /models:update — bring the catalog to the latest models
 
-Apply the latest vendor model catalogs to WarpOS dispatch: migrate dead ids, add new
+Apply the latest vendor model catalogs to MC dispatch: migrate dead ids, add new
 options, optionally adopt newer flagships, and keep every place the model is pinned in
 agreement. This is the writer half of `/models:check` (the read-only auditor).
 
@@ -68,7 +68,7 @@ $ARGUMENTS
 
 6. **Regenerate manifests** (hash-tracked `scripts/**` + `.claude/**` changed):
    ```bash
-   node scripts/generate-framework-manifest.js && node scripts/warpos/snapshot-installed.js
+   node scripts/generate-framework-manifest.js && node scripts/mc/snapshot-installed.js
    ```
 
 7. **Verify + report:**

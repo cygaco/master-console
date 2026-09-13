@@ -18,7 +18,7 @@
 <!-- Concrete, checkable criteria. Nothing reaches 100% until all are satisfied + evidenced (§20, §27). -->
 - [ ] `/skills:cleanup` reports zero known-broken skills.
 - [ ] `events.jsonl` auto-rolls without manual `sleep:deep` intervention.
-- [ ] `/scan:warpos-staleness` for providers exits 0 across declared models.
+- [ ] `/scan:mc-staleness` for providers exits 0 across declared models.
 - [ ] `/ui:review` runs cleanly on a fresh portfolio product with no source edits.
 
 ## Related definitions

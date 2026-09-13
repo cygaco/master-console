@@ -251,7 +251,7 @@ test("QA-014: a record with panel_run_id===run but a DIFFERENT run_id still atte
   assert.equal(out.attested, true, "a real runner record must correlate by panel_run_id, not be discarded on run_id");
 });
 test("QA-014: readLedgerRecords filters by panel_run_id, not run_id", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-qa014-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mc-qa014-"));
   const ledger = path.join(dir, "l.jsonl");
   try {
     const recA = JSON.stringify({ sprint_id: S, run_id: "sprint-run-XYZ", panel_run_id: R, role: "security-reviewer", provider: "openai", ok: true });

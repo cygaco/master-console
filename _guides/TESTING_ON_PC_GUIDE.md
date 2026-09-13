@@ -32,7 +32,7 @@ And the one fact that shapes everything on Windows:
 
 ## 2. Which tools you use depends on what you built
 
-Your testing toolchain depends on *how* your app was built. Find your stack below. (If you used WarpOS's default path, you're almost certainly **Expo / React Native**.)
+Your testing toolchain depends on *how* your app was built. Find your stack below. (If you used MC's default path, you're almost certainly **Expo / React Native**.)
 
 ### Expo / React Native (the default for most vibe-coders)
 
@@ -237,4 +237,4 @@ TESTING ON A WINDOWS PC - MINIMUM VIABLE
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Emulator tooling, free tiers, and device prices change frequently — treat the numbers here as directional and check each "Official sources" link before you rely on one. The one rule that won't change: emulate to build, real-device to launch.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Emulator tooling, free tiers, and device prices change frequently — treat the numbers here as directional and check each "Official sources" link before you rely on one. The one rule that won't change: emulate to build, real-device to launch.*

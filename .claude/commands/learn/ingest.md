@@ -4,7 +4,7 @@ description: Ingest external knowledge from files, links, or YouTube videos and 
 
 # /learner — External Knowledge Ingestion
 
-Takes a file, URL, or YouTube video and extracts actionable knowledge. Analyzes it for relevance to the current project and WarpOS system. Proposes or auto-applies improvements to strategies, skills, hooks, linters, or specs.
+Takes a file, URL, or YouTube video and extracts actionable knowledge. Analyzes it for relevance to the current project and MC system. Proposes or auto-applies improvements to strategies, skills, hooks, linters, or specs.
 
 ## Usage
 
@@ -156,7 +156,7 @@ The crawl logic doesn't care about the topic. It cares about: find links, classi
    Then read each generated `<id>.en.vtt` and clean VTT formatting (below).
    **Long videos:** fan the transcripts out to parallel sub-agents to distill
    (return summaries) rather than reading multi-hundred-KB transcripts into the
-   main context. Extract to a gitignored scratch dir (e.g. under `.warpos/`).
+   main context. Extract to a gitignored scratch dir (e.g. under `.mc/`).
    If yt-dlp truly can't be installed (no network / no pip), fall through to (2).
 
 2. **WebFetch on transcript service:**
@@ -184,7 +184,7 @@ Raw VTT files have timestamps and duplicated lines. Clean them:
 After extracting content, analyze it through these lenses:
 
 ### Step 1: Relevance Scan
-Ask: "What in this content is relevant to our project and the WarpOS system?"
+Ask: "What in this content is relevant to our project and the MC system?"
 
 Categories to look for:
 - **Prompting techniques** — better ways to communicate with AI

@@ -7,9 +7,9 @@
 - **Title:** Agent-Teams→Subagents migration & orchestration hardening
 - **Owner:** President (ε conductor)
 - **Parent epic:** [E-TEAMS-MIGRATION-001](../epics/E-TEAMS-MIGRATION-001-agent-teams-subagents-migration.md)
-- **Goal:** Migrate WarpOS off the removed Claude Code v2.1.178 team primitives (`TeamCreate`/`TeamDelete`) to the spawn-via-Agent model across the 5 skills, 4 hooks, tests, and ~12 docs that still instruct the dead API; build a subprocess reaper + liveness contract for orphaned `dispatch-*.js` OS processes; add the orchestration-doctrine doc + a regression enforcer; and land it green through the cross-provider gauntlet.
+- **Goal:** Migrate MC off the removed Claude Code v2.1.178 team primitives (`TeamCreate`/`TeamDelete`) to the spawn-via-Agent model across the 5 skills, 4 hooks, tests, and ~12 docs that still instruct the dead API; build a subprocess reaper + liveness contract for orphaned `dispatch-*.js` OS processes; add the orchestration-doctrine doc + a regression enforcer; and land it green through the cross-provider gauntlet.
 - **Scope:** the 4 build legs (A skills, B hooks-directive-strings, C subprocess-reaper, D doctrine-doc + `no-dead-team-tools.js` enforcer + test migration) defined in the parent epic's Scope.
-- **Out of scope:** `_requirements/`, `_warpos/EXAMPLES/` (W4), `dispatch-contract.json` / dispatch-config (W5), historical archives + per-run `runtime/*`, and the team-guard/lifecycle gate LOGIC (only directives change).
+- **Out of scope:** `_requirements/`, `_mc/EXAMPLES/` (W4), `dispatch-contract.json` / dispatch-config (W5), historical archives + per-run `runtime/*`, and the team-guard/lifecycle gate LOGIC (only directives change).
 - **Current state:** Completed
 - **Percent completion:** 100% — LANDED on `main` @ `7b40bbf7` (ff-merge, 9 commits) + pushed (2026-06-19). All 4 legs + gauntlet GREEN + β DECIDE B 0.88 + 4 riders applied.
 
@@ -56,7 +56,7 @@
 - None currently recorded.
 
 ## Dependencies
-- None hard. Coordinated to avoid W4 (`_warpos/EXAMPLES`) + W5 (`dispatch-contract.json`) edit surfaces.
+- None hard. Coordinated to avoid W4 (`_mc/EXAMPLES`) + W5 (`dispatch-contract.json`) edit surfaces.
 
 ## Blockers
 - None currently recorded.
@@ -115,6 +115,6 @@ None — sprint completed (merged to `main` @ `7b40bbf7` + pushed 2026-06-19).
 - Evidence of completion: merged to `main` @ `7b40bbf7` (ff from this branch, 9 commits) + pushed to `origin/main`; cross-provider gauntlet GREEN (backend/qa/security binding PASS); β DECIDE B 0.88; post-merge on main enforcer 2113-files-clean + reaper 20/20 + enforcer 18/18 + S-LC-05 18/18.
 - Session IDs / dates / agents: SP-TEAMS-MIGRATION-001 / 2026-06-19 / α + ε + β
 - Parent epic: E-TEAMS-MIGRATION-001
-- Remaining follow-up items: ED-063 (gemini corpus-diversity gauntlet re-run on the reaper once Antigravity is live); warpos shipping-MANIFEST regen on a clean main
+- Remaining follow-up items: ED-063 (gemini corpus-diversity gauntlet re-run on the reaper once Antigravity is live); mc shipping-MANIFEST regen on a clean main
 - Related untracked work: None
 - ../../TRACKER.md updated: via ROADMAP § Epics pointer · Roadmap reconciled: Yes

@@ -2,7 +2,7 @@
 "use strict";
 /**
  * scripts/bootstrap/phases/paint.js — the `paint` step of the step-driven
- * bootstrap:spinup pipeline (WARPOS-PROMPT §1; renamed from the former `onscreen`
+ * bootstrap:spinup pipeline (MC-PROMPT §1; renamed from the former `onscreen`
  * phase). Execute Epic-1's first sprint until the core loop SERVES, gated by a
  * verify-before-claim serve check.
  *
@@ -161,7 +161,7 @@ async function run(ctx) {
     status: "needs_orchestration",
     message: "paint execution is product-side" + scaffoldNote,
     orchestration_prompt:
-      "Execute Epic-1's first sprint product-side. The WarpOS app scaffold " +
+      "Execute Epic-1's first sprint product-side. The MC app scaffold " +
       "(Next.js App Router + Tailwind v4 + shadcn/ui) is in place — run `npm install`, " +
       "then build features on the primitives in src/components/ui (never hand-roll raw " +
       "elements). Gate completion with verifyServe (build clean + HTTP 200 + entry " +

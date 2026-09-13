@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/change-plan/v1",
+  "$id": "mc/change-plan/v1",
   "title": "ChangePlan",
   "description": "Pre-build object Gamma writes before dispatching a builder. Phase 3J artifact. The shape gives Reviewer + req-reviewer + Compliance an explicit contract: what was promised, what was touched, what crosses a boundary.",
   "type": "object",

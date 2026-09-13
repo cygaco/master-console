@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 "use strict";
 /**
- * scripts/bootstrap/phases/roadmap.js — the `roadmap` step (WARPOS-PROMPT §1, §2, §5).
+ * scripts/bootstrap/phases/roadmap.js — the `roadmap` step (MC-PROMPT §1, §2, §5).
  *
  * Turns the canon (_requirements/00-canonical/*) into a real ROADMAP.md with
  * EPICS + sprints, MVP-core-loop first (Epic-1 sprint-1 = the core loop on screen).
  *
  * DETERMINISTIC seed + LLM synthesis split: the deterministic part shells to the
- * existing scaffold engine (scripts/warpos/generate-roadmap-scaffold.js) which emits
+ * existing scaffold engine (scripts/mc/generate-roadmap-scaffold.js) which emits
  * an EMPTY product-style ROADMAP.md (placeholder prose, NO grounded epics/sprints,
  * NO `<!-- ledger:sprints -->` anchor). The grounded epic/sprint synthesis from the
  * canon's golden paths is roadmap:create's LLM job — a node process can't run it — so
@@ -71,13 +71,13 @@ async function run(ctx) {
   }
 
   // ── Deterministic seed: scaffold an empty ROADMAP.md if none exists ──────
-  const scaffoldScript = path.join(repoRoot, "scripts", "warpos", "generate-roadmap-scaffold.js");
+  const scaffoldScript = path.join(repoRoot, "scripts", "mc", "generate-roadmap-scaffold.js");
   const scaffoldExisted = fs.existsSync(roadmapAbs);
   if (dryRun) {
     log(`[dry-run] would seed roadmap scaffold via generate-roadmap-scaffold.js (target ${repoRoot})`);
     log(`[dry-run] scaffold is an EMPTY template — grounded synthesis still needs roadmap:create`);
   } else if (!fs.existsSync(scaffoldScript)) {
-    log(`scaffold engine not found at scripts/warpos/generate-roadmap-scaffold.js — skipping seed`);
+    log(`scaffold engine not found at scripts/mc/generate-roadmap-scaffold.js — skipping seed`);
   } else {
     log(`seeding roadmap scaffold (reusing generate-roadmap-scaffold.js)...`);
     const r = spawnSync(process.execPath, [scaffoldScript, repoRoot], { cwd: repoRoot, stdio: ["ignore", "inherit", "inherit"], windowsHide: true });

@@ -1,6 +1,6 @@
 # Patterns
 
-Reusable WarpOS implementation patterns live here after they pass the admission policy in `ADMISSION.md`.
+Reusable MC implementation patterns live here after they pass the admission policy in `ADMISSION.md`.
 
 Current canonical patterns:
 

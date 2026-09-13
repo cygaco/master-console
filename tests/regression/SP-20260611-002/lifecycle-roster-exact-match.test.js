@@ -113,21 +113,21 @@ ok("verify-end-to-end-rejects-substring-spoof-team", () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "lc-em-"));
   const teamsRoot = path.join(home, "teams");
   const proj = fs.mkdtempSync(path.join(os.tmpdir(), "lc-proj-"));
-  // The team belongs to this project (slug "warpos") + mode "sprint" but its
+  // The team belongs to this project (slug "mc") + mode "sprint" but its
   // roster is a SUBSTRING spoof — verify() must report NOT live.
-  const cfgDir = path.join(teamsRoot, "warpos-sprint");
+  const cfgDir = path.join(teamsRoot, "mc-sprint");
   fs.mkdirSync(cfgDir, { recursive: true });
   fs.writeFileSync(
     path.join(cfgDir, "config.json"),
     JSON.stringify({
-      name: "warpos-sprint",
+      name: "mc-sprint",
       members: [
         { name: "epsilon-helper", agentType: "general-purpose" },
         { name: "builder", agentType: "general-purpose" },
       ],
     }),
   );
-  const v = lifecycle.verify({ teamsRoot, slug: "warpos", mode: "sprint", projectDir: proj });
+  const v = lifecycle.verify({ teamsRoot, slug: "mc", mode: "sprint", projectDir: proj });
   assert.strictEqual(v.live, false, "a substring-spoof roster must read NOT live end-to-end");
 });
 
@@ -135,19 +135,19 @@ ok("verify-end-to-end-accepts-exact-roster-team", () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "lc-em-"));
   const teamsRoot = path.join(home, "teams");
   const proj = fs.mkdtempSync(path.join(os.tmpdir(), "lc-proj-"));
-  const cfgDir = path.join(teamsRoot, "warpos-sprint");
+  const cfgDir = path.join(teamsRoot, "mc-sprint");
   fs.mkdirSync(cfgDir, { recursive: true });
   fs.writeFileSync(
     path.join(cfgDir, "config.json"),
     JSON.stringify({
-      name: "warpos-sprint",
+      name: "mc-sprint",
       members: [
         { name: "epsilon", agentType: "epsilon" },
         { name: "beta", agentType: "beta" },
       ],
     }),
   );
-  const v = lifecycle.verify({ teamsRoot, slug: "warpos", mode: "sprint", projectDir: proj });
+  const v = lifecycle.verify({ teamsRoot, slug: "mc", mode: "sprint", projectDir: proj });
   assert.strictEqual(v.live, true, "an exact-roster ε+β team reads live end-to-end (no regression)");
 });
 

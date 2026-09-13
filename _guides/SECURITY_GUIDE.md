@@ -490,4 +490,4 @@ SECURITY
 
 ---
 
-*This guide is part of the **WarpOS launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, and the sibling guides `DATABASE_GUIDE.md` (RLS / schema depth) and `AUTH_GUIDE.md` (login + MFA) referenced above. **Last reviewed: 2026-06.** Security tooling, OWASP categories, and vendor defaults change; the official sources above are the source of truth — and this guide is **not a substitute for a professional security audit if you handle sensitive data.***
+*This guide is part of the **MC launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, and the sibling guides `DATABASE_GUIDE.md` (RLS / schema depth) and `AUTH_GUIDE.md` (login + MFA) referenced above. **Last reviewed: 2026-06.** Security tooling, OWASP categories, and vendor defaults change; the official sources above are the source of truth — and this guide is **not a substitute for a professional security audit if you handle sensitive data.***

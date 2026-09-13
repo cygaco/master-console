@@ -29,7 +29,7 @@ If `$ARGUMENTS` already contains a `###` heading, treat it as pre-formatted: cho
 4. **Format** to match existing plays: `### Title` heading, a **bold one-line thesis**, then the reasoning, a **worked example**, and a `*(source / lineage / date)*` line. Keep it short and opinionated.
 5. **Append** at the END of the chosen section — just before the next `## ` heading or the `---` divider — preserving the placeholder line for that section if present (replace a `*(plays about … — add via /playbook:add)*` stub with the real play; otherwise append after the last play).
 6. Convert any relative date to absolute (UTC `YYYY-MM-DD`).
-7. After writing, **regenerate the framework manifests** (the Playbook is framework-tracked): `node scripts/generate-framework-manifest.js && node scripts/warpos/manifest/build.js`, so the regression-seed enforcer (BC-02/BC-05) stays green. (See `project_regen_manifests_after_framework_edit`.)
+7. After writing, **regenerate the framework manifests** (the Playbook is framework-tracked): `node scripts/generate-framework-manifest.js && node scripts/mc/manifest/build.js`, so the regression-seed enforcer (BC-02/BC-05) stays green. (See `project_regen_manifests_after_framework_edit`.)
 8. Echo: `Added to <Section>: <heading>. playbook.md +<N> lines.`
 
 ## Anti-patterns

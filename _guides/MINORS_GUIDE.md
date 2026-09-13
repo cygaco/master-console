@@ -89,4 +89,4 @@ WHO IS YOUR APP FOR?
 
 ---
 
-*Part of the **WarpOS launch-guide library** (`_guides/`) — plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble. **Last reviewed: 2026-06.** Children's and teens' privacy law changes and varies by jurisdiction — the official sources above are the source of truth, and this guide is not legal advice.*
+*Part of the **MC launch-guide library** (`_guides/`) — plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble. **Last reviewed: 2026-06.** Children's and teens' privacy law changes and varies by jurisdiction — the official sources above are the source of truth, and this guide is not legal advice.*

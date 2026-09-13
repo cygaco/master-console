@@ -42,7 +42,7 @@ If `paths.agents` does not exist or contains no `.md` files, stderr emits:
 no agents found at <path>
 ```
 
-…and exits 1. (Empty agents tree IS a failure — a working WarpOS install always has agents.)
+…and exits 1. (Empty agents tree IS a failure — a working MC install always has agents.)
 
 ## Example
 

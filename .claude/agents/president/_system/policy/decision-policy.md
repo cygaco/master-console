@@ -64,7 +64,7 @@ Class C resolution is to **defer the call to the decision point and make it
 state-conditional** — "decided at launch-time based on the state then" — rather than
 pre-committing to a premature binary now. β returns this (with one recommended answer)
 when the right choice genuinely depends on state that does not exist yet (e.g. the MC
-freeze-vs-pull call: decided at launch-time on WarpOS's state then, not pre-committed).
+freeze-vs-pull call: decided at launch-time on MC's state then, not pre-committed).
 Requirement: name **the state that will drive it** and **the decision point** at which
 it resolves. This is a real resolution, not a punt — do not force an early binary just
 to "close" the question.
@@ -176,11 +176,11 @@ This rule exists because asking the user for routine technical choices is the bo
 
 ## Two-gate authority — Beta vs the Claude Code classifier
 
-Beta authorizes within the **WarpOS policy frame** (Class A/B/C, the rubric, this document). The Claude Code **auto-mode classifier** authorizes within the **harness safety frame** (prompt-derived intent vs proposed action). These are independent gates. Both must clear.
+Beta authorizes within the **MC policy frame** (Class A/B/C, the rubric, this document). The Claude Code **auto-mode classifier** authorizes within the **harness safety frame** (prompt-derived intent vs proposed action). These are independent gates. Both must clear.
 
 When the classifier blocks an action and cites intent mismatch with the user's original prompt ("user only asked to look it up", "user did not authorize publishing", etc.):
 
-1. **Beta DECIDE does NOT override.** A WarpOS policy verdict is not a harness override. The classifier outranks Beta on harness-safety questions. **The classifier also sits ABOVE `permissions.allow`** (mechanical layering fact, PROVEN 2026-06-09, L-2026-06-09-classifier-above-permissions-allow): a standing `Bash(git push *)` allow rule — even a turbo `push-to-main` scope — does NOT make a push-to-main classifier-immune; it still requires per-action operator intent. So β must never promise "classifier-immune auto-push" from a permissions profile (or a turbo grant) alone — push-to-main stays per-action regardless of `permissions.allow`. (DP-gap #39(b); the turbo-overrides-push-table autonomy clause, DP-gap #39(a), is now operator-ruled — see § Autonomy-ceiling resolution below.)
+1. **Beta DECIDE does NOT override.** A MC policy verdict is not a harness override. The classifier outranks Beta on harness-safety questions. **The classifier also sits ABOVE `permissions.allow`** (mechanical layering fact, PROVEN 2026-06-09, L-2026-06-09-classifier-above-permissions-allow): a standing `Bash(git push *)` allow rule — even a turbo `push-to-main` scope — does NOT make a push-to-main classifier-immune; it still requires per-action operator intent. So β must never promise "classifier-immune auto-push" from a permissions profile (or a turbo grant) alone — push-to-main stays per-action regardless of `permissions.allow`. (DP-gap #39(b); the turbo-overrides-push-table autonomy clause, DP-gap #39(a), is now operator-ruled — see § Autonomy-ceiling resolution below.)
 2. **Do not retry with Beta blessing alone.** Retrying the same Edit/Bash with a new "Beta said yes" prelude is bypass-by-rationalization; the classifier will block again and you will burn turns.
 3. **Surface to the user with one short plain-text sentence** describing the action and asking for go-ahead. Do NOT use AskUserQuestion (beta-gate intercepts it). The user types yes/no; the classifier re-evaluates with that confirmation in scope.
 4. **The shape echoes the autonomy table.** Push-to-remote and ≥$5 spend already "ask first" — that's an in-repo policy alignment with a harness-safety expectation. Treat classifier blocks as the same shape: confirm, don't override.
@@ -197,7 +197,7 @@ How an autonomy-class ESCALATE resolves, and what a turbo session may carry as a
 
 2. **A turbo session may carry a durable OPERATOR-DECLARED permissions profile** that grants **spend (+$100 framework default, raisable per session) + commit + branch ops + merge-to-main**, **deliberately overriding the "Push = Ask first" autonomy-table line FOR TURBO SESSIONS.** This is legitimate because it is an **operator declaration, not a self-grant** — Alex never widens its own autonomy to this profile; the operator establishes it for the session.
 
-3. **BUT push-to-main still stays per-action.** Even with the operator-declared turbo profile and a standing `Bash(git push *)` in `permissions.allow`, the harness auto-mode classifier sits **above** `permissions.allow` and continues to gate push-to-main on per-action intent (the part (b) mechanical layering fact, § Two-gate authority point #1, PROVEN 2026-06-09 / L-2026-06-09-classifier-above-permissions-allow; gpt55 review item 5). So the turbo profile authorizes spend/commit/branch/merge **within the WarpOS policy frame**, but push-to-main requires a per-action operator line (one typed push line per arc, or operator-run `! git push`) to clear the harness frame.
+3. **BUT push-to-main still stays per-action.** Even with the operator-declared turbo profile and a standing `Bash(git push *)` in `permissions.allow`, the harness auto-mode classifier sits **above** `permissions.allow` and continues to gate push-to-main on per-action intent (the part (b) mechanical layering fact, § Two-gate authority point #1, PROVEN 2026-06-09 / L-2026-06-09-classifier-above-permissions-allow; gpt55 review item 5). So the turbo profile authorizes spend/commit/branch/merge **within the MC policy frame**, but push-to-main requires a per-action operator line (one typed push line per arc, or operator-run `! git push`) to clear the harness frame.
 
 Source: DP-gap #39(a) (operator-ruled 2026-06-09, E-LIFECYCLE-001 §22 point #2 — turbo with a $100 framework-default spend ceiling, raisable per session). Part (b) (classifier-above-`permissions.allow`) integrated 2026-06-08; see § Two-gate authority point #1. Composes with DP-gap #34 (autonomous-run authorization) and DP-gap #37 (arc-level push).
 

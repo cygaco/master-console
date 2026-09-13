@@ -271,4 +271,4 @@ GOOGLE PLAY (brief — see DEV_SETUP_GUIDE)
 
 ---
 
-*Part of the **WarpOS launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, and the siblings `DEV_SETUP_GUIDE.md` (the day-zero account signup), `PRIVACY_GDPR_GUIDE.md`, `PAYMENTS_GUIDE.md`, and `AUTH_GUIDE.md` referenced above. **Last reviewed: 2026-06.** Apple's rules change often and the payment rules are in active litigation — the Official sources above are the source of truth.*
+*Part of the **MC launch-guide library** (`_guides/`) — reusable, plain-language launch playbooks for newbie vibe coders. See `_guides/README.md` for the shared preamble, and the siblings `DEV_SETUP_GUIDE.md` (the day-zero account signup), `PRIVACY_GDPR_GUIDE.md`, `PAYMENTS_GUIDE.md`, and `AUTH_GUIDE.md` referenced above. **Last reviewed: 2026-06.** Apple's rules change often and the payment rules are in active litigation — the Official sources above are the source of truth.*

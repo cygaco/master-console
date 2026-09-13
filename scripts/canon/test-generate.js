@@ -230,14 +230,14 @@ function unitsValidate() {
   const good = {};
   for (const name of NARRATIVE) {
     const tmpl = fs.readFileSync(
-      path.join(REPO, "_warpos", "templates", "canonical", `${name}.md.tmpl`),
+      path.join(REPO, "_mc", "templates", "canonical", `${name}.md.tmpl`),
       "utf8",
     );
     good[`${name}.md`] = render(tmpl, { product_name: "Acme" }, { degrade: true });
   }
   for (const name of STRUCTURED) {
     const tmpl = fs.readFileSync(
-      path.join(REPO, "_warpos", "templates", "canonical", `${name}.json.tmpl`),
+      path.join(REPO, "_mc", "templates", "canonical", `${name}.json.tmpl`),
       "utf8",
     );
     good[`${name}.json`] = render(

@@ -45,7 +45,7 @@ const EXCLUDE_BASENAMES = new Set([
 // STRUCTURAL cross-session exemption: readers of a FOREIGN-session ledger, unverifiable by construction.
 // Each entry names WHY it is cross-session (the structural property), not a settable flag. Tracked: ED-232.
 const CROSS_SESSION_EXEMPT = Object.freeze({
-  "scripts/warpos/test-sealed-capsule-gate.js":
+  "scripts/mc/test-sealed-capsule-gate.js":
     "verifyTyped reads an ISOLATED child repo's ledger (sealed-capsule gate spawns a foreign session that " +
     "signs with its own per-session secret); unverifiable under the same-session HMAC model (ADR-0025). " +
     "Cross-session key-distribution is the ED-232 priority follow-up.",

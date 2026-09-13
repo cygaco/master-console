@@ -7,7 +7,7 @@ description: Iterate a winning creative/message against a conversion/engagement 
 Take a *proven* winner and improve it: fan out ~20 variations (hooks/angles/scenes), test,
 and let **data** pick the next winner. "Money loves speed"; fan out the winner, not the
 guesses. A thin wrapper over `karpathy:run` (optimize an editable artifact against a scalar)
-+ WarpOS parallel subagents (the literal replacement for serial "give me 20 variations").
++ MC parallel subagents (the literal replacement for serial "give me 20 variations").
 
 > **SCAFFOLD (S2.2).** Procedure outline, not a full implementation.
 
@@ -25,7 +25,7 @@ plus:
   worktree with a score curve + stop conditions. This IS the iterate engine; `growth:iterate`
   is a thin domain wrapper that frames the artifact + metric for it.
 - **Parallel subagents** (default-to-parallel) — fan out all N variations concurrently, not
-  serially. This is WarpOS's single biggest edge over a serial Cowork flow.
+  serially. This is MC's single biggest edge over a serial Cowork flow.
 - **The speed gate** — owns `money-loves-speed` + the winner-fan-out gate: iteration may only fan
   out from an artifact with **real metric data** attached (no opinion-driven scaling); ranks the
   resulting variations. Resolve the agent from the skill-hook registry at call time and dispatch

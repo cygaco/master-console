@@ -43,7 +43,7 @@ const trace = {
   problem:
     "/scan:full returned 9 critical + 28 high findings; ~15 were concrete run-09-cleanup leftovers (dangling refs to deleted task-manifest.md / file-ownership.md, missing systems.jsonl entries for emergent systems, 2 architecture quick fixes).",
   root_cause:
-    "Run-09 deletions of two WarpOS template files left dangling references in 11 dependent docs + SPEC_GRAPH edges + systems.jsonl. The run-09 commit updated the obvious agent .md files but missed canonical docs (PRDs, GLOSSARY, FLOW_SPEC, etc.), audit maps, and the manifest. A reference-checking pre-commit hook would have caught this at deletion time.",
+    "Run-09 deletions of two MC template files left dangling references in 11 dependent docs + SPEC_GRAPH edges + systems.jsonl. The run-09 commit updated the obvious agent .md files but missed canonical docs (PRDs, GLOSSARY, FLOW_SPEC, etc.), audit maps, and the manifest. A reference-checking pre-commit hook would have caught this at deletion time.",
   fix: "8-batch /fix:deep: A=SPEC_GRAPH 3 edges, B=LAUNCH-CHECKLIST 4 refs, C=2 PRDs, D=5 architecture/canonical docs, E=evolution.md + .system.md hub, F=learn-events-write.js obsolete entry, G=alpha.md repointed + framework-manifest-guard registered, H=systems.jsonl (store path corrected, installer annotated, 5 emergent systems declared).",
   files_touched: 17,
   commit_sha: "6e1211c",
@@ -62,7 +62,7 @@ const learning = {
   id: learningId,
   ts,
   intent: "process",
-  tip: "When deleting a file referenced across the project (e.g. WarpOS templates removed in run-09), grep for the basename across all .md/.json/.js BEFORE the deletion commit. The deletion-time scan caught direct refs in 9 files; a separate /scan:full pass surfaced 11 more in canonical docs, SPEC_GRAPH, and audit maps. Wire a pre-commit hook (similar to framework-manifest-guard) that runs ref-checker on any 'D' (delete) status file and blocks the commit on dangling refs unless --force.",
+  tip: "When deleting a file referenced across the project (e.g. MC templates removed in run-09), grep for the basename across all .md/.json/.js BEFORE the deletion commit. The deletion-time scan caught direct refs in 9 files; a separate /scan:full pass surfaced 11 more in canonical docs, SPEC_GRAPH, and audit maps. Wire a pre-commit hook (similar to framework-manifest-guard) that runs ref-checker on any 'D' (delete) status file and blocks the commit on dangling refs unless --force.",
   conditions: { event: "deletion-of-canonical-template", scope: "cross-repo" },
   effective: null,
   pending_validation: true,

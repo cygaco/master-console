@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/kernel/workorder-min/v1",
-  "title": "WarpOS Minimal WorkOrder (Phase-0 seed)",
+  "$id": "mc/kernel/workorder-min/v1",
+  "title": "MC Minimal WorkOrder (Phase-0 seed)",
   "description": "D5 (SP-20260718-001 Phase 0). The MINIMAL required field set for a valid, auditable WorkOrder binding — a subset of packet-06's full v1 schema, deliberately NOT the full WorkOrder/ResultEnvelope contract (that lands at RATIFIED-PLAN Phase 3, G3.1; see ED-217). Companion to top-level-runtime-contract.md §5.",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
     "output_contract"
   ],
   "properties": {
-    "schema": { "type": "string", "description": "schema version tag, e.g. warpos/work-order/v1" },
+    "schema": { "type": "string", "description": "schema version tag, e.g. mc/work-order/v1" },
     "id": { "type": "string", "pattern": "^WO-", "description": "WO-... identifier" },
     "role": { "type": "string", "description": "provider-neutral role_id (ADR-0018 role-identity triple: role_id/provider/runtime)" },
     "objective": { "type": "string", "minLength": 1 },

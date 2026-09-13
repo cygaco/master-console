@@ -6,7 +6,7 @@ timing: reference
 lead_time: "none"
 ---
 
-# WarpOS Launch-Compliance Knowledge Library — agent training references
+# MC Launch-Compliance Knowledge Library — agent training references
 
 > This is the **launch-compliance knowledge library**: 8 self-contained, teachable references that **train the `qa-reviewer`'s integrity/compliance scope** — the review lane that asks "is this product *legally and policy* shippable?" alongside its correctness checks. Each ref closes with a §6 **agent-applicable RULES** section; because much of compliance needs human/legal judgment, many rules are written as **FLAGs** (the reviewer surfaces them for human confirmation) rather than hard automated PASS/FAIL.
 >
@@ -53,4 +53,4 @@ This library is **agent grounding (`anchor: none`)** — grounded into the consu
 
 ---
 
-*The WarpOS launch-compliance knowledge library — framework-generic, reviewer-grade compliance judgment training, grounded in current 2025–2026 primary sources (FTC, USPTO, US Copyright Office, GDPR/CCPA text, Apple App Review Guidelines, Google Play policy). Sources cited per ref. Last reviewed: 2026-06. **Not legal advice** — a flagged item means "get a human/lawyer to confirm," not "this is fine."*
+*The MC launch-compliance knowledge library — framework-generic, reviewer-grade compliance judgment training, grounded in current 2025–2026 primary sources (FTC, USPTO, US Copyright Office, GDPR/CCPA text, Apple App Review Guidelines, Google Play policy). Sources cited per ref. Last reviewed: 2026-06. **Not legal advice** — a flagged item means "get a human/lawyer to confirm," not "this is fine."*

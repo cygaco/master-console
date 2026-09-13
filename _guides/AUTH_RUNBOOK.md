@@ -13,7 +13,7 @@ lead_time: "Custom Domain add-on purchase (operator, ~$10/mo) gates §7; Resend 
 > method-choice for a human founder. **This** doc assumes the choice is made: **passwordless Supabase
 > (6-digit email code + Google), no passwords, ever.** It is written so an **AI agent can drive the
 > whole setup autonomously**, with the operator-only steps fenced (🔴 OPERATOR = only a human can do it;
-> 🤖 AGENT = the AI does it). The WarpOS app-scaffold ships the code half of this (clients, sign-in UI,
+> 🤖 AGENT = the AI does it). The MC app-scaffold ships the code half of this (clients, sign-in UI,
 > PKCE callback, the §9 password hard-block migration + verifier); this runbook is the config half.
 
 ## 0. Placeholders (fill these first)
@@ -289,7 +289,7 @@ curl -s https://{{AUTH_HOST}}/auth/v1/health                 # auth server answe
 SUPABASE_DB_URL=… npm run verify:auth                        # §9 password hard-block, installed-proof
 ```
 
-## 13. What the WarpOS scaffold ships vs what you configure
+## 13. What the MC scaffold ships vs what you configure
 
 **Ships (framework-time, app-scaffold):** the two Supabase clients + config seam (no-op when unset), the
 sign-up-first sign-in UI (§4) + account page, the PKCE `/auth/callback` + session middleware, the §9

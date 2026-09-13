@@ -157,7 +157,7 @@ record:
 
 ```bash
 # Plan Contract's approval_boundaries determines what level is needed.
-# Manually edit _warpos/templates/sprint/approval/approval.yaml.tmpl
+# Manually edit _mc/templates/sprint/approval/approval.yaml.tmpl
 # render, OR write the YAML directly under paths.sprintApprovals/.
 ```
 

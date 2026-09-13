@@ -10,10 +10,10 @@ writes: []
 # /manifest:validate
 
 Run static checks on the manifest:
-- Required top-level keys (`$schema`, `project`, `warpos`, `agents`)
+- Required top-level keys (`$schema`, `project`, `mc`, `agents`)
 - Required project keys (`name`, `slug`)
-- Required warpos keys (`version`, `installed`)
-- `warpos.version` is semver
+- Required mc keys (`version`, `installed`)
+- `mc.version` is semver
 - `agentProviders[*]` is one of `claude|openai|gemini`
 
 ## Input

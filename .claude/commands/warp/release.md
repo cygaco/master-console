@@ -1,17 +1,17 @@
 ---
-description: "Drive a full WarpOS release of the canonical clone from this product repo — promote, bump, regen, build capsule, run gates, commit, brokered ff-merge to main, push, tag. One command, no cd into canonical."
+description: "Drive a full MC release of the canonical clone from this product repo — promote, bump, regen, build capsule, run gates, commit, brokered ff-merge to main, push, tag. One command, no cd into canonical."
 user-invocable: true
 ---
 
-# /warp:release — release WarpOS from the product repo
+# /warp:release — release MC from the product repo
 
-The product-side wrapper around `scripts/warpos/release-canonical.js`. Drives every step of a WarpOS release of the canonical clone WITHOUT switching the caller's cwd. Default = dry-run; `--apply` executes.
+The product-side wrapper around `scripts/mc/release-canonical.js`. Drives every step of a MC release of the canonical clone WITHOUT switching the caller's cwd. Default = dry-run; `--apply` executes.
 
 > Ledger contract — the version-bump stage writes a `RELEASES.md` Versions row in the canonical clone via `scripts/sprint/ledger.js` (loaded from canonical, projectRoot override). See `paths.sprintReference#ledger-discipline` for what qualifies and the fail-open contract.
 
 ## Background
 
-Pre-0.1.3 the only path to a release was: edit version.json in canonical → cd `../WarpOS` → regen manifest → build capsule → run gates → commit → push → ff-merge to main. Every step required cd-ing into the canonical clone. This skill replaces that with a single product-rooted command. All canonical-side ops happen via `spawnSync({cwd: canonical})` and `git -C <canonical> ...`.
+Pre-0.1.3 the only path to a release was: edit version.json in canonical → cd `../MC` → regen manifest → build capsule → run gates → commit → push → ff-merge to main. Every step required cd-ing into the canonical clone. This skill replaces that with a single product-rooted command. All canonical-side ops happen via `spawnSync({cwd: canonical})` and `git -C <canonical> ...`.
 
 ## Usage
 
@@ -33,7 +33,7 @@ The orchestrator runs 11 stages (0-10). Each emits a receipt `{stage, ok, what, 
 
 | # | Stage | Purpose |
 |---|---|---|
-| 0 | locate-canonical | Find the WarpOS clone (--canonical → ../WarpOS sibling → manifest hint) |
+| 0 | locate-canonical | Find the MC clone (--canonical → ../MC sibling → manifest hint) |
 | 1 | promote | Push framework changes from product to canonical (skippable with --no-promote) |
 | 2 | compute-version | Bump per --version (patch \| minor \| major \| <x.y.z>) |
 | 3 | bump-version | Write new version.json in canonical |
@@ -43,11 +43,11 @@ The orchestrator runs 11 stages (0-10). Each emits a receipt `{stage, ok, what, 
 | 7 | run-gates | release-gates.js (block on RED, warn on yellow/manual) |
 | 8 | commit-release-branch | git -C <canonical> checkout -b release/<v> + commit |
 | 9 | merge-to-main-and-push | **brokered** ff-merge to main + push origin main (`release-canonical.js` routes stage 9 through the broker's `integrateBranchMerge` / `syncMainFromOrigin` fetch+brokered-ff; a raw `git merge` / `git pull --ff-only origin main` works today via the logged fallback but is REFUSED by the reference-transaction hook post-flip) |
-| 10 | tag-and-push | git tag warpos@<v> + push (--no-tag skips) |
+| 10 | tag-and-push | git tag mc@<v> + push (--no-tag skips) |
 
 ## How it differs from the canonical-side `/warp:release`
 
-The canonical version (in the WarpOS repo) is the original engine — when you're inside the WarpOS clone editing it directly. This skill is the cross-repo wrapper: same end state, but you stay in the product repo. They don't compete; the canonical version is the deepest layer this skill ultimately reaches.
+The canonical version (in the MC repo) is the original engine — when you're inside the MC clone editing it directly. This skill is the cross-repo wrapper: same end state, but you stay in the product repo. They don't compete; the canonical version is the deepest layer this skill ultimately reaches.
 
 ## Recommended flow
 
@@ -67,7 +67,7 @@ The canonical version (in the WarpOS repo) is the original engine — when you'r
 
 - **Stage 0** can't find canonical → pass `--canonical <path>` explicitly.
 - **Stage 1** finds Class C in promote → resolve TEMPLATE_REVIEW / SECRET_BLOCK in source, `--resume-from 1`.
-- **Stage 7** RED gates → inspect with `node scripts/warpos/release-gates.js` inside canonical, fix, `--resume-from 7`.
+- **Stage 7** RED gates → inspect with `node scripts/mc/release-gates.js` inside canonical, fix, `--resume-from 7`.
 - **Stage 9** push blocked by harness permission gate → first run after a fresh session needs explicit user authorization, then re-run.
 - **Stage 9** non-fast-forward → canonical main has commits this run hasn't seen; reconcile manually.
 
@@ -77,8 +77,8 @@ Stages that mutate state (3-10 in apply mode) write to canonical. Stage 9 pushes
 
 ## See also
 
-- `scripts/warpos/release-canonical.js` — the orchestrator engine
+- `scripts/mc/release-canonical.js` — the orchestrator engine
 - Stage 1 (promote) — RETIRED in SP-20260522-001; stage now no-ops to preserve `--resume-from` numbering. Canonical-only sync; no product→canonical channel.
-- `scripts/warpos/release-build.js` — Stage 6 (canonical-side, invoked via spawnSync)
-- `scripts/warpos/release-gates.js` — Stage 7 (canonical-side)
-- `scripts/warpos/update.js` — the inbound counterpart for product → 0.1.x install
+- `scripts/mc/release-build.js` — Stage 6 (canonical-side, invoked via spawnSync)
+- `scripts/mc/release-gates.js` — Stage 7 (canonical-side)
+- `scripts/mc/update.js` — the inbound counterpart for product → 0.1.x install

@@ -6,7 +6,7 @@ timing: reference
 lead_time: "none"
 ---
 
-# WarpOS Copy Store — voice + high-leverage copy
+# MC Copy Store — voice + high-leverage copy
 
 > This is a **store domain**, not a guide library: a per-product runtime data store that holds the house **voice** and the **high-leverage copy** — the *argument* (not the words), the **hooks**, and the **≤6 Necessary Beliefs** the prospect must hold before buying. It is the persuasion truth the rest of the Growth chain draws on.
 >
@@ -51,4 +51,4 @@ The "Chief" coherence review (the producer's editor-in-chief gate — avatar / p
 
 ---
 
-*A WarpOS `_knowledge/` store domain — framework-generic and canonical (no product content). Populated per product at runtime by `copy-lead`; empty scaffolding in canonical. Contract: `copy-lead.md` + this README (no JSON schema yet).*
+*A MC `_knowledge/` store domain — framework-generic and canonical (no product content). Populated per product at runtime by `copy-lead`; empty scaffolding in canonical. Contract: `copy-lead.md` + this README (no JSON schema yet).*

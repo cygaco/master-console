@@ -46,10 +46,10 @@ Spawn a general-purpose agent (runs commands). Focus: **is everything ready to g
 - **E8 Lint passes** — resolve `manifest.buildCommands.lint` → run. WARN on output.
 - **E9 Kill stale dev servers** — `npx kill-port 3000 2>/dev/null || true` (cleanup; never fails).
 
-### WarpOS wiring
+### MC wiring
 
 - **E10 paths.json present and valid** — parse check; report version
-- **E11 manifest.json present and valid** — parse check; required keys: `project.name`, `warpos.version`, `agents.team.name`
+- **E11 manifest.json present and valid** — parse check; required keys: `project.name`, `mc.version`, `agents.team.name`
 - **E12 store.json present and valid** — if oneshot mode may be used; optional otherwise
 - **E13 All hook scripts exist** — every hook command in `settings.json` resolves to a file in `paths.hooks`
 - **E14 Hook lib present** — `scripts/hooks/lib/paths.js`, `logger.js`, `context-sources.js`, `project-config.js` all present
@@ -82,11 +82,11 @@ Read `manifest.agentProviders` to determine which providers this project uses. F
   - Auth: set `GEMINI_API_KEY` env var OR run `gemini auth login` (OAuth → `~/.gemini/oauth_creds.json`)
 - **E27 Provider config in store** — verify `paths.store.providers` (if present) has matching entries for every provider referenced in `manifest.agentProviders`.
 - **E28 Provider fallback chain** — every non-Claude provider in `manifest.providers` must declare a `fallback`. If any is missing → WARN (loss of fallback safety).
-- **E28.5 Provider tier readiness (report-only)** — run `node scripts/warpos/provider-tier-check.js --json`. This layers a **T1/T2/T3 tier grade** over the health stack (T1 = CLI+auth reachable · T2 = funded/keyed for paid models · T3 = subscription floor met) — **value-free** (reads only key NAMEs, never values) and **report-only**. Surface each provider's `verdict` (`tier_met` / `tier_short` / `unknown-self-attested`) and the `t3_floor` (operator-tunable, default `max_5x`). Severity: **INFO** — never blocks (the check itself exits 0; T3 funding/subscription is undetectable value-free, so an unmet T3 reports `unknown-self-attested`, not an error). To raise a provider's selected tier the operator runs the confirm-class `node scripts/warpos/provider-tier-check.js --set-tier <provider> <t1|t2|t3> --sub <subscription>`. Rationale: S-LC-10 — health checks reachability but not tier; this surfaces whether each provider meets the selected funding/subscription floor without spending a token.
+- **E28.5 Provider tier readiness (report-only)** — run `node scripts/mc/provider-tier-check.js --json`. This layers a **T1/T2/T3 tier grade** over the health stack (T1 = CLI+auth reachable · T2 = funded/keyed for paid models · T3 = subscription floor met) — **value-free** (reads only key NAMEs, never values) and **report-only**. Surface each provider's `verdict` (`tier_met` / `tier_short` / `unknown-self-attested`) and the `t3_floor` (operator-tunable, default `max_5x`). Severity: **INFO** — never blocks (the check itself exits 0; T3 funding/subscription is undetectable value-free, so an unmet T3 reports `unknown-self-attested`, not an error). To raise a provider's selected tier the operator runs the confirm-class `node scripts/mc/provider-tier-check.js --set-tier <provider> <t1|t2|t3> --sub <subscription>`. Rationale: S-LC-10 — health checks reachability but not tier; this surfaces whether each provider meets the selected funding/subscription floor without spending a token.
 
 ### Platform
 
-- **E29 Platform note** — if `process.platform !== 'win32'`, WARN (WarpOS MVP is Windows-only; features may degrade)
+- **E29 Platform note** — if `process.platform !== 'win32'`, WARN (MC MVP is Windows-only; features may degrade)
 - **E30 paths.json directory resolution** — parse `.claude/paths.json`. For each key whose value is a directory path (no `.` extension): verify the directory exists. Flag any missing path as ERROR: "`paths.X` → \"<path>\" does not exist. Either create the dir or remove the key." Severity: ERROR.
 - **E31 Mode-aware team-mode hook deployed** — `scripts/hooks/smart-context.js` (the active UserPromptSubmit hook that emits `TEAM MODE ACTIVE` / `ONESHOT MODE ACTIVE`) MUST branch on `store.heartbeat.agent` or `.claude/runtime/mode.json`, not unconditionally emit `TEAM MODE ACTIVE`. Grep the active hook for `heartbeat.agent` or `mode.json`; if neither reference appears, flag as ERROR: "team-mode hook fires during oneshot — Delta will get directed to consult Beta who is not active." Severity: ERROR.
 - **E32 prompt-validator scopes by subagent_type** — `scripts/hooks/prompt-validator.js` MUST read `event.tool_input.subagent_type` as the primary role signal, with `detectRole(prompt)` only as a fallback. Grep the file for `subagent_type`; if absent or only referenced after `detectRole`, flag as ERROR. Rationale: L3 run-09 — fixer dispatch with a `feature:` prefix got HARD-BLOCKED because validator inferred "builder" role from prompt text. Severity: ERROR.

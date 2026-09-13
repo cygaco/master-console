@@ -6,7 +6,7 @@ timing: reference
 lead_time: "none"
 ---
 
-# WarpOS Design-Principles Guides — agent training references
+# MC Design-Principles Guides — agent training references
 
 > This is the **design-principles guide library**: 19 self-contained, teachable UI/UX & web-conversion guides that **train the AI designer agents** — `design-lead`, `conversion-lead`, the `design-quality` gauntlet, and `visual-review`. Each guide closes with a §6 **agent-applicable RULES** section phrased in the agents' own finding vocabulary, so a guide is something an agent can PASS/FAIL against.
 >
@@ -111,4 +111,4 @@ This library is **agent grounding (`anchor: none`)** — it is not staged into t
 
 ---
 
-*The WarpOS design-principles guide library — reusable, framework-generic design judgment training. Sources are cited per guide for provenance only; principles are self-contained and teachable (no "go use product X"). Last reviewed: June 2026.*
+*The MC design-principles guide library — reusable, framework-generic design judgment training. Sources are cited per guide for provenance only; principles are self-contained and teachable (no "go use product X"). Last reviewed: June 2026.*

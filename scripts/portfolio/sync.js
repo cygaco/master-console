@@ -4,8 +4,8 @@
  * scripts/portfolio/sync.js — /portfolio:sync (T-20260521-175).
  *
  * Portfolio-wide /warp:update. Iterates registry SEQUENTIALLY (Plan Contract
- * non-blocking decision — avoids gh rate-limit risk), runs WarpOS
- * scripts/warpos/update.js inside each registered product's repo_path, and
+ * non-blocking decision — avoids gh rate-limit risk), runs MC
+ * scripts/mc/update.js inside each registered product's repo_path, and
  * emits an aggregate summary at the end.
  *
  * Sources of truth:
@@ -53,15 +53,15 @@ function detectWarposVersion(repoPath) {
   }
 }
 
-// ── runUpdate: spawn scripts/warpos/update.js against one product ──
-function runUpdate(productRepoPath, warposCloneRoot) {
+// ── runUpdate: spawn scripts/mc/update.js against one product ──
+function runUpdate(productRepoPath, mcCloneRoot) {
   return new Promise((resolve) => {
-    const updateScript = path.join(warposCloneRoot, "scripts", "warpos", "update.js");
+    const updateScript = path.join(mcCloneRoot, "scripts", "mc", "update.js");
     if (!fs.existsSync(updateScript)) {
       return resolve({
         ok: false,
         status: "update-script-missing",
-        stderr: "scripts/warpos/update.js not found at " + updateScript,
+        stderr: "scripts/mc/update.js not found at " + updateScript,
       });
     }
     let child;
@@ -109,7 +109,7 @@ function runUpdate(productRepoPath, warposCloneRoot) {
 }
 
 function locateWarposCloneRoot() {
-  // sync.js lives at scripts/portfolio/sync.js inside the WarpOS canonical
+  // sync.js lives at scripts/portfolio/sync.js inside the MC canonical
   // clone. Two levels up is the clone root.
   return path.resolve(__dirname, "..", "..");
 }
@@ -144,7 +144,7 @@ async function syncRegistry(opts) {
 
   emitTrace({ type: "portfolio_sync", phase: "start", product_count: products.length });
 
-  const warposCloneRoot = locateWarposCloneRoot();
+  const mcCloneRoot = locateWarposCloneRoot();
   const results = [];
 
   // SEQUENTIAL — avoids gh rate-limit risk per Plan Contract decision.
@@ -199,7 +199,7 @@ async function syncRegistry(opts) {
 
     let updateR;
     try {
-      updateR = await runUpdate(product.repo_path, warposCloneRoot);
+      updateR = await runUpdate(product.repo_path, mcCloneRoot);
     } catch (err) {
       // No-fail-fast: catch ANY error so siblings are still attempted.
       updateR = { ok: false, status: "internal-error", stderr: err.message };
@@ -214,7 +214,7 @@ async function syncRegistry(opts) {
     };
     // C-13 per-product line completion.
     stdout.write(
-      `${updateR.ok ? "ok" : "FAILED (" + updateR.status + ")"} (warpos ${fromVersion} → ${toVersion})\n`,
+      `${updateR.ok ? "ok" : "FAILED (" + updateR.status + ")"} (mc ${fromVersion} → ${toVersion})\n`,
     );
     if (!updateR.ok && updateR.stderr) {
       // Print stderr indented so operator can diagnose without re-running.

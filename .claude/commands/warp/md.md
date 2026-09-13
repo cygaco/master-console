@@ -10,7 +10,7 @@ needs every session, while leaving **every framework section untouched**. The
 project facts live in a single marker-delimited block; re-running this skill
 replaces only that block.
 
-WarpOS ships a generic `CLAUDE.md` (Identity, Reasoning, Operational Loop,
+MC ships a generic `CLAUDE.md` (Identity, Reasoning, Operational Loop,
 Skill Use, Autonomy, Paths, Memory, hygiene). A consumer product needs its own
 one-liner, stack, commands, and conventions surfaced in always-loaded
 instructions — but must not fork or drift the framework sections. This skill is
@@ -61,7 +61,7 @@ the safe, idempotent way to keep that project block honest.
 
 1. **Locate `CLAUDE.md` + detect layer.** Read the root `CLAUDE.md`. Detect
    whether this repo is a **product** (has product source / `PROJECT.md` / app
-   subdir) or **framework/tooling** (canonical WarpOS — has `_warpos/`,
+   subdir) or **framework/tooling** (canonical MC — has `_mc/`,
    `framework/`). The project block describes the product; for canonical, the
    block is minimal (point at AGENTS.md / ROADMAP.md).
 2. **Gather facts** from the priority-ordered sources above. Verify every

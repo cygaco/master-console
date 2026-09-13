@@ -228,7 +228,7 @@ function cmdStart(argv) {
   ensureDir(path.dirname(rp));
   const now = nowIso();
   const ralph = {
-    schema: "warpos/sprint/ralph-progress/v1",
+    schema: "mc/sprint/ralph-progress/v1",
     sprint: current.id,
     ticket: f.ticket,
     current_loop: 1,

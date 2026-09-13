@@ -18,7 +18,7 @@ const os = require("os");
 const path = require("path");
 const { PassThrough } = require("stream");
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "warpos-sync-smoke-"));
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "mc-sync-smoke-"));
 const TMP_REG = path.join(TMP_DIR, "portfolio.json");
 const REAL_REPO = path.join(TMP_DIR, "real-product");
 fs.mkdirSync(REAL_REPO, { recursive: true });
@@ -57,7 +57,7 @@ function assertContains(name, got, sub) {
 (async () => {
   // 1. Empty registry
   console.log("--- Test 1: empty registry ---");
-  reg.save({ schema: "warpos/portfolio-registry/v1", products: {} });
+  reg.save({ schema: "mc/portfolio-registry/v1", products: {} });
   {
     const b = makeBuffers();
     const r = await syncRegistry({ stdout: b.ostream, stderr: b.estream });
@@ -70,7 +70,7 @@ function assertContains(name, got, sub) {
   console.log("\n--- Test 2: two products dry-run (real + missing) ---");
   const nowIso = new Date().toISOString();
   reg.save({
-    schema: "warpos/portfolio-registry/v1",
+    schema: "mc/portfolio-registry/v1",
     products: {
       real: {
         slug: "real",
@@ -130,7 +130,7 @@ function assertContains(name, got, sub) {
   const REAL_2 = path.join(TMP_DIR, "real-2");
   fs.mkdirSync(REAL_2, { recursive: true });
   reg.save({
-    schema: "warpos/portfolio-registry/v1",
+    schema: "mc/portfolio-registry/v1",
     products: {
       a: { slug: "a", repo_path: REAL_REPO, role: "product", last_synced: nowIso },
       b: { slug: "b", repo_path: path.join(TMP_DIR, "gone"), role: "product", last_synced: nowIso },

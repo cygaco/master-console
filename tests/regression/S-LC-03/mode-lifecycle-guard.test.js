@@ -79,7 +79,7 @@ function baseOpts(extra) {
       projectDir: tmpDir,
       cwd: tmpDir,
       env: {}, // empty env => no kill-switch
-      slug: "warpos",
+      slug: "mc",
       prevMode: "adhoc",
       sessionId: "sess-test-1",
       activeTeam: null, // injected => no live ~/.claude/teams read
@@ -94,14 +94,14 @@ installSink();
 // Ensure the bootstrap "no manifest" allow-list never fires in the emit tests:
 // create a manifest stub in the temp projectDir.
 fs.mkdirSync(path.join(tmpDir, ".claude"), { recursive: true });
-fs.writeFileSync(path.join(tmpDir, ".claude", "manifest.json"), JSON.stringify({ project: { slug: "warpos" } }));
+fs.writeFileSync(path.join(tmpDir, ".claude", "manifest.json"), JSON.stringify({ project: { slug: "mc" } }));
 
 // ── 1a. /mode:sprint emits BOTH events in order, labels-only ─────────────────
 ok("mode-sprint-emits-requested-then-preflight", () => {
   truncateSink();
   const cap = capture();
   const event = { tool_name: "SlashCommand", tool_input: { command: "/mode:sprint" } };
-  const res = guard.run(event, baseOpts({ stdout: cap.fn, emit: lifecycle.emit, activeTeam: "warpos-adhoc" }));
+  const res = guard.run(event, baseOpts({ stdout: cap.fn, emit: lifecycle.emit, activeTeam: "mc-adhoc" }));
 
   assert.strictEqual(res.action, "emitted", "a /mode:* call is acted on");
   assert.strictEqual(res.decision, null, "REPORT-ONLY: decision is null");
@@ -116,14 +116,14 @@ ok("mode-sprint-emits-requested-then-preflight", () => {
   const r = recs[0].data.payload;
   assert.strictEqual(r.prev_mode, "adhoc");
   assert.strictEqual(r.target_mode, "sprint");
-  assert.strictEqual(r.project_slug, "warpos");
+  assert.strictEqual(r.project_slug, "mc");
   assert.ok(r.correlation_id, "carries a correlation id");
 
   // preflight payload — team detection + shared correlation id + dry_run backstop
   const p = recs[1].data.payload;
   assert.strictEqual(p.target_mode, "sprint");
-  assert.strictEqual(p.existing_team_id, "warpos-adhoc", "active team detected");
-  assert.strictEqual(p.required_team_id, "warpos-sprint", "target team derived from slug+mode");
+  assert.strictEqual(p.existing_team_id, "mc-adhoc", "active team detected");
+  assert.strictEqual(p.required_team_id, "mc-sprint", "target team derived from slug+mode");
   assert.strictEqual(p.dry_run, true, "backstop preflight is a dry_run this sprint");
   assert.strictEqual(p.correlation_id, r.correlation_id, "requested+preflight share one correlation id");
   assert.ok(["on", "off", "scoped"].includes(p.turbo_perms_state), "turbo is a status label");
@@ -230,8 +230,8 @@ ok("fail-open-malformed-team-config", () => {
   // Build a fake ~/.claude/teams with one malformed config + one valid-but-other-project.
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "lc-guard-home-"));
   const teamsRoot = path.join(fakeHome, ".claude", "teams");
-  fs.mkdirSync(path.join(teamsRoot, "warpos-sprint"), { recursive: true });
-  fs.writeFileSync(path.join(teamsRoot, "warpos-sprint", "config.json"), "{ broken json ]]]");
+  fs.mkdirSync(path.join(teamsRoot, "mc-sprint"), { recursive: true });
+  fs.writeFileSync(path.join(teamsRoot, "mc-sprint", "config.json"), "{ broken json ]]]");
   fs.mkdirSync(path.join(teamsRoot, "other-proj-sprint"), { recursive: true });
   fs.writeFileSync(
     path.join(teamsRoot, "other-proj-sprint", "config.json"),
@@ -241,7 +241,7 @@ ok("fail-open-malformed-team-config", () => {
   let threw = false;
   let teamId;
   try {
-    teamId = guard.findActiveTeamForProject("warpos", "C:/Users/x/WarpOS", fakeHome);
+    teamId = guard.findActiveTeamForProject("mc", "C:/Users/x/MC", fakeHome);
   } catch {
     threw = true;
   }
@@ -251,7 +251,7 @@ ok("fail-open-malformed-team-config", () => {
   // And the full guard run survives a malformed team-config (live read path).
   const res = guard.run(
     { tool_name: "SlashCommand", tool_input: { command: "/mode:sprint" } },
-    baseOpts({ emit: () => false, activeTeam: undefined, homeDir: fakeHome, slug: "warpos" }),
+    baseOpts({ emit: () => false, activeTeam: undefined, homeDir: fakeHome, slug: "mc" }),
   );
   assert.strictEqual(res.decision, null, "guard never blocks on a malformed team-config");
 });

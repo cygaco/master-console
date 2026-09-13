@@ -13,7 +13,7 @@ const {
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
 const eventsTemplate = fs.readFileSync(
-  path.join(REPO_ROOT, "_warpos/templates/app-scaffold/src/lib/telemetry/events.ts.tmpl"),
+  path.join(REPO_ROOT, "_mc/templates/app-scaffold/src/lib/telemetry/events.ts.tmpl"),
   "utf8",
 );
 

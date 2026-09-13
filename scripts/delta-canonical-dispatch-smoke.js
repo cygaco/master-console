@@ -165,7 +165,7 @@ function loadManifest() {
     log(
       RED,
       `[smoke] cannot read .claude/manifest.json: ${e.message}\n` +
-        `        fix: check permissions or restore from .claude/.warpos-backup/`,
+        `        fix: check permissions or restore from .claude/.mc-backup/`,
     );
     process.exit(1);
   }

@@ -159,7 +159,7 @@ function main() {
   ok("B5: malformed active-sprints.yaml ('sprints: [' unterminated) degrades In flight, rest render", () => {
     const dir = makeFixtureRoot();
     const f = path.join(dir, REL.sprints);
-    fs.writeFileSync(f, "schema: warpos/sprint/active-sprints/v1\nprimary: SP-X\nsprints: [\n");
+    fs.writeFileSync(f, "schema: mc/sprint/active-sprints/v1\nprimary: SP-X\nsprints: [\n");
     const board = renderBoard(dir);
     // Direct parse probe too (sandbox-safe, no spawn): the parse must report error.
     const parsed = roadmap.parseActiveSprints(dir);
@@ -173,7 +173,7 @@ function main() {
     const f = path.join(dir, REL.sprints);
     // An unterminated double-quoted scalar — the canonical 'primary: [unterminated'
     // corruption shape. (We use a quote so the assertion is unambiguous.)
-    fs.writeFileSync(f, 'schema: warpos/sprint/active-sprints/v1\nprimary: "unterminated\nsprints:\n');
+    fs.writeFileSync(f, 'schema: mc/sprint/active-sprints/v1\nprimary: "unterminated\nsprints:\n');
     const parsed = roadmap.parseActiveSprints(dir);
     assert.ok(parsed.error, "unterminated quoted scalar must be flagged, not silently accepted");
     assertHealthyExcept(renderBoard(dir), "In flight");
@@ -259,7 +259,7 @@ function main() {
     const dir = makeFixtureRoot();
     // Synthesize a queue: 1 active + many stale planning, with a primary.
     const rows = [];
-    rows.push("schema: warpos/sprint/active-sprints/v1");
+    rows.push("schema: mc/sprint/active-sprints/v1");
     rows.push("primary: SP-ACTIVE-1");
     rows.push("sprints:");
     rows.push("  - id: SP-ACTIVE-1");

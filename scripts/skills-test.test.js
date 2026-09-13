@@ -50,7 +50,7 @@ process.on("exit", () => {
 function writeFixtureRegistry() {
   const regPath = path.join(scratch, `skill-weight-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
   const reg = {
-    schema: "warpos/skill-weight/v1",
+    schema: "mc/skill-weight/v1",
     classification: "fixture",
     candidates: {
       "fixture:subprocess-ok": { weight: "heavy", execution: "subprocess", source: "fixture", subprocess_verified: false },

@@ -11,7 +11,7 @@ function ok(n, fn) { try { fn(); p++; console.log("  ok  " + n); } catch (e) { f
 
 ok("rows-are-name-opener-description-run_context-no-mandatory-route", () => {
   const reg = JSON.parse(fs.readFileSync(path.join(ROOT, "framework", "panel-registry.json"), "utf8"));
-  assert.strictEqual(reg.$schema, "warpos/panel-registry/v1");
+  assert.strictEqual(reg.$schema, "mc/panel-registry/v1");
   const RC = new Set(["in_app", "cli"]);
   const rows = Object.entries(reg.panels || {});
   assert.ok(rows.length >= 4, "at least the 4 seed panels");

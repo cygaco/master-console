@@ -3,7 +3,7 @@
 
 /**
  * resonance-runner (S2.2 Marketing — the named UNDER-BUILD fix) — the runnable
- * enforcer for the resonance / conversion-quality eval. WarpOS checks correctness
+ * enforcer for the resonance / conversion-quality eval. MC checks correctness
  * but NOT message clarity · proof strength · audience specificity · visual hierarchy
  * · objection handling · conversion hypothesis — so it ships *valid artifacts that
  * still feel generic* (FINAL-PLAN §10d). This runner scores a target artifact

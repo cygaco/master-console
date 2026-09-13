@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bump-model — rewrite a Claude model IDENTIFIER across a WarpOS project safely.
+ * bump-model — rewrite a Claude model IDENTIFIER across a MC project safely.
  *
  * The dispatch model id (e.g. `claude-opus-4-7`) is the per-project source of
  * truth in catalog.js, but it's duplicated into agent frontmatter, routing
@@ -57,7 +57,7 @@ function labelOf(id) {
 }
 
 // ── Path filter ──────────────────────────────────────────────────────
-const DENY_DIRS = new Set([".git", "node_modules", ".warpos", "backups"]);
+const DENY_DIRS = new Set([".git", "node_modules", ".mc", "backups"]);
 const TEXT_EXT = new Set([".js", ".mjs", ".cjs", ".ts", ".json", ".md", ".yaml", ".yml", ".txt"]);
 
 function isDenied(relPath) {

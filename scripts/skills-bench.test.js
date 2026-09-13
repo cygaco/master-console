@@ -52,7 +52,7 @@ process.on("exit", () => {
 function writeFixtureRegistry() {
   const regPath = path.join(scratch, `skill-weight-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
   const reg = {
-    schema: "warpos/skill-weight/v1",
+    schema: "mc/skill-weight/v1",
     classification: "fixture",
     candidates: {
       "fixture:both-pass": { weight: "heavy", execution: "subprocess", source: "fixture", subprocess_verified: false },
@@ -72,7 +72,7 @@ const THRESHOLDS = { min_tokens_saved: 4000, min_pct_saved: 0.6, quality_toleran
 
 function heavyBenchset(skill) {
   return {
-    schema: "warpos/skill-dispatch/bench-result/v1",
+    schema: "mc/skill-dispatch/bench-result/v1",
     skill,
     thresholds: THRESHOLDS,
     measurements: [
@@ -85,7 +85,7 @@ function heavyBenchset(skill) {
 
 function lightBenchset(skill) {
   return {
-    schema: "warpos/skill-dispatch/bench-result/v1",
+    schema: "mc/skill-dispatch/bench-result/v1",
     skill,
     thresholds: THRESHOLDS,
     // envelope ≈ inline → net per task ≈ inline − (envelope + ~1000 overhead) ≈ negative.
@@ -211,7 +211,7 @@ h.violation("a registry-inline skill cannot be finalized subprocess (fail-closed
   fs.writeFileSync(
     regPath,
     JSON.stringify({
-      schema: "warpos/skill-weight/v1",
+      schema: "mc/skill-weight/v1",
       candidates: { "fixture:is-inline": { weight: "light", execution: "inline", subprocess_verified: false } },
     }) + "\n",
     "utf8",

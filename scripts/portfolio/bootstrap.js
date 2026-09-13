@@ -70,7 +70,7 @@ function resolveProjectRoot() {
 // ── Constants ────────────────────────────────────────────────────
 const TEMPLATE_DIR = path.join(
   PROJECT,
-  "_warpos",
+  "_mc",
   "templates",
   "product-bootstrap",
 );
@@ -184,7 +184,7 @@ function validateSlug(slug, raw) {
       `Slug \`${raw ?? slug}\` is not valid.`,
       "Slugs must start with a lowercase letter or digit, contain only",
       "lowercase letters, digits, and hyphens, and be 1-64 characters.",
-      `Examples: agentic-web, tax-cpa-agent, warpos-core.`,
+      `Examples: agentic-web, tax-cpa-agent, mc-core.`,
       `Suggested: \`${suggestion}\``,
     ].join("\n");
     process.stderr.write(msg + "\n");

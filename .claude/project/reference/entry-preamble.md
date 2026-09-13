@@ -13,8 +13,8 @@
 > atomic source+projection commits) is the deferred end-state; until it lands, this file plus the
 > parity enforcer ARE the single-source guarantee.
 
-<!-- WARPOS:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
-**What this repo is.** WarpOS is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
+<!-- MC:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
+**What this repo is.** MC is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
 
 **Read order — once, then act.**
 1. `DUMP.md` (repo root, local) — the session handoff: next action, in-flight state, verbatim payloads. Read once, then execute.
@@ -26,4 +26,4 @@
 **Guards, gates, and output destinations.** The repo's guarantees are enforced: the `refs/heads/main` reference-transaction fence (every write to main goes through the broker), `/scan:full`, and the release gates. Every policy names an enforcer or logs the debt. Write per-run output under `runtime/`, never a manifest-tracked project dir. Orchestrators hold envelopes, not content — heavy work goes to a subprocess that writes its full output to a file and returns a short envelope. Regenerate both manifests after editing any hash-tracked file.
 
 **For identity, authority, and the complete rules, read `CLAUDE.md`.**
-<!-- WARPOS:ENTERING-AGENT-PREAMBLE:END -->
+<!-- MC:ENTERING-AGENT-PREAMBLE:END -->

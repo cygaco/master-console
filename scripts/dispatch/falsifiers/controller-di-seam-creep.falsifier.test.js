@@ -87,7 +87,7 @@ test("S2(ii) controller-di-seam-creep — sanitizeOpts DROPS every non-allowlist
 
   const hostile = { gitRoot: "/g", bundleRoot: "/b", nope: 1 };
   for (const seam of FORBIDDEN_SEAMS) hostile[seam] = () => ({ ok: true });
-  hostile[Symbol.for("warpos.test.seams")] = { hookLivenessCheck: () => ({ ok: true }) };
+  hostile[Symbol.for("mc.test.seams")] = { hookLivenessCheck: () => ({ ok: true }) };
 
   const clean = ctl.sanitizeOpts(hostile);
   assert.deepStrictEqual(Object.keys(clean).sort(), ["bundleRoot", "gitRoot"]);

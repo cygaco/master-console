@@ -1,7 +1,7 @@
 {
   "_comment": "Scans intentionally NOT delegated by /scan:full. key = scan name, value = reason. Enforced by scripts/checks/scan-coverage.js. Keep this SMALL — prefer ADDING a scan to /scan:full over excluding it. An exclusion is a claim that the scan has no go/no-go health signal for a full-system pass.",
   "exclusions": {
-    "warpos-layer-diff": "Read-only informational layer diff (exit 0 always, never a gate). It has no pass/fail health signal, so it is not a go/no-go input to /scan:full — run it directly when you want the product-vs-dev-tooling split. Sibling gate scan:warpos-ship-coverage IS in /scan:full.",
+    "mc-layer-diff": "Read-only informational layer diff (exit 0 always, never a gate). It has no pass/fail health signal, so it is not a go/no-go input to /scan:full — run it directly when you want the product-vs-dev-tooling split. Sibling gate scan:mc-ship-coverage IS in /scan:full.",
     "turbo-spend": "Report-only spend telemetry for a turbo session; the scan body explicitly says it is intentionally separate from /scan:full, so it is run directly when spend diagnostics are needed rather than used as a go/no-go health input."
   }
 }

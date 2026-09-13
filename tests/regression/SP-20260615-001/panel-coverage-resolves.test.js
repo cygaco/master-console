@@ -67,7 +67,7 @@ function writeFixture(name, obj) {
 ok("REAL registry — all 4 seed rows resolve → exit 0", () => {
   // Sanity: the real registry exists and carries the four known panels.
   const real = JSON.parse(fs.readFileSync(REAL_REGISTRY, "utf8"));
-  assert.strictEqual(real.$schema, "warpos/panel-registry/v1", "real registry $schema");
+  assert.strictEqual(real.$schema, "mc/panel-registry/v1", "real registry $schema");
   for (const p of ["readiness", "models", "admin", "roadmap"]) {
     assert(real.panels[p], `real registry missing the '${p}' seed row`);
   }
@@ -79,7 +79,7 @@ ok("REAL registry — all 4 seed rows resolve → exit 0", () => {
 
 ok("ORPHAN opener (node scripts/nonexistent.js) → finding, exit 1", () => {
   const fixture = writeFixture("orphan.json", {
-    $schema: "warpos/panel-registry/v1",
+    $schema: "mc/panel-registry/v1",
     panels: {
       ghost: { name: "ghost", opener: "node scripts/nonexistent.js", description: "phantom target", run_context: "cli" },
     },
@@ -95,7 +95,7 @@ ok("ORPHAN opener (node scripts/nonexistent.js) → finding, exit 1", () => {
 
 ok("UNSAFE opener (node x.js && calc) → finding, exit 1", () => {
   const fixture = writeFixture("unsafe.json", {
-    $schema: "warpos/panel-registry/v1",
+    $schema: "mc/panel-registry/v1",
     panels: {
       evil: { name: "evil", opener: "node x.js && calc", description: "injection attempt", run_context: "cli" },
     },
@@ -115,7 +115,7 @@ ok("UNSAFE opener (node x.js && calc) → finding, exit 1", () => {
 ok("B2 — orphan script inside an EXISTING lane dir → orphan_opener finding (NOT skipped)", () => {
   const { findings, skipped } = evaluate({
     registry: {
-      $schema: "warpos/panel-registry/v1",
+      $schema: "mc/panel-registry/v1",
       panels: { roadmap: { name: "roadmap", opener: "node scripts/panel/ghost.js", description: "d", run_context: "cli" } },
     },
     resolve: () => ({ found: true }),
@@ -132,7 +132,7 @@ ok("B2 — orphan script inside an EXISTING lane dir → orphan_opener finding (
 ok("B2 — absent script AND absent lane dir → SKIP (genuine pre-integration case stays tolerant)", () => {
   const { findings, skipped } = evaluate({
     registry: {
-      $schema: "warpos/panel-registry/v1",
+      $schema: "mc/panel-registry/v1",
       panels: { roadmap: { name: "roadmap", opener: "node scripts/panel/ghost.js", description: "d", run_context: "cli" } },
     },
     resolve: () => ({ found: true }),
@@ -147,7 +147,7 @@ ok("B2 — absent script AND absent lane dir → SKIP (genuine pre-integration c
 ok("B3 — a row with an extra `route` key → extra_row_keys finding (exact shape)", () => {
   const { findings } = evaluate({
     registry: {
-      $schema: "warpos/panel-registry/v1",
+      $schema: "mc/panel-registry/v1",
       panels: { admin: { name: "admin", opener: "/cockpit:readiness", description: "d", run_context: "cli", route: "/admin" } },
     },
     resolve: () => ({ found: true }),

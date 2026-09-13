@@ -39,7 +39,7 @@ const path = require("path");
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const GUIDES_DIR = path.join(REPO_ROOT, "_guides");
 const REGISTRY_FILE = path.join(GUIDES_DIR, "registry.json");
-const REGISTRY_SCHEMA = "warpos/guides/registry/v1";
+const REGISTRY_SCHEMA = "mc/guides/registry/v1";
 
 const VALID_SHAPES = ["walkthrough", "checklist", "notice"];
 const VALID_TIMINGS = ["project-start", "at-module", "at-gate", "reference"];

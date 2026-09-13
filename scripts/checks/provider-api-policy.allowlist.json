@@ -22,8 +22,8 @@
       "reason": "The CLI-vs-API policy doc ITSELF — it states the API whitelist (names the literals to document the rule, does not dispatch)."
     },
     {
-      "path": "WARPOS.md",
-      "reason": "WarpOS gap-register — a curl verify-hint for the deep-research Phase-0 readiness check (documents the host literal, does not dispatch)."
+      "path": "MC.md",
+      "reason": "MC gap-register — a curl verify-hint for the deep-research Phase-0 readiness check (documents the host literal, does not dispatch)."
     },
     {
       "path": "scripts/checks/provider-api-policy.js",

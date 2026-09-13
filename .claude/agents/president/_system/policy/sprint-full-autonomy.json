@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/sprint-full-autonomy/v1",
+  "$schema": "mc/sprint-full-autonomy/v1",
   "version": 1,
   "comment": "Default autonomy presets for /sprint:full. Approved by operator on 2026-05-18 via AP-20260518-017..020. hard_ceilings[] is informational — scripts/sprint/full.js hardcodes the authoritative enum and rejects any preset bundle that tries to include production_release_approval or paid_service_approval in pre_authorized_approval_levels[]. Operators MAY edit this file to add custom presets, but the hardcoded enum guards the floor.",
   "presets": {

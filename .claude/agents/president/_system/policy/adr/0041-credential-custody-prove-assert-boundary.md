@@ -39,8 +39,8 @@ labeled so it is never consumed as a proof. That boundary currently lives only i
 things make prose an inadequate home, and they are the ADR-0040 argument in a second instance:
 
 1. **The control ships to a different repository.** It is a product-layer control that must run on the user's
-   machine, inside the sibling `vlad` product repo (registered in the HOME-anchored portfolio registry, `~/.warpos/portfolio.json`) — a repo that will
-   never contain WarpOS's sprint trackers. A boundary defined only in `trackers/sprints/` does not resolve
+   machine, inside the sibling `vlad` product repo (registered in the HOME-anchored portfolio registry, `~/.mc/portfolio.json`) — a repo that will
+   never contain MC's sprint trackers. A boundary defined only in `trackers/sprints/` does not resolve
    where the control runs.
 2. **Its two strongest citations are machine-local.** β's verdict is canonical at `paths.betaEvents` line 293,
    which is gitignored (ADR-0026's class); the enforcement ledger at `paths.enforcementDebt` is likewise
@@ -118,7 +118,7 @@ it is deny-by-default (an allowlist excludes everything not named), immune to se
 pattern-match checks (P1/P3) must enumerate classes — the discriminator that predicts the next occurrence.
 
 **Firing point (β A5, binding).** The leak would happen on the user's machine, so P1–P4 are **product-layer
-controls that ship with the product and run in the user's install.** An enforcer that runs only in WarpOS CI
+controls that ship with the product and run in the user's install.** An enforcer that runs only in MC CI
 proves something about our source and nothing about their runtime, and does not satisfy the DoD item. If any
 part can only run in our CI, the design must say **which** part and record the gap explicitly.
 
@@ -171,7 +171,7 @@ planned identity and marked OWED. The names are carried here rather than only as
 | P2 | `scripts/checks/spawn-env-allowlist.js` — two assertions: every audited spawn passes an explicit allowlist env; any raw `spawn`/`exec`/`fork` outside the wrapper is a REFUSAL, not a warning | **OWED** — ED-340 |
 | P3 | `test/credential-custody-decoy.test.js` — runtime decoy fixture per secret class P1 covers + a mutant run that must go RED with the scrub removed | **OWED** — ED-340 |
 | P4 | `scripts/checks/no-secret-on-outbound.js` — walk of outbound-request call sites; the SDK auth call is the sole permitted carrier of the held secret; non-zero exit on any other; own mutant: a planted non-auth outbound call carrying a decoy secret must go RED | **OWED** — ED-340 |
-| Firing point (A5) | The four above wired into the product's own ship-time check run, not only WarpOS CI; the wiring itself asserted by a presence check in the product's release gate | **OWED** — ED-340 |
+| Firing point (A5) | The four above wired into the product's own ship-time check run, not only MC CI; the wiring itself asserted by a presence check in the product's release gate | **OWED** — ED-340 |
 | Labeling rule (1–3) | A receipt/README claim lint over the shipped copy: any custody claim string must map to a P-clause id | **OWED** — ED-340 |
 | A1–A4 | **No enforcer exists or can exist in-repo for A1/A2** (that is the finding, not a gap to close). Enforced instead as a *presence* obligation: the four ceilings must appear verbatim in the shipped custody statement, checked by the same claim lint | **OWED** — ED-340 |
 
@@ -189,7 +189,7 @@ count reference that silently excludes a new clause is exactly the half-applied-
 
 ## Scope
 
-Binding on the Vlad product's model-access seam under **either** seam, and on any future WarpOS-family product
+Binding on the Vlad product's model-access seam under **either** seam, and on any future MC-family product
 that holds a user's credential. It governs the prove/assert boundary and the labeling rule **only** — the
 sprint's other design surfaces (the four-core MCP tool set, the quota detector's three buckets, the honest-
 degradation language) are the sprint's, per β's explicitly narrow OPEN_ADR. The full obligation text remains
@@ -210,7 +210,7 @@ boundary and the rule.
 - **A user-facing claim exceeding P1–P4 is a defect of this ADR's class**, regardless of how confident the
   claim's author is — including a claim about A1 (dependencies), which is the one most likely to be written
   optimistically because it feels like hygiene.
-- **An enforcer that runs only in WarpOS CI does not satisfy the DoD item**, and a design that ships one is
+- **An enforcer that runs only in MC CI does not satisfy the DoD item**, and a design that ships one is
   incomplete rather than partially credited.
 - **A1 and A2 will not be closed by future effort.** A later change claiming to have closed either in-repo
   should be read as suspect by construction and re-derived against the destination-enumerability rule before

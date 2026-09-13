@@ -1,10 +1,10 @@
 ---
-description: List all registered portfolio products — slug, path, WarpOS version, last commit, dirty count, current sprint.
+description: List all registered portfolio products — slug, path, MC version, last commit, dirty count, current sprint.
 ---
 
 # /portfolio:list — List Portfolio Products
 
-`/portfolio:list` — Print a summary table of every product registered in `~/.warpos/portfolio.json`.
+`/portfolio:list` — Print a summary table of every product registered in `~/.mc/portfolio.json`.
 
 ## Input
 

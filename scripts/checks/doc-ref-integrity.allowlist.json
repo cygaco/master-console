@@ -1,16 +1,16 @@
 {
-  "_comment": "S-13b doc-ref-integrity allowlist. A canon doc may legitimately cite a path absent on disk: runtime-generated artifacts, frozen/per-version capsules, removed-by-design dead-tree paths (the live-CODE layer is guarded by cutover-completeness.js), planned/aspirational scripts named in ROADMAP/WARPOS, historical change-log/ADR descriptions, or per-domain-generated scaffolds. List target PREFIXES (startsWith, forward slashes) and exact LITERALS. Per-line `<!-- doc-ref-ignore -->` in the doc is the inline escape hatch for self-documenting/anti-example lines. Keep this honest — every entry must read as 'this path is SUPPOSED to be absent', not 'I don't want to fix it'. Prefer fixing a genuine navigational stale ref over allowlisting it.",
+  "_comment": "S-13b doc-ref-integrity allowlist. A canon doc may legitimately cite a path absent on disk: runtime-generated artifacts, frozen/per-version capsules, removed-by-design dead-tree paths (the live-CODE layer is guarded by cutover-completeness.js), planned/aspirational scripts named in ROADMAP/MC, historical change-log/ADR descriptions, or per-domain-generated scaffolds. List target PREFIXES (startsWith, forward slashes) and exact LITERALS. Per-line `<!-- doc-ref-ignore -->` in the doc is the inline escape hatch for self-documenting/anti-example lines. Keep this honest — every entry must read as 'this path is SUPPOSED to be absent', not 'I don't want to fix it'. Prefer fixing a genuine navigational stale ref over allowlisting it.",
 
-  "_note_framework_templates_rename": "The three `framework/templates/...` literals at the tail of `literals` (DATA_AND_ACCOUNTS.md.tmpl, app-scaffold/.env.local.example.tmpl, app-scaffold/FOUNDERS_CHECKLIST.md.tmpl) are PRE-EXISTING historical change-log/tracker references to the pre-rename `framework/templates/` prefix, which was renamed to `_warpos/templates/` (ownership-manifest work, SP-20260522-001; ED-008). Those are immutable historical records — rewriting them would falsify the change-log — so they are allowlisted as legitimately-absent under the '_comment' historical-change-log category, NOT as unfixed navigational staleness. Added during SP-20260716-003 (composer) only because they blocked merge-guard for an unrelated commit; they pre-date this sprint. Debt-ref: the real fix is discharged when the framework/templates→_warpos/templates migration debt closes; drop these entries then.",
+  "_note_framework_templates_rename": "The three `framework/templates/...` literals at the tail of `literals` (DATA_AND_ACCOUNTS.md.tmpl, app-scaffold/.env.local.example.tmpl, app-scaffold/FOUNDERS_CHECKLIST.md.tmpl) are PRE-EXISTING historical change-log/tracker references to the pre-rename `framework/templates/` prefix, which was renamed to `_mc/templates/` (ownership-manifest work, SP-20260522-001; ED-008). Those are immutable historical records — rewriting them would falsify the change-log — so they are allowlisted as legitimately-absent under the '_comment' historical-change-log category, NOT as unfixed navigational staleness. Added during SP-20260716-003 (composer) only because they blocked merge-guard for an unrelated commit; they pre-date this sprint. Debt-ref: the real fix is discharged when the framework/templates→_mc/templates migration debt closes; drop these entries then.",
 
-  "_note_gitignored_by_design": "The entries tagged here — pathPrefixes `.claude/agents/president/_system/beta/mined/` (raw /beta:mine output, .gitignore) and `_planning/ingest/` (private planning material removed from the index in S-OS-02, .gitignore), plus the literal `.claude/settings.local.json` (the operator's per-machine settings layer; untracked since S-OS-02, compiled INTO .claude/settings.json by scripts/warpos/settings/compile.js) — are per-machine files that a FRESH CLONE (the CI runner, a new worktree) never has. The citing docs are correct (several even say 'gitignored' inline); the targets are SUPPOSED to be absent on a clean tree, the same category as the `.claude/project/memory/` prefix above them. Added 2026-09-12 when `npm test` on the Linux CI runner surfaced 13 broken refs that resolve only on the operator's machine. Enforcer for the class: the PER-MACHINE test in doc-ref-integrity.test.js asserts these targets are allowed-absent under this shipped allowlist regardless of machine state.",
+  "_note_gitignored_by_design": "The entries tagged here — pathPrefixes `.claude/agents/president/_system/beta/mined/` (raw /beta:mine output, .gitignore) and `_planning/ingest/` (private planning material removed from the index in S-OS-02, .gitignore), plus the literal `.claude/settings.local.json` (the operator's per-machine settings layer; untracked since S-OS-02, compiled INTO .claude/settings.json by scripts/mc/settings/compile.js) — are per-machine files that a FRESH CLONE (the CI runner, a new worktree) never has. The citing docs are correct (several even say 'gitignored' inline); the targets are SUPPOSED to be absent on a clean tree, the same category as the `.claude/project/memory/` prefix above them. Added 2026-09-12 when `npm test` on the Linux CI runner surfaced 13 broken refs that resolve only on the operator's machine. Enforcer for the class: the PER-MACHINE test in doc-ref-integrity.test.js asserts these targets are allowed-absent under this shipped allowlist regardless of machine state.",
 
   "pathPrefixes": [
     "runtime/",
     "framework/releases/",
     ".claude/agents/president/_system/beta/mined/",
     "_planning/ingest/",
-    "_warpos/releases/",
+    "_mc/releases/",
     ".claude/runtime/",
     ".claude/worktrees/",
     ".claude/eval/",
@@ -47,11 +47,11 @@
     ".claude/reference/architecture-map.md",
     ".claude/project/reference/agent-dispatch-guide.md",
     ".claude/agents/builder.md",
-    "_warpos/templates/app-scaffold/DESIGN_SYSTEM.md",
+    "_mc/templates/app-scaffold/DESIGN_SYSTEM.md",
     "trackers/sprints/T1..T6",
-    "scripts/warpos/promote.js",
-    "scripts/warpos/migrate-machine.js",
-    "scripts/warpos/beta-mine-analyze.js",
+    "scripts/mc/promote.js",
+    "scripts/mc/migrate-machine.js",
+    "scripts/mc/beta-mine-analyze.js",
     "scripts/portfolio/generate-vscode-tasks.js",
     "scripts/prepare.js",
     "scripts/score.js",
@@ -66,7 +66,7 @@
     "scripts/hooks/lib/lifecycle-events.js",
     "scripts/hooks/mode-lifecycle-guard.js",
     "scripts/teams/lifecycle.js",
-    "scripts/warpos/provider-tier-check.js",
+    "scripts/mc/provider-tier-check.js",
     "framework/templates/canonical/DATA_AND_ACCOUNTS.md.tmpl",
     "framework/templates/app-scaffold/.env.local.example.tmpl",
     "framework/templates/app-scaffold/FOUNDERS_CHECKLIST.md.tmpl"

@@ -25,7 +25,7 @@ LRN `2026-04-18` (line 117 of `paths.learningsFile`): "Karpathy autoresearch is 
 
 Fortune, 2026-03-17 (Andrej Karpathy interview): "The AI agent at the heart of autoresearch isn't refining its own training set up, it's a closed-loop optimisation over editable artifacts. The mutation is LLM-driven; the evaluation is LLM-driven; the artifact is text."
 
-## Why this matters for WarpOS
+## Why this matters for MC
 
 The `/karpathy:run` skill in this project implements autoresearch:
 - Editable artifact: an agent spec, skill, hook policy, or other markdown/code file

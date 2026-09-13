@@ -1,6 +1,6 @@
 # Installer File Lifecycle: Skip-vs-Ghost Tradeoff
 
-> Reference for any installer/sync script that copies files from an upstream source into a downstream project (e.g. WarpOS templates copied into a downstream product, framework files copied into a new project).
+> Reference for any installer/sync script that copies files from an upstream source into a downstream project (e.g. MC templates copied into a downstream product, framework files copied into a new project).
 
 ## Source learning
 
@@ -27,7 +27,7 @@ Each install writes a **ship-manifest** to the downstream project recording whic
 ```jsonc
 // downstream-repo/.claude/.ship-manifest.json
 {
-  "installer": "warpos-sync@1.4.2",
+  "installer": "mc-sync@1.4.2",
   "installed_at": "2026-04-29T00:00:00Z",
   "owned_files": [
     ".claude/agents/president/delta.md",
@@ -50,7 +50,7 @@ Result: orphans are explicitly handled, not silently accumulated.
 
 ## When this applies
 
-- `scripts/warpos-sync*.js` and similar installer scripts
+- `scripts/mc-sync*.js` and similar installer scripts
 - Any tool that distributes a curated set of files into target projects
 - NOT for one-off scaffolds (`npx create-foo`) — those don't sync over time
 
@@ -67,4 +67,4 @@ When writing or modifying an installer:
 ## See also
 
 - LRN-2026-04-18 (line 111) — original validated learning
-- `scripts/warpos-sync-run09.js` — current sync script (does NOT yet implement ship-manifest pattern; this doc is the spec for adding it)
+- `scripts/mc-sync-run09.js` — current sync script (does NOT yet implement ship-manifest pattern; this doc is the spec for adding it)

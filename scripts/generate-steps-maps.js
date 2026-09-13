@@ -17,7 +17,7 @@
  *   --verbose explain every replacement
  *
  * Absence-tolerant: this is framework tooling. When the product canon is
- * absent (no STEPS.json — e.g. WarpOS-canonical, which carries no baked-in
+ * absent (no STEPS.json — e.g. MC-canonical, which carries no baked-in
  * product), there is nothing to regenerate. The script (and --check) no-op
  * with exit 0 rather than crashing on a missing file. Product canon is
  * generated per-product at bootstrap:spinup into _requirements/00-canonical/.
@@ -181,7 +181,7 @@ function main() {
   // Absence-tolerant: no product canon in this repo → nothing to do.
   // STEPS.json is the source of truth; when it (and therefore the product
   // step registry) is absent, regen is a no-op. This is the expected state
-  // in WarpOS-canonical, which carries no baked-in product. Exit 0 so the
+  // in MC-canonical, which carries no baked-in product. Exit 0 so the
   // pre-commit hook + CI --check pass cleanly on a product-less repo.
   if (!fs.existsSync(STEPS_PATH)) {
     console.log(

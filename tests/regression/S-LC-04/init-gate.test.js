@@ -52,7 +52,7 @@ function ok(name, fn) {
 // rosters). Tests clone + mutate this to plant alternate registries.
 function baseRegistry() {
   return {
-    $schema: "warpos/mode-lifecycle/v0.1",
+    $schema: "mc/mode-lifecycle/v0.1",
     version: "v0.1",
     modes: {
       solo: { roster: [], requires_team: false },
@@ -127,7 +127,7 @@ function runGuard(opts = {}) {
     );
   }
   if (opts.activeTeam) {
-    const teamName = opts.teamName || "warpos-sprint";
+    const teamName = opts.teamName || "mc-sprint";
     const cfgDir = path.join(home, ".claude", "teams", teamName);
     fs.mkdirSync(cfgDir, { recursive: true });
     const members =
@@ -453,7 +453,7 @@ ok("D1) sprint + ready team, dispatched 3x => deterministic ALLOW, no duplicate 
     if (teamsConst === null) teamsConst = teams;
     assert.strictEqual(
       teams,
-      "warpos-sprint",
+      "mc-sprint",
       "the hook must not create extra team dirs (idempotent)",
     );
   }

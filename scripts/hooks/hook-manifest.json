@@ -1,5 +1,5 @@
 {
-  "$schema": "warpos/hook-manifest/v1",
+  "$schema": "mc/hook-manifest/v1",
   "generatedFrom": "framework/hooks.registry.json",
   "updatedAt": "sha256:c06515ebd0971601",
   "hooks": {

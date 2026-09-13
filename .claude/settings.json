@@ -7,7 +7,7 @@
         "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/smart-context.js\""
       },
       "disabledAt": "2026-07-09",
-      "reason": "Operator directive (WarpOS-v1 plan): automatic prompt context injector off. Re-enable: move this hook back into hooks.UserPromptSubmit[0].hooks, flip enabled:true in framework/hooks.registry.json, run scripts/hooks/build.js + scripts/warpos/settings/compile.js."
+      "reason": "Operator directive (MC-v1 plan): automatic prompt context injector off. Re-enable: move this hook back into hooks.UserPromptSubmit[0].hooks, flip enabled:true in framework/hooks.registry.json, run scripts/hooks/build.js + scripts/mc/settings/compile.js."
     }
   },
   "hooks": {
@@ -446,7 +446,7 @@
       "Bash(WARPOS_DISPATCH_BACKGROUND=1 node scripts/dispatch-claude.js *)"
     ]
   },
-  "_compiledBy": "warpos/settings-compiler/v1",
+  "_compiledBy": "mc/settings-compiler/v1",
   "_compiledAt": "2026-08-28T18:56:28.399Z",
   "_defaultsSha": "77691d86dca8af1a13fc190bf31cdda9f5ef6d5690968bef4c6d83bddcb7e2db",
   "_localSha": "5fc73d89ce6616595e81871c461be1a3e2e78db13a41b2b18a012586d39b86c3"

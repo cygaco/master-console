@@ -5,10 +5,10 @@
  *
  * Opens a PRODUCT's in-app founder admin panel in the browser, against a fixed,
  * reused throwaway Next instance. This is DEV-TOOLING (a skill harness), NOT
- * product code. It targets a PRODUCT app — NEVER WarpOS itself.
+ * product code. It targets a PRODUCT app — NEVER MC itself.
  *
  * Flow (CONTRACT.md §B, in order):
- *   1. refuseIfTargetIsWarpOS(targetDir) FIRST — non-zero, no side effects.   [AC-R1c]
+ *   1. refuseIfTargetIsMC(targetDir) FIRST — non-zero, no side effects.   [AC-R1c]
  *   2. resolve-or-scaffold (reuse-default + upfront ETA banner on cold).      [AC-R1a/b]
  *   3. ensureDeps (npm install if node_modules absent), fail-CLEAR + nonzero. [AC-R1c]
  *   4. spawn `npm run dev` (NOT detached) + poll-ready + PARSE the real port,
@@ -30,13 +30,13 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
-const { isCanonicalDir } = require("../warpos/repo-role");
+const { isCanonicalDir } = require("../mc/repo-role");
 
 const IS_WIN = process.platform === "win32";
 
 // Repo root = scripts/admin/preview.js → ../../
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-// WarpOS canonical root, for the refusal guard. From within a worktree this still
+// MC canonical root, for the refusal guard. From within a worktree this still
 // resolves to the worktree's checkout root — the manifest-based checks below are
 // the authoritative defence; the path-equality check is the fast belt.
 const WARPOS_ROOT = REPO_ROOT;
@@ -74,23 +74,23 @@ function openInBrowser(url) {
   }
 }
 
-// ── WarpOS refusal guard (AC-R1c) ─────────────────────────────
-// Refuse if the resolved target is the WarpOS canonical tree. Detection:
+// ── MC refusal guard (AC-R1c) ─────────────────────────────
+// Refuse if the resolved target is the MC canonical tree. Detection:
 //   (a) fast belt: path.resolve(targetDir) === WARPOS_ROOT, OR
 //   (b) isCanonicalDir(targetDir) — the env-IMMUNE, signals-only detector in
-//       scripts/warpos/repo-role.js (the single source per ED-009). It covers
-//       the _warpos/MANIFEST.json marker, the manifest self-identity fields, and
+//       scripts/mc/repo-role.js (the single source per ED-009). It covers
+//       the _mc/MANIFEST.json marker, the manifest self-identity fields, and
 //       the version.json heuristic in ONE place, and ignores WARPOS_REPO_ROLE so
 //       the safety floor can't be env-spoofed (xprovider HIGH #5).
 // Delegates detection to the resolver rather than re-deriving canonical signals
 // inline (which would re-introduce the role-derivation drift ED-009 forbids).
-function refuseIfTargetIsWarpOS(targetDir) {
+function refuseIfTargetIsMC(targetDir) {
   const resolved = path.resolve(targetDir);
   if (resolved === WARPOS_ROOT) {
-    return { refuse: true, reason: `resolved target is the WarpOS canonical root (${resolved})` };
+    return { refuse: true, reason: `resolved target is the MC canonical root (${resolved})` };
   }
   if (isCanonicalDir(resolved)) {
-    return { refuse: true, reason: `target resolves to the WarpOS canonical tree (repo-role canonical signal at ${resolved})` };
+    return { refuse: true, reason: `target resolves to the MC canonical tree (repo-role canonical signal at ${resolved})` };
   }
   return { refuse: false };
 }
@@ -111,7 +111,7 @@ function detectReady(buffer) {
 // ── pointer write (SOLE writer, atomic tmp+rename) ────────────
 function writePointer({ instanceDir, port, pid, route }) {
   const pointer = {
-    $schema: "warpos/admin-preview/v1",
+    $schema: "mc/admin-preview/v1",
     instanceDir: path.resolve(instanceDir),
     slug: "admin-preview-instance",
     port,
@@ -299,12 +299,12 @@ async function run(argv, deps = {}) {
     ? path.resolve(args.instanceDir)
     : DEFAULT_INSTANCE_DIR;
 
-  // 1. WarpOS refusal — FIRST, before any side effect.
-  const guard = refuseIfTargetIsWarpOS(instanceDir);
+  // 1. MC refusal — FIRST, before any side effect.
+  const guard = refuseIfTargetIsMC(instanceDir);
   if (guard.refuse) {
     return fail(
-      `refusing to preview the WarpOS canonical root — ${guard.reason}. ` +
-        "admin:preview targets a PRODUCT app, never WarpOS itself.",
+      `refusing to preview the MC canonical root — ${guard.reason}. ` +
+        "admin:preview targets a PRODUCT app, never MC itself.",
     );
   }
 
@@ -373,7 +373,7 @@ if (require.main === module) {
 
 module.exports = {
   openInBrowser,
-  refuseIfTargetIsWarpOS,
+  refuseIfTargetIsMC,
   detectReady,
   writePointer,
   resolveOrScaffold,

@@ -357,4 +357,4 @@ Referrals (build ONLY after retention proves itself):
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`). Last reviewed: 2026-06. Store review policies and section numbers change frequently, referral and k-factor figures are directional and partly vendor-sourced, and deferred-deep-link options shift year to year — confirm the platform docs and your reward economics before launch.*
+*Part of the MC launch-guide library (`_guides/`). Last reviewed: 2026-06. Store review policies and section numbers change frequently, referral and k-factor figures are directional and partly vendor-sourced, and deferred-deep-link options shift year to year — confirm the platform docs and your reward economics before launch.*

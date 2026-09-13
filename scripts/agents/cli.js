@@ -166,7 +166,7 @@ function testCmd(args, _spawnFn) {
   // Exit 2 on any RED role/provider (real dispatch-readiness failure); 0 on green/yellow.
   // Non-zero exits are propagated faithfully — we do NOT swallow them into 0.
   if (args.includes("--smoke") || args.includes("--full")) {
-    const smokeScript = path.resolve(__dirname, "..", "warpos", "provider-smoke.js");
+    const smokeScript = path.resolve(__dirname, "..", "mc", "provider-smoke.js");
     const result = spawnFn(
       process.execPath,
       [smokeScript, "--per-role"],

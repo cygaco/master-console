@@ -94,7 +94,7 @@ suspect elements → `browser_console_messages`. Then judge:
 <!-- knowledge:design role:design-quality (grounding — training references, do not weaken existing gate) -->
 ## Design-principles guides (training references) — each axis's owning guides
 
-Ground each axis in the WarpOS **design-principles guide library**
+Ground each axis in the MC **design-principles guide library**
 (`_knowledge/design/` · index `_knowledge/design/registry.json` · overview `_knowledge/design/README.md`).
 These framework-generic, self-contained teachable principles (NN/g, Laws of UX, Gestalt,
 Refactoring UI, WCAG 2.2, Baymard/CXL, web.dev) back the six axes via each guide's `maps_to`.

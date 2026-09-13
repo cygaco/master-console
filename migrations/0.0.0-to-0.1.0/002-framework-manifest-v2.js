@@ -26,7 +26,7 @@ module.exports = {
         target: ".claude/framework-manifest.json",
         via: "scripts/generate-framework-manifest.js",
         reason:
-          "Schema bumped to warpos/framework-manifest/v2 — derived artifact must be rebuilt.",
+          "Schema bumped to mc/framework-manifest/v2 — derived artifact must be rebuilt.",
       },
     ];
   },

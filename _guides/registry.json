@@ -1,5 +1,5 @@
 {
-  "schema": "warpos/guides/registry/v1",
+  "schema": "mc/guides/registry/v1",
   "guides": [
     {
       "guide": "ADMIN_TOOLING",
@@ -197,7 +197,7 @@
       "shape": "notice",
       "timing": "reference",
       "lead_time": "none",
-      "title": "WarpOS Launch Guides — for total newbies"
+      "title": "MC Launch Guides — for total newbies"
     },
     {
       "guide": "SECURITY",

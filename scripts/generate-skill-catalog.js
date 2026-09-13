@@ -257,7 +257,7 @@ function main() {
   const { entries, truncated } = truncate(all, MAX_ENTRIES);
 
   const catalog = {
-    schema: "warpos/skill-catalog/v1",
+    schema: "mc/skill-catalog/v1",
     generated_at: new Date().toISOString(),
     source: PATHS.commands || ".claude/commands",
     count: entries.length,

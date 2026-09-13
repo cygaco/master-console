@@ -42,13 +42,13 @@ function setup() {
   const base = mkTmp("admin-seed-");
   const instanceDir = path.join(base, "instance");
   fs.mkdirSync(instanceDir, { recursive: true });
-  // Make it look like a Next app so the WarpOS guard never fires.
+  // Make it look like a Next app so the MC guard never fires.
   fs.writeFileSync(path.join(instanceDir, "package.json"), JSON.stringify({ name: "admin-preview-instance" }), "utf8");
   const pointer = path.join(base, "admin-preview.json");
   fs.writeFileSync(
     pointer,
     JSON.stringify({
-      $schema: "warpos/admin-preview/v1",
+      $schema: "mc/admin-preview/v1",
       instanceDir,
       slug: "admin-preview-instance",
       route: "/admin",

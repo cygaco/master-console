@@ -149,7 +149,7 @@ function runClaude({ enforce }) {
   const prompt = writePrompt();
   const fakeClaude = writeFakeClaude();
   const worktree = tmpDir("worktree");
-  fs.writeFileSync(path.join(worktree, ".git"), "gitdir: /tmp/warpos-fixture-worktree.git\n");
+  fs.writeFileSync(path.join(worktree, ".git"), "gitdir: /tmp/mc-fixture-worktree.git\n");
   const env = baseEnv(modeProject, contractFile, enforce);
   env.DISPATCH_CLAUDE_BIN = process.execPath;
   env.DISPATCH_CLAUDE_BIN_ARGS = JSON.stringify([fakeClaude]);

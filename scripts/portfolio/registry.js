@@ -4,7 +4,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
-const SCHEMA_ID = "warpos/portfolio-registry/v1";
+const SCHEMA_ID = "mc/portfolio-registry/v1";
 const SCHEMA_PATH = path.resolve(
   __dirname,
   "../../schemas/portfolio/registry.schema.json"

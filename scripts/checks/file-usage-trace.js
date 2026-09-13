@@ -5,7 +5,7 @@
  * file-usage-trace.js — PROVE which files consume a target file before you
  * delete/rename it (PLAN §10.2 / §17.2 step 5).
  *
- * The recurring WarpOS bug class: a canonical file is deleted or renamed and a
+ * The recurring MC bug class: a canonical file is deleted or renamed and a
  * referencing consumer is missed — the deletion-time scan once caught direct
  * refs in 9 files; a CLAUDE.md↔alpha.md mix-up is the same class. This tracer is
  * the safety prerequisite for the destructive tranche: given a target file it
@@ -150,7 +150,7 @@ function bodyReferences(body, needle) {
 function categorize(relPosix) {
   if (relPosix === "framework/paths.registry.json" || REGISTRY_VIEWS.has(relPosix)) return "paths-registry";
   if (relPosix.startsWith(".claude/agents/")) return "agent specs";
-  if (/(^|\/)[^/]*manifest[^/]*\.json$/i.test(relPosix) || relPosix === "_warpos/MANIFEST.json") return "manifests";
+  if (/(^|\/)[^/]*manifest[^/]*\.json$/i.test(relPosix) || relPosix === "_mc/MANIFEST.json") return "manifests";
   if (relPosix.startsWith("scripts/") || relPosix.includes("/hooks/") || relPosix.startsWith(".claude/hooks/")) return "scripts/hooks";
   if (relPosix.endsWith(".md")) return "docs";
   return "other";

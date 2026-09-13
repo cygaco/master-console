@@ -8,7 +8,7 @@ lead_time: "Apple ~2d payment+verify; Google Play identity review hours-days; Pl
 
 # DEV_SETUP_GUIDE.md — Developer accounts & app-store registration
 
-> **Part of the WarpOS launch-guide library** (`_guides/`). Read **`README.md`** first — it has the shared *"what only YOU can do vs your AI"* rule, the secrets golden-rule, and the day-zero timing principle.
+> **Part of the MC launch-guide library** (`_guides/`). Read **`README.md`** first — it has the shared *"what only YOU can do vs your AI"* rule, the secrets golden-rule, and the day-zero timing principle.
 >
 > **Who this is for:** you're ready to publish on the **Apple App Store** and/or **Google Play Store** and need the developer accounts set up. Plain language, from zero.
 >
@@ -175,4 +175,4 @@ GOOGLE PLAY
 
 ---
 
-*Part of the WarpOS launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last verified against published requirements: May 2026. Store policies and fees change; the official sources above are the source of truth.*
+*Part of the MC launch-guide library (`_guides/`) — a reusable, plain-language launch playbook for newbie vibe coders. Last verified against published requirements: May 2026. Store policies and fees change; the official sources above are the source of truth.*

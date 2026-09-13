@@ -176,7 +176,7 @@ function validateFile(file) {
   // require justification when reproduction=not_applicable, and empty
   // justification is treated as missing.
   if (
-    parsed.schema === "warpos/sprint/plan-contract/v1" &&
+    parsed.schema === "mc/sprint/plan-contract/v1" &&
     parsed.goal_verification
   ) {
     const gv = parsed.goal_verification;
@@ -197,7 +197,7 @@ function validateFile(file) {
       }
     }
   }
-  if (parsed.schema === "warpos/sprint/regression-fixture/v1") {
+  if (parsed.schema === "mc/sprint/regression-fixture/v1") {
     if (parsed.reproduction_kind === "not_applicable") {
       const j =
         typeof parsed.justification === "string"

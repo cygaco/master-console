@@ -23,7 +23,7 @@
  *   SPRINT.ralph                -> .claude/project/sprint/ralph
  *   SPRINT.checkpoints          -> .claude/project/sprint/checkpoints
  *   SPRINT.requirements         -> .claude/project/sprint/requirements
- *   SPRINT.templates            -> _warpos/templates/sprint
+ *   SPRINT.templates            -> _mc/templates/sprint
  *   SPRINT.schemas              -> schemas/sprint
  *   SPRINT.routing              -> sprint-routing.json
  *   SPRINT.reference            -> sprint-workflow.md
@@ -158,7 +158,7 @@ const SPRINT = {
   ralph: p("sprintRalph", ".claude/project/sprint/ralph"),
   checkpoints: p("sprintCheckpoints", ".claude/project/sprint/checkpoints"),
   requirements: p("sprintRequirements", ".claude/project/sprint/requirements"),
-  templates: p("sprintTemplates", "_warpos/templates/sprint"),
+  templates: p("sprintTemplates", "_mc/templates/sprint"),
   schemas: p("sprintSchemas", "schemas/sprint"),
   routing: p(
     "sprintRouting",

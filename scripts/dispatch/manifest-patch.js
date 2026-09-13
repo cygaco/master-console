@@ -36,7 +36,7 @@ function readManifest() {
   } catch (e) {
     const err = new Error(
       `.claude/manifest.json unreadable (${MANIFEST_PATH}): ${e.message}\n` +
-        `  fix: check file permissions or restore from .claude/.warpos-backup/`,
+        `  fix: check file permissions or restore from .claude/.mc-backup/`,
     );
     err.code = "MANIFEST_UNREADABLE";
     throw err;
@@ -47,7 +47,7 @@ function readManifest() {
   } catch (e) {
     const err = new Error(
       `.claude/manifest.json is not valid JSON (${MANIFEST_PATH}): ${e.message}\n` +
-        `  fix: restore from .claude/.warpos-backup/ or re-run /warp:setup`,
+        `  fix: restore from .claude/.mc-backup/ or re-run /warp:setup`,
     );
     err.code = "MANIFEST_INVALID";
     throw err;

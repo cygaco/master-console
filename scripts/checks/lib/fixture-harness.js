@@ -4,7 +4,7 @@
 /**
  * fixture-harness.js — the P5 isolated-testing substrate (PLAN §12 P5 / §17.2.2).
  *
- * The recurring WarpOS bug class is the FALSE-GREEN: an enforcer that passes
+ * The recurring MC bug class is the FALSE-GREEN: an enforcer that passes
  * against the live dev-repo (which happens to be clean) but would also pass a
  * real violation, because it was never run against a KNOWN-bad input. P5 makes
  * that structurally impossible by requiring every enforcer to ship with:
@@ -88,7 +88,7 @@ function isPass(result) {
  */
 function sealedDir(spec, label = "fixture") {
   const base = fs.mkdtempSync(
-    path.join(os.tmpdir(), `warpos-${label.replace(/[^a-z0-9_-]/gi, "")}-`),
+    path.join(os.tmpdir(), `mc-${label.replace(/[^a-z0-9_-]/gi, "")}-`),
   );
   for (const [rel, content] of Object.entries(spec || {})) {
     const full = path.join(base, rel);

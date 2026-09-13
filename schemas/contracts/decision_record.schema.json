@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "warpos/contracts/decision_record/v0.1",
-  "title": "WarpOS Product-Studio Contract — Decision Record (v0.1)",
+  "$id": "mc/contracts/decision_record/v0.1",
+  "title": "MC Product-Studio Contract — Decision Record (v0.1)",
   "description": "The oneshot stand-in for α/β judgment: a decision emitted by an ENFORCER without a human present, embedded in artifact metadata and read by the arbitration-needed resolver. Shape-compatible with betaEvents (shares decision/owner/rationale/confidence) but a DISTINCT schema/file — NOT the betaEvents file (β EVT-sp20260530-001-before-plan-beta-001: preserves the oneshot clean-room invariant — enforcers must not import the α/β machinery to emit a record). Not a chain artifact (precedence: null).",
   "version": "v0.1",
   "precedence_note": "decision_record is not part of the derivation chain; precedence is null and it is excluded from the chain's distinct-precedence check.",

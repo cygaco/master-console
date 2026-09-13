@@ -5,7 +5,7 @@
  * Phase 4B migration. Class C (destructive — requires explicit ack).
  *
  * NOTE: this migration is REPLAY metadata. The actual move happened in Phase 1
- * commit ecdf8a3 against the WarpOS source repo. For projects upgrading FROM
+ * commit ecdf8a3 against the MC source repo. For projects upgrading FROM
  * an unversioned 0.0.0 install, this migration replays the move on their copy.
  * Idempotent: detects already-moved state and exits OK.
  */
@@ -102,7 +102,7 @@ module.exports = {
       return {
         ok: true,
         notes:
-          "Filesystem move completed. Codemod of hardcoded references still required — run scripts/warpos/codemod-docs-to-requirements.js.",
+          "Filesystem move completed. Codemod of hardcoded references still required — run scripts/mc/codemod-docs-to-requirements.js.",
       };
     } catch (e) {
       return { ok: false, error: e.message };
