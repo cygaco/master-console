@@ -1,10 +1,10 @@
 # Master Console
 
-**Formerly MC.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
+**Master Console (formerly WarpOS).** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
 
-**Version:** 1.2.0
+**Version:** 2.0.0
 
-**Skills:** 238 slash commands
+**Skills:** 266 slash commands
 
 **Hooks:** 75 automated hooks
 
@@ -14,12 +14,12 @@
 
 ## Naming note
 
-The brand is **Master Console**; the engine in this repository was built and released as **MC** from March to July 2026. This rebrand is landing in two steps:
+The brand is **Master Console**; the engine in this repository was built and released under its previous name from March to July 2026 (the line above is the one place that name is kept). The rebrand landed in two steps:
 
-1. **Brand layer (this README, the docs, the story)** — done. Where history is referenced, it says "formerly MC".
-2. **Identifier layer** — not yet. The package name (`mc`), the `warp:*` skill namespace, the `MC_*` environment variables, the `_mc/` directory, the `mc@` release tags and the `MC.md` gap register are all unchanged until the `2.0.0` release, which introduces the `mc` slug with one release of deprecated aliases. Until then, everything you type is still spelled `warp`.
+1. **Brand layer (this README, the docs, the story)** — landed before 2.0.0.
+2. **Identifier layer** — 2.0.0. The package name is `mc`; skills live under `mc:*` (and `scan:mc-*`); environment variables are `MC_*`; the framework directory is `_mc/` and per-install state is `.mc/`; the gap register is `MC.md`; release tags are `mc@<version>` from 2.0.0 on. The previous identifiers keep working through 2.0.x as deprecated aliases and read-fallbacks and are removed in 2.1.0 — the exact policy is in [CHANGELOG.md](CHANGELOG.md). Installs at 1.2.0 upgrade through `migrations/1.2.0-to-2.0.0/`.
 
-The GitHub repository was renamed from `cygaco/MC` to `cygaco/master-console` on 2026-09-12; GitHub redirects the old clone and web URLs, and the runbook that was followed is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because "MC" collides with an unrelated project of the same name on GitHub and PyPI, and with Warp (warp.dev) products.
+The GitHub repository was renamed to `cygaco/master-console` on 2026-09-12; GitHub redirects the old clone and web URLs, and the runbook that was followed is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because the previous name collides with an unrelated project of the same name on GitHub and PyPI, and with Warp (warp.dev) products.
 
 ## What is this?
 
@@ -39,7 +39,7 @@ Under Alex sit the **departments** — Product (with Quality), Engineering and G
 
 Around the agents:
 
-- **237 skills** — slash commands such as `/fix:fast`, `/research:deep`, `/sprint:full`, `/sleep:deep`. They live under `.claude/commands/<namespace>/<name>.md` (230 live plus 7 deprecated aliases kept for one release).
+- **266 skills** — slash commands such as `/fix:fast`, `/research:deep`, `/sprint:full`, `/sleep:deep`. They live under `.claude/commands/<namespace>/<name>.md`; the count includes the deprecated aliases kept for one release under the previous skill names.
 - **75 hooks** — things that happen automatically around every prompt, edit and command: secret scanning, formatting, path guards, dispatch guards, tracker validation. Registered in `.claude/settings.json`; the scripts are under `scripts/hooks/`.
 - **Memory** — an append-only events log, scored learnings with a validation lifecycle, reasoning traces, and a sleep/dream consolidation cycle that prunes and promotes what the system learned.
 - **Enforcement** — every policy names an enforcer or logs the gap; `/scan:full` runs the whole enforcer suite; the sprint lifecycle refuses to close without real evidence.
@@ -63,14 +63,14 @@ git clone https://github.com/cygaco/master-console.git
 
 # 2. Run the installer from inside your project
 cd <your-project>
-node ../MC/scripts/warp-setup.js .
+node ../master-console/scripts/warp-setup.js .
 
 # 3. Start Claude Code in your project and finish setup
 /mc:setup     # completes any missing step: clone, install, CLAUDE.md merge, hooks
 /mc:tour      # guided introduction
 ```
 
-The PowerShell installer is equivalent: `..\MC\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/mc:update` can upgrade you later.
+The PowerShell installer is equivalent: `..\master-console\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/mc:update` can upgrade you later.
 
 ### Optional: provider CLIs
 
@@ -126,13 +126,13 @@ Entering a mode only sets it up; nothing builds until you give an explicit task.
 ├── install.ps1             — PowerShell installer; scripts/warp-setup.js — Node installer
 ├── .claude/
 │   ├── agents/             — president/ (the five faces), engineering/, product/, growth/, _org/ (role registry)
-│   ├── commands/           — the 237 skills, one .md per slash command, grouped by namespace
+│   ├── commands/           — the 266 skills, one .md per slash command, grouped by namespace
 │   ├── project/reference/  — reasoning frameworks, operational loop, sprint workflow reference
 │   └── settings.json       — compiled hook wiring (75 hooks)
 ├── scripts/                — hooks/, dispatch/, sprint/, paths/, checks/, mc/ (install + release engine)
 ├── framework/              — paths registry source (framework/paths.registry.json) + release capsules
 ├── _requirements/          — spec templates: canonical brief, design system, architecture, features, ops, security, testing
-├── _mc/                — framework zone: templates, settings defaults, ownership manifest, a synthetic example product
+├── _mc/                    — framework zone: templates, settings defaults, ownership manifest, a synthetic example product
 ├── patterns/               — validated implementation patterns
 ├── trackers/               — the enforced tracker system (TRACKER.md + per-epic/sprint files + validator)
 ├── schemas/  migrations/  tests/
@@ -159,7 +159,7 @@ Browse `.claude/commands/`. The namespaces:
 | `agents`, `models`, `hooks`, `skills`, `paths`, `manifest`, `enforcement`, `events` | Managing the engine itself |
 | `bootstrap`, `portfolio`, `admin`, `cockpit`, `panel`, `guides`, `knowledge`, `playbook` | Product on-ramps, multi-product operation, founder panels, guide and knowledge libraries |
 | `growth`, `content` | Message briefs, angles, landing pages, ad creative, posts |
-| `warp` | Install, update, release, health, diagnostics of the engine (renamed to `mc:*` in 2.0.0) |
+| `mc` | Install, update, release, health, diagnostics of the engine (the pre-2.0.0 `warp` names remain as deprecated aliases until 2.1.0) |
 | `commit`, `linters`, `fav`, `check` | Landing work; linters; favourites; deprecated `check:*` aliases for `scan:*` |
 
 ## Requirements system
@@ -185,8 +185,8 @@ The installer creates `.claude/manifest.json` in your project. It tells Alex wha
 - [USER_GUIDE.md](USER_GUIDE.md) — how to actually use it day to day
 - [AGENTS.md](AGENTS.md) · [AGENT-STRUCTURE.md](AGENT-STRUCTURE.md) · [CLAUDE.md](CLAUDE.md) — the agent system and doctrine
 - [CHANGELOG.md](CHANGELOG.md) · [RELEASES.md](RELEASES.md) — what changed, release by release
-- [docs/PROVENANCE.md](docs/PROVENANCE.md) — formerly MC: what was built when, with receipts
-- [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md) — the pending GitHub repository rename
+- [docs/PROVENANCE.md](docs/PROVENANCE.md) — the pre-rebrand history: what was built when, with receipts
+- [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md) — the GitHub repository rename (executed 2026-09-12)
 - [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## Support

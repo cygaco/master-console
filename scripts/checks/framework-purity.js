@@ -253,6 +253,7 @@ const ALLOW_PROMOTE_RELIC_PATHS = [
   /^scripts\/hooks\/version-bump-guard\.js$/, // FRAMEWORK_PREFIXES mirror comment
   /^scripts\/phase0-verify\.js$/, // historical test names
   /^(_mc\/BASELINE\/)?_docs\/phase0\//, // historical phase-0 report documenting the retired ledger
+  /^scripts\/open-source\/rename-mc\.(denylist|occurrences)\.json$/, // S-OS-06 rename partition + its ledger quote this file's pinned relic-detector patterns as DATA (Class-3/4)
 ];
 
 // File patterns where ABS_PATH is allowed even inside the scoped surface —

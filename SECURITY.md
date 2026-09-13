@@ -4,7 +4,7 @@
 
 Please report vulnerabilities **privately through GitHub**: open the repository's **Security** tab and choose **Report a vulnerability** (GitHub private vulnerability reporting). That creates a private advisory only the maintainer can see. Do not open a public issue, and do not e-mail — there is no e-mail channel for this project.
 
-Repository: `https://github.com/cygaco/master-console` (renamed from `cygaco/MC` on 2026-09-12; GitHub redirects the old URL, and the Security tab moved with it).
+Repository: `https://github.com/cygaco/master-console` (renamed on 2026-09-12; GitHub redirects the old URL, and the Security tab moved with it).
 
 Include what you can: the affected file or skill, the version (`version.json` or `package.json`), reproduction steps, and the impact you see. A proof-of-concept is welcome; a working exploit against a third party's system is not.
 
