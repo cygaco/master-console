@@ -263,3 +263,6 @@ runtime/open-source/rewrite/originals/
 # β mining output (verbatim operator prompts) — re-asserted; enforcer:
 # scripts/checks/warpos-tracked-transients.js (fails on any tracked file under it).
 .claude/agents/president/_system/beta/mined/
+
+# per-machine harness permissions (was only ignored via the operator global excludes; repo-level since 2026-09-12)
+.claude/settings.local.json
