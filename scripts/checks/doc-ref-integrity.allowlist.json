@@ -3,9 +3,13 @@
 
   "_note_framework_templates_rename": "The three `framework/templates/...` literals at the tail of `literals` (DATA_AND_ACCOUNTS.md.tmpl, app-scaffold/.env.local.example.tmpl, app-scaffold/FOUNDERS_CHECKLIST.md.tmpl) are PRE-EXISTING historical change-log/tracker references to the pre-rename `framework/templates/` prefix, which was renamed to `_warpos/templates/` (ownership-manifest work, SP-20260522-001; ED-008). Those are immutable historical records — rewriting them would falsify the change-log — so they are allowlisted as legitimately-absent under the '_comment' historical-change-log category, NOT as unfixed navigational staleness. Added during SP-20260716-003 (composer) only because they blocked merge-guard for an unrelated commit; they pre-date this sprint. Debt-ref: the real fix is discharged when the framework/templates→_warpos/templates migration debt closes; drop these entries then.",
 
+  "_note_gitignored_by_design": "The entries tagged here — pathPrefixes `.claude/agents/president/_system/beta/mined/` (raw /beta:mine output, .gitignore) and `_planning/ingest/` (private planning material removed from the index in S-OS-02, .gitignore), plus the literal `.claude/settings.local.json` (the operator's per-machine settings layer; untracked since S-OS-02, compiled INTO .claude/settings.json by scripts/warpos/settings/compile.js) — are per-machine files that a FRESH CLONE (the CI runner, a new worktree) never has. The citing docs are correct (several even say 'gitignored' inline); the targets are SUPPOSED to be absent on a clean tree, the same category as the `.claude/project/memory/` prefix above them. Added 2026-09-12 when `npm test` on the Linux CI runner surfaced 13 broken refs that resolve only on the operator's machine. Enforcer for the class: the PER-MACHINE test in doc-ref-integrity.test.js asserts these targets are allowed-absent under this shipped allowlist regardless of machine state.",
+
   "pathPrefixes": [
     "runtime/",
     "framework/releases/",
+    ".claude/agents/president/_system/beta/mined/",
+    "_planning/ingest/",
     "_warpos/releases/",
     ".claude/runtime/",
     ".claude/worktrees/",
@@ -27,6 +31,7 @@
   "_note_adr0041_owed_enforcers": "The three scripts/checks/*.js literals immediately below are ADR-0041's own P1/P2/P4 enforcer rows, each marked '**OWED** — ED-340' in that ADR's own status table (lines 170/171/173) — planned-but-unbuilt, i.e. the '_comment' category 'planned/aspirational scripts'. They read as 'this path is SUPPOSED to be absent', which is this file's stated honesty test. Added 2026-08-29 by the SP-20260829-001 conductor as an EXPLICIT REVIEWED ACT, not by a builder: bundle B2 hit these pre-existing breaks when merge-guard ran doc-ref-integrity --enforce repo-wide over a commit that did not create them (ED-356 instance #4), and a builder adding allowlist entries to pass a guard is the shape two prior builders correctly refused. Verified before adding: the breaks reproduce on session/2026-08-29 independently of B2 (4 broken refs, 3 of them these), and each of the three is OWED in the ADR table. A FOURTH break on the same ADR — line 317's inline code span for a JavaScript member-access example — is NOT allowlisted: it is a checker path-shape false positive and is fixed at the defect with the inline <!-- doc-ref-ignore --> escape hatch this file's _comment names for self-documenting/anti-example lines. Ruling: alpha, this session. If these enforcers are ever built, DELETE these three entries — they are not permanent.",
 
   "literals": [
+    ".claude/settings.local.json",
     "scripts/checks/no-held-secret-in-surface.js",
     "scripts/checks/spawn-env-allowlist.js",
     "scripts/checks/no-secret-on-outbound.js",

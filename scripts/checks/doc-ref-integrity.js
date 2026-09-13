@@ -139,7 +139,16 @@ function evaluate({ refs, allowlist }) {
     if (!r || !r.target) continue;
     if (r.exists) continue; // resolves — nothing to report
     const target = norm(r.target);
-    const allowedByPrefix = prefixes.find((p) => target.startsWith(p));
+    // A markdown link is DIR-RELATIVE (`../../_planning/x.md` cited from trackers/epics/).
+    // Match allowlist prefixes against the raw target AND its repo-relative resolution
+    // from the citing file, so a relative spelling of an allowlisted path (gitignored /
+    // per-machine, dead-tree) cannot bypass the allowlist. Only `./`/`../` targets get
+    // the second candidate — a root-anchored target already IS repo-relative.
+    const candidates = [target];
+    if (r.file && /^\.\.?\//.test(target)) {
+      candidates.push(norm(path.posix.normalize(path.posix.join(path.posix.dirname(norm(r.file)), target))));
+    }
+    const allowedByPrefix = prefixes.find((p) => candidates.some((c) => c.startsWith(p)));
     if (literals.has(target)) {
       allowed.push({ ...r, allowedBy: "literal-allowlist" });
       continue;

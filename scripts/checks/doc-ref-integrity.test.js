@@ -123,6 +123,27 @@ ok("`<!-- doc-ref-ignore: reason -->` (with a reason) also skips the line", () =
   assert.strictEqual(refs.length, 0);
 });
 
+// ── PER-MACHINE class: canon docs legitimately cite gitignored / per-machine files
+// (raw /beta:mine output, private _planning/ingest material, the operator's
+// .claude/settings.local.json layer). A fresh clone (CI, a new worktree) never has
+// them, so the SHIPPED allowlist must classify such a ref as allowed-absent — asserted
+// synthetically (exists:false) so it holds regardless of what THIS machine has on disk. ──
+ok("PER-MACHINE: refs to gitignored/per-machine targets are allowed-absent under the shipped allowlist", () => {
+  const allowlist = mod.loadAllowlist();
+  const refs = [
+    { file: ".claude/agents/president/beta.md", line: 1, target: ".claude/agents/president/_system/beta/mined/beta-source-data.md", exists: false },
+    { file: "trackers/epics/E-X.md", line: 1, target: "../../_planning/ingest/warpos-lifecycle.md", exists: false },
+    { file: ".claude/commands/permissions/authorized.md", line: 1, target: ".claude/settings.local.json", exists: false },
+  ];
+  const { findings, allowed } = mod.evaluate({ refs, allowlist });
+  assert.strictEqual(findings.length, 0, `per-machine targets must not be broken refs: ${JSON.stringify(findings.map((f) => f.target))}`);
+  assert.strictEqual(allowed.length, refs.length, "every per-machine ref is accounted for as allowed-absent");
+  // The shipped .gitignore agrees these are per-machine (the allowlist is not free-floating).
+  const gitignore = fs.readFileSync(path.join(__dirname, "..", "..", ".gitignore"), "utf8");
+  assert.ok(/^\.claude\/agents\/president\/_system\/beta\/mined\/$/m.test(gitignore), ".gitignore lists beta/mined/");
+  assert.ok(/^_planning\/ingest\/$/m.test(gitignore), ".gitignore lists _planning/ingest/");
+});
+
 // ── LIVE run() against the REAL canon ─────────────────────────────────────────
 ok("LIVE: the real canon scan ships zero broken refs (run() ok:true)", () => {
   const res = mod.run();
