@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T19:09:56.636Z",
+  "generatedAt": "2026-09-13T20:02:25.286Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -20,8 +20,8 @@
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "5e8401eb0238e2221a1d3dc61c9e4456f166c2c94a7d9f12e646a7d50a85426b",
-      "installedSha": "5e8401eb0238e2221a1d3dc61c9e4456f166c2c94a7d9f12e646a7d50a85426b"
+      "sha256": "fce484e4c649f68765cc833726d44f84a965608b889ea9ce9be3b94f3a6156ec",
+      "installedSha": "fce484e4c649f68765cc833726d44f84a965608b889ea9ce9be3b94f3a6156ec"
     },
     "AGENT-STRUCTURE.md": {
       "owner": "framework",
@@ -5629,6 +5629,13 @@
       "sha256": "065b7756aed9980416f09cff3f757189ef214252e833436e0a760e332d6ac34f",
       "installedSha": "065b7756aed9980416f09cff3f757189ef214252e833436e0a760e332d6ac34f"
     },
+    "tests/regression/S-OS-06/falsify-doc-ref-legacy-rename.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "1896d043089d6eff81405a1ad3325fd8b3dafff1bde4f831ced4cbb62a3efd00",
+      "installedSha": "1896d043089d6eff81405a1ad3325fd8b3dafff1bde4f831ced4cbb62a3efd00"
+    },
     "tests/regression/S-OS-06/falsify-live-warpos-off-allowlist.test.js": {
       "owner": "framework",
       "managed": true,
@@ -5703,8 +5710,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "b367033f81a0ab6d8ae0da40962b01b942aac26cb2ff564ba77b65f7b4dc7ce9",
-      "installedSha": "b367033f81a0ab6d8ae0da40962b01b942aac26cb2ff564ba77b65f7b4dc7ce9"
+      "sha256": "f63fca515ef61cb047109b47ef539671b30d79ca7c15436698f448726c18242c",
+      "installedSha": "f63fca515ef61cb047109b47ef539671b30d79ca7c15436698f448726c18242c"
     },
     "tests/regression/S-OS-06/occurrence-ledger.test.js": {
       "owner": "framework",
@@ -8226,6 +8233,13 @@
       "sha256": "5cb922edda245686f23f94dfc25481570423d4ea4d622cc4a263583d38ddd26a",
       "installedSha": "5cb922edda245686f23f94dfc25481570423d4ea4d622cc4a263583d38ddd26a"
     },
+    "scripts/open-source/portfolio-coverage.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/open-source/portfolio-coverage.js",
+      "sha256": "00465cb150330f15191215d9526d83c91b34b1c6ff76f2782c80a04e6303c56e",
+      "installedSha": "00465cb150330f15191215d9526d83c91b34b1c6ff76f2782c80a04e6303c56e"
+    },
     "scripts/open-source/remap-notes.js": {
       "owner": "framework",
       "managed": true,
@@ -8237,8 +8251,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.denylist.json",
-      "sha256": "280e05ddc37f1cdb700501fffc69f725a647994fe5fda188ba2d575ef8eae42d",
-      "installedSha": "280e05ddc37f1cdb700501fffc69f725a647994fe5fda188ba2d575ef8eae42d"
+      "sha256": "41d782fda7f9d8fee802d101fe05bf03300e0b9ebb5f42027cab05c5c15e2dfa",
+      "installedSha": "41d782fda7f9d8fee802d101fe05bf03300e0b9ebb5f42027cab05c5c15e2dfa"
     },
     "scripts/open-source/rename-mc.js": {
       "owner": "framework",
@@ -8251,8 +8265,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.occurrences.json",
-      "sha256": "ad4c020c421655d4b9b82ff13ae06fe211d188cfd3452ce9ee8357c851d3fa3f",
-      "installedSha": "ad4c020c421655d4b9b82ff13ae06fe211d188cfd3452ce9ee8357c851d3fa3f"
+      "sha256": "6c3560e3aa3a302784bd06fe83efeca3e3708207e5160177e8e294c644bcd804",
+      "installedSha": "6c3560e3aa3a302784bd06fe83efeca3e3708207e5160177e8e294c644bcd804"
     },
     "scripts/open-source/split-brain.js": {
       "owner": "framework",
@@ -11611,22 +11625,22 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/doc-ref-integrity.allowlist.json",
-      "sha256": "07b3e34b78d8b174fdcbdbd9f5e80a4970da6eb2a5f6f3f0663ec6564753e937",
-      "installedSha": "07b3e34b78d8b174fdcbdbd9f5e80a4970da6eb2a5f6f3f0663ec6564753e937"
+      "sha256": "cd38588b82d542a348df33a1c06f1ae031e9b1accebef3a2ec27adac9099e1e3",
+      "installedSha": "cd38588b82d542a348df33a1c06f1ae031e9b1accebef3a2ec27adac9099e1e3"
     },
     "scripts/checks/doc-ref-integrity.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/doc-ref-integrity.js",
-      "sha256": "fc53874c9e36ded2be812dff7168fbd7d6a467feb96908c406c834e91da61c65",
-      "installedSha": "fc53874c9e36ded2be812dff7168fbd7d6a467feb96908c406c834e91da61c65"
+      "sha256": "4b13a2799e38ee65d05ff8133357261ef492eb08f62746964dc79c6d8a66b8c5",
+      "installedSha": "4b13a2799e38ee65d05ff8133357261ef492eb08f62746964dc79c6d8a66b8c5"
     },
     "scripts/checks/doc-ref-integrity.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/doc-ref-integrity.test.js",
-      "sha256": "64374893a29bab86da1612d567d1e5a9c10fb1c1bce6f505a157159bc98eaa28",
-      "installedSha": "64374893a29bab86da1612d567d1e5a9c10fb1c1bce6f505a157159bc98eaa28"
+      "sha256": "cc50c6d68aea1bbfcc936a084297781705eb4b6fc9a684a1ebf293eb07068121",
+      "installedSha": "cc50c6d68aea1bbfcc936a084297781705eb4b6fc9a684a1ebf293eb07068121"
     },
     "scripts/checks/docker-secret-ignore.js": {
       "owner": "framework",

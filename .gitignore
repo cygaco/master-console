@@ -260,6 +260,10 @@ scripts/write-mr-fix1-brief.js
 runtime/open-source/rewrite/*.orig
 runtime/open-source/rewrite/*unredacted*
 runtime/open-source/rewrite/originals/
+# S-OS-06 gate G5 portfolio coverage record — it names the operator's private portfolio products, so it
+# stays local. Generator: scripts/open-source/portfolio-coverage.js (refuses a non-ignored output path);
+# enforcer: tests/regression/S-OS-06/migration.test.js test 6 (asserts the record is gitignored).
+runtime/S-OS-06/portfolio-coverage.json
 # β mining output (verbatim operator prompts) — re-asserted; enforcer:
 # scripts/checks/mc-tracked-transients.js (fails on any tracked file under it).
 .claude/agents/president/_system/beta/mined/
