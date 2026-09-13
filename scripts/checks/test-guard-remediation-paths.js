@@ -17,6 +17,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -98,7 +99,7 @@ function makeSeamRepo(write) {
 function runSeam(dir) {
   const r = spawnSync(process.execPath, [SCRIPT, "--guard-remediation", "--json"], {
     encoding: "utf8",
-    env: { ...process.env, WARPOS_GUARD_REMEDIATION_ROOT: dir },
+    env: { ...process.env, ...mcEnv.envPair("GUARD_REMEDIATION_ROOT", dir) },
   });
   let parsed = {};
   try {

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * Verification-rigor teeth (SP-20260718-003 · QA-004/QA-005 · AC-3, AC-16, AC-17). The design flagged
  * three ACs whose verified_by was a bare grep-on-prose — a false-green in the VERIFICATION itself. This
@@ -72,15 +73,15 @@ function runSunset(env) {
   }
 }
 test("AC-17: a PAST sunset date (unresolved) → the enforcer exits NON-ZERO", () => {
-  const code = runSunset({ WARPOS_ED060_SUNSET_DATE_TEST: "2020-01-01", WARPOS_ED060_RESOLVED_TEST: "false" });
+  const code = runSunset({ ...mcEnv.envPair("ED060_SUNSET_DATE_TEST", "2020-01-01"), ...mcEnv.envPair("ED060_RESOLVED_TEST", "false") });
   assert.equal(code, 1, "a passed, unresolved sunset must fail /scan:full");
 });
 test("AC-17: a FUTURE sunset date (unresolved) → the enforcer exits 0", () => {
-  const code = runSunset({ WARPOS_ED060_SUNSET_DATE_TEST: "2099-01-01", WARPOS_ED060_RESOLVED_TEST: "false" });
+  const code = runSunset({ ...mcEnv.envPair("ED060_SUNSET_DATE_TEST", "2099-01-01"), ...mcEnv.envPair("ED060_RESOLVED_TEST", "false") });
   assert.equal(code, 0, "a future sunset is tracked debt, not overdue");
 });
 test("AC-17: a PAST sunset date but RESOLVED → the enforcer exits 0 (moot)", () => {
-  const code = runSunset({ WARPOS_ED060_SUNSET_DATE_TEST: "2020-01-01", WARPOS_ED060_RESOLVED_TEST: "true" });
+  const code = runSunset({ ...mcEnv.envPair("ED060_SUNSET_DATE_TEST", "2020-01-01"), ...mcEnv.envPair("ED060_RESOLVED_TEST", "true") });
   assert.equal(code, 0, "resolving ED-060 makes the deadline moot");
 });
 

@@ -21,6 +21,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -50,7 +51,7 @@ function git(repo, args) {
 function runPurity(repo, mode) {
   const r = spawnSync(process.execPath, [SCRIPT, mode, "--quiet"], {
     encoding: "utf8",
-    env: { ...process.env, WARPOS_PURITY_ROOT: repo },
+    env: { ...process.env, ...mcEnv.envPair("PURITY_ROOT", repo) },
   });
   return r.status;
 }

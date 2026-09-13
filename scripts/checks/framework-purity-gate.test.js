@@ -1,4 +1,5 @@
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * framework-purity-gate.test.js — RED proof for the S-OS-04 fail-closed, full-tree
  * default of scripts/checks/framework-purity.js, against a throwaway git repo
@@ -40,7 +41,7 @@ function makeRepo() {
 function run(repo, args = []) {
   const r = spawnSync(process.execPath, [SCRIPT, ...args, "--json"], {
     encoding: "utf8",
-    env: { ...process.env, WARPOS_PURITY_ROOT: repo },
+    env: { ...process.env, ...mcEnv.envPair("PURITY_ROOT", repo) },
   });
   return { code: r.status, json: r.stdout ? JSON.parse(r.stdout) : null, err: r.stderr };
 }

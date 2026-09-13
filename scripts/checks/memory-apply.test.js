@@ -15,6 +15,7 @@
 //     unverifiable-delete plan exits 2 with the file STILL PRESENT (nothing mutated).
 // ─────────────────────────────────────────────────────────────────────────────
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const assert = require("assert");
 const fs = require("fs");
@@ -1747,13 +1748,13 @@ ok("HOLD NO-OVERRIDE: no env var and no flag re-enables --apply", () => {
   // Every plausible spelling an operator (or a future maintainer) might reach for.
   const env = {
     ...process.env,
-    WARPOS_MEMORY_APPLY_FORCE: "1",
-    WARPOS_MEMORY_APPLY_UNHOLD: "1",
+    ...mcEnv.envPair("MEMORY_APPLY_FORCE", "1"),
+    ...mcEnv.envPair("MEMORY_APPLY_UNHOLD", "1"),
     MEMORY_APPLY_FORCE: "1",
     MEMORY_APPLY_UNHOLD: "1",
-    WARPOS_APPLY_FORCE: "1",
-    WARPOS_UNHOLD: "1",
-    WARPOS_HOLD: "0",
+    ...mcEnv.envPair("APPLY_FORCE", "1"),
+    ...mcEnv.envPair("UNHOLD", "1"),
+    ...mcEnv.envPair("HOLD", "0"),
     FORCE: "1",
     UNHOLD: "1",
   };

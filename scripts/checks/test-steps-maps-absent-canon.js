@@ -25,6 +25,7 @@
  */
 
 "use strict";
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
 const fs = require("fs");
 const path = require("path");
@@ -49,7 +50,7 @@ function ok(name, cond, detail) {
 function runGen(root, args) {
   return spawnSync(process.execPath, [SCRIPT, ...args], {
     encoding: "utf8",
-    env: { ...process.env, WARPOS_STEPS_ROOT: root },
+    env: { ...process.env, ...mcEnv.envPair("STEPS_ROOT", root) },
   });
 }
 
