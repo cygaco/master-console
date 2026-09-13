@@ -4,7 +4,7 @@
 
 **Version:** 1.2.0
 
-**Skills:** 237 slash commands
+**Skills:** 238 slash commands
 
 **Hooks:** 75 automated hooks
 

@@ -53,6 +53,16 @@ test("--advisory keeps the pre-S-OS-04 behaviour: a MED-only file exits 0", () =
   assert.strictEqual(run(["--files", f, "--advisory"]).code, 0);
 });
 
+test("known-answer: a release tag / compare range (name@1.2.3...main) is not an email finding", () => {
+  const allow = loadAllowlist();
+  assert.strictEqual(isAllowlistedEmail("warpos@1.2.0", allow), true);
+  assert.strictEqual(isAllowlistedEmail("warpos@1.2.0...main", allow), true);
+  assert.strictEqual(isAllowlistedEmail("someone@1and1." + "biz", allow), false); // split so the live scan never sees an address literal
+  const f = tmpFile("[Unreleased]: https://github.com/cygaco/WarpOS/compare/warpos@1.2.0...main\n");
+  const r = run(["--files", f]);
+  assert.strictEqual(r.code, 0, r.out);
+});
+
 test("known-answer: an allowlisted placeholder email is not a finding (exit 0)", () => {
   const f = tmpFile(`contact: ${PLACEHOLDER_EMAIL}\n`);
   const r = run(["--files", f]);

@@ -2,7 +2,7 @@
   "$schema": "warpos/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-03T20:06:25.599Z",
+  "generatedAt": "2026-09-13T00:00:58.830Z",
   "generatedBy": "scripts/warpos/manifest/build.js",
   "warposVersion": "1.2.0",
   "migrations": [],
@@ -20,8 +20,8 @@
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "34bac45979477bb8d3a71addb3b09f208aa649f45a8d95befebe79e8d04c06de",
-      "installedSha": "34bac45979477bb8d3a71addb3b09f208aa649f45a8d95befebe79e8d04c06de"
+      "sha256": "2e54eb189bb307ede9fe64f4bf65b95fa0277d855f1baa08c63c638065c0b727",
+      "installedSha": "2e54eb189bb307ede9fe64f4bf65b95fa0277d855f1baa08c63c638065c0b727"
     },
     "AGENT-STRUCTURE.md": {
       "owner": "framework",
@@ -31,17 +31,13 @@
       "sha256": "9ec68d81e7429fa7d2f7a8a43d0f2d2aa158a59347864b6fc75d873579a75e44",
       "installedSha": "9ec68d81e7429fa7d2f7a8a43d0f2d2aa158a59347864b6fc75d873579a75e44"
     },
-    "agentic_os_tracker_system_improvements.md": {
-      "owner": "runtime",
-      "managed": false
-    },
     "AGENTS.md": {
       "owner": "framework",
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "e2c9ba2f004b8c42010ea421529b994a5a8098020bc374f7aee39da3b2821252",
-      "installedSha": "e2c9ba2f004b8c42010ea421529b994a5a8098020bc374f7aee39da3b2821252"
+      "sha256": "398db8fe03c874016764debd0c11b07601d3e477d306be519bda26fc0fbe3056",
+      "installedSha": "398db8fe03c874016764debd0c11b07601d3e477d306be519bda26fc0fbe3056"
     },
     "ANTIGRAVITY.md": {
       "owner": "framework",
@@ -50,6 +46,12 @@
       "_note": "Root document — source path same as destination (canonical-side).",
       "sha256": "b567bbea8fe0df6ed67536f0822291f867961ce55e5902aab2d9bc2aee593251",
       "installedSha": "b567bbea8fe0df6ed67536f0822291f867961ce55e5902aab2d9bc2aee593251"
+    },
+    "CHANGELOG.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference",
+      "_note": "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers."
     },
     "CLAUDE.md": {
       "owner": "framework",
@@ -67,6 +69,18 @@
       "sha256": "6c805e2481156f135e93a74366a8c215bfcccf2bd97d5e8555e8d3b4ccff182b",
       "installedSha": "6c805e2481156f135e93a74366a8c215bfcccf2bd97d5e8555e8d3b4ccff182b"
     },
+    "CODE_OF_CONDUCT.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference",
+      "_note": "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers."
+    },
+    "CONTRIBUTING.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference",
+      "_note": "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers."
+    },
     "DICTIONARY.md": {
       "owner": "framework",
       "managed": true,
@@ -75,28 +89,12 @@
       "sha256": "b95dcca7beb9c180a8cb92d233ecbee55b52fcc2b8a59ff134fee9754e540ae6",
       "installedSha": "b95dcca7beb9c180a8cb92d233ecbee55b52fcc2b8a59ff134fee9754e540ae6"
     },
-    "GEMINI.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": null,
-      "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "695feaf587c0936d0e2b602204bde5245624dc098a8b18ba56e190aa00963074",
-      "installedSha": "695feaf587c0936d0e2b602204bde5245624dc098a8b18ba56e190aa00963074"
-    },
     "install.ps1": {
       "owner": "framework",
       "managed": true,
       "source": null,
       "sha256": "94ffdb8e45d7db3501e6da945179982ba5436512278689c063b4e0d340ef29eb",
       "installedSha": "94ffdb8e45d7db3501e6da945179982ba5436512278689c063b4e0d340ef29eb"
-    },
-    "INTERESTING.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": null,
-      "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "1bc89cc9024e53768d69ec1dedf9f41f4eaa64b6e0cb2789232b00290256e180",
-      "installedSha": "1bc89cc9024e53768d69ec1dedf9f41f4eaa64b6e0cb2789232b00290256e180"
     },
     "issues.md": {
       "owner": "runtime",
@@ -116,8 +114,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "4207bffd7ba98505f4d0e2ccf34bdc12ff0daac6f760d520e792793083608469",
-      "installedSha": "4207bffd7ba98505f4d0e2ccf34bdc12ff0daac6f760d520e792793083608469"
+      "sha256": "b58a6937db9e9e1522403fd89a439fecb76c4f0b9d81350a23a516174f6d4710",
+      "installedSha": "b58a6937db9e9e1522403fd89a439fecb76c4f0b9d81350a23a516174f6d4710"
     },
     "PROJECT.md": {
       "owner": "framework",
@@ -132,8 +130,8 @@
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "19eb11caaab9aadb2fb04a95210dc816d9c06af19d17d9f39337506b57ef9ce8",
-      "installedSha": "19eb11caaab9aadb2fb04a95210dc816d9c06af19d17d9f39337506b57ef9ce8"
+      "sha256": "15a20d209209d763e8aeee7217157a00fa6990a434390bd1f7aab2b240ecfbda",
+      "installedSha": "15a20d209209d763e8aeee7217157a00fa6990a434390bd1f7aab2b240ecfbda"
     },
     "REGRESSIONS.md": {
       "owner": "runtime",
@@ -152,8 +150,14 @@
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "b4744658fbcf8eb459ca74da5f978edaf5e4c0c2441de0b5ed4f17393adb42d5",
-      "installedSha": "b4744658fbcf8eb459ca74da5f978edaf5e4c0c2441de0b5ed4f17393adb42d5"
+      "sha256": "107f9fc533d2a53466117eaa602a3df1fb1c6a6a84347cc7e219e532f43387fb",
+      "installedSha": "107f9fc533d2a53466117eaa602a3df1fb1c6a6a84347cc7e219e532f43387fb"
+    },
+    "SECURITY.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference",
+      "_note": "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers."
     },
     "TRACKER.md": {
       "owner": "runtime",
@@ -178,10 +182,6 @@
       "_note": "Root document — source path same as destination (canonical-side).",
       "sha256": "bddc610b633b6058cd27eb4cd69e2c531bfdaa13f85f83b797503920ca74a719",
       "installedSha": "bddc610b633b6058cd27eb4cd69e2c531bfdaa13f85f83b797503920ca74a719"
-    },
-    "WARP.md": {
-      "owner": "runtime",
-      "managed": false
     },
     "_warpos/MANIFEST.json": {
       "owner": "generated",
@@ -1305,270 +1305,6 @@
       "sha256": "77691d86dca8af1a13fc190bf31cdda9f5ef6d5690968bef4c6d83bddcb7e2db",
       "installedSha": "77691d86dca8af1a13fc190bf31cdda9f5ef6d5690968bef4c6d83bddcb7e2db"
     },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/_audits/01-requirements-audit.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/_audits/01-requirements-audit.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "ebab80dec41f7775399a413374e8378723f255251b1c75ab74ac04ff9473afc6",
-      "installedSha": "ebab80dec41f7775399a413374e8378723f255251b1c75ab74ac04ff9473afc6"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/06-playwright.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/06-playwright.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "66d6f0eaec44e4fa6df1a068bd1e2e0fbc151c4afe2e0b0f4131b261743347a9",
-      "installedSha": "66d6f0eaec44e4fa6df1a068bd1e2e0fbc151c4afe2e0b0f4131b261743347a9"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/08-nextjs.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/08-nextjs.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "06673255660378794e7dc05a6032e5291a8c09cd28c91ecde06da9726db75e62",
-      "installedSha": "06673255660378794e7dc05a6032e5291a8c09cd28c91ecde06da9726db75e62"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/11-fly-io.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/11-fly-io.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "c6562ad83eeb12e66d43e78112e54515f163bbba176223f59c5d7ea200433b6c",
-      "installedSha": "c6562ad83eeb12e66d43e78112e54515f163bbba176223f59c5d7ea200433b6c"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/12-vercel.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/09-integrations/PROVIDER/12-vercel.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "23302afc37ac9e6a9e7e93c5419f3a2e4e2b696e9ac338cce5f6828fadeb9d84",
-      "installedSha": "23302afc37ac9e6a9e7e93c5419f3a2e4e2b696e9ac338cce5f6828fadeb9d84"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/API_SURFACE.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/API_SURFACE.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "6bff5dcf5acb0a8842782fdc613eb400f05c67c9abc22a646675109411a31e42",
-      "installedSha": "6bff5dcf5acb0a8842782fdc613eb400f05c67c9abc22a646675109411a31e42"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/AUTH_SCHEMAS.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/AUTH_SCHEMAS.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "6d475e41f4ab35edde30fab4bffcb73ed3af7c43708b6a474ad95ca905102737",
-      "installedSha": "6d475e41f4ab35edde30fab4bffcb73ed3af7c43708b6a474ad95ca905102737"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/COMPONENT_HIERARCHY.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/COMPONENT_HIERARCHY.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "2c375d8ce63d5a3dd650107044b18fe6b37b7ff071c4ede7bdb875a5fe7171e7",
-      "installedSha": "2c375d8ce63d5a3dd650107044b18fe6b37b7ff071c4ede7bdb875a5fe7171e7"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/DATA_FLOW.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/DATA_FLOW.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "31e20cf0335c5cc7cb5ad75b93bf8e90b9e64d70a87105c363ecfbfa75c66315",
-      "installedSha": "31e20cf0335c5cc7cb5ad75b93bf8e90b9e64d70a87105c363ecfbfa75c66315"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/DESIGN_TOKENS.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/DESIGN_TOKENS.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "b539198a8fae567398a8804320770c980de8da2a35c6822c133eec172dc5d53e",
-      "installedSha": "b539198a8fae567398a8804320770c980de8da2a35c6822c133eec172dc5d53e"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/ENV_VARS.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/ENV_VARS.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "921b5afc2469193b361425e68e460d1a05ae385285e41aef5088b9fd651c68c6",
-      "installedSha": "921b5afc2469193b361425e68e460d1a05ae385285e41aef5088b9fd651c68c6"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/ERROR_RECOVERY.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/ERROR_RECOVERY.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "dc9164bc7a7c124cbd3875a0ddf34d3475eb5f7efd7861bbabc755ff77f31ccb",
-      "installedSha": "dc9164bc7a7c124cbd3875a0ddf34d3475eb5f7efd7861bbabc755ff77f31ccb"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/EXTENSION_SPEC.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/EXTENSION_SPEC.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "29363c4ee6dce78845cbd798c907d272b6e0711a5470d7ce651a578806921002",
-      "installedSha": "29363c4ee6dce78845cbd798c907d272b6e0711a5470d7ce651a578806921002"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/FLOW_SPEC.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/FLOW_SPEC.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "74260d757504dc8c743a093c211f937170baf8748f8cfbcd8b802a94e4089cbc",
-      "installedSha": "74260d757504dc8c743a093c211f937170baf8748f8cfbcd8b802a94e4089cbc"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/PERSISTENCE.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/PERSISTENCE.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "4863a3c1d48b7895279da4f9aedd23aac6f49695f0119980d1c7f832776c5ae4",
-      "installedSha": "4863a3c1d48b7895279da4f9aedd23aac6f49695f0119980d1c7f832776c5ae4"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/PIPELINES.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/PIPELINES.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "925f7ccb047be1054b2030459e34b3f13bf097225ff13fb4f63274831996318a",
-      "installedSha": "925f7ccb047be1054b2030459e34b3f13bf097225ff13fb4f63274831996318a"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/PROMPT_TEMPLATES.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/PROMPT_TEMPLATES.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "bfb7e7b9a9b7a94fb2677771f925e4948c135e16ddeb92c9ec74ca24438016cc",
-      "installedSha": "bfb7e7b9a9b7a94fb2677771f925e4948c135e16ddeb92c9ec74ca24438016cc"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/QA-SYSTEM-PROMPT.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/QA-SYSTEM-PROMPT.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "f6e2716c9aeb3b38f407d28f5555b1b1094ad7432f141b7136dfcc38dbd8e948",
-      "installedSha": "f6e2716c9aeb3b38f407d28f5555b1b1094ad7432f141b7136dfcc38dbd8e948"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/SECURITY.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/SECURITY.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "44ce6d8bfe6d743bfbc8fa1162aac5da38e0f3b33f702feb65822108a6fc88d9",
-      "installedSha": "44ce6d8bfe6d743bfbc8fa1162aac5da38e0f3b33f702feb65822108a6fc88d9"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/STACK.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/STACK.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "e2c7e1073a04a6ed3bef918746effc593e6e945903bbc1bb7a74e95c2756f037",
-      "installedSha": "e2c7e1073a04a6ed3bef918746effc593e6e945903bbc1bb7a74e95c2756f037"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/THIRD_PARTY.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/THIRD_PARTY.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "5407d89bcfbd295bc243ea65c94706a34e365aeadf7f83756b490d2dd86bfdb7",
-      "installedSha": "5407d89bcfbd295bc243ea65c94706a34e365aeadf7f83756b490d2dd86bfdb7"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/VALIDATION_RULES.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/VALIDATION_RULES.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "ab66f94cb34491154fb6fb2f5957a72c0b26df43b893b9d9612b9919ca0ac2ca",
-      "installedSha": "ab66f94cb34491154fb6fb2f5957a72c0b26df43b893b9d9612b9919ca0ac2ca"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/contracts/ROUTING.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/03-architecture/contracts/ROUTING.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "4cf4624918d188455321d56eaa4b80105a5fc39fa4af582fcc1a351f987902d0",
-      "installedSha": "4cf4624918d188455321d56eaa4b80105a5fc39fa4af582fcc1a351f987902d0"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/02-copy-system/COPY_STRATEGY.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/02-copy-system/COPY_STRATEGY.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "69234cf2718290353c76ee3e2820ae80f1dd420bc258f8bf326486b006293965",
-      "installedSha": "69234cf2718290353c76ee3e2820ae80f1dd420bc258f8bf326486b006293965"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/02-copy-system/SURFACE_MAP.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/02-copy-system/SURFACE_MAP.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "e1c1d7d1876ae1aa5c72f3cb9a60e961291b628bc36ac15f4fbaf9bfc6c4fe45",
-      "installedSha": "e1c1d7d1876ae1aa5c72f3cb9a60e961291b628bc36ac15f4fbaf9bfc6c4fe45"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/CORE_BRIEF.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/CORE_BRIEF.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "cb73c5cbe1db08afdff650297f20a6bc7ba481e8387c123c29e3b54752ae0432",
-      "installedSha": "cb73c5cbe1db08afdff650297f20a6bc7ba481e8387c123c29e3b54752ae0432"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/EVOLUTION.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/EVOLUTION.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "1e8936cef305d025ef94fb394abeebef8fcffbd20229bb5d4b070d651d113019",
-      "installedSha": "1e8936cef305d025ef94fb394abeebef8fcffbd20229bb5d4b070d651d113019"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/FAILURE_STATES.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/FAILURE_STATES.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "a8c1652ed6d57cc9067ca545c591dd10d8b71d4c6ed75cd8c637ba4dddd381c6",
-      "installedSha": "a8c1652ed6d57cc9067ca545c591dd10d8b71d4c6ed75cd8c637ba4dddd381c6"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/GLOSSARY.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/GLOSSARY.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "81f7a39e5516e3f2cac8175c258bd4d49bd235c59da1d9691f8985c1f512f064",
-      "installedSha": "81f7a39e5516e3f2cac8175c258bd4d49bd235c59da1d9691f8985c1f512f064"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/GOLDEN_PATHS.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/GOLDEN_PATHS.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "38707f16cafed3156259d99e0c8680d5988073a6a4bcdc375340fc8c254c7b59",
-      "installedSha": "38707f16cafed3156259d99e0c8680d5988073a6a4bcdc375340fc8c254c7b59"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/PRODUCT_MODEL.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/PRODUCT_MODEL.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "46640bad0e4e60891f2cef43067735d9006d5e338068d93bd83ef767c50ab90c",
-      "installedSha": "46640bad0e4e60891f2cef43067735d9006d5e338068d93bd83ef767c50ab90c"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/STEPS.json": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/STEPS.json",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "4bd63bfd86548f85b54d9cfa2fd49538c94925c21dac42d9dd3ff7d7c098ee2b",
-      "installedSha": "4bd63bfd86548f85b54d9cfa2fd49538c94925c21dac42d9dd3ff7d7c098ee2b"
-    },
-    "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/USER_COHORTS.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/EXAMPLES/Jobzooka/_requirements/00-canonical/USER_COHORTS.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "a64d0766197252bd6d489aa1d4bec71677f2488325f915025533a1db36a7f91a",
-      "installedSha": "a64d0766197252bd6d489aa1d4bec71677f2488325f915025533a1db36a7f91a"
-    },
     "_warpos/BASELINE/_requirements/README.md": {
       "owner": "framework",
       "managed": true,
@@ -2406,8 +2142,8 @@
       "managed": true,
       "source": "_warpos/BASELINE/_docs/sprint/CHANGELOG_0.5.1.md",
       "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "4c18b772d59250f0ff7fd658f9f25523ce11a5125220c751b1ed2b4023c52dd3",
-      "installedSha": "4c18b772d59250f0ff7fd658f9f25523ce11a5125220c751b1ed2b4023c52dd3"
+      "sha256": "9185ed50af5e9e5b50ac341fde3b3f8ec292fdc81dcd48f4ad07fb8c739b7817",
+      "installedSha": "9185ed50af5e9e5b50ac341fde3b3f8ec292fdc81dcd48f4ad07fb8c739b7817"
     },
     "_warpos/BASELINE/_docs/sprint/CHANGELOG_v0.2.md": {
       "owner": "framework",
@@ -2560,14 +2296,6 @@
       "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
       "sha256": "eae6e83af5bd51e12054251a1ba275f78ab9407958c8c7c4e77b8f71165e48d1",
       "installedSha": "eae6e83af5bd51e12054251a1ba275f78ab9407958c8c7c4e77b8f71165e48d1"
-    },
-    "_warpos/BASELINE/_docs/research/2026-05-21-product-clone-companycam-postmortem.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/2026-05-21-product-clone-companycam-postmortem.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "929c7813b5cd4c9dfa2f0976a9e3c92521da88ce8af7ff1b3dadb35bc776be9b",
-      "installedSha": "929c7813b5cd4c9dfa2f0976a9e3c92521da88ce8af7ff1b3dadb35bc776be9b"
     },
     "_warpos/BASELINE/_docs/research/_launch-readiness-2026-06/deep-research-appstore-o3.md": {
       "owner": "framework",
@@ -2824,54 +2552,6 @@
       "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
       "sha256": "dcf60f777a9829a0b40759570e44635fab4e5f994067891c042eb1758a36fadd",
       "installedSha": "dcf60f777a9829a0b40759570e44635fab4e5f994067891c042eb1758a36fadd"
-    },
-    "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/.session.json": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/.session.json",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "26538926c8fe978ac4a86334ac5072eca3179345dec5b77332f8a0aaac012564",
-      "installedSha": "26538926c8fe978ac4a86334ac5072eca3179345dec5b77332f8a0aaac012564"
-    },
-    "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/brief.json": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/brief.json",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "0b4f7372683c094c6458d3453dd2e96f6f3764b0c13109de8f8e048c24310c81",
-      "installedSha": "0b4f7372683c094c6458d3453dd2e96f6f3764b0c13109de8f8e048c24310c81"
-    },
-    "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/BRIEF.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/BRIEF.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "82d4d87fd035f175066bbbac8d1eaac54e70fa542cd0d72a6708b818488cbd76",
-      "installedSha": "82d4d87fd035f175066bbbac8d1eaac54e70fa542cd0d72a6708b818488cbd76"
-    },
-    "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/claude-report.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/claude-report.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "1b8ca3e2ebe1d3d1d9dfe1f44b9b2d2f535eaccf91ca168602670899fa6ae4d2",
-      "installedSha": "1b8ca3e2ebe1d3d1d9dfe1f44b9b2d2f535eaccf91ca168602670899fa6ae4d2"
-    },
-    "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/gemini-report.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/gemini-report.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "3bb61ba1e7712d77a0d8cc78d5a6f0bb6a7cc5c0ae0b7ec2e4a594b4d3b31464",
-      "installedSha": "3bb61ba1e7712d77a0d8cc78d5a6f0bb6a7cc5c0ae0b7ec2e4a594b4d3b31464"
-    },
-    "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/SYNTHESIS.md": {
-      "owner": "framework",
-      "managed": true,
-      "source": "_warpos/BASELINE/_docs/research/dreamteams-staffing-layer/SYNTHESIS.md",
-      "_note": "_warpos/ is the framework source-of-truth zone in installed products (post-SP-20260522-001).",
-      "sha256": "852caa8333673d3a4b777196c6888259522020ad1a82815080ef17b15149c080",
-      "installedSha": "852caa8333673d3a4b777196c6888259522020ad1a82815080ef17b15149c080"
     },
     "_warpos/BASELINE/_docs/research/design-visual-hierarchy/brief.json": {
       "owner": "framework",
@@ -4393,6 +4073,11 @@
       "managed": false,
       "class": "reference"
     },
+    "_docs/HOW2CLEANMEMORY.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference"
+    },
     "_docs/sprint/AUTONOMY.md": {
       "owner": "project",
       "managed": false,
@@ -4499,11 +4184,6 @@
       "class": "reference"
     },
     "_docs/research/2026-05-21-central-warpos-rfc.md": {
-      "owner": "project",
-      "managed": false,
-      "class": "reference"
-    },
-    "_docs/research/2026-05-21-product-clone-companycam-postmortem.md": {
       "owner": "project",
       "managed": false,
       "class": "reference"
@@ -4669,31 +4349,6 @@
       "class": "reference"
     },
     "_docs/research/dreamteams-staffing-layer/.session.json": {
-      "owner": "project",
-      "managed": false,
-      "class": "reference"
-    },
-    "_docs/research/dreamteams-staffing-layer/brief.json": {
-      "owner": "project",
-      "managed": false,
-      "class": "reference"
-    },
-    "_docs/research/dreamteams-staffing-layer/BRIEF.md": {
-      "owner": "project",
-      "managed": false,
-      "class": "reference"
-    },
-    "_docs/research/dreamteams-staffing-layer/claude-report.md": {
-      "owner": "project",
-      "managed": false,
-      "class": "reference"
-    },
-    "_docs/research/dreamteams-staffing-layer/gemini-report.md": {
-      "owner": "project",
-      "managed": false,
-      "class": "reference"
-    },
-    "_docs/research/dreamteams-staffing-layer/SYNTHESIS.md": {
       "owner": "project",
       "managed": false,
       "class": "reference"
@@ -6333,20 +5988,6 @@
       "sha256": "5c80a8bc7f964e445a5a100dc74961061c71ced663d2862e2f25638ff8f5674b",
       "installedSha": "5c80a8bc7f964e445a5a100dc74961061c71ced663d2862e2f25638ff8f5674b"
     },
-    "scripts/delta-compliance-onboarding-fix1.txt": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/delta-compliance-onboarding-fix1.txt",
-      "sha256": "f6152b0c222a1f06edfd4627234711b9e6fdefb5a2f6473be122e2b9e57b51ed",
-      "installedSha": "f6152b0c222a1f06edfd4627234711b9e6fdefb5a2f6473be122e2b9e57b51ed"
-    },
-    "scripts/delta-compliance-onboarding-spec.txt": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/delta-compliance-onboarding-spec.txt",
-      "sha256": "b734c6f799cf22267b828b745c30fac64ed844c7593647282da5bb15a20893b9",
-      "installedSha": "b734c6f799cf22267b828b745c30fac64ed844c7593647282da5bb15a20893b9"
-    },
     "scripts/delta-dispatch-builder.js": {
       "owner": "framework",
       "managed": true,
@@ -6367,20 +6008,6 @@
       "source": "scripts/delta-eval-mr-fix2.txt",
       "sha256": "fc6168419f7efb5b080d44a394e4d9ad61df2c482167ab4245e594195034a40e",
       "installedSha": "fc6168419f7efb5b080d44a394e4d9ad61df2c482167ab4245e594195034a40e"
-    },
-    "scripts/delta-eval-onboarding-fix1.txt": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/delta-eval-onboarding-fix1.txt",
-      "sha256": "e63e945d288e8ba13c2874bf2fbda7c42f21f20ae9745c9e9ff5b942e14dd566",
-      "installedSha": "e63e945d288e8ba13c2874bf2fbda7c42f21f20ae9745c9e9ff5b942e14dd566"
-    },
-    "scripts/delta-eval-onboarding-spec.txt": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/delta-eval-onboarding-spec.txt",
-      "sha256": "ae12cf3adb3668b5756dbfb213118632f2d92549d837e70aa818c3054e25fdb7",
-      "installedSha": "ae12cf3adb3668b5756dbfb213118632f2d92549d837e70aa818c3054e25fdb7"
     },
     "scripts/delta-final-gauntlet.js": {
       "owner": "framework",
@@ -6437,13 +6064,6 @@
       "source": "scripts/delta-mark-done.js",
       "sha256": "5493d237bf7d39dc3dd177759ecccb884327edd49311209d0a883ece4d876b0c",
       "installedSha": "5493d237bf7d39dc3dd177759ecccb884327edd49311209d0a883ece4d876b0c"
-    },
-    "scripts/delta-onboarding-spec.txt": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/delta-onboarding-spec.txt",
-      "sha256": "bccd33f2a4fd17cd52f4eeff94c446c96458eacb302cd95c8c79b2e56a69a4cc",
-      "installedSha": "bccd33f2a4fd17cd52f4eeff94c446c96458eacb302cd95c8c79b2e56a69a4cc"
     },
     "scripts/delta-pre-clean-worktrees.js": {
       "owner": "framework",
@@ -6680,8 +6300,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/generate-framework-manifest.js",
-      "sha256": "d0a341bb2c0f220aedddd0f9895a08a9a90b436c2c8589ff5371def5459991e3",
-      "installedSha": "d0a341bb2c0f220aedddd0f9895a08a9a90b436c2c8589ff5371def5459991e3"
+      "sha256": "e9590e713cb28228c08e6ee80c2c28a0af0cbed42cb06e40241eab0c781e9b2f",
+      "installedSha": "e9590e713cb28228c08e6ee80c2c28a0af0cbed42cb06e40241eab0c781e9b2f"
     },
     "scripts/generate-maps.js": {
       "owner": "framework",
@@ -6750,8 +6370,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/lint-hl-stories.js",
-      "sha256": "42318407b256f9a74273441456dd1ea96cd883b9121c7d332a9e7baa52922221",
-      "installedSha": "42318407b256f9a74273441456dd1ea96cd883b9121c7d332a9e7baa52922221"
+      "sha256": "6d3f7e22ee2dd797b0c4dc76211ebb312c36e1cec6f207172398f389dc884929",
+      "installedSha": "6d3f7e22ee2dd797b0c4dc76211ebb312c36e1cec6f207172398f389dc884929"
     },
     "scripts/lint-json-bom.js": {
       "owner": "framework",
@@ -6764,8 +6384,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/lint-prds.js",
-      "sha256": "206dbbeb78399e68a2c8d31ee494c537b3539dceed59a6b6bc332a726b2fedd7",
-      "installedSha": "206dbbeb78399e68a2c8d31ee494c537b3539dceed59a6b6bc332a726b2fedd7"
+      "sha256": "a9de7f1511f429890a18d320be3f6b259327c48f2d4fd975b49fdd7ce8abddb9",
+      "installedSha": "a9de7f1511f429890a18d320be3f6b259327c48f2d4fd975b49fdd7ce8abddb9"
     },
     "scripts/lint-staleness.js": {
       "owner": "framework",
@@ -6778,8 +6398,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/lint-stories.js",
-      "sha256": "d5292bd2cc4ed7f9742bc97d680e14351ab130cb2b858d10390434f138a9c6d6",
-      "installedSha": "d5292bd2cc4ed7f9742bc97d680e14351ab130cb2b858d10390434f138a9c6d6"
+      "sha256": "bb9a8a888d7f8ac79e3b10653edf2be71de1dfd1cb6067f6d461f0143e11ff16",
+      "installedSha": "bb9a8a888d7f8ac79e3b10653edf2be71de1dfd1cb6067f6d461f0143e11ff16"
     },
     "scripts/market-research-fix-1-brief.md": {
       "owner": "framework",
@@ -7079,8 +6699,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/qa-health.js",
-      "sha256": "88ec7a0991f0918bc891e055bde40134fe6a490a0085b5c402ac0b9d407887f5",
-      "installedSha": "88ec7a0991f0918bc891e055bde40134fe6a490a0085b5c402ac0b9d407887f5"
+      "sha256": "bbeef4f4e89912e405d6e2a9dbce593aec22b44048bcc641248af69871e3326d",
+      "installedSha": "bbeef4f4e89912e405d6e2a9dbce593aec22b44048bcc641248af69871e3326d"
     },
     "scripts/read-store-state.js": {
       "owner": "framework",
@@ -7114,8 +6734,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/research-append-learnings.js",
-      "sha256": "50b6d19e48b18911dc4b7af756986dfc359051ba51cdf63076044c0ab9d9d5ac",
-      "installedSha": "50b6d19e48b18911dc4b7af756986dfc359051ba51cdf63076044c0ab9d9d5ac"
+      "sha256": "cd40eeb4d9f78f90ee49c8219276bb187d20731c81e45db57fd216338d35b9ba",
+      "installedSha": "cd40eeb4d9f78f90ee49c8219276bb187d20731c81e45db57fd216338d35b9ba"
     },
     "scripts/research-build-payload.js": {
       "owner": "framework",
@@ -7261,8 +6881,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/store-viewer.html",
-      "sha256": "ca8649fbdeb1e902a29cbe39dc3ca22fd9bb66486c92670368a72067ecb06d78",
-      "installedSha": "ca8649fbdeb1e902a29cbe39dc3ca22fd9bb66486c92670368a72067ecb06d78"
+      "sha256": "923dd39a0bc5febe71b1f4c0d8f6c2a5dda82526bff2af5a532dae0c77703847",
+      "installedSha": "923dd39a0bc5febe71b1f4c0d8f6c2a5dda82526bff2af5a532dae0c77703847"
     },
     "scripts/strip-planning-only.js": {
       "owner": "framework",
@@ -7536,13 +7156,6 @@
       "source": "scripts/write-market-research-fix-1-brief.js",
       "sha256": "6167dc690d13a8e2e6e97984677a5859f8e8573e5a30b927fc4d8d3a43e6a4ab",
       "installedSha": "6167dc690d13a8e2e6e97984677a5859f8e8573e5a30b927fc4d8d3a43e6a4ab"
-    },
-    "scripts/write-mr-fix1-brief.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/write-mr-fix1-brief.js",
-      "sha256": "34f1f7fc31051ac3c35f8bb5db85065ffa4169de8d2d079fd710d1d3d30bba44",
-      "installedSha": "34f1f7fc31051ac3c35f8bb5db85065ffa4169de8d2d079fd710d1d3d30bba44"
     },
     "scripts/write-onboarding-fix-1-brief.js": {
       "owner": "framework",
@@ -7940,8 +7553,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/warpos/manifest/build.js",
-      "sha256": "3c2c2a41a53424e58f10439d08784ef27d034a7f985cb7abb8435422b5a4fe8e",
-      "installedSha": "3c2c2a41a53424e58f10439d08784ef27d034a7f985cb7abb8435422b5a4fe8e"
+      "sha256": "c9915808847df9690260e2caab62560c996b98150c81e071b3041991c5739781",
+      "installedSha": "c9915808847df9690260e2caab62560c996b98150c81e071b3041991c5739781"
     },
     "scripts/warpos/manifest/test-bootstrap.js": {
       "owner": "framework",
@@ -7954,8 +7567,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/warpos/manifest/test-build.js",
-      "sha256": "1c5dcba40f1e7c0c796fc853f03e32604bc94ff4fdf634b9e3e1a70a6733f5b2",
-      "installedSha": "1c5dcba40f1e7c0c796fc853f03e32604bc94ff4fdf634b9e3e1a70a6733f5b2"
+      "sha256": "2757debab29f6a502015c973f0997d2c40623cdab88a731e1b620b528da98176",
+      "installedSha": "2757debab29f6a502015c973f0997d2c40623cdab88a731e1b620b528da98176"
     },
     "scripts/warpos/manifest/test-installer-hook.js": {
       "owner": "framework",
@@ -7982,8 +7595,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/warpos/manifest/walk-skip.js",
-      "sha256": "a7fb5d3b87d5ddc420a2354a6845a8127579c1cb4213400923813a42ee4e55ca",
-      "installedSha": "a7fb5d3b87d5ddc420a2354a6845a8127579c1cb4213400923813a42ee4e55ca"
+      "sha256": "2bcd131d85461585cb6307b78dba7af99499e3abd982d62da075349fa2443d84",
+      "installedSha": "2bcd131d85461585cb6307b78dba7af99499e3abd982d62da075349fa2443d84"
     },
     "scripts/warpos/lib/content-hash.js": {
       "owner": "framework",
@@ -8066,8 +7679,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/trackers/validate.js",
-      "sha256": "6d4055b1399d534ed73959004d8abfee78a8f0a83a80ee42401b9743555602ce",
-      "installedSha": "6d4055b1399d534ed73959004d8abfee78a8f0a83a80ee42401b9743555602ce"
+      "sha256": "7ad07a0cb466d3cd82768c4fa1f8017206c3bdd5cdde1259525d6ff10840af2b",
+      "installedSha": "7ad07a0cb466d3cd82768c4fa1f8017206c3bdd5cdde1259525d6ff10840af2b"
     },
     "scripts/tools/emit-attestation-events.js": {
       "owner": "framework",
@@ -8633,8 +8246,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/requirements/config.js",
-      "sha256": "770719f4377cbadaa72fa457e3fda8e99ed39f0b217b5af9d7077123b148a5df",
-      "installedSha": "770719f4377cbadaa72fa457e3fda8e99ed39f0b217b5af9d7077123b148a5df"
+      "sha256": "b2cb45161da67875c4a63c5528565e56ef83b9eb2881b428c018633c3c3d0fd9",
+      "installedSha": "b2cb45161da67875c4a63c5528565e56ef83b9eb2881b428c018633c3c3d0fd9"
     },
     "scripts/requirements/gate.js": {
       "owner": "framework",
@@ -8717,8 +8330,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/products/_log-beta-decisions.js",
-      "sha256": "4bfc3d361b60efadc36f2b152cfcf8f0778e6dd9e51beb973529ee5c52f199d4",
-      "installedSha": "4bfc3d361b60efadc36f2b152cfcf8f0778e6dd9e51beb973529ee5c52f199d4"
+      "sha256": "bc423aa3581b3887395d7348758fc4fea5ae9eed2b0392fb416b32e9b586105d",
+      "installedSha": "bc423aa3581b3887395d7348758fc4fea5ae9eed2b0392fb416b32e9b586105d"
     },
     "scripts/products/_log-beta-design-review.js": {
       "owner": "framework",
@@ -8843,8 +8456,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/portfolio/status.js",
-      "sha256": "44da8162bacafd64547c82c9706fbd52a896a4818ee238b5ef76bcf361dea8cc",
-      "installedSha": "44da8162bacafd64547c82c9706fbd52a896a4818ee238b5ef76bcf361dea8cc"
+      "sha256": "6b350aa6761c7dfb1616a6a816c1e3bd4f9ce3485b0334df8940ae532923f891",
+      "installedSha": "6b350aa6761c7dfb1616a6a816c1e3bd4f9ce3485b0334df8940ae532923f891"
     },
     "scripts/portfolio/sync.js": {
       "owner": "framework",
@@ -8920,8 +8533,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "f5a07196b9915e3f3d5f3d9e94cf6eb10014e8d9bba453552d77c5e33e613560",
-      "installedSha": "f5a07196b9915e3f3d5f3d9e94cf6eb10014e8d9bba453552d77c5e33e613560"
+      "sha256": "632f1ba4bae8cb043c733874fa28c7c057bf8df4d2727cda992877b0143f67a0",
+      "installedSha": "632f1ba4bae8cb043c733874fa28c7c057bf8df4d2727cda992877b0143f67a0"
     },
     "scripts/one-off/append-releases-row-SP-20260521-001.js": {
       "owner": "framework",
@@ -9634,15 +9247,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/hooks/tracker-completion-gate.js",
-      "sha256": "859b23adf1bbb8f879ed70d144b8be9ae505e21c10bec2f3a8d2e9cfd6beda68",
-      "installedSha": "859b23adf1bbb8f879ed70d144b8be9ae505e21c10bec2f3a8d2e9cfd6beda68"
+      "sha256": "18941159ec745e02a758a05aee73e2e6aeab04e0ad3bdbd330e0f57866a1f7ca",
+      "installedSha": "18941159ec745e02a758a05aee73e2e6aeab04e0ad3bdbd330e0f57866a1f7ca"
     },
     "scripts/hooks/tracker-start-of-work.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/hooks/tracker-start-of-work.js",
-      "sha256": "81e21362c43f705b48d06fb6b3e3e4a6df95d57273d6e1e4673f3012c731e295",
-      "installedSha": "81e21362c43f705b48d06fb6b3e3e4a6df95d57273d6e1e4673f3012c731e295"
+      "sha256": "fd1d8ea8d585d82f0429635f88058829a5d833dbd45c011999a2947d4255fa26",
+      "installedSha": "fd1d8ea8d585d82f0429635f88058829a5d833dbd45c011999a2947d4255fa26"
     },
     "scripts/hooks/typecheck.js": {
       "owner": "framework",
@@ -9781,8 +9394,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/hooks/lib/project-config.js",
-      "sha256": "f034cf392d5f26cff9694aea3ce89e3aa619f56a00102e96e23bc4b3d7eba33c",
-      "installedSha": "f034cf392d5f26cff9694aea3ce89e3aa619f56a00102e96e23bc4b3d7eba33c"
+      "sha256": "5ec44ff001ee68467c92c8ba57e4907cfb30cd37aa47dbea53de7a888e162a7b",
+      "installedSha": "5ec44ff001ee68467c92c8ba57e4907cfb30cd37aa47dbea53de7a888e162a7b"
     },
     "scripts/hooks/lib/provider-health.js": {
       "owner": "framework",
@@ -11559,8 +11172,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/brand-leak-scan.js",
-      "sha256": "9d72d1161c54bee64814e2208a4b2804f692df98b1ccc38084a8895d0b027078",
-      "installedSha": "9d72d1161c54bee64814e2208a4b2804f692df98b1ccc38084a8895d0b027078"
+      "sha256": "9862aa1a40dc1470040d2e2f7ab24fecdddb00bed0c24f6480f2037a12f1daf4",
+      "installedSha": "9862aa1a40dc1470040d2e2f7ab24fecdddb00bed0c24f6480f2037a12f1daf4"
     },
     "scripts/checks/canon-no-unfilled-tokens.js": {
       "owner": "framework",
@@ -11888,15 +11501,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/entry-preamble-parity.js",
-      "sha256": "d104e0dff099853b3dda6a3f3048eea8b88b14932fb4c1e972774fdf4ab76483",
-      "installedSha": "d104e0dff099853b3dda6a3f3048eea8b88b14932fb4c1e972774fdf4ab76483"
+      "sha256": "5b8733b2c0e15bfb742c854140c87288f1affc8659528663f6f51e506d3ee5ad",
+      "installedSha": "5b8733b2c0e15bfb742c854140c87288f1affc8659528663f6f51e506d3ee5ad"
     },
     "scripts/checks/entry-preamble-parity.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/entry-preamble-parity.test.js",
-      "sha256": "1d2ad8bde10dc48f60f5e04c9bd54d7cc41bfa52b9f47a9b06c12bf33d91f442",
-      "installedSha": "1d2ad8bde10dc48f60f5e04c9bd54d7cc41bfa52b9f47a9b06c12bf33d91f442"
+      "sha256": "588a59e64b6f3c7026c1519d622bc313ab98a85f54e45aecb11253b0f7e6f8af",
+      "installedSha": "588a59e64b6f3c7026c1519d622bc313ab98a85f54e45aecb11253b0f7e6f8af"
     },
     "scripts/checks/epsilon-liveness.js": {
       "owner": "framework",
@@ -11954,19 +11567,26 @@
       "sha256": "897f11437c765da7b1f577c8c2ddbd76ea58cf10fe2ada252621a4a31a1f8ecd",
       "installedSha": "897f11437c765da7b1f577c8c2ddbd76ea58cf10fe2ada252621a4a31a1f8ecd"
     },
+    "scripts/checks/framework-purity-gate.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/framework-purity-gate.test.js",
+      "sha256": "991ed6b705423a2ae95dd98a8d3c6bf94ad22f8c3abde873968454a02a775c45",
+      "installedSha": "991ed6b705423a2ae95dd98a8d3c6bf94ad22f8c3abde873968454a02a775c45"
+    },
     "scripts/checks/framework-purity.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/framework-purity.js",
-      "sha256": "be1ac6683e3e3a2341b2505e51d2a2738a5236d713649b9ad7698c9e64447906",
-      "installedSha": "be1ac6683e3e3a2341b2505e51d2a2738a5236d713649b9ad7698c9e64447906"
+      "sha256": "4ef1d772e848f22ac7a8ef84255831541452f4d3ce1435cc447b7e2cffa932c0",
+      "installedSha": "4ef1d772e848f22ac7a8ef84255831541452f4d3ce1435cc447b7e2cffa932c0"
     },
     "scripts/checks/framework-purity.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/framework-purity.test.js",
-      "sha256": "b9354c299c60310d59705efc595a0fc16c0251098f1abd325a4ca25aec843631",
-      "installedSha": "b9354c299c60310d59705efc595a0fc16c0251098f1abd325a4ca25aec843631"
+      "sha256": "3b32dbafc530777903b0950bf7535b26e39577d06ed796343fcde78adf88d9d4",
+      "installedSha": "3b32dbafc530777903b0950bf7535b26e39577d06ed796343fcde78adf88d9d4"
     },
     "scripts/checks/gate-failclosed-audit.js": {
       "owner": "framework",
@@ -12079,6 +11699,41 @@
       "source": "scripts/checks/knowledge-coverage.test.js",
       "sha256": "519c42a329718564317acbd1a4442d32e9564548d81ad7231b36bf2b3a7f756e",
       "installedSha": "519c42a329718564317acbd1a4442d32e9564548d81ad7231b36bf2b3a7f756e"
+    },
+    "scripts/checks/leak-denylist.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/leak-denylist.js",
+      "sha256": "d7310be813622ede003fa1b7cb173859af803f5c9417f0d9476a66b415e6044f",
+      "installedSha": "d7310be813622ede003fa1b7cb173859af803f5c9417f0d9476a66b415e6044f"
+    },
+    "scripts/checks/leak-denylist.json": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/leak-denylist.json",
+      "sha256": "e802cba3f8ef3607a8da668c770ada430bd83f222195f51d733306b697bca32a",
+      "installedSha": "e802cba3f8ef3607a8da668c770ada430bd83f222195f51d733306b697bca32a"
+    },
+    "scripts/checks/leak-denylist.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/leak-denylist.test.js",
+      "sha256": "722807dcc1bf13cd9dba4a32471f9c1eeeddeb121ed27ae7e137f87f1a84aa90",
+      "installedSha": "722807dcc1bf13cd9dba4a32471f9c1eeeddeb121ed27ae7e137f87f1a84aa90"
+    },
+    "scripts/checks/leak-gate.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/leak-gate.js",
+      "sha256": "1a8a600605c6a70852bc366df4bce0c98426d35bd1cc7ebb0d25629cbca66471",
+      "installedSha": "1a8a600605c6a70852bc366df4bce0c98426d35bd1cc7ebb0d25629cbca66471"
+    },
+    "scripts/checks/leak-gate.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/leak-gate.test.js",
+      "sha256": "642bc6cbc61e82dd12fbb43489d9fc2070bba7c041ae43fa68292ea045026a30",
+      "installedSha": "642bc6cbc61e82dd12fbb43489d9fc2070bba7c041ae43fa68292ea045026a30"
     },
     "scripts/checks/license-match.test.js": {
       "owner": "framework",
@@ -12430,6 +12085,20 @@
       "sha256": "4dd8b7a57a844a37c0ed991aaf29dffde8f93a868b6d6fccc792c30ba0181788",
       "installedSha": "4dd8b7a57a844a37c0ed991aaf29dffde8f93a868b6d6fccc792c30ba0181788"
     },
+    "scripts/checks/readme-drift.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/readme-drift.js",
+      "sha256": "27500ae97fd78da3acb8ac155fcc93cdb5c953d8e21b590674e0c5d884dd1ec6",
+      "installedSha": "27500ae97fd78da3acb8ac155fcc93cdb5c953d8e21b590674e0c5d884dd1ec6"
+    },
+    "scripts/checks/readme-drift.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/readme-drift.test.js",
+      "sha256": "dbecc0c3c1337601ec4996e0701cc100d5cc58cd877cc045631847c05820c1c7",
+      "installedSha": "dbecc0c3c1337601ec4996e0701cc100d5cc58cd877cc045631847c05820c1c7"
+    },
     "scripts/checks/reasoned-consult-honesty.js": {
       "owner": "framework",
       "managed": true,
@@ -12616,8 +12285,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/test-framework-purity-staged.js",
-      "sha256": "160bb07550d884565318ebc272efb1288de103f221178cb5d3d2be239962d239",
-      "installedSha": "160bb07550d884565318ebc272efb1288de103f221178cb5d3d2be239962d239"
+      "sha256": "e80ef4f089fbb05d0486e5b763ce09b2b9e9ee0f1f679e93b23a7d5928ca8db5",
+      "installedSha": "e80ef4f089fbb05d0486e5b763ce09b2b9e9ee0f1f679e93b23a7d5928ca8db5"
     },
     "scripts/checks/test-guard-remediation-paths.js": {
       "owner": "framework",
@@ -12819,8 +12488,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/warpos-ship-coverage.js",
-      "sha256": "a90b58b3e97e0d851518d749d575163df372dd9210cfbd83c77fbd37387a371b",
-      "installedSha": "a90b58b3e97e0d851518d749d575163df372dd9210cfbd83c77fbd37387a371b"
+      "sha256": "4f94308963592ced9660232edb323f22c946d106b372c58f848b83c3247e17e7",
+      "installedSha": "4f94308963592ced9660232edb323f22c946d106b372c58f848b83c3247e17e7"
     },
     "scripts/checks/warpos-staleness.js": {
       "owner": "framework",
@@ -12836,12 +12505,26 @@
       "sha256": "89b06e599b5adb938ce85efa710055868d19013ebea412c898b8bde3b6ab3936",
       "installedSha": "89b06e599b5adb938ce85efa710055868d19013ebea412c898b8bde3b6ab3936"
     },
+    "scripts/checks/warpos-tracked-transients.allowlist.json": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/warpos-tracked-transients.allowlist.json",
+      "sha256": "cde4f2301a46b6bdf288ef2a50f453f5a754d1f33b058a756a0a2b68c475869f",
+      "installedSha": "cde4f2301a46b6bdf288ef2a50f453f5a754d1f33b058a756a0a2b68c475869f"
+    },
     "scripts/checks/warpos-tracked-transients.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/warpos-tracked-transients.js",
-      "sha256": "28f689473c1de2869db54b69c446d37a33afeddb10141e56d012be8ef2f18148",
-      "installedSha": "28f689473c1de2869db54b69c446d37a33afeddb10141e56d012be8ef2f18148"
+      "sha256": "45fc0ef9ab4be2844000b3773631a360be57604eda5202767c6941429338702f",
+      "installedSha": "45fc0ef9ab4be2844000b3773631a360be57604eda5202767c6941429338702f"
+    },
+    "scripts/checks/warpos-tracked-transients.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/warpos-tracked-transients.test.js",
+      "sha256": "ff9da97a6170a9873bc2a4bbd2d62a17cfab28acd5866cbed51ff170125ef81a",
+      "installedSha": "ff9da97a6170a9873bc2a4bbd2d62a17cfab28acd5866cbed51ff170125ef81a"
     },
     "scripts/checks/warpos-version-quorum.js": {
       "owner": "framework",
@@ -12856,6 +12539,20 @@
       "source": "scripts/checks/lib/fixture-harness.js",
       "sha256": "9a1ed25b82d06edfd3ff10f719489c8a694be9b1546df51001b59abc59ec2019",
       "installedSha": "9a1ed25b82d06edfd3ff10f719489c8a694be9b1546df51001b59abc59ec2019"
+    },
+    "scripts/checks/fixtures/readme-drift/fail.md": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/fixtures/readme-drift/fail.md",
+      "sha256": "92d526592e0d7b08a6a7cd987c740b505ee4acb45d8e9ee370f1f8c2164dc3d5",
+      "installedSha": "92d526592e0d7b08a6a7cd987c740b505ee4acb45d8e9ee370f1f8c2164dc3d5"
+    },
+    "scripts/checks/fixtures/readme-drift/pass.md": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/fixtures/readme-drift/pass.md",
+      "sha256": "7a2f2fa2bc2a0a0663282c98e810762681229de3886c6b4a7960a72f55cfb516",
+      "installedSha": "7a2f2fa2bc2a0a0663282c98e810762681229de3886c6b4a7960a72f55cfb516"
     },
     "scripts/checks/fixtures/authority-pollution/plant/AGENTS.md": {
       "owner": "framework",
@@ -12885,12 +12582,26 @@
       "sha256": "cf8fdea395e6930bbbbe48cdfbc0e0e28c3b132eb6c677fadd72b51eed420c8d",
       "installedSha": "cf8fdea395e6930bbbbe48cdfbc0e0e28c3b132eb6c677fadd72b51eed420c8d"
     },
+    "scripts/check/privacy.allowlist.json": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/check/privacy.allowlist.json",
+      "sha256": "e5272ca495116e9da5ae0fadfaae7697a5b3dde4c7c225a18a61a2211a8de375",
+      "installedSha": "e5272ca495116e9da5ae0fadfaae7697a5b3dde4c7c225a18a61a2211a8de375"
+    },
     "scripts/check/privacy.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "5e920ce169206a5269336fc0058c277f6058f866a1ff6499c2169d2ae71728b1",
-      "installedSha": "5e920ce169206a5269336fc0058c277f6058f866a1ff6499c2169d2ae71728b1"
+      "sha256": "fcbb206c034f91aff3b8da51843c3f2344b28a56f112035d095bb0cdffe5e20b",
+      "installedSha": "fcbb206c034f91aff3b8da51843c3f2344b28a56f112035d095bb0cdffe5e20b"
+    },
+    "scripts/check/privacy.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/check/privacy.test.js",
+      "sha256": "513c89469e6f3dbfa654c8b6e7a7203ea54f73d386ff837ab9a8366d0b68138c",
+      "installedSha": "513c89469e6f3dbfa654c8b6e7a7203ea54f73d386ff837ab9a8366d0b68138c"
     },
     "scripts/check/roadmap-trace.js": {
       "owner": "framework",
@@ -14653,8 +14364,8 @@
       "owner": "framework",
       "managed": true,
       "source": "framework/releases/0.12.1/changelog.md",
-      "sha256": "bbe30f4edea7d3b1cb38a2ef804dfdb5525273975ad9577d72de697019f2955c",
-      "installedSha": "bbe30f4edea7d3b1cb38a2ef804dfdb5525273975ad9577d72de697019f2955c"
+      "sha256": "a2266d06be73e887c2faf9b4a6c6eec98ed80a1e497bf9493fd199b7e8f2d984",
+      "installedSha": "a2266d06be73e887c2faf9b4a6c6eec98ed80a1e497bf9493fd199b7e8f2d984"
     },
     "framework/releases/0.12.1/checksums.json": {
       "owner": "framework",
@@ -15124,6 +14835,25 @@
       "source": null,
       "sha256": "6952f8b5ed7d9e7214351fa3caf865315f810b4b6161d1601fa5162ba56ff61a",
       "installedSha": "6952f8b5ed7d9e7214351fa3caf865315f810b4b6161d1601fa5162ba56ff61a"
+    },
+    "docs/PROVENANCE.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference",
+      "_note": "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers."
+    },
+    "docs/RENAME-RUNBOOK.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "reference",
+      "_note": "Canonical-repo community/provenance doc — describes this repo, not shipped to consumers."
+    },
+    ".github/workflows/leak-gate.yml": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "69a981a5f1a1f6c51f4baa343a92b68fcffcfaeb0b7b868516f3c9d4e3c6e61e",
+      "installedSha": "69a981a5f1a1f6c51f4baa343a92b68fcffcfaeb0b7b868516f3c9d4e3c6e61e"
     },
     ".claude/.agent-result-hashes.json": {
       "owner": "runtime",
@@ -25277,8 +25007,8 @@
       "managed": true,
       "source": ".claude/project/reference/entry-preamble.md",
       "kind": "md",
-      "sha256": "f4ce323138fc87099d642beb6335d3db9f41e0de2c4439a94f6f4e70f68015e6",
-      "installedSha": "f4ce323138fc87099d642beb6335d3db9f41e0de2c4439a94f6f4e70f68015e6"
+      "sha256": "f68d6c433b9e4143f8983b0862b59952f0c76dd65ba3e0ee91d470d7e89b7098",
+      "installedSha": "f68d6c433b9e4143f8983b0862b59952f0c76dd65ba3e0ee91d470d7e89b7098"
     },
     ".claude/project/reference/evolution.md": {
       "owner": "framework",
@@ -25293,8 +25023,8 @@
       "managed": true,
       "source": ".claude/project/reference/installer-file-lifecycle.md",
       "kind": "md",
-      "sha256": "561b00efaf1d5be617f34268d9bf5765380752053a592dd087738ba9ba094993",
-      "installedSha": "561b00efaf1d5be617f34268d9bf5765380752053a592dd087738ba9ba094993"
+      "sha256": "b6b9c31942777a46c9dc9568450585fabf6f6041ffa25873e985da9f14d2f75c",
+      "installedSha": "b6b9c31942777a46c9dc9568450585fabf6f6041ffa25873e985da9f14d2f75c"
     },
     ".claude/project/reference/karpathy-autoresearch.md": {
       "owner": "framework",
@@ -25405,8 +25135,8 @@
       "managed": true,
       "source": ".claude/project/reference/SYSTEMS-REFERENCE.md",
       "kind": "md",
-      "sha256": "e608d649b2e7612a50ef80c21fd41100ebbb7a3e0f5e9d163664869425cee464",
-      "installedSha": "e608d649b2e7612a50ef80c21fd41100ebbb7a3e0f5e9d163664869425cee464"
+      "sha256": "0584694a6498760b217c1a1178791bb92abbe4f49cb005ce6aba37e1156996e8",
+      "installedSha": "0584694a6498760b217c1a1178791bb92abbe4f49cb005ce6aba37e1156996e8"
     },
     ".claude/project/reference/SYSTEMS.md": {
       "owner": "framework",
@@ -25445,8 +25175,8 @@
       "managed": true,
       "source": ".claude/project/reference/warpos-system-updates-2026-04-15.md",
       "kind": "md",
-      "sha256": "2f4197b7092ccf244abdd5700b59706bc58e109c34a00dae5adfb7a3e0fb76bd",
-      "installedSha": "2f4197b7092ccf244abdd5700b59706bc58e109c34a00dae5adfb7a3e0fb76bd"
+      "sha256": "7e2c81850aeb6bc2de2722b0fd9ceadab9bf7247c3e36d53e36cbcfaa977296c",
+      "installedSha": "7e2c81850aeb6bc2de2722b0fd9ceadab9bf7247c3e36d53e36cbcfaa977296c"
     },
     ".claude/project/reference/lastmile/acceptance-criteria.md": {
       "owner": "framework",
@@ -26227,16 +25957,16 @@
       "managed": true,
       "source": ".claude/commands/trackers/init.md",
       "kind": "md",
-      "sha256": "a47199e49c5dcba18e4bc9ef5fbcc47779a26ae0ebf428fb19e8979a639c6609",
-      "installedSha": "a47199e49c5dcba18e4bc9ef5fbcc47779a26ae0ebf428fb19e8979a639c6609"
+      "sha256": "1395d04411b56ebfeb89314680e71a06aa1c81c9ad7dbd66a01b8bbf65a1f5ae",
+      "installedSha": "1395d04411b56ebfeb89314680e71a06aa1c81c9ad7dbd66a01b8bbf65a1f5ae"
     },
     ".claude/commands/trackers/validate.md": {
       "owner": "framework",
       "managed": true,
       "source": ".claude/commands/trackers/validate.md",
       "kind": "md",
-      "sha256": "e85fc94486aa44a9fa2cc964e3c8aabc6d8ba6937e32804ef797b1ff6e3e1365",
-      "installedSha": "e85fc94486aa44a9fa2cc964e3c8aabc6d8ba6937e32804ef797b1ff6e3e1365"
+      "sha256": "103754ff5979f223715e9ea40eddd49a8b4bc6df4adad1208919cccf195de277",
+      "installedSha": "103754ff5979f223715e9ea40eddd49a8b4bc6df4adad1208919cccf195de277"
     },
     ".claude/commands/sprint/cost-gate.md": {
       "owner": "framework",
@@ -26475,8 +26205,8 @@
       "managed": true,
       "source": ".claude/commands/scan/architecture.md",
       "kind": "md",
-      "sha256": "29c3accc799d7254d4fe627cd414071220ea17459584f3a381b7c3b0091f6504",
-      "installedSha": "29c3accc799d7254d4fe627cd414071220ea17459584f3a381b7c3b0091f6504"
+      "sha256": "618b16274ee5bcccfa1c7ac33ff05075737f28da1bf884af0fa9d4326cd09750",
+      "installedSha": "618b16274ee5bcccfa1c7ac33ff05075737f28da1bf884af0fa9d4326cd09750"
     },
     ".claude/commands/scan/coherence.md": {
       "owner": "framework",
@@ -26539,8 +26269,8 @@
       "managed": true,
       "source": ".claude/commands/scan/framework-purity.md",
       "kind": "md",
-      "sha256": "069883fc89791f7624586a39ff4c2bee25c0a52e896da499954bc019a8d54b0c",
-      "installedSha": "069883fc89791f7624586a39ff4c2bee25c0a52e896da499954bc019a8d54b0c"
+      "sha256": "72a21010281b18377035c1a355e322a413546e294e67c16f4f4f24bc9fc52fdc",
+      "installedSha": "72a21010281b18377035c1a355e322a413546e294e67c16f4f4f24bc9fc52fdc"
     },
     ".claude/commands/scan/framework-views-fresh.md": {
       "owner": "framework",
@@ -26555,8 +26285,8 @@
       "managed": true,
       "source": ".claude/commands/scan/full.md",
       "kind": "md",
-      "sha256": "ef47f82fe7fcfd6d26ca75b79fda903264437124e4faee8fac3e8ba675ab0d21",
-      "installedSha": "ef47f82fe7fcfd6d26ca75b79fda903264437124e4faee8fac3e8ba675ab0d21"
+      "sha256": "f9d8e65354c8596546fbeb401e090f48451f86b0ae54b714c84915cbe06de2e7",
+      "installedSha": "f9d8e65354c8596546fbeb401e090f48451f86b0ae54b714c84915cbe06de2e7"
     },
     ".claude/commands/scan/greek-office-parity.md": {
       "owner": "framework",
@@ -26589,6 +26319,14 @@
       "kind": "md",
       "sha256": "c2e937f5d430f4394eca6771c24c104d8951dba7a5710a367e23cbe176f40fbd",
       "installedSha": "c2e937f5d430f4394eca6771c24c104d8951dba7a5710a367e23cbe176f40fbd"
+    },
+    ".claude/commands/scan/leak-gate.md": {
+      "owner": "framework",
+      "managed": true,
+      "source": ".claude/commands/scan/leak-gate.md",
+      "kind": "md",
+      "sha256": "05d27be0d3b1400b0114293c31048e6424404258454772bcc808c22707f590bd",
+      "installedSha": "05d27be0d3b1400b0114293c31048e6424404258454772bcc808c22707f590bd"
     },
     ".claude/commands/scan/meta-lockstep.md": {
       "owner": "framework",
@@ -26643,8 +26381,8 @@
       "managed": true,
       "source": ".claude/commands/scan/privacy.md",
       "kind": "md",
-      "sha256": "05c72e28fd404f0cbd87791066cf83da5fbd8893bfef98cd70f2c27dc9fd8843",
-      "installedSha": "05c72e28fd404f0cbd87791066cf83da5fbd8893bfef98cd70f2c27dc9fd8843"
+      "sha256": "490f2c56db5b1217939736202b786d31280f6f09fd6b5cdbbb7a1d1e872c652a",
+      "installedSha": "490f2c56db5b1217939736202b786d31280f6f09fd6b5cdbbb7a1d1e872c652a"
     },
     ".claude/commands/scan/provider-agent-tool-parity.md": {
       "owner": "framework",
@@ -26819,8 +26557,8 @@
       "managed": true,
       "source": ".claude/commands/scan/warpos-manifest-coverage.md",
       "kind": "md",
-      "sha256": "3032fd3f07027067fe92e805ba3f15f9a5153c90ee64cf4e8eec2e276dd5f9db",
-      "installedSha": "3032fd3f07027067fe92e805ba3f15f9a5153c90ee64cf4e8eec2e276dd5f9db"
+      "sha256": "6b01d858022ec54cd1c566338fd2b41c97bad644952518c116ea07f2b06711c5",
+      "installedSha": "6b01d858022ec54cd1c566338fd2b41c97bad644952518c116ea07f2b06711c5"
     },
     ".claude/commands/scan/warpos-manifest-honesty.md": {
       "owner": "framework",
@@ -26883,8 +26621,8 @@
       "managed": true,
       "source": ".claude/commands/scan/warpos-tracked-transients.md",
       "kind": "md",
-      "sha256": "8224460228c9e9601523e7eaf9d32e7a1d9d181cfea0417f1dad9c55fa552b4d",
-      "installedSha": "8224460228c9e9601523e7eaf9d32e7a1d9d181cfea0417f1dad9c55fa552b4d"
+      "sha256": "0e9fc6ca0eb088254f36788e921fd97edbc8bd5f06543a84129700fc59c6c122",
+      "installedSha": "0e9fc6ca0eb088254f36788e921fd97edbc8bd5f06543a84129700fc59c6c122"
     },
     ".claude/commands/scan/warpos-version-quorum.md": {
       "owner": "framework",
@@ -27019,8 +26757,8 @@
       "managed": true,
       "source": ".claude/commands/portfolio/list.md",
       "kind": "md",
-      "sha256": "9cd3ee2aecb8b1e22c2fb98933714d70a36b1d7e760dffb79c2a6b6f9d31255a",
-      "installedSha": "9cd3ee2aecb8b1e22c2fb98933714d70a36b1d7e760dffb79c2a6b6f9d31255a"
+      "sha256": "6bc6191107afb69af3b2317c0238bb6c5cc3637bba40aef9fcae16c92b0655a9",
+      "installedSha": "6bc6191107afb69af3b2317c0238bb6c5cc3637bba40aef9fcae16c92b0655a9"
     },
     ".claude/commands/portfolio/new.md": {
       "owner": "framework",
@@ -27035,8 +26773,8 @@
       "managed": true,
       "source": ".claude/commands/portfolio/open.md",
       "kind": "md",
-      "sha256": "546f71aeb3ea763bce105fa3cdee5b8f283b99e624d3cbf4afcd41cdc325df47",
-      "installedSha": "546f71aeb3ea763bce105fa3cdee5b8f283b99e624d3cbf4afcd41cdc325df47"
+      "sha256": "a5e1d03d55677d2051ac9473afc027612ac876ca29d5ee213df70cdcb4cbcd93",
+      "installedSha": "a5e1d03d55677d2051ac9473afc027612ac876ca29d5ee213df70cdcb4cbcd93"
     },
     ".claude/commands/portfolio/register.md": {
       "owner": "framework",
@@ -27067,8 +26805,8 @@
       "managed": true,
       "source": ".claude/commands/portfolio/status.md",
       "kind": "md",
-      "sha256": "9b6a883ef2a0e5a2b829dc7f53d5800df3a34ef756aee2c7382d9614a7fffdf7",
-      "installedSha": "9b6a883ef2a0e5a2b829dc7f53d5800df3a34ef756aee2c7382d9614a7fffdf7"
+      "sha256": "2d335f488c7467ae2f8df71fd1b003d851edd84ca00bd6f207483c8817375ed3",
+      "installedSha": "2d335f488c7467ae2f8df71fd1b003d851edd84ca00bd6f207483c8817375ed3"
     },
     ".claude/commands/portfolio/sync.md": {
       "owner": "framework",
@@ -27347,8 +27085,8 @@
       "managed": true,
       "source": ".claude/commands/maps/steps.md",
       "kind": "md",
-      "sha256": "bd04b394a446fd22dc7d45c9713ac2c36f0f4bf77ee4a468b17cf7ec7f83e6fa",
-      "installedSha": "bd04b394a446fd22dc7d45c9713ac2c36f0f4bf77ee4a468b17cf7ec7f83e6fa"
+      "sha256": "40c8956b2f912bdbbbee25e37aab2bfd085562d32af1d4d046da03bb0c742e7e",
+      "installedSha": "40c8956b2f912bdbbbee25e37aab2bfd085562d32af1d4d046da03bb0c742e7e"
     },
     ".claude/commands/maps/systems.md": {
       "owner": "framework",
@@ -27411,8 +27149,8 @@
       "managed": true,
       "source": ".claude/commands/learn/ingest.md",
       "kind": "md",
-      "sha256": "05add0a8c580b9e8782c989f0e399ecb248d2849a9e638dc39af32282b5a223d",
-      "installedSha": "05add0a8c580b9e8782c989f0e399ecb248d2849a9e638dc39af32282b5a223d"
+      "sha256": "44c5bb4f2107577699c87a0e592004e06eadab65be37a9b1581afe8bb42cd6f1",
+      "installedSha": "44c5bb4f2107577699c87a0e592004e06eadab65be37a9b1581afe8bb42cd6f1"
     },
     ".claude/commands/learn/integrate.md": {
       "owner": "framework",
@@ -27547,8 +27285,8 @@
       "managed": true,
       "source": ".claude/commands/guides/write.md",
       "kind": "md",
-      "sha256": "8c37598c82014b34c2484e79964f12b62f11797bb91d0a9aec6353c5c39cb581",
-      "installedSha": "8c37598c82014b34c2484e79964f12b62f11797bb91d0a9aec6353c5c39cb581"
+      "sha256": "93bf44cadda1ccf6e90d7ee896b26f20df508560eceaaddd6175a7f319cc15a8",
+      "installedSha": "93bf44cadda1ccf6e90d7ee896b26f20df508560eceaaddd6175a7f319cc15a8"
     },
     ".claude/commands/growth/ad-images.md": {
       "owner": "framework",
@@ -28059,8 +27797,8 @@
       "managed": true,
       "source": ".claude/agents/_principles/registry.json",
       "kind": "json",
-      "sha256": "34b2320422dfac41e7970f716b8f7fc3edca75cb812ca17c2f2e16d7ea8942f0",
-      "installedSha": "34b2320422dfac41e7970f716b8f7fc3edca75cb812ca17c2f2e16d7ea8942f0"
+      "sha256": "3b1b28da62792910d5c292604ab6ef7db77aa95311b7fa1456844c3df68c4c6d",
+      "installedSha": "3b1b28da62792910d5c292604ab6ef7db77aa95311b7fa1456844c3df68c4c6d"
     },
     ".claude/agents/_org/dispatch-contract.json": {
       "owner": "framework",
@@ -28747,8 +28485,8 @@
       "managed": true,
       "source": ".claude/agents/president/_system/beta/judgement-model.md",
       "kind": "md",
-      "sha256": "04cd153998ee37d56ea645eb40c6b0522faa6740bc1c2e2ed657280ae1cb9e2f",
-      "installedSha": "04cd153998ee37d56ea645eb40c6b0522faa6740bc1c2e2ed657280ae1cb9e2f"
+      "sha256": "a78072132e6a0c50c12c9354e218cc6f989eb17ed4d506afffdb19fcd21f97d3",
+      "installedSha": "a78072132e6a0c50c12c9354e218cc6f989eb17ed4d506afffdb19fcd21f97d3"
     },
     ".claude/agents/president/_system/beta/mined/beta-source-data.md": {
       "owner": "framework",
@@ -28816,8 +28554,8 @@
       "managed": true,
       "source": ".claude/agents/growth/research-lead.md",
       "kind": "md",
-      "sha256": "89d2fa46f47908d61c40e75a3bf3a2ee2158fca56c5072f683348f622710bcac",
-      "installedSha": "89d2fa46f47908d61c40e75a3bf3a2ee2158fca56c5072f683348f622710bcac"
+      "sha256": "c1a2b047048c4079bacc7bcd356adf6c6a9d4fb55fbc155e11fbe3f1960fddbd",
+      "installedSha": "c1a2b047048c4079bacc7bcd356adf6c6a9d4fb55fbc155e11fbe3f1960fddbd"
     },
     ".claude/agents/engineering/director-of-engineering.md": {
       "owner": "framework",
