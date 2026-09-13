@@ -44,13 +44,19 @@ function test(name, fn) {
 }
 
 // ── 1. Default resolution is HOME-anchored ────────────────────────────────
-test("registryPath() resolves to ~/.mc/portfolio.json", () => {
+// S-OS-06 T3 part 5 read-both: ~/.mc/portfolio.json — unless ONLY the legacy registry exists on this machine, which
+// is then used in place (never moved). The legacy dir name is derived from mc-env's prefix (no legacy literal here);
+// the sandboxed fresh/legacy-only/dual cases live in tests/regression/S-OS-06/home-read-both.test.js.
+test("registryPath() resolves to ~/.mc/portfolio.json (or an existing legacy registry, read-both)", () => {
   // Ensure no env override is active for this assertion
   const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
   mcEnv.unsetEnv("PORTFOLIO_REGISTRY");
   try {
     const resolved = registryPath();
-    const expected = path.join(os.homedir(), ".mc", "portfolio.json");
+    const fs = require("fs");
+    const current = path.join(os.homedir(), ".mc", "portfolio.json");
+    const legacy = path.join(os.homedir(), `.${mcEnv.LEGACY_PREFIX.slice(0, -1).toLowerCase()}`, "portfolio.json");
+    const expected = fs.existsSync(current) || !fs.existsSync(legacy) ? current : legacy;
     assert.strictEqual(
       resolved,
       expected,

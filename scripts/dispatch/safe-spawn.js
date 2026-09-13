@@ -62,8 +62,19 @@ const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
 // spawn routes through (providers.js runProvider, cert-attest.js, dispatch-review →
 // dispatch-agent, ...); the raw `codex exec`-from-Bash route is separately blocked by
 // dispatch-route-guard, so the two together cover both routes (lib-only-fix pairing).
-const DEFAULT_CODEX_HOME =
-  mcEnv.readEnv("CODEX_HOME") || path.join(os.homedir(), ".codex-warpos");
+// S-OS-06 T3 part 5: ~/.codex-mc first, else an EXISTING legacy codex home (authenticated state) used IN PLACE — never
+// moved; the legacy join below is the pinned machine literal. The deprecation line waits for an actual codex spawn.
+function resolveCodexHome(home = os.homedir()) {
+  const current = path.join(home, ".codex-mc");
+  const legacy = path.join(home, ".codex-warpos");
+  try {
+    return require("../hooks/lib/mc-dirs").resolvePair(current, legacy, { warn: false });
+  } catch {
+    return { path: fs.existsSync(current) || !fs.existsSync(legacy) ? current : legacy, deprecated: false };
+  }
+}
+const _codexHomeResolution = resolveCodexHome();
+const DEFAULT_CODEX_HOME = mcEnv.readEnv("CODEX_HOME") || _codexHomeResolution.path;
 const _codexHomeSeeded = new Set();
 
 // Seed the isolated home ONCE per process: copy-if-MISSING auth.json + config.toml from
@@ -93,6 +104,13 @@ function seedCodexHome(dir) {
 function withCodexHome(toolId, env) {
   if (toolId !== "codex") return env;
   if (env && env.CODEX_HOME) return env; // explicit override wins — untouched
+  if (_codexHomeResolution.deprecated && DEFAULT_CODEX_HOME === _codexHomeResolution.path) {
+    try {
+      require("../hooks/lib/mc-dirs").warnLegacy(_codexHomeResolution, path.join(os.homedir(), ".codex-mc"), DEFAULT_CODEX_HOME);
+    } catch {
+      /* a deprecation line must never block a dispatch */
+    }
+  }
   seedCodexHome(DEFAULT_CODEX_HOME);
   return { ...(env || {}), CODEX_HOME: DEFAULT_CODEX_HOME };
 }
@@ -829,4 +847,4 @@ function safeSpawnFile(toolId, args, opts = {}) {
   };
 }
 
-module.exports = { resolveTool, assertArgs, normalizeStdin, treeKill, safeSpawnSync, safeSpawnFile, TOOL_IDS, ARG_POLICY, PROJECT_ROOT, CMDLINE_MAX, assembledCmdlineLen, AGY_FORBIDDEN_SKIP_PERM, withCodexHome, DEFAULT_CODEX_HOME };
+module.exports = { resolveTool, assertArgs, normalizeStdin, treeKill, safeSpawnSync, safeSpawnFile, TOOL_IDS, ARG_POLICY, PROJECT_ROOT, CMDLINE_MAX, assembledCmdlineLen, AGY_FORBIDDEN_SKIP_PERM, withCodexHome, DEFAULT_CODEX_HOME, resolveCodexHome };

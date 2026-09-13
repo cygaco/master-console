@@ -412,10 +412,41 @@ h.failClosed("safeSpawnFile fails closed on an arg violation (NO spawn, NO file)
 });
 
 // ── withCodexHome — the isolated CODEX_HOME seam (RI-009 codex cache multi-writer collision) ──
-// The default is the isolated ~/.codex-mc (reading the constant does NOT seed).
-h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-mc", () => ({
-  ok: typeof DEFAULT_CODEX_HOME === "string" && /[\\/]\.codex-mc$/.test(DEFAULT_CODEX_HOME),
-}));
+// The default is the isolated ~/.codex-mc — or, for one release, an EXISTING legacy codex home used IN PLACE
+// (S-OS-06 T3 part 5: read-both, never moved). Reading the constant does NOT seed. The legacy dir name is derived
+// from mc-env's prefix so this test adds no legacy literal.
+const { resolveCodexHome } = require("./safe-spawn");
+const LEGACY_CODEX_DIR = `.codex-${mcEnv.LEGACY_PREFIX.slice(0, -1).toLowerCase()}`;
+h.pass("DEFAULT_CODEX_HOME is the isolated ~/.codex-mc (or an existing legacy codex home, read-both)", () => {
+  const override = mcEnv.readEnv("CODEX_HOME");
+  const expected = override || resolveCodexHome().path;
+  const shapeOk = override ? true : [".codex-mc", LEGACY_CODEX_DIR].includes(path.basename(DEFAULT_CODEX_HOME));
+  return { ok: typeof DEFAULT_CODEX_HOME === "string" && DEFAULT_CODEX_HOME === expected && shapeOk };
+});
+
+h.pass("resolveCodexHome: fresh -> ~/.codex-mc; legacy-only -> legacy in place (deprecated, never moved); both -> ~/.codex-mc", () => {
+  const fx = sealedDir({}, "codexhome-readboth");
+  try {
+    const home = fx.dir;
+    const cur = path.join(home, ".codex-mc");
+    const leg = path.join(home, LEGACY_CODEX_DIR);
+    const fresh = resolveCodexHome(home);
+    const freshCreatedNothing = !fs.existsSync(cur);
+    fs.mkdirSync(leg);
+    const legacyOnly = resolveCodexHome(home);
+    const notMoved = !fs.existsSync(cur) && fs.existsSync(leg);
+    fs.mkdirSync(cur);
+    const both = resolveCodexHome(home);
+    return {
+      ok:
+        fresh.path === cur && !fresh.deprecated && freshCreatedNothing &&
+        legacyOnly.path === leg && legacyOnly.deprecated === true && notMoved &&
+        both.path === cur && !both.deprecated,
+    };
+  } finally {
+    fx.cleanup();
+  }
+});
 
 // Behavior: codex spawns get the isolated CODEX_HOME; an explicit CODEX_HOME wins; non-codex
 // tools are untouched; the caller's env is never mutated. Point DEFAULT at a SEALED temp via a

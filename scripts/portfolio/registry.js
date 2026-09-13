@@ -26,7 +26,15 @@ function registryPath() {
       { exitCode: 2 }
     );
   }
-  return path.join(home, ".warpos", "portfolio.json");
+  // S-OS-06 T3 part 5: ~/.mc/portfolio.json first, else an EXISTING legacy registry read AND written in place
+  // (never auto-moved — state ceiling). The legacy join below is the one pinned compat literal.
+  const current = path.join(home, ".mc", "portfolio.json");
+  const legacy = path.join(home, ".warpos", "portfolio.json");
+  try {
+    return require("../hooks/lib/mc-dirs").resolvePair(current, legacy).path;
+  } catch {
+    return fs.existsSync(current) || !fs.existsSync(legacy) ? current : legacy;
+  }
 }
 
 // ── Empty document shape ───────────────────────────────────
@@ -77,7 +85,7 @@ function load() {
 
 // ── save(doc) ─────────────────────────────────────────────
 // Atomic write: write to .portfolio.json.tmp, then rename.
-// Creates ~/.warpos/ dir lazily.
+// Creates ~/.warpos/ only if that legacy registry already exists (read-both, never moved); else ~/.mc/, lazily.
 function save(doc) {
   const rp = registryPath();
   const dir = path.dirname(rp);
