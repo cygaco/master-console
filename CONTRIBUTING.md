@@ -13,7 +13,7 @@ Thanks for looking. Master Console (formerly WarpOS) is a single-maintainer proj
 ## Getting set up
 
 ```
-git clone https://github.com/cygaco/WarpOS.git     # the repo will be renamed; GitHub redirects
+git clone https://github.com/cygaco/master-console.git
 cd WarpOS
 node --version                                    # 20 or newer
 ```
@@ -79,4 +79,4 @@ The brand is Master Console; identifiers are still `warpos` / `warp:*` / `WARPOS
 
 ## Questions
 
-Open a [GitHub discussion or issue](https://github.com/cygaco/WarpOS/issues). Run `/warp:health` first — it usually names the fix.
+Open a [GitHub discussion or issue](https://github.com/cygaco/master-console/issues). Run `/warp:health` first — it usually names the fix.

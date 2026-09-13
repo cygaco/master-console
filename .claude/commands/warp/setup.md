@@ -52,13 +52,13 @@ Tell the user exactly what state their project is in, before doing anything:
 Only if `../WarpOS/` is missing.
 
 ```bash
-git clone https://github.com/cygaco/WarpOS.git ../WarpOS
+git clone https://github.com/cygaco/master-console.git ../master-console
 ```
 
 If the clone fails (private repo, no access):
 > "The WarpOS repo requires access. If you have a GitHub account, ask the owner to add you as a collaborator, then run `/warp:setup` again. If you were given a personal access token, run this first:
 > `git config --global credential.helper store`
-> `git clone https://<PAT>@github.com/cygaco/WarpOS.git ../WarpOS`"
+> `git clone https://<PAT>@github.com/cygaco/master-console.git ../master-console`"
 
 ### Step B — Run the installer
 
@@ -192,7 +192,7 @@ Don't block on this. Setup is already complete without them.
 
 ## Flags
 
-- `--source <url>` — use a custom WarpOS repo instead of `cygaco/WarpOS`
+- `--source <url>` — use a custom WarpOS repo instead of `cygaco/master-console`
 - `--yes` — skip interactive prompts (use detection defaults)
 - `--skip-backup` — don't back up existing CLAUDE.md / .claude / .gitignore (advanced; use only in CI)
 - `--merge-strategy <append|replace|interactive>` — pre-choose how to handle existing CLAUDE.md

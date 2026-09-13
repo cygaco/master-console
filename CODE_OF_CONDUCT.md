@@ -60,7 +60,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement by opening an
-issue on the repository (`https://github.com/cygaco/WarpOS/issues`) or by
+issue on the repository (`https://github.com/cygaco/master-console/issues`) or by
 mentioning the maintainer, `@cygaco`, on GitHub. For a report you do not want
 public, use the repository's private vulnerability-reporting form (Security tab)
 and state that it is a conduct report; it reaches the same maintainer privately.

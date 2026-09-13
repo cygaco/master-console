@@ -118,10 +118,11 @@ function findRepoRootFromCapsule(capsuleDir) {
 
 // 0.4.1: when sourceRoot doesn't have the target capsule, try to discover
 // a canonical WarpOS clone via the same walk release-canonical.js uses:
-// sibling ../WarpOS, sibling ../warpos, manifest.json#warpos.source.
+// sibling ../master-console (post-rename, 2026-09-12), sibling ../WarpOS, sibling ../warpos, manifest.json#warpos.source.
 // Returns an absolute path to the canonical, or null if nothing usable.
 function discoverCanonical(targetRoot, version) {
   const tries = [];
+  tries.push(path.resolve(targetRoot, "..", "master-console"));
   tries.push(path.resolve(targetRoot, "..", "WarpOS"));
   tries.push(path.resolve(targetRoot, "..", "warpos"));
   try {

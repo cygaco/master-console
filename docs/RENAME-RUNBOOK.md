@@ -1,6 +1,6 @@
 # GitHub repository rename — operator runbook
 
-**Status: NOT executed.** This is the procedure for renaming `cygaco/WarpOS` on GitHub. The rename is an operator action (public URL change, epic E-OPEN-SOURCE-001 gate); nothing in this repository performs it.
+**Status: EXECUTED 2026-09-12** — `cygaco/WarpOS` → `cygaco/master-console` (Settings → General → Rename; verified via `gh repo view` and the 301 redirect). Kept as the record of the procedure. The rename is an operator action (public URL change, epic E-OPEN-SOURCE-001 gate); nothing in this repository performs it.
 
 ## Recommended slug: `cygaco/master-console`
 

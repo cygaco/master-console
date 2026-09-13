@@ -342,7 +342,7 @@ log(
 // AND stdin is a TTY. Otherwise: use defaults, ship.
 const projectNameDefault = path.basename(TARGET);
 const mainBranchDefault = detectMainBranch(TARGET);
-const warposSourceDefault = "https://github.com/cygaco/WarpOS.git";
+const warposSourceDefault = "https://github.com/cygaco/master-console.git";
 
 const interview = {
   projectName: projectNameDefault,
@@ -1003,7 +1003,7 @@ try {
     installedVersion: shipManifest.version,
     installedCommit,
     installedAt: new Date().toISOString(),
-    source: interview.warposSource || "https://github.com/cygaco/WarpOS.git",
+    source: interview.warposSource || "https://github.com/cygaco/master-console.git",
     counts: shipManifest.counts,
     installed_files: installedFiles.sort(),
     assets: perAsset.sort((a, b) => a.dest.localeCompare(b.dest)),

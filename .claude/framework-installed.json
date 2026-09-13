@@ -1,8 +1,8 @@
 {
   "$schema": "warpos/framework-installed/v2",
   "installedVersion": "1.2.0",
-  "installedCommit": "f6f85c7f777f3c85860f21f4e0744ff50d2ca99f",
-  "installedAt": "2026-09-13T00:00:58.523Z",
+  "installedCommit": "4db496b637738136326ae57929b92cdd45241ee4",
+  "installedAt": "2026-09-13T00:24:13.757Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -3524,8 +3524,8 @@
       "dest": ".claude/commands/warp/setup.md",
       "owner": "framework",
       "mergeStrategy": "three_way_markdown",
-      "installedHash": "35d2b8465ea365d65cda2330c06178060affd732bb05394684b492a014a720de",
-      "currentHashAtInstall": "35d2b8465ea365d65cda2330c06178060affd732bb05394684b492a014a720de",
+      "installedHash": "69bc68720b8e13b6daf1baca2d35e80d4e6356fc962b55ddb865fbcd13ec6ce3",
+      "currentHashAtInstall": "69bc68720b8e13b6daf1baca2d35e80d4e6356fc962b55ddb865fbcd13ec6ce3",
       "introducedIn": "0.0.0"
     },
     {
@@ -6534,8 +6534,8 @@
       "dest": "scripts/warpos/update.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "29cbe83c3841493aa070c0ad9cc64441cf5705b4a39d6fffff0a76c24bc46e34",
-      "currentHashAtInstall": "29cbe83c3841493aa070c0ad9cc64441cf5705b4a39d6fffff0a76c24bc46e34",
+      "installedHash": "d8929a5e7f6d3c1ae9f699d0ce94e6a3d693072ecc44bf798cb56558586aa5c8",
+      "currentHashAtInstall": "d8929a5e7f6d3c1ae9f699d0ce94e6a3d693072ecc44bf798cb56558586aa5c8",
       "introducedIn": "0.0.0"
     },
     {

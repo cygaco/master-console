@@ -19,7 +19,7 @@ The brand is **Master Console**; the engine in this repository was built and rel
 1. **Brand layer (this README, the docs, the story)** — done. Where history is referenced, it says "formerly WarpOS".
 2. **Identifier layer** — not yet. The package name (`warpos`), the `warp:*` skill namespace, the `WARPOS_*` environment variables, the `_warpos/` directory, the `warpos@` release tags and the `WARPOS.md` gap register are all unchanged until the `2.0.0` release, which introduces the `mc` slug with one release of deprecated aliases. Until then, everything you type is still spelled `warp`.
 
-The GitHub repository is still `cygaco/WarpOS`. It will be renamed; GitHub redirects the old clone URLs after a rename, and the runbook is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because "WarpOS" collides with an unrelated `warp-os/warpos` project (GitHub and PyPI) and with Warp, the terminal company. The story of what was built when, with reproducible receipts, is in [docs/PROVENANCE.md](docs/PROVENANCE.md).
+The GitHub repository was renamed from `cygaco/WarpOS` to `cygaco/master-console` on 2026-09-12; GitHub redirects the old clone and web URLs, and the runbook that was followed is in [docs/RENAME-RUNBOOK.md](docs/RENAME-RUNBOOK.md). The name was changed because "WarpOS" collides with an unrelated project of the same name on GitHub and PyPI, and with Warp (warp.dev) products.
 
 ## What is this?
 
@@ -59,7 +59,7 @@ Open your project in your editor, then in a fresh terminal:
 
 ```
 # 1. Clone the engine next to your project
-git clone https://github.com/cygaco/WarpOS.git
+git clone https://github.com/cygaco/master-console.git
 
 # 2. Run the installer from inside your project
 cd <your-project>
@@ -192,7 +192,7 @@ The installer creates `.claude/manifest.json` in your project. It tells Alex wha
 ## Support
 
 - Run `/warp:health` first; it names the failing system and the fix.
-- Bugs and questions: [GitHub issues](https://github.com/cygaco/WarpOS/issues). Security reports: see [SECURITY.md](SECURITY.md) — private vulnerability reporting on the repository, no email.
+- Bugs and questions: [GitHub issues](https://github.com/cygaco/master-console/issues). Security reports: see [SECURITY.md](SECURITY.md) — private vulnerability reporting on the repository, no email.
 
 ## License
 

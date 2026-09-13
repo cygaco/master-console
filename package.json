@@ -5,11 +5,11 @@
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cygaco/WarpOS.git"
+    "url": "git+https://github.com/cygaco/master-console.git"
   },
-  "homepage": "https://github.com/cygaco/WarpOS#readme",
+  "homepage": "https://github.com/cygaco/master-console#readme",
   "bugs": {
-    "url": "https://github.com/cygaco/WarpOS/issues"
+    "url": "https://github.com/cygaco/master-console/issues"
   },
   "engines": {
     "node": ">=20"
