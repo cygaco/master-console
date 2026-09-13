@@ -69,7 +69,8 @@
       { "key": "future|scripts/open-source/mc-alias-map.json", "warrant": "T3 compat layer (AC-2.2): the committed alias MAP enumerates every legacy -> mc alias, so it quotes the legacy names as DATA" },
       { "key": "pin|scripts/checks/mc-tracked-transients.js|prefix: \".warpos/\",|", "warrant": "T3 apply: the legacy per-install audit-log dir stays FORBIDDEN beside the new .mc/ rule for the 2.0.x compat window (existing installs still write it; never auto-moved)" },
       { "key": "glob|migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js", "warrant": "T3 part 1c (skill-namespace): the 0.0.0->0.1.0 migration OPERATES on the literal /warp:sync + /warp:update skill names as its DATA (alias body + idempotency marker for installs still on 0.0.0); the warp:->mc: transform would break it, so it is historical Class-3 data, verbatim" },
-      { "key": "future|.claude/commands/warp/*.md", "warrant": "T3 part 2 compat layer: the one-release deprecated-alias skills re-created at the legacy warp: skill paths vacated by part 1c; their bodies quote the legacy /warp:<skill> invocation as DATA, and declaring them Class-3 keeps an idempotent --apply-skill-namespace from re-planning them as moves" }
+      { "key": "future|.claude/commands/warp/*.md", "warrant": "T3 part 2 compat layer: the one-release deprecated-alias skills re-created at the legacy warp: skill paths vacated by part 1c; their bodies quote the legacy /warp:<skill> invocation as DATA, and declaring them Class-3 keeps an idempotent --apply-skill-namespace from re-planning them as moves" },
+      { "key": "pin|scripts/hooks/lib/mc-env.js|\"warpos\"|const LEGACY_SLUG = ", "warrant": "T3 part 4a read-both helper (AC-3.1/AC-3.2): the ONE legacy slug literal the shipped compat helper derives the legacy env prefix (and, 4c/5, the legacy dir + HOME names) from, for the one-release window removed in mc@2.1.0; rewriting it makes the helper read MC_ twice and silently drop every legacy fallback" }
     ]
   },
 
@@ -135,7 +136,9 @@
     { "file": "scripts/portfolio/registry.js", "matchText": "\".warpos\"", "warrant": "HOME-anchored legacy path segment (~/.warpos/portfolio.json); BUILD-SPEC HOME-ANCHORED STATE requires T3 to read ~/.mc then fall back to ~/.warpos, NEVER auto-move in 2.0.0 -- this occurrence is the fallback read, pinned rather than replaced" },
     { "file": "scripts/portfolio/registry.js", "matchText": "~/.warpos/", "anchor": "// Creates ", "warrant": "comment documenting the same HOME-anchored legacy path as the pinned path.join segment; kept verbatim so the comment matches the pinned code" },
 
-    { "file": "scripts/checks/mc-tracked-transients.js", "matchText": "prefix: \".warpos/\",", "warrant": "T3 apply: the legacy per-install audit-log dir stays FORBIDDEN beside the new .mc/ rule for the 2.0.x compat window (existing installs still write it; never auto-moved)" }
+    { "file": "scripts/checks/mc-tracked-transients.js", "matchText": "prefix: \".warpos/\",", "warrant": "T3 apply: the legacy per-install audit-log dir stays FORBIDDEN beside the new .mc/ rule for the 2.0.x compat window (existing installs still write it; never auto-moved)" },
+
+    { "file": "scripts/hooks/lib/mc-env.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG = ", "warrant": "T3 part 4a read-both helper (AC-3.1/AC-3.2): the ONE legacy slug literal the shipped compat helper derives the legacy env prefix (and, 4c/5, the legacy dir + HOME names) from, for the one-release window removed in mc@2.1.0; rewriting it makes the helper read MC_ twice and silently drop every legacy fallback" }
   ],
 
   "openQuestions": [
