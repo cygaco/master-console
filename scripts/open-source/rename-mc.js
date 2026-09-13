@@ -132,6 +132,42 @@ function renamePath(relPath) {
   return renamed.join("/");
 }
 
+// ── rename candidacy vs write permission (T3 part 0 — α/ε Class-B ruling) ──
+// One list, two questions:
+//   1. Is the path a rename CANDIDATE?  Class-3/4 (historical) paths never are: a historical
+//      record keeps its name verbatim, by construction (β r1). They are recorded in
+//      keptHistoricalPaths — never in pathRenames, never in refusedRenames.
+//   2. Is the rename PERMITTED?  A write-protected source is refused, EXCEPT a generated view
+//      whose name is unchanged and whose directory is renamed with a live Class-1 path moving
+//      through that same directory rename: the view MOVES with its directory, and its CONTENT
+//      stays derived (β r3 — derived governs content only; T5 regenerates it). A candidate
+//      whose target lands ON a write-protected path is refused.
+// refusedRenames therefore holds only genuine refusals.
+
+/** The deepest renamed directory of a move whose file name is unchanged; null when the file's own name changes. */
+function renamedDirectory(from, to) {
+  const a = from.split("/");
+  const b = to.split("/");
+  if (a.length !== b.length || a[a.length - 1] !== b[b.length - 1]) return null;
+  let last = -1;
+  for (let i = 0; i < a.length - 1; i++) if (a[i] !== b[i]) last = i;
+  if (last < 0) return null;
+  return { fromDir: a.slice(0, last + 1).join("/"), toDir: b.slice(0, last + 1).join("/") };
+}
+
+function describeRefusal(r) {
+  if (r.reason === "target-write-protected") {
+    return `${r.from} -> ${r.to} lands on a write-protected path (class ${r.class}, ${r.kind})`;
+  }
+  if (r.reason === "generated-view-move-without-class1-dir-rename") {
+    return (
+      `${r.from} -> ${r.to} is write-protected (class ${r.class}, ${r.kind}); ` +
+      `a generated view moves only with a Class-1 directory rename, and no live Class-1 path makes that move`
+    );
+  }
+  return `${r.from} -> ${r.to} is write-protected (class ${r.class}, ${r.kind})`;
+}
+
 // ── classification + occurrence-ledger build ─────────────────────────────
 
 function buildLedgerAndPlan({ root, partition }) {
@@ -140,7 +176,9 @@ function buildLedgerAndPlan({ root, partition }) {
   const classCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
   const unclassified = [];
   const pathRenames = [];
-  const refusedRenames = []; // AC-1.3: a would-be rename against a write-protected path — must NEVER reach pathRenames
+  const refusedRenames = []; // AC-1.3: GENUINE refusals only — any entry makes --apply refuse; never reaches pathRenames
+  const keptHistoricalPaths = []; // Class-3/4 paths a naive rename WOULD touch: never candidates, names verbatim (β r1)
+  const candidates = []; // rename candidates in tracked order; write permission is decided after the scan
   const class1Files = [];
 
   for (const relPath of trackedFiles) {
@@ -154,20 +192,48 @@ function buildLedgerAndPlan({ root, partition }) {
       class1Files.push({ relPath, writeProtected: result.writeProtected, kind: result.kind });
     }
 
-    // Compute the would-be rename for EVERY classified path (not just Class-1) so a
-    // write-protected path that WOULD be touched by a naive rename is provably caught,
-    // never silently skipped because it fell outside the Class-1 loop. This is what
-    // makes the AC-1.3 refusal a real, falsifiable check rather than correct-by-
-    // construction (the class-4/generated-view paths never enter class1Files at all,
-    // so without this the "refuse" branch in runApply would be unreachable dead code).
+    // Compute the would-be rename for EVERY classified path (not just Class-1) so no path a
+    // naive rename WOULD touch is silently skipped: each one lands in exactly one of
+    // keptHistoricalPaths / refusedRenames / pathRenames.
     const to = renamePath(relPath);
     if (to !== relPath) {
-      if (result.writeProtected) {
-        refusedRenames.push({ from: relPath, to, class: result.class, kind: result.kind });
-      } else if (result.class === 1) {
-        pathRenames.push({ from: relPath, to });
+      if (result.class === 3 || result.class === 4) {
+        keptHistoricalPaths.push({ path: relPath, wouldBe: to, class: result.class, kind: result.kind });
+      } else if (!result.writeProtected) {
+        if (result.class === 1) candidates.push({ from: relPath, to, source: result });
+      } else if (result.kind === "generated-view" && renamedDirectory(relPath, to)) {
+        candidates.push({ from: relPath, to, source: result, generatedViewMove: true });
+      } else {
+        refusedRenames.push({ from: relPath, to, class: result.class, kind: result.kind, reason: "source-write-protected" });
       }
     }
+  }
+
+  // Write permission for each candidate (question 2).
+  const liveMoves = candidates.filter((c) => !c.generatedViewMove);
+  for (const c of candidates) {
+    if (c.generatedViewMove) {
+      const dir = renamedDirectory(c.from, c.to);
+      const followsClass1DirRename = liveMoves.some(
+        (l) => l.from.startsWith(dir.fromDir + "/") && l.to.startsWith(dir.toDir + "/")
+      );
+      if (!followsClass1DirRename) {
+        refusedRenames.push({
+          from: c.from,
+          to: c.to,
+          class: c.source.class,
+          kind: c.source.kind,
+          reason: "generated-view-move-without-class1-dir-rename",
+        });
+        continue;
+      }
+    }
+    const target = partition.classifyPath(c.to);
+    if (target && target.writeProtected) {
+      refusedRenames.push({ from: c.from, to: c.to, class: target.class, kind: target.kind, reason: "target-write-protected" });
+      continue;
+    }
+    pathRenames.push(c.generatedViewMove ? { from: c.from, to: c.to, generatedViewMove: true } : { from: c.from, to: c.to });
   }
 
   const changelogHistoricalLines = computeChangelogHistoricalLines(path.join(root, "CHANGELOG.md"));
@@ -246,6 +312,7 @@ function buildLedgerAndPlan({ root, partition }) {
     unclassified,
     pathRenames,
     refusedRenames,
+    keptHistoricalPaths,
     categoryCounts,
     ledger,
     dispositionCounts: { rewritten: rewrittenCount, pinned: pinnedCount, derived: derivedCount },
@@ -305,6 +372,8 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     unclassifiedPaths: built.unclassified.slice(0, 50),
     pathRenames: built.pathRenames,
     refusedRenames: built.refusedRenames,
+    keptHistoricalPathCount: built.keptHistoricalPaths.length,
+    keptHistoricalPaths: built.keptHistoricalPaths,
     categoryCounts: built.categoryCounts,
     dispositionCounts: built.dispositionCounts,
     unpinnedUnrewrittenUnderived: underivedCount,
@@ -339,7 +408,16 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(`  per-category (rewritten occurrences): ${JSON.stringify(built.categoryCounts)}`);
   console.log(`  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} derived=${built.dispositionCounts.derived}`);
   console.log(`  unpinned-unrewritten-underived=${underivedCount}`);
-  console.log(`  path renames planned: ${built.pathRenames.length}`);
+  const viewMoves = built.pathRenames.filter((r) => r.generatedViewMove).length;
+  console.log(`  path renames planned: ${built.pathRenames.length} (${viewMoves} generated-view directory move(s))`);
+  console.log(`  refusedRenames=${built.refusedRenames.length}`);
+  console.log(`  keptHistoricalPaths=${built.keptHistoricalPaths.length}`);
+  if (built.refusedRenames.length > 0) {
+    // Not a dry-run exit condition (the plan is still written for inspection), but --apply refuses
+    // on it and record-trust-exit item 4 asserts refusedRenames == 0.
+    console.error(`rename-mc --dry-run: ${built.refusedRenames.length} refused rename(s) — --apply will refuse:`);
+    built.refusedRenames.slice(0, 50).forEach((r) => console.error(`  - ${describeRefusal(r)} [${r.reason}]`));
+  }
 
   const ok = unclassifiedCount === 0 && underivedCount === 0;
   if (!ok) {
@@ -368,15 +446,15 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
     );
   }
 
-  // AC-1.3: refuse if anything write-protected would be touched. `refusedRenames` is
-  // computed for EVERY classified path (not just the Class-1 rename candidates), so a
-  // generated view or a Class-3/4 path that WOULD be renamed by a naive rule is caught
-  // here regardless of which class it fell into — this is a real, falsifiable refusal,
-  // not a defensive re-check of something the earlier loop already filtered to empty.
+  // AC-1.3: refuse if anything write-protected would be touched. Class-3/4 paths are never
+  // rename candidates (keptHistoricalPaths), and a generated view moving with a Class-1
+  // directory rename is a permitted move (pathRenames) — so what remains in refusedRenames is
+  // a GENUINE refusal (a gated/protected source, a generated view renamed on its own, or a
+  // target landing on a write-protected path), falsified by F9 and F5.
   if (built.refusedRenames.length > 0) {
     const first = built.refusedRenames[0];
     throw new Error(
-      `rename-mc --apply refused: ${first.from} -> ${first.to} is write-protected (class ${first.class}, ${first.kind}); ` +
+      `rename-mc --apply refused: ${describeRefusal(first)}; ` +
         `${built.refusedRenames.length} write-protected path(s) would have been touched`
     );
   }

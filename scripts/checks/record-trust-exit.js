@@ -8,8 +8,9 @@
  * `FAIL [n id] <reason>` — and the process exits 0 ONLY if every item passes:
  *
  *   1 fixtures   every falsify-*.test.js under tests/regression/S-OS-06/ runs (`node --test`)
- *                and passes. The REQUIRED falsifiers (F1..F6, F8) are identified by the
- *                `const FALSIFIER_ID = "..."` each fixture declares (never by file name); a
+ *                and passes. The REQUIRED falsifiers (F1..F6, F8, F9) are identified by the
+ *                `const FALSIFIER_ID = "..."` each fixture declares (never by file name; F9 is the
+ *                genuine-refused-rename falsifier behind item 4's refusedRenames==0 assertion); a
  *                missing required id is a hard FAIL. Fail-open shapes are FAILs too: a fixture
  *                that is skipped / todo / cancelled, that passes zero tests, whose TAP summary
  *                is unparseable, or that never reaches an exit code (timeout / killed).
@@ -25,7 +26,11 @@
  *                a FAIL, never a zero), AND the PRE-apply derived rule holds: the set of files
  *                carrying `derived` rows in the committed occurrence ledger this run just wrote
  *                == the partition's generated views, and there are exactly 5 of them; the
- *                derived count agrees across stdout, ledger rows and ledger header.
+ *                derived count agrees across stdout, ledger rows and ledger header; AND
+ *                refusedRenames == 0 on BOTH the stdout `refusedRenames=` line and the fresh
+ *                runtime/S-OS-06/rename-plan.json this run just wrote (missing line / array, a stale
+ *                plan, or a stdout/plan disagreement is a FAIL). A refused rename is a genuine
+ *                refusal — --apply would refuse — so a green exit gate requires none.
  *                (Post-apply — T3/T5 — the derived rule must be revisited, not silently kept.)
  *
  * Exit: 0 = every item PASS · 1 = any item FAIL · 2 = usage / internal error (never green).
@@ -50,10 +55,11 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const FIXTURES_REL = "tests/regression/S-OS-06";
 const FIXTURE_FILE_RE = /^falsify-.+\.test\.js$/;
 const FALSIFIER_ID_RE = /^\s*const\s+FALSIFIER_ID\s*=\s*["']([^"']+)["']\s*;?\s*$/m;
-const REQUIRED_FALSIFIERS = ["F1", "F2", "F3", "F4", "F5", "F6", "F8"];
+const REQUIRED_FALSIFIERS = ["F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9"];
 
 const LOADER_REL = "scripts/open-source/partition-loader.js";
 const CODEMOD_REL = "scripts/open-source/rename-mc.js";
+const PLAN_REL = "runtime/S-OS-06/rename-plan.json";
 const LOADER_CONSUMERS = [CODEMOD_REL, "scripts/checks/framework-purity.js", "scripts/checks/cutover-completeness.js"];
 const LOADER_REQUIRE_RE = /require\((["'])(\.\/|\.\.\/open-source\/)partition-loader\1\)/;
 
@@ -279,6 +285,7 @@ async function checkDryRun({ root }) {
   const unclassified = num(/^\s*unclassified=(\d+)\s*$/m);
   const underived = num(/^\s*unpinned-unrewritten-underived=(\d+)\s*$/m);
   const derivedOut = num(/^\s*disposition counts:.*\bderived=(\d+)\s*$/m);
+  const refusedOut = num(/^\s*refusedRenames=(\d+)\s*$/m);
 
   const problems = [];
   if (unclassified === null) problems.push("dry-run output has no unclassified= line (fail-closed, never read as 0)");
@@ -286,6 +293,34 @@ async function checkDryRun({ root }) {
   if (underived === null) problems.push("dry-run output has no unpinned-unrewritten-underived= line (fail-closed, never read as 0)");
   else if (underived !== 0) problems.push(`unpinned-unrewritten-underived=${underived}`);
   if (derivedOut === null) problems.push("dry-run output has no derived= disposition count (fail-closed)");
+  if (refusedOut === null) problems.push("dry-run output has no refusedRenames= line (fail-closed, never read as 0)");
+  else if (refusedOut !== 0) problems.push(`refusedRenames=${refusedOut}`);
+
+  // refusedRenames == 0, read from the FRESH plan this dry-run just wrote (a stale plan is a FAIL).
+  // Any entry there is a genuine refusal (--apply would refuse), so the plan must be empty of them.
+  try {
+    const planAbs = absOf(root, PLAN_REL);
+    const st = fs.statSync(planAbs);
+    if (st.mtimeMs + MTIME_SLACK_MS < startedAt) problems.push(`${PLAN_REL} was not rewritten by this dry-run (stale plan)`);
+    const plan = JSON.parse(fs.readFileSync(planAbs, "utf8").replace(/^﻿/, ""));
+    if (!Array.isArray(plan.refusedRenames)) {
+      problems.push(`${PLAN_REL} has no refusedRenames array (fail-closed, never read as 0)`);
+    } else {
+      const planRefused = plan.refusedRenames.length;
+      if (planRefused !== 0) {
+        const named = plan.refusedRenames
+          .slice(0, 3)
+          .map((x) => `${x.from} -> ${x.to}${x.reason ? ` (${x.reason})` : ""}`)
+          .join(", ");
+        problems.push(`plan refusedRenames=${planRefused}: ${named}`);
+      }
+      if (refusedOut !== null && planRefused !== refusedOut) {
+        problems.push(`refusedRenames disagreement: stdout=${refusedOut} plan=${planRefused}`);
+      }
+    }
+  } catch (e) {
+    problems.push(`plan ${PLAN_REL} unreadable: ${e.message}`);
+  }
 
   // PRE-apply derived rule: derived set == the generated views (exactly 5).
   let views;
@@ -322,7 +357,7 @@ async function checkDryRun({ root }) {
       }
       if (!problems.length) {
         return pass(
-          `dry-run exit 0; unclassified=0; unpinned-unrewritten-underived=0; PRE-apply derived set == the ${views.length} generated views (${derivedRows.length} derived occurrences)`
+          `dry-run exit 0; unclassified=0; unpinned-unrewritten-underived=0; PRE-apply derived set == the ${views.length} generated views (${derivedRows.length} derived occurrences); refusedRenames=0 (stdout and the fresh ${PLAN_REL} agree)`
         );
       }
     }

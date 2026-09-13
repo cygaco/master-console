@@ -121,6 +121,7 @@ test("record-trust-exit GREEN: the real clean tree -> exit 0, all four items PAS
   ]);
   assert.match(r.stdout, /^record-trust-exit: PASS \(4\/4 items pass\)$/m);
   assert.match(lines[3].detail, /unclassified=0; unpinned-unrewritten-underived=0; PRE-apply derived set == the 5 generated views/);
+  assert.match(lines[3].detail, /refusedRenames=0/);
   assert.strictEqual(fs.readFileSync(H.LOADER.COMMITTED_LEDGER_PATH, "utf8"), ledgerBefore, "the exit gate must not change the committed ledger");
 });
 

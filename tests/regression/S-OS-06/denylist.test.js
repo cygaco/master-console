@@ -70,17 +70,31 @@ ok("denylist-frozen-blocks-generated-views", () => {
   assert.strictEqual(releasesGlob.writeProtected, true, "framework/releases/** must be write-protected");
 });
 
-ok("refused-renames-on-the-real-tree-never-leak-into-pathRenames", () => {
-  // Read-only against ROOT: buildLedgerAndPlan performs no writes. Confirms the
-  // real tree's own write-protected paths that WOULD be touched by a naive rename
-  // (e.g. _warpos/MANIFEST.json) are captured as refusals, never as applied renames.
+ok("real-tree-plan-splits-rename-candidacy-from-write-permission", () => {
+  // Read-only against ROOT: buildLedgerAndPlan performs no writes. T3 part 0 ruling:
+  // Class-3/4 paths are never rename candidates (keptHistoricalPaths, names verbatim); a
+  // generated view moving with its Class-1 directory rename (_warpos/MANIFEST.json) is a
+  // permitted MOVE in pathRenames; the real tree carries no genuine refusal.
   const partition = loadPartition({ forceReload: true });
   const built = RENAME_MC.buildLedgerAndPlan({ root: ROOT, partition });
-  const protectedInPathRenames = built.pathRenames.filter((r) => partition.classifyPath(r.from).writeProtected);
-  assert.strictEqual(protectedInPathRenames.length, 0, "no write-protected path may appear in pathRenames");
+  assert.strictEqual(built.refusedRenames.length, 0, `no genuine refusal on the real tree: ${JSON.stringify(built.refusedRenames.slice(0, 3))}`);
 
-  const generatedViewRefusals = built.refusedRenames.filter((r) => r.kind === "generated-view");
-  assert.ok(generatedViewRefusals.length > 0, "expected at least one generated-view refusal on the current tree (_warpos/MANIFEST.json)");
+  const historicalInPathRenames = built.pathRenames.filter((r) => [3, 4].includes(partition.classifyPath(r.from).class));
+  assert.strictEqual(historicalInPathRenames.length, 0, "no Class-3/4 path may appear in pathRenames");
+  const protectedInPathRenames = built.pathRenames.filter((r) => partition.classifyPath(r.from).writeProtected);
+  assert.ok(
+    protectedInPathRenames.every((r) => r.generatedViewMove === true && partition.classifyPath(r.from).kind === "generated-view"),
+    `the only write-protected sources in pathRenames are generated-view directory moves: ${JSON.stringify(protectedInPathRenames)}`
+  );
+  assert.ok(
+    built.pathRenames.some((r) => r.from === "_warpos/MANIFEST.json" && r.to === "_mc/MANIFEST.json" && r.generatedViewMove === true),
+    "_warpos/MANIFEST.json moves with its _warpos/ -> _mc/ directory rename"
+  );
+  assert.ok(
+    built.keptHistoricalPaths.some((k) => k.path === "_planning/warpos-lifecycle-plan.md" && k.class === 4),
+    "the Class-4 _planning/warpos-lifecycle-plan.md keeps its name (keptHistoricalPaths)"
+  );
+  assert.ok(built.keptHistoricalPaths.every((k) => [3, 4].includes(k.class)), "keptHistoricalPaths holds Class-3/4 paths only");
 });
 
 ok("denylist-consumed-only-through-the-loader", () => {
