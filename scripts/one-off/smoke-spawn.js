@@ -2,7 +2,7 @@
 "use strict";
 const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 
-// Smoke test for scripts/portfolio/spawn.js. Uses WARPOS_PORTFOLIO_REGISTRY
+// Smoke test for scripts/portfolio/spawn.js. Uses MC_PORTFOLIO_REGISTRY
 // env override (already supported by registry.js) so we don't touch the real
 // portfolio.json under ~/.mc. Tests:
 //   (1) active-CWD warning fires when repo_path == cwd; spawn skipped

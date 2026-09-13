@@ -3,7 +3,7 @@
 // adhoc-team-hygiene-extension.test.js — S-LC-05. Coverage for the orphan/stale
 // extension to scripts/checks/adhoc-team-hygiene.js.
 //
-// The scan runs in a SEALED subprocess with WARPOS_TEAMS_DIR_OVERRIDE pointed at
+// The scan runs in a SEALED subprocess with MC_TEAMS_DIR_OVERRIDE pointed at
 // a temp fixture so the REAL ~/.claude/teams (other projects' live teams) is
 // never read.
 //
@@ -61,7 +61,7 @@ function plantTeam(teamsRoot, name, members, opts = {}) {
 
 function runScan(teamsRoot, extraArgs = []) {
   const r = spawnSync("node", [SCAN, "--json", ...extraArgs], {
-    env: { ...process.env, WARPOS_TEAMS_DIR_OVERRIDE: teamsRoot },
+    env: { ...process.env, MC_TEAMS_DIR_OVERRIDE: teamsRoot },
     encoding: "utf8",
   });
   let json = null;

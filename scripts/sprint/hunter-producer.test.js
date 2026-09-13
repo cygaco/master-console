@@ -88,7 +88,7 @@ test("teeth-1 (positive): record-inprocess PRODUCES a writer-stamped hunter reco
   });
 });
 
-// ACTIVATION same-run correlation: with a panel run active (WARPOS_PANEL_RUN_ID) the hunter record carries
+// ACTIVATION same-run correlation: with a panel run active (MC_PANEL_RUN_ID) the hunter record carries
 // panel_run_id + code_sha, exactly as dispatch-agent stamps its CLI lanes — so attestPanelRun can same-run
 // correlate the hunter into a panel-3lab attestation (ADR-0022 teeth-5).
 test("activation: the hunter record carries panel_run_id + code_sha for same-run panel correlation", () => {
@@ -105,7 +105,7 @@ test("activation: the hunter record carries panel_run_id + code_sha for same-run
     }
     const rec = readLedger(led).find((r) => r.sprint_id === "SP-HUNTER-PANEL");
     assert.ok(rec, "hunter record landed");
-    assert.equal(rec.panel_run_id, "panel-ACTIVATION-T", "panel_run_id stamped from WARPOS_PANEL_RUN_ID (same-run correlation)");
+    assert.equal(rec.panel_run_id, "panel-ACTIVATION-T", "panel_run_id stamped from MC_PANEL_RUN_ID (same-run correlation)");
     assert.ok(rec.code_sha && /^[0-9a-f]{7,40}$/i.test(rec.code_sha), `code_sha stamped (git HEAD): ${rec.code_sha}`);
   });
 });

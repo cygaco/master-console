@@ -111,7 +111,7 @@ try {
 // the harness FOREGROUND Bash ceiling is 600s — a foreground wrapper is killed by the
 // harness BEFORE its own bound fires, so it never writes its death record. The shared
 // policy helper clamps to 540s (FOREGROUND_CEILING_MS) unless an explicit background
-// signal (WARPOS_DISPATCH_BACKGROUND=1 / opts.background) is present. FAIL-CLOSED:
+// signal (MC_DISPATCH_BACKGROUND=1 / opts.background) is present. FAIL-CLOSED:
 // absence of the signal ⇒ clamp, never the longer default.
 const { foregroundAwareTimeout, WRAPPER_DEFAULTS } = require("./dispatch/timeout-policy");
 
@@ -413,7 +413,7 @@ function dispatchSkill(opts) {
   // advisory here. The wrapper stays report-only-PINNED: lifting the pin (so an enforce
   // gate REFUSES an unearned skill-subprocess) is gated on the §13.6/§13.7 earn-it loop
   // stamping the heavy-by-design skills (scan:full/research:deep/…) — until they're
-  // stamped, an enforce gate would false-refuse them. Pin beats WARPOS_SHAPE_DOOR; the
+  // stamped, an enforce gate would false-refuse them. Pin beats MC_SHAPE_DOOR; the
   // advisory always surfaces. The record (below) already stamps shape:"subprocess-skill".
   //
   // D10 (SP-20260718-003) — BURN-IN GATE, verified 2026-07-18: the heavy skills are STILL
@@ -439,10 +439,10 @@ function dispatchSkill(opts) {
 
   // T-20260610-304: clamp requested bound to foreground ceiling (540s). An env override
   // sets the *requested* bound but the foreground ceiling is the hard cap. Background
-  // signal (WARPOS_DISPATCH_BACKGROUND=1) passes through the full requested bound.
+  // signal (MC_DISPATCH_BACKGROUND=1) passes through the full requested bound.
   const TIMEOUT_MS = foregroundAwareTimeout(
     parseInt(process.env.DISPATCH_SKILL_TIMEOUT_MS || `${DEFAULT_TIMEOUT_MS}`, 10),
-    {}, // opts — WARPOS_DISPATCH_BACKGROUND env var is checked inside the helper
+    {}, // opts — MC_DISPATCH_BACKGROUND env var is checked inside the helper
   );
   // Pass canonical CLAUDE_PROJECT_DIR so any nested telemetry resolves to canonical
   // (ED-016 class), not a cwd-bent path.

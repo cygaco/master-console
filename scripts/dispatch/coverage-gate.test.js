@@ -184,7 +184,7 @@ h.pass("T-303 N8: record with run_id + sprint_id satisfies runId-scoped coverage
 
 // PLANTED (N8): a record with run_id=null cannot satisfy a run-scoped check.
 // This is the §17.4 fail-closed: null run_id means the dispatcher never exported
-// WARPOS_RUN_ID — the coverage gate must REJECT it under a live runId-scoped eval.
+// MC_RUN_ID — the coverage gate must REJECT it under a live runId-scoped eval.
 h.violation(
   "PLANTED T-303 N8: run_id=null under runId-scoped evaluate is filtered out (UNBACKED)",
   () =>

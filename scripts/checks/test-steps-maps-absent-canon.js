@@ -20,7 +20,7 @@
  *   4. present STEPS.json + a HAND-CORRUPTED auto-gen region → --check exits 1
  *      (the drift gate still bites — absence-tolerance didn't defang it).
  *
- * Uses the WARPOS_STEPS_ROOT test seam (cf. WARPOS_PURITY_ROOT) to point the
+ * Uses the MC_STEPS_ROOT test seam (cf. MC_PURITY_ROOT) to point the
  * generator's PROJECT root at a throwaway fixture dir.
  */
 

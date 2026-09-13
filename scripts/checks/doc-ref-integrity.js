@@ -52,7 +52,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * no disk. Disk I/O (file walk, ref extraction, existence checks) lives in `run()`.
  *
  * REPORT-ONLY by default (ramp): findings printed, exit 0. Pass `--enforce` (or
- * WARPOS_DOC_REF_INTEGRITY_ENFORCE=block) to make a broken-ref finding exit 1.
+ * MC_DOC_REF_INTEGRITY_ENFORCE=block) to make a broken-ref finding exit 1.
  * FAIL-CLOSED: a runner error (unreadable allowlist, walk failure) exits 2 — a
  * runner error is NEVER a pass (false-green-gauntlet lesson).
  *

@@ -105,7 +105,7 @@ function readPointer(pointerPath) {
  * tree. Detection is target-LOCAL and unforgeable — path identity OR
  * isCanonicalDir(), the env-IMMUNE signals-only detector in
  * scripts/mc/repo-role.js (the single source per ED-009). isCanonicalDir
- * intentionally ignores WARPOS_REPO_ROLE, so the safety floor cannot be
+ * intentionally ignores MC_REPO_ROLE, so the safety floor cannot be
  * env-spoofed (xprovider review HIGH #5 — the concern that previously pushed this
  * guard to hand-roll its own detection). Routing through the resolver keeps the
  * single-source invariant without losing the env-immunity property.

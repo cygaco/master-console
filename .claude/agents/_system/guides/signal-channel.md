@@ -38,7 +38,7 @@ node scripts/teams/signal-board.js wait <topic> --timeout <s> [--poll <ms>] [--s
 
 - `post` writes one atomic file per signal (tmp + rename, no locks) and prints
   its path. `--` reads the payload from stdin. Set `--from`, or the
-  `WARPOS_SIGNAL_FROM` env var, to attribute the sender.
+  `MC_SIGNAL_FROM` env var, to attribute the sender.
 - `read` prints matching signals oldest-first as a JSON array.
 - `wait` polls until a signal **newer than `--since`** (default: the moment the
   wait started) lands: **exit 0** with the signal on stdout, **exit 3** on

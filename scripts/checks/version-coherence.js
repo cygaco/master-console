@@ -12,7 +12,7 @@
  *
  * Three checks:
  *   A. Product-version quorum (EXTENDED — covers the fields version-quorum misses:
- *      manifest.warpos.version + install.ps1's WARPOS_VERSION constant).
+ *      manifest.mc.version + install.ps1's MC_VERSION constant).
  *   B. Schema-label coherence (authoritative declarations of each schema family
  *      must agree — paths registry→derived→paths.json→schema validator→installed;
  *      framework-manifest version.json-claim vs declared).
@@ -50,8 +50,8 @@ try {
     if (val !== truth) { red("product-version", `${where} = ${val} ≠ version.json ${truth}`); drift++; }
   }
   // install.ps1 fallback constant (the one that fired the spurious 0.4.3 warning)
-  const m = Rraw("install.ps1").match(/\$Script:WARPOS_VERSION\s*=\s*"([^"]+)"/);
-  if (m && m[1] !== truth) { red("product-version", `install.ps1 $Script:WARPOS_VERSION = ${m[1]} ≠ version.json ${truth}`); drift++; }
+  const m = Rraw("install.ps1").match(/\$Script:MC_VERSION\s*=\s*"([^"]+)"/);
+  if (m && m[1] !== truth) { red("product-version", `install.ps1 $Script:MC_VERSION = ${m[1]} ≠ version.json ${truth}`); drift++; }
   if (!drift) ok(`product version ${truth} agrees across manifest/framework-manifest/installed/install.ps1`);
 } catch (e) { red("product-version", "error: " + e.message); }
 

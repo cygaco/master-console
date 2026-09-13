@@ -29,7 +29,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * role. `evaluate()` is pure (synthetic records + expectations -> verdict) so it
  * is P5-testable with planted violations. BLOCKING by default (PLAN §4 ramp FLIPPED,
  * now that §17.4 makes the gate non-fakeable); --report-only /
- * WARPOS_COVERAGE_GATE_ENFORCE=report surfaces violations WITHOUT exiting non-zero.
+ * MC_COVERAGE_GATE_ENFORCE=report surfaces violations WITHOUT exiting non-zero.
  *
  * Zero runtime deps (Node core only).
  */
@@ -340,7 +340,7 @@ if (require.main === module) {
   const runId = flag("--run");
   const expected = parseExpect(flag("--expect"));
   // FLIPPED (PLAN §4 ramp, §17.4): BLOCKING is now the default. Opt OUT with
-  // --report-only or WARPOS_COVERAGE_GATE_ENFORCE=report. (--enforce / =block stay
+  // --report-only or MC_COVERAGE_GATE_ENFORCE=report. (--enforce / =block stay
   // accepted as explicit no-ops for back-compat with existing call sites.)
   const reportOnly = argv.includes("--report-only") || mcEnv.readEnv("COVERAGE_GATE_ENFORCE") === "report";
   const enforce = !reportOnly;

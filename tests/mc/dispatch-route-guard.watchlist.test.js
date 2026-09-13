@@ -199,14 +199,14 @@ for (const cmd of EDGE_VARIANTS) {
   );
 }
 
-// One-shot bypass: WARPOS_PROVIDER_PROBE=1 in env. The guard's probeBypass
+// One-shot bypass: MC_PROVIDER_PROBE=1 in env. The guard's probeBypass
 // only runs in the actual hook plumbing; findForbidden ignores env so the
 // pure-function matcher always blocks. We assert that here so callers
 // understand the boundary.
 const probeShape = "cat prompt.txt | codex exec";
 const probeHit = findForbidden(probeShape);
 check(
-  "WARPOS_PROVIDER_PROBE escape hatch lives in hook, not in matcher",
+  "MC_PROVIDER_PROBE escape hatch lives in hook, not in matcher",
   probeHit !== null,
   "findForbidden should be env-agnostic; bypass logic is in probeBypass()",
 );

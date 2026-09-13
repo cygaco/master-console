@@ -16,7 +16,7 @@
  *   - `<provider> --version` / `--help` / `auth status` / `models list`
  *   - Anything that begins with `node scripts/dispatch-agent.js`
  *   - Commands operating on `.claude/runtime/.provider-tmp/` paths
- *   - When `WARPOS_PROVIDER_PROBE=1` is set in the harness env (one-shot
+ *   - When `MC_PROVIDER_PROBE=1` is set in the harness env (one-shot
  *      health probe escape hatch; the bypass is logged.)
  *
  * Why this hook exists: raw provider CLI prompt invocation from Bash has
@@ -52,7 +52,7 @@ function block(reason) {
 
 function probeBypass(cmd) {
   // Honour one-shot bypass for provider-health probes. The probe path sets
-  // WARPOS_PROVIDER_PROBE=1 in the harness env before launching the Bash
+  // MC_PROVIDER_PROBE=1 in the harness env before launching the Bash
   // tool call. We log the bypass for audit.
   if (mcEnv.readEnv("PROVIDER_PROBE") === "1") {
     try {
@@ -744,8 +744,8 @@ process.stdin.on("end", () => {
           : "      (LRN-2026-04-17 Windows-stdin; LRN-2026-04-30 binding-gap).",
         "",
         "One-shot bypass for an approved provider-health probe:",
-        "  PowerShell: $env:WARPOS_PROVIDER_PROBE = '1'; <command>; Remove-Item Env:WARPOS_PROVIDER_PROBE",
-        "  bash:       WARPOS_PROVIDER_PROBE=1 <command>   (note: bash-inline env",
+        "  PowerShell: $env:MC_PROVIDER_PROBE = '1'; <command>; Remove-Item Env:MC_PROVIDER_PROBE",
+        "  bash:       MC_PROVIDER_PROBE=1 <command>   (note: bash-inline env",
         "              may not propagate to PreToolUse hooks; prefer harness env)",
         "",
         `Full rules: ${guidePathHint} (paths.agentDispatchGuide).`,

@@ -24,7 +24,7 @@
 //     is a later ramp gated on §22 #4.)
 //   • FAIL-OPEN — any parse/registry/team-config error degrades to allow; a guard
 //     exception must NEVER brick a /mode:* invocation (plan §20 blast-radius).
-//   • KILL-SWITCH — honored via env WARPOS_DISABLE_MODE_GUARD, a marker file
+//   • KILL-SWITCH — honored via env MC_DISABLE_MODE_GUARD, a marker file
 //     (.claude/runtime/.mode-guard-off), and a bootstrap allow-list (don't fire
 //     during initial setup). Mirrors team-guard's kill-switch shape.
 //   • SCOPED — only `/mode:*` is touched; every other Skill/SlashCommand is a
@@ -127,7 +127,7 @@ function safeExists(p) {
 }
 
 // AC-2.4 (SP-20260611-002): when the mode-guard no-ops on a DELIBERATE kill-switch
-// (env WARPOS_DISABLE_MODE_GUARD or the .mode-guard-off marker), the suppression
+// (env MC_DISABLE_MODE_GUARD or the .mode-guard-off marker), the suppression
 // must NOT be silent (#6, the same silent-suppression class as the team-gate #5).
 // Emit a loud audit record (event + stderr attestation) so a silenced mode-guard
 // is visible at /scan. Bootstrap reasons (initial setup / no-manifest) are routine
@@ -137,7 +137,7 @@ function attestModeGuardKillSwitch(reason, target) {
   // Only the deliberate operator kill-switches are loud; bootstrap is routine.
   if (reason !== "env" && reason !== "marker") return;
   const which =
-    reason === "env" ? "env:WARPOS_DISABLE_MODE_GUARD" : "marker:.mode-guard-off";
+    reason === "env" ? "env:MC_DISABLE_MODE_GUARD" : "marker:.mode-guard-off";
   const attestation = {
     guard: "mode-lifecycle-guard",
     bypass: "mode-guard-kill-switch",

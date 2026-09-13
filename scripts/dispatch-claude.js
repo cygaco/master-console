@@ -96,7 +96,7 @@ try {
 // the harness FOREGROUND Bash ceiling is 600s — a foreground wrapper is killed by the
 // harness BEFORE its own bound fires, so it never writes its death record. The shared
 // policy helper clamps to 540s (FOREGROUND_CEILING_MS) unless an explicit background
-// signal (WARPOS_DISPATCH_BACKGROUND=1 / opts.background) is present. FAIL-CLOSED:
+// signal (MC_DISPATCH_BACKGROUND=1 / opts.background) is present. FAIL-CLOSED:
 // absence of the signal ⇒ clamp, never the longer default.
 const { foregroundAwareTimeout, WRAPPER_DEFAULTS } = require("./dispatch/timeout-policy");
 
@@ -323,7 +323,7 @@ try {
 }
 if (!promptStr.trim()) usage("Empty prompt.");
 
-// ── ED-257: builder right-sizing heuristic — WARN by default, BLOCK only under WARPOS_BUILDER_SIZE_ENFORCE.
+// ── ED-257: builder right-sizing heuristic — WARN by default, BLOCK only under MC_BUILDER_SIZE_ENFORCE.
 // A build-chain prompt implying a >15-min unit reaps read-only with zero diff (SP-20260721-002 monolith).
 try {
   const { assessBuilderPrompt, enforceEnabled, ENFORCE_ENV } = require("./enforcement/builder-right-size");
@@ -407,10 +407,10 @@ if (passW) claudeArgs.push("-w"); // forward worktree-creation to claude (preser
 
 // T-20260610-304: clamp requested bound to foreground ceiling (540s). An env override
 // sets the *requested* bound but the foreground ceiling is the hard cap. Background
-// signal (WARPOS_DISPATCH_BACKGROUND=1) passes through the full requested bound.
+// signal (MC_DISPATCH_BACKGROUND=1) passes through the full requested bound.
 const TIMEOUT_MS = foregroundAwareTimeout(
   parseInt(process.env.DISPATCH_BUILDER_TIMEOUT_MS || `${DEFAULT_TIMEOUT_MS}`, 10),
-  {}, // opts — WARPOS_DISPATCH_BACKGROUND env var is checked inside the helper
+  {}, // opts — MC_DISPATCH_BACKGROUND env var is checked inside the helper
 );
 
 // cwd = the VALIDATED worktree (builder edits there); else canonical root. When
@@ -444,17 +444,17 @@ const currentMode = detectMode();
 // ── Dispatch-contract consult (§17.1 keystone) ──────────────
 // Every dispatcher READS FROM the contract. This wrapper owns the subprocess-claude shape,
 // so it asserts the role is contract-allowed to be dispatched this way. ENFORCE by default
-// (ADR-0013 amended SP-20260627-001); WARPOS_DISPATCH_CONTRACT_ENFORCE=report|off|0 reverts.
+// (ADR-0013 amended SP-20260627-001); MC_DISPATCH_CONTRACT_ENFORCE=report|off|0 reverts.
 // β edge (SP-20260627-001): split the two error classes. A MODULE-LOAD failure (require throws
 // — a broken/absent contract module) fails OPEN: the contract must never brick a working
 // dispatch, and the kill-switch needs no loadable module. An EVALUATION failure (the gate RAN
-// and threw on input — e.g. a malformed WARPOS_DISPATCH_CONTRACT_PATH) fails CLOSED under
+// and threw on input — e.g. a malformed MC_DISPATCH_CONTRACT_PATH) fails CLOSED under
 // enforce (BC-16); it must NOT be swallowed into a silent bypass (GPT-5.5 gauntlet BLOCKER).
 let __contractMod = null;
 try {
   __contractMod = require("./dispatch/dispatch-contract");
 } catch (e) {
-  process.stderr.write(`[dispatch-claude] dispatch-contract module unloadable — failing OPEN (advisory only; set WARPOS_DISPATCH_CONTRACT_ENFORCE=off to silence): ${e && e.message}\n`);
+  process.stderr.write(`[dispatch-claude] dispatch-contract module unloadable — failing OPEN (advisory only; set MC_DISPATCH_CONTRACT_ENFORCE=off to silence): ${e && e.message}\n`);
 }
 if (__contractMod) {
   const { validateDispatch, validateDispatchForClass, sanctionedLane, contractEnforceMode } = __contractMod;
@@ -560,7 +560,7 @@ if (__contractMod) {
 // DIFFERENT shape for this role, the role is being routed through the WRONG wrapper
 // (e.g. a cross-provider reviewer pushed through dispatch-claude) — the wrong shape
 // self-detects on a REAL dispatch (the north star's 2nd clause). Gated by the shared
-// shapeDoor() (WARPOS_SHAPE_DOOR=report|enforce, default report; WARPOS_DISABLE_SHAPE_DOOR
+// shapeDoor() (MC_SHAPE_DOOR=report|enforce, default report; MC_DISABLE_SHAPE_DOOR
 // kill-switch; the legacy block flag honored as a deprecated alias INSIDE the door — β#2
 // one-switch). exit 2 on an enforce refusal (distinct from the contract block's exit 1);
 // fail-OPEN on any resolver error.
@@ -584,8 +584,8 @@ try {
     // W2/N2 ENFORCE FLIP (2026-06-16): dispatch-claude enforces by default. Safe-by-construction
     // (a real build-chain role resolves proven:true + 'subprocess-claude' MATCH → never refused;
     // the FIX-A3 sanctioned lane still proceeds+suppressed in BOTH modes). Per-wrapper kill:
-    // WARPOS_SHAPE_DOOR_DISPATCH_CLAUDE=report; fleet kill: WARPOS_SHAPE_DOOR=report; ultimate:
-    // WARPOS_DISABLE_SHAPE_DOOR=1.
+    // MC_SHAPE_DOOR_DISPATCH_CLAUDE=report; fleet kill: MC_SHAPE_DOOR=report; ultimate:
+    // MC_DISABLE_SHAPE_DOOR=1.
     // Per-wrapper env is a TRUE kill (W2 gauntlet MED-1): report → force report via reportOnlyPin
     // (beats a global enforce); unset → enforceDefault. sanctioned is preserved in BOTH branches.
     const killThis = /^(report|off|0)$/i.test(String(mcEnv.readEnv("SHAPE_DOOR_DISPATCH_CLAUDE") || ""));

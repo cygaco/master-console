@@ -16,7 +16,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *     an explicit background signal is present. Absence of the signal ⇒ clamp. This
  *     prevents a detection gap from silently re-opening the doogle class.
  *   - Background dispatches (real builder runs > 540s) keep their full bound via the
- *     explicit WARPOS_DISPATCH_BACKGROUND=1 signal or opts.background === true.
+ *     explicit MC_DISPATCH_BACKGROUND=1 signal or opts.background === true.
  *
  * WRAPPER_DEFAULTS — the canonical per-wrapper raw bounds (the *requested* bound before
  * the foreground ceiling is applied). Each wrapper imports this so the sanity check and
@@ -25,7 +25,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *
  * NOTE on env overrides (DISPATCH_BUILDER_TIMEOUT_MS / DISPATCH_SKILL_TIMEOUT_MS):
  *   An env override sets the *requested* bound but the foreground ceiling is the hard
- *   cap. A caller that genuinely needs >540s MUST set WARPOS_DISPATCH_BACKGROUND=1 —
+ *   cap. A caller that genuinely needs >540s MUST set MC_DISPATCH_BACKGROUND=1 —
  *   the honest signal that they've backgrounded the dispatch. Without that signal, any
  *   requested bound above 540s is clamped (fail-closed).
  *

@@ -243,7 +243,7 @@ test("SR-014: different panel_run_id but matching run_id → NOT attested (no ru
   assert.equal(attestLane(LANES.gpt, [otherPanelGpt], { runId: R, sprintId: S, codeSha: SHA }).attested, false);
 });
 
-// ── QA-014: the panel identity is panel_run_id — a record with a DIFFERENT run_id (from WARPOS_RUN_ID)
+// ── QA-014: the panel identity is panel_run_id — a record with a DIFFERENT run_id (from MC_RUN_ID)
 //    but the matching panel_run_id must STILL correlate. The prior live filter keyed on run_id → real
 //    runner records were discarded. Prove attestLane AND readLedgerRecords correlate by panel_run_id. ──
 test("QA-014: a record with panel_run_id===run but a DIFFERENT run_id still attests (identity is panel_run_id)", () => {

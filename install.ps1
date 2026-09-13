@@ -36,7 +36,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 # Fallback only - version.json is the source of truth, read below.
-$Script:WARPOS_VERSION = "2.0.0"
+$Script:MC_VERSION = "2.0.0"
 
 function Write-Step($msg) { Write-Host "[install] $msg" -ForegroundColor Cyan }
 function Write-Warn($msg) { Write-Host "[install] WARN: $msg" -ForegroundColor Yellow }
@@ -53,12 +53,12 @@ foreach ($req in @(".claude\framework-manifest.json", ".claude\paths.json", "ver
 }
 
 $VersionFile = Get-Content (Join-Path $Source "version.json") -Raw | ConvertFrom-Json
-if ($VersionFile.version -ne $Script:WARPOS_VERSION) {
-    Write-Warn "version.json reports $($VersionFile.version), script expects $Script:WARPOS_VERSION - proceeding with $($VersionFile.version)"
-    $Script:WARPOS_VERSION = $VersionFile.version
+if ($VersionFile.version -ne $Script:MC_VERSION) {
+    Write-Warn "version.json reports $($VersionFile.version), script expects $Script:MC_VERSION - proceeding with $($VersionFile.version)"
+    $Script:MC_VERSION = $VersionFile.version
 }
 
-Write-Step "WarpOS $Script:WARPOS_VERSION installer"
+Write-Step "MC $Script:MC_VERSION installer"
 Write-Step "Source: $Source"
 Write-Step "Target: $Target"
 if ($DryRun)      { Write-Step "Mode:   DRY-RUN (no files written)" }
@@ -163,7 +163,7 @@ Write-Step "Stage 1/3 - copied $Copied, skipped $Skipped, hashed $($InstalledAss
 Write-Step "Stage 2/3 - writing install snapshot"
 $installRecord = [ordered]@{
     "`$schema"          = "mc/framework-installed/v2"
-    installedVersion    = $Script:WARPOS_VERSION
+    installedVersion    = $Script:MC_VERSION
     installedCommit     = (git -C $Source rev-parse HEAD 2>$null)
     installedAt         = (Get-Date -Format "o")
     source              = $Source
@@ -203,7 +203,7 @@ if (Test-Path -LiteralPath $GeneratorPath) {
     try {
         & node $GeneratorPath 2>&1 | Out-Null
         if ($LASTEXITCODE -eq 0) {
-            Write-Step "Stage 2/3 - framework-manifest.json regenerated against $Target ($Script:WARPOS_VERSION)"
+            Write-Step "Stage 2/3 - framework-manifest.json regenerated against $Target ($Script:MC_VERSION)"
         } else {
             Write-Warn "framework-manifest.json regenerator returned $LASTEXITCODE - falling back to canonical copy"
             Copy-Item -LiteralPath (Join-Path $Source ".claude\framework-manifest.json") -Destination (Join-Path $Target ".claude\framework-manifest.json") -Force

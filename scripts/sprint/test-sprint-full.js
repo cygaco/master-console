@@ -1098,7 +1098,7 @@ function testBetaConsultContract() {
       );
     }
 
-    // J-16d: kill switch — WARPOS_BETA_SUBSTANCE_GATE=off lets a canned message through (fail-open lever).
+    // J-16d: kill switch — MC_BETA_SUBSTANCE_GATE=off lets a canned message through (fail-open lever).
     {
       const prev = mcEnv.readEnv("BETA_SUBSTANCE_GATE");
       mcEnv.setEnv("BETA_SUBSTANCE_GATE", "off");
@@ -1482,8 +1482,8 @@ function testSprintModeEpsilonDefaults() {
     fullSrc.includes("_epsilonExplicit"),
   );
   ok(
-    "M-4: source uses WARPOS_EPSILON_RUNTIME env guard",
-    fullSrc.includes("WARPOS_EPSILON_RUNTIME"),
+    "M-4: source uses the EPSILON_RUNTIME env guard (MC_EPSILON_RUNTIME, read-both)",
+    fullSrc.includes('mcEnv.envNames("EPSILON_RUNTIME")'),
   );
 
   // M-5 (gauntlet fix-cycle 2026-06-10): explicit OPT-OUT must win over the

@@ -52,12 +52,12 @@ h.test("AC-1.3 role-norm is a pure 1-hop alias (no chaining); normalizing never 
 h.test("AC-1.4 contractEnforceMode defaults to ENFORCE; report|off|0 + master/per-wrapper kill revert it", () => {
   assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", {}), true, "default must be enforce");
   assert.strictEqual(contractEnforceMode("DISPATCH_AGENT", {}), true, "default must be enforce (any wrapper)");
-  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { WARPOS_DISPATCH_CONTRACT_ENFORCE: "off" }), false, "=off reverts");
-  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { WARPOS_DISPATCH_CONTRACT_ENFORCE: "report" }), false, "=report reverts");
-  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { WARPOS_DISPATCH_CONTRACT_ENFORCE: "0" }), false, "=0 reverts");
-  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { WARPOS_DISABLE_SHAPE_DOOR: "1" }), false, "master kill reverts");
-  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { WARPOS_DISPATCH_CONTRACT_ENFORCE_DISPATCH_CLAUDE: "report" }), false, "per-wrapper kill reverts");
-  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { WARPOS_DISPATCH_CONTRACT_ENFORCE: "enforce" }), true, "explicit enforce stays enforce");
+  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { MC_DISPATCH_CONTRACT_ENFORCE: "off" }), false, "=off reverts");
+  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { MC_DISPATCH_CONTRACT_ENFORCE: "report" }), false, "=report reverts");
+  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { MC_DISPATCH_CONTRACT_ENFORCE: "0" }), false, "=0 reverts");
+  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { MC_DISABLE_SHAPE_DOOR: "1" }), false, "master kill reverts");
+  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { MC_DISPATCH_CONTRACT_ENFORCE_DISPATCH_CLAUDE: "report" }), false, "per-wrapper kill reverts");
+  assert.strictEqual(contractEnforceMode("DISPATCH_CLAUDE", { MC_DISPATCH_CONTRACT_ENFORCE: "enforce" }), true, "explicit enforce stays enforce");
 });
 
 h.done();

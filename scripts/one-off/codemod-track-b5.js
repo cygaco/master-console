@@ -68,7 +68,7 @@ const SUBS = [
 // Files to skip even within otherwise-scanned dirs. SCRIPTS_MC_KEEP: the
 // scripts/mc/* machinery dir intentionally keeps its name; do not rewrite
 // any 'mc/' inside it that's actually 'scripts/mc/'-relative.
-function isScriptsWarposPath(s) {
+function isScriptsMcPath(s) {
   return /\bscripts\/mc\//.test(s);
 }
 

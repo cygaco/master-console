@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 // ─────────────────────────────────────────────────────────────────────────────
 // team-guard-verify.test.js — SP-20260611-002 WS-G1 / R-1 (S-1) exploit-shaped
 // regression for the team-guard verify-don't-trust hardening (T-316).
@@ -55,7 +56,7 @@ function ok(name, fn) {
 //   backingTeamName — the config team name (default "mc-sprint")
 //   staleConfig     — backdate the backing config >24h (config-window bypass test)
 //   plantHeartbeat  — write a bare `.team-live-<sid>` marker (the AC-1.2 spoof)
-//   killEnv         — set WARPOS_DISABLE_TEAM_GATE=1
+//   killEnv         — set MC_DISABLE_TEAM_GATE=1
 //   killMarker      — touch .team-gate-off
 //   manifestSlug    — write .claude/manifest.json with project.slug (project-scope fixtures)
 //   memberCwd       — include a member cwd in the backing team config
@@ -117,10 +118,10 @@ function runGuard(opts = {}) {
     },
   };
   const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, HOME: home, USERPROFILE: home };
-  delete env.WARPOS_TEAM_GATE_SOFT; // ship-default posture: hard gate ON
-  delete env.WARPOS_TEAM_GATE_HARD;
-  if (opts.killEnv) env.WARPOS_DISABLE_TEAM_GATE = "1";
-  else delete env.WARPOS_DISABLE_TEAM_GATE;
+  mcEnv.unsetEnv("TEAM_GATE_SOFT", env); // ship-default posture: hard gate ON
+  mcEnv.unsetEnv("TEAM_GATE_HARD", env);
+  if (opts.killEnv) env.MC_DISABLE_TEAM_GATE = "1";
+  else mcEnv.unsetEnv("DISABLE_TEAM_GATE", env);
   if (opts.killMarker) {
     fs.writeFileSync(path.join(proj, ".claude", "runtime", ".team-gate-off"), "");
   }
@@ -238,7 +239,7 @@ ok("team-gate-kill-switch-logs-loud-with-attestation", () => {
   const { stdout, stderr } = runGuard({ killEnv: true, backingTeam: false });
   assert.ok(!blocks(stdout), "the kill-switch bypasses the gate (allows)");
   assert.ok(/KILL-SWITCH BYPASS/.test(stderr), "the bypass is attested loudly on stderr");
-  assert.ok(/WARPOS_DISABLE_TEAM_GATE/.test(stderr), "the attestation names WHICH switch fired (env)");
+  assert.ok(/MC_DISABLE_TEAM_GATE/.test(stderr), "the attestation names WHICH switch fired (env)");
   assert.ok(/AC-1\.4/.test(stderr), "the attestation cites the AC");
 });
 

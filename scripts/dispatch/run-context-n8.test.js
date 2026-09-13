@@ -7,22 +7,22 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *
  * Verifies the three N8 guarantees:
  *
- *  A. runContext() (dispatch-agent.js) returns sprint_id from WARPOS_SPRINT_ID
+ *  A. runContext() (dispatch-agent.js) returns sprint_id from MC_SPRINT_ID
  *     — the single-source extension so all three wrappers stamp it uniformly.
  *
  *  B. The run_id generation shape is `run-<base36>-<hex>` (mirrors makeDispatchId
  *     "d-" prefix, prefixed "run-" to distinguish orchestrator runs).
  *
- *  C. Inherited WARPOS_RUN_ID is respected — the generation guard
- *     `if (!env.WARPOS_RUN_ID)` never overwrites a parent orchestrator's run_id.
+ *  C. Inherited MC_RUN_ID is respected — the generation guard
+ *     `if (!env.MC_RUN_ID)` never overwrites a parent orchestrator's run_id.
  *
  *  D. A full.js / epsilon-runtime child env export can be simulated: child env
- *     WARPOS_RUN_ID / WARPOS_PHASE_ID / WARPOS_SPRINT_ID are non-null and the
+ *     MC_RUN_ID / MC_PHASE_ID / MC_SPRINT_ID are non-null and the
  *     run_id can be scoped by coverage-gate.evaluate({ runId }).
  *
  *  PLANTED VIOLATION (§17.4 fail-closed, N8-specific):
  *  - run_id=null under a live runId-scoped evaluate CANNOT satisfy coverage.
- *    A null run_id means no orchestrator exported WARPOS_RUN_ID — the gate
+ *    A null run_id means no orchestrator exported MC_RUN_ID — the gate
  *    correctly rejects it, making run-scoped coverage unsatisfiable for null runs.
  *
  *  ED-231 (SP-20260718-005): coverage-gate.evaluate defaults requireSignature:true,
@@ -45,7 +45,7 @@ const { signRecord } = require("./attest-signing");
 const h = harness("run-context-n8");
 
 // ── A. runContext() returns sprint_id from env ─────────────────────────────
-h.test("runContext() returns sprint_id when WARPOS_SPRINT_ID is set", () => {
+h.test("runContext() returns sprint_id when MC_SPRINT_ID is set", () => {
   const prev = mcEnv.readEnv("SPRINT_ID");
   mcEnv.setEnv("SPRINT_ID", "SP-20260610-006");
   try {
@@ -59,7 +59,7 @@ h.test("runContext() returns sprint_id when WARPOS_SPRINT_ID is set", () => {
   }
 });
 
-h.test("runContext() returns null sprint_id when WARPOS_SPRINT_ID is unset", () => {
+h.test("runContext() returns null sprint_id when MC_SPRINT_ID is unset", () => {
   const prev = mcEnv.readEnv("SPRINT_ID");
   mcEnv.unsetEnv("SPRINT_ID");
   try {
@@ -72,7 +72,7 @@ h.test("runContext() returns null sprint_id when WARPOS_SPRINT_ID is unset", () 
   }
 });
 
-h.test("runContext() returns run_id from WARPOS_RUN_ID when set", () => {
+h.test("runContext() returns run_id from MC_RUN_ID when set", () => {
   const prev = mcEnv.readEnv("RUN_ID");
   mcEnv.setEnv("RUN_ID", "run-test-00000001");
   try {
@@ -95,8 +95,8 @@ h.test("generated run_id matches run-<base36>-<4-byte-hex> shape", () => {
   }
 });
 
-// ── C. Inherited WARPOS_RUN_ID is respected ────────────────────────────────
-h.test("inherited WARPOS_RUN_ID is not overwritten by the generation guard", () => {
+// ── C. Inherited MC_RUN_ID is respected ────────────────────────────────
+h.test("inherited MC_RUN_ID is not overwritten by the generation guard", () => {
   const inherited = "run-inherited-aabbccdd";
   const prev = mcEnv.readEnv("RUN_ID");
   mcEnv.setEnv("RUN_ID", inherited);
@@ -142,7 +142,7 @@ function rec(over) {
   return record;
 }
 
-// Simulate what a child dispatch writes after spawnAgent sets env.WARPOS_RUN_ID.
+// Simulate what a child dispatch writes after spawnAgent sets env.MC_RUN_ID.
 h.pass(
   "D: record stamped with run_id + sprint_id satisfies runId-scoped coverage",
   () =>
@@ -157,7 +157,7 @@ h.pass(
 // A record whose run_id is null cannot satisfy a run-scoped coverage check.
 // coverage-gate.evaluate filters `records.filter(r => r.run_id === runId)`:
 // null !== RUN → the record is excluded → UNBACKED → coverage FAILS.
-// This is the correct fail-closed: a null run_id means WARPOS_RUN_ID was never
+// This is the correct fail-closed: a null run_id means MC_RUN_ID was never
 // exported — the coverage gate cannot prove run-scoped liveness.
 h.violation(
   "PLANTED N8: run_id=null under runId-scoped evaluate is filtered out (UNBACKED → FAIL)",

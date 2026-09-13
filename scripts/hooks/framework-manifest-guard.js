@@ -21,7 +21,7 @@
  *     - product install without gitignored .claude/ (block, like canonical)
  *
  *   Escape hatches:
- *     - env: WARPOS_MANIFEST_GUARD=off (set in the harness env, not Bash-inline)
+ *     - env: MC_MANIFEST_GUARD=off (set in the harness env, not Bash-inline)
  *     - sentinel: .mc/manifest-guard-disable on disk (gitignored escape)
  */
 
@@ -169,10 +169,10 @@ function bypassMessage() {
     "",
     "Bypass (use sparingly — every bypass is logged):",
     "  PowerShell (current process):",
-    "    $env:WARPOS_MANIFEST_GUARD = 'off'; <git command>; Remove-Item Env:WARPOS_MANIFEST_GUARD",
+    "    $env:MC_MANIFEST_GUARD = 'off'; <git command>; Remove-Item Env:MC_MANIFEST_GUARD",
     "  bash (NOTE: Bash-inline `VAR=val cmd` may not reach PreToolUse hooks —",
     "  set in the harness env or use the sentinel):",
-    "    export WARPOS_MANIFEST_GUARD=off && <git command> && unset WARPOS_MANIFEST_GUARD",
+    "    export MC_MANIFEST_GUARD=off && <git command> && unset MC_MANIFEST_GUARD",
     "  Repo-local sentinel (gitignore-safe; bypass is logged):",
     "    mkdir -p .mc && touch .mc/manifest-guard-disable",
   ].join("\n");

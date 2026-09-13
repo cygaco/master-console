@@ -7,7 +7,7 @@
  * Unit gauntlet for dispatch-shape.js#shapeDoor — the ONE shared per-wrapper enforce gate.
  * Planted BOTH modes (β#3 + DoE): report=>advisory+proceed, enforce=>refuse(exit2 at caller),
  * kill-switch overrides enforce, sanctioned lane proceeds+suppressed, resolver-throw=>fail-open,
- * legacy WARPOS_DISPATCH_CONTRACT_ENFORCE back-compat, report-only-pin never refuses, and the
+ * legacy MC_DISPATCH_CONTRACT_ENFORCE back-compat, report-only-pin never refuses, and the
  * conservative property (only HIGH severity refuses; MEDIUM stays advisory even under enforce).
  *
  *   node tests/regression/SP-20260616-001/shape-door.test.js
@@ -37,7 +37,7 @@ test("report-mode-advisory-proceeds", () => {
 });
 
 test("enforce-high-severity-refuses", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "enforce" }, {});
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "enforce" }, {});
   assert.strictEqual(r.action, "refuse");
   assert.strictEqual(r.mode, "enforce");
   assert.strictEqual(r.severity, "high");
@@ -45,13 +45,13 @@ test("enforce-high-severity-refuses", () => {
 });
 
 test("kill-switch-overrides-enforce", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "enforce", WARPOS_DISABLE_SHAPE_DOOR: "1" }, {});
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "enforce", MC_DISABLE_SHAPE_DOOR: "1" }, {});
   assert.strictEqual(r.action, "proceed");
   assert.strictEqual(r.mode, "report", "kill-switch forces report even under enforce");
 });
 
 test("sanctioned-lane-proceeds-under-enforce", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "enforce" }, { sanctioned: true });
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "enforce" }, { sanctioned: true });
   assert.strictEqual(r.action, "proceed");
   assert.strictEqual(r.suppressed, true, "sanctioned lane suppresses the advisory (FIX-A3 preserved)");
 });
@@ -60,7 +60,7 @@ test("resolver-error-fail-open", () => {
   // A unit whose .kind getter throws propagates out of resolveShape -> shapeMismatch -> the door's catch.
   const boom = { get kind() { throw new Error("boom"); } };
   let threw = false, r;
-  try { r = shapeDoor("subprocess-claude", boom, { WARPOS_SHAPE_DOOR: "enforce" }, {}); } catch { threw = true; }
+  try { r = shapeDoor("subprocess-claude", boom, { MC_SHAPE_DOOR: "enforce" }, {}); } catch { threw = true; }
   assert.strictEqual(threw, false, "shapeDoor must NEVER throw — fail-OPEN");
   assert.strictEqual(r.action, "proceed");
   assert.ok(/resolver-threw-fail-open/.test(r.reason), "names the fail-open path");
@@ -68,21 +68,21 @@ test("resolver-error-fail-open", () => {
 
 test("enforce-medium-stays-advisory", () => {
   // Conservative: only HIGH severity refuses. A wrong-wrapper MEDIUM mismatch is advisory even under enforce.
-  const r = shapeDoor("subprocess-cross-provider", medUnit, { WARPOS_SHAPE_DOOR: "enforce" }, {});
+  const r = shapeDoor("subprocess-cross-provider", medUnit, { MC_SHAPE_DOOR: "enforce" }, {});
   assert.strictEqual(r.action, "proceed");
   assert.strictEqual(r.severity, "medium");
 });
 
-test("legacy-WARPOS_DISPATCH_CONTRACT_ENFORCE-back-compat", () => {
-  const legacy = shapeDoor("subprocess-claude", hiUnit, { WARPOS_DISPATCH_CONTRACT_ENFORCE: "block" }, {});
-  const modern = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "enforce" }, {});
+test("legacy-MC_DISPATCH_CONTRACT_ENFORCE-back-compat", () => {
+  const legacy = shapeDoor("subprocess-claude", hiUnit, { MC_DISPATCH_CONTRACT_ENFORCE: "block" }, {});
+  const modern = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "enforce" }, {});
   assert.strictEqual(legacy.action, "refuse", "old var still enforces the shape gate (no silent regression)");
   assert.strictEqual(legacy.action, modern.action, "old var is identical to the new var for the shape gate");
 });
 
 test("report-only-pin-never-refuses", () => {
   // dispatch-skill pins this: a high-severity skill mismatch must NOT refuse even under enforce.
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "enforce" }, { reportOnlyPin: true });
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "enforce" }, { reportOnlyPin: true });
   assert.strictEqual(r.action, "proceed");
   assert.strictEqual(r.mode, "report");
 });
@@ -111,13 +111,13 @@ test("enforceDefault-does-not-false-refuse-a-matching-dispatch", () => {
 });
 
 test("global-report-overrides-the-per-wrapper-flip", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "report" }, { enforceDefault: true });
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "report" }, { enforceDefault: true });
   assert.strictEqual(r.mode, "report");
   assert.strictEqual(r.action, "proceed", "the global report escape disables the flip fleet-wide");
 });
 
 test("kill-switch-beats-the-per-wrapper-flip", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_DISABLE_SHAPE_DOOR: "1" }, { enforceDefault: true });
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_DISABLE_SHAPE_DOOR: "1" }, { enforceDefault: true });
   assert.strictEqual(r.mode, "report", "the kill-switch beats enforceDefault");
   assert.strictEqual(r.action, "proceed");
 });
@@ -129,10 +129,10 @@ test("no-enforceDefault-is-backward-compatible-report", () => {
 });
 
 // ── W2 GAUNTLET FIXES (GPT-5.5 backend-reviewer found these — regression-locked) ──
-// HIGH-2: an explicit WARPOS_SHAPE_DOOR=report is the operator's fleet kill and MUST beat the
-// legacy WARPOS_DISPATCH_CONTRACT_ENFORCE=block alias (a stale legacy env must not override it).
+// HIGH-2: an explicit MC_SHAPE_DOOR=report is the operator's fleet kill and MUST beat the
+// legacy MC_DISPATCH_CONTRACT_ENFORCE=block alias (a stale legacy env must not override it).
 test("explicit-report-beats-legacy-block-env", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "report", WARPOS_DISPATCH_CONTRACT_ENFORCE: "block" }, {});
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "report", MC_DISPATCH_CONTRACT_ENFORCE: "block" }, {});
   assert.strictEqual(r.mode, "report", "explicit report kill must beat the legacy block alias");
   assert.strictEqual(r.action, "proceed");
 });
@@ -140,7 +140,7 @@ test("explicit-report-beats-legacy-block-env", () => {
 // MED-1: the per-wrapper kill is implemented as reportOnlyPin — it must force report even under a
 // global enforce (a true per-wrapper kill, not a mere enforceDefault:false).
 test("reportOnlyPin-true-kill-beats-global-enforce", () => {
-  const r = shapeDoor("subprocess-claude", hiUnit, { WARPOS_SHAPE_DOOR: "enforce" }, { reportOnlyPin: true });
+  const r = shapeDoor("subprocess-claude", hiUnit, { MC_SHAPE_DOOR: "enforce" }, { reportOnlyPin: true });
   assert.strictEqual(r.mode, "report", "the per-wrapper reportOnlyPin kill beats a global enforce");
   assert.strictEqual(r.action, "proceed");
 });
@@ -159,7 +159,7 @@ test("fail-open-contract-unavailable-proceeds-under-enforce", () => {
     require.cache[contractPath] = { id: contractPath, filename: contractPath, loaded: true, exports: {} };
     delete require.cache[shapePath]; // re-bind a fresh dispatch-shape to the poisoned contract
     const { shapeDoor: poisonedDoor } = require(shapePath);
-    const r = poisonedDoor("subprocess-claude", { kind: "agent", id: "backend-builder" }, { WARPOS_SHAPE_DOOR: "enforce" }, {});
+    const r = poisonedDoor("subprocess-claude", { kind: "agent", id: "backend-builder" }, { MC_SHAPE_DOOR: "enforce" }, {});
     assert.strictEqual(r.action, "proceed", "fail-open (contract-unavailable) must NOT refuse under enforce");
     assert.notStrictEqual(r.mismatch && r.mismatch.severity, "high", "a fail-open mismatch must not be high-severity");
   } finally {

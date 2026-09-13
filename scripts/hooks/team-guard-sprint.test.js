@@ -78,7 +78,7 @@ function runGuard(opts = {}) {
     // This suite validates the Layer-b ADVISORY (the soft ramp). Since S-12c now
     // ships the hard gate DEFAULT-ON (it would BLOCK these cases before the
     // advisory is reached), soften it back to advisory for these assertions via
-    // WARPOS_TEAM_GATE_SOFT=1. The DEFAULT-ON block path is covered by
+    // MC_TEAM_GATE_SOFT=1. The DEFAULT-ON block path is covered by
     // team-guard-gate.test.js.
     env: {
       ...process.env,

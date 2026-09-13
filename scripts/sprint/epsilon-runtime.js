@@ -43,7 +43,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * ADDITIVE + GATED (the load-bearing safety property):
  *   This module does NOT replace full.js. full.js's script-driven path is unchanged and
  *   remains the default. ε-conducted dispatch is OPT-IN — full.js runs the runtime only
- *   when `--epsilon` (or WARPOS_EPSILON_RUNTIME=on) is set. The runtime has two modes:
+ *   when `--epsilon` (or MC_EPSILON_RUNTIME=on) is set. The runtime has two modes:
  *     - PLAN mode (default for tests / dry runs): resolve the full per-step dispatch
  *       PLAN without spawning. Pure given its seams (registry + composition) — the
  *       bite-test drives every branch off disk.
@@ -69,7 +69,7 @@ const registryRoles = require("../dispatch/registry-roles"); // role-registry fi
 // 15m/20m bounds that exceeded the 600s harness FOREGROUND kill — a foreground
 // wrapper was killed before its own bound fired and never wrote its death record. The
 // policy helper clamps to 540s unless an explicit background signal is present
-// (opts.background === true or WARPOS_DISPATCH_BACKGROUND=1). FAIL-CLOSED.
+// (opts.background === true or MC_DISPATCH_BACKGROUND=1). FAIL-CLOSED.
 const { foregroundAwareTimeout, WRAPPER_DEFAULTS } = require("../dispatch/timeout-policy");
 
 // T-20260611-310 (R-1): parent spawnSync grace over the CHILD wrapper's own bound.
@@ -421,7 +421,7 @@ function recordAgentDispatch(
     //   the runContext() single-source reads env, but the arg is always present here.
     run_id: mcEnv.readEnv("RUN_ID") || null,
     // SAME-RUN panel correlation (SP-20260718-003 Unit H activation): the in-process hunter record MUST carry
-    // the panel_run_id the runner minted (WARPOS_PANEL_RUN_ID) + the code_sha it ran against (git HEAD), exactly
+    // the panel_run_id the runner minted (MC_PANEL_RUN_ID) + the code_sha it ran against (git HEAD), exactly
     // as dispatch-agent stamps its CLI records — otherwise applyPanelGate / attestPanelRun cannot same-run
     // correlate the hunter lane into a panel-3lab attestation (ADR-0022 teeth-5: binding-green needs one REAL
     // same-run hunter record). Both are null when the hunter is dispatched outside a panel run (standalone).
@@ -544,7 +544,7 @@ function spawnAgent(agentPlan, sprintId, opts = {}) {
   const env = { ...process.env, ...(opts.env || {}) };
   // T-303 (N8): stamp run-context vars on the child env so CLI-routed wrappers'
   // runContext() picks them up and stamps run_id/phase_id/sprint_id onto every
-  // completion record. Respect an inherited WARPOS_RUN_ID — only generate when
+  // completion record. Respect an inherited MC_RUN_ID — only generate when
   // absent (parent orchestrator's run_id wins over per-dispatch generation; if full.js
   // set it on process.env it is already in the spread above, but guard anyway for
   // standalone invocations where mcEnv.readEnv("RUN_ID") may be absent).
@@ -563,7 +563,7 @@ function spawnAgent(agentPlan, sprintId, opts = {}) {
   // construction. (process.env passthrough above is preserved; we only ADD the signal.)
   if (opts.background === true) mcEnv.setEnv("DISPATCH_BACKGROUND", "1", env);
   // T-20260610-304: clamp to FOREGROUND_CEILING_MS (540s) when not explicitly backgrounded.
-  // opts.background === true or WARPOS_DISPATCH_BACKGROUND=1 passes through the full bound.
+  // opts.background === true or MC_DISPATCH_BACKGROUND=1 passes through the full bound.
   // The per-route child base (childBaseMs) + the env-propagation that single-sources it on
   // the child are computed at each spawn site below — they differ per route (epsilon-agent vs
   // epsilon-claude defaults), so `timeout`/env are NOT set here in `common`.
@@ -639,7 +639,7 @@ function spawnAgent(agentPlan, sprintId, opts = {}) {
     // W2/N2 ENFORCE FLIP (2026-06-16): CLAUDE_RAW enforces by default (it rides the ramp).
     // Safe-by-construction (a real role resolves proven:true + 'subprocess-claude' MATCH → never
     // refused). On REFUSE ε aborts THIS spawn (never process.exit). Per-wrapper kill:
-    // WARPOS_SHAPE_DOOR_EPSILON=report; fleet kill: WARPOS_SHAPE_DOOR=report; ultimate: WARPOS_DISABLE_SHAPE_DOOR=1.
+    // MC_SHAPE_DOOR_EPSILON=report; fleet kill: MC_SHAPE_DOOR=report; ultimate: MC_DISABLE_SHAPE_DOOR=1.
     // Per-wrapper env is a TRUE kill (W2 gauntlet MED-1): report → force report via reportOnlyPin
     // (beats a global enforce); unset → enforceDefault (the ramp default).
     const killThis = /^(report|off|0)$/i.test(String(mcEnv.readEnv("SHAPE_DOOR_EPSILON", env) || ""));

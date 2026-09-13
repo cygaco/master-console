@@ -13,7 +13,7 @@ ground their lifecycle-aware judgment (Principle #2) in it.
 ## How to set the stage
 
 - **Persistent (the SoT):** edit the `**Stage:**` value above and commit. ← do this on a real transition.
-- **Quick override:** set the `WARPOS_LIFECYCLE_STAGE` env var (session / CI, or
+- **Quick override:** set the `MC_LIFECYCLE_STAGE` env var (session / CI, or
   `.claude/settings.json#env` for persistence). It takes precedence over this file.
 - **Resolve it anywhere:** `node scripts/mc/lifecycle-stage.js` (env → this file → `unknown`).
   Subagents can't read env, so the orchestrator resolves the stage and passes it on dispatch.

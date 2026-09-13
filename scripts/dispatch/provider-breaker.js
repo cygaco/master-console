@@ -23,7 +23,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *   A broken breaker MUST NEVER block a healthy provider.
  *
  * State store: .claude/runtime/provider-down.json (gitignored runtime state).
- * Test seam:   WARPOS_PROVIDER_DOWN_FILE env var overrides the resolved path.
+ * Test seam:   MC_PROVIDER_DOWN_FILE env var overrides the resolved path.
  *
  * SP-20260610-007 / T-20260610-306 (G5)
  */
@@ -38,7 +38,7 @@ const MAX_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours — clamp absurd parsed valu
 // ── Path resolution ────────────────────────────────────────────────────────
 /**
  * Resolve the path to provider-down.json.
- * WARPOS_PROVIDER_DOWN_FILE overrides the default (test seam).
+ * MC_PROVIDER_DOWN_FILE overrides the default (test seam).
  */
 function resolveFilePath() {
   if (mcEnv.readEnv("PROVIDER_DOWN_FILE")) {

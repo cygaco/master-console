@@ -30,7 +30,7 @@ const RESERVED = new Set([
 ]);
 
 const TEMPLATES_DIR = path.resolve(__dirname, "../../_mc/templates/portfolio");
-const WARPOS_ROOT = path.resolve(__dirname, "../..");
+const MC_ROOT = path.resolve(__dirname, "../..");
 
 // ── Validation seam (reused by both create + the CLI) ───────────────────────
 function validateSlug(slug) {
@@ -78,7 +78,7 @@ function scaffoldProductApp({ repoRoot, slug, install = false, log = () => {} })
  * @param {boolean} [opts.wantInstall]
  * @param {string|null} [opts.parentDir] TEST/SANDBOX-ONLY seam (GATE-A
  *   fresh_scaffold_all_ways, SP-20260721-001 D-4 INC-2). Overrides the sibling
- *   parent the new repo is scaffolded under (default: WARPOS_ROOT/..). This is
+ *   parent the new repo is scaffolded under (default: MC_ROOT/..). This is
  *   a NON-TRUST seam (β R3): it relocates WHERE the scaffold lands, it never
  *   weakens any assertion the caller makes afterward. Production /portfolio:new
  *   callers never pass it — real users always get the real sibling location.
@@ -103,8 +103,8 @@ function createProductRepo(opts) {
 
   // ── resolve sibling path ───────────────────────────────────
   // parentDir (test/sandbox seam) overrides the parent dir; default stays the
-  // real sibling-of-WARPOS_ROOT location every production caller gets.
-  const repoPath = path.resolve(parentDir || path.resolve(WARPOS_ROOT, ".."), slug);
+  // real sibling-of-MC_ROOT location every production caller gets.
+  const repoPath = path.resolve(parentDir || path.resolve(MC_ROOT, ".."), slug);
 
   if (fs.existsSync(repoPath)) {
     const allowedLeftovers = new Set([".git", ".gitignore", "README.md", ".claude"]);
@@ -147,7 +147,7 @@ function createProductRepo(opts) {
 
   // ── install MC into the new repo (LOUD, never silent) ──
   // WI-50 regression: this step used to resolve scripts/warp-setup.js against
-  // WARPOS_ROOT and existsSync-GUARD it. But warp-setup.js is the canonical
+  // MC_ROOT and existsSync-GUARD it. But warp-setup.js is the canonical
   // installer that is INTENTIONALLY NEVER SHIPPED (release-build.js: "lives in
   // the canonical clone, never shipped") — so on any CONSUMER install the guard
   // was false and the install SILENTLY no-op'd, producing a project with app
@@ -182,7 +182,7 @@ function createProductRepo(opts) {
     const adoptScript = path.resolve(__dirname, "adopt.js");
     const adopt = spawnSync(
       "node", [adoptScript, fromBrief, "--target-path", repoPath, "--skip-new"],
-      { cwd: WARPOS_ROOT, encoding: "utf8", timeout: 30_000 },
+      { cwd: MC_ROOT, encoding: "utf8", timeout: 30_000 },
     );
     if (adopt.stdout) process.stdout.write(adopt.stdout);
     if (adopt.stderr) process.stderr.write(adopt.stderr);
@@ -253,8 +253,8 @@ function _copyTemplates(srcDir, destDir, slugVal) {
 }
 
 function _seedGitIdentity(repoPathVal) {
-  const nameRes = spawnSync("git", ["config", "user.name"], { cwd: WARPOS_ROOT, encoding: "utf8" });
-  const emailRes = spawnSync("git", ["config", "user.email"], { cwd: WARPOS_ROOT, encoding: "utf8" });
+  const nameRes = spawnSync("git", ["config", "user.name"], { cwd: MC_ROOT, encoding: "utf8" });
+  const emailRes = spawnSync("git", ["config", "user.email"], { cwd: MC_ROOT, encoding: "utf8" });
   const name = (nameRes.stdout || "").trim();
   const email = (emailRes.stdout || "").trim();
   if (name) spawnSync("git", ["config", "user.name", name], { cwd: repoPathVal, encoding: "utf8" });
@@ -336,7 +336,7 @@ function _printLocalOnlyNextSteps(slugVal, repoPathVal, log = console.log) {
 function _briefRootsRel() {
   const fallback = { briefs: "_docs/briefs", clones: "_docs/clones" };
   try {
-    const reg = JSON.parse(fs.readFileSync(path.join(WARPOS_ROOT, "framework", "paths.registry.json"), "utf8"));
+    const reg = JSON.parse(fs.readFileSync(path.join(MC_ROOT, "framework", "paths.registry.json"), "utf8"));
     const entries = reg.paths || reg;
     const briefs = entries.briefsRoot && entries.briefsRoot.path;
     const clones = entries.clonesRoot && entries.clonesRoot.path;
@@ -433,7 +433,7 @@ function _installSourceCandidates(startRoot) {
     path.resolve(startRoot, "..", "mc"),
   ];
 }
-function _resolveInstallerRoot(startRoot = WARPOS_ROOT) {
+function _resolveInstallerRoot(startRoot = MC_ROOT) {
   for (const c of _installSourceCandidates(startRoot)) {
     if (_isValidInstallSource(c)) return c;
   }
@@ -445,7 +445,7 @@ function _resolveInstallerRoot(startRoot = WARPOS_ROOT) {
 // canonical clone); fall back to the canonical-only warp-setup.js when
 // install.ps1 is absent. The installer is resolved against a VALID engine source
 // (the running root if it qualifies, else a sibling canonical clone) — NOT blindly
-// against WARPOS_ROOT, which is a consumer when a cockpit drives the engine
+// against MC_ROOT, which is a consumer when a cockpit drives the engine
 // (WI-50 round 3). The prior code existsSync-guarded warp-setup.js and SILENTLY
 // skipped when absent — so a consumer install produced a project with app files
 // but no MC engine (WI-50). This FAILS LOUDLY when no valid source/installer
@@ -453,16 +453,16 @@ function _resolveInstallerRoot(startRoot = WARPOS_ROOT) {
 // (.claude/framework-installed.json) — never a silent no-op. Returns
 // {ok:true} | {ok:false, error}.
 function _installMC(repoPath, { spawn = spawnSync, resolveRoot = _resolveInstallerRoot } = {}) {
-  const installerRoot = resolveRoot(WARPOS_ROOT);
+  const installerRoot = resolveRoot(MC_ROOT);
   if (!installerRoot) {
     return {
       ok: false,
       error:
         `No valid MC engine source found. The running MC root ` +
-        `(${WARPOS_ROOT}) is a consumer install — it is missing ` +
+        `(${MC_ROOT}) is a consumer install — it is missing ` +
         `.claude/framework-manifest.json, so install.ps1 refuses it as a source ` +
         `— and no sibling canonical engine was found. Tried: ` +
-        `${_installSourceCandidates(WARPOS_ROOT).join(", ")}. A valid source must ` +
+        `${_installSourceCandidates(MC_ROOT).join(", ")}. A valid source must ` +
         `carry ${_SOURCE_CONTRACT.join(", ")} plus an installer. Clone the ` +
         `canonical MC engine as a sibling (../MC) to enable Create.`,
     };
@@ -540,6 +540,6 @@ module.exports = {
   _isValidInstallSource,
   SLUG_RE,
   RESERVED,
-  WARPOS_ROOT,
+  MC_ROOT,
   TEMPLATES_DIR,
 };

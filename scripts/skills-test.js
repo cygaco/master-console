@@ -276,7 +276,7 @@ function testPing(slug, declaredExecution) {
   // (d) a backing completion run_id (ok:true) on the ledger for THIS skill.
   const comps = readLedger("dispatch-completions.jsonl");
   // SP-20260718-004 R4 same-session choke-point: the backing record must be a VERIFIED liveness record —
-  // a forged/unsigned ok:true row cannot prove a skill ran. Default-on (WARPOS_LIVENESS_REQUIRE_SIG=0 opt-out).
+  // a forged/unsigned ok:true row cannot prove a skill ran. Default-on (MC_LIVENESS_REQUIRE_SIG=0 opt-out).
   const { isVerifiedLivenessRecord } = require("./dispatch/verified-liveness-read");
   const _reqSig = mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0";
   const backing = comps.find(

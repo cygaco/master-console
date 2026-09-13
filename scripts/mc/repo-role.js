@@ -15,7 +15,7 @@
  *
  * Precedence (first wins):
  *   (a) explicit override arg   resolveRepoRole({ override: 'canonical' })
- *   (b) env WARPOS_REPO_ROLE    WARPOS_REPO_ROLE=canonical node <script>
+ *   (b) env MC_REPO_ROLE    MC_REPO_ROLE=canonical node <script>
  *   (c) manifest/marker signals  — see CANONICAL_SIGNALS below
  *   (d) structural heuristic    version.json#name === "mc"
  *   (e) consumer heuristic      .claude/framework-installed.json present but no canonical signal
@@ -82,7 +82,7 @@ function makeResult(role, source) {
  *
  * Returns a source token if `root` carries a positive canonical filesystem
  * signal, else null. This is the FILESYSTEM-ONLY detector: it deliberately does
- * NOT consult the override arg or the WARPOS_REPO_ROLE env var. resolveRepoRole()
+ * NOT consult the override arg or the MC_REPO_ROLE env var. resolveRepoRole()
  * layers override/env ON TOP of this; safety guards that must be env-IMMUNE call
  * it through isCanonicalDir() so a hostile or misconfigured env can never spoof a
  * canonical tree into looking non-canonical (xprovider review HIGH #5 — the very
@@ -190,7 +190,7 @@ function resolveRepoRole(opts) {
   if (envVal) {
     const normalized = envVal.toLowerCase();
     if (ROLES.includes(normalized)) {
-      return makeResult(normalized, "env:WARPOS_REPO_ROLE");
+      return makeResult(normalized, "env:MC_REPO_ROLE");
     }
     // Invalid env value — fall through to signals.
   }
@@ -221,7 +221,7 @@ function resolveRepoRole(opts) {
  *
  * TRUE iff `dir` carries a positive canonical filesystem signal. Unlike
  * resolveRepoRole(), this NEVER consults the override arg or the
- * WARPOS_REPO_ROLE env var — it is the env-IMMUNE detector for safety floors
+ * MC_REPO_ROLE env var — it is the env-IMMUNE detector for safety floors
  * that must not be spoofable (the admin:* "never run/seed against MC itself"
  * guards; xprovider review HIGH #5). It answers "is THIS directory the MC
  * canonical tree?", so it probes `dir` directly rather than the module root.

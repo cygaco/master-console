@@ -163,7 +163,7 @@ async function main() {
   // (spawnPass inherits process.env). Each child's completion record is stamped with it (recordCompletion),
   // so the panel gate correlates lanes by RUN IDENTITY — not the firing-time window, which a concurrent
   // same-sprint run could satisfy (the SR-011 substitution gap). The window remains a secondary narrow.
-  // BE-CQ-002 (backend-reviewer MEDIUM): RESPECT an INHERITED WARPOS_PANEL_RUN_ID. The runner used to
+  // BE-CQ-002 (backend-reviewer MEDIUM): RESPECT an INHERITED MC_PANEL_RUN_ID. The runner used to
   // UNCONDITIONALLY re-mint the id inside its own process, so a conductor that mints the id up-front (to
   // stamp the separately-summoned in-process hunter with the SAME id) could not correlate the hunter into
   // the panel run without an out-of-band ledger-extraction workaround. Now: inherit if set, else mint —

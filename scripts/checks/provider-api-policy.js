@@ -47,7 +47,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *     document, not to dispatch.
  *
  * REPORT-ONLY by default (PLAN §4 ramp): findings printed, exit 0 + WARN. Pass
- * `--strict` (or `WARPOS_PROVIDER_API_POLICY_ENFORCE=block`) to make a finding
+ * `--strict` (or `MC_PROVIDER_API_POLICY_ENFORCE=block`) to make a finding
  * exit 1 — the §4-flipped state. FAIL-CLOSED on its own errors: a runner error
  * (unreadable allowlist, walk failure) exits 2 — a runner error is NEVER a pass
  * (false-green-gauntlet lesson).

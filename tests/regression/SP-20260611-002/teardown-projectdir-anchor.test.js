@@ -161,8 +161,8 @@ ok("legitimate-same-project-teardown-still-works-and-fails-open", () => {
   const emptyState = fs.mkdtempSync(path.join(os.tmpdir(), "tpa-state-"));
   const env = {
     ...process.env,
-    WARPOS_TEAMS_DIR_OVERRIDE: emptyTeams,
-    WARPOS_TEAM_STATE_DIR_OVERRIDE: emptyState,
+    MC_TEAMS_DIR_OVERRIDE: emptyTeams,
+    MC_TEAM_STATE_DIR_OVERRIDE: emptyState,
   };
   delete env.CLAUDE_PROJECT_DIR;
   const r = spawnSync("node", [HOOK], {

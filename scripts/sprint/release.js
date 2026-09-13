@@ -107,7 +107,7 @@ function regressionSeedGate(runEnforcer) {
   //
   // We detect "product" by the PHYSICAL ABSENCE of the enforcer module on disk,
   // NOT a role oracle. The earlier resolveRepoRole() approach honored the
-  // WARPOS_REPO_ROLE env var, which let `WARPOS_REPO_ROLE=consumer` spoof a product
+  // MC_REPO_ROLE env var, which let `MC_REPO_ROLE=consumer` spoof a product
   // role on canonical and silently skip this MANDATORY gate (gauntlet S-LC-12
   // security+backend FAIL). A filesystem check is unspoofable and strictly more
   // precise: the gate's whole premise is "the enforcer module isn't shipped here",

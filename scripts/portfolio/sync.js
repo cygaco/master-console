@@ -43,7 +43,7 @@ function pad(s, n) {
   return x + " ".repeat(n - x.length);
 }
 
-function detectWarposVersion(repoPath) {
+function detectMcVersion(repoPath) {
   try {
     const fi = path.join(repoPath, ".claude", "framework-installed.json");
     const data = JSON.parse(fs.readFileSync(fi, "utf8"));
@@ -108,7 +108,7 @@ function runUpdate(productRepoPath, mcCloneRoot) {
   });
 }
 
-function locateWarposCloneRoot() {
+function locateMcCloneRoot() {
   // sync.js lives at scripts/portfolio/sync.js inside the MC canonical
   // clone. Two levels up is the clone root.
   return path.resolve(__dirname, "..", "..");
@@ -144,12 +144,12 @@ async function syncRegistry(opts) {
 
   emitTrace({ type: "portfolio_sync", phase: "start", product_count: products.length });
 
-  const mcCloneRoot = locateWarposCloneRoot();
+  const mcCloneRoot = locateMcCloneRoot();
   const results = [];
 
   // SEQUENTIAL — avoids gh rate-limit risk per Plan Contract decision.
   for (const product of products) {
-    const fromVersion = detectWarposVersion(product.repo_path) || "?";
+    const fromVersion = detectMcVersion(product.repo_path) || "?";
 
     // C-13 per-product banner. The "<result>" placeholder is filled after the
     // update runs; print the prefix now so the operator sees progress.
@@ -204,7 +204,7 @@ async function syncRegistry(opts) {
       // No-fail-fast: catch ANY error so siblings are still attempted.
       updateR = { ok: false, status: "internal-error", stderr: err.message };
     }
-    const toVersion = updateR.ok ? detectWarposVersion(product.repo_path) || fromVersion : fromVersion;
+    const toVersion = updateR.ok ? detectMcVersion(product.repo_path) || fromVersion : fromVersion;
     const r = {
       slug: product.slug,
       ok: !!updateR.ok,
@@ -278,6 +278,6 @@ if (require.main === module) {
 module.exports = {
   syncRegistry,
   runUpdate,
-  detectWarposVersion,
-  locateWarposCloneRoot,
+  detectMcVersion,
+  locateMcCloneRoot,
 };

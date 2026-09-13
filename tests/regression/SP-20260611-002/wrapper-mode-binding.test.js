@@ -7,6 +7,7 @@
 // temp mode.json + a narrowed contract fixture. No live provider or Claude CLI is
 // called; the same wrapper code path still reaches the contract consult.
 "use strict";
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 
 const assert = require("assert");
 const fs = require("fs");
@@ -119,12 +120,12 @@ function baseEnv(modeProject, contractFile, enforce) {
   const env = {
     ...process.env,
     CLAUDE_PROJECT_DIR: modeProject,
-    WARPOS_DISPATCH_CONTRACT_PATH: contractFile,
+    MC_DISPATCH_CONTRACT_PATH: contractFile,
     DISPATCH_LEDGER_DIR: ledgerDir,
   };
-  if (enforce) env.WARPOS_DISPATCH_CONTRACT_ENFORCE = "block";
-  else delete env.WARPOS_DISPATCH_CONTRACT_ENFORCE;
-  delete env.WARPOS_MODE;
+  if (enforce) env.MC_DISPATCH_CONTRACT_ENFORCE = "block";
+  else mcEnv.unsetEnv("DISPATCH_CONTRACT_ENFORCE", env);
+  mcEnv.unsetEnv("MODE", env);
   return env;
 }
 

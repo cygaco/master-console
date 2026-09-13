@@ -53,7 +53,7 @@ h.violation("AC-2.5 BC-16: missing shape fails CLOSED", () =>
   validateDispatch({ role: "frontend-builder" }));
 
 // AC-2.5b — GPT-5.5 gauntlet BLOCKER regression-lock: a MODULE-EVALUATION error (the gate
-// ran and threw — here a malformed contract file via WARPOS_DISPATCH_CONTRACT_PATH) must
+// ran and threw — here a malformed contract file via MC_DISPATCH_CONTRACT_PATH) must
 // FAIL CLOSED under enforce in the dispatch-claude wrapper, NOT be swallowed by a broad
 // fail-open catch into a silent bypass. (The separate MODULE-LOAD path still fails OPEN.)
 h.test("AC-2.5b BLOCKER regression: malformed contract path → dispatch-claude FAILS CLOSED (exit 1) under enforce", () => {
@@ -62,7 +62,7 @@ h.test("AC-2.5b BLOCKER regression: malformed contract path → dispatch-claude 
   try {
     const r = spawnSync("node", ["scripts/dispatch-claude.js", "backend-reviewer", __filename], {
       cwd: PROJECT_ROOT,
-      env: { ...process.env, WARPOS_DISPATCH_CONTRACT_PATH: badContract },
+      env: { ...process.env, MC_DISPATCH_CONTRACT_PATH: badContract },
       encoding: "utf8",
       timeout: 30000,
     });

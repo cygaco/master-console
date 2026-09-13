@@ -138,7 +138,7 @@ The core verbs:
 
 **Private-by-default.** Every `/portfolio:new` and `/portfolio:adopt` invocation hardcodes `--private`; there is no `--public` path. The GitHub repo is created under your authenticated `gh` user. On gh auth failure, the local repo stays intact and you get a one-line copyable command to finish manually.
 
-**Where products live.** By default, sibling repos land one directory above WarpOS (e.g. if WarpOS is at `~/Projects/WarpOS`, products land at `~/Projects/<slug>`). Override via `--workspace <dir>` or `WARPOS_PORTFOLIO_WORKSPACE`.
+**Where products live.** By default, sibling repos land one directory above MC (e.g. if MC is at `~/Projects/master-console`, products land at `~/Projects/<slug>`). Override via `--workspace <dir>` or `MC_PORTFOLIO_WORKSPACE`.
 
 **The registry.** `~/.mc/portfolio.json` is the source of truth. Edit only via the skills — they validate the schema and write atomically.
 

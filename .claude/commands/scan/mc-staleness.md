@@ -11,6 +11,6 @@ Compares `.claude/framework-installed.json` against canonical `version.json`. Fa
 node scripts/checks/mc-staleness.js
 ```
 
-Set `WARPOS_CANONICAL=/path/to/WarpOS` if the canonical repo isn't auto-discoverable from `installedSource`. Pass `--json` for machine-readable output.
+Set `MC_CANONICAL=/path/to/master-console` if the canonical repo isn't auto-discoverable from `installedSource`. Pass `--json` for machine-readable output.
 
 **Fix when failing:** `/mc:update --to <canonical-version> --apply`

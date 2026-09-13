@@ -193,7 +193,7 @@ function loadRegistry() {
 }
 
 function active() {
-  // Per-invocation override: WARPOS_SPRINT_ID env (set by parseSprintArg)
+  // Per-invocation override: MC_SPRINT_ID env (set by parseSprintArg)
   // wins over the registry primary. This lets a helper invoked with
   // --sprint <SP-id> target a non-primary sprint without rewriting the
   // registry.

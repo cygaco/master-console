@@ -87,7 +87,7 @@ function appendDecision(fields) {
   };
   // Sprint v0.2: tag every new decision with the active sprint id when
   // known. Resolution order: explicit fields.sprint_id → env
-  // WARPOS_SPRINT_ID → null. Pre-existing rows without the field keep
+  // MC_SPRINT_ID → null. Pre-existing rows without the field keep
   // parsing (AC-14.3).
   const sid = fields.sprint_id || mcEnv.readEnv("SPRINT_ID") || null;
   if (sid) entry.sprint_id = sid;

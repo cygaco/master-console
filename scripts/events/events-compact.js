@@ -172,7 +172,7 @@ function containedReal(rootAbs, candidate) {
 // The `crashAfter` hook is honored ONLY under an explicit test env flag, and is
 // NEVER exposed as a documented CLI flag (the CLI main below parses no such
 // argument). Belt-and-suspenders: even a programmatic caller cannot trip a seam
-// abort in production unless WARPOS_COMPACT_ALLOW_CRASH is set.
+// abort in production unless MC_COMPACT_ALLOW_CRASH is set.
 function crashEnabled() {
   return mcEnv.readEnv("COMPACT_ALLOW_CRASH") === "1";
 }
@@ -353,7 +353,7 @@ function reconcileOrphans(rootAbs, opts) {
  * @param {object} [opts]
  * @param {boolean} [opts.apply=true]  false ⇒ dry-run (no disk mutation)
  * @param {string}  [opts.crashAfter]  TEST-ONLY seam-abort label (honored only
- *                                      under WARPOS_COMPACT_ALLOW_CRASH=1)
+ *                                      under MC_COMPACT_ALLOW_CRASH=1)
  * @returns {object} a lean result envelope; ok:false + reason on any fault.
  */
 function compactOnce(rootAbs, opts) {

@@ -77,7 +77,7 @@ tension, name the tension explicitly and resolve toward the higher-priority one.
 - **Use the DECLARED stage first.** Read the operator-declared stage — `paths.currentStage`
   (`.claude/agents/president/_system/policy/current-stage.md`, the `Stage:` field), or the
   stage the dispatcher hands you (resolved via `scripts/mc/lifecycle-stage.js`, which
-  honors a `WARPOS_LIFECYCLE_STAGE` override). Take it as ground truth; only *infer* the
+  honors a `MC_LIFECYCLE_STAGE` override). Take it as ground truth; only *infer* the
   phase from evidence when none is declared, and say so. If your evidence strongly
   contradicts the declared stage, surface the mismatch rather than silently overriding it.
 - **The five phases** (judge against the phase's priorities, not a generic ideal):

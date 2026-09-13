@@ -12,7 +12,7 @@ const SCHEMA_PATH = path.resolve(
 );
 
 // ── Registry location ──────────────────────────────────────
-// Resolved fresh on every call — never cached — so WARPOS_PORTFOLIO_REGISTRY
+// Resolved fresh on every call — never cached — so MC_PORTFOLIO_REGISTRY
 // overrides and os.homedir() changes (e.g. in tests) are always respected.
 function registryPath() {
   const override = mcEnv.readEnv("PORTFOLIO_REGISTRY");
@@ -21,7 +21,7 @@ function registryPath() {
   if (!home) {
     throw Object.assign(
       new Error(
-        "cannot resolve HOME dir; set WARPOS_PORTFOLIO_REGISTRY to override"
+        "cannot resolve HOME dir; set MC_PORTFOLIO_REGISTRY to override"
       ),
       { exitCode: 2 }
     );

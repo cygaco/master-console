@@ -3,7 +3,7 @@
  *
  * Reads .claude/framework-installed.json (this project) and the canonical
  * MC repo's version.json (path resolved from framework-installed.json
- * `source` or via WARPOS_CANONICAL env var). Fails if installed < canonical
+ * `source` or via MC_CANONICAL env var). Fails if installed < canonical
  * for >7 days AND no pending /mc:update transaction exists.
  *
  * Exit 0 = green; 1 = stale.
@@ -63,7 +63,7 @@ const installedAt = installed.installedAt;
 const canonicalVersionFile = findCanonicalVersionFile(installedSource);
 if (!canonicalVersionFile || !fs.existsSync(canonicalVersionFile)) {
   pass(
-    `installed ${installedVersion}; canonical version.json not reachable (set WARPOS_CANONICAL to enable comparison)`,
+    `installed ${installedVersion}; canonical version.json not reachable (set MC_CANONICAL to enable comparison)`,
     { installedVersion },
   );
 }

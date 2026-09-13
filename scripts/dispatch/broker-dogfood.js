@@ -471,7 +471,7 @@ function loadBroker(injected) {
 function resolveBundleConfig(opts = {}, env = process.env) {
   const manifest = opts.bundleManifestPath || mcEnv.readEnv("PINNED_BUNDLE_MANIFEST", env) || null;
   const bundleRoot = opts.bundleRoot || mcEnv.readEnv("PINNED_BUNDLE_ROOT", env) || (manifest ? path.dirname(manifest) : null);
-  if (!manifest) return { ok: false, reason: "no-pinned-bundle-configured", detail: "set --bundle-manifest or WARPOS_PINNED_BUNDLE_MANIFEST (a PROMOTED, out-of-tree bundle)" };
+  if (!manifest) return { ok: false, reason: "no-pinned-bundle-configured", detail: "set --bundle-manifest or MC_PINNED_BUNDLE_MANIFEST (a PROMOTED, out-of-tree bundle)" };
   if (!fs.existsSync(manifest)) return { ok: false, reason: "bundle-load-failed", detail: `configured bundle manifest is missing or unstatable: ${manifest}` };
   return { ok: true, bundleManifestPath: manifest, bundleRoot };
 }

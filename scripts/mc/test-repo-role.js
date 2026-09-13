@@ -226,7 +226,7 @@ section("Precedence — (b) env override beats marker signals");
   try {
     const r = resolveRepoRole({ root: dir });
     ok("env wins over signal — role === 'consumer'", r.role === "consumer", `got: ${r.role}`);
-    ok("source === 'env:WARPOS_REPO_ROLE'", r.source === "env:WARPOS_REPO_ROLE", `got: ${r.source}`);
+    ok("source === 'env:MC_REPO_ROLE'", r.source === "env:MC_REPO_ROLE", `got: ${r.source}`);
   } finally {
     if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
     else mcEnv.setEnv("REPO_ROLE", origEnv);
@@ -429,7 +429,7 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
     } finally { cleanup(dir); }
   }
 
-  // 19d: Invalid env WARPOS_REPO_ROLE → falls through; canonical signal wins
+  // 19d: Invalid env MC_REPO_ROLE → falls through; canonical signal wins
   {
     const dir = makeTmpRepo({ mcManifest: true });
     const origEnv = mcEnv.readEnv("REPO_ROLE");
@@ -438,7 +438,7 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
       const r = resolveRepoRole({ root: dir });
       ok("invalid env 'garbage_value' falls through → canonical via signal", r.role === "canonical",
         `got role: ${r.role}, source: ${r.source}`);
-      ok("invalid env: source is NOT 'env:WARPOS_REPO_ROLE'", r.source !== "env:WARPOS_REPO_ROLE",
+      ok("invalid env: source is NOT 'env:MC_REPO_ROLE'", r.source !== "env:MC_REPO_ROLE",
         `got: ${r.source}`);
     } finally {
       if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
@@ -456,7 +456,7 @@ section("FIX2 — invalid override/env values ignored (fall through to signals)"
       const r = resolveRepoRole({ root: dir });
       ok("valid env 'consumer' wins over canonical signal", r.role === "consumer",
         `got: ${r.role}`);
-      ok("valid env source is 'env:WARPOS_REPO_ROLE'", r.source === "env:WARPOS_REPO_ROLE",
+      ok("valid env source is 'env:MC_REPO_ROLE'", r.source === "env:MC_REPO_ROLE",
         `got: ${r.source}`);
     } finally {
       if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
@@ -509,7 +509,7 @@ section("FIX3 — enforcer pattern self-test (new regex patterns match role-deri
   // remain line-local misses — the documented ramp-to-blocking precondition.)
   const sourceSelfPattern =
     /mc(?:\?\.|[.\[]).*source.*===.*['"]self['"]|['"]self['"].*===.*mc(?:\?\.|[.\[]).*source/;
-  const slugWarposPattern =
+  const slugMcPattern =
     /project(?:\?\.|[.\[]).*slug.*===.*['"]mc['"]|['"]mc['"].*===.*project(?:\?\.|[.\[]).*slug/;
   ok("sourceSelfPattern matches mc.source === 'self' (dot access)",
     sourceSelfPattern.test('if (m.mc.source === "self") return true;'));
@@ -517,8 +517,8 @@ section("FIX3 — enforcer pattern self-test (new regex patterns match role-deri
     sourceSelfPattern.test('if (manifest.mc?.source === "self") return true;'));
   ok("sourceSelfPattern does NOT match a bare content read of mc.source",
     !sourceSelfPattern.test('const v = m.mc.source;'));
-  ok("slugWarposPattern matches project?.slug === 'mc' (optional chaining)",
-    slugWarposPattern.test('if (m.project?.slug === "mc") refuse();'));
+  ok("slugMcPattern matches project?.slug === 'mc' (optional chaining)",
+    slugMcPattern.test('if (m.project?.slug === "mc") refuse();'));
 }
 
 // 21. ED-009 adoption — isCanonicalDir() env-immune signals-only detector
@@ -569,7 +569,7 @@ section("ED-009 — isCanonicalDir() env-immune canonical-tree detector (admin:*
     } finally { cleanup(dir); }
   }
 
-  // 21f: ENV-IMMUNITY (the whole point) — WARPOS_REPO_ROLE=consumer must NOT flip
+  // 21f: ENV-IMMUNITY (the whole point) — MC_REPO_ROLE=consumer must NOT flip
   //      a real canonical tree to non-canonical for the safety floor, even though
   //      resolveRepoRole() (which honors env) DOES return 'consumer'.
   {
@@ -577,9 +577,9 @@ section("ED-009 — isCanonicalDir() env-immune canonical-tree detector (admin:*
     const origEnv = mcEnv.readEnv("REPO_ROLE");
     mcEnv.setEnv("REPO_ROLE", "consumer");
     try {
-      ok("isCanonicalDir IGNORES WARPOS_REPO_ROLE=consumer (stays true on canonical tree)",
+      ok("isCanonicalDir IGNORES MC_REPO_ROLE=consumer (stays true on canonical tree)",
         isCanonicalDir(dir) === true);
-      ok("resolveRepoRole HONORS WARPOS_REPO_ROLE=consumer (the divergence isCanonicalDir defeats)",
+      ok("resolveRepoRole HONORS MC_REPO_ROLE=consumer (the divergence isCanonicalDir defeats)",
         resolveRepoRole({ root: dir }).role === "consumer");
     } finally {
       if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");
@@ -588,14 +588,14 @@ section("ED-009 — isCanonicalDir() env-immune canonical-tree detector (admin:*
     }
   }
 
-  // 21g: env-immunity the OTHER direction — WARPOS_REPO_ROLE=canonical must NOT
+  // 21g: env-immunity the OTHER direction — MC_REPO_ROLE=canonical must NOT
   //      make an unsignaled tree read as canonical (no env spoof INTO canonical).
   {
     const dir = makeTmpRepo({});
     const origEnv = mcEnv.readEnv("REPO_ROLE");
     mcEnv.setEnv("REPO_ROLE", "canonical");
     try {
-      ok("isCanonicalDir IGNORES WARPOS_REPO_ROLE=canonical (stays false on unsignaled tree)",
+      ok("isCanonicalDir IGNORES MC_REPO_ROLE=canonical (stays false on unsignaled tree)",
         isCanonicalDir(dir) === false);
     } finally {
       if (origEnv === undefined) mcEnv.unsetEnv("REPO_ROLE");

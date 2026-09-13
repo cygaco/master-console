@@ -16,7 +16,7 @@
  * reintroduce it.
  *
  * Escape hatches (mirror framework-manifest-guard):
- *   - env: WARPOS_PURITY_GUARD=off
+ *   - env: MC_PURITY_GUARD=off
  *   - sentinel: .mc/purity-guard-disable
  *
  * Repo-role gate: the purity detectors only make sense in the canonical
@@ -160,7 +160,7 @@ process.stderr.write(
     "    node scripts/checks/framework-purity.js --staged",
     "",
     "  To bypass (logged):",
-    "    set WARPOS_PURITY_GUARD=off, OR",
+    "    set MC_PURITY_GUARD=off, OR",
     "    touch .mc/purity-guard-disable",
     "",
   ].join("\n"),

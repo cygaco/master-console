@@ -52,7 +52,8 @@ const CROSS_SESSION_EXEMPT = Object.freeze({
 });
 
 // A file READS the dispatch-completions ledger if it names it or the canonical read helpers.
-const LEDGER_READ = /dispatch-completions|WARPOS_COVERAGE_LEDGER|readCompletions|dispatchCompletionsFile/;
+// COVERAGE_LEDGER (the env SUFFIX) matches both the MC_COVERAGE_LEDGER name and a readEnv("COVERAGE_LEDGER") read.
+const LEDGER_READ = /dispatch-completions|COVERAGE_LEDGER|readCompletions|dispatchCompletionsFile/;
 // A file GATES on an ok:true liveness RECORD — a `record.ok === true` / `record.ok !== true` COMPARISON, the
 // canonical form where the actual ledger-record trust checks appear (and where every real reader this sprint
 // converted lived). NAMED RESIDUAL (gauntlet R6 SR-R6-002/LRCP-R6-001 → ED-229): the truthy/negated/destructured

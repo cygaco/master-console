@@ -8,7 +8,7 @@
  * /scan:framework-purity (--diff) keeps the broader staged + unstaged view.
  *
  * Strategy: build a throwaway git repo, point the scanner at it via the
- * WARPOS_PURITY_ROOT test seam, and assert:
+ * MC_PURITY_ROOT test seam, and assert:
  *
  *   1. --staged is CLEAN when only an UNSTAGED file carries a leak (the WI-23
  *      false-RED that this fix removes).

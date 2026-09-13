@@ -143,7 +143,7 @@ const KNOWN_NOT_SHIPPED = [
   // /scan:full-invoked betaevents-dedup / ed-dup-id / pipe-masks lints + /enforcement:log's next-ed-id +
   // their deps ed-registry/dedup-util — else a product's scaffolded full.md / log.md reference a missing
   // script; they SKIP on an absent MC ledger). builder-right-size is the ONE exception: a build-chain
-  // prompt-size heuristic (WARPOS_BUILDER_SIZE_ENFORCE) NOT invoked by any shipped skill — dev-tooling,
+  // prompt-size heuristic (MC_BUILDER_SIZE_ENFORCE) NOT invoked by any shipped skill — dev-tooling,
   // canonical-only. Prefix covers builder-right-size.js + .test.js (excluded from the dir-ship in
   // generate-framework-manifest.js EXCLUDE_RELATIVE_PREFIXES).
   { prefix: "scripts/enforcement/builder-right-size", reason: "SP-005: builder prompt-size right-sizing heuristic — build-chain dispatch dev-tooling, not invoked by any shipped skill; canonical-only (covers .js + .test.js)" },

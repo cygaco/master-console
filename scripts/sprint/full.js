@@ -176,10 +176,10 @@ function parseArgs(argv) {
     // ε-conducted mode (ADR-0009): when set, each completed phase's hook-point step(s) are
     // run through the ε sprint-conductor RUNTIME (registry-driven REAL dispatch + completion
     // records) instead of full.js's telemetry-only emitPhaseConsults. ADDITIVE — the default
-    // (flag absent / WARPOS_EPSILON_RUNTIME unset) is the unchanged script path.
+    // (flag absent / MC_EPSILON_RUNTIME unset) is the unchanged script path.
     // `--epsilon-dispatch` additionally writes real per-agent completion records.
     // T-297: in sprint mode these default ON (sprint-mode default applied in main() after
-    // mode detection; explicit CLI flags and WARPOS_EPSILON_RUNTIME env always win).
+    // mode detection; explicit CLI flags and MC_EPSILON_RUNTIME env always win).
     epsilon: mcEnv.readEnv("EPSILON_RUNTIME") === "on",
     epsilonDispatch: false,
     // Tracks whether epsilon/epsilonDispatch were set via explicit CLI flag (vs env/default).
@@ -782,7 +782,7 @@ function maybeConsultBeta(state, boundary, args) {
   // history to compare against. C3/C4 are enforced fail-closed by the AUDIT layer
   // (scripts/mc/release-build.js betaHonestyGate + /scan:sprint-beta-honesty),
   // which reads the full events corpus and BLOCKS the release on a duplicate.
-  // Kill switch WARPOS_BETA_SUBSTANCE_GATE=off (default ON) — fail-closed, never warn-only;
+  // Kill switch MC_BETA_SUBSTANCE_GATE=off (default ON) — fail-closed, never warn-only;
   // an off-switch (like dispatch-route-guard's) is a rollout/emergency lever, not a soften.
   //
   // SINGLE READ (task #12 — β single-read hygiene): the gate below and the row stamp further
@@ -1730,9 +1730,10 @@ function main() {
 
   // T-297: Sprint-mode default — when the active session mode is sprint, enable
   // ε-conduct (epsilon + epsilonDispatch) by default. Explicit CLI flags
-  // (_epsilonExplicit tracks them) and WARPOS_EPSILON_RUNTIME env always win.
+  // (_epsilonExplicit tracks them) and MC_EPSILON_RUNTIME env always win.
   // Non-sprint modes: behavior byte-identical to today. Fail-open on mode error.
-  const _envEpsilonSet = Object.prototype.hasOwnProperty.call(process.env, "WARPOS_EPSILON_RUNTIME");
+  // Read-both (S-OS-06): "explicitly set" means EITHER name is present — MC_EPSILON_RUNTIME or its legacy twin.
+  const _envEpsilonSet = Object.values(mcEnv.envNames("EPSILON_RUNTIME")).some((n) => Object.prototype.hasOwnProperty.call(process.env, n));
   if (!args._epsilonExplicit && !_envEpsilonSet) {
     try {
       const modeLib = require("../hooks/lib/mode");
@@ -1785,7 +1786,7 @@ function main() {
 
   // T-303 (N8): establish run-context env vars so all child dispatches (runHelper
   // spreads ...process.env) carry the same run identity. Rule: respect an inherited
-  // WARPOS_RUN_ID — a parent orchestrator's run_id wins; only generate when absent.
+  // MC_RUN_ID — a parent orchestrator's run_id wins; only generate when absent.
   // Format mirrors makeDispatchId() but prefixed `run-` to distinguish orchestrator
   // runs from per-dispatch ids.
   if (!mcEnv.readEnv("RUN_ID")) {
@@ -1796,7 +1797,7 @@ function main() {
   }
   // Stamp the sprint id so dispatch wrappers' runContext() returns the correct sprint.
   mcEnv.setEnv("SPRINT_ID", sprintId);
-  // WARPOS_PHASE_ID is set at each phase entry (below in each phase function).
+  // MC_PHASE_ID is set at each phase entry (below in each phase function).
 
   // Cost gate: per-run --cost-gate on|off overrides the persistent toggle
   // (scripts/sprint/cost-gate.js -> .claude/runtime/sprint-cost-gate.json).

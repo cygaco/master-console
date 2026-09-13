@@ -54,7 +54,7 @@ The `--sprint <SP-id>` flag (v0.2, T-20260512-007) targets a specific
 sprint instead of the registry primary. Omitted → defaults to
 `paths.sprintActiveRegistry#primary`. Unknown id → helper exits
 non-zero with the COPY C-10 "unknown sprint" message. Set
-`process.env.WARPOS_SPRINT_ID` as a side effect so logger +
+`process.env.MC_SPRINT_ID` as a side effect so logger +
 decision-ledger auto-tag rows for the targeted sprint.
 
 Examples:

@@ -8,7 +8,7 @@
     "_note": "Default is warn during soft rollout. Flip to 'block' after 2026-06-15 or once the team is comfortable with the friction. Soft-rollout downgrades 'block' to 'warn' until the date passes; after the date, the declared mode is the effective mode."
   },
   "bypass": {
-    "env_var": "WARPOS_VERSION_GUARD=off",
+    "env_var": "MC_VERSION_GUARD=off",
     "sentinel_file": ".mc/version-bump-guard-disable",
     "_note": "Both bypass mechanisms log to stderr so misuse is observable."
   }

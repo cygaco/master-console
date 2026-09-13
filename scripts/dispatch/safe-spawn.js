@@ -29,7 +29,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * Objects / AppContainer are DEFERRED (§17.7) behind a real survivor-test.
  *
  * KNOWN RESIDUALS (the "trusted operator env" boundary — GPT-5.5 review R2):
- *   - WARPOS_APPROVED_TOOL_ROOTS is OPTIONAL. Without it, resolveTool still rejects
+ *   - MC_APPROVED_TOOL_ROOTS is OPTIONAL. Without it, resolveTool still rejects
  *     repo-local + temp-dir hijacks (the realistic vectors) but accepts any other
  *     on-PATH location. PRODUCTION deployments handling untrusted input SHOULD set
  *     it to pin tool roots. (Mandating it would break ordinary dev where tools live
@@ -454,9 +454,9 @@ function which(cmd) {
  *   - id not in the allowlist,
  *   - resolved path is inside the repo (a planted repo-local shim) or under the
  *     OS temp dir (a writable hijack location),
- *   - WARPOS_APPROVED_TOOL_ROOTS is set and the path is under none of them.
+ *   - MC_APPROVED_TOOL_ROOTS is set and the path is under none of them.
  *
- * Test seam: WARPOS_TOOL_<ID>_PATH forces a path (used by unit tests + the
+ * Test seam: MC_TOOL_<ID>_PATH forces a path (used by unit tests + the
  * existing DISPATCH_*_BIN seams); it is still subjected to the same safety checks.
  */
 function resolveTool(toolId, opts = {}) {
@@ -478,7 +478,7 @@ function resolveTool(toolId, opts = {}) {
   }
   const approved = (mcEnv.readEnv("APPROVED_TOOL_ROOTS") || "").split(path.delimiter).filter(Boolean);
   if (approved.length && !approved.some((root) => real === root || real.startsWith(root + path.sep))) {
-    return { ok: false, reason: `resolved '${toolId}' (${real}) is under no WARPOS_APPROVED_TOOL_ROOTS entry` };
+    return { ok: false, reason: `resolved '${toolId}' (${real}) is under no MC_APPROVED_TOOL_ROOTS entry` };
   }
   const ext = path.extname(real).toLowerCase();
   const kind = ext === ".cmd" || ext === ".bat" ? "cmd-shim" : ext === ".exe" || ext === "" ? "native" : "script";

@@ -15,7 +15,7 @@
  *     a data route is 404/405. Write endpoints are ABSENT, not merely unreachable.
  *
  *   REVIEW-MODE KEEPALIVE (β-1, AC-R2c): a --review-mode / --no-auto-shutdown flag
- *     (or WARPOS_GUI_KEEPALIVE env) DISABLES the auto-exit lifecycle (stdin-EOF,
+ *     (or MC_GUI_KEEPALIVE env) DISABLES the auto-exit lifecycle (stdin-EOF,
  *     tab-close beforeunload ping, the soft-shutdown timer) so a headless gauntlet
  *     cannot race the server dead before/while the page renders. In normal mode the
  *     gui.js clean-shutdown behavior is preserved. After binding, the EXACT reachable

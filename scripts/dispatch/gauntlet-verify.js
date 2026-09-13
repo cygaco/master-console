@@ -282,7 +282,7 @@ function verifyGauntlet(args = {}) {
   // a valid origin-proof signature (attest-signing.verifyRecord) or it is demoted to "unsigned"
   // (fail-closed) — a forged unsigned liveness record can no longer read as "ran". Default FALSE in
   // this programmatic API (preserves the shape-focused unit tests, which construct unsigned records);
-  // the CLI — the actual release/WG-19 gate — defaults it TRUE (env WARPOS_GAUNTLET_REQUIRE_SIG=0 to
+  // the CLI — the actual release/WG-19 gate — defaults it TRUE (env MC_GAUNTLET_REQUIRE_SIG=0 to
   // disable). Any programmatic caller reading liveness across a trust boundary MUST pass true.
   const requireSignature = args.requireSignature === true;
 
@@ -612,7 +612,7 @@ if (require.main === module) {
           "  --strict-fallback   Fail when any role only fell back to Claude (default: fell-back counts as ran).",
           "  --no-require-sig    Disable origin-proof signature verification (ED-231). Default is ON — a",
           "                      forged UNSIGNED ok:true record is fail-closed as 'unsigned'. Escape for",
-          "                      transition/debug only; also WARPOS_GAUNTLET_REQUIRE_SIG=0.",
+          "                      transition/debug only; also MC_GAUNTLET_REQUIRE_SIG=0.",
         ].join("\n") + "\n",
       );
       process.exit(0);
@@ -629,7 +629,7 @@ if (require.main === module) {
     const strictFallback = argv.includes("--strict-fallback");
     // ED-231 whole-ledger signing (β RIDER-1, MISTAKE-CLASS priority): the CLI IS the release/WG-19
     // liveness gate, so it requires origin-proof signatures BY DEFAULT — a forged unsigned ok:true
-    // record can never green a lane here. Opt out with --no-require-sig or WARPOS_GAUNTLET_REQUIRE_SIG=0
+    // record can never green a lane here. Opt out with --no-require-sig or MC_GAUNTLET_REQUIRE_SIG=0
     // (a named, deliberate escape for a transition/debug, never a silent default).
     const requireSignature =
       !argv.includes("--no-require-sig") && mcEnv.readEnv("GAUNTLET_REQUIRE_SIG") !== "0";

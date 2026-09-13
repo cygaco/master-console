@@ -24,15 +24,15 @@ const path = require("path");
 const readline = require("readline");
 // SP-20260525-019 (T-219/T-220): product-scaffold core extracted into a shared module.
 // scaffoldProduct = paths.json + skeleton + ROADMAP (the early bundle);
-// populateWarposMirror = the _mc/ source mirror (the late block);
+// populateMcMirror = the _mc/ source mirror (the late block);
 // writeProductManifest/writeAgentStore/writeProductSettings = the generated-file
 // steps (manifest.json, store.json, settings.json — extracted by T-220 so the
 // install.ps1/CLI path produces them too). See the module docstring for why the
 // call sites stay split (ordering is load-bearing).
 const {
   scaffoldProduct,
-  populateWarposMirror,
-  regenerateWarposManifest,
+  populateMcMirror,
+  regenerateMcManifest,
   writeProductManifest,
   writeAgentStore,
   writeProductSettings,
@@ -1023,13 +1023,13 @@ try {
 
 // ── 8.9. Populate _mc/ framework SOURCE mirror (SP-20260525-003) ──
 // SP-20260525-019 (T-219): moved VERBATIM into the shared scaffold core
-// (scripts/mc/scaffold-core.js#populateWarposMirror) — same populate-source
+// (scripts/mc/scaffold-core.js#populateMcMirror) — same populate-source
 // call, same logging, same fail-open. Only relocated + parameterized.
 // MUST run here: AFTER the settings-compile check above (which keys on whether
 // _mc/settings/defaults.json exists — this block creates it) and BEFORE the
 // MANIFEST COVERAGE block below (which regenerates _mc/MANIFEST.json).
 {
-  const { installedDelta } = populateWarposMirror({
+  const { installedDelta } = populateMcMirror({
     target: TARGET,
     mcRoot: MC,
     shipManifest,
@@ -1111,11 +1111,11 @@ if (!SKIP_MANIFEST_CHECK) {
     try {
       const { spawnSync } = require("child_process");
       // (1) regenerate _mc/MANIFEST.json via the SHARED scaffold core
-      // (scaffold-core.js#regenerateWarposManifest) — the SAME build the
+      // (scaffold-core.js#regenerateMcManifest) — the SAME build the
       // install.ps1 / CLI path runs, so both installers produce an identical
       // mirror manifest (β: extract-don't-fork). The validate + --strict-manifest
       // install-refusal policy below stays warp-setup-specific.
-      const buildRes = regenerateWarposManifest({ target: TARGET, mcRoot: MC, log });
+      const buildRes = regenerateMcManifest({ target: TARGET, mcRoot: MC, log });
       if (!buildRes.ok) {
         // helper already logged the skip/build-failure reason — skip the validate pass.
       } else {

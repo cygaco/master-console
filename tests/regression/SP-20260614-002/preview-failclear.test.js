@@ -49,9 +49,9 @@ function tmpDir(label) {
 }
 
 async function main() {
-  // ── refusal: WARPOS_ROOT by path equality ──────────────────────────────────
+  // ── refusal: MC_ROOT by path equality ──────────────────────────────────
   await ok("resolved-target-mc-root-refused-precondition: path equality refuses", () => {
-    const g = preview.refuseIfTargetIsMC(preview.WARPOS_ROOT);
+    const g = preview.refuseIfTargetIsMC(preview.MC_ROOT);
     assert.strictEqual(g.refuse, true, "the canonical root must be refused by path");
     assert.ok(/canonical root/i.test(g.reason), "reason names the canonical root");
   });
@@ -116,7 +116,7 @@ async function main() {
 
   // ── run(): MC target → non-ok, no side effects, exact remediation ──────
   await ok("run() refuses a MC-root target before any scaffold (no side effects)", async () => {
-    const res = await preview.run(["--instance-dir", preview.WARPOS_ROOT]);
+    const res = await preview.run(["--instance-dir", preview.MC_ROOT]);
     assert.strictEqual(res.ok, false, "run() must fail on a MC target");
     assert.ok(
       /refusing to preview the MC canonical root/i.test(res.error),

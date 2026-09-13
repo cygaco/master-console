@@ -65,7 +65,7 @@ h.test("isDispatchProc matches only `node <abs-canonical-wrapper>` (r3 redesign)
   const wrapC = _path.resolve(_ROOT, "scripts", "dispatch-claude.js");
   assert(isDispatchProc("node " + wrapC + " builder p.txt"), "node + abs dispatch-claude.js");
   assert(isDispatchProc("node " + WRAP + " reviewer p.txt"), "node + abs dispatch-agent.js");
-  assert(!isDispatchProc("codex exec WARPOS_RUN_ID=abc"), "marker branch removed — codex never matches on its own argv");
+  assert(!isDispatchProc("codex exec MC_RUN_ID=abc"), "marker branch removed — codex never matches on its own argv");
   assert(!isDispatchProc("node build.js"), "unrelated node");
   assert(!isDispatchProc("node scripts/dispatch-agent.js reviewer"), "a RELATIVE wrapper path no longer matches (abs required)");
   assert(!isDispatchProc(""), "empty cmd");
@@ -195,7 +195,7 @@ h.test("SIGNATURE: only `node <abs-operand-wrapper>` matches; every spoof is rej
   assert(!isDispatchProc("node -e \"require('x')\" " + realAgent), "the wrapper after `-e <code>` is NOT the operand (r4 HIGH)");
   assert(!isDispatchProc(["node", "-e", "console.log(1)", realAgent]), "argv form: -e consumes code; trailing wrapper is not the operand (r4 HIGH)");
   assert(!isDispatchProc(["claude", "--prompt", "remember " + realAgent + " is the path"]), "claude (not node) with the path inside a --prompt value");
-  assert(!isDispatchProc(["node", "--prompt", "WARPOS_RUN_ID=demo"]), "a marker as a --prompt value is NOT identity (r4 HIGH — marker branch removed)");
+  assert(!isDispatchProc(["node", "--prompt", "MC_RUN_ID=demo"]), "a marker as a --prompt value is NOT identity (r4 HIGH — marker branch removed)");
   assert(!isDispatchProc(["node", "evil arg " + realAgent]), "a single argv value containing the path is ONE token, not the operand");
   // security-final: a value-consuming node flag must NOT promote the wrapper to operand:
   assert(!isDispatchProc(["node", "--import", realAgent, "x"]), "--import <wrapper> — wrapper is the flag value, not the operand");

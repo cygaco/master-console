@@ -39,7 +39,7 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 // MC canonical root, for the refusal guard. From within a worktree this still
 // resolves to the worktree's checkout root — the manifest-based checks below are
 // the authoritative defence; the path-equality check is the fast belt.
-const WARPOS_ROOT = REPO_ROOT;
+const MC_ROOT = REPO_ROOT;
 
 const DEFAULT_INSTANCE_DIR = path.join(REPO_ROOT, "runtime", "admin-preview", "instance");
 const POINTER_PATH = path.join(REPO_ROOT, ".claude", "runtime", "admin-preview.json");
@@ -76,17 +76,17 @@ function openInBrowser(url) {
 
 // ── MC refusal guard (AC-R1c) ─────────────────────────────
 // Refuse if the resolved target is the MC canonical tree. Detection:
-//   (a) fast belt: path.resolve(targetDir) === WARPOS_ROOT, OR
+//   (a) fast belt: path.resolve(targetDir) === MC_ROOT, OR
 //   (b) isCanonicalDir(targetDir) — the env-IMMUNE, signals-only detector in
 //       scripts/mc/repo-role.js (the single source per ED-009). It covers
 //       the _mc/MANIFEST.json marker, the manifest self-identity fields, and
-//       the version.json heuristic in ONE place, and ignores WARPOS_REPO_ROLE so
+//       the version.json heuristic in ONE place, and ignores MC_REPO_ROLE so
 //       the safety floor can't be env-spoofed (xprovider HIGH #5).
 // Delegates detection to the resolver rather than re-deriving canonical signals
 // inline (which would re-introduce the role-derivation drift ED-009 forbids).
 function refuseIfTargetIsMC(targetDir) {
   const resolved = path.resolve(targetDir);
-  if (resolved === WARPOS_ROOT) {
+  if (resolved === MC_ROOT) {
     return { refuse: true, reason: `resolved target is the MC canonical root (${resolved})` };
   }
   if (isCanonicalDir(resolved)) {
@@ -386,5 +386,5 @@ module.exports = {
   POINTER_PATH,
   DEFAULT_INSTANCE_DIR,
   DEFAULT_ROUTE,
-  WARPOS_ROOT,
+  MC_ROOT,
 };

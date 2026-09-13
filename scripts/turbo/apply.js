@@ -298,7 +298,7 @@ function normalizeScopes(input, opts = {}) {
           ", ",
         )}" — the Claude Code classifier hard-denies arbitrary-code Bash, so ` +
           `granting it would fail on first use. Re-run without auto-mode (or set\n` +
-          `WARPOS_AUTO_MODE=0) to opt in.\n`,
+          `MC_AUTO_MODE=0) to opt in.\n`,
       );
     }
   }
@@ -575,7 +575,7 @@ function main() {
   }
 
   // mode === "apply"
-  // Auto-mode signal: the harness sets WARPOS_AUTO_MODE=1 in unattended runs.
+  // Auto-mode signal: the harness sets MC_AUTO_MODE=1 in unattended runs.
   // When set, classifier-hard-denied scopes (node-e-fs) are dropped with a note
   // instead of failing the apply. Absent/0 = honor explicit opt-in as before.
   const autoMode = /^(1|true|yes)$/i.test(

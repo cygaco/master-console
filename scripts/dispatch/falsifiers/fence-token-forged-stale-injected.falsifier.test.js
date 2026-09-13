@@ -16,7 +16,7 @@
  *
  * WHY WE READ THE FENCE ENV, NOT THE RECEIPT: the fence is exactly the three scoped env vars
  * `protected-ref-transaction.js` reads to authorize a protected-ref write. Asserting on a receipt would
- * only prove what the transport SAYS. We assert on `WARPOS_CONTROLLER_FENCE_TOKEN` as observed from
+ * only prove what the transport SAYS. We assert on `MC_CONTROLLER_FENCE_TOKEN` as observed from
  * INSIDE the CAS — the actual value the hook would authorize against.
  */
 const test = require("node:test");

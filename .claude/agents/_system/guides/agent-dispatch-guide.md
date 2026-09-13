@@ -447,7 +447,7 @@ Blocked by `scripts/hooks/dispatch-route-guard.js` (PreToolUse, Bash matcher):
 - `node scripts/dispatch-agent.js <role> <prompt-file>` — the canonical cross-provider wrapper.
 - `node scripts/dispatch-claude.js <build-role> <prompt-file> -w` — the bounded Claude build-chain wrapper (RI-004/ED-018).
 - `claude -p --agent <role> …` — documented Claude fallback for **non-build** roles only (build roles are blocked; see §7).
-- Any command running under `WARPOS_PROVIDER_PROBE=1` — one-shot health probe escape hatch (the bypass is logged via `lib/logger`).
+- Any command running under `MC_PROVIDER_PROBE=1` — one-shot health probe escape hatch (the bypass is logged via `lib/logger`).
 
 ---
 
@@ -755,7 +755,7 @@ on every cold start.
 
 ---
 
-## §16.9 — Shape-door self-detection (W2-core, `WARPOS_SHAPE_DOOR`)
+## §16.9 — Shape-door self-detection (W2-core, `MC_SHAPE_DOOR`)
 
 Every dispatch entry point consults the LIVE shape resolver
 (`scripts/dispatch/dispatch-shape.js#shapeDoor`) at spawn — the ONE shared gate so a
@@ -775,11 +775,11 @@ model). Advisory noise is stderr-only — not yet persisted (**ED-059**).
 
 | Var | Values | Effect |
 |---|---|---|
-| `WARPOS_SHAPE_DOOR` | `report` \| `enforce` | The shape-enforce authority. Default `report` (advisory only). `enforce` REFUSES a high-severity mismatch (exit **2**, named reason). |
-| `WARPOS_DISABLE_SHAPE_DOOR` | `1`/`true`/`yes` | **ULTIMATE KILL-SWITCH** — forces report fleet-wide, beats everything. Set this if the door ever false-refuses in production, then file the planted-test gap. |
-| `WARPOS_SHAPE_DOOR=report` | (explicit) | **FLEET KILL** — forces report on every wrapper; beats the per-wrapper flip AND the legacy `block` alias (gauntlet-fixed precedence). |
-| `WARPOS_SHAPE_DOOR_DISPATCH_AGENT` · `_DISPATCH_CLAUDE` · `_EPSILON` | `report` | **PER-WRAPPER KILL** — force-report (via `reportOnlyPin`) just that one flipped wrapper, leaving the others enforcing. Beats a global `enforce`. |
-| `WARPOS_DISPATCH_CONTRACT_ENFORCE` | `block` | DEPRECATED alias → enforce, back-compat only. An explicit `WARPOS_SHAPE_DOOR=report` BEATS it. |
+| `MC_SHAPE_DOOR` | `report` \| `enforce` | The shape-enforce authority. Default `report` (advisory only). `enforce` REFUSES a high-severity mismatch (exit **2**, named reason). |
+| `MC_DISABLE_SHAPE_DOOR` | `1`/`true`/`yes` | **ULTIMATE KILL-SWITCH** — forces report fleet-wide, beats everything. Set this if the door ever false-refuses in production, then file the planted-test gap. |
+| `MC_SHAPE_DOOR=report` | (explicit) | **FLEET KILL** — forces report on every wrapper; beats the per-wrapper flip AND the legacy `block` alias (gauntlet-fixed precedence). |
+| `MC_SHAPE_DOOR_DISPATCH_AGENT` · `_DISPATCH_CLAUDE` · `_EPSILON` | `report` | **PER-WRAPPER KILL** — force-report (via `reportOnlyPin`) just that one flipped wrapper, leaving the others enforcing. Beats a global `enforce`. |
+| `MC_DISPATCH_CONTRACT_ENFORCE` | `block` | DEPRECATED alias → enforce, back-compat only. An explicit `MC_SHAPE_DOOR=report` BEATS it. |
 
 **The four entry points:**
 

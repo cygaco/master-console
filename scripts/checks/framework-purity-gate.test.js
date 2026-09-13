@@ -3,7 +3,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
 /**
  * framework-purity-gate.test.js — RED proof for the S-OS-04 fail-closed, full-tree
  * default of scripts/checks/framework-purity.js, against a throwaway git repo
- * (WARPOS_PURITY_ROOT seam). Companion to framework-purity.test.js (detector units)
+ * (MC_PURITY_ROOT seam). Companion to framework-purity.test.js (detector units)
  * and test-framework-purity-staged.js (WI-23 staged/diff scoping).
  *
  *   node --test scripts/checks/framework-purity-gate.test.js

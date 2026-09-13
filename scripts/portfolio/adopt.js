@@ -10,7 +10,7 @@ const RESERVED = new Set([
   "dispatch", "sync", "bootstrap", "clone", "ponder", "import",
 ]);
 
-const WARPOS_ROOT = path.resolve(__dirname, "../..");
+const MC_ROOT = path.resolve(__dirname, "../..");
 
 // ── argv parsing ───────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -39,8 +39,8 @@ if (RESERVED.has(slug)) {
 }
 
 // ── locate brief ───────────────────────────────────────────
-const briefsRoot = path.resolve(WARPOS_ROOT, "_docs/briefs");
-const clonesRoot = path.resolve(WARPOS_ROOT, "_docs/clones");
+const briefsRoot = path.resolve(MC_ROOT, "_docs/briefs");
+const clonesRoot = path.resolve(MC_ROOT, "_docs/clones");
 const briefPath = _locateBrief(slug, briefsRoot, clonesRoot);
 
 if (!briefPath) {
@@ -65,12 +65,12 @@ if (!skipNew) {
   const newScript = path.resolve(__dirname, "new.js");
   const result = spawnSync(
     "node", [newScript, slug],
-    { cwd: WARPOS_ROOT, encoding: "utf8", timeout: 120_000, stdio: "inherit" }
+    { cwd: MC_ROOT, encoding: "utf8", timeout: 120_000, stdio: "inherit" }
   );
   if (result.status !== 0) {
     process.exit(result.status || 4);
   }
-  repoPath = path.resolve(WARPOS_ROOT, "..", slug);
+  repoPath = path.resolve(MC_ROOT, "..", slug);
 }
 
 if (!repoPath || !fs.existsSync(repoPath)) {

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const mcEnv = require("./hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 
 /**
  * scripts/test-sprint-hooks.js — Acceptance tests for the two sprint hooks.
@@ -925,7 +926,7 @@ function testLoggerTagsSprintIdFromEnv() {
         env: {
           ...process.env,
           CLAUDE_PROJECT_DIR: tmp,
-          WARPOS_SPRINT_ID: "SP-20260512-001",
+          MC_SPRINT_ID: "SP-20260512-001",
         },
       },
     );
@@ -946,11 +947,11 @@ function testLoggerTagsSprintIdFromEnv() {
     const last = JSON.parse(raw[raw.length - 1]);
     if (last.sprint_id === "SP-20260512-001") {
       ok(
-        "logger tags event with sprint_id from WARPOS_SPRINT_ID env (AC-14.1)",
+        "logger tags event with sprint_id from MC_SPRINT_ID env (AC-14.1)",
       );
     } else {
       fail(
-        "logger tags event with sprint_id from WARPOS_SPRINT_ID env",
+        "logger tags event with sprint_id from MC_SPRINT_ID env",
         `got sprint_id=${last.sprint_id}`,
       );
     }
@@ -966,7 +967,7 @@ function testLoggerNoSprintIdWhenUnset() {
     const eventsFile = path.join(tmp, ".claude/project/events/events.jsonl");
     fs.mkdirSync(path.dirname(eventsFile), { recursive: true });
     const env = { ...process.env, CLAUDE_PROJECT_DIR: tmp };
-    delete env.WARPOS_SPRINT_ID;
+    mcEnv.unsetEnv("SPRINT_ID", env);
     const child = spawnSync(
       process.execPath,
       [
@@ -1039,7 +1040,7 @@ function testDecisionLedgerTagsSprintId() {
         env: {
           ...process.env,
           CLAUDE_PROJECT_DIR: tmp,
-          WARPOS_SPRINT_ID: "SP-20260512-001",
+          MC_SPRINT_ID: "SP-20260512-001",
         },
       },
     );

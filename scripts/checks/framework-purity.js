@@ -58,7 +58,7 @@
  *
  * Enforcer of its own contract: scripts/checks/framework-purity.test.js
  * (detector unit tests) + scripts/checks/framework-purity-gate.test.js
- * (planted-leak RED proof against a throwaway git repo, via WARPOS_PURITY_ROOT).
+ * (planted-leak RED proof against a throwaway git repo, via MC_PURITY_ROOT).
  */
 
 "use strict";
@@ -69,7 +69,7 @@ const path = require("path");
 const { execSync } = require("child_process");
 
 // REPO_ROOT defaults to the canonical repo (two levels up from this file).
-// WARPOS_PURITY_ROOT is a test-only seam: it lets the test suite point the
+// MC_PURITY_ROOT is a test-only seam: it lets the test suite point the
 // scanner at a throwaway git repo so the modes can be exercised hermetically
 // without a false-RED on the real working tree.
 const REPO_ROOT = mcEnv.readEnv("PURITY_ROOT")

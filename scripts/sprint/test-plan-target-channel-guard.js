@@ -9,7 +9,7 @@
  *
  * THE DEFECT. `payload.sprint` is not a targeting channel: plan.js stamps the
  * Plan Contract's `sprint:` from the RESOLVED sprint (`--sprint` via
- * parseSprintArg -> WARPOS_SPRINT_ID, else the registry `primary`) and reads
+ * parseSprintArg -> MC_SPRINT_ID, else the registry `primary`) and reads
  * only `payload.sprint_title` / `payload.sprint_objective`. A caller who put
  * the target in the payload was silently retargeted to `primary` and handed an
  * exit-0 success line. The pre-existing sanity WARN cannot catch it — that

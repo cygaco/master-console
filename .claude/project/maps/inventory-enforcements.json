@@ -292,8 +292,8 @@
         "`<provider> --version|--help|auth|models`",
         "commands beginning with `node scripts/dispatch-agent.js` / `node scripts/dispatch-claude.js`",
         "`claude -p ... --agent <role>` documented fallback",
-        "WARPOS_PROVIDER_PROBE=1 one-shot bypass",
-        "WARPOS_DISPATCH_ROUTE_GUARD=off kill switch"
+        "MC_PROVIDER_PROBE=1 one-shot bypass",
+        "MC_DISPATCH_ROUTE_GUARD=off kill switch"
       ],
       "gaps_closed": [
         "GAP-1603"
@@ -487,7 +487,7 @@
       "allows": [
         "commits that don't touch manifest-tracked files",
         "commits where manifest is also staged",
-        "WARPOS_MANIFEST_GUARD=off"
+        "MC_MANIFEST_GUARD=off"
       ],
       "gaps_closed": [],
       "pre_check": "On git commit: diff staged files against manifest-tracked set. If any tracked file changed but manifest not staged, block.",
@@ -515,7 +515,7 @@
       "allows": [
         "consumer/product repos (no canonical marker) — purity scan would flag the product's own slugs/keys; no-op there",
         "commits with clean staged tree",
-        "WARPOS_PURITY_GUARD=off",
+        "MC_PURITY_GUARD=off",
         "sentinel .mc/purity-guard-disable",
         "check tool error (exit 2) → fail-open on own error"
       ],
@@ -2224,7 +2224,7 @@
       "allows": [
         "business-verb imperatives (neutralized + tagged data_only at the ingest-store layer; audited by /scan:ingest-firewall)",
         "content classified non-reject",
-        "WARPOS_UNTRUSTED_CONTENT_FIREWALL=off",
+        "MC_UNTRUSTED_CONTENT_FIREWALL=off",
         "hook-payload parse error → fail-open (infra, not a content threat)"
       ],
       "gaps_closed": [],
@@ -2260,7 +2260,7 @@
         "EXCLUDE_PREFIXES (runtime/events/memory/maps/builds/sprint/retros/beta/releases)",
         "not a git commit",
         "version.json unreadable / git error",
-        "WARPOS_VERSION_GUARD=off",
+        "MC_VERSION_GUARD=off",
         "sentinel .mc/version-bump-guard-disable"
       ],
       "gaps_closed": [],

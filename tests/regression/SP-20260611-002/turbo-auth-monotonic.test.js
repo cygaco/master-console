@@ -157,7 +157,7 @@ ok("AC-3.1: end-to-end — a widening re-apply WITHOUT --attest is REFUSED (exit
   );
   const { spawnSync } = require("child_process");
   const APPLY = path.join(ROOT, "scripts", "turbo", "apply.js");
-  const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, WARPOS_AUTO_MODE: "0" };
+  const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, MC_AUTO_MODE: "0" };
 
   // First apply — narrow grant, succeeds.
   const first = spawnSync(process.execPath, [APPLY, "--scope", "manifest-edit", "--ttl", "60m"], { env, encoding: "utf8" });
@@ -184,7 +184,7 @@ ok("AC-3.2: an attested widening SUCCEEDS and preserves the session anchor", () 
   const { spawnSync } = require("child_process");
   const APPLY = path.join(ROOT, "scripts", "turbo", "apply.js");
   const authFile = path.join(proj, ".claude", "runtime", "authorization.json");
-  const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, WARPOS_AUTO_MODE: "0" };
+  const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, MC_AUTO_MODE: "0" };
 
   const first = spawnSync(process.execPath, [APPLY, "--scope", "manifest-edit", "--ttl", "60m", "--spend-ceiling", "100"], { env, encoding: "utf8" });
   assert.strictEqual(first.status, 0);

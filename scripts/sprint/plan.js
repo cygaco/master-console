@@ -422,7 +422,7 @@ function main() {
   // ── DOOR 1 (fail-closed): the inert-target-channel guard ─────────────────
   // `payload.sprint` is NOT a targeting channel. This script stamps the Plan
   // Contract's `sprint:` from the RESOLVED sprint — `--sprint` via
-  // parseSprintArg -> WARPOS_SPRINT_ID, else the registry `primary` — and never
+  // parseSprintArg -> MC_SPRINT_ID, else the registry `primary` — and never
   // reads `payload.sprint` (only `payload.sprint_title` / `sprint_objective`).
   // A caller who supplies the target ONLY in the payload was therefore silently
   // retargeted and handed an exit-0 success line naming a different sprint in
@@ -487,7 +487,7 @@ function main() {
     process.stderr.write(
       `WARN: --sprint ${sa.id} but ensureCurrentSprint resolved id=${current.id}. ` +
         `Plan Contract will be written against ${current.id}, not ${sa.id}. ` +
-        `Investigate: active-sprints.yaml#primary, $WARPOS_SPRINT_ID, and per-sprint current.yaml.\n`,
+        `Investigate: active-sprints.yaml#primary, $MC_SPRINT_ID, and per-sprint current.yaml.\n`,
     );
   }
   const { pcId, pcPath, planContract } = writePlanContract(payload, current);

@@ -85,7 +85,7 @@ function parseArgs(argv) {
     // Threaded through to brokerMerge() (stage 9) — the INC-1 brokered land onto main. spId defaults to a
     // fixed pseudo-sprint id (not tied to any sprint ceremony) so an ad-hoc release run always holds a
     // lease without requiring the operator to be mid-sprint.
-    spId: get("--sp-id") || mcEnv.readEnv("SP_ID") || "warpos-release-canonical",
+    spId: get("--sp-id") || mcEnv.readEnv("SP_ID") || "mc-release-canonical",
     leaseRoot: get("--lease-root") || null,
     bundleManifestPath: get("--bundle-manifest") || mcEnv.readEnv("PINNED_BUNDLE_MANIFEST") || null,
     bundleRoot: get("--bundle-root") || mcEnv.readEnv("PINNED_BUNDLE_ROOT") || null,
@@ -307,7 +307,7 @@ function stageBumpVersion(opts, canonical, current, next) {
   writeJson(file, after);
   // 2026-05-30: the bump must ALSO touch the version-bearing fields that neither
   // version-quorum nor the manifest regen covers — else they lag (the 0.10.0→0.11.0
-  // bug: .claude/manifest.json#warpos.version + install.ps1's WARPOS_VERSION fallback
+  // bug: .claude/manifest.json#mc.version + install.ps1's MC_VERSION fallback
   // stayed behind). version-coherence (release-gate) now blocks on this, so the engine
   // must keep them current. Fail-open — never blocks the release.
   try {
@@ -326,11 +326,11 @@ function stageBumpVersion(opts, canonical, current, next) {
     const psFile = path.join(canonical, "install.ps1");
     if (fs.existsSync(psFile)) {
       const ps = fs.readFileSync(psFile, "utf8");
-      const re = /(\$Script:WARPOS_VERSION\s*=\s*")[^"]+(")/;
+      const re = /(\$Script:MC_VERSION\s*=\s*")[^"]+(")/;
       if (re.test(ps)) fs.writeFileSync(psFile, ps.replace(re, `$1${next}$2`));
     }
   } catch (e) {
-    process.stderr.write(`bump: install.ps1 WARPOS_VERSION skip (${e.message})\n`);
+    process.stderr.write(`bump: install.ps1 MC_VERSION skip (${e.message})\n`);
   }
   // SP-20260519-001 R-2: append version row to canonical RELEASES.md ledger.
   // Fail-open: never blocks the release. Loads ledger.js from canonical so

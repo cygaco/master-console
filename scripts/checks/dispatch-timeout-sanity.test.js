@@ -75,7 +75,7 @@ test("foregroundAwareTimeout(20min, { background: true }) returns full 20min", (
   }
 });
 
-test("WARPOS_DISPATCH_BACKGROUND=1 env signal → full bound (background path)", () => {
+test("MC_DISPATCH_BACKGROUND=1 env signal → full bound (background path)", () => {
   const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
   mcEnv.setEnv("DISPATCH_BACKGROUND", "1");
   try {
@@ -174,7 +174,7 @@ test("runChecks() returns ok:true on real WRAPPER_DEFAULTS", () => {
 // Design note: foregroundAwareTimeout always CLAMPS when no background signal is
 // present. So a large default (30min) with no env signal still yields effectiveMs=540s
 // (GREEN — that IS the fix). The planted violation that proves the check's comparison
-// fires correctly is triggered by WARPOS_DISPATCH_BACKGROUND=1, which bypasses the
+// fires correctly is triggered by MC_DISPATCH_BACKGROUND=1, which bypasses the
 // clamp and exposes a raw value > ceiling.
 console.log("\n(5) Planted violation — foreground bound >540s → red:");
 
@@ -194,7 +194,7 @@ test("planted: large default clamped to ceiling by helper → check is GREEN (th
   }
 });
 
-test("planted: WARPOS_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exposes violation (red)", () => {
+test("planted: MC_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exposes violation (red)", () => {
   // This is the true planted violation: with background signal set, the helper returns the
   // raw defaultMs (no clamp). If defaultMs > ceiling, the check correctly reports RED.
   // This proves the check's comparison logic fires (not just the helper's clamp).
@@ -206,7 +206,7 @@ test("planted: WARPOS_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exp
     const c = result.checks.find(ch => ch.wrapper === "bg-bypass-planted");
     assert(c, "Expected check for bg-bypass-planted");
     assert.strictEqual(c.status, "red",
-      `Expected red: WARPOS_DISPATCH_BACKGROUND=1 bypassed the clamp, effective=1800000ms > ceiling`);
+      `Expected red: MC_DISPATCH_BACKGROUND=1 bypassed the clamp, effective=1800000ms > ceiling`);
     assert.strictEqual(result.ok, false, "Expected ok:false for planted violation");
     assert(c.reason && /VIOLATION/i.test(c.reason),
       `Expected VIOLATION in reason, got: ${c.reason}`);
