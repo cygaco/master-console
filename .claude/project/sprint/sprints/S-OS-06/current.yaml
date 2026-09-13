@@ -4,7 +4,7 @@ title: "Rebrand identifier layer: Master Console slug mc, mc@2.0.0 with one-rele
 objective: "Run /sprint:plan to set this."
 status: designing
 created_at: "2026-09-13T10:25:50.488Z"
-updated_at: "2026-09-13T16:28:38.950Z"
+updated_at: "2026-09-13T17:15:46.685Z"
 source_request: "Rebrand the LIVE identifier layer from warpos to mc and cut mc@2.0.0, with one-release deprecated aliases (warp:* skills, WARPOS_* env, _warpos//.warpos/ dirs) and a downstream-product migration; leave historical records verbatim."
 interpreted_intent: "Apply the confirmed `mc` slug across every LIVE identifier surface of the engine — scripts, skills (warp:* -> mc:*, scan:warpos-* -> scan:mc-*), hooks/agents/settings, the paths registry values, the _warpos/ and .warpos/ directory names, WARPOS_* environment variables, tests, schemas, package.json name, and live docs/prose — while cutting the version to 2.0.0 (mc@2.0.0). Ship one-release deprecated aliases and read-both compat so existing installs and the 8 downstream products keep working through the transition, plus a migrations/1.2.0-to-2.0.0/ bundle proven on a fixture product. Historical records (retros, ADR bodies, PROVENANCE, CHANGELOG entries < 2.0.0, sprint history, learnings, warpos@ tags, runtime/**) stay verbatim so the prior-art evidence the whole open-source epic protects is not falsified."
 plan_contract: ".claude/project/sprint/plan-contracts/PC-20260913-0090.yaml"
@@ -25,7 +25,6 @@ tickets:
   designed: []
   ready_for_execution: []
   in_progress:
-    - T-20260913-363
     - T-20260913-364
   blocked: []
   waiting_on_human: []
@@ -37,6 +36,7 @@ tickets:
     - T-20260913-360
     - T-20260913-361
     - T-20260913-362
+    - T-20260913-363
   released: []
   deferred: []
   abandoned: []
