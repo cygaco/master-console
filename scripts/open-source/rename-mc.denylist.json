@@ -68,7 +68,8 @@
       { "key": "future|.claude/commands/scan/warpos-*.md", "warrant": "T3 compat layer (AC-2.1): the one-release deprecated-alias skills at the legacy scan: skill names; their bodies quote the legacy invocation as DATA" },
       { "key": "future|scripts/open-source/mc-alias-map.json", "warrant": "T3 compat layer (AC-2.2): the committed alias MAP enumerates every legacy -> mc alias, so it quotes the legacy names as DATA" },
       { "key": "pin|scripts/checks/mc-tracked-transients.js|prefix: \".warpos/\",|", "warrant": "T3 apply: the legacy per-install audit-log dir stays FORBIDDEN beside the new .mc/ rule for the 2.0.x compat window (existing installs still write it; never auto-moved)" },
-      { "key": "glob|migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js", "warrant": "T3 part 1c (skill-namespace): the 0.0.0->0.1.0 migration OPERATES on the literal /warp:sync + /warp:update skill names as its DATA (alias body + idempotency marker for installs still on 0.0.0); the warp:->mc: transform would break it, so it is historical Class-3 data, verbatim" }
+      { "key": "glob|migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js", "warrant": "T3 part 1c (skill-namespace): the 0.0.0->0.1.0 migration OPERATES on the literal /warp:sync + /warp:update skill names as its DATA (alias body + idempotency marker for installs still on 0.0.0); the warp:->mc: transform would break it, so it is historical Class-3 data, verbatim" },
+      { "key": "future|.claude/commands/warp/*.md", "warrant": "T3 part 2 compat layer: the one-release deprecated-alias skills re-created at the legacy warp: skill paths vacated by part 1c; their bodies quote the legacy /warp:<skill> invocation as DATA, and declaring them Class-3 keeps an idempotent --apply-skill-namespace from re-planning them as moves" }
     ]
   },
 
@@ -147,6 +148,7 @@
     { "pattern": "scripts/checks/warpos-tracked-transients.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "one-line alias shim (old name requiring the new mc-tracked-transients.js) landing in the SAME commit as the rename per AC-4.1; the shim's old filename is permanently retained for the 2.0.x compat window, never re-renamed by an idempotent re-run" },
     { "pattern": "scripts/checks/warpos-*.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (BUILD-SPEC lane B): the one-release deprecated alias shims at every renamed check script's LEGACY name; declared before they are created so their legacy filenames are never re-planned as renames by an idempotent re-run" },
     { "pattern": ".claude/commands/scan/warpos-*.md", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (AC-2.1): the one-release deprecated-alias skills at the legacy scan: skill names; their bodies quote the legacy invocation as DATA" },
-    { "pattern": "scripts/open-source/mc-alias-map.json", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (AC-2.2): the committed alias MAP enumerates every legacy -> mc alias, so it quotes the legacy names as DATA" }
+    { "pattern": "scripts/open-source/mc-alias-map.json", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 compat layer (AC-2.2): the committed alias MAP enumerates every legacy -> mc alias, so it quotes the legacy names as DATA" },
+    { "pattern": ".claude/commands/warp/*.md", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "T3 part 2 compat layer: the one-release deprecated-alias skills at the legacy warp: skill paths vacated by part 1c; their bodies quote the legacy /warp:<skill> invocation as DATA and must never be re-planned as skill moves" }
   ]
 }
