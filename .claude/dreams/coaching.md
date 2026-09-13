@@ -414,3 +414,48 @@ promoted. `/beta:integrate` has a reviewed set of 26 validated items whenever yo
   allows — that is the workaround, not the fix.)
 - **No lockfile** in the repo root, so `npm audit` cannot run at all — dependency health is currently
   unmeasurable rather than clean.
+
+
+# Coaching — 2026-09-12 (morning briefing from the `/sleep:deep` cycle run inside `/session:end`)
+
+## What you were actually trying to do this fortnight
+Take the framework public without taking yourself public with it. The rename, the history rewrite, the
+leak gate, and the Linux CI run are one project: *the repo can now be looked at by strangers*. That is done,
+and it was done carefully — the gate has planted-RED proofs and a denylist that cannot itself leak.
+
+## The pattern worth naming
+**A true report about the wrong population.** The commit that made the suite green says "3 probe-gated
+skips"; the tree holds 8, and the 5 unsaid ones guard the exfiltration and junction vectors. The row that
+closed the leak gate says "root_leak stays a visible advisory"; it says so *inside a closed row*, which is
+where nothing is read again. Twice in one fortnight a correct sentence was written over a population it did
+not count. You already own the rule for this ("state coverage at the grain it actually has"); the missing
+half is *name the population* — held for you as SCHEMA-2026-09-12-report-population.
+
+## A genuine strength, stated plainly
+One question from you about your own chat text sitting in the repo produced, the same day, 1,754
+deletions, a fail-closed gate with CI, and a public-history rewrite. Nothing else in the log moves that
+fast. Privacy is a stop-the-line class for you and the system now knows it (P-142).
+
+## Suggested first task next session
+**Turn the lamps into bells:** convert every probe-gated early `return` in `archive.test.js` and
+`reasoned-consult-honesty.test.js` to `t.skip(reason)` so `node --test` counts them (ED-419). One file,
+one afternoon, and it retires a whole false-green shape. Then rule on **ED-421** — relocate `_requirements/`
++ `_docs/` out of the public tree, or allow-list them per file. Only you can make that call.
+
+## Held for your ruling — not acted on
+- **Judgment model, Pending Review items 40–45:** G-32 (may a successor read a predecessor's working
+  notes), G-33 (whose call is a dispatch bound), DP-gap #51 (an arc with zero β rows — the whole open-source
+  arc — is either operator-conducted-by-marker or a gate skip; the ledger cannot tell), DP-gap #52.
+- **Still carried unruled:** G-26, G-27, DP-gap #44 (44 days) · G-28, G-29 (32 days) · G-30, G-31,
+  DP-gaps #47–#50 (14 days) · the two 2026-08-29 schema promotions · tonight's report-population schema.
+- **Release-rule-minting confidence RAISE:** its condition is met (S-05 closed) but its falsifier fired once
+  (row 375). Held one more cycle unless you say otherwise.
+
+## Housekeeping you may want to authorize
+- `/issues:log` a new recurring issue: **13 blocked writes to `events.jsonl` in 7 days** (`rm` ×7,
+  overwrite/truncate ×6) — sibling of RI-010 (count 56); both say the memory stores still lack a first-class
+  write API. This cycle used the script-file workaround four more times.
+- **No lockfile** → `npm audit` unmeasurable (2nd cycle). **55 worktrees**, 0 prunable. **Handoff.md is
+  96 days old** and `SPEC_GRAPH.json` 77 — the store-liveness check (ED-367) is now the third cycle's ask.
+- The 2026-08-29 sweep left **48 candidate rows without a disposition** (ED-424); the 2026-09-12 run carries
+  one on every row as the template.

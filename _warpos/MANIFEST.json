@@ -2,7 +2,7 @@
   "$schema": "warpos/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T06:16:04.773Z",
+  "generatedAt": "2026-09-13T06:50:09.552Z",
   "generatedBy": "scripts/warpos/manifest/build.js",
   "warposVersion": "1.2.0",
   "migrations": [],
@@ -25246,6 +25246,10 @@
       "owner": "runtime",
       "managed": false
     },
+    ".claude/project/memory/learnings.jsonl.bak-20260912-sleepdeep": {
+      "owner": "runtime",
+      "managed": false
+    },
     ".claude/project/memory/recurring-issues.jsonl": {
       "owner": "runtime",
       "managed": false
@@ -25799,6 +25803,12 @@
       "_note": "Operator's dream journal — written by /sleep:* skills + manual edits. Project-owned; never overwritten."
     },
     ".claude/dreams/2026-08-29.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "guide",
+      "_note": "Operator's dream journal — written by /sleep:* skills + manual edits. Project-owned; never overwritten."
+    },
+    ".claude/dreams/2026-09-12.md": {
       "owner": "project",
       "managed": false,
       "class": "guide",
@@ -28477,16 +28487,16 @@
       "managed": true,
       "source": ".claude/agents/president/_system/beta/judgement-model-recommendations.md",
       "kind": "md",
-      "sha256": "378cf75831cefbc8fdf1fe9da17f20b93fe9231b45b7306465bf000fc77f1d48",
-      "installedSha": "378cf75831cefbc8fdf1fe9da17f20b93fe9231b45b7306465bf000fc77f1d48"
+      "sha256": "475c93b313e633fa77201a387b411cf9734ba12a8599870439a66ad8fec20b27",
+      "installedSha": "475c93b313e633fa77201a387b411cf9734ba12a8599870439a66ad8fec20b27"
     },
     ".claude/agents/president/_system/beta/judgement-model.md": {
       "owner": "framework",
       "managed": true,
       "source": ".claude/agents/president/_system/beta/judgement-model.md",
       "kind": "md",
-      "sha256": "a78072132e6a0c50c12c9354e218cc6f989eb17ed4d506afffdb19fcd21f97d3",
-      "installedSha": "a78072132e6a0c50c12c9354e218cc6f989eb17ed4d506afffdb19fcd21f97d3"
+      "sha256": "542228a851887b8d1d878442789580a0ba64d34acb3e1c55a7225312b7df796d",
+      "installedSha": "542228a851887b8d1d878442789580a0ba64d34acb3e1c55a7225312b7df796d"
     },
     ".claude/agents/president/_system/beta/mined/beta-source-data.md": {
       "owner": "framework",
@@ -28501,8 +28511,8 @@
       "managed": true,
       "source": ".claude/agents/president/_system/beta/mined/judgement-model-recommendations-archive.md",
       "kind": "md",
-      "sha256": "1ac8ee44890a1cd7af1938645104320151cd4e3f2b8945acd6ef91dfa4d6f6cf",
-      "installedSha": "1ac8ee44890a1cd7af1938645104320151cd4e3f2b8945acd6ef91dfa4d6f6cf"
+      "sha256": "28a2788e20dc5e3338419c74d23dfdfd3661ff09cb8146f43557520b358887af",
+      "installedSha": "28a2788e20dc5e3338419c74d23dfdfd3661ff09cb8146f43557520b358887af"
     },
     ".claude/agents/president/_system/alpha/events.jsonl": {
       "owner": "runtime",

@@ -1041,3 +1041,111 @@ the sleep skill directs writes only to the learnings store, β staging, dreams a
 **(a)** no store-liveness enforcer; **(b)** `RI-008` duplicated with an `undefined` record in
 `paths.recurringIssuesFile`; **(c)** the untracked 33× `merge-guard` idiom pattern (a `/issues:log`
 candidate above threshold).
+
+
+# Sleep Journal — 2026-09-12 (`/sleep:deep`, full 6-phase — post E-OPEN-SOURCE-001 S-OS-01→05: public rename, history rewrite, leak gate, CI green on Linux; 14 days / 31 commits since the 2026-08-29 cycle)
+
+Run as the cognitive-maintenance phase of `/session:end`, session `685685d2`, by the cognitive-chain
+teammate (Phases: `/beta:mine` → `/sleep:deep` → `/learn:integrate` + `/beta:integrate` → `/enforcement:sweep`).
+Inputs: the 7 learnings logged this wrap (`session:end:20260912:learn-deep:conversation`) + the 40
+pending-validation set; `paths.betaEvents` rows 319–462; events/tools/git 08-30→09-12.
+
+## NREM Consolidation
+- **Learnings: 233 → 233** (0 pruned, **7 promoted** to `effective:true`, 0 merged, **1 superseded**, 8 attested
+  `implemented` by `/learn:integrate`). Backup `learnings.jsonl.bak-20260912-sleepdeep`. Consolidation
+  re-run verified **idempotent** (second pass = no-op); 233/233 lines parse.
+- **Importance audit: 105 HIGH / 128 MEDIUM / 0 LOW.** The 7 new entries were untagged; 3 tagged HIGH
+  (false-green setup class, per-machine-file class, classifier/workflows), 4 MEDIUM. 0 LOW is again a
+  reviewed result — each new entry names a mechanism and a commit.
+- **Promotions (7), all artifact-verified, none self-rated:** 6 by opening the named test/workflow/lib on
+  disk (archive.test.js directory-source case; contract-lint printed skip; registry-derived dispatch
+  fixtures; leak-gate.yml node 22; signal-board `lastStamp`; the four worktree shas) and 1 by cross-store
+  corroboration (the classifier learning against L-2026-06-09 + the judgement-model confidence row +
+  16 push-advisory audit events). None of the 10 older `implemented|pending_validation` rows promoted —
+  their `implemented_by` refs are rule/hook *names*, not paths, so the resolver cannot verify them; left as-is.
+- **Deduplication: 0 merges.** Max Jaccard of the 7 new vs the store = **0.101** (rows 229/105).
+- **Decay applied: 0 removed — same finding as 2026-08-29, second cycle.** 39 `pending_validation` rows
+  remain; both SHY rules still hit only the two false-positive classes (schema-artifact `effective:null`
+  on implemented rows; external-reference research facts). The skill's decay predicate is mis-specified
+  against this store's schema; recorded again, not applied.
+- **Conflicts resolved: 1.** L-2026-06-11 "agy headless contract is UNPROVEN" contradicts the 2026-07-23
+  proof (authenticated serve, `runtime/agy-adr-evidence/`) → `status: superseded` with a pointer, not deleted.
+- **Pattern promotion → 1 schema (held):** `SCHEMA-2026-09-12-report-population` — a true report about the
+  wrong population is the shape every false green takes here (3-of-8 skips declared; the closed row over the
+  open leak; correctness-vs-register corrections). Targets CLAUDE.md § Policy & Enforcement Hygiene — operator ruling.
+- **False memory guard: 11 file-shaped refs checked, 11 resolve** (the 7 new + `.claude/commands/epic/fold.md`,
+  `scripts/teams/signal-board.js`, `.github/workflows/leak-gate.yml`, `scripts/dispatch/dispatch-claude.test.js`).
+  One resolver bug in my own tooling (`git cat-file -e sha^{commit}` fails under this shell) caught by the
+  zero-result rule and fixed before any row was marked.
+- **Retroactive reclassification (1g): nothing — `paths.tracesFile` still 10 rows, last 2026-06-09 (95 days cold).**
+  ED-367 (store liveness) remains the enforcer owed; second cycle reporting it.
+- **Alex β review (1h): 144 rows since last sleep** (2026-08-29T20:03 → 08-30T07:28) — 134 DECIDE / 7 DIRECTIVE /
+  **0 ESCALATE** / 3 other; class B ×142. Corrections of β by α/ε: 8 (rows 347, 398, 399, 406, 422, 437, 440, 441);
+  β self-corrections 7 + ~9 in-row withdrawals. **Zero β rows after 08-30T07:28** — the whole open-source
+  arc ran unconsulted (AP-13 / DP-gap #51, operator question). Confidence: **3 new rows** (pre-fire clearance
+  0.88 · fail-open/closed classification 0.90 · population inference 0.70/DIRECTIVE), **0 existing values
+  changed**, release-rule-minting RAISE HELD (its falsifier fired once, row 375), self-correction HOLD (4th cycle).
+
+## Cleanup (Glymphatic)
+- **Session files cleared: 0.** 133 `*.bak/*.tmp` hits are all inside nested `.claude/worktrees/*` copies
+  of research docs — not orphans of this tree; not touched.
+- **Events compacted: 0 — not due.** `events.jsonl` 7,248 lines (post the 09-02 scrub).
+- **STALE markers: not re-scanned** (08-29 found none genuine; time-boxed).
+- **Handoffs: no handoffs dir.** `.claude/runtime/handoff.md` is dated **2026-06-08 (96 days)** — stale artifact,
+  orchestrator-owned, left.
+- **Git: 139 uncommitted paths** (almost all `runtime/`), **55 worktrees, 0 prunable**, 0 `agent/wt-*`
+  branches. `git gc --auto` **not run** — fix-* teammates active in worktrees; orchestrator owns git.
+- **Requirement drift: 0** (`requirements-staged.jsonl` absent).
+- **Recurring system issues: 10 curated, 0 resolution candidates, 1 new scan candidate** — 13 blocked
+  writes to `events.jsonl` in 7 days (`rm` ×7, overwrite/truncate/writeFileSync ×6) → queue `/issues:log`
+  next session (sibling of RI-010, which this cycle worked around 4× more with script files — count 56).
+
+## Replay (Spindle)
+- **Today's real goal:** `npm test` green on a fresh Linux clone so E-OPEN-SOURCE-001 can ship (75%, DoD 6 done).
+- **Achieved:** 14 failures in 4 disjoint areas fixed at root cause by 4 parallel worktree builders, rolled
+  up in `b008c896`; Linux CI 911/912 exposed a real lib bug (`644da219`); leak gate GREEN; validate 20/20.
+- **Simpler paths missed:** 9 fix commits for 4 defects (worktree + integrator re-commit doubles); the
+  8-day silence (09-04→09-11, 0 events, 0 commits) bracketed by the two heaviest days — a dropped-context gap.
+- **Blind spots:** traces 95d cold · `SPEC_GRAPH.json` 2026-06-27 (77d) · handoff.md 96d · 10 skill
+  events in 14 days · `tools.jsonl` carries no skill id (ED-423).
+- **User style notes:** daytime, plain-language, one-word go-aheads; own-data privacy is stop-the-line
+  (P-142); register corrections recur without an artifact (AP-14).
+
+## REM Dreams
+- **Dream paintings: 2** saved to `.claude/dreams/2026-09-12.md`, each with a Deep Read — *eight doors,
+  three bells* (the sentry learned to count, and counted the wrong population) and *the ledger that closed
+  over the leak* (a residual named inside a CLOSED row is a comment).
+- **Two dreams RETURNED:** the sentry (08-29) and the seal of many hands (08-29, polarity flipped again).
+- **Cross-pollination:** both paintings + the register-correction finding are one mechanism — a correct
+  local statement over an unenumerated population (the August grain-match schema, two more instances).
+- **Schema: 1** (report-population, held). **Subconscious learnings: 2** — a declared skip count is a
+  claim falsified by the tree; closing a row that carries a residual must mint the residual's open row.
+- **β pattern mining: RUN, all six lenses** (the 4-cycle "absent, not empty" debt is discharged) — 14
+  patterns, 5 anti-patterns, 3 confidence rows, 2 persona gaps, 2 DP-gaps staged and integrated (see below).
+
+## β recommendations — integrated (`/beta:integrate` 2026-09-12)
+- **Applied:** P-132…P-145, AP-10…AP-14, 3 new confidence rows; changelog +5. **Held (operator):** items 40–45
+  (G-32, G-33, G-26 reinforced, DP-gap #51, #52; carried-unruled G-26/27/DP#44 44d · G-28/29 32d · G-30/31 +
+  DP#47–50 14d). **Archived + cleared:** the 202 KB staging file → `mined/…-archive.md` (gitignored, 303 KB).
+
+## Repair
+- **Security: CLEAN** — 0 secret shapes in files changed since 08-30; `npm run leak-gate` **GREEN (5/5)**
+  after tonight's writes to the tracked judgement model, dreams and staging file.
+- **Dependencies: UNMEASURABLE (2nd cycle)** — no `package-lock.json`, `npm audit` cannot run.
+- **Architecture: path-lint not run this cycle** (time-boxed; 08-29 was exit 0). Hook integrity: **75
+  referenced scripts, 0 missing, none 0-byte / >60 KB.**
+- **Mode: dark.** Repairs applied were data-layer only (learnings, β model, ledger, dreams); no `src/`, no git.
+
+## Growth
+- **System strength: STRENGTHENING in enforcement, STALLING in self-observation.** The repo gained a
+  fail-closed leak gate, CI, and 8 root-cause test fixes in 14 days — and its own reasoning trace store,
+  spec graph and handoff are 77–96 days stale, its tool log cannot name a skill, and the open-source arc
+  has no judgment record.
+- **Biggest leverage point:** turn lamps into bells — make every probe-gated test call `t.skip(reason)`
+  so the runner's skip count IS the count (closes ED-419 and half of ED-301's class for one afternoon).
+  Second: the root_leak scope ruling (ED-421) — the one decision only the operator can make.
+- **Morning briefing:** appended to `.claude/dreams/coaching.md`.
+- **False memory check: 11 refs verified against disk; 1 resolver bug caught; 0 stale refs found.**
+- **Enforcement sweep (Phase 4.5): 69 candidates → 26 FILE (8 rows ED-419…ED-426), 20 TRACEABLE, 23 TRIAGE;
+  dup-lint OK; ledger 395 → 403 lines.** The sweep's `REPORT.md` write was refused by the harness
+  (subagent report-file rule); the full sweep report lives in `runtime/session-end/2026-09-12-cognitive-chain.md`.
