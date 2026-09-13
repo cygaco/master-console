@@ -55,9 +55,18 @@ ok("derived-set-is-exactly-the-5-generated-views", () => {
   // generated views — a derived row on any other path is the exact false-green this
   // disposition exists to prevent (a stray write-protected path masquerading as
   // "derived" instead of being pinned or rewritten).
-  const generatedViewPaths = new Set(partition.generatedViews.map((g) => g.path));
+  // T3 post-apply: a view moved with its Class-1 directory (_warpos/MANIFEST.json -> _mc/MANIFEST.json) keeps
+  // its declared entry through the loader's renamePath resolution. Each derived file must resolve to one of the
+  // declared entries, and no two derived files may resolve to the SAME entry (no identity is ever added).
+  const seenEntries = new Set();
   for (const file of derivedFiles) {
-    assert.ok(generatedViewPaths.has(file), `derived-disposition file ${file} is not one of the declared generated views`);
+    const cls = partition.classifyPath(file);
+    assert.ok(
+      cls.kind === "generated-view" && partition.generatedViews.includes(cls.entry),
+      `derived-disposition file ${file} is not one of the declared generated views`
+    );
+    assert.ok(!seenEntries.has(cls.entry), `two derived files resolve to the same generated-view entry (${file})`);
+    seenEntries.add(cls.entry);
   }
 });
 

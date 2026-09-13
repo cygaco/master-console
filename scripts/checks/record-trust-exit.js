@@ -23,9 +23,11 @@
  *                never names the artifact (the un-routed-reader guard applies to it as well).
  *   4 dry-run    `node scripts/open-source/rename-mc.js --dry-run` exits 0 AND its output shows
  *                unclassified=0 AND unpinned-unrewritten-underived=0 (a missing counter line is
- *                a FAIL, never a zero), AND the PRE-apply derived rule holds: the set of files
- *                carrying `derived` rows in the committed occurrence ledger this run just wrote
- *                == the partition's generated views, and there are exactly 5 of them; the
+ *                a FAIL, never a zero), AND the derived rule holds: the set of files carrying
+ *                `derived` rows in the committed occurrence ledger this run just wrote == the
+ *                partition's generated views read at their RESOLVED paths (declared, or the
+ *                codemod's rename of it once --apply moved the view with its Class-1 directory —
+ *                revisited post-apply in T3), and there are exactly 5 of them; the
  *                derived count agrees across stdout, ledger rows and ledger header; AND
  *                refusedRenames == 0 on BOTH the stdout `refusedRenames=` line and the fresh
  *                runtime/S-OS-06/rename-plan.json this run just wrote (missing line / array, a stale
@@ -322,10 +324,18 @@ async function checkDryRun({ root }) {
     problems.push(`plan ${PLAN_REL} unreadable: ${e.message}`);
   }
 
-  // PRE-apply derived rule: derived set == the generated views (exactly 5).
+  // Derived rule (revisited post-apply in T3, as the header required): derived set == the generated views
+  // (exactly 5), each read at its RESOLVED path — the declared path, or the codemod's rename of it once --apply
+  // has moved the view with its Class-1 directory. The loader resolves a view entry through renamePath only
+  // (like a pin), so this never admits a path beyond the 5 declared entries.
   let views;
   try {
-    views = [...new Set(loader.loadPartition({ forceReload: true }).generatedViews.map((g) => toPosix(g.path)))].sort();
+    const partition = loader.loadPartition({ forceReload: true });
+    const resolve = (g) => {
+      const cands = partition.viewPathCandidates(g);
+      return cands.find((p) => fs.existsSync(absOf(root, p))) || cands[0];
+    };
+    views = [...new Set(partition.generatedViews.map(resolve))].sort();
   } catch (e) {
     return fail(`${problems.concat(`partition does not load for the derived rule: ${e.message}`).join("; ")}`);
   }
@@ -357,7 +367,7 @@ async function checkDryRun({ root }) {
       }
       if (!problems.length) {
         return pass(
-          `dry-run exit 0; unclassified=0; unpinned-unrewritten-underived=0; PRE-apply derived set == the ${views.length} generated views (${derivedRows.length} derived occurrences); refusedRenames=0 (stdout and the fresh ${PLAN_REL} agree)`
+          `dry-run exit 0; unclassified=0; unpinned-unrewritten-underived=0; derived set == the ${views.length} generated views at their resolved paths (${derivedRows.length} derived occurrences); refusedRenames=0 (stdout and the fresh ${PLAN_REL} agree)`
         );
       }
     }

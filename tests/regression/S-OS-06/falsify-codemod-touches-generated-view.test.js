@@ -73,6 +73,26 @@ test(`${FALSIFIER_ID} GREEN: a generated view moving WITH its Class-1 directory 
     assert.strictEqual(fx.read("_mc/MANIFEST.json"), MANIFEST_BODY, "a MOVE, not a content rewrite: the view is byte-identical");
     assert.strictEqual(fx.read("_mc/templates/a.md"), "# mc template\n", "the live Class-1 sibling moved and was rewritten");
     assert.strictEqual(fx.read("src/banner.js"), "// mc banner\n");
+
+    // T3 post-apply view identity: a SECOND dry-run over the applied tree resolves the moved view to its
+    // declared entry — its hits stay DERIVED at the new path (never re-planned as rewritten), nothing is
+    // refused, no rename remains, and a second --apply is a no-op (AC-1.2 idempotency across a view move).
+    const again = fx.runCodemod(["--dry-run"]);
+    assert.strictEqual(again.status, 0, again.out);
+    const plan2 = readPlan(fx);
+    assert.deepStrictEqual(plan2.refusedRenames, [], `the moved view is not refused on a re-run: ${again.out}`);
+    assert.deepStrictEqual(plan2.pathRenames, [], `no rename remains after the apply: ${JSON.stringify(plan2.pathRenames)}`);
+    const full2 = JSON.parse(fs.readFileSync(path.join(fx.dir, "runtime", "S-OS-06", "rename-occurrences.full.json"), "utf8"));
+    const movedRows = full2.rows.filter((r) => r.file === "_mc/MANIFEST.json");
+    assert.ok(
+      movedRows.length > 0 && movedRows.every((r) => r.disposition === "derived"),
+      `the moved view stays derived at its post-rename path: ${JSON.stringify(movedRows.slice(0, 3))}`
+    );
+    assert.strictEqual(full2.rows.filter((r) => r.disposition === "rewritten").length, 0, "nothing is left to rewrite after the apply");
+    const reapply = fx.runCodemod(["--apply"]);
+    assert.strictEqual(reapply.status, 0, reapply.out);
+    assert.match(reapply.stdout, /renamed=0 filesRewritten=0/);
+    assert.strictEqual(fx.read("_mc/MANIFEST.json"), MANIFEST_BODY, "the re-apply never touches the moved view");
   });
 });
 

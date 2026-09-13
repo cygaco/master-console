@@ -229,7 +229,11 @@ function buildLedgerAndPlan({ root, partition }) {
       }
     }
     const target = partition.classifyPath(c.to);
-    if (target && target.writeProtected) {
+    // A generated view moving onto its OWN post-rename identity (the loader resolves a view entry through
+    // renamePath, like a pin) is not landing on some other protected path: same entry, content derived.
+    const viewFollowsItsOwnEntry =
+      c.generatedViewMove && target && target.kind === "generated-view" && target.entry === c.source.entry;
+    if (target && target.writeProtected && !viewFollowsItsOwnEntry) {
       refusedRenames.push({ from: c.from, to: c.to, class: target.class, kind: target.kind, reason: "target-write-protected" });
       continue;
     }
