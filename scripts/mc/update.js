@@ -1521,7 +1521,7 @@ async function run(opts) {
   // `.claude/settings.json` from layered sources. Older targets without
   // defaults.json keep whatever update.js wrote directly. Fail-open.
   try {
-    const settingsDefaultsFile = path.join(targetRoot, "_mc/settings/defaults.json");
+    const settingsDefaultsFile = mcProjectPath(targetRoot, "_mc/settings/defaults.json");
     if (fs.existsSync(settingsDefaultsFile)) {
       const compileScript = path.join(__dirname, "settings", "compile.js");
       if (fs.existsSync(compileScript)) {
@@ -1726,10 +1726,20 @@ async function run(opts) {
 //   1  — partial rollback (some entries restored, some failed)
 //   4  — txDir not found / invalid txId
 //   5  — rollback threw (e.g. snapshot hash mismatch — R-31)
+// S-OS-06 T3 4c: `_mc/` / `.mc/` first, else the legacy location IN PLACE (one release; never moved). Guarded
+// require — a target whose manifest predates the helper keeps the canonical join instead of failing to load.
+function mcProjectPath(root, rel) {
+  try {
+    return require("../hooks/lib/mc-dirs").resolveProjectPath(root, rel);
+  } catch {
+    return path.join(root, rel);
+  }
+}
+
 function runRollbackCli(txId, opts) {
   // paths.mcTransactionsDir = .mc/transactions (relative to target).
   const targetRoot = opts.target ? path.resolve(opts.target) : REPO_ROOT;
-  const txDir = path.join(targetRoot, ".mc", "transactions", txId);
+  const txDir = mcProjectPath(targetRoot, `.mc/transactions/${txId}`);
   if (!fs.existsSync(txDir)) {
     const msg = `rollback: transaction directory not found at ${txDir}\n  txId: ${txId}\n  target: ${targetRoot}\n  hint: list available transactions with: ls ${path.join(targetRoot, ".mc", "transactions")}`;
     if (opts.json) {

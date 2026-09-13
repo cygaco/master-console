@@ -136,7 +136,8 @@ function validate(opts) {
   const cwd = process.cwd();
   const manifestPath =
     opts.manifestPath ||
-    path.join(opts.root || cwd, "_mc", "MANIFEST.json");
+    // S-OS-06 T3 4c: `_mc/` first, else the legacy manifest in place (never moved).
+    require("../../hooks/lib/mc-dirs").resolveProjectPath(opts.root || cwd, "_mc/MANIFEST.json");
   const absManifestPath = path.resolve(manifestPath);
   if (!fs.existsSync(absManifestPath)) {
     return {

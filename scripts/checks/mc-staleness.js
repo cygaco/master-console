@@ -78,7 +78,8 @@ if (cmpResult >= 0)
   });
 
 // Stale — check for pending update transaction
-const txDir = path.join(ROOT, ".mc", "transactions");
+// S-OS-06 T3 4c: `.mc/transactions` first, else a legacy transactions dir in place (never moved).
+const txDir = require("../hooks/lib/mc-dirs").resolveProjectPath(ROOT, ".mc/transactions");
 let pendingTx = null;
 if (fs.existsSync(txDir)) {
   const entries = fs.readdirSync(txDir);

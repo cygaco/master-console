@@ -156,7 +156,8 @@ function run(event) {
   const project = resolveProject();
   if (!project) return process.exit(0);
 
-  if (fs.existsSync(path.join(project, ".mc", "version-bump-guard-disable"))) {
+  // S-OS-06 T3 4c: a legacy-dir sentinel is still honoured for one release (read in place, never moved).
+  if (fs.existsSync(require("./lib/mc-dirs").resolveProjectPath(project, ".mc/version-bump-guard-disable"))) {
     process.stderr.write(
       "[version-bump-guard] bypass: sentinel .mc/version-bump-guard-disable present (logged)\n",
     );

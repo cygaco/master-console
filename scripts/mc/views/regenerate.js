@@ -107,13 +107,23 @@ function sha256OfBuffer(buf) {
   return h.digest("hex");
 }
 
+// S-OS-06 T3 4c: `_mc/` first, else the legacy source mirror in place (never moved). Guarded require — an install
+// whose manifest predates the helper falls back to the canonical join instead of failing to load.
+function projectPath(root, rel) {
+  try {
+    return require("../../hooks/lib/mc-dirs").resolveProjectPath(root, rel);
+  } catch {
+    return path.join(root, rel);
+  }
+}
+
 // ── Regenerate ───────────────────────────────────────────────────────
 
 function regenerate(opts) {
   const cwd = process.cwd();
   const manifestPath =
     opts.manifestPath ||
-    path.join(opts.root || cwd, "_mc", "MANIFEST.json");
+    projectPath(opts.root || cwd, "_mc/MANIFEST.json");
   const absManifestPath = path.resolve(manifestPath);
   if (!fs.existsSync(absManifestPath)) {
     return {

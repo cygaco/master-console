@@ -272,7 +272,8 @@ function mergeHooks(defaults = {}, local = {}) {
 function compile(opts) {
   const root = path.resolve(opts.root || process.cwd());
   const defaultsPath = path.resolve(
-    opts.defaultsPath || path.join(root, "_mc", "settings", "defaults.json"),
+    // S-OS-06 T3 4c: `_mc/` first, else the legacy defaults layer in place (never moved).
+    opts.defaultsPath || require("../../hooks/lib/mc-dirs").resolveProjectPath(root, "_mc/settings/defaults.json"),
   );
   const localPath = path.resolve(
     opts.localPath || path.join(root, ".claude", "settings.local.json"),

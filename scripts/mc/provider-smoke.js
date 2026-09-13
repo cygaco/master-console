@@ -339,7 +339,8 @@ function loadPingPrompt(targetRoot) {
   // Reuse .mc/ping-prompt.txt when present (shared with /agents:test) so
   // the ping wording stays consistent across tools; otherwise a 1-token ask.
   try {
-    const p = path.join(targetRoot, ".mc", "ping-prompt.txt");
+    // S-OS-06 T3 4c: `.mc/` first, else the legacy ping prompt in place (never moved).
+    const p = require("../hooks/lib/mc-dirs").resolveProjectPath(targetRoot, ".mc/ping-prompt.txt");
     if (fs.existsSync(p)) {
       const body = fs.readFileSync(p, "utf8").trim();
       if (body) return body;

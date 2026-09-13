@@ -111,7 +111,16 @@ function resolveResearch(args) {
 }
 
 function stateFile(args) {
-  return args.state || path.join(args.repoRoot, ".mc", "spinup-state.json");
+  return args.state || mcProjectPath(args.repoRoot, ".mc/spinup-state.json");
+}
+
+// S-OS-06 T3 4c: `.mc/` first, else an existing legacy state file IN PLACE (never moved). Guarded require.
+function mcProjectPath(root, rel) {
+  try {
+    return require("../hooks/lib/mc-dirs").resolveProjectPath(root, rel);
+  } catch {
+    return path.join(root, rel);
+  }
 }
 
 function loadState(args) {

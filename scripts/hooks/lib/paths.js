@@ -45,6 +45,21 @@ try {
   }
 }
 
+// S-OS-06 T3 4c: a registry path under `_mc/` or `.mc/` resolves to the canonical location when it exists, else to
+// an EXISTING legacy-named twin IN PLACE (one release; never moved; one deprecation line per process). Every other
+// key is untouched (zero filesystem cost). Fail-open: a helper failure leaves the canonical joins as they were.
+try {
+  const mcDirs = require("./mc-dirs");
+  for (const [key, value] of Object.entries(PATHS)) {
+    if (typeof value !== "string") continue;
+    const rel = path.relative(PROJECT, value);
+    if (!mcDirs.legacySegment(rel.split(/[\\/]+/)[0])) continue;
+    PATHS[key] = mcDirs.resolveProjectPath(PROJECT, rel);
+  }
+} catch {
+  /* fail-open: path resolution must never break a hook */
+}
+
 function LEGACY_FALLBACK_PATHS() {
   return {
     events: path.join(PROJECT, ".claude", "project", "events"),
