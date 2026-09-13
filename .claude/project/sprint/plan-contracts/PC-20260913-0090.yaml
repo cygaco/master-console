@@ -1,0 +1,158 @@
+schema: warpos/sprint/plan-contract/v1
+id: PC-20260913-0090
+created_at: "2026-09-13T10:39:27.918Z"
+updated_at: "2026-09-13T10:39:27.918Z"
+sprint: S-OS-06
+source_request: "Rebrand the LIVE identifier layer from warpos to mc and cut mc@2.0.0, with one-release deprecated aliases (warp:* skills, WARPOS_* env, _warpos//.warpos/ dirs) and a downstream-product migration; leave historical records verbatim."
+source_request_verbatim: "Confirmed: the identifier slug is `mc`. Start S-OS-06 (identifier layer, mc@2.0.0) as a real sprint via /mode:sprint then /sprint:full. Land only when CI is green. Anything needing a push to main, give me the command to run."
+request_type: refactor
+interpreted_intent: "Apply the confirmed `mc` slug across every LIVE identifier surface of the engine — scripts, skills (warp:* -> mc:*, scan:warpos-* -> scan:mc-*), hooks/agents/settings, the paths registry values, the _warpos/ and .warpos/ directory names, WARPOS_* environment variables, tests, schemas, package.json name, and live docs/prose — while cutting the version to 2.0.0 (mc@2.0.0). Ship one-release deprecated aliases and read-both compat so existing installs and the 8 downstream products keep working through the transition, plus a migrations/1.2.0-to-2.0.0/ bundle proven on a fixture product. Historical records (retros, ADR bodies, PROVENANCE, CHANGELOG entries < 2.0.0, sprint history, learnings, warpos@ tags, runtime/**) stay verbatim so the prior-art evidence the whole open-source epic protects is not falsified."
+user_or_business_outcome: "Master Console ships as `mc` end-to-end: a fresh clone, the CLI, the skill namespace, the env vars and the on-disk directories all say mc, version 2.0.0, with no dangling `warpos` identifiers in the live surface (only the evidence tags, the single 'formerly WarpOS' line, CHANGELOG history, deprecated-alias shims and allow-listed historical records remain). Existing installs and downstream products upgrade through one release of aliases without a manual step. This is the last rebrand chunk before the public announcement (phase 7)."
+affected_surfaces:
+  - surface: "scripts/** (533 tracked paths carry 'warpos' in the name; ~1,300 occurrences under scripts/warpos, 511 under scripts/checks)"
+    evidence_level: verified_from_repo
+    notes: "Path renames via git mv + content rewrites; the codemod engine itself lives here (scripts/open-source/rename-mc.js)."
+  - surface: ".claude/commands/** (14 warp:* skills, 14 scan:warpos-* skills, 497 occurrences)"
+    evidence_level: verified_from_repo
+    notes: "Skill namespace rename warp:* -> mc:*, scan:warpos-* -> scan:mc-*, with one-release deprecated-alias skills (precedents: check:*->scan:*, warp:sync alias)."
+  - surface: "framework/paths.registry.json (19 registry lines) + generated views (.claude/paths.json, scripts/hooks/lib/paths.generated.js)"
+    evidence_level: verified_from_repo
+    notes: "Rename via /paths:rename per key then scripts/paths/build.js; SOURCE only, verify keys survive in the generated views (source-vs-generated rule)."
+  - surface: "_warpos/ (~260 paths incl. templates, BASELINE, MANIFEST.json 1,271 occ) -> _mc/; .warpos/ runtime dir -> .mc/"
+    evidence_level: verified_from_repo
+    notes: "Directory renames + one-release fallback read; MANIFEST + manifests regenerated last."
+  - surface: "WARPOS_* environment variables (104 distinct) -> MC_*"
+    evidence_level: verified_from_repo
+    notes: "Read-both helper (MC_X then WARPOS_X, deprecation warning once per process) for one release; grep every raw process.env.WARPOS_ read."
+  - surface: ".github/workflows/leak-gate.yml (line 36 runs scripts/checks/warpos-tracked-transients.js)"
+    evidence_level: verified_from_repo
+    notes: "Alpha CANNOT edit workflows (classifier CI Bypass). Keep warpos-tracked-transients.js as a one-line deprecated-alias shim requiring the renamed mc-tracked-transients.js so the workflow needs no edit."
+  - surface: "package.json name warpos 1.2.0 -> mc 2.0.0; CHANGELOG [2.0.0]; tag mc@2.0.0 (operator-run push)"
+    evidence_level: verified_from_repo
+    notes: "Version bump across package.json + both manifests; 37 warpos@ tags kept forever."
+  - surface: "tests/**, schemas/**, README/CONTRIBUTING/SECURITY/docs (live prose), TRACKER/ROADMAP live sections"
+    evidence_level: verified_from_repo
+    notes: "Live identifier + prose rename; README keeps exactly one 'Master Console (formerly WarpOS)'."
+  - surface: "migrations/1.2.0-to-2.0.0/ (new)"
+    evidence_level: assumed_needs_verification
+    notes: "Downstream migration bundle: _warpos/->_mc/, .warpos/->.mc/, WARPOS.md->MC.md, settings/hook rewiring; tested on a fixture product (G5). Precedent format: migrations/0.7.0-to-0.7.1/."
+current_behavior:
+  evidence_level: verified_from_repo
+  notes: "The engine ships as `warpos` 1.2.0: 2,469 tracked files carry 28,618 'warpos' occurrences; 533 tracked paths have 'warpos' in the name; 104 WARPOS_* env vars; 19 warpos paths-registry lines; skills namespaced warp:* and scan:warpos-*; on-disk _warpos/ and .warpos/ dirs; package.json name warpos. S-OS-05 already renamed the GitHub repo to cygaco/master-console and landed the brand layer; the identifier layer is untouched. gate G5 (/scan:cutover-completeness) and framework-purity currently allow 'warpos' everywhere."
+desired_behavior: "Every LIVE surface uses `mc`: scripts/skills/hooks/agents/settings, paths registry values, _mc/ and .mc/ dirs, MC_* env, tests/schemas, package.json name mc version 2.0.0, live docs/prose. One-release deprecated aliases + read-both compat keep warp:*, WARPOS_*, _warpos/, .warpos/ and the warpos-*.js check scripts working with a deprecation warning. A migrations/1.2.0-to-2.0.0/ bundle upgrades the 8 downstream products with no manual step, proven on a fixture. /scan:cutover-completeness is green; framework-purity fails on 'warpos' in LIVE dirs while allow-listing historical dirs. Historical records stay verbatim. npm test + npm run leak-gate green; both manifests regenerated last; the warpos-tracked-transients workflow step still passes via the alias shim."
+scope:
+  size: xl
+  risk_level: high
+  complexity_drivers:
+    - "28,618 'warpos' occurrences across 2,469 tracked files and 533 path renames — the largest codemod in the project's history."
+    - "The paths registry is load-bearing: every hook reads the generated view; a wrong rename silently breaks dispatch (the source-vs-generated + rename-both-layers rule applies)."
+    - "104 WARPOS_* env vars need a read-both helper or existing installs break mid-release."
+    - "The LIVE-vs-HISTORICAL partition is a correctness invariant: rewriting historical records would falsify the prior-art evidence the epic exists to protect."
+    - "Alpha cannot edit .github/workflows (classifier CI Bypass), so the workflow's warpos-tracked-transients.js dependency must be preserved as an alias shim rather than renamed in the workflow."
+    - "Both manifests must be regenerated LAST or BC-02/BC-05 go red; manifest regen + registry build + merges are serial keystones."
+scope_variants:
+  minimal_safe:
+    summary: "Rename the LIVE identifier surface to mc via an idempotent codemod, ship warp:*/WARPOS_*/_warpos//.warpos/ one-release aliases + read-both, cut 2.0.0, regen manifests, gates green. Downstream migration ships as a documented bundle without the live fixture test."
+    tradeoffs:
+      - "G5 requires a fixture-proven migration; skipping the fixture test would leave DoD line 8's 'without a manual step' unverified — not recommended."
+  recommended:
+    summary: "minimal_safe PLUS a migrations/1.2.0-to-2.0.0/ bundle proven on a copied fixture product (Pantry Pilot), /scan:cutover-completeness green, and framework-purity flipped to fail on 'warpos' in LIVE dirs with an explicit historical allow-list."
+    tradeoffs:
+      - "Larger blast radius on the shared keystones (paths registry, manifests); mitigated by the idempotent dry-run plan, per-category counts, and the full gauntlet on the codemod + compat diffs."
+  expanded:
+    summary: recommended PLUS removing the deprecated aliases in the same release and rewriting historical records to mc.
+    tradeoffs:
+      - "Rejected: removing aliases in the cut release breaks existing installs and the 8 downstream products; rewriting historical records falsifies the prior-art evidence. Both violate the epic's own invariants."
+assumptions:
+  safe:
+    - "The `mc` slug is operator-CONFIRMED (this session) for commands/dirs/env/tags."
+    - "Precedents exist for the one-release deprecated-alias pattern: role-aliases (renamed roles), check:*->scan:* alias skills, warp:sync alias, WARPOS_* read-both is a new but analogous shim."
+    - "warpos@ tags are kept forever; the migrations/ format follows migrations/0.7.0-to-0.7.1/ (idempotent apply()/main(), ctx.targetRoot)."
+  unsafe:
+    - "The exact LIVE-vs-HISTORICAL directory partition is a Class B call that changes DoD line 8 wording — must be ratified by beta before the codemod runs, not assumed."
+  needs_user_or_beta_review:
+    - "Alpha's LIVE-vs-HISTORICAL scope recommendation (which dirs rename vs stay verbatim, and the DoD line 8 amendment to add 'and historical records under the allow-listed dirs') — put to beta at the plan->design boundary, round S-OS-06 r1."
+    - "Whether framework-purity flipping to fail on 'warpos' in LIVE dirs (with a historical allow-list) is in-scope this sprint or a follow-on ramp."
+open_questions:
+  blocking: []
+  non_blocking:
+    - "Final env read-both deprecation-warning cadence (once per process vs once per var) — decide during design."
+    - "Whether WARPOS.md becomes MC.md with a pointer or a full alias file — decide during design."
+    - "Which of the 8 downstream products are still live and need the migration (portfolio registry check) — the migration ships regardless; the fixture proves it."
+non_goals:
+  - "Rewriting historical records (retros, ADR bodies, PROVENANCE, CHANGELOG < 2.0.0, sprint history, learnings, runtime/**, warpos@ tags) to say 'mc' — they stay verbatim."
+  - "Removing the deprecated aliases in the cut release — they live for one release."
+  - "The operator announcement (phase 7) — separate sprint after this lands."
+  - Building the Master Console UI.
+  - "Pushing to main or tagging mc@2.0.0 — operator-run; the conductor pushes only the branch."
+requirement_areas:
+  - "R-1 codemod engine + inventory: an idempotent scripts/open-source/rename-mc.js with --dry-run (writes runtime/S-OS-06/rename-plan.json: path renames via git mv + content rules per category — env, skill namespace, dirs, paths keys, identifiers, prose) and --apply, plus a committed rule ledger and per-category before/after counts"
+  - "R-2 one-release aliases + read-both compat: warp:* -> deprecated-alias skills pointing at mc:*; scan:warpos-* -> scan:mc-* alias skills; warpos-*.js check scripts -> shims requiring mc-*.js (incl. the workflow-referenced warpos-tracked-transients.js); an env helper reading MC_X then WARPOS_X with a one-time deprecation warning; _warpos//.warpos/ fallback read; a role-aliases-style skill-id map"
+  - "R-3 paths registry rename: /paths:rename per key, scripts/paths/build.js regen, and a verify step that the renamed keys survive in the generated views (source-vs-generated + rename-both-layers rule)"
+  - "R-4 downstream migration: migrations/1.2.0-to-2.0.0/ renaming _warpos/->_mc/, .warpos/->.mc/, WARPOS.md->MC.md and rewriting settings/hook wiring for the 8 downstream products, proven on a fixture product copied from _warpos/BASELINE (Pantry Pilot) into runtime/S-OS-06/fixture-product/ (gate G5)"
+  - "R-5 gates + version + manifests: npm test green, npm run leak-gate green, /scan:cutover-completeness green, framework-purity fails on 'warpos' in LIVE dirs (historical dirs allow-listed), readme-drift green, package.json + manifests bumped to 2.0.0, CHANGELOG [2.0.0] entry, and BOTH manifests regenerated LAST (fm -> installed -> _mc) before each commit"
+high_level_story_candidates:
+  - "As Master Console, my entire live identifier surface says mc and I ship as mc@2.0.0, with no dangling warpos identifier outside evidence tags, the one 'formerly WarpOS' line, CHANGELOG history and alias shims"
+  - "As an existing install or downstream product, I keep working across the rename via one-release aliases and read-both env, and I upgrade to mc via a migration with no manual step"
+  - "As the prior-art record, my historical documents stay byte-verbatim so the evidence the open-source epic protects is not falsified"
+granular_story_candidates:
+  - "Build an idempotent rename-mc.js codemod with a dry-run plan + per-category counts and a committed rule ledger"
+  - "Ship warp:*->mc:* and scan:warpos-*->scan:mc-* deprecated-alias skills for one release"
+  - "Ship a WARPOS_*->MC_* read-both env helper and _warpos//.warpos/ fallback read"
+  - Keep warpos-tracked-transients.js as an alias shim so the leak-gate workflow needs no edit
+  - "Rename the 19 paths-registry keys via /paths:rename + build.js and verify they survive the generated views"
+  - "Author + fixture-test migrations/1.2.0-to-2.0.0/ for the 8 downstream products"
+  - "Flip framework-purity to fail on warpos in LIVE dirs with a historical allow-list; cut 2.0.0; regen both manifests last"
+workstream_candidates:
+  - "WS-1 codemod: rename-mc.js engine + inventory + apply + rule ledger (keystone, serial)"
+  - "WS-2 compat: skill aliases + check-script shims + env read-both + dir fallback + skill-id map"
+  - "WS-3 registry+migration: paths registry rename/build + migrations/1.2.0-to-2.0.0/ + fixture test"
+  - "WS-4 gates+release: cutover-completeness + framework-purity live/historical + readme-drift + version 2.0.0 + manifests regen last"
+preliminary_ticket_candidates:
+  allowed: false
+  candidates: []
+  notes: "Tickets are minted after the requirement bundle is populated; expected tickets map to WS-1 (T1 codemod), WS-2 (T2 compat), WS-3 (T3 paths registry, T4 migration), WS-4 (T5 gates+release)."
+external_service_dependencies:
+  status: none_expected
+  required: []
+  possible: []
+  notes: "No external service. The cross-provider gauntlet uses the existing GPT + Claude reviewers. The tag push and the push-to-main are operator-run (out of band)."
+approval_boundaries:
+  - "Do NOT rewrite historical records to 'mc' — the LIVE-vs-HISTORICAL partition is a correctness invariant (beta ratifies the exact partition at r1)."
+  - "Do NOT remove the deprecated aliases or the read-both env helper in the cut release — one release of compat is required."
+  - "Do NOT edit .github/workflows (classifier CI Bypass) — preserve the workflow's script dependency via an alias shim; surface any unavoidable workflow line to alpha for the operator."
+  - "Do NOT push to main or tag mc@2.0.0 — operator-run; the conductor pushes only the branch."
+  - Regenerate BOTH manifests LAST before every commit or BC-02/BC-05 go red.
+design_required: true
+execution_allowed_without_design: false
+recommended_mode: adhoc
+mode_invocation_required_by_user: true
+lane:
+  type: branch
+  value: open-source/S-OS-06
+  isolation_notes: "Branch already exists off 669aadc1 (= origin/main); builders run in per-file-ownership worktrees, keystone steps (registry build, manifest regen, merges) serial on the sprint branch. Land only when CI (leak-gate.yml) is green on the pushed branch; push-to-main is operator-run."
+beta_review:
+  required: true
+  likely_founder_rejection_risks:
+    - "Rewriting historical records would falsify the prior-art evidence — the operator would reject; the LIVE-vs-HISTORICAL partition guards against it."
+  overbuild_risks:
+    - "Removing aliases in the cut release, or collapsing the env read-both into a hard cutover, would over-reach and break downstream — keep one release of compat."
+  missing_context_risks:
+    - The exact LIVE-vs-HISTORICAL directory allow-list must be grounded in the tree during design and ratified by beta at r1 before the codemod runs.
+    - Every raw process.env.WARPOS_ read must be enumerated so the read-both helper covers them all.
+plan_quality:
+  status: pass
+  confidence: high
+  evidence_gaps:
+    - Exact LIVE-vs-HISTORICAL directory allow-list and the full raw-env-read list to be grounded during design.
+  fail_reasons: []
+next_recommended_command: "/sprint:design --sprint S-OS-06 --documentation-scale m"
+resume_instructions: "Read runtime/S-OS-06/CONDUCT-BRIEF.md + trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md (phase 6 scope + DoD line 8 + gate G5). Consult beta at the plan->design boundary (round S-OS-06 r1) with alpha's LIVE-vs-HISTORICAL scope recommendation; record the ruling msg_id in the epic Decisions. Then run /sprint:design for S-OS-06, mint T1..T5, and require the cross-provider gauntlet on the codemod + compat + paths-registry diffs before landing."
+tracker_paths:
+  current_sprint: ".claude/project/sprint/current-sprint.yaml"
+  sprint_progress: ".claude/project/sprint/sprint-progress.yaml"
+  plan_contract: ".claude/project/sprint/plan-contracts/PC-20260913-0090.yaml"
+reports:
+  plan: ".claude/project/sprint/plan-contracts/PC-20260913-0090.report.md"
+created_by: epsilon
+updated_by: epsilon

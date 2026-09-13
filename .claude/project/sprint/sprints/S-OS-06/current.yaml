@@ -1,17 +1,17 @@
 schema: warpos/sprint/current-sprint/v1
-id: "S-OS-06"
+id: S-OS-06
 title: "Rebrand identifier layer: Master Console slug mc, mc@2.0.0 with one-release aliases + downstream migration"
 objective: "Run /sprint:plan to set this."
-status: not_started
+status: designing
 created_at: "2026-09-13T10:25:50.488Z"
-updated_at: "2026-09-13T10:25:50.488Z"
-source_request: ""
-interpreted_intent: ""
-plan_contract: null
-risk_level: low
+updated_at: "2026-09-13T11:17:25.071Z"
+source_request: "Rebrand the LIVE identifier layer from warpos to mc and cut mc@2.0.0, with one-release deprecated aliases (warp:* skills, WARPOS_* env, _warpos//.warpos/ dirs) and a downstream-product migration; leave historical records verbatim."
+interpreted_intent: "Apply the confirmed `mc` slug across every LIVE identifier surface of the engine — scripts, skills (warp:* -> mc:*, scan:warpos-* -> scan:mc-*), hooks/agents/settings, the paths registry values, the _warpos/ and .warpos/ directory names, WARPOS_* environment variables, tests, schemas, package.json name, and live docs/prose — while cutting the version to 2.0.0 (mc@2.0.0). Ship one-release deprecated aliases and read-both compat so existing installs and the 8 downstream products keep working through the transition, plus a migrations/1.2.0-to-2.0.0/ bundle proven on a fixture product. Historical records (retros, ADR bodies, PROVENANCE, CHANGELOG entries < 2.0.0, sprint history, learnings, warpos@ tags, runtime/**) stay verbatim so the prior-art evidence the whole open-source epic protects is not falsified."
+plan_contract: ".claude/project/sprint/plan-contracts/PC-20260913-0090.yaml"
+risk_level: high
 approval_state: none_required
-current_phase: idle
-recommended_mode: no_recommendation
+current_phase: design
+recommended_mode: adhoc
 mode_invocation_required_by_user: true
 external_services:
   identified: []
@@ -23,7 +23,12 @@ tickets:
   proposed: []
   planned: []
   designed: []
-  ready_for_execution: []
+  ready_for_execution:
+    - T-20260913-360
+    - T-20260913-361
+    - T-20260913-362
+    - T-20260913-363
+    - T-20260913-364
   in_progress: []
   blocked: []
   waiting_on_human: []
@@ -38,31 +43,64 @@ tickets:
   reopened: []
   superseded: []
 requirements:
-  prd: null
-  high_level_stories: null
-  granular_stories: null
-  copy: null
-  inputs: null
-  trace: null
-  acceptance_criteria: null
-  qa_plan: null
-  redteam_plan: null
-  release_plan: null
+  prd: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\prd.md"
+  high_level_stories: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\high-level-stories.md"
+  granular_stories: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\granular-stories.md"
+  copy: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\copy.md"
+  inputs: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\inputs.md"
+  trace: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\trace.md"
+  acceptance_criteria: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\acceptance-criteria.md"
+  qa_plan: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\qa-plan.md"
+  redteam_plan: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\redteam-plan.md"
+  release_plan: "C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\project\\sprint\\requirements\\S-OS-06\\release-plan.md"
 checks:
-  lint: { status: not_run, last_run: null, evidence: "" }
-  typecheck: { status: not_run, last_run: null, evidence: "" }
-  tests: { status: not_run, last_run: null, evidence: "" }
-  build: { status: not_run, last_run: null, evidence: "" }
-  qa: { status: not_run, last_run: null, evidence: "" }
-  redteam: { status: not_run, last_run: null, evidence: "" }
+  lint:
+    status: not_run
+    last_run: null
+    evidence: ""
+  typecheck:
+    status: not_run
+    last_run: null
+    evidence: ""
+  tests:
+    status: not_run
+    last_run: null
+    evidence: ""
+  build:
+    status: not_run
+    last_run: null
+    evidence: ""
+  qa:
+    status: not_run
+    last_run: null
+    evidence: ""
+  redteam:
+    status: not_run
+    last_run: null
+    evidence: ""
 approvals:
-  plan: { required: false, state: not_required, ref: null }
-  design: { required: false, state: not_required, ref: null }
-  execution: { required: false, state: not_required, ref: null }
-  release: { required: false, state: not_required, ref: null }
-  external_services: { required: false, state: not_required, ref: null }
+  plan:
+    required: false
+    state: not_required
+    ref: null
+  design:
+    required: false
+    state: not_required
+    ref: null
+  execution:
+    required: false
+    state: not_required
+    ref: null
+  release:
+    required: false
+    state: not_required
+    ref: null
+  external_services:
+    required: false
+    state: not_required
+    ref: null
 reports:
-  plan: null
+  plan: ".claude/project/sprint/plan-contracts/PC-20260913-0090.report.md"
   design: null
   execution: null
   release: null
@@ -74,10 +112,14 @@ ralph:
   last_checkpoint: null
   next_action: null
 crash_recovery:
-  last_checkpoint: null
-  resume_command: "/sprint:plan"
-  resume_summary: "Tracker initialized. No sprint started yet. Run /sprint:plan to begin."
+  last_checkpoint: ".claude/project/sprint/sprint-progress.yaml"
+  resume_command: "/sprint:design"
+  resume_summary: "Sprint S-OS-06 design scaffolded (scale=m). Next: mint tickets from granular-stories, then run /sprint:execute."
   active_files: []
   dirty_state: false
   blockers: []
   safe_to_continue: true
+lane:
+  type: branch
+  value: open-source/S-OS-06
+  isolation_notes: "Branch already exists off 669aadc1 (= origin/main); builders run in per-file-ownership worktrees, keystone steps (registry build, manifest regen, merges) serial on the sprint branch. Land only when CI (leak-gate.yml) is green on the pushed branch; push-to-main is operator-run."

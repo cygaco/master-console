@@ -1,14 +1,14 @@
 schema: warpos/sprint/sprint-progress/v1
-sprint: "S-OS-06"
-updated_at: "2026-09-13T10:25:50.488Z"
-current_phase: idle
-current_command: none
+sprint: S-OS-06
+updated_at: "2026-09-13T11:01:51.744Z"
+current_phase: design
+current_command: "/sprint:full"
 current_ticket: null
 current_task: null
 current_loop: null
-status: starting
-last_completed_step: "tracker_initialized"
-next_action: "Run /sprint:plan with a brief plain-language request to begin the sprint workflow."
+status: halted
+last_completed_step: sprint_full_design_halted
+next_action: "Phase 2 (design) scaffolded requirements at scale=m. The skill body must now: (1) review and fill the rendered templates in .claude/project/sprint/requirements/S-OS-06/, (2) mint tickets via `node scripts/sprint/ticket.js create --sprint S-OS-06 --title \"<title>\" --type <type> --risk <level>` for each story, setting status=ready_for_execution. Then resume: `/sprint:full --sprint S-OS-06 --resume`."
 active_files: []
 modified_files: []
 checks_last_run: null
@@ -20,7 +20,7 @@ external_services_needed: []
 issues_opened: []
 tickets_updated: []
 ralph_checkpoint: null
-resume_command: "/sprint:plan"
-resume_notes: "Fresh sprint tracker. Provide a brief plain-language request and the planner will produce a Plan Contract."
+resume_command: "/sprint:full --sprint S-OS-06 --resume"
+resume_notes: "halt_reason=tickets_pending"
 safe_to_continue: true
 stop_reason: null
