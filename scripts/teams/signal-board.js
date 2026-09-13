@@ -87,13 +87,26 @@ function stripBom(s) {
 // ── post ────────────────────────────────────────────────────────────────────
 // Atomic: write to a tmp file in the same dir, then rename into place. A reader
 // listing the dir never sees the tmp (it does not end in .json).
+// Filename stamp is MONOTONIC within a process: two posts in the same
+// millisecond (routine on a fast Linux runner / tmpfs; rare on NTFS) would
+// otherwise share the epoch prefix and let the RANDOM suffix decide lexical
+// order — the older signal sorted last ~50% of the time, so `--last 1` and
+// `wait()` could return the wrong record. Bumping past the previous stamp keeps
+// "lexical sort == post order" true for a single writer on every platform.
+let lastStamp = 0;
+function nextStamp() {
+  const now = Date.now();
+  lastStamp = now > lastStamp ? now : lastStamp + 1;
+  return lastStamp;
+}
+
 function post(topic, payload, meta = {}, opts = {}) {
   const dir = topicDir(topic, opts);
   fs.mkdirSync(dir, { recursive: true });
   const ts = meta.ts || new Date().toISOString();
   const from = meta.from || process.env.WARPOS_SIGNAL_FROM || "unknown";
   const record = { topic, from, ts, payload };
-  const now = Date.now();
+  const now = nextStamp();
   const rand = Math.random().toString(36).slice(2, 8);
   const base = `${now}-${rand}.json`;
   const finalPath = path.join(dir, base);
