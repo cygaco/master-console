@@ -157,7 +157,7 @@ function hasBackingDispatchRecord(dispatchRecords, role, minTsMs, maxTsMs, sprin
     // must match — a different stamped id never correlates. A record with NO stamp
     // (field absent, null, or empty — the pre-W0/unstamped sentinel) falls through to
     // the time-window fallback below (the dispatcher writes sprint_id:null when
-    // WARPOS_SPRINT_ID is unset; null is "unstamped", NOT "stamped for sprint null").
+    // MC_SPRINT_ID is unset; null is "unstamped", NOT "stamped for sprint null").
     const recSprint =
       typeof rec.sprint_id === "string" && rec.sprint_id.trim() ? rec.sprint_id.trim() : null;
     if (wantSprint !== null && recSprint !== null && recSprint !== wantSprint) return false;

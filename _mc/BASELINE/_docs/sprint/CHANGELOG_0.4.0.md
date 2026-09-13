@@ -269,7 +269,7 @@ with ASCII hyphens. Installer now parses cleanly under PowerShell
 
 ## Installer changes
 
-- Default `$Script:WARPOS_VERSION` fallback bumped `0.1.0` → `0.4.0`
+- Default `$Script:MC_VERSION` fallback bumped `0.1.0` → `0.4.0`
   (version.json is still the source of truth; this is the fallback
   only).
 - Header comment lists the new sprint-workflow schema

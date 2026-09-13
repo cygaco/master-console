@@ -5,7 +5,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
 // on a broken pass chain and runtime-stamp detection FIRES on an under-fired review, and that a
 // correct 3-distinct-provider claude-last chain + a full 3-provider run are clean.
 // These fixtures inject UNSIGNED synthetic records to exercise the pass-COUNTING logic, so they opt out of
-// the SP-20260718-004 same-session signature requirement (WARPOS_LIVENESS_REQUIRE_SIG=0); the signature gate
+// the SP-20260718-004 same-session signature requirement (MC_LIVENESS_REQUIRE_SIG=0); the signature gate
 // itself is asserted by the "R4 signed pass-count" case below.
 mcEnv.setEnv("LIVENESS_REQUIRE_SIG", "0");
 const assert = require("assert");

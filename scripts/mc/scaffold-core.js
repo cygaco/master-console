@@ -33,7 +33,7 @@
  * Merging A+B+C+D into one call site would therefore alter behavior. To keep
  * the move behavior-preserving, the core exposes:
  *   - scaffoldProduct(...)       → blocks A (paths.json) + B (skeleton) + C (ROADMAP)
- *   - populateWarposMirror(...)  → block D (_mc/ source mirror)
+ *   - populateMcMirror(...)  → block D (_mc/ source mirror)
  * warp-setup.js calls each at the exact site the inline block previously sat.
  *
  * All functions return an `installedDelta` so the caller can keep its `installed`
@@ -390,7 +390,7 @@ function scaffoldProduct({ target, mcRoot, log }) {
 }
 
 /**
- * populateWarposMirror — the LATE scaffold block (block D).
+ * populateMcMirror — the LATE scaffold block (block D).
  *
  * Populates the product's `_mc/` framework SOURCE mirror so
  * scripts/mc/views/regenerate.js does real work. Must run AFTER the
@@ -405,7 +405,7 @@ function scaffoldProduct({ target, mcRoot, log }) {
  * @param {string}  [opts.RESET]        ANSI reset escape
  * @returns {{ installedDelta: number }}
  */
-function populateWarposMirror({ target, mcRoot, shipManifest, log, HEADER = "", RESET = "" }) {
+function populateMcMirror({ target, mcRoot, shipManifest, log, HEADER = "", RESET = "" }) {
   const TARGET = target;
   const MC = mcRoot;
   let installed = 0;
@@ -480,13 +480,13 @@ function populateWarposMirror({ target, mcRoot, shipManifest, log, HEADER = "", 
 }
 
 /**
- * regenerateWarposManifest — the MANIFEST COVERAGE build step (extracted from
+ * regenerateMcManifest — the MANIFEST COVERAGE build step (extracted from
  * warp-setup.js, SP-20260525-019 / T-220).
  *
  * Regenerates `_mc/MANIFEST.json` (the dest→{owner,source} map that
  * scripts/mc/views/regenerate.js reads) by running the manifest builder with
  * `--source-prefix _mc`, so framework-view entries carry `source` pointers
- * into `_mc/`. Without this, populateWarposMirror copies the mirror SOURCE
+ * into `_mc/`. Without this, populateMcMirror copies the mirror SOURCE
  * files but the mirror has no MANIFEST.json and regenerate.js stays inert.
  *
  * WHY EXTRACTED: warp-setup.js ran this inline (its "MANIFEST COVERAGE" block);
@@ -496,7 +496,7 @@ function populateWarposMirror({ target, mcRoot, shipManifest, log, HEADER = "", 
  * warp-setup keeps its own validate + --strict-manifest install-refusal policy
  * wrapped AROUND this build step; the CLI just needs the regeneration.
  *
- * Must run AFTER populateWarposMirror (the mirror source must exist first).
+ * Must run AFTER populateMcMirror (the mirror source must exist first).
  * Fail-open: never crash the install on a manifest-build error.
  *
  * @param {object}   opts
@@ -505,7 +505,7 @@ function populateWarposMirror({ target, mcRoot, shipManifest, log, HEADER = "", 
  * @param {function} opts.log         reporter, signature log(status, msg, detail?)
  * @returns {{ ok: boolean, skipped: boolean, status: (number|null), stderr: string }}
  */
-function regenerateWarposManifest({ target, mcRoot, log }) {
+function regenerateMcManifest({ target, mcRoot, log }) {
   const mcZone = path.join(target, "_mc");
   if (!fs.existsSync(mcZone)) {
     log("info", "_mc/ not present — skipping manifest regeneration (legacy install layout)");
@@ -559,7 +559,7 @@ function regenerateWarposManifest({ target, mcRoot, log }) {
 // Prefer an explicit override; else read the installing source's version.json — this
 // module ships inside the MC source / capsule, so __dirname/../../version.json is
 // the version actually being installed.
-function resolveWarposVersion(override) {
+function resolveMcVersion(override) {
   if (override && typeof override === "string") return override;
   try {
     const vj = JSON.parse(
@@ -592,7 +592,7 @@ function writeProductManifest({ target, interview = {}, stack = "unknown", frame
         mainBranch: interview.mainBranch,
       },
       mc: {
-        version: resolveWarposVersion(mcVersion),
+        version: resolveMcVersion(mcVersion),
         installed: true,
         source: interview.mcSource,
         features: ["agents", "hooks", "skills", "memory", "maps", "events"],
@@ -696,7 +696,7 @@ function writeProductManifest({ target, interview = {}, stack = "unknown", frame
     // migration (which would need a restamp entry for every version pair).
     try {
       const existing = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
-      const want = resolveWarposVersion(mcVersion);
+      const want = resolveMcVersion(mcVersion);
       if (
         existing &&
         existing.mc &&
@@ -804,7 +804,7 @@ function writeAgentStore({ target, log }) {
  *   - warp-setup calls this at its original site (BEFORE the _mc/ mirror), so
  *     on a fresh install defaults.json doesn't exist yet → compile is SKIPPED →
  *     warp-setup ships the inlined base write, exactly as before (behavior-preserving).
- *   - the CLI calls this AFTER populateWarposMirror (which created defaults.json) →
+ *   - the CLI calls this AFTER populateMcMirror (which created defaults.json) →
  *     compile fires → settings.json is compiled from defaults. Either way settings.json
  *     EXISTS with the MC hooks (defaults.json carries the same hook events as the
  *     inlined write), satisfying the path-set parity gate.
@@ -1080,8 +1080,8 @@ function writeProductSettings({ target, mcRoot, hookTools = {}, log, HEADER = ""
 module.exports = {
   SKELETON_DIRS,
   scaffoldProduct,
-  populateWarposMirror,
-  regenerateWarposManifest,
+  populateMcMirror,
+  regenerateMcManifest,
   writeProductManifest,
   writeAgentStore,
   writeProductSettings,
@@ -1218,7 +1218,7 @@ if (require.main === module) {
       /* manifest missing/unreadable — handled below */
     }
     if (shipManifest) {
-      total += populateWarposMirror({
+      total += populateMcMirror({
         target,
         mcRoot,
         shipManifest,
@@ -1229,14 +1229,14 @@ if (require.main === module) {
       // mirror). Without this the mirror has source files but no MANIFEST.json
       // and regenerate.js stays inert — the install.ps1-path gap the parity
       // matrix caught. Fail-open; the helper logs its own outcome.
-      regenerateWarposManifest({ target, mcRoot, log });
+      regenerateMcManifest({ target, mcRoot, log });
 
       // LAYERED settings compile: now that the mirror has created
       // `_mc/settings/defaults.json`, re-run writeProductSettings so its
       // compile branch fires and settings.json is compiled from the layered
       // sources — the SAME compile.js warp-setup uses. The base merge above is
       // idempotent, so this second call only adds the compile. (ORDER, per the
-      // ticket: layered-compile AFTER populateWarposMirror.)
+      // ticket: layered-compile AFTER populateMcMirror.)
       total += writeProductSettings({ target, mcRoot, log }).installedDelta;
     } else {
       log(

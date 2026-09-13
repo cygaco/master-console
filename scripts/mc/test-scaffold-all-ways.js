@@ -22,12 +22,12 @@
  * (operator directive — a real canonical-corruption incident this session).
  * Four leak vectors, each sandbox-scoped:
  *   (a) scaffold TARGET      — createProductRepo's new `parentDir` opt overrides
- *                              new-lib.js's `path.resolve(WARPOS_ROOT,"..",slug)`.
+ *                              new-lib.js's `path.resolve(MC_ROOT,"..",slug)`.
  *                              The engine always passes an os.tmpdir() sandbox.
  *                              Never `../<slug>`.
  *   (b) portfolio REGISTRY   — createProductRepo writes the real registry via
  *                              registry.js#save()/load(), which resolve their path
- *                              via `WARPOS_PORTFOLIO_REGISTRY` FIRST (registry.js
+ *                              via `MC_PORTFOLIO_REGISTRY` FIRST (registry.js
  *                              registryPath()) — an existing, tested seam
  *                              (registry-path.test.js). The engine points it at a
  *                              sandbox doc for the duration of Leg 1, then restores
@@ -41,7 +41,7 @@
  *                              (canonical) are read-only. No out-of-sandbox write.
  *   (d) GIT ops              — every git call in the legs below is scoped to a
  *                              sandbox cwd (or is a read-only `git config`/`git
- *                              rev-parse` against WARPOS_ROOT, which new-lib.js
+ *                              rev-parse` against MC_ROOT, which new-lib.js
  *                              already does and is explicitly allowed — reads
  *                              only, never a write).
  *
@@ -296,7 +296,7 @@ function runLeg1({ sandboxRoot, timeoutMs }) {
     fs.mkdirSync(path.dirname(sandboxRegistryPath), { recursive: true });
 
     // vector (b): portfolio registry — point the existing, tested
-    // WARPOS_PORTFOLIO_REGISTRY seam (registry.js#registryPath()) at a
+    // MC_PORTFOLIO_REGISTRY seam (registry.js#registryPath()) at a
     // sandbox doc for the duration of this leg only.
     savedRegistryEnv = mcEnv.readEnv("PORTFOLIO_REGISTRY");
     mcEnv.setEnv("PORTFOLIO_REGISTRY", sandboxRegistryPath);

@@ -31,7 +31,7 @@
  *        policy mode.
  *
  * Bypass (logged via stderr):
- *   - env: WARPOS_VERSION_GUARD=off
+ *   - env: MC_VERSION_GUARD=off
  *   - sentinel: .mc/version-bump-guard-disable
  *
  * Fail-open conditions (legitimate "nothing to check" — always exit 0):
@@ -133,7 +133,7 @@ function failClosed(project, reason) {
   }
   process.stderr.write(
     `[version-bump-guard] WARNING: ${reason} — cannot verify whether a version bump is required; failing closed per policy (mode=${effectiveMode}).\n` +
-      `  Bypass (logged): WARPOS_VERSION_GUARD=off, or touch .warpos/version-bump-guard-disable\n`,
+      `  Bypass (logged): MC_VERSION_GUARD=off, or touch .mc/version-bump-guard-disable\n`,
   );
   if (effectiveMode === "block") return process.exit(2);
   return process.exit(0);
@@ -148,7 +148,7 @@ function run(event) {
 
   if (mcEnv.readEnv("VERSION_GUARD") === "off") {
     process.stderr.write(
-      "[version-bump-guard] bypass: WARPOS_VERSION_GUARD=off (logged)\n",
+      "[version-bump-guard] bypass: MC_VERSION_GUARD=off (logged)\n",
     );
     return process.exit(0);
   }
@@ -222,7 +222,7 @@ function run(event) {
     `Bump version.json before committing framework changes — otherwise downstream ` +
     `consumers running /mc:update --to ${version} will get a stale capsule.\n` +
     `  Staged framework files: ${sample.join(", ")}${more}\n` +
-    `  Bypass (logged): WARPOS_VERSION_GUARD=off, or touch .warpos/version-bump-guard-disable\n` +
+    `  Bypass (logged): MC_VERSION_GUARD=off, or touch .mc/version-bump-guard-disable\n` +
     `  Or run: /mc:release --version patch --apply (bumps + mints capsule).\n`;
 
   process.stderr.write(msg);

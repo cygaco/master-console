@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 
 /**
  * review-fallback-shape.test.js — regression for SP-20260611-001 fix 2 (T-311, R-2).
  *
  * Finding (crossfam-findings-2026-06-10 §A.2): in dispatch-claude.js the sanctioned
  * --review-fallback informational branch was gated `if (reviewFallback && !blocking)`.
- * Under WARPOS_DISPATCH_CONTRACT_ENFORCE=block (the W2 ENFORCE flip) the sanctioned lane
+ * Under MC_DISPATCH_CONTRACT_ENFORCE=block (the W2 ENFORCE flip) the sanctioned lane
  * fell into the VIOLATION branch and exited 1 — the flip would BRICK the fallback exactly
  * when it is most needed (a provider is quota-dead).
  *
@@ -61,8 +62,8 @@ function runWrapper({ role, extraArgs = [], enforce = false, ledgerName }) {
     DISPATCH_CLAUDE_BIN: process.execPath,
     DISPATCH_CLAUDE_BIN_ARGS: JSON.stringify([fakeHappy]),
   };
-  if (enforce) env.WARPOS_DISPATCH_CONTRACT_ENFORCE = "block";
-  else delete env.WARPOS_DISPATCH_CONTRACT_ENFORCE;
+  if (enforce) env.MC_DISPATCH_CONTRACT_ENFORCE = "block";
+  else mcEnv.unsetEnv("DISPATCH_CONTRACT_ENFORCE", env);
   const res = spawnSync(
     process.execPath,
     [DISPATCH_CLAUDE, role, promptFile, "--model", "sonnet", ...extraArgs],

@@ -767,7 +767,7 @@ if (provider === "claude") {
 // This wrapper owns the subprocess-cross-provider shape. Assert the role is
 // contract-allowed to be dispatched this way (a build-chain role, or a claude-pinned
 // reviewer routed here, is a routing error). REPORT-ONLY by default (PLAN §4 ramp);
-// WARPOS_DISPATCH_CONTRACT_ENFORCE=block makes a violation fatal. Fail-OPEN on any
+// MC_DISPATCH_CONTRACT_ENFORCE=block makes a violation fatal. Fail-OPEN on any
 // contract-read error so the contract never crashes a working cross-provider dispatch.
 // β edge (SP-20260627-001): split the two error classes. A MODULE-LOAD failure (require
 // throws — a broken/absent contract module) fails OPEN: the contract must never brick a
@@ -779,7 +779,7 @@ let contractMod = null;
 try {
   contractMod = require("./dispatch/dispatch-contract");
 } catch (e) {
-  process.stderr.write(`[dispatch-agent] dispatch-contract module unloadable — failing OPEN (advisory only; set WARPOS_DISPATCH_CONTRACT_ENFORCE=off to silence): ${e && e.message}\n`);
+  process.stderr.write(`[dispatch-agent] dispatch-contract module unloadable — failing OPEN (advisory only; set MC_DISPATCH_CONTRACT_ENFORCE=off to silence): ${e && e.message}\n`);
 }
 if (contractMod) {
   const { validateDispatch, contractEnforceMode } = contractMod;
@@ -832,13 +832,13 @@ if (contractMod) {
 // mere wrong-wrapper (a builder shoved through this path) is only a MEDIUM advisory — still NOT
 // refused (conservative by design). So the flip cannot false-refuse a real reviewer dispatch; its
 // teeth apply only to a genuinely-dangerous unproven-subprocess unit. Escapes:
-// WARPOS_SHAPE_DOOR_DISPATCH_AGENT=report (per-wrapper kill), global
-// WARPOS_SHAPE_DOOR=report (fleet kill), WARPOS_DISABLE_SHAPE_DOOR=1 (ultimate). exit 2 on an
+// MC_SHAPE_DOOR_DISPATCH_AGENT=report (per-wrapper kill), global
+// MC_SHAPE_DOOR=report (fleet kill), MC_DISABLE_SHAPE_DOOR=1 (ultimate). exit 2 on an
 // enforce refusal; fail-OPEN on any resolver error.
 try {
   const { shapeDoor } = require("./dispatch/dispatch-shape");
   // The per-wrapper env is a TRUE kill (W2 gauntlet MED-1): when set to report, force report via
-  // reportOnlyPin (which beats even a global WARPOS_SHAPE_DOOR=enforce) — not merely clear the
+  // reportOnlyPin (which beats even a global MC_SHAPE_DOOR=enforce) — not merely clear the
   // flip. Unset → enforceDefault (the per-wrapper ramp default).
   const killThis = /^(report|off|0)$/i.test(String(mcEnv.readEnv("SHAPE_DOOR_DISPATCH_AGENT") || ""));
   const door = shapeDoor("subprocess-cross-provider", { kind: "agent", id: role }, process.env, killThis ? { reportOnlyPin: true } : { enforceDefault: true });

@@ -26,7 +26,7 @@ const mcEnv = require("./lib/mc-env"); // S-OS-06 read-both env (MC_X, then the 
  * partially covered by β (adhoc outbound gate) + the S1.2 oneshot
  * arbitration-needed state. Provenance tracking is the v0.2 target.
  *
- * Disable (debug only): WARPOS_UNTRUSTED_CONTENT_FIREWALL=off
+ * Disable (debug only): MC_UNTRUSTED_CONTENT_FIREWALL=off
  */
 
 const { classify } = require("./lib/untrusted-content");

@@ -1,13 +1,17 @@
 # Changelog
 
-All notable changes to Master Console (formerly MC) are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
+All notable changes to Master Console are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
-Every released version has a capsule under `framework/releases/<version>/` (`release.json`, `changelog.md`, `framework-manifest.json`) and a git tag `mc@<version>`. This file condenses those changelogs. Where a capsule's notes were left as the generated placeholder at release time, the entry below says so rather than inventing content — the capsule and the commit history are the record. The engineering ledger, with the per-sprint release rows, is [RELEASES.md](RELEASES.md).
+Every released version has a capsule under `framework/releases/<version>/` (`release.json`, `changelog.md`, `framework-manifest.json`) and a git tag: `mc@<version>` from 2.0.0 on, while releases before 2.0.0 keep the tags they were cut with. This file condenses those changelogs. Where a capsule's notes were left as the generated placeholder at release time, the entry below says so rather than inventing content — the capsule and the commit history are the record. The engineering ledger, with the per-sprint release rows, is [RELEASES.md](RELEASES.md).
 
-## [Unreleased]
+## [2.0.0] — Unreleased
+
+### Deprecation policy
+- warp:* / scan:warpos-* skill aliases, WARPOS_* env, and _warpos//.warpos/ directory fallbacks are supported through 2.0.x and REMOVED in 2.1.0.
 
 ### Changed
-- **Rebrand, brand layer (E-OPEN-SOURCE-001 S-OS-05).** The project is now **Master Console**; README, contributor docs and the provenance story say "formerly MC" where history is referenced. Identifiers (`mc` package name, `warp:*` skills, `MC_*` env vars, `_mc/`, `mc@` tags) are unchanged until `2.0.0`.
+- **Identifier layer (E-OPEN-SOURCE-001 S-OS-06).** The engine's identifiers move to the `mc` slug: `mc:*` skills and `scan:mc-*` scans, `MC_*` environment variables (read through one read-both helper that prefers the new name), the `_mc/` and `.mc/` directories, the `MC.md` gap register, and `mc@` release tags from this release on. Installs at 1.2.0 upgrade through `migrations/1.2.0-to-2.0.0/` (directory layout, settings and hook wiring, skill references). Home-directory state is read from the new location first and the old one second; nothing is moved automatically.
+- **Rebrand, brand layer (E-OPEN-SOURCE-001 S-OS-05).** The project is now **Master Console**; the README, contributor docs and the provenance story name the previous brand where history is referenced.
 - Root docs reorganised: the unbuilt cross-project design spec moved to `_planning/design/`, the tracker-system brief to `_planning/`, the memory-hygiene write-up to `_docs/`; the `GEMINI.md` sunset tombstone was removed per its ADR-0036 removal-trigger (Gemini routes through `ANTIGRAVITY.md`); an operator-notes file was removed.
 
 ### Added
@@ -15,7 +19,7 @@ Every released version has a capsule under `framework/releases/<version>/` (`rel
 - `LICENSE` (AGPL-3.0), a root `package.json` (`npm test` runs the node test suite) and a license-match check (landed on `main` 2026-09-02, S-OS-02).
 
 ### Removed
-- **2026-09-03 targeted history rewrite (S-OS-03).** A `git filter-repo` pass over the public history removed 20 string rules (seven verbatim quotes and one personal e-mail address) and purged nine paths (a paid third-party course corpus, two files marked confidential, one raw AI transcript, three private planning documents). The rewrite was range-limited: every commit up to tag `mc@0.1.4` (`de9ba8eb`, 2026-05-01) is byte-identical, including the GitHub-signed commit `db6292e2`. Later commits have new SHAs; the old → new map is `runtime/open-source/rewrite/commit-map.txt`. If you cloned before 2026-09-03, re-clone (`runtime/open-source/rewrite/DOWNSTREAM-NOTICE.md`).
+- **2026-09-03 targeted history rewrite (S-OS-03).** A `git filter-repo` pass over the public history removed 20 string rules (seven verbatim quotes and one personal e-mail address) and purged nine paths (a paid third-party course corpus, two files marked confidential, one raw AI transcript, three private planning documents). The rewrite was range-limited: every commit up to the 0.1.4 release tag (`de9ba8eb`, 2026-05-01) is byte-identical, including the GitHub-signed commit `db6292e2`. Later commits have new SHAs; the old → new map is `runtime/open-source/rewrite/commit-map.txt`. If you cloned before 2026-09-03, re-clone (`runtime/open-source/rewrite/DOWNSTREAM-NOTICE.md`).
 - Front-page cleanup (S-OS-02): private product content replaced by a synthetic example product under `_mc/BASELINE/`, per-run runtime artifacts untracked, raw judgment-mining output moved out of the tracked tree.
 
 ## [1.2.0] — 2026-07-29

@@ -46,11 +46,11 @@ ok("skill-enforce-limitation-documented: the dispatch guide names the subprocess
 
 // AC-4.2: the contract docs are present (dispatch guide + epsilon.md).
 const guide = read(".claude/agents/_system/guides/agent-dispatch-guide.md");
-ok("contract-docs-present: dispatch guide documents WARPOS_SHAPE_DOOR", /WARPOS_SHAPE_DOOR/.test(guide));
-ok("contract-docs-present: dispatch guide documents the WARPOS_DISABLE_SHAPE_DOOR kill-switch", /WARPOS_DISABLE_SHAPE_DOOR/.test(guide));
+ok("contract-docs-present: dispatch guide documents MC_SHAPE_DOOR", /MC_SHAPE_DOOR/.test(guide));
+ok("contract-docs-present: dispatch guide documents the MC_DISABLE_SHAPE_DOOR kill-switch", /MC_DISABLE_SHAPE_DOOR/.test(guide));
 ok("contract-docs-present: dispatch guide documents the report-only-pinned skill limitation + ED-057", /report-only/.test(guide) && /ED-057/.test(guide));
 const eps = read(".claude/agents/president/epsilon.md");
-ok("contract-docs-present: epsilon.md documents the shape door", /WARPOS_SHAPE_DOOR/.test(eps) && /shapeDoor/.test(eps));
+ok("contract-docs-present: epsilon.md documents the shape door", /MC_SHAPE_DOOR/.test(eps) && /shapeDoor/.test(eps));
 
 console.log(`\n${failed === 0 ? "PASS" : "FAIL"} — skill-door: ${passed} passed, ${failed} failed`);
 process.exit(failed === 0 ? 0 : 1);

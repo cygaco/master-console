@@ -37,9 +37,9 @@ const path = require("path");
 // SHARED CONSTANTS — trusted-controller.js requires THIS module (not the other way around) to read these
 // three names, so there is exactly one place they are defined. Keep the literal values stable: any change
 // here MUST be mirrored by trusted-controller.js's withControllerFence call site (which imports them).
-const FENCE_TOKEN_ENV = "WARPOS_CONTROLLER_FENCE_TOKEN";
-const FENCE_SPID_ENV = "WARPOS_CONTROLLER_FENCE_SPID";
-const FENCE_LEASEROOT_ENV = "WARPOS_CONTROLLER_FENCE_LEASE_ROOT";
+const FENCE_TOKEN_ENV = "MC_CONTROLLER_FENCE_TOKEN";
+const FENCE_SPID_ENV = "MC_CONTROLLER_FENCE_SPID";
+const FENCE_LEASEROOT_ENV = "MC_CONTROLLER_FENCE_LEASE_ROOT";
 
 // The write-surface enumeration (build_spec Seam E) is delegation-COMPLETE for exactly ONE protected ref
 // pattern today: refs/heads/main. Extending protection to another ref is a one-line addition here.

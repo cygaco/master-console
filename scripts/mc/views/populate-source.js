@@ -71,7 +71,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const CLAUDE_PREFIX = ".claude/";
-const WARPOS_PREFIX = "_mc/";
+const MC_PREFIX = "_mc/";
 
 /**
  * Decide whether a shipped `.claude/<...>` dest is part of the regenerate
@@ -127,7 +127,7 @@ function isFrameworkViewDest(dest) {
  * the exact transform build.js applies (rel.replace(/^\.claude\//, "")).
  */
 function destToMirrorRel(dest) {
-  return WARPOS_PREFIX + dest.slice(CLAUDE_PREFIX.length);
+  return MC_PREFIX + dest.slice(CLAUDE_PREFIX.length);
 }
 
 function sha256OfFile(file) {

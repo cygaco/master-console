@@ -110,7 +110,7 @@ function runGuard(opts = {}) {
     },
   };
   const env = { ...process.env, CLAUDE_PROJECT_DIR: proj, HOME: home, USERPROFILE: home };
-  // S-12c is now DEFAULT-ON: the gate is active unless WARPOS_TEAM_GATE_SOFT=1.
+  // S-12c is now DEFAULT-ON: the gate is active unless MC_TEAM_GATE_SOFT=1.
   // `hardGate:true` is the normal shipped posture (no env needed); `hardGate:false`
   // means "explicitly soften the gate back to advisory-only" (the ramp-off path).
   mcEnv.unsetEnv("TEAM_GATE_HARD", env); // legacy force-on; default-on no longer needs it
@@ -204,8 +204,8 @@ ok("(+) DEFAULT (no flag) + no team + worker => BLOCK (gate ships ON)", () => {
   assert.ok(isGateBlock(stdout), "the gate must block by default — no marker required");
 });
 
-// (+) SOFT opt-out — WARPOS_TEAM_GATE_SOFT=1 ramps the gate back to advisory.
-ok("(+) WARPOS_TEAM_GATE_SOFT=1 + no team + worker => ALLOW (soft ramp-off)", () => {
+// (+) SOFT opt-out — MC_TEAM_GATE_SOFT=1 ramps the gate back to advisory.
+ok("(+) MC_TEAM_GATE_SOFT=1 + no team + worker => ALLOW (soft ramp-off)", () => {
   const { stdout } = runGuard({ mode: "sprint", hardGate: false, agentType: "general-purpose" });
   assert.ok(!blocks(stdout), "the soft kill ramps the gate to advisory-only");
 });

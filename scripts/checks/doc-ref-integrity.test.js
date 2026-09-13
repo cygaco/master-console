@@ -144,6 +144,26 @@ ok("PER-MACHINE: refs to gitignored/per-machine targets are allowed-absent under
   assert.ok(/^_planning\/ingest\/$/m.test(gitignore), ".gitignore lists _planning/ingest/");
 });
 
+// ── PER-MACHINE (untracked private plan, T5-E2d): the E-LIFECYCLE-001 plan is cited under a root spelling
+// (ROADMAP.md) AND a dir-relative spelling (the epic). One literal must cover both — literals match the citing
+// file's resolution exactly like prefixes do. ──
+ok("PER-MACHINE: the untracked lifecycle plan is allowed-absent under its root AND dir-relative spellings", () => {
+  const allowlist = mod.loadAllowlist();
+  const refs = [
+    { file: "ROADMAP.md", line: 1, target: "_planning/mc-lifecycle-plan.md", exists: false },
+    { file: "trackers/epics/E-LIFECYCLE-001-mode-lifecycle-enforcement.md", line: 1, target: "../../_planning/mc-lifecycle-plan.md", exists: false },
+  ];
+  const { findings, allowed } = mod.evaluate({ refs, allowlist });
+  assert.strictEqual(findings.length, 0, `both spellings must be allowed-absent: ${JSON.stringify(findings.map((f) => f.target))}`);
+  assert.ok(allowed.every((a) => a.allowedBy === "literal-allowlist"), "allowed by the literal, not by accident");
+  // A dir-relative spelling that resolves ELSEWHERE is not the literal.
+  const stray = mod.evaluate({
+    refs: [{ file: "trackers/epics/E-X.md", line: 1, target: "../_planning/mc-lifecycle-plan.md", exists: false }],
+    allowlist,
+  });
+  assert.strictEqual(stray.findings.length, 1, "a spelling resolving to trackers/_planning/... is still a broken ref");
+});
+
 // ── LIVE run() against the REAL canon ─────────────────────────────────────────
 ok("LIVE: the real canon scan ships zero broken refs (run() ok:true)", () => {
   const res = mod.run();

@@ -28,7 +28,16 @@
  *   - tallyLegacySlug(...)             per-file disposition tally (pending / pinned /
  *                                      derived / suppressed-per-entry) — the NUMBERS both
  *                                      gates emit
- *   - validateEntries()                F2: every entry carries a one-line warrant; schema
+ *   - findCompatOccurrence(file, text) β r3b: the FIFTH disposition. A `compat` occurrence is
+ *                                      permitted IFF it sits inside a REGISTERED compat window
+ *                                      (compatWindows: enumerated member paths + anchored
+ *                                      occurrences), each window carrying its OWN `expires`
+ *                                      version. Outside the register -> live-unallowed (RED);
+ *                                      at tree version >= a window's expiry -> that window's
+ *                                      occurrences are live-unallowed again (RED), per entry.
+ *   - validateEntries()                F2: every entry carries a one-line warrant; schema;
+ *                                      "no occurrence holds two" (a compat member / occurrence
+ *                                      that is also a view, glob, future entry or pin)
  *   - checkStale({ trackedFiles })     F7: an entry that matches nothing is a NON-ZERO exit
  *   - checkFreeze()                    F8: post-freeze additions must be separate, warranted
  *                                      `partition-amendment:` commits
@@ -106,7 +115,7 @@ function _parseArtifactText(raw, label) {
       `partition-loader: ${label} carries no $question header — an artifact that does not state its question is not the partition (F3)`
     );
   }
-  for (const section of ["generatedViews", "pathGlobs", "occurrencePins", "futureEntries"]) {
+  for (const section of ["generatedViews", "pathGlobs", "occurrencePins", "futureEntries", "compatWindows"]) {
     if (parsed[section] !== undefined && !Array.isArray(parsed[section])) {
       throw new PartitionLoadError(`partition-loader: ${label} section "${section}" is not an array — failing CLOSED (F3)`);
     }
@@ -131,7 +140,85 @@ function entryKeys(denylist) {
   for (const g of d.pathGlobs || []) keys.push(`glob|${g && g.pattern}`);
   for (const g of d.futureEntries || []) keys.push(`future|${g && g.pattern}`);
   for (const p of d.occurrencePins || []) keys.push(`pin|${p && p.file}|${p && p.matchText}|${(p && p.anchor) || ""}`);
+  keys.push(...compatKeys(d));
   return [...new Set(keys)].sort();
+}
+
+/**
+ * Freeze keys for the compat register: one key PER MEMBER and PER OCCURRENCE (closed by enumeration), and each key
+ * carries its window's surface id AND expiry version — so extending an expiry, or moving a member between surfaces,
+ * is a NEW key (a post-freeze addition that needs its own warranted amendment, F8), never a silent edit.
+ */
+function compatKeys(denylist) {
+  const keys = [];
+  for (const w of (denylist && denylist.compatWindows) || []) {
+    const head = `compat|${w && w.surface}|${w && w.expires}`;
+    for (const m of (w && Array.isArray(w.members) && w.members) || []) keys.push(`${head}|path|${m}`);
+    for (const o of (w && Array.isArray(w.occurrences) && w.occurrences) || []) {
+      keys.push(`${head}|occ|${o && o.file}|${o && o.matchText}|${(o && o.anchor) || ""}`);
+    }
+  }
+  return keys;
+}
+
+// ── compat expiry clock (β r3b condition 2: PER-ENTRY expiry, never a global switch) ──
+const SEMVER_RE = /^(\d+)\.(\d+)\.(\d+)(?:[-+][0-9A-Za-z.-]+)?$/;
+
+function parseSemver(v) {
+  const m = SEMVER_RE.exec(String(v === undefined || v === null ? "" : v).trim());
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
+
+function _cmpSemver(a, b) {
+  for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] < b[i] ? -1 : 1;
+  return 0;
+}
+
+/** The tree's own version (package.json#version at `root`) — the clock every compat expiry is read against. */
+function readTreeVersion(root = PARTITION_ROOT) {
+  let v;
+  try {
+    v = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8").replace(/^﻿/, "")).version;
+  } catch (e) {
+    return { version: null, reason: `package.json unreadable (${e.code || e.name}) — every compat window reads EXPIRED (fail closed)` };
+  }
+  if (!parseSemver(v)) return { version: null, reason: `package.json version ${JSON.stringify(v)} unparseable — every compat window reads EXPIRED (fail closed)` };
+  return { version: v, reason: `package.json ${v}` };
+}
+
+/** Fail-closed: an unknown/unparseable tree version or expiry reads as EXPIRED; otherwise expired iff version >= expires. */
+function isCompatExpired(expires, version) {
+  const e = parseSemver(expires);
+  const v = parseSemver(version);
+  if (!e || !v) return true;
+  return _cmpSemver(v, e) >= 0;
+}
+
+function compatLabel(w) {
+  return `${w && w.surface} (expires ${w && w.expires})`;
+}
+
+/**
+ * The FIVE-disposition view of a legacy-slug tally (β r3b re-ratification). `rewritten` occurrences no longer exist
+ * in the tree, so what a gate sees is: pinned (occurrence pins + Class-3 path entries), derived (generated views),
+ * compat (unexpired registered windows), historical-allow-listed (Class-4 path entries + CHANGELOG < 2.0.0 sections
+ * + the Class-2 operator-gated tree) — and the un-dispositioned residue (live-unallowed, incl. expired compat).
+ */
+function dispositionSummary(tally) {
+  const byClass = (tally && tally.suppressedByClass) || {};
+  const cls = (n) => byClass[n] || 0;
+  return {
+    pinned: (tally.pinnedTotal || 0) + cls(3),
+    derived: tally.derivedTotal || 0,
+    compat: tally.compatTotal || 0,
+    historicalAllowListed: cls(4) + cls(2) + (tally.changelogHistoricalTotal || 0),
+    historicalAllowListedBreakdown: { class4: cls(4), class2Gated: cls(2), changelogHistorical: tally.changelogHistoricalTotal || 0 },
+    pinnedBreakdown: { occurrencePins: tally.pinnedTotal || 0, class3Paths: cls(3) },
+    liveUnallowed: tally.pendingTotal || 0,
+    compatExpired: tally.compatExpiredTotal || 0,
+    compatBySurface: { ...(tally.compatBySurface || {}) },
+    compatExpiredBySurface: { ...(tally.compatExpiredBySurface || {}) },
+  };
 }
 
 /** Line numbers (1-based) inside CHANGELOG sections for releases < 2.0.0. */
@@ -242,11 +329,30 @@ function buildPartition(denylist) {
   for (const g of generatedViews) {
     for (const p of _viewPathCandidates(g.path)) if (!generatedViewByPath.has(p)) generatedViewByPath.set(p, g);
   }
+  // β r3b compat register: CLOSED by enumeration. A member is an EXACT tracked path (never a glob, never resolved
+  // through renamePath — a legacy alias path's rename is a different, live file); an occurrence is (file, matchText
+  // [, anchor]) like a pin. A path that merely LOOKS like compat but is not enumerated here is an ordinary live path.
+  const compatWindows = denylist.compatWindows || [];
+  const compatMemberByPath = new Map();
+  const compatOccurrences = [];
+  for (const w of compatWindows) {
+    if (!w || typeof w !== "object") continue;
+    for (const m of Array.isArray(w.members) ? w.members : []) {
+      if (typeof m === "string" && m && !compatMemberByPath.has(_toPosix(m))) compatMemberByPath.set(_toPosix(m), w);
+    }
+    for (const o of Array.isArray(w.occurrences) ? w.occurrences : []) {
+      if (o && typeof o === "object") compatOccurrences.push({ window: w, occ: o });
+    }
+  }
 
   function classifyPath(trackedPath) {
     const p = _toPosix(trackedPath);
     const gv = generatedViewByPath.get(p);
     if (gv) return { class: gv.class, writeProtected: true, kind: "generated-view", entry: gv };
+    // A registered compat member: never a rename candidate and never rewritten (Class-3 semantics for the codemod),
+    // but its occurrences carry the `compat` disposition — counted per surface and RED once the window expires.
+    const cw = compatMemberByPath.get(p);
+    if (cw) return { class: 3, writeProtected: true, kind: "compat", entry: cw };
     for (const glob of pathGlobs) {
       if (glob._re.test(p)) return { class: glob.class, writeProtected: glob.writeProtected, kind: "path-glob", entry: glob };
     }
@@ -270,6 +376,16 @@ function buildPartition(denylist) {
     return occurrencePins.find((pin) => _pinFileCandidates(pin.file).includes(p) && _pinMatchesLine(pin, lineText)) || null;
   }
 
+  /** The registered compat window whose anchored occurrence matches this LINE of this exact file, or null. */
+  function findCompatOccurrence(file, lineText) {
+    if (typeof lineText !== "string") {
+      throw new TypeError("partition-loader: findCompatOccurrence(file, lineText) — pass the LINE TEXT, not a line number");
+    }
+    const p = _toPosix(file);
+    const hit = compatOccurrences.find(({ occ }) => _toPosix(occ.file) === p && _pinMatchesLine(occ, lineText));
+    return hit ? { window: hit.window, occurrence: hit.occ } : null;
+  }
+
   function isGeneratedView(file) {
     return generatedViewByPath.has(_toPosix(file));
   }
@@ -287,7 +403,17 @@ function buildPartition(denylist) {
   }
 
   // ── legacy-slug disposition tally (both gates emit these NUMBERS) ──────
-  function createLegacySlugTally() {
+  /**
+   * `version` is the tree version every compat expiry is read against. Omitted -> read from the partition root's
+   * package.json; null / unparseable -> every compat window reads EXPIRED (fail closed, never silently permitted).
+   */
+  function createLegacySlugTally({ version } = {}) {
+    const clock =
+      version === undefined
+        ? readTreeVersion(PARTITION_ROOT)
+        : parseSemver(version)
+          ? { version, reason: `version ${version}` }
+          : { version: null, reason: `version ${JSON.stringify(version)} unknown/unparseable — every compat window reads EXPIRED (fail closed)` };
     return {
       filesWithHits: 0,
       pendingTotal: 0,
@@ -300,7 +426,14 @@ function buildPartition(denylist) {
       changelogHistoricalTotal: 0,
       suppressedTotal: 0,
       suppressedByEntry: {},
+      suppressedByClass: {},
       unclassifiedByFile: {},
+      version: clock.version,
+      versionReason: clock.reason,
+      compatTotal: 0,
+      compatBySurface: {},
+      compatExpiredTotal: 0,
+      compatExpiredBySurface: {},
     };
   }
 
@@ -331,6 +464,30 @@ function buildPartition(denylist) {
       add(tally.derivedByView, p, n);
       return;
     }
+    // compat: permitted ONLY while the registered window is unexpired; an expired window's occurrences are
+    // live-unallowed again (and counted as expired per surface, so the partial removal is visible).
+    const addCompat = (w, n, lineNo, lineText) => {
+      const label = compatLabel(w);
+      if (isCompatExpired(w.expires, tally.version)) {
+        tally.compatExpiredTotal += n;
+        add(tally.compatExpiredBySurface, label, n);
+        tally.pendingTotal += n;
+        add(tally.pendingByFile, p, n);
+        if (!tally.pendingSamples[p]) {
+          tally.pendingSamples[p] = `compat window ${label} EXPIRED at tree version ${tally.version === null ? "<unknown>" : tally.version} — ${lineNo}: ${String(lineText).trim().slice(0, 120)}`;
+        }
+        return;
+      }
+      tally.compatTotal += n;
+      add(tally.compatBySurface, label, n);
+    };
+    if (cls.kind === "compat") {
+      content.split(/\r?\n/).forEach((lineText, idx) => {
+        const n = count(lineText);
+        if (n) addCompat(cls.entry, n, idx + 1, lineText);
+      });
+      return;
+    }
     if (!VALID_CLASSES.includes(cls.class)) {
       const n = count(content);
       tally.pendingTotal += n;
@@ -343,12 +500,19 @@ function buildPartition(denylist) {
       const label = `class-${cls.class} ${cls.entry.pattern}`;
       tally.suppressedTotal += n;
       add(tally.suppressedByEntry, label, n);
+      add(tally.suppressedByClass, cls.class, n);
       return;
     }
     const hist = p === CHANGELOG_REL ? historicalChangelogLines(content) : null;
     content.split(/\r?\n/).forEach((lineText, idx) => {
       const n = count(lineText);
       if (!n) return;
+      // compat is checked BEFORE pins; validateEntries/checkStale refuse a line claimed by both (no occurrence holds two).
+      const comp = findCompatOccurrence(p, lineText);
+      if (comp) {
+        addCompat(comp.window, n, idx + 1, lineText);
+        return;
+      }
       const pin = findOccurrencePin(p, lineText);
       if (pin) {
         tally.pinnedTotal += n;
@@ -373,6 +537,8 @@ function buildPartition(denylist) {
       ...sortDesc(tally.suppressedByEntry).map(([k, v]) => [k, v]),
       ...sortDesc(tally.pinnedByPin).map(([k, v]) => [k, v]),
       ...sortDesc(tally.derivedByView).map(([k, v]) => [`derived (generated view) ${k}`, v]),
+      ...sortDesc(tally.compatBySurface || {}).map(([k, v]) => [`compat ${k}`, v]),
+      ...sortDesc(tally.compatExpiredBySurface || {}).map(([k, v]) => [`compat-EXPIRED ${k} (counted live-unallowed)`, v]),
     ];
     if (tally.changelogHistoricalTotal) rows.push([`changelog-historical ${CHANGELOG_REL} (< 2.0.0 sections)`, tally.changelogHistoricalTotal]);
     if (rows.length === 0) lines.push(`${indent}  (none)`);
@@ -380,11 +546,101 @@ function buildPartition(denylist) {
     lines.push(
       `${indent}totals: suppressed=${tally.suppressedTotal} pinned=${tally.pinnedTotal} derived=${tally.derivedTotal} changelog-historical=${tally.changelogHistoricalTotal} live-unallowed=${tally.pendingTotal}`
     );
+    const d = dispositionSummary(tally);
+    lines.push(
+      `${indent}dispositions (5, each closed by a registered artifact): pinned=${d.pinned} derived=${d.derived} compat=${d.compat} historical-allow-listed=${d.historicalAllowListed} · rewritten occurrences are gone from the tree; un-dispositioned residue live-unallowed=${d.liveUnallowed} (compat-expired=${d.compatExpired}) · compat clock: ${tally.versionReason || "n/a"}`
+    );
     const pending = sortDesc(tally.pendingByFile);
     if (pending.length && maxPending > 0) {
       lines.push(`${indent}live-unallowed occurrences by file (top ${Math.min(maxPending, pending.length)} of ${pending.length}):`);
       for (const [k, v] of pending.slice(0, maxPending)) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
     }
+    return lines;
+  }
+
+  // ── PATH-NAME tally (T5 F3): tracked paths whose NAME carries the legacy slug, by disposition ──
+  /**
+   * The content tally reads file BODIES; a file NAMED with the legacy slug is a separate leak surface (a shipped
+   * alias skill, a migration's own filename, an archived plan). Every such tracked path gets exactly one of the
+   * same dispositions, classified through the SAME partition:
+   *   derived                  generated view (its name is the view's declared identity)
+   *   compat                   registered compat MEMBER (per surface; RED once that window's expiry is reached)
+   *   pinned                   Class-3 path entry (historical-in-live DATA names: migrations, the codemod's own data)
+   *   historical-allow-listed  Class-4 path entry, or the Class-2 operator-gated tree
+   *   live-unallowed           anything else (a Class-1 live path still carrying the slug in its name) — a violation
+   * `rewritten` never appears: a renamed path no longer carries the slug. -> a tally object (numbers + named paths).
+   */
+  function tallyLegacySlugPathNames(trackedPaths, needle, { version } = {}) {
+    if (!Array.isArray(trackedPaths)) throw new TypeError("tallyLegacySlugPathNames: trackedPaths must be an array");
+    if (typeof needle !== "string" || !needle) throw new TypeError("tallyLegacySlugPathNames: needle must be a non-empty string");
+    const clock =
+      version === undefined
+        ? readTreeVersion(PARTITION_ROOT)
+        : parseSemver(version)
+          ? { version, reason: `version ${version}` }
+          : { version: null, reason: `version ${JSON.stringify(version)} unknown/unparseable — every compat window reads EXPIRED (fail closed)` };
+    const re = new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    const t = {
+      total: 0,
+      byDisposition: { pinned: 0, derived: 0, compat: 0, historicalAllowListed: 0, liveUnallowed: 0 },
+      byEntry: {},
+      compatBySurface: {},
+      compatExpiredBySurface: {},
+      liveUnallowedPaths: [],
+      version: clock.version,
+      versionReason: clock.reason,
+    };
+    const bump = (obj, key) => {
+      obj[key] = (obj[key] || 0) + 1;
+    };
+    for (const raw of trackedPaths) {
+      const p = _toPosix(raw);
+      if (!re.test(p)) continue;
+      t.total += 1;
+      const cls = classifyPath(p);
+      if (cls.kind === "generated-view") {
+        t.byDisposition.derived += 1;
+        bump(t.byEntry, `derived (generated view) ${p}`);
+      } else if (cls.kind === "compat") {
+        const label = compatLabel(cls.entry);
+        if (isCompatExpired(cls.entry.expires, clock.version)) {
+          t.byDisposition.liveUnallowed += 1;
+          bump(t.compatExpiredBySurface, label);
+          t.liveUnallowedPaths.push({ path: p, reason: `compat window ${label} EXPIRED at tree version ${clock.version === null ? "<unknown>" : clock.version}` });
+        } else {
+          t.byDisposition.compat += 1;
+          bump(t.compatBySurface, label);
+          bump(t.byEntry, `compat ${label}`);
+        }
+      } else if (!VALID_CLASSES.includes(cls.class)) {
+        t.byDisposition.liveUnallowed += 1;
+        t.liveUnallowedPaths.push({ path: p, reason: `unclassified (entry class ${JSON.stringify(cls.class)})` });
+      } else if (cls.class === 3) {
+        t.byDisposition.pinned += 1;
+        bump(t.byEntry, `class-3 ${cls.entry ? cls.entry.pattern : cls.kind}`);
+      } else if (cls.class === 4 || cls.class === 2) {
+        t.byDisposition.historicalAllowListed += 1;
+        bump(t.byEntry, `class-${cls.class} ${cls.entry ? cls.entry.pattern : cls.kind}`);
+      } else {
+        t.byDisposition.liveUnallowed += 1;
+        t.liveUnallowedPaths.push({ path: p, reason: `live Class-1 path (${cls.kind}) still carries the legacy slug in its NAME` });
+      }
+    }
+    return t;
+  }
+
+  function formatPathNameTally(t, { indent = "    ", maxLive = 50 } = {}) {
+    const d = t.byDisposition;
+    const lines = [];
+    lines.push(`${indent}path-name tally (tracked paths with the legacy slug in the NAME — review as NUMBERS):`);
+    const rows = Object.entries(t.byEntry).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
+    if (rows.length === 0) lines.push(`${indent}  (none)`);
+    for (const [k, v] of rows) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
+    for (const [k, v] of Object.entries(t.compatExpiredBySurface)) lines.push(`${indent}  ${String(v).padStart(7)}  compat-EXPIRED ${k} (counted live-unallowed)`);
+    lines.push(
+      `${indent}path-name dispositions (5): pinned=${d.pinned} derived=${d.derived} compat=${d.compat} historical-allow-listed=${d.historicalAllowListed} · live-unallowed=${d.liveUnallowed} · total=${t.total} · compat clock: ${t.versionReason}`
+    );
+    for (const x of t.liveUnallowedPaths.slice(0, maxLive)) lines.push(`${indent}  LIVE ${x.path} — ${x.reason}`);
     return lines;
   }
 
@@ -425,6 +681,90 @@ function buildPartition(denylist) {
         } else {
           if (typeof e.pattern !== "string" || !e.pattern) problems.push({ id: "SCHEMA", key, message: `${section} entry needs a pattern` });
           if (!VALID_CLASSES.includes(e.class)) problems.push({ id: "SCHEMA", key, message: `${section} entry '${key}' has invalid class ${JSON.stringify(e.class)}` });
+        }
+      }
+    }
+
+    // ── compat register (β r3b): closed by enumeration, per-entry expiry, no occurrence holds two ──
+    const surfaces = new Set();
+    const memberOwner = new Map();
+    const pinKeys = new Set(occurrencePins.map((pin) => `${_toPosix(pin.file)}|${pin.matchText}|${pin.anchor || ""}`));
+    for (const w of compatWindows) {
+      const key = `compat|${w && w.surface}|${w && w.expires}`;
+      if (!w || typeof w !== "object" || Array.isArray(w)) {
+        problems.push({ id: "SCHEMA", key, message: "compatWindows: entry is not an object" });
+        continue;
+      }
+      const warrant = w.warrant;
+      if (typeof warrant !== "string" || !warrant.trim()) {
+        problems.push({ id: "F2", key, message: `compat window '${w.surface}' has a missing/empty warrant — every register entry must carry a one-line warrant` });
+      } else if (/[\r\n]/.test(warrant)) {
+        problems.push({ id: "F2", key, message: `compat window '${w.surface}' has a multi-line warrant — a warrant is ONE line` });
+      } else if (PLACEHOLDER_WARRANT.test(warrant.trim())) {
+        problems.push({ id: "F2", key, message: `compat window '${w.surface}' has a placeholder warrant ('${warrant.trim()}') — not a warrant` });
+      }
+      if (typeof w.surface !== "string" || !/^[a-z0-9][a-z0-9-]*$/.test(w.surface)) {
+        problems.push({ id: "SCHEMA", key, message: `compat window needs a surface id (lowercase-hyphen), got ${JSON.stringify(w.surface)}` });
+      } else if (surfaces.has(w.surface)) {
+        problems.push({ id: "SCHEMA", key, message: `compat surface '${w.surface}' is declared twice — one surface, one entry, one expiry` });
+      } else {
+        surfaces.add(w.surface);
+      }
+      if (!parseSemver(w.expires)) {
+        problems.push({ id: "SCHEMA", key, message: `compat window '${w.surface}' needs its OWN expires version (semver) — β r3b condition 2: a per-entry expiry, never a global switch; got ${JSON.stringify(w.expires)}` });
+      }
+      if (Object.prototype.hasOwnProperty.call(w, "pattern") || Object.prototype.hasOwnProperty.call(w, "path")) {
+        problems.push({ id: "SCHEMA", key, message: `compat window '${w.surface}' carries a pattern/path — the register is closed by ENUMERATION (members[] exact paths + occurrences[]), never by description` });
+      }
+      const members = w.members === undefined ? [] : w.members;
+      const occurrences = w.occurrences === undefined ? [] : w.occurrences;
+      if (!Array.isArray(members) || !Array.isArray(occurrences)) {
+        problems.push({ id: "SCHEMA", key, message: `compat window '${w.surface}': members and occurrences must be arrays` });
+        continue;
+      }
+      if (members.length === 0 && occurrences.length === 0) {
+        problems.push({ id: "SCHEMA", key, message: `compat window '${w.surface}' enumerates no member and no occurrence — a hollow register entry` });
+      }
+      for (const m of members) {
+        const mk = `${key}|path|${m}`;
+        if (typeof m !== "string" || !m.trim()) {
+          problems.push({ id: "SCHEMA", key: mk, message: `compat window '${w.surface}' has a non-string/empty member` });
+          continue;
+        }
+        if (/[*?[\]{}]/.test(m)) {
+          problems.push({ id: "SCHEMA", key: mk, message: `compat member '${m}' is a glob — members are enumerated EXACT paths (closed by registration, β r3b condition 1)` });
+        }
+        const p = _toPosix(m);
+        if (memberOwner.has(p)) {
+          problems.push({ id: "SCHEMA", key: mk, message: `compat member '${p}' is registered under two surfaces ('${memberOwner.get(p)}' and '${w.surface}') — no occurrence holds two` });
+        } else {
+          memberOwner.set(p, w.surface);
+        }
+        const also = [];
+        if (generatedViewByPath.has(p)) also.push("a generated view");
+        const g = pathGlobs.find((e) => e._re.test(p));
+        if (g) also.push(`path glob '${g.pattern}' (class ${g.class})`);
+        const f = futureEntries.find((e) => e._re.test(p));
+        if (f) also.push(`future entry '${f.pattern}' (class ${f.class})`);
+        if (also.length) {
+          problems.push({ id: "SCHEMA", key: mk, message: `compat member '${p}' is also ${also.join(" and ")} — no occurrence holds two dispositions` });
+        }
+      }
+      for (const o of occurrences) {
+        const ok = `${key}|occ|${o && o.file}|${o && o.matchText}|${(o && o.anchor) || ""}`;
+        if (!o || typeof o !== "object" || typeof o.file !== "string" || !o.file || typeof o.matchText !== "string" || !o.matchText) {
+          problems.push({ id: "SCHEMA", key: ok, message: `compat occurrence in '${w && w.surface}' needs non-empty file + matchText` });
+          continue;
+        }
+        if (Object.prototype.hasOwnProperty.call(o, "line")) {
+          problems.push({ id: "SCHEMA", key: ok, message: `compat occurrence '${ok}' carries a bare line number — keyed on (file, matchText [, anchor]) only` });
+        }
+        const f = _toPosix(o.file);
+        if (compatMemberByPath.has(f)) {
+          problems.push({ id: "SCHEMA", key: ok, message: `compat occurrence '${ok}' sits in a registered compat MEMBER file — no occurrence holds two` });
+        }
+        if (pinKeys.has(`${f}|${o.matchText}|${o.anchor || ""}`)) {
+          problems.push({ id: "SCHEMA", key: ok, message: `compat occurrence '${ok}' is also an occurrence pin — no occurrence holds two dispositions` });
         }
       }
     }
@@ -492,6 +832,51 @@ function buildPartition(denylist) {
         problems.push({ id: "F7", key, message: `stale occurrence pin '${key}' matches NOTHING — the pinned literal is gone (rewritten or removed)` });
       } else if (matches > 1) {
         problems.push({ id: "F7", key, message: `ambiguous occurrence pin '${key}' matches ${matches} lines (${where.slice(0, 5).join(", ")}) — add an anchor so it pins exactly one` });
+      }
+    }
+    // compat register: every enumerated member is a tracked path; every occurrence binds EXACTLY one line of a live
+    // (Class-1, non-generated, non-member) file, and that line is claimed by no pin (no occurrence holds two).
+    for (const w of compatWindows) {
+      if (!w || typeof w !== "object") continue;
+      const head = `compat|${w.surface}|${w.expires}`;
+      for (const m of Array.isArray(w.members) ? w.members : []) {
+        if (typeof m === "string" && m && !trackedSet.has(_toPosix(m))) {
+          problems.push({ id: "F7", key: `${head}|path|${m}`, message: `stale compat member '${m}' (surface ${w.surface}) — not a tracked path; a register entry that matches nothing is hollow` });
+        }
+      }
+      for (const o of Array.isArray(w.occurrences) ? w.occurrences : []) {
+        if (!o || typeof o.file !== "string" || typeof o.matchText !== "string") continue;
+        const key = `${head}|occ|${o.file}|${o.matchText}|${o.anchor || ""}`;
+        const f = _toPosix(o.file);
+        if (!trackedSet.has(f)) {
+          problems.push({ id: "F7", key, message: `stale compat occurrence '${key}' — its file is not tracked` });
+          continue;
+        }
+        const cls = classifyPath(f);
+        if (cls.class !== 1 || cls.kind === "generated-view") {
+          problems.push({ id: "F7", key, message: `hollow compat occurrence '${key}' — its file is ${cls.kind} class ${cls.class}; occurrences only bind live (Class-1, non-generated) files` });
+          continue;
+        }
+        let text;
+        try {
+          text = fs.readFileSync(path.join(root, f), "utf8");
+        } catch (e) {
+          throw new PartitionLoadError(`partition-loader: cannot read compat file ${f}: ${e.message}`);
+        }
+        const where = [];
+        text.split(/\r?\n/).forEach((lineText, i) => {
+          if (!_pinMatchesLine(o, lineText)) return;
+          where.push(`${f}:${i + 1}`);
+          const pin = findOccurrencePin(f, lineText);
+          if (pin) {
+            problems.push({ id: "F7", key, message: `compat occurrence '${key}' claims ${f}:${i + 1}, which pin '${pin.file} :: ${pin.matchText}' also claims — no occurrence holds two` });
+          }
+        });
+        if (where.length === 0) {
+          problems.push({ id: "F7", key, message: `stale compat occurrence '${key}' matches NOTHING — the literal is gone (removed or rewritten); retire the register entry` });
+        } else if (where.length > 1) {
+          problems.push({ id: "F7", key, message: `ambiguous compat occurrence '${key}' matches ${where.length} lines (${where.slice(0, 5).join(", ")}) — add an anchor so it binds exactly one` });
+        }
       }
     }
     return { problems, notes };
@@ -607,6 +992,9 @@ function buildPartition(denylist) {
     denylist,
     classifyPath,
     findOccurrencePin,
+    findCompatOccurrence,
+    compatWindows,
+    isCompatMember: (file) => compatMemberByPath.has(_toPosix(file)),
     isGeneratedView,
     /** A view entry's identities: its declared path, plus the codemod's rename of it when that differs. */
     viewPathCandidates: (g) => _viewPathCandidates(g && typeof g === "object" ? g.path : g),
@@ -621,6 +1009,9 @@ function buildPartition(denylist) {
     createLegacySlugTally,
     tallyLegacySlug,
     formatLegacySlugTally,
+    tallyLegacySlugPathNames,
+    formatPathNameTally,
+    dispositionSummary,
     validateEntries,
     checkStale,
     checkFreeze,
@@ -660,6 +1051,12 @@ module.exports = {
   loadPartition,
   buildPartition,
   entryKeys,
+  compatKeys,
+  parseSemver,
+  readTreeVersion,
+  isCompatExpired,
+  compatLabel,
+  dispositionSummary,
   historicalChangelogLines,
   listRepoFiles,
   readPartitionAt,

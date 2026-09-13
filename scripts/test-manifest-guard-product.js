@@ -110,7 +110,7 @@ check(
 );
 check(
   "canonical bypass message includes PowerShell form",
-  parsed1 && /\$env:WARPOS_MANIFEST_GUARD/.test(parsed1.reason || ""),
+  parsed1 && /\$env:MC_MANIFEST_GUARD/.test(parsed1.reason || ""),
 );
 
 // ── Product with gitignored .claude/: tracked edit, stale manifest → WARN ──

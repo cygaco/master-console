@@ -195,8 +195,8 @@ actively POLL a durable signal in the SAME turn, so you never yield to an event 
 Parse every result via `scripts/hooks/lib/providers.js#parseProviderJson`. Verify output is non-zero bytes and exit was 0 before advancing.
 
 **Shape-door self-detection (W2-core).** All subprocess routes consult the shape resolver
-(`dispatch-shape.js#shapeDoor`) at spawn — `report`-only by default (`WARPOS_SHAPE_DOOR=enforce`
-+ the `WARPOS_DISABLE_SHAPE_DOOR` kill-switch ride the per-wrapper enforce ramp). The runtime's
+(`dispatch-shape.js#shapeDoor`) at spawn — `report`-only by default (`MC_SHAPE_DOOR=enforce`
++ the `MC_DISABLE_SHAPE_DOOR` kill-switch ride the per-wrapper enforce ramp). The runtime's
 own **CLAUDE_RAW** route (raw `claude -p --agent`) is doored here; the `dispatch-claude.js` /
 `dispatch-agent.js` routes are doored inside those wrappers (so ε does not double-consult them).
 On a high-severity refusal the raw spawn is aborted as a failed dispatch (never `process.exit` —

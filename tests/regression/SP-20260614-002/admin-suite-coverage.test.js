@@ -21,7 +21,7 @@ const { spawnSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..", "..", "..");
 const CHECK = path.join(ROOT, "scripts", "checks", "admin-suite-coverage.js");
-const { evaluate, ADMIN_SKILLS, WARPOS_GUARD_TOKEN } = require(CHECK);
+const { evaluate, ADMIN_SKILLS, MC_GUARD_TOKEN } = require(CHECK);
 
 let pass = 0;
 let fail = 0;
@@ -55,7 +55,7 @@ const integratedSeams = {
   // verifies behavior/ordering, not token presence — xprovider review BLOCKER #4).
   read: (rel) =>
     rel === "scripts/admin/preview.js"
-      ? `async function run(argv){ const g = ${WARPOS_GUARD_TOKEN}(instanceDir); if (g.refuse) return; resolveOrScaffold({}); }`
+      ? `async function run(argv){ const g = ${MC_GUARD_TOKEN}(instanceDir); if (g.refuse) return; resolveOrScaffold({}); }`
       : null,
 };
 
@@ -111,7 +111,7 @@ ok("FINDING — missing refuseIfTargetIsMC guard when preview.js is PRESENT", ()
 
 ok("FINDING (BLOCKER #4) — guard token PRESENT but CALLED AFTER a seam → call-order finding", () => {
   const seams = { ...integratedSeams, read: (rel) => (rel === "scripts/admin/preview.js"
-    ? `async function run(argv){ resolveOrScaffold({}); const g = ${WARPOS_GUARD_TOKEN}(instanceDir); }`
+    ? `async function run(argv){ resolveOrScaffold({}); const g = ${MC_GUARD_TOKEN}(instanceDir); }`
     : null) };
   const { findings } = evaluate({ registry: GOOD_REGISTRY, ...seams });
   assert(findings.some((f) => f.finding_type === "mc_guard_call_order"),

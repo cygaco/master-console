@@ -10,7 +10,7 @@
  *      lines, with a STRICT extension boundary (`.json` must NOT match `.js`),
  *      and ignores non-remediation code/comment-only lines that aren't guidance.
  *   B. End-to-end GREEN on the real canonical tree (no false-RED).
- *   C. End-to-end RED via the WARPOS_GUARD_REMEDIATION_ROOT seam: a throwaway
+ *   C. End-to-end RED via the MC_GUARD_REMEDIATION_ROOT seam: a throwaway
  *      guard whose remediation points at a non-existent script must fail (exit 1).
  *   D. End-to-end GREEN via the seam: a throwaway guard whose remediation points
  *      at a script that DOES exist passes.

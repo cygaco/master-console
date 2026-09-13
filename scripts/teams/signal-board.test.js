@@ -159,7 +159,7 @@ function run() {
         "--poll",
         "100",
       ],
-      { env: { ...process.env, WARPOS_SIGNALS_DIR_OVERRIDE: root }, stdio: "pipe" },
+      { env: { ...process.env, MC_SIGNALS_DIR_OVERRIDE: root }, stdio: "pipe" },
     );
     waitExit = 0;
   } catch (e) {

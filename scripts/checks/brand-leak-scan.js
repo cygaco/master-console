@@ -7,7 +7,7 @@
  * this epic ships: the founders in-app readiness panel + the in-app guide content.
  *
  * Rule (2026-09-02 ruling, E-OPEN-SOURCE-001 — supersedes project_masterconsole_branding_boundary):
- *   The engine and its UI share ONE public brand, Master Console; "formerly MC" is
+ *   The engine and its UI share ONE public brand, Master Console; a "formerly <previous name>" note is
  *   allowed wherever history is referenced, and the engine's own docs (README, CHANGELOG,
  *   docs/PROVENANCE.md) are NOT in this scanner's scope. What this scanner still protects
  *   is the SCAFFOLDED PRODUCT's surface: a product built with the engine shows its OWN

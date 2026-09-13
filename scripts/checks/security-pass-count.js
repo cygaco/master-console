@@ -91,7 +91,7 @@ function evaluateRuntime(records, expectedCount) {
     g.total += 1;
     // SP-20260718-004 R4 (β DIRECTIVE): a PASS only counts if the ok:true record carries a valid
     // origin-proof signature — a forged/unsigned record cannot inflate the pass count. Same-session
-    // choke-point; default-on (WARPOS_LIVENESS_REQUIRE_SIG=0 for the fixture tests).
+    // choke-point; default-on (MC_LIVENESS_REQUIRE_SIG=0 for the fixture tests).
     if (isVerifiedLivenessRecord(r, { requireSignature: mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0" }) && r.provider)
       g.okProviders.add(r.provider);
   }

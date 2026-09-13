@@ -55,7 +55,7 @@ Scope:
   Allowlist: `codex --version`, `gemini --version`, `gemini --help`,
   `claude --version`, `node scripts/dispatch-agent.js`,
   `claude -p --agent <role>` (the documented fallback), and provider health
-  probes (env `WARPOS_PROVIDER_PROBE=1`).
+  probes (env `MC_PROVIDER_PROBE=1`).
 - Register the new hook in `.claude/settings.json` under `PreToolUse` /
   matcher `Bash`.
 - Update `.claude/agents/00-alex/gamma.md` and `delta.md` to add the
@@ -185,7 +185,7 @@ error vocabulary.
   `.claude/agents/store.json#mode`.
 
 Scope:
-- Update `dispatch-agent.js` to honour an optional `WARPOS_MODE` env var
+- Update `dispatch-agent.js` to honour an optional `MC_MODE` env var
   (`oneshot` | `adhoc`) when present; otherwise check
   `02-oneshot/.system/store.json#status === "running"` to infer oneshot;
   default `adhoc`. Resolution order: explicit env → mode-specific subdir
@@ -202,7 +202,7 @@ Primitive limits: none.
   *does* exist (copied during install) so the guard fires there too. If
   product `.claude/` is gitignored the user gets a message that names a
   file they cannot stage.
-- Bypass message currently says: `Set WARPOS_MANIFEST_GUARD=off to bypass.`
+- Bypass message currently says: `Set MC_MANIFEST_GUARD=off to bypass.`
   PreToolUse hooks read env from the harness, not from Bash-inline `VAR=v
   cmd`, so the message is misleading on Windows/PowerShell.
 - No `.mc/manifest-guard-disable` sentinel exists.

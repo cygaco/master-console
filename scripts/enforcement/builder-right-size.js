@@ -8,8 +8,11 @@
  * prompt SIZE. WARN by default; BLOCK only under an explicit enforce env — a large-but-LEGITIMATE prompt
  * must NEVER be hard-blocked (β rider: warn-by-default / enforce-only-under-env).
  */
+const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
+
 const SIZE_FLOOR_BYTES = 12000; // ~a monolith spec; a right-sized <=15-min chunk is well under this.
-const ENFORCE_ENV = "WARPOS_BUILDER_SIZE_ENFORCE";
+const ENFORCE_SUFFIX = "BUILDER_SIZE_ENFORCE";
+const ENFORCE_ENV = mcEnv.envNames(ENFORCE_SUFFIX).current; // "MC_BUILDER_SIZE_ENFORCE" (the legacy name is read as fallback)
 
 /**
  * assessBuilderPrompt({ role, promptBytes, isBuildChain, enforce }) -> { level, reason }
@@ -29,7 +32,7 @@ function assessBuilderPrompt({ role, promptBytes, isBuildChain, enforce } = {}) 
 
 /** enforceEnabled(env) — true only when the enforce env is explicitly "1"/"true" (default warn-only). */
 function enforceEnabled(env = process.env) {
-  const v = env[ENFORCE_ENV];
+  const v = mcEnv.readEnv(ENFORCE_SUFFIX, env || {});
   return v === "1" || v === "true";
 }
 

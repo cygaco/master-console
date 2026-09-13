@@ -178,7 +178,7 @@ path-glob expansion or import-graph propagation.
 Four append-only stores tag every new row with `sprint_id`:
 
 - `paths.eventsFile` — `events.jsonl` rows gain `sprint_id` when
-  `process.env.WARPOS_SPRINT_ID` is set (sprint helpers set this on
+  `process.env.MC_SPRINT_ID` is set (sprint helpers set this on
   every invocation via `SPRINT.parseSprintArg`).
 - `paths.decisionLedger` — `decision-ledger.jsonl` records carry
   `sprint_id` on append; resolution order is explicit field → env →

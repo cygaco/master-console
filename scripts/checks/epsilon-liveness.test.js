@@ -21,7 +21,7 @@
 
 // These fixtures inject UNSIGNED synthetic ledger records to exercise the stall-DETECTION MATCHING logic
 // (sha256 + filename fallback), so they opt out of the SP-20260718-004 same-session signature requirement
-// via TEST-INJECTION (requireSignature:false) — NOT the old ambient WARPOS_LIVENESS_REQUIRE_SIG=0 runtime
+// via TEST-INJECTION (requireSignature:false) — NOT the old ambient MC_LIVENESS_REQUIRE_SIG=0 runtime
 // env, which was killed (hunter r3 #2: an ambient-env unsigned opt-out is a settable-label false-green).
 // The signature gate itself is covered by the verified-liveness-read suite.
 const crypto = require("crypto");

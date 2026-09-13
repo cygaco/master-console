@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 // ─────────────────────────────────────────────────────────────────────────────
 // mode-write-coverage.test.js — SP-20260611-002 WS-G1 / R-2 (S-2) regression (T-316).
 //
@@ -83,7 +84,7 @@ function readLifecycleRecs(proj) {
 ok("mode-set-emits-lifecycle-events-on-bash-invocation", () => {
   const proj = sealedProject();
   const env = { ...process.env, CLAUDE_PROJECT_DIR: proj };
-  delete env.WARPOS_SPRINT_ID;
+  mcEnv.unsetEnv("SPRINT_ID", env);
   const r = spawnSync("node", [MODE_SET, "sprint", "--by", "alpha"], { env, encoding: "utf8" });
   assert.strictEqual(r.status, 0, `mode-set should exit 0 (stderr: ${r.stderr})`);
 
@@ -208,7 +209,7 @@ ok("mode-guard-kill-switch-emits-audit-event", () => {
     { tool_name: "SlashCommand", tool_input: { command: "/mode:sprint" } },
     {
       projectDir: sealedProject(),
-      env: { WARPOS_DISABLE_MODE_GUARD: "1" },
+      env: { MC_DISABLE_MODE_GUARD: "1" },
       emit: () => true,
       stdout: () => {},
       attest: (reason, target) => recorded.push({ reason, target }),

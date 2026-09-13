@@ -9,8 +9,8 @@
  *   node scripts/portfolio/new-lib.test.js
  *
  * Regression target: WI-50 round 3 (2026-06-07). new-lib.js ran
- * WARPOS_ROOT/install.ps1 blindly; when a CONSUMER product (e.g. a cockpit)
- * drives the engine, WARPOS_ROOT has no .claude/framework-manifest.json so
+ * MC_ROOT/install.ps1 blindly; when a CONSUMER product (e.g. a cockpit)
+ * drives the engine, MC_ROOT has no .claude/framework-manifest.json so
  * install.ps1 refuses it as a source ("Source repo missing required file").
  * The fix resolves a VALID engine source (running root if it qualifies, else a
  * sibling canonical clone) before invoking the installer.

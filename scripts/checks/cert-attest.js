@@ -13,7 +13,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *
  * WHY A SCRIPT (not a raw shell probe): a raw `codex exec … -m <model>` from Bash is (correctly)
  * refused by the dispatch-route-guard / auto-classifier as guard-circumvention. This tool IS the
- * sanctioned path: it sets WARPOS_PROVIDER_PROBE=1 process-INTERNALLY and spawns ONLY through
+ * sanctioned path: it sets MC_PROVIDER_PROBE=1 process-INTERNALLY and spawns ONLY through
  * safeSpawnSync (shell:false, arg-allowlisted, abs-path tool, tree-kill) — never a raw shell string.
  * The operator/lead runs the plain `node scripts/checks/cert-attest.js --model <m>` top-level.
  *
@@ -254,7 +254,7 @@ function readLedgerRecords(sprintId, panelRunId, ledgerPath) {
     if (sprintId && r.sprint_id !== sprintId) continue;
     // QA-014 sweep: the panel-run IDENTITY is `panel_run_id` (SR-011 — minted by the runner, propagated to
     // every child record). The prior filter used `run_id`, which the runner never carries as the panel id
-    // (recordCompletion writes run_id from WARPOS_RUN_ID) → real runner records were DISCARDED before
+    // (recordCompletion writes run_id from MC_RUN_ID) → real runner records were DISCARDED before
     // attestation. Filter by panel_run_id so the live-read pre-filter agrees with attestLane's correlation.
     if (panelRunId != null && r.panel_run_id !== panelRunId) continue;
     out.push(r);

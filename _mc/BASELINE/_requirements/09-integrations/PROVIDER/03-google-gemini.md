@@ -90,7 +90,7 @@ trusted directory"). **Fixed 2026-05-30:** `providers.js` now sets
 `GEMINI_CLI_TRUST_WORKSPACE=true` in the gemini child env by default (the official
 headless equivalent of "trust this folder", per
 geminicli.com/docs/cli/trusted-folders/#headless-and-automated-environments). The
-older opt-in `WARPOS_GEMINI_TRUST_BYPASS=1` → `--skip-trust` path still exists as a
+older opt-in `MC_GEMINI_TRUST_BYPASS=1` → `--skip-trust` path still exists as a
 fallback. `provider-health.js` reports `trusted_directory_required` on the failure signature.
 
 ## Project decisions

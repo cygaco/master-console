@@ -11,7 +11,7 @@
  *   (pre-mvp = "Early Development / Pre-Launch" — building 0-to-1 toward an MVP.)
  *
  * Precedence (first wins):
- *   1. WARPOS_LIFECYCLE_STAGE env var   ← the quick override (session / CI / set in
+ *   1. MC_LIFECYCLE_STAGE env var   ← the quick override (session / CI / set in
  *      .claude/settings.json#env for persistence). This is why a script resolver
  *      exists: a subagent (Read/Grep/Glob only) cannot read env, so the orchestrator
  *      resolves the stage here and passes it to the Director on dispatch.
@@ -81,7 +81,7 @@ function resolve() {
   const env = mcEnv.readEnv("LIFECYCLE_STAGE");
   if (env && env.trim()) {
     const c = canonical(env);
-    return { stage: c, source: "env:WARPOS_LIFECYCLE_STAGE", valid: STAGES.includes(c) };
+    return { stage: c, source: "env:MC_LIFECYCLE_STAGE", valid: STAGES.includes(c) };
   }
   const f = fromFile();
   if (f) {

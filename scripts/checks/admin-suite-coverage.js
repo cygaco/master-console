@@ -44,7 +44,7 @@ const COMMANDS_DIR = path.join(ROOT, ".claude", "commands");
 const ADMIN_SKILLS = ["preview", "readiness", "guides", "seed"];
 
 // The MC-refusal token preview.js must contain (AC-R5a iii).
-const WARPOS_GUARD_TOKEN = "refuseIfTargetIsMC";
+const MC_GUARD_TOKEN = "refuseIfTargetIsMC";
 
 const JSON_OUT = process.argv.includes("--json");
 
@@ -281,4 +281,4 @@ function main() {
 
 if (require.main === module) process.exit(main());
 
-module.exports = { evaluate, ADMIN_SKILLS, WARPOS_GUARD_TOKEN };
+module.exports = { evaluate, ADMIN_SKILLS, MC_GUARD_TOKEN };

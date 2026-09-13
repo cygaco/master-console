@@ -28,7 +28,7 @@ const fs = require("fs");
 const path = require("path");
 
 // PROJECT root resolves from this script's location in production. The
-// WARPOS_STEPS_ROOT test seam (cf. WARPOS_PURITY_ROOT in framework-purity.js)
+// MC_STEPS_ROOT test seam (cf. MC_PURITY_ROOT in framework-purity.js)
 // lets the absence-tolerance regression test point the resolver at a throwaway
 // repo — both the absent-canon case (no STEPS.json → no-op exit 0) and the
 // present-canon happy path. Unset in production → identical behavior.

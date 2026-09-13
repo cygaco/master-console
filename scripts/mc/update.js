@@ -1459,15 +1459,15 @@ async function run(opts) {
   // COPY diverges from fresh's regenerated asset-sha list).
 
   // SP-20260525-024: also refresh the _mc/ framework SOURCE mirror on update,
-  // not just fresh install. populateWarposMirror is content-addressed + idempotent
+  // not just fresh install. populateMcMirror is content-addressed + idempotent
   // and is explicitly "the migration path for existing products" (scaffold-core.js)
   // — without it, consumers on the old root-copy model never gain _mc/, and
   // regenerate.js stays inert there. Fail-open; separate try so a mirror error
   // can't undo the scaffold above.
   try {
     const scaffoldCore = require("./scaffold-core");
-    if (scaffoldCore && typeof scaffoldCore.populateWarposMirror === "function") {
-      scaffoldCore.populateWarposMirror({
+    if (scaffoldCore && typeof scaffoldCore.populateMcMirror === "function") {
+      scaffoldCore.populateMcMirror({
         target: targetRoot,
         mcRoot: sourceTreeRoot,
         shipManifest: capsule.manifest,
@@ -1483,21 +1483,21 @@ async function run(opts) {
   // (a2 → EXPANSION: ED-264 / GATE-B 3c SYSTEMIC reconvergence): REGENERATE _mc/MANIFEST.json in-target
   // instead of hand-patching only mcVersion. The prior surgical patch fixed the version FIELD but left the
   // per-asset sha256/installedSha LIST STALE — it carried the N-1 capsule's manifest, NOT the freshly-mirrored
-  // on-disk _mc/ sources populateWarposMirror just laid down (GATE-B 3c ground truth: identical _mc/
+  // on-disk _mc/ sources populateMcMirror just laid down (GATE-B 3c ground truth: identical _mc/
   // source files, divergent MANIFEST sha lists → the hand-patch never recomputed them). A fresh-N install builds
   // this manifest by running scripts/mc/manifest/build.js against the target
-  // (scaffold-core#regenerateWarposManifest, invoked from its CLI); running the SAME function here makes the
+  // (scaffold-core#regenerateMcManifest, invoked from its CLI); running the SAME function here makes the
   // upgraded MANIFEST byte-symmetric with fresh. Both design cautions: PRODUCT-mode (--source-prefix _mc —
   // the classifier path fresh exercises, install-matrix-tested) and mcVersion read from the TARGET's own
   // version.json (manifest/build.js default; never a passed-in literal that can drift). mcRoot=targetRoot →
   // the reconvergence loads the freshly-applied target's own build.js (IN-TARGET, consistent with runGenerators),
   // and manifest/build.js output is deterministic on (--root, --source-prefix), so the identical copy is
-  // symmetric-with-fresh. Must run AFTER populateWarposMirror (mirror source must exist first). Fail-open — the
+  // symmetric-with-fresh. Must run AFTER populateMcMirror (mirror source must exist first). Fail-open — the
   // post-update --check gate is the authority on acceptability.
   try {
     const sc = require("./scaffold-core");
-    if (sc && typeof sc.regenerateWarposManifest === "function") {
-      sc.regenerateWarposManifest({
+    if (sc && typeof sc.regenerateMcManifest === "function") {
+      sc.regenerateMcManifest({
         target: targetRoot,
         mcRoot: targetRoot,
         log: scaffoldLog,

@@ -63,7 +63,7 @@ or a canon doc is *staged*, which can't happen once they're relocated out of
   exit 0) AND that the generator still does real work (round-trips a present
   canon) AND that the drift gate still bites (a corrupted region → `--check`
   exit 1), so absence-tolerance can't silently turn into a defanged blanket-0
-  stub. Test seam: `WARPOS_STEPS_ROOT` (cf. `WARPOS_PURITY_ROOT`).
+  stub. Test seam: `MC_STEPS_ROOT` (cf. `MC_PURITY_ROOT`).
 
 ## What gets regenerated (per region)
 

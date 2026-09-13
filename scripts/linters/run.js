@@ -73,13 +73,13 @@ function discover() {
   //   it necessarily rots as canonical evolves (every framework file edited since
   //   install diverges from its install snapshot), so it is a point-in-time
   //   diagnostic, NOT a continuous regression guard. Excluded by design.
-  const WARPOS_TEST_EXCLUDE = new Set([
+  const MC_TEST_EXCLUDE = new Set([
     "test-install-matrix.js",
     "test-hash-back-compat.js",
   ]);
   if (fs.existsSync("scripts/mc")) {
     for (const f of fs.readdirSync("scripts/mc")) {
-      if (f.startsWith("test-") && f.endsWith(".js") && !WARPOS_TEST_EXCLUDE.has(f)) {
+      if (f.startsWith("test-") && f.endsWith(".js") && !MC_TEST_EXCLUDE.has(f)) {
         const stem = f.replace(/\.js$/, "");
         linters.push({
           name: `mc-${stem}`,

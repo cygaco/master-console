@@ -42,7 +42,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * hashing, allowlist load) lives in `run()`.
  *
  * REPORT-ONLY by default (PLAN §4 ramp): findings are printed, exit 0. Pass
- * `--enforce` (or `WARPOS_DUPLICATE_DOC_DRIFT_ENFORCE=block`) to make a drift
+ * `--enforce` (or `MC_DUPLICATE_DOC_DRIFT_ENFORCE=block`) to make a drift
  * finding exit 1 — the §4-flipped state. FAIL-CLOSED on its own errors: a runner
  * error (unreadable/malformed manifest, unreadable allowlist, unreadable doc)
  * exits 2 — a runner error is NEVER a pass (false-green-gauntlet lesson).

@@ -392,7 +392,7 @@ function scrubbedEnv(role, repoDir) {
     if (includesCanonical(env[k])) { delete env[k]; continue; }
   }
   if (repoDir) { env.PWD = repoDir; } // re-point cwd-ish resolution at the isolated repo
-  if (role) env.WARPOS_REPO_ROLE = role; // belt; role is ALSO threaded via the resolver arg
+  if (role) env.MC_REPO_ROLE = role; // belt; role is ALSO threaded via the resolver arg
   return env;
 }
 
@@ -446,7 +446,7 @@ function lifecycle(o) {
 const TELEMETRY_PROBE_ROLE = "qa";
 
 // Default real step runner — spawns the INSTALLED repo's own scripts (never
-// canonical) with cwd=repoDir + fully-scrubbed env + role threaded via WARPOS_REPO_ROLE.
+// canonical) with cwd=repoDir + fully-scrubbed env + role threaded via MC_REPO_ROLE.
 // H2 (gauntlet): a MISSING required engine is fail-CLOSED (non-zero), never "n/a:0" —
 // a payload that omits a required lifecycle surface is an incomplete BOM, the exact
 // thing this gate exists to catch.

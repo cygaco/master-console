@@ -49,9 +49,9 @@ test("statusOf reads a real registry status (SP-20260512-001 is retrospected)", 
 
 // ── Behavioral: the guard refuses an auto-resolved closed primary, side-effect-free ──
 test("no --sprint + auto-resolved CLOSED primary → exit 2 + refusal (the RI-007 bug, closed)", () => {
-  // WARPOS_SPRINT_ID makes SPRINT.active() return a CLOSED sprint without --sprint (the omit-flag path).
+  // MC_SPRINT_ID makes SPRINT.active() return a CLOSED sprint without --sprint (the omit-flag path).
   const r = spawnSync(process.execPath, [FULL, "a brand new feature request"], {
-    env: { ...process.env, WARPOS_SPRINT_ID: "SP-20260512-001" },
+    env: { ...process.env, MC_SPRINT_ID: "SP-20260512-001" },
     encoding: "utf8", timeout: 30000,
   });
   assert.strictEqual(r.status, 2, `exit 2; got ${r.status} stderr=${(r.stderr || "").slice(0, 200)}`);

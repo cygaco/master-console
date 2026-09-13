@@ -262,7 +262,7 @@ ok("kill-switch-env", () => {
   const cap = capture();
   const res = guard.run(
     { tool_name: "SlashCommand", tool_input: { command: "/mode:sprint" } },
-    baseOpts({ env: { WARPOS_DISABLE_MODE_GUARD: "1" }, emit: (e) => { recorder.push(e); return true; }, stdout: cap.fn }),
+    baseOpts({ env: { MC_DISABLE_MODE_GUARD: "1" }, emit: (e) => { recorder.push(e); return true; }, stdout: cap.fn }),
   );
   assert.strictEqual(res.action, "killed", "env kill-switch => guard no-ops");
   assert.strictEqual(res.reason, "env");

@@ -1,6 +1,6 @@
 # Contributing to Master Console
 
-Thanks for looking. Master Console (formerly MC) is a single-maintainer project that is being opened up; the process below is what keeps it honest, and it applies to the maintainer's own changes too.
+Thanks for looking. Master Console is a single-maintainer project that is being opened up; the process below is what keeps it honest, and it applies to the maintainer's own changes too.
 
 ## Ground rules
 
@@ -75,7 +75,7 @@ Three rules with a bug history behind each, from [CLAUDE.md](CLAUDE.md):
 
 ## The rebrand
 
-The brand is Master Console; identifiers are still `mc` / `warp:*` / `MC_*` / `_mc/` until the `2.0.0` release. Please do not rename identifiers piecemeal — that migration is one coordinated sprint with aliases for downstream installs. Brand-level prose (READMEs, docs) should say Master Console, and "formerly MC" where history is referenced.
+The brand is Master Console and, from `2.0.0`, the identifiers use the `mc` slug (`mc:*` skills, `MC_*` environment variables, `_mc/`, `.mc/`). The previous identifiers remain as deprecated aliases and read-fallbacks through 2.0.x and are removed in 2.1.0 (policy in [CHANGELOG.md](CHANGELOG.md)); please do not add new uses of them. Brand-level prose (READMEs, docs) should say Master Console.
 
 ## Questions
 

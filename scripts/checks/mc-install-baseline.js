@@ -131,7 +131,7 @@ function extractRemediationPaths(source) {
 }
 
 function runGuardRemediationCheck() {
-  // WARPOS_GUARD_REMEDIATION_ROOT is a test-only seam: point the scan at a
+  // MC_GUARD_REMEDIATION_ROOT is a test-only seam: point the scan at a
   // throwaway tree so the RED path can be exercised hermetically without a
   // false-RED on the real guard set.
   const scanRoot = mcEnv.readEnv("GUARD_REMEDIATION_ROOT")
@@ -395,7 +395,7 @@ function runShipCoverageCheck() {
   }
 
   // Collect guard-mandated remediation paths via the same scan as --guard-remediation.
-  // WARPOS_GUARD_REMEDIATION_ROOT is the test-only seam (same as --guard-remediation).
+  // MC_GUARD_REMEDIATION_ROOT is the test-only seam (same as --guard-remediation).
   const scanRoot = mcEnv.readEnv("GUARD_REMEDIATION_ROOT")
     ? path.resolve(mcEnv.readEnv("GUARD_REMEDIATION_ROOT"))
     : REPO_ROOT;

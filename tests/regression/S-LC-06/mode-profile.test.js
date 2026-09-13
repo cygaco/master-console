@@ -8,7 +8,7 @@
 // `dispatch-contract.js validate` FAILS. A narrowing profile → OK.
 //
 // Each planted contract is materialized as a SEALED file and validated in a
-// subprocess via WARPOS_DISPATCH_CONTRACT_PATH (the same path-override seam the
+// subprocess via MC_DISPATCH_CONTRACT_PATH (the same path-override seam the
 // existing dispatch-contract.test.js uses) so the live keystone is never touched.
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -28,7 +28,7 @@ function validateSealed(contractObj, label) {
   const fx = sealedDir({ "dispatch-contract.json": JSON.stringify(contractObj) }, label);
   try {
     const r = spawnSync(process.execPath, [VALIDATOR, "validate"], {
-      env: { ...process.env, WARPOS_DISPATCH_CONTRACT_PATH: fx.file("dispatch-contract.json") },
+      env: { ...process.env, MC_DISPATCH_CONTRACT_PATH: fx.file("dispatch-contract.json") },
       encoding: "utf8",
     });
     return { ok: r.status === 0, stdout: r.stdout, stderr: r.stderr };

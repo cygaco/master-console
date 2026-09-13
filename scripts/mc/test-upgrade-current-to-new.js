@@ -346,7 +346,7 @@ function normalizeContent3c(text, ctx) {
 // enters the decision at all.
 const NORMALIZE_ALLOWED_RELPATHS = new Map([
   // NOTE (β (a) ruling): .claude/framework-installed.json and _mc/MANIFEST.json are NOT normalized here —
-  // they are STRUCTURED-compared (compareFrameworkInstalledRecord / compareWarposManifestInventory) so their
+  // they are STRUCTURED-compared (compareFrameworkInstalledRecord / compareMcManifestInventory) so their
   // framework-owned fields stay under a load-bearing check while per-install fields/entries are filtered.
   [
     ".claude/manifest.json",
@@ -425,7 +425,7 @@ function compareTreeContents(treeA, treeB, commonRelPaths, ctx) {
     // framework-owned fields and filter ONLY fields/entries already dispositioned at the file level, via the
     // IMPORTED existing dispositions (β condition 1). These run BEFORE the preserve/normalize generic paths.
     if (rel === "_mc/MANIFEST.json") {
-      const r = compareWarposManifestInventory(treeA, treeB, rel);
+      const r = compareMcManifestInventory(treeA, treeB, rel);
       if (!r.equal) mismatches.push({ rel, reason: r.reason });
       continue;
     }
@@ -484,7 +484,7 @@ function readJsonRecord(root, rel) {
 }
 
 // _mc/MANIFEST.json is a WHOLE-TREE ownership inventory (manifest/build.js product-mode enumerates every
-// path). Its framework-owned entries are reconverged in-target by update.js#regenerateWarposManifest and MUST
+// path). Its framework-owned entries are reconverged in-target by update.js#regenerateMcManifest and MUST
 // match; entries for paths already dispositioned at the file level are filtered by the IMPORTED predicates.
 function isDispositionedInventoryKey(key) {
   return (
@@ -496,7 +496,7 @@ function isDispositionedInventoryKey(key) {
     isFullTreeExcluded(key) // EXISTING full-tree walk exclusion (.claude/runtime, project/events, memory, …)
   );
 }
-function compareWarposManifestInventory(treeA, treeB, rel) {
+function compareMcManifestInventory(treeA, treeB, rel) {
   let a, b;
   try { a = readJsonRecord(treeA, rel); } catch (e) { return { equal: false, reason: `_mc/MANIFEST.json unparseable in upgraded tree: ${e.message}` }; }
   try { b = readJsonRecord(treeB, rel); } catch (e) { return { equal: false, reason: `_mc/MANIFEST.json unparseable in fresh-N tree: ${e.message}` }; }
@@ -1146,10 +1146,10 @@ async function runEngine({ timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
       /* best-effort */
     }
     try {
-      // WARPOS_GATEB_KEEP=1 preserves the sandbox trees (n1-install + freshN oracle) for post-mortem
+      // MC_GATEB_KEEP=1 preserves the sandbox trees (n1-install + freshN oracle) for post-mortem
       // 3c-parity field diffs — the cleanup is otherwise a hard rmSync in this finally.
       if (!mcEnv.readEnv("GATEB_KEEP")) fs.rmSync(tmpBase, { recursive: true, force: true });
-      else process.stderr.write(`[WARPOS_GATEB_KEEP] preserved sandbox: ${tmpBase}\n`);
+      else process.stderr.write(`[MC_GATEB_KEEP] preserved sandbox: ${tmpBase}\n`);
     } catch {
       /* best-effort */
     }

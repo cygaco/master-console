@@ -51,7 +51,7 @@ Defaults: `--autonomy moderate --scope recommended --documentation-scale auto --
 **ε-conduct default (sprint-mode only):** When the session mode is `sprint` (`.claude/runtime/mode.json`
 `mode === "sprint"`), `--epsilon` and `--epsilon-dispatch` are ON by default — the orchestrator
 detects this via `scripts/hooks/lib/mode.js#isSprint()`. Explicit CLI flags (`--epsilon`,
-`--no-epsilon`, `--epsilon-dispatch`) and `WARPOS_EPSILON_RUNTIME` env var always win. Non-sprint
+`--no-epsilon`, `--epsilon-dispatch`) and `MC_EPSILON_RUNTIME` env var always win. Non-sprint
 sessions have byte-identical behavior to the pre-T-297 default (ε OFF unless explicitly passed).
 
 See `paths.sprintFullAutonomy` for preset definitions and

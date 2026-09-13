@@ -696,7 +696,7 @@ console.log("\n(n) CLI EXIT CODES — subprocess tests:");
   }
 
   // Test 3: phase_started event with no consult → exit 1 (missing_consult finding)
-  // Uses WARPOS_SPRINT_DATES_JSON to inject a post-cutoff date for the sprint.
+  // Uses MC_SPRINT_DATES_JSON to inject a post-cutoff date for the sprint.
   {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "wos-sbh-"));
     const tmpEvents = path.join(tmpDir, "events.jsonl");

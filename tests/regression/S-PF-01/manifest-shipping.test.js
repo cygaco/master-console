@@ -31,7 +31,7 @@ function flattenFrameworkAssets(manifest) {
   return out;
 }
 
-function flattenWarposPaths(manifest) {
+function flattenMcPaths(manifest) {
   if (Array.isArray(manifest.paths)) {
     return new Set(manifest.paths.map((entry) => entry.path));
   }
@@ -39,7 +39,7 @@ function flattenWarposPaths(manifest) {
 }
 
 const frameworkPaths = flattenFrameworkAssets(frameworkManifest);
-const mcPaths = flattenWarposPaths(mcManifest);
+const mcPaths = flattenMcPaths(mcManifest);
 
 try {
   for (const rel of REQUIRED) {

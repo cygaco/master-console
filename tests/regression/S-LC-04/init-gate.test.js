@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 // ─────────────────────────────────────────────────────────────────────────────
 // init-gate.test.js — S-LC-04 (E-LIFECYCLE-001): the mode:init:gate
 // generalization of scripts/hooks/team-guard.js from HARDCODED-sprint-only to
@@ -171,11 +172,11 @@ function runGuard(opts = {}) {
     HOME: home,
     USERPROFILE: home,
   };
-  delete env.WARPOS_TEAM_GATE_HARD;
-  if (opts.soft) env.WARPOS_TEAM_GATE_SOFT = "1";
-  else delete env.WARPOS_TEAM_GATE_SOFT;
-  if (opts.killSwitchEnv) env.WARPOS_DISABLE_TEAM_GATE = "1";
-  else delete env.WARPOS_DISABLE_TEAM_GATE;
+  mcEnv.unsetEnv("TEAM_GATE_HARD", env);
+  if (opts.soft) env.MC_TEAM_GATE_SOFT = "1";
+  else mcEnv.unsetEnv("TEAM_GATE_SOFT", env);
+  if (opts.killSwitchEnv) env.MC_DISABLE_TEAM_GATE = "1";
+  else mcEnv.unsetEnv("DISABLE_TEAM_GATE", env);
 
   const r = spawnSync("node", [HOOK], {
     input: JSON.stringify(event),

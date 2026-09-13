@@ -58,7 +58,7 @@
  *
  * Enforcer of its own contract: scripts/checks/framework-purity.test.js
  * (detector unit tests) + scripts/checks/framework-purity-gate.test.js
- * (planted-leak RED proof against a throwaway git repo, via WARPOS_PURITY_ROOT).
+ * (planted-leak RED proof against a throwaway git repo, via MC_PURITY_ROOT).
  */
 
 "use strict";
@@ -69,7 +69,7 @@ const path = require("path");
 const { execSync } = require("child_process");
 
 // REPO_ROOT defaults to the canonical repo (two levels up from this file).
-// WARPOS_PURITY_ROOT is a test-only seam: it lets the test suite point the
+// MC_PURITY_ROOT is a test-only seam: it lets the test suite point the
 // scanner at a throwaway git repo so the modes can be exercised hermetically
 // without a false-RED on the real working tree.
 const REPO_ROOT = mcEnv.readEnv("PURITY_ROOT")
@@ -91,6 +91,16 @@ const LEGACY_SLUG_ENFORCE_MAJOR = 2;
 function loadGatePartition() {
   const loader = require("../open-source/partition-loader");
   return loader.loadPartition({ forceReload: true });
+}
+
+/** package.json#version at REPO_ROOT, or null (unreadable/absent) — the compat-window expiry clock. */
+function readRootVersion() {
+  try {
+    const v = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "package.json"), "utf8").replace(/^﻿/, "")).version;
+    return typeof v === "string" ? v : null;
+  } catch {
+    return null;
+  }
 }
 
 function resolveLegacySlugMode(opts) {
@@ -253,6 +263,7 @@ const ALLOW_PROMOTE_RELIC_PATHS = [
   /^scripts\/hooks\/version-bump-guard\.js$/, // FRAMEWORK_PREFIXES mirror comment
   /^scripts\/phase0-verify\.js$/, // historical test names
   /^(_mc\/BASELINE\/)?_docs\/phase0\//, // historical phase-0 report documenting the retired ledger
+  /^scripts\/open-source\/rename-mc\.(denylist|occurrences)\.json$/, // S-OS-06 rename partition + its ledger quote this file's pinned relic-detector patterns as DATA (Class-3/4)
 ];
 
 // File patterns where ABS_PATH is allowed even inside the scoped surface —
@@ -439,7 +450,8 @@ function run(opts) {
     };
   }
   const slugMode = resolveLegacySlugMode(opts);
-  const slugTally = partition.createLegacySlugTally();
+  // The compat expiry clock is THIS tree's package.json version (null when unreadable -> every window reads expired).
+  const slugTally = partition.createLegacySlugTally({ version: readRootVersion() });
   const slugUnscanned = []; // live files too large to scan: unverifiable, fail closed when enforcing
 
   const skippedLarge = [];
@@ -481,14 +493,23 @@ function run(opts) {
       ]
     : [];
 
+  // T5 F3: the PATH-NAME tally beside the content tally — every scanned path whose NAME carries the legacy slug,
+  // classified through the same partition into the same dispositions. A live Class-1 path (or an expired compat
+  // member) still named with the slug is a violation of its own kind (kept apart from the content findings).
+  const pathTally = partition.tallyLegacySlugPathNames(files, LEGACY_SLUG_NEEDLE, { version: readRootVersion() });
+  findings.legacy_slug_path = slugMode.enforce
+    ? pathTally.liveUnallowedPaths.map((x) => ({ path: x.path, pattern: `path-name live-unallowed: ${x.reason}` }))
+    : [];
+
   // root_leak + domain_vocab are ADVISORY and deliberately excluded from the
-  // violation count — they must never flip the exit code. legacy_slug counts only
-  // when ENFORCING (package.json >= 2.0.0, or --enforce).
+  // violation count — they must never flip the exit code. legacy_slug (content AND
+  // path-name) counts only when ENFORCING (package.json >= 2.0.0, or --enforce).
   const violationCount =
     findings.client_slug.length +
     findings.abs_path.length +
     findings.promote_relic.length +
-    findings.legacy_slug.length;
+    findings.legacy_slug.length +
+    findings.legacy_slug_path.length;
 
   return {
     ok: violationCount === 0,
@@ -501,6 +522,7 @@ function run(opts) {
       abs_path: findings.abs_path.length,
       promote_relic: findings.promote_relic.length,
       legacy_slug: slugTally.pendingTotal + slugUnscanned.length, // a violation only when enforcing
+      legacy_slug_path: pathTally.byDisposition.liveUnallowed, // path-name residue; a violation only when enforcing
       root_leak: findings.root_leak.length, // advisory, not a violation
       domain_vocab: findings.domain_vocab.length, // advisory, not a violation
     },
@@ -514,11 +536,31 @@ function run(opts) {
       pinned: slugTally.pinnedTotal,
       derived: slugTally.derivedTotal,
       changelog_historical: slugTally.changelogHistoricalTotal,
+      // β r3b: the fifth disposition, emitted PER SURFACE (reviewed as numbers). Expired windows are counted
+      // separately AND inside live_unallowed (they fail the gate).
+      compat: slugTally.compatTotal,
+      compat_by_surface: slugTally.compatBySurface,
+      compat_expired: slugTally.compatExpiredTotal,
+      compat_expired_by_surface: slugTally.compatExpiredBySurface,
+      compat_clock: slugTally.versionReason,
+      dispositions: partition.dispositionSummary(slugTally),
       suppressed_by_entry: slugTally.suppressedByEntry,
       pinned_by_pin: slugTally.pinnedByPin,
       derived_by_view: slugTally.derivedByView,
       pending_by_file: slugTally.pendingByFile,
       formatted: partition.formatLegacySlugTally(slugTally, { indent: "    ", maxPending: slugMode.enforce ? 0 : 10 }),
+      // T5 F3: the PATH-NAME tally (tracked paths with the slug in the NAME), beside the content tally above.
+      path_names: {
+        total: pathTally.total,
+        dispositions: pathTally.byDisposition,
+        by_entry: pathTally.byEntry,
+        compat_by_surface: pathTally.compatBySurface,
+        compat_expired_by_surface: pathTally.compatExpiredBySurface,
+        live_unallowed: pathTally.byDisposition.liveUnallowed,
+        live_unallowed_paths: pathTally.liveUnallowedPaths,
+        compat_clock: pathTally.versionReason,
+        formatted: partition.formatPathNameTally(pathTally, { indent: "    " }),
+      },
     },
     findings,
   };
@@ -563,6 +605,10 @@ Hard detectors (each one fails the gate):
                   classified through scripts/open-source/partition-loader.js. REPORT-ONLY
                   (prints the pending count) while package.json < 2.0.0; ENFORCING at
                   >= 2.0.0 or with --enforce. Suppressed counts are always printed.
+                  compat: an occurrence is permitted ONLY inside a REGISTERED compat window
+                  (the partition's compatWindows: enumerated members + anchored occurrences,
+                  each window with its OWN expires version); counts are emitted per surface;
+                  at package.json >= a window's expiry its occurrences are live-unallowed.
 
 Advisory (report-only — never affects the exit code):
   root_leak       _requirements/ or _docs/ at canonical root
@@ -607,6 +653,10 @@ function formatHuman(r) {
     lines.push("  legacy slug partition tally:");
     lines.push(...ls.formatted);
     if (ls.unscanned.length) lines.push(`    unscanned live files (too large): ${ls.unscanned.length}`);
+    if (ls.path_names) {
+      lines.push(`    legacy_slug_path: ${r.summary.legacy_slug_path}  [${ls.enforce ? "ENFORCING" : "REPORT-ONLY"}]`);
+      lines.push(...ls.path_names.formatted);
+    }
   }
   lines.push("");
   lines.push(`  advisory (report-only, does NOT affect exit code):`);

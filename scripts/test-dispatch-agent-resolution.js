@@ -94,15 +94,15 @@ for (const [role, expectedTail] of otherCases) {
 const unknown = dispatch.findAgentSpec("definitely-not-a-real-role");
 check("unknown role returns null", unknown === null, String(unknown));
 
-// detectMode still honours WARPOS_MODE (the mode signal persists even though
+// detectMode still honours MC_MODE (the mode signal persists even though
 // resolution is mode-agnostic — the conducting face uses it for orchestration).
 const prev = mcEnv.readEnv("MODE");
 mcEnv.setEnv("MODE", "oneshot");
-check("detectMode honours WARPOS_MODE=oneshot", dispatch.detectMode() === "oneshot");
+check("detectMode honours MC_MODE=oneshot", dispatch.detectMode() === "oneshot");
 mcEnv.setEnv("MODE", "adhoc");
-check("detectMode honours WARPOS_MODE=adhoc", dispatch.detectMode() === "adhoc");
+check("detectMode honours MC_MODE=adhoc", dispatch.detectMode() === "adhoc");
 mcEnv.setEnv("MODE", "sprint");
-check("detectMode honours WARPOS_MODE=sprint", dispatch.detectMode() === "sprint");
+check("detectMode honours MC_MODE=sprint", dispatch.detectMode() === "sprint");
 if (prev === undefined) mcEnv.unsetEnv("MODE");
 else mcEnv.setEnv("MODE", prev);
 

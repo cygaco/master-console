@@ -10,9 +10,12 @@
  *
  * Modes:
  *   --dry-run   (default) classify every tracked path into exactly one of the four
- *               beta r1 classes, scan every Class-1 file for `warpos` occurrences,
- *               assign each occurrence exactly one disposition (rewritten / pinned /
- *               derived), and write:
+ *               beta r1 classes, scan every Class-1 file (and every REGISTERED compat
+ *               member) for `warpos` occurrences, assign each occurrence exactly one
+ *               disposition (rewritten / pinned / derived / compat — β r3b: compat is
+ *               permitted ONLY inside a registered compat window, each window carrying its
+ *               own expiry; an occurrence in an expired window FAILS the dry-run as
+ *               compatExpired), and write:
  *                 - runtime/S-OS-06/rename-plan.json  (path renames + category counts)
  *                 - runtime/S-OS-06/rename-occurrences.full.json  (ALL occurrence rows incl.
  *                   the ~33k `rewritten` codemod-plan rows; regenerated each run, NOT committed)
@@ -50,7 +53,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const { loadPartition, historicalChangelogLines } = require("./partition-loader");
+const { loadPartition, historicalChangelogLines, readTreeVersion, isCompatExpired, compatLabel } = require("./partition-loader");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 
@@ -62,7 +65,12 @@ const BINARY_EXTENSIONS = new Set([
   ".pyc", ".node", ".wasm",
 ]);
 
-const MAX_SCAN_BYTES = 5 * 1024 * 1024; // 5MB — skip larger blobs, they aren't hand-authored source
+// Size cap for whole-file content scans. Crossing it is NEVER a silent skip (T5-C, the β fail-open
+// class): a tracked TEXT file over the cap would have its `warpos` occurrences go unledgered and
+// unrewritten while the dry-run reads green. So an oversized non-binary tracked file makes --dry-run
+// FAIL naming it, and makes --apply / --apply-skill-namespace refuse. Binary files (by extension or a
+// NUL byte in the first 8KB) stay a legitimate skip at any size.
+const MAX_SCAN_BYTES = 5 * 1024 * 1024; // 5MB
 
 // ── tracked-file enumeration ────────────────────────────────────────────────
 
@@ -78,21 +86,62 @@ function listTrackedFiles(root) {
   return r.stdout.split(NUL).filter(Boolean).map((p) => p.split(path.sep).join("/"));
 }
 
-function looksBinary(absPath) {
+/**
+ * One file's content-scan status: "binary" (extension or NUL in the first 8KB — a legitimate skip),
+ * "unreadable" (missing / not a regular file / read error — nothing to scan), "oversized" (a TEXT file
+ * over maxBytes — never silently skipped, see MAX_SCAN_BYTES) or "text" (scan it). The binary sniff runs
+ * BEFORE the size cap, so a large binary blob is not misreported as an oversized text file.
+ */
+function scanStatus(absPath, maxBytes = MAX_SCAN_BYTES) {
   const ext = path.extname(absPath).toLowerCase();
-  if (BINARY_EXTENSIONS.has(ext)) return true;
+  if (BINARY_EXTENSIONS.has(ext)) return "binary";
+  let stat;
   try {
-    const stat = fs.statSync(absPath);
-    if (stat.size > MAX_SCAN_BYTES) return true;
-    if (stat.size === 0) return false;
-    const fd = fs.openSync(absPath, "r");
-    const buf = Buffer.alloc(Math.min(8192, stat.size));
-    fs.readSync(fd, buf, 0, buf.length, 0);
-    fs.closeSync(fd);
-    return buf.includes(0);
+    stat = fs.statSync(absPath);
   } catch {
-    return true; // unreadable -> treat as opaque, skip content scan
+    return "unreadable";
   }
+  if (!stat.isFile()) return "unreadable";
+  if (stat.size === 0) return "text";
+  const buf = Buffer.alloc(Math.min(8192, stat.size));
+  try {
+    const fd = fs.openSync(absPath, "r");
+    try {
+      fs.readSync(fd, buf, 0, buf.length, 0);
+    } finally {
+      fs.closeSync(fd);
+    }
+  } catch {
+    return "unreadable";
+  }
+  if (buf.includes(0)) return "binary";
+  return stat.size > maxBytes ? "oversized" : "text";
+}
+
+/** True when the content scan does not read this file. An oversized text file is excluded here AND named by listOversizedUnscanned(). */
+function looksBinary(absPath) {
+  return scanStatus(absPath) !== "text";
+}
+
+/** Tracked, non-binary files over the scan cap — each one is an unverifiable scan gap the dry-run must fail on. */
+function listOversizedUnscanned(root, trackedFiles, maxBytes = MAX_SCAN_BYTES) {
+  const out = [];
+  for (const rel of trackedFiles) {
+    const abs = path.join(root, rel);
+    let size;
+    try {
+      size = fs.statSync(abs).size;
+    } catch {
+      continue;
+    }
+    if (size <= maxBytes) continue; // cheap stat first; only over-cap files pay the binary sniff
+    if (scanStatus(abs, maxBytes) === "oversized") out.push({ file: rel, bytes: size });
+  }
+  return out;
+}
+
+function describeOversized(o) {
+  return `${o.file} (${o.bytes} bytes > MAX_SCAN_BYTES ${MAX_SCAN_BYTES}; non-binary, so its content cannot be verified)`;
 }
 
 // ── CHANGELOG.md historical-section special case ────────────────────────────
@@ -161,6 +210,9 @@ function residualWarpTokens(lineText) {
 function skillNamespaceLineDecision(partition, file, effective, hist, lineText, lineNum) {
   const after = rewriteSkillPathRefs(rewriteSkillNamespaceTokens(lineText));
   if (after === lineText) return { after, verbatimReason: null };
+  if (partition.findCompatOccurrence(file, lineText) || (effective !== file && partition.findCompatOccurrence(effective, lineText))) {
+    return { after: lineText, verbatimReason: "compat-occurrence" };
+  }
   if (partition.findOccurrencePin(file, lineText) || (effective !== file && partition.findOccurrencePin(effective, lineText))) {
     return { after: lineText, verbatimReason: "occurrence-pin" };
   }
@@ -248,7 +300,10 @@ function planSkillNamespace({ root, partition, trackedFiles }) {
     if (cls.class !== 1) {
       if (enumTokens) {
         counts.keptNonClass1Tokens += enumTokens;
-        const label = `class-${cls.class} ${cls.entry ? cls.entry.pattern || cls.entry.path : cls.kind}`;
+        const entryName = cls.entry
+          ? cls.entry.pattern || cls.entry.path || (cls.kind === "compat" ? `compat ${compatLabel(cls.entry)}` : cls.kind)
+          : cls.kind;
+        const label = `class-${cls.class} ${entryName}`;
         bump(keptByEntry, label, enumTokens);
       }
       continue;
@@ -316,6 +371,72 @@ function categorizeOccurrence(file, lineText) {
   if (/\bWarpos[A-Z][a-zA-Z0-9]*\b/.test(lineText)) return "identifier";
   if (/\b[a-zA-Z0-9]+_warpos_[a-zA-Z0-9]+\b/i.test(lineText)) return "identifier";
   return "prose";
+}
+
+// ── per-category transform table + structural delta (β r3c) ─────────────────
+// ONE table drives BOTH --apply's content rewrite AND the per-category delta assertion, so "what the codemod
+// categorizes" and "what the codemod transforms" cannot drift apart silently (the env categorize-then-skip gap:
+// T1 categorized WARPOS_* lines "env", --apply skipped them, T3 rewrote only process.env reads, and the
+// constants/prose fell through both). For EVERY category the categorizer owns:
+//     delta(C) = categorized-lines(C) − (pinned-lines(C) + transformed-lines(C))
+// where a line is "transformed" iff its category's transform returns text carrying NO legacy slug. delta != 0
+// for ANY category, or a line whose category has no registered transform (uncomputable), makes --dry-run exit
+// non-zero and --apply REFUSE before touching anything — never a silent skip.
+
+const LEGACY_SLUG_ANY_RE = /warpos/i;
+
+/** The generic slug rewrite shared by every transformable category (case-preserving for the spellings in the tree). */
+function genericSlugRewrite(lineText) {
+  return lineText
+    .replace(/WARPOS/g, "MC")
+    .replace(/WarpOS/g, "MC")
+    .replace(/Warpos/g, "Mc")
+    .replace(/warpos/g, "mc");
+}
+
+// A raw process.env read of a legacy-named variable has NO mechanical transform: the literal WARPOS_->MC_ swap
+// silently drops the one-release legacy fallback, and the correct rewrite (a read-both helper CALL + its require)
+// is not a line-local edit. Such a line is untransformable -> counted in the delta -> the codemod refuses.
+const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:\.\s*WARPOS_|\[\s*["'`]WARPOS_)/;
+
+/** category -> (lineText) => rewritten line, or null when that line has no mechanical transform. */
+const CATEGORY_TRANSFORMS = Object.freeze({
+  "paths-registry": genericSlugRewrite,
+  env: (lineText) => (RAW_LEGACY_ENV_READ_RE.test(lineText) ? null : genericSlugRewrite(lineText)),
+  "skill-namespace": genericSlugRewrite,
+  dir: genericSlugRewrite,
+  identifier: genericSlugRewrite,
+  prose: genericSlugRewrite,
+});
+
+/** Every category the categorizer can return. A category missing from CATEGORY_TRANSFORMS is uncomputable (refuse). */
+const OCCURRENCE_CATEGORIES = Object.freeze(["paths-registry", "env", "skill-namespace", "dir", "identifier", "prose"]);
+
+function emptyCategoryDelta() {
+  const out = {};
+  for (const c of OCCURRENCE_CATEGORIES) out[c] = { categorized: 0, pinned: 0, transformed: 0, delta: 0 };
+  return out;
+}
+
+/**
+ * One slug-carrying LINE's structural decision: its category, and whether it is pinned / transformed / neither.
+ * Returns { category, computable, outcome: "pinned" | "transformed" | "untransformed", after }.
+ */
+function computeLineCategoryDecision(relPath, lineText, pinned) {
+  let category;
+  try {
+    category = categorizeOccurrence(relPath, lineText);
+  } catch (e) {
+    return { category: `<categorizer threw: ${e.message}>`, computable: false, outcome: "untransformed", after: null };
+  }
+  const transform = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, category) ? CATEGORY_TRANSFORMS[category] : null;
+  if (!OCCURRENCE_CATEGORIES.includes(category) || typeof transform !== "function") {
+    return { category: String(category), computable: false, outcome: "untransformed", after: null };
+  }
+  if (pinned) return { category, computable: true, outcome: "pinned", after: lineText };
+  const after = transform(lineText);
+  if (typeof after === "string" && !LEGACY_SLUG_ANY_RE.test(after)) return { category, computable: true, outcome: "transformed", after };
+  return { category, computable: true, outcome: "untransformed", after: typeof after === "string" ? after : null };
 }
 
 // ── path rename planning (segment-level; Class-1 only) ──────────────────────
@@ -387,6 +508,7 @@ function buildLedgerAndPlan({ root, partition }) {
   const keptHistoricalPaths = []; // Class-3/4 paths a naive rename WOULD touch: never candidates, names verbatim (β r1)
   const candidates = []; // rename candidates in tracked order; write permission is decided after the scan
   const class1Files = [];
+  const compatMemberFiles = []; // β r3b: registered compat members (Class-3 for renames) — their occurrences are `compat`
 
   for (const relPath of trackedFiles) {
     const result = partition.classifyPath(relPath);
@@ -398,6 +520,7 @@ function buildLedgerAndPlan({ root, partition }) {
     if (result.class === 1) {
       class1Files.push({ relPath, writeProtected: result.writeProtected, kind: result.kind });
     }
+    if (result.kind === "compat") compatMemberFiles.push({ relPath, window: result.entry });
 
     // Compute the would-be rename for EVERY classified path (not just Class-1) so no path a
     // naive rename WOULD touch is silently skipped: each one lands in exactly one of
@@ -454,7 +577,21 @@ function buildLedgerAndPlan({ root, partition }) {
   let derivedCount = 0;
   let pinnedCount = 0;
   let rewrittenCount = 0;
-  const underived = []; // defensive: occurrences that got NONE of the three dispositions
+  let compatCount = 0;
+  const compatBySurface = {};
+  const compatExpired = []; // occurrences inside a registered window whose expiry the tree version has reached — a FAIL
+  const treeVersion = readTreeVersion(root);
+  const noteCompat = (w, file, line, matchText) => {
+    compatCount += 1;
+    const label = compatLabel(w);
+    compatBySurface[label] = (compatBySurface[label] || 0) + 1;
+    if (isCompatExpired(w.expires, treeVersion.version)) compatExpired.push({ file, line, matchText, surface: w.surface, expires: w.expires });
+  };
+  const underived = []; // defensive: occurrences that got NONE of the four codemod dispositions
+  // β r3c structural delta: per category, categorized LINES vs pinned + transformed lines (see CATEGORY_TRANSFORMS).
+  const categoryDelta = emptyCategoryDelta();
+  const categoryUncomputable = []; // a slug line whose category has no registered transform (or the categorizer threw)
+  const categoryUntransformed = []; // a categorized, unpinned line its category's transform leaves carrying the slug
 
   for (const { relPath, writeProtected } of class1Files) {
     const absPath = path.join(root, relPath);
@@ -473,6 +610,24 @@ function buildLedgerAndPlan({ root, partition }) {
 
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
+      // Structural delta — ONE decision per slug-carrying LINE of a live, non-derived file. Compat-claimed lines are
+      // the compat disposition (never categorized for a rewrite); pinned lines count as pinned in their category.
+      if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText) && !partition.findCompatOccurrence(relPath, lineText)) {
+        const linePinned = Boolean(partition.findOccurrencePin(relPath, lineText)) || (isChangelog && changelogHistoricalLines.has(lineNum));
+        const dec = computeLineCategoryDecision(relPath, lineText, linePinned);
+        if (!dec.computable) {
+          categoryUncomputable.push({ file: relPath, line: lineNum, category: dec.category });
+        } else {
+          const slot = categoryDelta[dec.category];
+          slot.categorized += 1;
+          if (dec.outcome === "pinned") slot.pinned += 1;
+          else if (dec.outcome === "transformed") slot.transformed += 1;
+          else {
+            slot.delta += 1;
+            categoryUntransformed.push({ file: relPath, line: lineNum, category: dec.category, text: lineText.trim().slice(0, 160) });
+          }
+        }
+      }
       const re = /warpos/gi;
       let m;
       while ((m = re.exec(lineText)) !== null) {
@@ -487,9 +642,17 @@ function buildLedgerAndPlan({ root, partition }) {
           warrant = "generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)";
           derivedCount += 1;
         } else {
-          // R4: a pin binds (file, matchText [, anchor]) — never a line number.
+          // β r3b: a registered compat occurrence is checked BEFORE pins in the chain below (the loader refuses a
+          // line claimed by both, so computing the pin unconditionally never changes a disposition).
+          const comp = partition.findCompatOccurrence(relPath, lineText);
+          // R4: a pin binds (file, matchText [, anchor]) — never a line number. This line is THE pin lever F6 mutates.
           const pin = partition.findOccurrencePin(relPath, lineText);
-          if (pin) {
+          if (comp) {
+            disposition = "compat";
+            rule = `compat:${comp.window.surface}`;
+            warrant = comp.window.warrant;
+            noteCompat(comp.window, relPath, lineNum, matchText);
+          } else if (pin) {
             disposition = "pinned";
             rule = "occurrence-pin";
             warrant = pin.warrant;
@@ -508,7 +671,7 @@ function buildLedgerAndPlan({ root, partition }) {
           }
         }
 
-        if (!["rewritten", "pinned", "derived"].includes(disposition)) {
+        if (!["rewritten", "pinned", "derived", "compat"].includes(disposition)) {
           underived.push({ file: relPath, line: lineNum, matchText });
         }
 
@@ -517,25 +680,79 @@ function buildLedgerAndPlan({ root, partition }) {
     });
   }
 
+  // Registered compat MEMBER files: never renamed, never rewritten, but every occurrence is ledgered `compat` so the
+  // count per surface is emitted (β r3b condition 3) and an expired window fails the dry-run.
+  for (const { relPath, window: w } of compatMemberFiles) {
+    const absPath = path.join(root, relPath);
+    if (looksBinary(absPath)) continue;
+    let content;
+    try {
+      content = fs.readFileSync(absPath, "utf8");
+    } catch {
+      continue;
+    }
+    content.split(/\r?\n/).forEach((lineText, idx) => {
+      const re = /warpos/gi;
+      let m;
+      while ((m = re.exec(lineText)) !== null) {
+        noteCompat(w, relPath, idx + 1, m[0]);
+        ledger.push({ file: relPath, line: idx + 1, rule: `compat:${w.surface}`, matchText: m[0], disposition: "compat", warrant: w.warrant });
+      }
+    });
+  }
+
   return {
     trackedFileCount: trackedFiles.length,
     classCounts,
     unclassified,
+    oversizedUnscanned: listOversizedUnscanned(root, trackedFiles),
     pathRenames,
     refusedRenames,
     keptHistoricalPaths,
     categoryCounts,
     ledger,
-    dispositionCounts: { rewritten: rewrittenCount, pinned: pinnedCount, derived: derivedCount },
+    dispositionCounts: { rewritten: rewrittenCount, pinned: pinnedCount, derived: derivedCount, compat: compatCount },
+    compatBySurface,
+    compatExpired,
+    treeVersion,
     underived,
+    categoryDelta,
+    categoryUncomputable,
+    categoryUntransformed,
   };
+}
+
+/** Structural-delta verdict over a built plan: every owned category delta 0 and nothing uncomputable. */
+function categoryDeltaProblems(built) {
+  const problems = [];
+  const delta = built && built.categoryDelta;
+  if (!delta || typeof delta !== "object") return ["no categoryDelta computed (fail-closed)"];
+  for (const c of OCCURRENCE_CATEGORIES) {
+    const s = delta[c];
+    if (!s) {
+      problems.push(`category ${c}: no delta slot (uncomputable)`);
+      continue;
+    }
+    if (s.categorized - (s.pinned + s.transformed) !== s.delta) problems.push(`category ${c}: arithmetic disagreement`);
+    if (s.delta !== 0) problems.push(`category ${c}: delta=${s.delta}`);
+  }
+  if (!Array.isArray(built.categoryUncomputable)) problems.push("no categoryUncomputable list (fail-closed)");
+  else if (built.categoryUncomputable.length) problems.push(`${built.categoryUncomputable.length} line(s) with an uncomputable category`);
+  return problems;
+}
+
+function describeCategoryDelta(delta) {
+  return OCCURRENCE_CATEGORIES.map((c) => {
+    const s = delta[c] || {};
+    return `${c}=${s.delta} (categorized=${s.categorized} pinned=${s.pinned} transformed=${s.transformed})`;
+  }).join("; ");
 }
 
 // ── occurrence-ledger split: full (runtime) vs committed (warranted only) ──
 
 const COMMITTED_LEDGER_REL = "scripts/open-source/rename-mc.occurrences.json";
 const FULL_LEDGER_REL = "runtime/S-OS-06/rename-occurrences.full.json";
-const WARRANTED_DISPOSITIONS = ["pinned", "derived"];
+const WARRANTED_DISPOSITIONS = ["pinned", "derived", "compat"];
 
 // The committed ledger is the record-trust artifact: every row it persists carries a
 // warrant. `rewritten` rows are the codemod PLAN (warrant:null) — they are represented
@@ -545,12 +762,13 @@ function buildCommittedLedger(built) {
   const rows = built.ledger
     .filter((r) => WARRANTED_DISPOSITIONS.includes(r.disposition))
     .map(({ file, line, rule, matchText, disposition, warrant }) => ({ file, line, rule, matchText, disposition, warrant }));
-  const rowsPersisted = { pinned: 0, derived: 0 };
+  const rowsPersisted = { pinned: 0, derived: 0, compat: 0 };
   for (const r of rows) rowsPersisted[r.disposition] += 1;
   return {
     $question:
-      "Which `warpos` occurrences in Class-1 files are NOT rewritten by rename-mc.js, and under what warrant? Warranted dispositions only (pinned + derived). The rewritten set is a COUNT here; full per-occurrence detail is regenerated by --dry-run at fullLedgerPath (not committed).",
+      "Which `warpos` occurrences are NOT rewritten by rename-mc.js, and under what warrant? Warranted dispositions only (pinned + derived + compat — the last per REGISTERED compat window, each with its own expiry). The rewritten set is a COUNT here; full per-occurrence detail is regenerated by --dry-run at fullLedgerPath (not committed).",
     dispositionCounts: { ...built.dispositionCounts },
+    compatBySurface: { ...(built.compatBySurface || {}) },
     rowsPersisted,
     fullLedgerPath: FULL_LEDGER_REL,
     rows,
@@ -582,14 +800,27 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     classCounts: built.classCounts,
     unclassified: unclassifiedCount,
     unclassifiedPaths: built.unclassified.slice(0, 50),
+    maxScanBytes: MAX_SCAN_BYTES,
+    oversizedUnscanned: built.oversizedUnscanned.length,
+    oversizedUnscannedFiles: built.oversizedUnscanned,
     pathRenames: built.pathRenames,
     refusedRenames: built.refusedRenames,
     keptHistoricalPathCount: built.keptHistoricalPaths.length,
     keptHistoricalPaths: built.keptHistoricalPaths,
     categoryCounts: built.categoryCounts,
     dispositionCounts: built.dispositionCounts,
+    compatClock: built.treeVersion,
+    compatBySurface: built.compatBySurface,
+    compatExpired: built.compatExpired.length,
+    compatExpiredOccurrences: built.compatExpired.slice(0, 50),
     unpinnedUnrewrittenUnderived: underivedCount,
     underivedOccurrences: built.underived.slice(0, 50),
+    // β r3c structural delta (per owned category): categorized lines == pinned + transformed; delta 0 everywhere.
+    categoryDelta: built.categoryDelta,
+    categoryDeltaProblems: categoryDeltaProblems(built),
+    categoryUncomputable: built.categoryUncomputable.length,
+    categoryUncomputableLines: built.categoryUncomputable.slice(0, 50),
+    categoryUntransformedLines: built.categoryUntransformed.slice(0, 50),
     skillNamespace: skillNs,
     openQuestions: partition.openQuestions,
     occurrenceLedgerPath: COMMITTED_LEDGER_REL,
@@ -618,8 +849,20 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(`rename-mc --dry-run: ${built.trackedFileCount} tracked files`);
   console.log(`  class counts: 1(live)=${built.classCounts[1]} 2(gated)=${built.classCounts[2]} 3(historical-in-live)=${built.classCounts[3]} 4(historical)=${built.classCounts[4]}`);
   console.log(`  unclassified=${unclassifiedCount}`);
+  console.log(`  oversizedUnscanned=${built.oversizedUnscanned.length} (tracked non-binary files over MAX_SCAN_BYTES=${MAX_SCAN_BYTES})`);
   console.log(`  per-category (rewritten occurrences): ${JSON.stringify(built.categoryCounts)}`);
-  console.log(`  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} derived=${built.dispositionCounts.derived}`);
+  // β r3c: the STRUCTURAL per-category delta (lines), every owned category named — a missing category is not a zero.
+  const deltaTotal = OCCURRENCE_CATEGORIES.reduce((a, c) => a + ((built.categoryDelta[c] && built.categoryDelta[c].delta) || 0), 0);
+  console.log(`  per-category delta (categorized-lines − pinned − transformed): ${describeCategoryDelta(built.categoryDelta)}`);
+  console.log(`  categoryDeltaTotal=${deltaTotal} uncomputableCategoryLines=${built.categoryUncomputable.length}`);
+  // `derived=` stays LAST on this line (record-trust-exit reads it anchored at end of line).
+  console.log(
+    `  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} compat=${built.dispositionCounts.compat} derived=${built.dispositionCounts.derived}`
+  );
+  const surfaces = Object.entries(built.compatBySurface).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  console.log(`  compat clock: ${built.treeVersion.reason}`);
+  console.log(`  compat by surface: ${surfaces.length ? surfaces.map(([k, v]) => `${k}=${v}`).join("; ") : "(none registered)"}`);
+  console.log(`  compatExpired=${built.compatExpired.length}`);
   console.log(`  unpinned-unrewritten-underived=${underivedCount}`);
   const viewMoves = built.pathRenames.filter((r) => r.generatedViewMove).length;
   console.log(`  path renames planned: ${built.pathRenames.length} (${viewMoves} generated-view directory move(s))`);
@@ -643,8 +886,28 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     built.refusedRenames.slice(0, 50).forEach((r) => console.error(`  - ${describeRefusal(r)} [${r.reason}]`));
   }
 
-  const ok = unclassifiedCount === 0 && underivedCount === 0;
+  const oversizedCount = built.oversizedUnscanned.length;
+  const compatExpiredCount = built.compatExpired.length;
+  const deltaProblems = plan.categoryDeltaProblems;
+  const ok = unclassifiedCount === 0 && underivedCount === 0 && oversizedCount === 0 && compatExpiredCount === 0 && deltaProblems.length === 0;
   if (!ok) {
+    if (deltaProblems.length > 0) {
+      console.error(
+        `rename-mc --dry-run FAILED (β r3c structural delta): ${deltaProblems.join("; ")} — every categorized line must be transformed by its category's transform or pinned; the codemod refuses, never skips:`
+      );
+      built.categoryUncomputable.slice(0, 25).forEach((x) => console.error(`  - uncomputable ${x.file}:${x.line} [category ${x.category}]`));
+      built.categoryUntransformed.slice(0, 25).forEach((x) => console.error(`  - untransformed ${x.file}:${x.line} [${x.category}] ${x.text}`));
+    }
+    if (compatExpiredCount > 0) {
+      console.error(
+        `rename-mc --dry-run FAILED: ${compatExpiredCount} compat occurrence(s) sit in a window whose expiry the tree version (${built.treeVersion.version === null ? "<unknown>" : built.treeVersion.version}) has reached — remove them or re-register through a warranted amendment:`
+      );
+      built.compatExpired.slice(0, 50).forEach((o) => console.error(`  - ${o.file}:${o.line} "${o.matchText}" [surface ${o.surface}, expires ${o.expires}]`));
+    }
+    if (oversizedCount > 0) {
+      console.error(`rename-mc --dry-run FAILED: ${oversizedCount} tracked non-binary file(s) exceed MAX_SCAN_BYTES and were NOT scanned:`);
+      built.oversizedUnscanned.forEach((o) => console.error(`  - ${describeOversized(o)}`));
+    }
     if (unclassifiedCount > 0) {
       console.error(`rename-mc --dry-run FAILED: unclassified paths (showing up to 50):`);
       built.unclassified.slice(0, 50).forEach((p) => console.error(`  - ${p}`));
@@ -669,6 +932,12 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
       `rename-mc --apply refused: ${built.unclassified.length} unclassified path(s) — fix the partition before applying`
     );
   }
+  if (built.oversizedUnscanned.length > 0) {
+    throw new Error(
+      `rename-mc --apply refused: ${describeOversized(built.oversizedUnscanned[0])}; ` +
+        `${built.oversizedUnscanned.length} oversized tracked text file(s) would be skipped unscanned`
+    );
+  }
 
   // AC-1.3: refuse if anything write-protected would be touched. Class-3/4 paths are never
   // rename candidates (keptHistoricalPaths), and a generated view moving with a Class-1
@@ -680,6 +949,17 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
     throw new Error(
       `rename-mc --apply refused: ${describeRefusal(first)}; ` +
         `${built.refusedRenames.length} write-protected path(s) would have been touched`
+    );
+  }
+
+  // β r3c: refuse BEFORE any rename or write when a categorized line would be left untransformed-and-unpinned
+  // (e.g. a raw process.env legacy read) or a line's category has no registered transform. Never skip-and-continue.
+  const deltaProblems = categoryDeltaProblems(built);
+  if (deltaProblems.length > 0) {
+    const first = built.categoryUncomputable[0] || built.categoryUntransformed[0];
+    throw new Error(
+      `rename-mc --apply refused (β r3c structural delta): ${deltaProblems.join("; ")}` +
+        (first ? `; first offender ${first.file}:${first.line} [${first.category}]` : "")
     );
   }
 
@@ -702,12 +982,12 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
   }
 
   // Rewrite content for `rewritten`-disposition occurrences only. Rebuild file-by-file
-  // from the ledger so pinned/derived lines are never touched. `env` category is
-  // skipped — its target is a read-both helper CALL that does not exist until T3.
+  // from the ledger so pinned/derived lines are never touched. Every category — env included —
+  // is rewritten through its CATEGORY_TRANSFORMS entry (the same table the delta above proved
+  // complete); a raw process.env legacy read has no transform, so it refused above instead.
   const rowsByFile = new Map();
   for (const row of built.ledger) {
     if (row.disposition !== "rewritten") continue;
-    if (row.rule === "env") continue; // T3 owns the helper-call rewrite
     if (!rowsByFile.has(row.file)) rowsByFile.set(row.file, []);
     rowsByFile.get(row.file).push(row);
   }
@@ -721,16 +1001,18 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
     if (!fs.existsSync(absTarget)) continue;
 
     const lines = fs.readFileSync(absTarget, "utf8").split(/\r?\n/);
-    const linesToRewrite = new Set(rows.map((r) => r.line));
+    const ruleByLine = new Map(rows.map((r) => [r.line, r.rule]));
     let changed = false;
-    for (const lineNum of linesToRewrite) {
+    for (const [lineNum, rule] of ruleByLine) {
       const idx = lineNum - 1;
       if (idx < 0 || idx >= lines.length) continue;
       const before = lines[idx];
-      const after = before
-        .replace(/WARPOS/g, "MC")
-        .replace(/WarpOS/g, "MC")
-        .replace(/warpos/g, "mc");
+      const transform = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, rule) ? CATEGORY_TRANSFORMS[rule] : null;
+      const after = transform ? transform(before) : null;
+      if (typeof after !== "string") {
+        // Unreachable after the delta refusal above; kept fail-closed so a table/categorizer drift can never skip a line.
+        throw new Error(`rename-mc --apply refused: ${file}:${lineNum} [${rule}] has no mechanical transform`);
+      }
       if (after !== before) {
         lines[idx] = after;
         changed = true;
@@ -749,7 +1031,15 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
 
 function runApplySkillNamespace({ root = REPO_ROOT, useGitMv = true } = {}) {
   const partition = loadPartition({ forceReload: true });
-  const plan = planSkillNamespace({ root, partition });
+  const tracked = listTrackedFiles(root);
+  const oversized = listOversizedUnscanned(root, tracked);
+  if (oversized.length > 0) {
+    throw new Error(
+      `rename-mc --apply-skill-namespace refused: ${describeOversized(oversized[0])}; ` +
+        `${oversized.length} oversized tracked text file(s) would be skipped unscanned`
+    );
+  }
+  const plan = planSkillNamespace({ root, partition, trackedFiles: tracked });
 
   if (plan.refusedMoves.length > 0) {
     const first = plan.refusedMoves[0];
@@ -840,8 +1130,17 @@ function main() {
 module.exports = {
   listTrackedFiles,
   looksBinary,
+  scanStatus,
+  listOversizedUnscanned,
+  MAX_SCAN_BYTES,
   computeChangelogHistoricalLines,
   categorizeOccurrence,
+  OCCURRENCE_CATEGORIES,
+  CATEGORY_TRANSFORMS,
+  genericSlugRewrite,
+  computeLineCategoryDecision,
+  categoryDeltaProblems,
+  describeCategoryDelta,
   renamePath,
   buildLedgerAndPlan,
   buildCommittedLedger,

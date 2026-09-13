@@ -66,7 +66,7 @@ const DISPATCH_SCRIPT_PATHS = ["dispatch-claude.js", "dispatch-agent.js"].map((b
   path.resolve(ROOT, "scripts", b).replace(/\\/g, "/").toLowerCase(),
 );
 // NOTE (r3 redesign): the telemetry-marker-in-argv branch + the broad known-exe set
-// were REMOVED as unsound — a WARPOS_RUN_ID=… token can be a user-supplied --prompt
+// were REMOVED as unsound — a MC_RUN_ID=… token can be a user-supplied --prompt
 // value, and we cannot read another process's ENV (where the real marker lives). A
 // provider CLI (claude/codex/gemini) is therefore matched ONLY via the wrapper's
 // process TREE (its node parent), never on its own argv. See isDispatchProc.
@@ -405,7 +405,7 @@ function classify(input) {
  *  ARRAY (never a flattened string — a flattened-then-retokenized cmdline lets a
  *  single argv value containing whitespace forge a separate wrapper/marker token,
  *  the r2 HIGH). ONE sound, conservative rule (r3 redesign — the marker-in-argv
- *  branch was dropped as UNSOUND: a WARPOS_RUN_ID=… token can be a user-supplied
+ *  branch was dropped as UNSOUND: a MC_RUN_ID=… token can be a user-supplied
  *  --prompt VALUE, and we cannot read another process's ENV where the real marker
  *  lives; and "any later token resolves to the path" false-matched `node -e "…"
  *  <wrapper-path>` where the wrapper is just a `-e` argument):

@@ -93,7 +93,7 @@ Not a ship blocker. Once cross-provider is live:
 - [ ] Prompt compression for GPT/Gemini — the Claude-tuned prompts are often verbose; condense for cross-provider
 - [ ] Cache the "system/identity" portion of review prompts where provider supports it (OpenAI prompt caching, Gemini context caching)
 - [ ] Tiered fallback: gpt-5.4 → gpt-5.4-mini → claude if primary times out or rate-limits
-- [ ] Per-agent model override via env var (`WARPOS_EVALUATOR_MODEL=gpt-5.4-mini`) for cost-sensitive users
+- [ ] Per-agent model override via env var (`MC_EVALUATOR_MODEL=gpt-5.4-mini`) for cost-sensitive users
 
 ### Missing skills identified in audit
 - [x] `/scan:system` — `commands/scan/system.md`

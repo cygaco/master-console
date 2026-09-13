@@ -11,7 +11,7 @@
 //       kill the server (it stays up and keeps serving). We prove this by closing the
 //       child's stdin, waiting past the soft-shutdown window, and confirming the
 //       server still answers /api/health AND the process is still alive.
-//   (c) parseArgs maps --review-mode / --no-auto-shutdown / WARPOS_GUI_KEEPALIVE all
+//   (c) parseArgs maps --review-mode / --no-auto-shutdown / MC_GUI_KEEPALIVE all
 //       to keepalive:true (and the keepalive lifecycle never schedules an exit).
 // ─────────────────────────────────────────────────────────────────────────────
 "use strict";
@@ -53,7 +53,7 @@ async function main() {
     mcEnv.setEnv("GUI_KEEPALIVE", "1");
     const k = parseArgs([]).keepalive;
     mcEnv.unsetEnv("GUI_KEEPALIVE");
-    ok("WARPOS_GUI_KEEPALIVE env → keepalive", k === true, "env not honored");
+    ok("MC_GUI_KEEPALIVE env → keepalive", k === true, "env not honored");
   }
   ok("parseArgs([]) → NOT keepalive (normal mode default)", parseArgs([]).keepalive === false, "default unexpectedly keepalive");
   ok("review-mode default does NOT open a browser", parseArgs(["--review-mode"]).openBrowser === false, "review-mode opened browser");

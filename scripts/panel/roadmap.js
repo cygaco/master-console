@@ -22,7 +22,7 @@
  *     a degraded section is a board state, not an error.
  *
  * Injectable source root (for tests + alt checkouts): --root <dir> or the
- * WARPOS_ROADMAP_ROOT env var override the default repo root (resolved from this
+ * MC_ROADMAP_ROOT env var override the default repo root (resolved from this
  * module's own __dirname, mirroring scripts/mc/repo-role.js). This lets a test
  * feed FIXTURES without touching the real repo files (read-only proof).
  *
@@ -55,7 +55,7 @@ function unavailable(reason) {
 // ── Arg / root resolution ────────────────────────────────────────────────────
 
 function resolveRoot(argv) {
-  // --root <dir> wins; then WARPOS_ROADMAP_ROOT; then the module-derived default.
+  // --root <dir> wins; then MC_ROADMAP_ROOT; then the module-derived default.
   const i = argv.indexOf("--root");
   if (i !== -1 && argv[i + 1]) {
     return path.resolve(argv[i + 1]);

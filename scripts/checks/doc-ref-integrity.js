@@ -52,7 +52,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * no disk. Disk I/O (file walk, ref extraction, existence checks) lives in `run()`.
  *
  * REPORT-ONLY by default (ramp): findings printed, exit 0. Pass `--enforce` (or
- * WARPOS_DOC_REF_INTEGRITY_ENFORCE=block) to make a broken-ref finding exit 1.
+ * MC_DOC_REF_INTEGRITY_ENFORCE=block) to make a broken-ref finding exit 1.
  * FAIL-CLOSED: a runner error (unreadable allowlist, walk failure) exits 2 — a
  * runner error is NEVER a pass (false-green-gauntlet lesson).
  *
@@ -69,6 +69,75 @@ const NAME = "doc-ref-integrity";
 const ALLOWLIST_FILE = path.join(__dirname, "doc-ref-integrity.allowlist.json");
 
 const norm = (p) => p.replace(/\\/g, "/");
+
+// ── Compat-registered legacy-rename tolerance (S-OS-06 T5-E2d, α ruling) ─────────
+// A canon doc's historical citation of a PRE-RENAME path (the legacy slug in the path) is allowed as "renamed" IFF
+// the codemod's mc-renamed counterpart (rename-mc.js#renamePath) EXISTS on disk — reported as a visible
+// allowed-renamed COUNT, never silently. The tolerance is a REGISTERED compat surface of the S-OS-06 partition
+// (compatWindows, surface below) carrying its OWN expiry: once the tree version reaches that expiry — or the surface
+// is not registered, or the partition/codemod cannot be loaded — the tolerance is OFF and every such citation is a
+// broken ref again (fail CLOSED). A legacy-slug citation whose counterpart is absent is ALWAYS a broken ref.
+const LEGACY_RENAME_SURFACE = "doc-ref-legacy-rename";
+// The ONE legacy literal in this checker — registered in the partition as compat occurrence DATA (surface above).
+const LEGACY_PATH_SLUG = "warpos";
+const LEGACY_PATH_SLUG_RE = new RegExp(LEGACY_PATH_SLUG, "i");
+
+/**
+ * Decide the tolerance from the partition's compat register. Pure given its inputs:
+ *   partition : a loaded partition API (partition-loader#loadPartition / #buildPartition), or null when unloadable
+ *   version   : the tree version the window's expiry is read against (null / unparseable => expired, fail closed)
+ *   isExpired : partition-loader#isCompatExpired
+ * Returns { active, surface, expires, reason }.
+ */
+function resolveLegacyRename({ partition, version, isExpired, loadError } = {}) {
+  const off = (expires, reason) => ({ active: false, surface: LEGACY_RENAME_SURFACE, expires, reason: `${reason} — tolerance OFF (fail closed)` });
+  if (!partition) return off(null, `partition unavailable (${loadError || "not loaded"})`);
+  const w = (partition.compatWindows || []).find((x) => x && x.surface === LEGACY_RENAME_SURFACE);
+  if (!w) return off(null, `compat surface '${LEGACY_RENAME_SURFACE}' is not registered`);
+  if (typeof isExpired !== "function") return off(w.expires || null, "no expiry clock supplied");
+  const shown = version === null || version === undefined ? "<unknown>" : version;
+  if (isExpired(w.expires, version)) return off(w.expires || null, `compat surface '${LEGACY_RENAME_SURFACE}' expired (expires ${w.expires}, tree ${shown})`);
+  return { active: true, surface: LEGACY_RENAME_SURFACE, expires: w.expires, reason: `compat surface '${LEGACY_RENAME_SURFACE}' registered (expires ${w.expires}, tree ${shown})` };
+}
+
+/** The tolerance for the real tree. Any load failure => OFF with its reason (never an exception, never ON). */
+function loadLegacyRename() {
+  let loader;
+  let renamePath;
+  try {
+    loader = require("../open-source/partition-loader");
+    renamePath = require("../open-source/rename-mc").renamePath;
+  } catch (e) {
+    return { ...resolveLegacyRename({ partition: null, loadError: e.message }), renamePath: null };
+  }
+  if (typeof renamePath !== "function") {
+    return { ...resolveLegacyRename({ partition: null, loadError: "the codemod exports no renamePath" }), renamePath: null };
+  }
+  let partition;
+  try {
+    partition = loader.loadPartition();
+  } catch (e) {
+    return { ...resolveLegacyRename({ partition: null, loadError: e.message }), renamePath };
+  }
+  const version = loader.readTreeVersion().version;
+  return { ...resolveLegacyRename({ partition, version, isExpired: loader.isCompatExpired }), renamePath };
+}
+
+/**
+ * Annotate a NON-resolving ref that carries the legacy slug with its mc-renamed counterpart and whether that
+ * counterpart exists (existsFn(file, target) — refExists in run(), injectable for a synthetic test). A ref whose
+ * path the codemod would not rename is left un-annotated: an ordinary broken ref.
+ */
+function annotateLegacyRename(r, renamePath, existsFn) {
+  if (!r || r.exists || !r.target || typeof renamePath !== "function") return r;
+  const target = norm(r.target);
+  if (!LEGACY_PATH_SLUG_RE.test(target)) return r;
+  const counterpart = renamePath(target);
+  if (!counterpart || counterpart === target) return r;
+  r.legacyCounterpart = counterpart;
+  r.legacyCounterpartExists = Boolean(existsFn(r.file, counterpart));
+  return r;
+}
 
 // Known repo top-level dirs that anchor a backtick prose path-ref. A backtick span
 // that doesn't START at one of these isn't a deliberate repo-file citation.
@@ -128,12 +197,16 @@ function stripFragment(t) {
  *   refs : [{ file, line, target, exists }]   (file = repo-relative; exists =
  *          pre-computed on disk by run(); a synthetic test passes it directly)
  *   allowlist : { pathPrefixes: [...], literals: [...] }
+ *   legacyRename : { active, surface, expires, reason } (resolveLegacyRename) — refs annotated by
+ *          annotateLegacyRename carry legacyCounterpart/legacyCounterpartExists; absent => tolerance OFF
  *
- * Returns { findings, allowed }.
+ * Returns { findings, allowed, allowedRenamed }.
  */
-function evaluate({ refs, allowlist }) {
+function evaluate({ refs, allowlist, legacyRename }) {
   const findings = [];
   const allowed = [];
+  let allowedRenamed = 0;
+  const tolerance = legacyRename || { active: false, reason: "no legacy-rename tolerance supplied — tolerance OFF (fail closed)" };
   const prefixes = (allowlist && allowlist.pathPrefixes) || [];
   const literals = new Set((allowlist && allowlist.literals) || []);
   for (const r of refs || []) {
@@ -150,13 +223,26 @@ function evaluate({ refs, allowlist }) {
       candidates.push(norm(path.posix.normalize(path.posix.join(path.posix.dirname(norm(r.file)), target))));
     }
     const allowedByPrefix = prefixes.find((p) => candidates.some((c) => c.startsWith(p)));
-    if (literals.has(target)) {
+    // Literals match the same candidates as prefixes: a dir-relative spelling of an allowlisted literal is that literal.
+    if (candidates.some((c) => literals.has(c))) {
       allowed.push({ ...r, allowedBy: "literal-allowlist" });
       continue;
     }
     if (allowedByPrefix) {
       allowed.push({ ...r, allowedBy: `prefix-allowlist (${allowedByPrefix})` });
       continue;
+    }
+    // Compat-registered legacy-rename tolerance: ONLY a counterpart that exists, ONLY while the window is unexpired.
+    if (r.legacyCounterpart && r.legacyCounterpartExists && tolerance.active) {
+      allowed.push({ ...r, renamed: true, allowedBy: `compat-renamed (${tolerance.surface}, expires ${tolerance.expires}) -> ${r.legacyCounterpart}` });
+      allowedRenamed += 1;
+      continue;
+    }
+    let legacyNote = "";
+    if (r.legacyCounterpart && !r.legacyCounterpartExists) {
+      legacyNote = ` It carries the legacy slug, but its mc-renamed counterpart '${r.legacyCounterpart}' does not exist either — a pre-rename citation is allowed-renamed ONLY when that counterpart is on disk.`;
+    } else if (r.legacyCounterpart) {
+      legacyNote = ` Its mc-renamed counterpart '${r.legacyCounterpart}' exists, but the legacy-rename tolerance is OFF: ${tolerance.reason}.`;
     }
     findings.push({
       severity: "high",
@@ -165,10 +251,10 @@ function evaluate({ refs, allowlist }) {
       file: r.file,
       line: r.line,
       target: r.target,
-      message: `${r.file}:${r.line} cites '${r.target}' which does not resolve on disk (relative to repo root or the doc's dir). The path likely moved/renamed and this prose drifted. Repoint it, or — if the ref is legitimately absent (ephemeral/design/illustrative) — add it to doc-ref-integrity.allowlist.json or mark the line with ${IGNORE_MARK}.`,
+      message: `${r.file}:${r.line} cites '${r.target}' which does not resolve on disk (relative to repo root or the doc's dir). The path likely moved/renamed and this prose drifted. Repoint it, or — if the ref is legitimately absent (ephemeral/design/illustrative) — add it to doc-ref-integrity.allowlist.json or mark the line with ${IGNORE_MARK}.${legacyNote}`,
     });
   }
-  return { findings, allowed };
+  return { findings, allowed, allowedRenamed };
 }
 
 // ── Disk: file walk + ref extraction + existence ─────────────────────────────
@@ -288,6 +374,7 @@ function run() {
   } catch (e) {
     return { ok: false, fatal: true, problems: [`canon scan failed: ${e.message}`], notes };
   }
+  const legacy = loadLegacyRename();
   const refs = [];
   for (const rel of files) {
     let text;
@@ -298,17 +385,20 @@ function run() {
     }
     for (const r of extractRefs(rel, text)) {
       r.exists = refExists(r.file, r.target);
+      annotateLegacyRename(r, legacy.renamePath, refExists);
       refs.push(r);
     }
   }
 
-  const { findings, allowed } = evaluate({ refs, allowlist });
+  const legacyRename = { active: legacy.active, surface: legacy.surface, expires: legacy.expires, reason: legacy.reason };
+  const { findings, allowed, allowedRenamed } = evaluate({ refs, allowlist, legacyRename });
 
   notes.push(
-    `${files.length} canon doc(s) · ${refs.length} repo-path ref(s) · ${findings.length} broken · ${allowed.length} allowed-absent`,
+    `${files.length} canon doc(s) · ${refs.length} repo-path ref(s) · ${findings.length} broken · ${allowed.length - allowedRenamed} allowed-absent · ${allowedRenamed} allowed-renamed`,
   );
+  notes.push(`legacy-rename tolerance ${legacyRename.active ? "ON" : "OFF"}: ${legacyRename.reason}`);
   const problems = findings.map((f) => f.message);
-  return { ok: findings.length === 0, fatal: false, problems, notes, findings, allowed };
+  return { ok: findings.length === 0, fatal: false, problems, notes, findings, allowed, allowedRenamed, legacyRename };
 }
 
 function main() {
@@ -356,7 +446,11 @@ module.exports = {
   scanFiles,
   loadAllowlist,
   isExternalOrAnchor,
+  resolveLegacyRename,
+  loadLegacyRename,
+  annotateLegacyRename,
   run,
   ALLOWLIST_FILE,
   REPO_ANCHORS,
+  LEGACY_RENAME_SURFACE,
 };

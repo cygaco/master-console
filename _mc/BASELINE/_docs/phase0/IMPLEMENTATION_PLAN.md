@@ -46,7 +46,7 @@ Phase 0 prompt's priority list (B → C → A → E → D → G → H → F → 
   CLI.
 - Anything inside a `runtime/.provider-tmp/` path (those are
   dispatch-agent owned).
-- Env override `WARPOS_PROVIDER_PROBE=1` bypasses for one call (logged).
+- Env override `MC_PROVIDER_PROBE=1` bypasses for one call (logged).
 
 **Block message:**
 
@@ -56,7 +56,7 @@ Pattern matched: <pattern>
 Use:  node scripts/dispatch-agent.js <role> <prompt-file>
 Why:  raw codex/gemini/claude -p calls re-trigger known stdin/binding
       failures (LRN-2026-04-17, LRN-2026-04-30 binding-gap).
-Bypass for a one-shot health probe: set WARPOS_PROVIDER_PROBE=1.
+Bypass for a one-shot health probe: set MC_PROVIDER_PROBE=1.
 See _docs/phase0/agent-dispatch-guide.md (or paths.agentDispatchGuide).
 ```
 
@@ -169,7 +169,7 @@ gitignored by default — controlled by `--archive-policy`).
 
 **Files modified:**
 - `scripts/hooks/lib/providers.js` — Gemini invocation: pass
-  `--skip-trust` when env `WARPOS_GEMINI_TRUST_BYPASS=1` or when the CLI
+  `--skip-trust` when env `MC_GEMINI_TRUST_BYPASS=1` or when the CLI
   emitted a `trusted-directory` error in the prior probe (cached).
 - `scripts/hooks/smart-context.js` — once-per-session warning when
   `GEMINI_API_KEY` is set AND `~/.gemini/settings.json` (or whatever
@@ -267,7 +267,7 @@ spec edits.
 **Files modified:**
 - `scripts/dispatch-agent.js` — replace `findAgentSpec` walker with a
   mode-aware variant. Resolution order:
-  1. `WARPOS_MODE` env (`oneshot` | `adhoc` | `solo`) → search
+  1. `MC_MODE` env (`oneshot` | `adhoc` | `solo`) → search
      `01-adhoc/<role>` or `02-oneshot/<role>` first.
   2. Inferred mode: if `.claude/agents/02-oneshot/.system/store.json#status === "running"`
      → oneshot; else adhoc.

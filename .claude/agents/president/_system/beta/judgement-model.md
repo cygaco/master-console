@@ -329,7 +329,7 @@ Never auto-applied — touches `paths.decisionPolicy` red lines.
 |---|---|---|---|
 | P-038 | Product-strategy / sequencing / "what's next" / roadmap-ranking routes to the **Director of Product** agent (`subagent_type: director-of-product`), not β | This session: 3× dispatch-director-of-product + `/roadmap:prioritize` built & run; 0 β consults for product calls. β has no awareness of the Director layer or the lifecycle model. | HIGH |
 | P-039 | Personas are built INCREMENTALLY — one must-follow principle at a time (the programmable-principles one-block-edit model) | DoP 1→10 principles + DoQA 0→7 across ~10 separate operator prompts 2026-05-29/30 ("add another principle…", "another for both") | HIGH |
-| P-040 | Product prioritization is grounded in a DECLARED lifecycle stage (`paths.currentStage` / `WARPOS_LIFECYCLE_STAGE`); the stage sets leanness intensity | `current-stage.md` → 5-phase + `pre-mvp`; `lifecycle-stage.js` resolver; `/roadmap:prioritize` ran stage-grounded | HIGH |
+| P-040 | Product prioritization is grounded in a DECLARED lifecycle stage (`paths.currentStage` / `MC_LIFECYCLE_STAGE`); the stage sets leanness intensity | `current-stage.md` → 5-phase + `pre-mvp`; `lifecycle-stage.js` resolver; `/roadmap:prioritize` ran stage-grounded | HIGH |
 
 **β application notes for P-038/P-039/P-040:**
 - **P-038:** On product-strategy / sequencing / what-to-build-next / roadmap-ranking questions, recognize the Director of Product (and Director of QA for testing) as the standing authority — defer to it or incorporate its lens; don't re-derive product judgment from scratch. (See G-13 — β still owes a principle for this.)

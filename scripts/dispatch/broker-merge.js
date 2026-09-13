@@ -35,11 +35,11 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  * OPTIONS
  *   --merge-commit <sha>   Use an ALREADY-BUILT 2-parent merge commit instead of building one.
  *   --target-ref <ref>     Default refs/heads/main.
- *   --sp-id <id>           Sprint id for the conductor lease (default: $WARPOS_SP_ID).
+ *   --sp-id <id>           Sprint id for the conductor lease (default: $MC_SP_ID).
  *   --lease-root <dir>     Lease store root (default: the conductor-lease default).
  *   --git-root <dir>       Repository root (default: this repo).
- *   --bundle-manifest <p>  Promoted pinned-bundle manifest (or $WARPOS_PINNED_BUNDLE_MANIFEST).
- *   --bundle-root <dir>    Promoted bundle root (or $WARPOS_PINNED_BUNDLE_ROOT).
+ *   --bundle-manifest <p>  Promoted pinned-bundle manifest (or $MC_PINNED_BUNDLE_MANIFEST).
+ *   --bundle-root <dir>    Promoted bundle root (or $MC_PINNED_BUNDLE_ROOT).
  *   --message <msg>        Merge commit message.
  *   --no-fallback          Refuse the ordinary route even for an operational miss (strict dogfood).
  *   --dry-run              Do everything except the final write (broker call included) — prints intent.
@@ -264,11 +264,11 @@ const USAGE = [
   "",
   "  --merge-commit <sha>   use an already-built 2-parent merge commit instead of building one",
   "  --target-ref <ref>     default refs/heads/main",
-  "  --sp-id <id>           sprint id for the conductor lease (default $WARPOS_SP_ID)",
+  "  --sp-id <id>           sprint id for the conductor lease (default $MC_SP_ID)",
   "  --lease-root <dir>     lease store root",
   "  --git-root <dir>       repository root",
-  "  --bundle-manifest <p>  promoted pinned-bundle manifest (or $WARPOS_PINNED_BUNDLE_MANIFEST)",
-  "  --bundle-root <dir>    promoted bundle root (or $WARPOS_PINNED_BUNDLE_ROOT)",
+  "  --bundle-manifest <p>  promoted pinned-bundle manifest (or $MC_PINNED_BUNDLE_MANIFEST)",
+  "  --bundle-root <dir>    promoted bundle root (or $MC_PINNED_BUNDLE_ROOT)",
   "  -m, --message <msg>    merge commit message",
   "  --no-fallback          refuse the ordinary route even for an operational miss (strict dogfood)",
   "  --dry-run              resolve + build + report, perform no write",

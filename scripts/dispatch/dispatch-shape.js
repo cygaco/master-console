@@ -274,16 +274,16 @@ function shapeMismatch(actualShape, unit) {
 // fleet enforce); a per-wrapper env=report force-reports just that wrapper.
 //
 // This is THE shape-enforce authority for self-detection (β#2): the wrappers'
-// historical inline `WARPOS_DISPATCH_CONTRACT_ENFORCE === "block"` shape check is
+// historical inline `MC_DISPATCH_CONTRACT_ENFORCE === "block"` shape check is
 // folded in here as a DEPRECATED back-compat alias (so a CI/fixture/harness that set
 // the old var keeps getting shape-refusal — the anthropic→claude rename bug class).
 // The separate contract-CONSULT block keeps its OWN toggle; this gate governs only the
 // shape-resolver self-detection.
 //
 // Toggles (read from `env`, injected for testability):
-//   WARPOS_SHAPE_DOOR        = report | enforce   (per-process; default report)
-//   WARPOS_DISABLE_SHAPE_DOOR = 1|true|yes        (KILL-SWITCH; forces report, beats enforce)
-//   WARPOS_DISPATCH_CONTRACT_ENFORCE = block      (DEPRECATED alias → enforce, back-compat)
+//   MC_SHAPE_DOOR        = report | enforce   (per-process; default report)
+//   MC_DISABLE_SHAPE_DOOR = 1|true|yes        (KILL-SWITCH; forces report, beats enforce)
+//   MC_DISPATCH_CONTRACT_ENFORCE = block      (DEPRECATED alias → enforce, back-compat)
 //
 // Branch order is EXPLICIT (β#3 — never an implicit catch-all; the W1 breaker-TTL lesson):
 //   (1) kill-switch / report-only-pin  → force report+proceed
@@ -301,8 +301,8 @@ function shapeMismatch(actualShape, unit) {
 //                            EVERY skill dispatch until the resolver gains a `subprocess-skill`
 //                            shape (logged enforcement-debt). Pin keeps the advisory, never refuses.
 //   enforceDefault {boolean} — the per-wrapper ENFORCE flip (W2/N2): this wrapper enforces by
-//                            DEFAULT when the global WARPOS_SHAPE_DOOR env is unset, so wrappers
-//                            ramp one at a time. A global WARPOS_SHAPE_DOOR=report (or the
+//                            DEFAULT when the global MC_SHAPE_DOOR env is unset, so wrappers
+//                            ramp one at a time. A global MC_SHAPE_DOOR=report (or the
 //                            kill-switch / pin) still overrides it back to report.
 //
 // Returns { action:"proceed"|"refuse", mode, severity, suppressed, reason, mismatch }.
@@ -316,15 +316,15 @@ function shapeDoor(actualShape, unit, env, opts) {
   // opts.enforceDefault (the persistent, committed per-wrapper flip), so wrappers ramp ONE
   // AT A TIME, lowest-blast first — instead of a single global all-or-nothing switch. The
   // global env still wins both ways so an operator keeps a fleet-wide override + kill:
-  //   WARPOS_DISABLE_SHAPE_DOOR / reportOnlyPin  → force report (ultimate escapes, beat all)
-  //   WARPOS_SHAPE_DOOR=enforce (or legacy block) → force enforce fleet-wide
-  //   WARPOS_SHAPE_DOOR=report                    → force report fleet-wide (kills the flip)
+  //   MC_DISABLE_SHAPE_DOOR / reportOnlyPin  → force report (ultimate escapes, beat all)
+  //   MC_SHAPE_DOOR=enforce (or legacy block) → force enforce fleet-wide
+  //   MC_SHAPE_DOOR=report                    → force report fleet-wide (kills the flip)
   //   else (env unset)                            → the wrapper's enforceDefault decides
   const globalRaw = String(mcEnv.readEnv("SHAPE_DOOR", e) || "").toLowerCase(); // "" = unset
   const wrapperEnforce = o.enforceDefault === true;
   // (1) kill-switch / pin checked FIRST — they beat enforce unconditionally (safe side).
-  // FIX (W2 gauntlet HIGH-2): an EXPLICIT WARPOS_SHAPE_DOOR=report is the operator's fleet kill
-  // and must beat the legacy WARPOS_DISPATCH_CONTRACT_ENFORCE=block alias — so it is checked
+  // FIX (W2 gauntlet HIGH-2): an EXPLICIT MC_SHAPE_DOOR=report is the operator's fleet kill
+  // and must beat the legacy MC_DISPATCH_CONTRACT_ENFORCE=block alias — so it is checked
   // BEFORE enforce/legacyBlock (a stale legacy env must never override an explicit report kill).
   let mode;
   if (killed || pinned) mode = "report";

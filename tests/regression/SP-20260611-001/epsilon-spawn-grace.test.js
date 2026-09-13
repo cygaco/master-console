@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const mcEnv = require("../../../scripts/hooks/lib/mc-env"); // S-OS-06 read-both env (clears MC_X and the legacy name together)
 
 /**
  * epsilon-spawn-grace.test.js — regression for SP-20260611-001 (T-310/R-1 + T-322).
@@ -281,11 +282,11 @@ function runChildAndCaptureBounds(setEnv = {}, deleteEnv = [], background = fals
     // inherited background signal — the harness may set it for long subprocesses).
     // background=true: keep the explicit signal so the child's foregroundAwareTimeout
     // does NOT clamp (exercises the long-lane no-shrink case).
-    // EXCEPTION: if the caller explicitly supplied WARPOS_DISPATCH_BACKGROUND via setEnv,
+    // EXCEPTION: if the caller explicitly supplied MC_DISPATCH_BACKGROUND via setEnv,
     // it is intentional (FIX-3c end-to-end feeds the spawn-path-SET signal) — respect it.
-    const callerSuppliedBgSignal = Object.prototype.hasOwnProperty.call(setEnv, "WARPOS_DISPATCH_BACKGROUND");
-    if (background) env.WARPOS_DISPATCH_BACKGROUND = "1";
-    else if (!callerSuppliedBgSignal) delete env.WARPOS_DISPATCH_BACKGROUND;
+    const callerSuppliedBgSignal = Object.prototype.hasOwnProperty.call(setEnv, "MC_DISPATCH_BACKGROUND");
+    if (background) env.MC_DISPATCH_BACKGROUND = "1";
+    else if (!callerSuppliedBgSignal) mcEnv.unsetEnv("DISPATCH_BACKGROUND", env);
     // driveRetry: trigger the WI-18 quota fallback in the child. The retry guard is
     // `!providerOverride && !modelOverride`, so we must NOT pass --provider here — the
     // shim's getProviderForRole() => "gemini" makes the role resolve to gemini natively,
@@ -492,9 +493,9 @@ console.log("\n(6) β build-constraint — foreground slot-wait shrink ACCEPTED,
 
 // ── (6b) FIX-3c: the ε SPAWN PATH ITSELF propagates the background signal ──
 //
-// Section (6)'s background case hand-sets WARPOS_DISPATCH_BACKGROUND in the test harness.
+// Section (6)'s background case hand-sets MC_DISPATCH_BACKGROUND in the test harness.
 // FIX-3c moves that guarantee INTO spawnAgent: opts.background === true must stamp
-// env.WARPOS_DISPATCH_BACKGROUND="1" on the child so the full 900s bound holds via the ε
+// env.MC_DISPATCH_BACKGROUND="1" on the child so the full 900s bound holds via the ε
 // spawn path's OWN construction (not an externally-set env). Without the stamp, the child's
 // foregroundAwareTimeout(n, {}) re-clamp reads no background signal → re-clamps the
 // propagated 900s back to the 540s foreground ceiling, silently shrinking the long lane.
@@ -505,9 +506,9 @@ console.log("\n(6b) FIX-3c — spawnAgent stamps the background signal on the ch
   const cap = captureSpawn(rt.ROUTE.DISPATCH_AGENT, "security-reviewer", { background: true });
   const childBg = foregroundAwareTimeout(WRAPPER_DEFAULTS["epsilon-agent"], { background: true }); // 900000, no clamp
   ok(
-    "spawnAgent: opts.background:true sets child env WARPOS_DISPATCH_BACKGROUND='1' (signal propagated by construction)",
-    cap && cap.env && cap.env.WARPOS_DISPATCH_BACKGROUND === "1",
-    `WARPOS_DISPATCH_BACKGROUND=${cap && cap.env ? cap.env.WARPOS_DISPATCH_BACKGROUND : "<no env>"}`,
+    "spawnAgent: opts.background:true sets child env MC_DISPATCH_BACKGROUND='1' (signal propagated by construction)",
+    cap && cap.env && cap.env.MC_DISPATCH_BACKGROUND === "1",
+    `MC_DISPATCH_BACKGROUND=${cap && cap.env ? cap.env.MC_DISPATCH_BACKGROUND : "<no env>"}`,
   );
   ok(
     "spawnAgent: background childBaseMs is the full bound (900s, NOT foreground-clamped to 540s)",
@@ -525,11 +526,11 @@ console.log("\n(6b) FIX-3c — spawnAgent stamps the background signal on the ch
   // must keep the full 900s bound BECAUSE spawnAgent stamped the signal — proving the
   // guarantee holds via the ε spawn path, not an ambient env. If FIX-3c is reverted, cap.env
   // carries no signal → the child re-clamps to 540s and this REDs.
-  if (cap && cap.env && cap.env.WARPOS_DISPATCH_BACKGROUND === "1") {
+  if (cap && cap.env && cap.env.MC_DISPATCH_BACKGROUND === "1") {
     const e2e = runChildAndCaptureBounds(
       {
         DISPATCH_BUILDER_TIMEOUT_MS: cap.env.DISPATCH_BUILDER_TIMEOUT_MS,
-        WARPOS_DISPATCH_BACKGROUND: cap.env.WARPOS_DISPATCH_BACKGROUND,
+        MC_DISPATCH_BACKGROUND: cap.env.MC_DISPATCH_BACKGROUND,
       },
       ["DISPATCH_SLOT_TIMEOUT_MS"],
       /*background=*/ false, // harness does NOT set the signal — only the spawn-path-set value carries it

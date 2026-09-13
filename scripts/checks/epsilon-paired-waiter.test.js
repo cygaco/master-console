@@ -223,7 +223,7 @@ t("historical (age > windowMs) -> NOT flagged", () => {
 
 // ── QA-R2-001: the env opt-out cannot downgrade the default verifier ──────────────────────────────────
 
-t("QA-R2-001: WARPOS_LIVENESS_REQUIRE_SIG=0 does NOT let an UNSIGNED ok:true completion suppress", () => {
+t("QA-R2-001: MC_LIVENESS_REQUIRE_SIG=0 does NOT let an UNSIGNED ok:true completion suppress", () => {
   const prev = mcEnv.readEnv("LIVENESS_REQUIRE_SIG");
   mcEnv.setEnv("LIVENESS_REQUIRE_SIG", "0");
   try {

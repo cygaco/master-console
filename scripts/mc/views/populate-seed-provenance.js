@@ -72,7 +72,7 @@ const stripBom = (s) => (typeof s === "string" ? s.replace(/^﻿/, "") : s);
  * override, then the installing SOURCE clone's version.json (the version
  * actually being installed), then the target's own, else a safe default.
  */
-function resolveWarposVersion({ mcVersion, mcRoot, targetRoot }) {
+function resolveMcVersion({ mcVersion, mcRoot, targetRoot }) {
   if (mcVersion && typeof mcVersion === "string") return mcVersion;
   for (const root of [mcRoot, targetRoot]) {
     if (!root) continue;
@@ -205,7 +205,7 @@ function populateSeedProvenance(opts) {
   }
 
   const zones = Array.isArray(opts.zones) ? opts.zones : defaultZones();
-  const version = resolveWarposVersion({
+  const version = resolveMcVersion({
     mcVersion: opts.mcVersion,
     mcRoot,
     targetRoot,
@@ -362,7 +362,7 @@ if (require.main === module) {
 
 module.exports = {
   populateSeedProvenance,
-  resolveWarposVersion,
+  resolveMcVersion,
   expectedMarker,
   normalizeZone,
   BASELINE_PREFIX,

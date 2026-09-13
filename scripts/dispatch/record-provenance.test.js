@@ -3,7 +3,7 @@
 const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, then the legacy name)
 /**
  * R3-1/R3-2 teeth (SP-20260718-003 · SR-011/SR-013): every completion record is bound to its execution
- * PROVENANCE — the panel_run_id the runner MINTS (propagated to each child via WARPOS_PANEL_RUN_ID) and
+ * PROVENANCE — the panel_run_id the runner MINTS (propagated to each child via MC_PANEL_RUN_ID) and
  * the code_sha the dispatch ran against — INJECTED in the single shared recordCompletion, so no dispatch
  * wrapper (dispatch-agent/dispatch-claude/dispatch-skill/epsilon-runtime) can omit them.
  *
@@ -46,13 +46,13 @@ function withLedger(env, fn) {
   }
 }
 
-// ── SR-011: WARPOS_PANEL_RUN_ID reaches the record (the minted id propagates to the child write). ──
-test("SR-011: recordCompletion stamps panel_run_id from WARPOS_PANEL_RUN_ID", () => {
+// ── SR-011: MC_PANEL_RUN_ID reaches the record (the minted id propagates to the child write). ──
+test("SR-011: recordCompletion stamps panel_run_id from MC_PANEL_RUN_ID", () => {
   withLedger({ PANEL_RUN_ID: "panel-injected-42" }, (rec) => {
     assert.equal(rec.panel_run_id, "panel-injected-42", "the minted panel_run_id must reach the record");
   });
 });
-test("SR-011: no WARPOS_PANEL_RUN_ID → panel_run_id is null (not a stale value)", () => {
+test("SR-011: no MC_PANEL_RUN_ID → panel_run_id is null (not a stale value)", () => {
   withLedger({}, (rec) => {
     assert.equal(rec.panel_run_id, null);
   });

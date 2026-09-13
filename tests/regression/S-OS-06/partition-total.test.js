@@ -52,16 +52,17 @@ ok("three-disposition-partition-total", () => {
     0,
     `expected 0 unpinned-unrewritten-underived occurrences, got ${built.underived.length}`
   );
-  const { rewritten, pinned, derived } = built.dispositionCounts;
+  const { rewritten, pinned, derived, compat } = built.dispositionCounts;
   assert.strictEqual(
-    rewritten + pinned + derived,
+    rewritten + pinned + derived + compat,
     built.ledger.length,
-    "the three disposition counts must sum to the total occurrence-ledger row count (two-grain (b) total)"
+    "the four codemod disposition counts must sum to the total occurrence-ledger row count (two-grain (b) total)"
   );
-  // Every ledger row has EXACTLY one of the three dispositions — never zero, never two.
+  // Every ledger row has EXACTLY one of the four codemod dispositions (β r3b adds compat) — never zero, never two.
   for (const row of built.ledger) {
-    assert.ok(["rewritten", "pinned", "derived"].includes(row.disposition), `row ${row.file}:${row.line} has an invalid disposition "${row.disposition}"`);
+    assert.ok(["rewritten", "pinned", "derived", "compat"].includes(row.disposition), `row ${row.file}:${row.line} has an invalid disposition "${row.disposition}"`);
   }
+  assert.strictEqual(built.compatExpired.length, 0, `no registered compat window may be expired at the tree version: ${JSON.stringify(built.compatExpired.slice(0, 3))}`);
 });
 
 ok("classCounts-match-git-ls-files", () => {

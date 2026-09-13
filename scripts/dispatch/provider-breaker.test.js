@@ -15,7 +15,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *   4. providerAvailable("claude") always true (breaker exempt).
  *   5. Clear removes the entry.
  *
- * Test seam: WARPOS_PROVIDER_DOWN_FILE env var is set to a temp file so no test
+ * Test seam: MC_PROVIDER_DOWN_FILE env var is set to a temp file so no test
  * touches the real .claude/runtime/provider-down.json.
  *
  *   node scripts/dispatch/provider-breaker.test.js
@@ -36,13 +36,13 @@ mcEnv.setEnv("PROVIDER_DOWN_FILE", tmpFile);
 try { fs.unlinkSync(tmpFile); } catch { /* ok if absent */ }
 
 // ── Load modules AFTER env var is set ─────────────────────────────────────
-// Both modules read WARPOS_PROVIDER_DOWN_FILE at call-time (resolveFilePath()),
+// Both modules read MC_PROVIDER_DOWN_FILE at call-time (resolveFilePath()),
 // so requiring after the env var is set is sufficient.
 const breaker = require("./provider-breaker");
 
 // providers.js is in the hooks lib; load it for the providerAvailable integration test.
 // It will have loaded provider-breaker via its own guarded require at module load time.
-// Since WARPOS_PROVIDER_DOWN_FILE is already set, the same temp file is used.
+// Since MC_PROVIDER_DOWN_FILE is already set, the same temp file is used.
 let providerAvailable = null;
 try {
   const providers = require("../hooks/lib/providers");

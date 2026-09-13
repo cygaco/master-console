@@ -19,7 +19,7 @@ level docs (not downstream live tracker state).
 | D — install hygiene + provider-tmp | `paths.providerTmp` (`.claude/runtime/.provider-tmp`) | present |
 | E — provider fallback policy scaffold | `.claude/agents/00-alex/.system/policy/provider-fallback.json` (`paths.providerFallbackPolicy`), 5 roles, 7 failure signals | present (documented; not yet enforced inside `runProvider`) |
 | F — ROADMAP split | `WARPOS_ROADMAP.md` (framework) + `ROADMAP.md` (product scaffold) | present |
-| G — dispatch mode-awareness | `scripts/dispatch-agent.js#findAgentSpec` reads `WARPOS_MODE` env / oneshot store | present |
+| G — dispatch mode-awareness | `scripts/dispatch-agent.js#findAgentSpec` reads `MC_MODE` env / oneshot store | present |
 | H — manifest hygiene (framework-manifest-guard) | `scripts/hooks/framework-manifest-guard.js` canonical-vs-product split, `.mc/manifest-guard-disable` sentinel | present |
 | I — `/mode:adhoc` stale-team classification | `.claude/commands/mode/adhoc.md` lines 36-77 (Step 1.75 + no-auto-claim startup directive + `.team-marker` freshness check) | present |
 | J — requirement write-time linter | `scripts/hooks/requirement-format-guard.js`, wired in `.claude/settings.json` PreToolUse Edit\|Write | present |

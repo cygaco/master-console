@@ -556,10 +556,10 @@ function validateContractFile() {
 // two overlap only on the canonical shape; the contract-consult runs BEFORE the door (exit 1 vs the
 // door's exit 2 — defined precedence, no double-refuse). Escapes mirror the shape-door so an
 // operator keeps a fleet + per-wrapper + master off-switch:
-//   WARPOS_DISABLE_SHAPE_DOOR=1                        → master kill (disables BOTH dispatch gates)
-//   WARPOS_DISPATCH_CONTRACT_ENFORCE=report|off|0      → fleet kill (contract gate)
-//   WARPOS_DISPATCH_CONTRACT_ENFORCE_<WRAPPER>=report  → per-wrapper kill (e.g. _DISPATCH_AGENT)
-//   (legacy WARPOS_DISPATCH_CONTRACT_ENFORCE=block still enforces — now the default)
+//   MC_DISABLE_SHAPE_DOOR=1                        → master kill (disables BOTH dispatch gates)
+//   MC_DISPATCH_CONTRACT_ENFORCE=report|off|0      → fleet kill (contract gate)
+//   MC_DISPATCH_CONTRACT_ENFORCE_<WRAPPER>=report  → per-wrapper kill (e.g. _DISPATCH_AGENT)
+//   (legacy MC_DISPATCH_CONTRACT_ENFORCE=block still enforces — now the default)
 function contractEnforceMode(wrapperKey, env) {
   const e = env || process.env;
   // ADR-0013 (amended SP-20260627-001): ENFORCE BY DEFAULT. The original 2026-06-16 flip was
@@ -571,10 +571,10 @@ function contractEnforceMode(wrapperKey, env) {
   // default. Reversibility is preserved via RECOVERABLE kill-switches — no code edit needed,
   // and (β edge, SP-20260627-001) they short-circuit independent of a broken contract MODULE
   // (callers fail-OPEN on module-load error; this gate only decides EVALUATION-error posture):
-  //   WARPOS_DISABLE_SHAPE_DOOR=1                              → master kill (both dispatch gates)
-  //   WARPOS_DISPATCH_CONTRACT_ENFORCE=report|off|0           → fleet kill (back to report-only)
-  //   WARPOS_DISPATCH_CONTRACT_ENFORCE_<WRAPPER>=report|off|0 → per-wrapper kill
-  //   WARPOS_DISPATCH_CONTRACT_ENFORCE[_<WRAPPER>]=enforce|block → explicit enforce (now also the default)
+  //   MC_DISABLE_SHAPE_DOOR=1                              → master kill (both dispatch gates)
+  //   MC_DISPATCH_CONTRACT_ENFORCE=report|off|0           → fleet kill (back to report-only)
+  //   MC_DISPATCH_CONTRACT_ENFORCE_<WRAPPER>=report|off|0 → per-wrapper kill
+  //   MC_DISPATCH_CONTRACT_ENFORCE[_<WRAPPER>]=enforce|block → explicit enforce (now also the default)
   if (/^(1|true|yes)$/i.test(String(mcEnv.readEnv("DISABLE_SHAPE_DOOR", e) || ""))) return false;
   const isOff = (v) => /^(report|off|0|false|no)$/.test(v);
   const isOn = (v) => /^(enforce|block|1|true|yes)$/.test(v);

@@ -102,7 +102,7 @@ Exit codes: 0 ok, 1 refused, 2 cli, 3 no-source, 4 copy-fail, 5 manifest-fail, 6
 // ── Mode detection ───────────────────────────────────────────────────
 
 function detectMode(root) {
-  const hasWarpos = fs.existsSync(path.join(root, "_mc"));
+  const hasMc = fs.existsSync(path.join(root, "_mc"));
   const hasFramework = fs.existsSync(path.join(root, "framework"));
   const hasScriptsHooks = fs.existsSync(path.join(root, "scripts", "hooks"));
   const hasClaude = fs.existsSync(path.join(root, ".claude"));
@@ -124,14 +124,14 @@ function detectMode(root) {
     };
   }
   // Product (already bootstrapped): has _mc/ but no framework/ — already migrated.
-  if (hasWarpos && !hasFramework) {
+  if (hasMc && !hasFramework) {
     return {
       mode: "product-bootstrapped",
       reason: "_mc/ exists but no framework/ (already migrated)",
     };
   }
   // Product (pre-bootstrap): no _mc/ but has .claude/ + (scripts/hooks/ OR framework-installed.json).
-  if (!hasWarpos && hasClaude && (hasScriptsHooks || hasFrameworkInstalled)) {
+  if (!hasMc && hasClaude && (hasScriptsHooks || hasFrameworkInstalled)) {
     return {
       mode: "product",
       reason:
@@ -150,7 +150,7 @@ function detectMode(root) {
   }
   return {
     mode: "unknown",
-    reason: `cannot detect mode (hasWarpos=${hasWarpos} hasFramework=${hasFramework} hasScriptsHooks=${hasScriptsHooks} hasFrameworkInstalled=${hasFrameworkInstalled})`,
+    reason: `cannot detect mode (hasMc=${hasMc} hasFramework=${hasFramework} hasScriptsHooks=${hasScriptsHooks} hasFrameworkInstalled=${hasFrameworkInstalled})`,
   };
 }
 
@@ -205,7 +205,7 @@ function discoverSource(root, explicit) {
   return {
     ok: false,
     reason:
-      "no --source flag, no framework-installed.json#source, no sibling clone found (tried ../MC, ../mc, ../Warpos)",
+      `no --source flag, no framework-installed.json#source, no sibling clone found (tried ${candidates.map((c) => `../${c}`).join(", ")})`,
   };
 }
 
@@ -216,11 +216,11 @@ function discoverSource(root, explicit) {
 // under _mc/. We prefer framework/ if both exist (canonical wins).
 function resolveSourceLayout(source) {
   const hasFramework = fs.existsSync(path.join(source, "framework"));
-  const hasWarpos = fs.existsSync(path.join(source, "_mc"));
+  const hasMc = fs.existsSync(path.join(source, "_mc"));
   if (hasFramework) {
     return { ok: true, layout: "framework", base: path.join(source, "framework") };
   }
-  if (hasWarpos) {
+  if (hasMc) {
     return { ok: true, layout: "_mc", base: path.join(source, "_mc") };
   }
   return {

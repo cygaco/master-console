@@ -145,7 +145,7 @@ function evaluate({ evidenceFiles, ledgerLines, nowMs, requireSignature = true }
     // Primary: sha256-based match — the ledger records evidence_sha for in-process spawns. The matching
     // record must be a VERIFIED liveness record (SP-20260718-004 R4 same-session choke-point) — a forged
     // ok:true record can't hide a stall. requireSignature is an INJECTED param (default true) — the old
-    // ambient WARPOS_LIVENESS_REQUIRE_SIG=0 runtime env was a settable unsigned-record opt-out (hunter r3
+    // ambient MC_LIVENESS_REQUIRE_SIG=0 runtime env was a settable unsigned-record opt-out (hunter r3
     // #2: reachable false-green in this evidence-file path); test-injection is now the only bypass.
     const _reqSig = requireSignature;
     const shaMatch = records.find(
@@ -193,7 +193,7 @@ function evaluatePairedWaiter({ records, nowMs, staleMs, windowMs = 2 * 60 * 60 
   // only a valid SIGNATURE (verifyRecord) — recordCompletion signs both, but isVerifiedLivenessRecord
   // REQUIRES ok:true so it wrongly rejects a real signed death (verified on 144 production deaths → all
   // fail the liveness check; a same-session signed ok:false passes verifyRecord). Always require the sig
-  // (QA-R2-001: no WARPOS_LIVENESS_REQUIRE_SIG env downgrade); test-injection via isVerified is the only bypass.
+  // (QA-R2-001: no MC_LIVENESS_REQUIRE_SIG env downgrade); test-injection via isVerified is the only bypass.
   const verify = typeof isVerified === "function"
     ? isVerified
     : (r) => (r.ok === false ? verifyRecord(r) : isVerifiedLivenessRecord(r, { requireSignature: true }));
@@ -425,13 +425,13 @@ if (require.main === module) {
 
   const result = evaluate({ evidenceFiles, ledgerLines, nowMs });
 
-  // ED-256 paired-waiter check — ADVISORY by default (WARN); under WARPOS_WAITER_ENFORCE it BLOCKS.
+  // ED-256 paired-waiter check — ADVISORY by default (WARN); under MC_WAITER_ENFORCE it BLOCKS.
   const waiterEnforce = mcEnv.readEnv("WAITER_ENFORCE") === "1" || mcEnv.readEnv("WAITER_ENFORCE") === "true";
   const pw = { findings: [], systemError: null };
   if (ledgerLines === null) {
     // backend r2 #3: under enforce an unreadable ledger is a SYSTEM ERROR (fail-closed exit 2), never a
     // silent green — the check cannot verify outstanding dispatches without the ledger.
-    if (waiterEnforce) pw.systemError = `ledger unreadable (${ledgerPath}) under WARPOS_WAITER_ENFORCE — cannot verify outstanding dispatches (fail-closed)`;
+    if (waiterEnforce) pw.systemError = `ledger unreadable (${ledgerPath}) under MC_WAITER_ENFORCE — cannot verify outstanding dispatches (fail-closed)`;
   } else {
     const records = [];
     for (const line of ledgerLines) {

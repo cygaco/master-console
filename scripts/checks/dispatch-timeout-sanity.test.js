@@ -75,7 +75,7 @@ test("foregroundAwareTimeout(20min, { background: true }) returns full 20min", (
   }
 });
 
-test("WARPOS_DISPATCH_BACKGROUND=1 env signal → full bound (background path)", () => {
+test("MC_DISPATCH_BACKGROUND=1 env signal → full bound (background path)", () => {
   const orig = mcEnv.readEnv("DISPATCH_BACKGROUND");
   mcEnv.setEnv("DISPATCH_BACKGROUND", "1");
   try {
@@ -174,7 +174,7 @@ test("runChecks() returns ok:true on real WRAPPER_DEFAULTS", () => {
 // Design note: foregroundAwareTimeout always CLAMPS when no background signal is
 // present. So a large default (30min) with no env signal still yields effectiveMs=540s
 // (GREEN — that IS the fix). The planted violation that proves the check's comparison
-// fires correctly is triggered by WARPOS_DISPATCH_BACKGROUND=1, which bypasses the
+// fires correctly is triggered by MC_DISPATCH_BACKGROUND=1, which bypasses the
 // clamp and exposes a raw value > ceiling.
 console.log("\n(5) Planted violation — foreground bound >540s → red:");
 
@@ -194,7 +194,7 @@ test("planted: large default clamped to ceiling by helper → check is GREEN (th
   }
 });
 
-test("planted: WARPOS_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exposes violation (red)", () => {
+test("planted: MC_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exposes violation (red)", () => {
   // This is the true planted violation: with background signal set, the helper returns the
   // raw defaultMs (no clamp). If defaultMs > ceiling, the check correctly reports RED.
   // This proves the check's comparison logic fires (not just the helper's clamp).
@@ -206,7 +206,7 @@ test("planted: WARPOS_DISPATCH_BACKGROUND=1 bypasses clamp → 30min default exp
     const c = result.checks.find(ch => ch.wrapper === "bg-bypass-planted");
     assert(c, "Expected check for bg-bypass-planted");
     assert.strictEqual(c.status, "red",
-      `Expected red: WARPOS_DISPATCH_BACKGROUND=1 bypassed the clamp, effective=1800000ms > ceiling`);
+      `Expected red: MC_DISPATCH_BACKGROUND=1 bypassed the clamp, effective=1800000ms > ceiling`);
     assert.strictEqual(result.ok, false, "Expected ok:false for planted violation");
     assert(c.reason && /VIOLATION/i.test(c.reason),
       `Expected VIOLATION in reason, got: ${c.reason}`);
@@ -270,11 +270,20 @@ test("runChecks with string defaultMs → ok:false (FAIL-CLOSED)", () => {
 // ── 7. Standalone CLI exits 0 ────────────────────────────────────────────────
 console.log("\n(7) Standalone CLI exit code:");
 
+// Hermetic child env: the CLI must be judged on its FOREGROUND bounds, so strip BOTH read-both names of the
+// background signal from the inherited env (an operator shell that exports it — current or legacy name — would
+// otherwise un-clamp every wrapper and red this test for an environmental reason, not a defect).
+function foregroundChildEnv() {
+  const env = { ...process.env };
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND", env);
+  return env;
+}
+
 test("node dispatch-timeout-sanity.js exits 0 (all wrappers ≤ ceiling)", () => {
   const r = spawnSync(process.execPath, [
     path.join(__dirname, "dispatch-timeout-sanity.js"),
     "--json",
-  ], { encoding: "utf8", timeout: 10000 });
+  ], { encoding: "utf8", timeout: 10000, env: foregroundChildEnv() });
   assert.strictEqual(r.status, 0,
     `Expected exit 0, got ${r.status}. stdout: ${r.stdout.slice(0, 500)}`);
   const out = JSON.parse(r.stdout);
@@ -286,7 +295,7 @@ test("node dispatch-timeout-sanity.js --json output is valid JSON with checks ar
   const r = spawnSync(process.execPath, [
     path.join(__dirname, "dispatch-timeout-sanity.js"),
     "--json",
-  ], { encoding: "utf8", timeout: 10000 });
+  ], { encoding: "utf8", timeout: 10000, env: foregroundChildEnv() });
   assert.doesNotThrow(() => JSON.parse(r.stdout), "Output must be valid JSON");
   const out = JSON.parse(r.stdout);
   assert(Array.isArray(out.checks), "Expected checks to be an array");
@@ -303,10 +312,17 @@ console.log("\n(7) fix-cycle pin — runProvider (providers.js) is a covered wra
 test("WRAPPER_DEFAULTS includes 'run-provider' (the cross-provider runProvider route)", () => {
   assert(Object.prototype.hasOwnProperty.call(WRAPPER_DEFAULTS, "run-provider"),
     "run-provider must stay in WRAPPER_DEFAULTS — removing it silently drops the 4th G8 wrapper from the sanity sweep");
-  assert(
-    foregroundAwareTimeout(WRAPPER_DEFAULTS["run-provider"], {}) <= FOREGROUND_CEILING_MS,
-    "run-provider foreground bound must clamp to the ceiling",
-  );
+  // Foreground judgement: clear BOTH names of the background signal for this assertion (exact restore after).
+  const snap = mcEnv.snapshotEnv("DISPATCH_BACKGROUND");
+  mcEnv.unsetEnv("DISPATCH_BACKGROUND");
+  try {
+    assert(
+      foregroundAwareTimeout(WRAPPER_DEFAULTS["run-provider"], {}) <= FOREGROUND_CEILING_MS,
+      "run-provider foreground bound must clamp to the ceiling",
+    );
+  } finally {
+    mcEnv.restoreEnv(snap);
+  }
 });
 test("providers.js loads and reaches timeout-policy (no broken require path)", () => {
   const providers = require("../hooks/lib/providers.js");

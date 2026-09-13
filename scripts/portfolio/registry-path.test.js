@@ -15,7 +15,7 @@ const mcEnv = require("../hooks/lib/mc-env"); // S-OS-06 read-both env (MC_X, th
  *     in the test name — path-lint hard-bans the contiguous form.)
  *  3. paths.json (generated) does NOT contain a portfolioRegistry key
  *     (the key was removed via removedIn so nothing can resolve the dead path).
- *  4. WARPOS_PORTFOLIO_REGISTRY env-var override is honoured by registryPath().
+ *  4. MC_PORTFOLIO_REGISTRY env-var override is honoured by registryPath().
  *
  * Exit 0 = all assertions pass.
  * Exit 1 = at least one failure (failures printed to stderr).
@@ -99,8 +99,8 @@ test("paths.json does not contain portfolioRegistry (dead path removed from gene
   );
 });
 
-// ── 4. WARPOS_PORTFOLIO_REGISTRY env override is honoured ─────────────────
-test("WARPOS_PORTFOLIO_REGISTRY env-var override is honoured by registryPath()", () => {
+// ── 4. MC_PORTFOLIO_REGISTRY env override is honoured ─────────────────
+test("MC_PORTFOLIO_REGISTRY env-var override is honoured by registryPath()", () => {
   const override = path.join(os.tmpdir(), "test-portfolio.json");
   const saved = mcEnv.readEnv("PORTFOLIO_REGISTRY");
   mcEnv.setEnv("PORTFOLIO_REGISTRY", override);

@@ -356,7 +356,7 @@ function parseReportContent(content, data) {
  * Missing or unreadable dir → returns empty map (graceful, never throws).
  *
  * @param {string} [overrideDir]  Override the full-reports directory path.
- *   Also settable via WARPOS_FULLREPORTS_DIR env var in the CLI entry point.
+ *   Also settable via MC_FULLREPORTS_DIR env var in the CLI entry point.
  */
 function loadFullReportsData(overrideDir) {
   // Use null-prototype object to avoid prototype-pollution on sprint IDs
@@ -805,9 +805,9 @@ function computeFindings(events, sprintDates = {}, cutoff = SP003_SHIP_DATE, rep
 // env overrides everywhere, so the triage tool (beta-honesty-triage.js) computes
 // findings over EXACTLY the inputs the gate sees. Returns the raw inputs; the
 // caller runs computeFindings() with whatever waiver/ cutoff policy it wants.
-//   WARPOS_EVENTS_FILE       — override path to events.jsonl
-//   WARPOS_SPRINT_DATES_JSON — override sprint dates as a JSON string
-//   WARPOS_FULLREPORTS_DIR   — override path to the full-reports directory
+//   MC_EVENTS_FILE       — override path to events.jsonl
+//   MC_SPRINT_DATES_JSON — override sprint dates as a JSON string
+//   MC_FULLREPORTS_DIR   — override path to the full-reports directory
 function loadAuditContext() {
   let rawEvents = [];
   let malformedCount = 0;

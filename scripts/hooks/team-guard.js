@@ -310,7 +310,7 @@ function configTeamCarriesConductor(conductor) {
 }
 
 // ── S-1 / AC-1.4: LOUD kill-switch attestation. When the team-gate kill-switch
-//    fires (env WARPOS_DISABLE_TEAM_GATE or the .team-gate-off marker), the
+//    fires (env MC_DISABLE_TEAM_GATE or the .team-gate-off marker), the
 //    bypass must NEVER be silent — emit a paths.eventsFile audit record AND a
 //    stderr attestation line carrying which switch fired + the reason, so a
 //    silenced gate is visible at /scan. Best-effort + fail-open: the attestation
@@ -319,7 +319,7 @@ function attestTeamGateKillSwitch(which, projectDir) {
   const attestation = {
     guard: "team-guard",
     bypass: "team-gate-kill-switch",
-    switch: which, // "env:WARPOS_DISABLE_TEAM_GATE" | "marker:.team-gate-off"
+    switch: which, // "env:MC_DISABLE_TEAM_GATE" | "marker:.team-gate-off"
     reason: "operator kill-switch active — readiness gate bypassed",
     ts: new Date().toISOString(),
   };
@@ -388,7 +388,7 @@ process.stdin.on("end", () => {
     // ENOENT, hit the outer catch, and exited 0 — silently permitting every
     // build-chain dispatch throughout any adhoc session. Never again.
     // S: runtime-retention — this debug log is OFF by default (opt in via
-    // WARPOS_TEAM_GUARD_DEBUG=1) AND byte-capped when on, so its ongoing
+    // MC_TEAM_GUARD_DEBUG=1) AND byte-capped when on, so its ongoing
     // footprint is bounded even during an extended debug session. Was
     // unbounded + always-on; grew unbounded with no rotation.
     try {
@@ -632,7 +632,7 @@ process.stdin.on("end", () => {
 
       // ── S-12c — HARD PreToolUse readiness GATE (un-skippable team-init) ──────
       // Ramps advisory→block: DEFAULT OFF (the (b) advisory below runs as today).
-      // When the operator flips HARD_GATE on (env WARPOS_TEAM_GATE_HARD=1 OR a
+      // When the operator flips HARD_GATE on (env MC_TEAM_GATE_HARD=1 OR a
       // .claude/runtime/.team-gate-hard marker), a WORKER dispatch with no correct
       // team live is BLOCKED from the 1st (NO ramp — un-skippable), while the
       // bootstrap/read-only ALLOW-list above keeps the team standable-up. Three
@@ -643,7 +643,7 @@ process.stdin.on("end", () => {
       // "it must ship enabled — an enforcement that depends on you flipping a
       // marker isn't an enforcement"). The kill-switch below (env or marker) is
       // the durable escape; the heartbeat + fail-open guard against false-blocks.
-      // The old WARPOS_TEAM_GATE_HARD / .team-gate-hard opt-IN is retained as a
+      // The old MC_TEAM_GATE_HARD / .team-gate-hard opt-IN is retained as a
       // belt-and-suspenders force-on, but absence no longer disables the gate.
       const hardGate = mcEnv.readEnv("TEAM_GATE_SOFT") !== "1";
       // AC-1.4: resolve WHICH kill-switch fired (for the loud attestation) — not
@@ -670,7 +670,7 @@ process.stdin.on("end", () => {
       // actually causes a bypass (the gate would otherwise have evaluated).
       if (hardGate && killSwitch && !teamLive) {
         attestTeamGateKillSwitch(
-          killSwitchEnv ? "env:WARPOS_DISABLE_TEAM_GATE" : "marker:.team-gate-off",
+          killSwitchEnv ? "env:MC_DISABLE_TEAM_GATE" : "marker:.team-gate-off",
           projectDir,
         );
       }
@@ -689,7 +689,7 @@ process.stdin.on("end", () => {
               `spawn implicitly creates the session-scoped team — TeamCreate/TeamDelete were ` +
               `REMOVED in Claude Code v2.1.178). Then dispatch workers as named subagents. ` +
               `Bootstrap calls (faces / explore / plan) are allowed. Kill-switch: ` +
-              `WARPOS_DISABLE_TEAM_GATE=1 or touch .claude/runtime/.team-gate-off. ` +
+              `MC_DISABLE_TEAM_GATE=1 or touch .claude/runtime/.team-gate-off. ` +
               `(E-SYSTEM-ORG-001 S-12c; E-TEAMS-MIGRATION-001)`,
           }),
         );

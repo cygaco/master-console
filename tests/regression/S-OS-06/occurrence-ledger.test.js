@@ -33,10 +33,22 @@ function ok(name, fn) {
 const partition = loadPartition({ forceReload: true });
 const built = RENAME_MC.buildLedgerAndPlan({ root: ROOT, partition });
 
+// β r3b (T5): the codemod ledger's dispositions are rewritten / pinned / derived / compat (compat only inside a
+// REGISTERED window); the fifth gate-level disposition, historical-allow-listed, is a PATH class never scanned here.
+const CODEMOD_DISPOSITIONS = ["rewritten", "pinned", "derived", "compat"];
+const WARRANTED = ["pinned", "derived", "compat"];
+
 ok("three-disposition-partition-total", () => {
   assert.strictEqual(built.underived.length, 0, `unpinned-unrewritten-underived must be 0, got ${built.underived.length}`);
   for (const row of built.ledger) {
-    assert.ok(row.disposition === "rewritten" || row.disposition === "pinned" || row.disposition === "derived");
+    assert.ok(CODEMOD_DISPOSITIONS.includes(row.disposition), `row ${row.file}:${row.line} has disposition ${row.disposition}`);
+    if (row.disposition === "compat") {
+      const cls = partition.classifyPath(row.file);
+      assert.ok(
+        cls.kind === "compat" || partition.findCompatOccurrence(row.file, require("fs").readFileSync(path.join(ROOT, row.file), "utf8").split(/\r?\n/)[row.line - 1]),
+        `compat row ${row.file}:${row.line} is not inside a registered compat window`
+      );
+    }
     assert.ok(typeof row.file === "string" && row.file.length > 0);
     assert.ok(Number.isInteger(row.line) && row.line > 0);
     assert.ok(typeof row.matchText === "string" && row.matchText.length > 0);
@@ -94,8 +106,8 @@ ok("committed-ledger-persists-exactly-the-warranted-rows", () => {
   // partition-total invariant is asserted over — no rewritten row leaks in, no warranted
   // row is dropped, and the header counts are the FULL-data three-disposition totals.
   const committed = RENAME_MC.buildCommittedLedger(built);
-  const expected = built.ledger.filter((r) => r.disposition === "pinned" || r.disposition === "derived");
-  assert.strictEqual(committed.rows.length, expected.length, "committed ledger must persist every pinned+derived row");
+  const expected = built.ledger.filter((r) => WARRANTED.includes(r.disposition));
+  assert.strictEqual(committed.rows.length, expected.length, "committed ledger must persist every pinned+derived+compat row");
   assert.strictEqual(committed.rows.filter((r) => r.disposition === "rewritten").length, 0, "committed ledger must carry no rewritten rows");
   committed.rows.forEach((row, i) => {
     const src = expected[i];
@@ -106,10 +118,16 @@ ok("committed-ledger-persists-exactly-the-warranted-rows", () => {
     );
   });
   assert.deepStrictEqual(committed.dispositionCounts, built.dispositionCounts, "header counts must be the full-data totals");
-  const { rewritten, pinned, derived } = committed.dispositionCounts;
-  assert.strictEqual(rewritten + pinned + derived, built.ledger.length, "header counts must partition the FULL ledger row count");
+  const { rewritten, pinned, derived, compat } = committed.dispositionCounts;
+  assert.strictEqual(rewritten + pinned + derived + compat, built.ledger.length, "header counts must partition the FULL ledger row count");
   assert.strictEqual(committed.rowsPersisted.pinned, pinned);
   assert.strictEqual(committed.rowsPersisted.derived, derived);
+  assert.strictEqual(committed.rowsPersisted.compat, compat);
+  assert.strictEqual(
+    Object.values(committed.compatBySurface).reduce((a, n) => a + n, 0),
+    compat,
+    "the per-surface compat counts must sum to the compat total"
+  );
   // Round-trip: the compact serializer emits valid JSON equal to the in-memory form.
   assert.deepStrictEqual(JSON.parse(RENAME_MC.serializeCommittedLedger(committed)), committed);
 });
@@ -119,11 +137,12 @@ ok("committed-ledger-file-as-written-holds-warranted-rows-only", () => {
   const abs = path.join(ROOT, ...RENAME_MC.COMMITTED_LEDGER_REL.split("/"));
   assert.ok(fs.existsSync(abs), "committed ledger must exist (run rename-mc.js --dry-run)");
   const written = JSON.parse(fs.readFileSync(abs, "utf8"));
-  const { rewritten, pinned, derived } = written.dispositionCounts;
-  for (const n of [rewritten, pinned, derived]) assert.ok(Number.isInteger(n) && n >= 0, "dispositionCounts must carry all three integer totals");
+  const { rewritten, pinned, derived, compat } = written.dispositionCounts;
+  for (const n of [rewritten, pinned, derived, compat]) assert.ok(Number.isInteger(n) && n >= 0, "dispositionCounts must carry all four integer totals");
   assert.ok(Array.isArray(written.rows));
+  assert.strictEqual(written.rows.filter((r) => r.disposition === "compat").length, compat, "written compat rows must equal the compat count");
   for (const row of written.rows) {
-    assert.ok(row.disposition === "pinned" || row.disposition === "derived", `written committed row ${row.file}:${row.line} has non-warranted disposition ${row.disposition}`);
+    assert.ok(WARRANTED.includes(row.disposition), `written committed row ${row.file}:${row.line} has non-warranted disposition ${row.disposition}`);
     assert.ok(typeof row.warrant === "string" && row.warrant.length > 0, `written committed row ${row.file}:${row.line} must carry a warrant`);
   }
   assert.strictEqual(written.rows.filter((r) => r.disposition === "pinned").length, pinned, "written pinned rows must equal the pinned count");

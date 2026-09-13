@@ -73,14 +73,14 @@ function readJSON(file) {
 }
 
 function scriptHeaderVersion() {
-  // install.ps1 typically has a `$WARPOS_VERSION = "X.Y.Z"` or similar.
+  // install.ps1 typically has a `$MC_VERSION = "X.Y.Z"` or similar.
   const file = path.join(TARGET_ROOT, "install.ps1");
   if (!fs.existsSync(file)) return null;
   try {
     const txt = fs.readFileSync(file, "utf8");
     // Look for the most common shape; tolerate version constant variants.
     const m =
-      txt.match(/\$WARPOS_VERSION\s*=\s*['"]([\d.]+)['"]/) ||
+      txt.match(/\$MC_VERSION\s*=\s*['"]([\d.]+)['"]/) ||
       txt.match(/^#?\s*Version[:\s=]+['"]?([\d.]+)['"]?/m) ||
       txt.match(/MC\s+([\d.]+)/);
     return m ? m[1] : null;
