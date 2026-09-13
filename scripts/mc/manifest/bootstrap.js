@@ -205,7 +205,7 @@ function discoverSource(root, explicit) {
   return {
     ok: false,
     reason:
-      "no --source flag, no framework-installed.json#source, no sibling clone found (tried ../MC, ../mc, ../Warpos)",
+      `no --source flag, no framework-installed.json#source, no sibling clone found (tried ${candidates.map((c) => `../${c}`).join(", ")})`,
   };
 }
 

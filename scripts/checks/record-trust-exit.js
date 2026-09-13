@@ -38,6 +38,11 @@
  *                plan, or a stdout/plan disagreement is a FAIL). A refused rename is a genuine
  *                refusal — --apply would refuse — so a green exit gate requires none.
  *                (Post-apply — T3/T5 — the derived rule must be revisited, not silently kept.)
+ *                β r3b (T5): the dry-run's FIFTH disposition `compat` is read fail-closed too — the
+ *                disposition counts line must carry compat=, the `compat by surface:` line is EMITTED in
+ *                this item's detail (reviewed as numbers), compatExpired must be 0 (a registered window
+ *                whose expiry the tree version reached is a FAIL), and the compat count must agree across
+ *                stdout, the committed ledger header, and the committed ledger's compat rows.
  *
  * Exit: 0 = every item PASS · 1 = any item FAIL · 2 = usage / internal error (never green).
  *
@@ -61,7 +66,8 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const FIXTURES_REL = "tests/regression/S-OS-06";
 const FIXTURE_FILE_RE = /^falsify-.+\.test\.js$/;
 const FALSIFIER_ID_RE = /^\s*const\s+FALSIFIER_ID\s*=\s*["']([^"']+)["']\s*;?\s*$/m;
-const REQUIRED_FALSIFIERS = ["F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9"];
+// F10 (β r3b condition 4): the compat-outside-register falsifier joins the BLOCKING set beside F8.
+const REQUIRED_FALSIFIERS = ["F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "F10"];
 
 const LOADER_REL = "scripts/open-source/partition-loader.js";
 const CODEMOD_REL = "scripts/open-source/rename-mc.js";
@@ -295,8 +301,16 @@ async function checkDryRun({ root }) {
   const underived = num(/^\s*unpinned-unrewritten-underived=(\d+)\s*$/m);
   const derivedOut = num(/^\s*disposition counts:.*\bderived=(\d+)\s*$/m);
   const refusedOut = num(/^\s*refusedRenames=(\d+)\s*$/m);
+  const compatOut = num(/^\s*disposition counts:.*\bcompat=(\d+)\b/m);
+  const compatExpiredOut = num(/^\s*compatExpired=(\d+)\s*$/m);
+  const surfaceLine = r.stdout.match(/^\s*compat by surface:\s*(.*)$/m);
 
   const problems = [];
+  if (compatOut === null) problems.push("dry-run output has no compat= disposition count (fail-closed, never read as 0)");
+  if (!surfaceLine) problems.push("dry-run output has no 'compat by surface:' line — compat counts must be EMITTED per surface (β r3b condition 3)");
+  if (compatExpiredOut === null) problems.push("dry-run output has no compatExpired= line (fail-closed, never read as 0)");
+  else if (compatExpiredOut !== 0) problems.push(`compatExpired=${compatExpiredOut} — a registered compat window has reached its expiry version`);
+  const compatDetail = surfaceLine ? `compat=${compatOut} by surface [${surfaceLine[1].trim()}]; compatExpired=${compatExpiredOut}` : "";
   if (unclassified === null) problems.push("dry-run output has no unclassified= line (fail-closed, never read as 0)");
   else if (unclassified !== 0) problems.push(`unclassified=${unclassified}`);
   if (underived === null) problems.push("dry-run output has no unpinned-unrewritten-underived= line (fail-closed, never read as 0)");
@@ -385,10 +399,15 @@ async function checkDryRun({ root }) {
       if (derivedOut !== null && !(derivedRows.length === derivedOut && headerDerived === derivedOut)) {
         problems.push(`derived count disagreement: stdout=${derivedOut} ledger-rows=${derivedRows.length} ledger-header=${headerDerived}`);
       }
+      const compatRows = ledger.rows.filter((row) => row && row.disposition === "compat").length;
+      const headerCompat = ledger.dispositionCounts && ledger.dispositionCounts.compat;
+      if (compatOut !== null && !(compatRows === compatOut && headerCompat === compatOut)) {
+        problems.push(`compat count disagreement: stdout=${compatOut} ledger-rows=${compatRows} ledger-header=${headerCompat}`);
+      }
       if (!problems.length) {
         const clean = rule.cleanViews.length ? ` [${rule.cleanViews.join(", ")}]` : "";
         return pass(
-          `dry-run exit 0; unclassified=0; unpinned-unrewritten-underived=0; derived set within the ${views.length} generated views at their resolved paths (${derivedRows.length} derived occurrences in ${derivedFiles.length} view(s); ${rule.cleanViews.length} regenerated clean${clean}); refusedRenames=0 (stdout and the fresh ${PLAN_REL} agree)`
+          `dry-run exit 0; unclassified=0; unpinned-unrewritten-underived=0; derived set within the ${views.length} generated views at their resolved paths (${derivedRows.length} derived occurrences in ${derivedFiles.length} view(s); ${rule.cleanViews.length} regenerated clean${clean}); refusedRenames=0 (stdout and the fresh ${PLAN_REL} agree); ${compatDetail}`
         );
       }
     }

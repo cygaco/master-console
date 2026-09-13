@@ -10,9 +10,12 @@
  *
  * Modes:
  *   --dry-run   (default) classify every tracked path into exactly one of the four
- *               beta r1 classes, scan every Class-1 file for `warpos` occurrences,
- *               assign each occurrence exactly one disposition (rewritten / pinned /
- *               derived), and write:
+ *               beta r1 classes, scan every Class-1 file (and every REGISTERED compat
+ *               member) for `warpos` occurrences, assign each occurrence exactly one
+ *               disposition (rewritten / pinned / derived / compat — β r3b: compat is
+ *               permitted ONLY inside a registered compat window, each window carrying its
+ *               own expiry; an occurrence in an expired window FAILS the dry-run as
+ *               compatExpired), and write:
  *                 - runtime/S-OS-06/rename-plan.json  (path renames + category counts)
  *                 - runtime/S-OS-06/rename-occurrences.full.json  (ALL occurrence rows incl.
  *                   the ~33k `rewritten` codemod-plan rows; regenerated each run, NOT committed)
@@ -50,7 +53,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const { loadPartition, historicalChangelogLines } = require("./partition-loader");
+const { loadPartition, historicalChangelogLines, readTreeVersion, isCompatExpired, compatLabel } = require("./partition-loader");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 
@@ -207,6 +210,9 @@ function residualWarpTokens(lineText) {
 function skillNamespaceLineDecision(partition, file, effective, hist, lineText, lineNum) {
   const after = rewriteSkillPathRefs(rewriteSkillNamespaceTokens(lineText));
   if (after === lineText) return { after, verbatimReason: null };
+  if (partition.findCompatOccurrence(file, lineText) || (effective !== file && partition.findCompatOccurrence(effective, lineText))) {
+    return { after: lineText, verbatimReason: "compat-occurrence" };
+  }
   if (partition.findOccurrencePin(file, lineText) || (effective !== file && partition.findOccurrencePin(effective, lineText))) {
     return { after: lineText, verbatimReason: "occurrence-pin" };
   }
@@ -294,7 +300,10 @@ function planSkillNamespace({ root, partition, trackedFiles }) {
     if (cls.class !== 1) {
       if (enumTokens) {
         counts.keptNonClass1Tokens += enumTokens;
-        const label = `class-${cls.class} ${cls.entry ? cls.entry.pattern || cls.entry.path : cls.kind}`;
+        const entryName = cls.entry
+          ? cls.entry.pattern || cls.entry.path || (cls.kind === "compat" ? `compat ${compatLabel(cls.entry)}` : cls.kind)
+          : cls.kind;
+        const label = `class-${cls.class} ${entryName}`;
         bump(keptByEntry, label, enumTokens);
       }
       continue;
@@ -433,6 +442,7 @@ function buildLedgerAndPlan({ root, partition }) {
   const keptHistoricalPaths = []; // Class-3/4 paths a naive rename WOULD touch: never candidates, names verbatim (β r1)
   const candidates = []; // rename candidates in tracked order; write permission is decided after the scan
   const class1Files = [];
+  const compatMemberFiles = []; // β r3b: registered compat members (Class-3 for renames) — their occurrences are `compat`
 
   for (const relPath of trackedFiles) {
     const result = partition.classifyPath(relPath);
@@ -444,6 +454,7 @@ function buildLedgerAndPlan({ root, partition }) {
     if (result.class === 1) {
       class1Files.push({ relPath, writeProtected: result.writeProtected, kind: result.kind });
     }
+    if (result.kind === "compat") compatMemberFiles.push({ relPath, window: result.entry });
 
     // Compute the would-be rename for EVERY classified path (not just Class-1) so no path a
     // naive rename WOULD touch is silently skipped: each one lands in exactly one of
@@ -500,7 +511,17 @@ function buildLedgerAndPlan({ root, partition }) {
   let derivedCount = 0;
   let pinnedCount = 0;
   let rewrittenCount = 0;
-  const underived = []; // defensive: occurrences that got NONE of the three dispositions
+  let compatCount = 0;
+  const compatBySurface = {};
+  const compatExpired = []; // occurrences inside a registered window whose expiry the tree version has reached — a FAIL
+  const treeVersion = readTreeVersion(root);
+  const noteCompat = (w, file, line, matchText) => {
+    compatCount += 1;
+    const label = compatLabel(w);
+    compatBySurface[label] = (compatBySurface[label] || 0) + 1;
+    if (isCompatExpired(w.expires, treeVersion.version)) compatExpired.push({ file, line, matchText, surface: w.surface, expires: w.expires });
+  };
+  const underived = []; // defensive: occurrences that got NONE of the four codemod dispositions
 
   for (const { relPath, writeProtected } of class1Files) {
     const absPath = path.join(root, relPath);
@@ -533,9 +554,16 @@ function buildLedgerAndPlan({ root, partition }) {
           warrant = "generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)";
           derivedCount += 1;
         } else {
+          // β r3b: a registered compat occurrence is checked BEFORE pins (the loader refuses a line claimed by both).
+          const comp = partition.findCompatOccurrence(relPath, lineText);
           // R4: a pin binds (file, matchText [, anchor]) — never a line number.
-          const pin = partition.findOccurrencePin(relPath, lineText);
-          if (pin) {
+          const pin = comp ? null : partition.findOccurrencePin(relPath, lineText);
+          if (comp) {
+            disposition = "compat";
+            rule = `compat:${comp.window.surface}`;
+            warrant = comp.window.warrant;
+            noteCompat(comp.window, relPath, lineNum, matchText);
+          } else if (pin) {
             disposition = "pinned";
             rule = "occurrence-pin";
             warrant = pin.warrant;
@@ -554,11 +582,32 @@ function buildLedgerAndPlan({ root, partition }) {
           }
         }
 
-        if (!["rewritten", "pinned", "derived"].includes(disposition)) {
+        if (!["rewritten", "pinned", "derived", "compat"].includes(disposition)) {
           underived.push({ file: relPath, line: lineNum, matchText });
         }
 
         ledger.push({ file: relPath, line: lineNum, rule, matchText, disposition, warrant });
+      }
+    });
+  }
+
+  // Registered compat MEMBER files: never renamed, never rewritten, but every occurrence is ledgered `compat` so the
+  // count per surface is emitted (β r3b condition 3) and an expired window fails the dry-run.
+  for (const { relPath, window: w } of compatMemberFiles) {
+    const absPath = path.join(root, relPath);
+    if (looksBinary(absPath)) continue;
+    let content;
+    try {
+      content = fs.readFileSync(absPath, "utf8");
+    } catch {
+      continue;
+    }
+    content.split(/\r?\n/).forEach((lineText, idx) => {
+      const re = /warpos/gi;
+      let m;
+      while ((m = re.exec(lineText)) !== null) {
+        noteCompat(w, relPath, idx + 1, m[0]);
+        ledger.push({ file: relPath, line: idx + 1, rule: `compat:${w.surface}`, matchText: m[0], disposition: "compat", warrant: w.warrant });
       }
     });
   }
@@ -573,7 +622,10 @@ function buildLedgerAndPlan({ root, partition }) {
     keptHistoricalPaths,
     categoryCounts,
     ledger,
-    dispositionCounts: { rewritten: rewrittenCount, pinned: pinnedCount, derived: derivedCount },
+    dispositionCounts: { rewritten: rewrittenCount, pinned: pinnedCount, derived: derivedCount, compat: compatCount },
+    compatBySurface,
+    compatExpired,
+    treeVersion,
     underived,
   };
 }
@@ -582,7 +634,7 @@ function buildLedgerAndPlan({ root, partition }) {
 
 const COMMITTED_LEDGER_REL = "scripts/open-source/rename-mc.occurrences.json";
 const FULL_LEDGER_REL = "runtime/S-OS-06/rename-occurrences.full.json";
-const WARRANTED_DISPOSITIONS = ["pinned", "derived"];
+const WARRANTED_DISPOSITIONS = ["pinned", "derived", "compat"];
 
 // The committed ledger is the record-trust artifact: every row it persists carries a
 // warrant. `rewritten` rows are the codemod PLAN (warrant:null) — they are represented
@@ -592,12 +644,13 @@ function buildCommittedLedger(built) {
   const rows = built.ledger
     .filter((r) => WARRANTED_DISPOSITIONS.includes(r.disposition))
     .map(({ file, line, rule, matchText, disposition, warrant }) => ({ file, line, rule, matchText, disposition, warrant }));
-  const rowsPersisted = { pinned: 0, derived: 0 };
+  const rowsPersisted = { pinned: 0, derived: 0, compat: 0 };
   for (const r of rows) rowsPersisted[r.disposition] += 1;
   return {
     $question:
-      "Which `warpos` occurrences in Class-1 files are NOT rewritten by rename-mc.js, and under what warrant? Warranted dispositions only (pinned + derived). The rewritten set is a COUNT here; full per-occurrence detail is regenerated by --dry-run at fullLedgerPath (not committed).",
+      "Which `warpos` occurrences are NOT rewritten by rename-mc.js, and under what warrant? Warranted dispositions only (pinned + derived + compat — the last per REGISTERED compat window, each with its own expiry). The rewritten set is a COUNT here; full per-occurrence detail is regenerated by --dry-run at fullLedgerPath (not committed).",
     dispositionCounts: { ...built.dispositionCounts },
+    compatBySurface: { ...(built.compatBySurface || {}) },
     rowsPersisted,
     fullLedgerPath: FULL_LEDGER_REL,
     rows,
@@ -638,6 +691,10 @@ function runDryRun({ root = REPO_ROOT } = {}) {
     keptHistoricalPaths: built.keptHistoricalPaths,
     categoryCounts: built.categoryCounts,
     dispositionCounts: built.dispositionCounts,
+    compatClock: built.treeVersion,
+    compatBySurface: built.compatBySurface,
+    compatExpired: built.compatExpired.length,
+    compatExpiredOccurrences: built.compatExpired.slice(0, 50),
     unpinnedUnrewrittenUnderived: underivedCount,
     underivedOccurrences: built.underived.slice(0, 50),
     skillNamespace: skillNs,
@@ -670,7 +727,14 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(`  unclassified=${unclassifiedCount}`);
   console.log(`  oversizedUnscanned=${built.oversizedUnscanned.length} (tracked non-binary files over MAX_SCAN_BYTES=${MAX_SCAN_BYTES})`);
   console.log(`  per-category (rewritten occurrences): ${JSON.stringify(built.categoryCounts)}`);
-  console.log(`  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} derived=${built.dispositionCounts.derived}`);
+  // `derived=` stays LAST on this line (record-trust-exit reads it anchored at end of line).
+  console.log(
+    `  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} compat=${built.dispositionCounts.compat} derived=${built.dispositionCounts.derived}`
+  );
+  const surfaces = Object.entries(built.compatBySurface).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  console.log(`  compat clock: ${built.treeVersion.reason}`);
+  console.log(`  compat by surface: ${surfaces.length ? surfaces.map(([k, v]) => `${k}=${v}`).join("; ") : "(none registered)"}`);
+  console.log(`  compatExpired=${built.compatExpired.length}`);
   console.log(`  unpinned-unrewritten-underived=${underivedCount}`);
   const viewMoves = built.pathRenames.filter((r) => r.generatedViewMove).length;
   console.log(`  path renames planned: ${built.pathRenames.length} (${viewMoves} generated-view directory move(s))`);
@@ -695,8 +759,15 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   }
 
   const oversizedCount = built.oversizedUnscanned.length;
-  const ok = unclassifiedCount === 0 && underivedCount === 0 && oversizedCount === 0;
+  const compatExpiredCount = built.compatExpired.length;
+  const ok = unclassifiedCount === 0 && underivedCount === 0 && oversizedCount === 0 && compatExpiredCount === 0;
   if (!ok) {
+    if (compatExpiredCount > 0) {
+      console.error(
+        `rename-mc --dry-run FAILED: ${compatExpiredCount} compat occurrence(s) sit in a window whose expiry the tree version (${built.treeVersion.version === null ? "<unknown>" : built.treeVersion.version}) has reached — remove them or re-register through a warranted amendment:`
+      );
+      built.compatExpired.slice(0, 50).forEach((o) => console.error(`  - ${o.file}:${o.line} "${o.matchText}" [surface ${o.surface}, expires ${o.expires}]`));
+    }
     if (oversizedCount > 0) {
       console.error(`rename-mc --dry-run FAILED: ${oversizedCount} tracked non-binary file(s) exceed MAX_SCAN_BYTES and were NOT scanned:`);
       built.oversizedUnscanned.forEach((o) => console.error(`  - ${describeOversized(o)}`));

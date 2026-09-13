@@ -93,6 +93,16 @@ function loadGatePartition() {
   return loader.loadPartition({ forceReload: true });
 }
 
+/** package.json#version at REPO_ROOT, or null (unreadable/absent) — the compat-window expiry clock. */
+function readRootVersion() {
+  try {
+    const v = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "package.json"), "utf8").replace(/^﻿/, "")).version;
+    return typeof v === "string" ? v : null;
+  } catch {
+    return null;
+  }
+}
+
 function resolveLegacySlugMode(opts) {
   if (opts && opts.enforceLegacySlug) {
     return { enforce: true, version: null, reason: "--enforce-legacy-slug" };
@@ -440,7 +450,8 @@ function run(opts) {
     };
   }
   const slugMode = resolveLegacySlugMode(opts);
-  const slugTally = partition.createLegacySlugTally();
+  // The compat expiry clock is THIS tree's package.json version (null when unreadable -> every window reads expired).
+  const slugTally = partition.createLegacySlugTally({ version: readRootVersion() });
   const slugUnscanned = []; // live files too large to scan: unverifiable, fail closed when enforcing
 
   const skippedLarge = [];
@@ -515,6 +526,14 @@ function run(opts) {
       pinned: slugTally.pinnedTotal,
       derived: slugTally.derivedTotal,
       changelog_historical: slugTally.changelogHistoricalTotal,
+      // β r3b: the fifth disposition, emitted PER SURFACE (reviewed as numbers). Expired windows are counted
+      // separately AND inside live_unallowed (they fail the gate).
+      compat: slugTally.compatTotal,
+      compat_by_surface: slugTally.compatBySurface,
+      compat_expired: slugTally.compatExpiredTotal,
+      compat_expired_by_surface: slugTally.compatExpiredBySurface,
+      compat_clock: slugTally.versionReason,
+      dispositions: partition.dispositionSummary(slugTally),
       suppressed_by_entry: slugTally.suppressedByEntry,
       pinned_by_pin: slugTally.pinnedByPin,
       derived_by_view: slugTally.derivedByView,
@@ -564,6 +583,10 @@ Hard detectors (each one fails the gate):
                   classified through scripts/open-source/partition-loader.js. REPORT-ONLY
                   (prints the pending count) while package.json < 2.0.0; ENFORCING at
                   >= 2.0.0 or with --enforce. Suppressed counts are always printed.
+                  compat: an occurrence is permitted ONLY inside a REGISTERED compat window
+                  (the partition's compatWindows: enumerated members + anchored occurrences,
+                  each window with its OWN expires version); counts are emitted per surface;
+                  at package.json >= a window's expiry its occurrences are live-unallowed.
 
 Advisory (report-only — never affects the exit code):
   root_leak       _requirements/ or _docs/ at canonical root
