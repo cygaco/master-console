@@ -29,6 +29,27 @@ const lease = require(path.join(PROJECT_ROOT, "scripts", "dispatch", "conductor-
 function git(cwd, args) {
   return execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true }).trim();
 }
+
+/**
+ * The bash that runs the shim. On win32 a bare "bash" is NOT reliably on PATH — PowerShell
+ * (the operator's primary shell) does not carry Git for Windows' bin/, so spawnSync("bash")
+ * is ENOENT there: status null, which the LAND case read as a refusal while DISCRIMINATION
+ * (expects non-zero) still passed. Derive Git for Windows' own bash from git's exec-path
+ * (<root>/mingw64/libexec/git-core → <root>/bin/bash.exe), the same bash git runs hooks with.
+ */
+function resolveBash() {
+  if (process.platform !== "win32") return "bash";
+  const candidates = [];
+  try {
+    const execPath = execFileSync("git", ["--exec-path"], { encoding: "utf8", windowsHide: true }).trim();
+    const root = path.resolve(execPath, "..", "..", "..");
+    candidates.push(path.join(root, "bin", "bash.exe"), path.join(root, "usr", "bin", "bash.exe"));
+  } catch { /* fall through to the fixed locations */ }
+  candidates.push("C:\\Program Files\\Git\\bin\\bash.exe", "C:\\Program Files\\Git\\usr\\bin\\bash.exe");
+  for (const c of candidates) if (fs.existsSync(c)) return c;
+  return "bash";
+}
+const BASH = resolveBash();
 function extractShim() {
   const src = fs.readFileSync(INSTALLER, "utf8");
   const blocks = [...src.matchAll(/<<'HOOK'\n([\s\S]*?)\nHOOK/g)].map((m) => m[1]);
@@ -70,13 +91,17 @@ function setup(tag) {
 function runHook(hookPath, cwd, refName, env) {
   const zero = "0000000000000000000000000000000000000000";
   const one = "1111111111111111111111111111111111111111";
-  const r = spawnSync("bash", [hookPath, "prepared"], {
+  const r = spawnSync(BASH, [hookPath, "prepared"], {
     cwd,
     input: `${zero} ${one} ${refName}\n`,
     encoding: "utf8",
     windowsHide: true,
     env,
   });
+  // A shim that could not be RUN (no bash, spawn error) is a test-environment failure,
+  // never a verdict — surface it loudly instead of letting status:null masquerade as
+  // "refused" (which would false-pass the DISCRIMINATION case).
+  if (r.error) throw new Error(`could not run the shim via ${BASH}: ${r.error.message}`);
   return r.status;
 }
 

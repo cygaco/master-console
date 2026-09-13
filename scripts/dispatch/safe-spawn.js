@@ -488,6 +488,46 @@ function system32(exe) {
 }
 
 // ── tree-kill ───────────────────────────────────────────────
+/**
+ * POSIX: every live descendant of `rootPid` (children, grandchildren, …) from ONE
+ * snapshot of the process table, deepest-last. A process-group kill alone is NOT a
+ * tree kill: a CLI (or anything spawned detached / under setsid) lives in its OWN
+ * process group, so `kill(-pid)` on the top PID leaks its grandchildren — the
+ * orphaned-paid-subprocess class the Linux CI run proved with a 3-level detached
+ * tree. `ps -e -o pid=,ppid=` is POSIX-portable (procps on Linux, BSD ps on macOS).
+ */
+function posixDescendants(rootPid) {
+  const out = [];
+  let table = "";
+  try {
+    const r = spawnSync("ps", ["-e", "-o", "pid=,ppid="], { encoding: "utf8", timeout: 5000 });
+    table = (r && r.stdout) || "";
+  } catch {
+    return out;
+  }
+  const byParent = new Map();
+  for (const line of table.split("\n")) {
+    const m = line.trim().match(/^(\d+)\s+(\d+)$/);
+    if (!m) continue;
+    const pid = Number(m[1]);
+    const ppid = Number(m[2]);
+    if (!byParent.has(ppid)) byParent.set(ppid, []);
+    byParent.get(ppid).push(pid);
+  }
+  const queue = [Number(rootPid)];
+  const seen = new Set(queue);
+  while (queue.length) {
+    const p = queue.shift();
+    for (const c of byParent.get(p) || []) {
+      if (seen.has(c)) continue;
+      seen.add(c);
+      out.push(c);
+      queue.push(c);
+    }
+  }
+  return out;
+}
+
 /** Best-effort kill of the WHOLE process tree (CLIs spawn children). */
 function treeKill(pid) {
   if (!pid) return false;
@@ -498,12 +538,21 @@ function treeKill(pid) {
       const tk = resolveTool("taskkill");
       const bin = (tk.ok && tk.path) || system32("taskkill.exe") || "taskkill";
       spawnSync(bin, ["/T", "/F", "/PID", String(pid)], { timeout: 5000, windowsHide: true });
-    } else {
-      try {
-        process.kill(-pid, "SIGKILL"); // process group
-      } catch {
-        process.kill(pid, "SIGKILL");
-      }
+      return true;
+    }
+    // POSIX: snapshot the descendants FIRST (killing the top reparents them to init
+    // and they vanish from a later walk), reap them deepest-first — each one's own
+    // process group too, in case it spawned further children after the snapshot —
+    // then the top PID's group, then the top PID itself.
+    const kids = posixDescendants(pid);
+    for (let i = kids.length - 1; i >= 0; i--) {
+      try { process.kill(-kids[i], "SIGKILL"); } catch { /* not a group leader / gone */ }
+      try { process.kill(kids[i], "SIGKILL"); } catch { /* already gone */ }
+    }
+    try {
+      process.kill(-pid, "SIGKILL"); // process group
+    } catch {
+      process.kill(pid, "SIGKILL");
     }
     return true;
   } catch {

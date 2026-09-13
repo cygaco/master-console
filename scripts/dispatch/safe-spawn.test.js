@@ -31,7 +31,17 @@ function sleepSync(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 const isAlive = (pid) => {
-  try { process.kill(pid, 0); return true; } catch { return false; }
+  try { process.kill(pid, 0); } catch { return false; }
+  // Linux: a ZOMBIE still answers kill(pid, 0) but is dead — read its state from
+  // /proc so an unreaped corpse never reads as "survived treeKill".
+  if (process.platform === "linux") {
+    try {
+      const stat = fs.readFileSync(`/proc/${pid}/stat`, "utf8");
+      const state = stat.slice(stat.lastIndexOf(")") + 1).trim()[0];
+      if (state === "Z" || state === "X") return false;
+    } catch { return false; }
+  }
+  return true;
 };
 
 const h = harness("safe-spawn");
@@ -146,8 +156,13 @@ h.violation("UNC / absolute-exe arg rejected (model never picks the exe)", () =>
   assertArgs("codex", ["exec", "\\\\attacker\\share\\evil.exe", "-"]));
 h.violation("bad flag value rejected (sandbox not in allowlist)", () =>
   assertArgs("codex", ["exec", "--sandbox", "full-access-please", "-"]));
+// HOST-absolute outside-repo path, not a Windows literal: "C:\\Windows\\Temp\\x" is a
+// RELATIVE path on POSIX, so path.resolve() put it UNDER the repo cwd and the Linux CI
+// runner accepted it (false-green). A sibling of PROJECT_ROOT is absolute + outside on
+// every host.
+const OUTSIDE_REPO = path.join(path.dirname(PROJECT_ROOT), "not-this-repo-x");
 h.violation("claude --worktree outside repo rejected", () =>
-  assertArgs("claude", ["-p", "--agent", "builder", "--worktree", "C:\\Windows\\Temp\\x"]));
+  assertArgs("claude", ["-p", "--agent", "builder", "--worktree", OUTSIDE_REPO]));
 // GPT-5.5 review CRITICAL regression guard: a consumed flag VALUE carrying a cmd
 // metachar must be rejected even when the per-flag validator (codex -o path check)
 // would accept the path. This is the CVE-2024-27980 .cmd-shim bypass.
@@ -251,8 +266,21 @@ h.test("treeKill reaps a parent + child + GRANDCHILD process tree (not just the 
   let pids = {};
   let killed = false;
   try {
-    const parent = spawn(process.execPath, ["-e", pSrc], { stdio: "ignore", detached });
-    parent.unref();
+    if (process.platform === "win32") {
+      // win32: no zombies, and a NON-detached child is bound to its parent's job object
+      // (it dies with a short-lived launcher), so P is spawned directly.
+      const parent = spawn(process.execPath, ["-e", pSrc], { stdio: "ignore", detached });
+      parent.unref();
+    } else {
+      // POSIX double-fork: launch P through a short-lived LAUNCHER so P is NOT this
+      // process's direct child. This h.test is fully synchronous (Atomics.wait), so the
+      // event loop never reaps a direct child's SIGCHLD — a killed P would linger as a
+      // ZOMBIE that still answers kill(pid, 0) and read as "survived" (the Linux CI
+      // false-red). Reparented to init, P is reaped the instant it dies.
+      const lSrc = `const cp=require("child_process");cp.spawn(process.execPath,["-e",${JSON.stringify(pSrc)}],{stdio:"ignore",detached:${dj}}).unref();`;
+      const launcher = spawn(process.execPath, ["-e", lSrc], { stdio: "ignore" });
+      launcher.unref();
+    }
 
     // Harvest all three PIDs from the sealed file (bounded poll, fully synchronous).
     const harvestDeadline = Date.now() + 8000;
