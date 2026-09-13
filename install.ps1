@@ -36,7 +36,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 # Fallback only - version.json is the source of truth, read below.
-$Script:WARPOS_VERSION = "1.2.0"
+$Script:WARPOS_VERSION = "2.0.0"
 
 function Write-Step($msg) { Write-Host "[install] $msg" -ForegroundColor Cyan }
 function Write-Warn($msg) { Write-Host "[install] WARN: $msg" -ForegroundColor Yellow }
