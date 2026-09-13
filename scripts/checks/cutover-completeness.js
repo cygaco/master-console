@@ -53,6 +53,81 @@ const ROOT = process.env.CLAUDE_PROJECT_DIR || path.resolve(__dirname, "..", "..
 const NAME = "cutover-completeness";
 const ALLOWLIST_FILE = path.join(__dirname, "cutover-completeness.allowlist.json");
 
+// ── S-OS-06 T2: the rename partition's FROZEN allow-list (β r3 Req1, AC-7.1) ──
+// The ONE literal the suppressed-count emission searches for sits on the next line; that
+// line is a Class-3 occurrence pin in the partition (anchor "const LEGACY_SLUG_NEEDLE = "),
+// so the rename codemod never rewrites it.
+const LEGACY_SLUG_NEEDLE = "warpos";
+const PARTITION_MAX_BYTES = 8 * 1024 * 1024;
+const PARTITION_BINARY_EXT =
+  /\.(png|jpe?g|gif|ico|webp|svg|woff2?|ttf|eot|pdf|zip|gz|tgz|tar|7z|mp[34]|wav|mov|exe|dll|node|wasm)$/i;
+
+/**
+ * The partition half of this gate. Reads the ONE partition artifact through the ONE
+ * loader (never the file directly) and returns:
+ *   { fatal }                         — unreadable/empty/truncated partition (F3) or a
+ *                                       runner error: exit 2, never green
+ *   { problems, notes, tally, ... }   — problems are F2 (unwarranted entry), SCHEMA,
+ *                                       F7 (entry matching nothing), F8 (post-freeze
+ *                                       silent addition): each one is exit 1
+ * and ALWAYS the per-entry suppressed legacy-slug counts (emitted, never swallowed).
+ */
+function runPartitionChecks() {
+  let loader;
+  try {
+    loader = require("../open-source/partition-loader");
+  } catch (e) {
+    return { fatal: `partition loader unavailable — failing CLOSED: ${e.message}` };
+  }
+  let partition;
+  try {
+    partition = loader.loadPartition({ forceReload: true });
+  } catch (e) {
+    return { fatal: `partition unreadable — failing CLOSED (F3): ${e.message}` };
+  }
+  if (!partition.allowList || partition.allowList.size === 0) {
+    return {
+      fatal:
+        "the partition allow-list view is EMPTY (no Class-3/4 entries, no occurrence pins) — an empty allow-list is a truncated allow-list (F3); refusing to read green",
+    };
+  }
+  const root = loader.PARTITION_ROOT;
+  try {
+    const tracked = loader.listRepoFiles(root);
+    const problems = [...partition.validateEntries()];
+    const stale = partition.checkStale({ root, trackedFiles: tracked });
+    problems.push(...stale.problems);
+    const freeze = partition.checkFreeze({ root });
+    problems.push(...freeze.problems);
+    const tally = partition.createLegacySlugTally();
+    for (const rel of tracked) {
+      if (PARTITION_BINARY_EXT.test(rel)) continue;
+      const abs = path.join(root, rel);
+      let st;
+      try {
+        st = fs.statSync(abs);
+      } catch {
+        continue; // in the index, deleted on disk
+      }
+      if (!st.isFile() || st.size > PARTITION_MAX_BYTES) continue;
+      const buf = fs.readFileSync(abs);
+      if (buf.subarray(0, 8192).includes(0)) continue;
+      partition.tallyLegacySlug(tally, rel, buf.toString("utf8"), LEGACY_SLUG_NEEDLE);
+    }
+    return {
+      fatal: null,
+      root,
+      allowEntries: partition.allowList.size,
+      problems,
+      notes: [...stale.notes, ...freeze.notes],
+      tally,
+      formatted: partition.formatLegacySlugTally(tally, { indent: "  ", maxPending: 0 }),
+    };
+  } catch (e) {
+    return { fatal: `partition check runner error — failing CLOSED: ${e.message}` };
+  }
+}
+
 // ── The deleted-tree path literals + renamed-away role names ─────────────────
 // Deleted old-tree DIRECTORIES (ADR-0007). Anchored so a path SEGMENT must match:
 // `01-adhoc/`, `/00-alex/` etc — never a coincidental substring. `00-alex` and
@@ -380,7 +455,32 @@ function run() {
   notes.push(
     `${targets.length} target file(s) scanned · ${hits.length} raw literal hit(s) · ${findings.length} live-stale · ${allowed.length} allowlisted`,
   );
-  return { ok: findings.length === 0, problems, notes, fatal: false, findings, allowed };
+
+  // S-OS-06 T2: the rename partition's frozen allow-view (F2 warrants, F3 fail-closed,
+  // F7 stale entries, F8 freeze) + the per-entry suppressed legacy-slug counts.
+  const partition = runPartitionChecks();
+  if (partition.fatal) {
+    return { ok: false, problems: [...problems, partition.fatal], notes, fatal: true, findings, allowed, partition };
+  }
+  for (const p of partition.problems) problems.push(`[${p.id}] ${p.message}`);
+  return {
+    ok: findings.length === 0 && partition.problems.length === 0,
+    problems,
+    notes,
+    fatal: false,
+    findings,
+    allowed,
+    partition,
+  };
+}
+
+function partitionReportLines(partition) {
+  if (!partition || partition.fatal) return [];
+  return [
+    `  rename partition (read via scripts/open-source/partition-loader.js): ${partition.allowEntries} allow-view entr${partition.allowEntries === 1 ? "y" : "ies"} · ${partition.problems.length} problem(s)`,
+    ...partition.formatted,
+    ...partition.notes.map((n) => `  note: ${n}`),
+  ];
 }
 
 function main() {
@@ -399,13 +499,27 @@ function main() {
     process.stdout.write(JSON.stringify(res, null, 2) + "\n");
     process.exit(res.fatal ? 2 : res.ok ? 0 : 1);
   }
+  // The suppressed counts are EMITTED on every non-fatal run, pass or fail (AC-7.1).
+  const report = partitionReportLines(res.partition);
   if (res.ok) {
     process.stdout.write(`PASS [${NAME}] ${res.notes.join(" · ")}\n`);
+    if (report.length) process.stdout.write(report.join("\n") + "\n");
     process.exit(0);
   }
-  process.stderr.write(`FAIL [${NAME}] ${res.findings ? res.findings.length : res.problems.length} live-stale ref(s):\n`);
-  for (const f of res.findings || []) process.stderr.write(`  - ${f.message}\n`);
-  if (!res.findings) for (const p of res.problems) process.stderr.write(`  - ${p}\n`);
+  if (res.findings && res.findings.length) {
+    process.stderr.write(`FAIL [${NAME}] ${res.findings.length} live-stale ref(s):\n`);
+    for (const f of res.findings) process.stderr.write(`  - ${f.message}\n`);
+  }
+  if (res.fatal) {
+    process.stderr.write(`FAIL [${NAME}] fail-closed (exit 2):\n`);
+    for (const p of res.problems.filter((m) => !(res.findings || []).some((f) => f.message === m))) {
+      process.stderr.write(`  - ${p}\n`);
+    }
+  } else if (res.partition && res.partition.problems.length) {
+    process.stderr.write(`FAIL [${NAME}] rename partition: ${res.partition.problems.length} problem(s):\n`);
+    for (const p of res.partition.problems) process.stderr.write(`  - [${p.id}] ${p.message}\n`);
+  }
+  if (report.length) process.stderr.write(report.join("\n") + "\n");
   if (res.notes.length) process.stderr.write(`  (${res.notes.join(" · ")})\n`);
   process.exit(res.fatal ? 2 : 1);
 }
@@ -419,6 +533,7 @@ module.exports = {
   enumerateTargets,
   loadAllowlist,
   run,
+  runPartitionChecks,
   DEAD_TREE,
   DEAD_ROLES,
   ALLOWLIST_FILE,

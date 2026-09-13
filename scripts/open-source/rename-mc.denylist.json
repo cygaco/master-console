@@ -1,14 +1,60 @@
 {
   "$question": "What must NOT be rewritten by scripts/open-source/rename-mc.js. This is a DIFFERENT question than scripts/warpos/manifest/walk-skip.js, which answers 'what is not SHIPPED' (matches by basename, lists WARPOS.md which is itself a rename target, and lives under a path that this sprint renames). Do not source codemod exclusions from walk-skip.js — this file is the sole source, consumed exclusively through scripts/open-source/partition-loader.js.",
   "$sprint": "S-OS-06",
-  "$ticket": "T-20260913-360 (T1, LANE A engine)",
+  "$ticket": "T-20260913-360 (T1, LANE A engine) · T-20260913-361 (T2, record-trust closure: R2 one artifact, R4 pins, $freeze)",
   "$schemaNotes": [
     "Every entry carries TWO ORTHOGONAL fields: `class` (which of the four β r1 classes a PATH belongs to, for the total-partition assertion) and `writeProtected` (whether --apply refuses to touch it). They are independent predicates over the same path — see BUILD-SPEC.md 'ROOT (arc failure mode, β r3)'.",
     "generatedViews: exact-path entries for the 5 generated views. class=1 (they are current/live content, not historical) but writeProtected=true always — the codemod never hand-edits a regenerated file. Their `warpos` occurrences get disposition=derived, never pinned (a pin would be a lie the moment the source regenerates).",
-    "pathGlobs: whole path/dir exclusions for Class 2 (operator-gated) / Class 3 (historical literal living inside otherwise-live tooling, e.g. the 0.1.x migration script) / Class 4 (wholly historical trees). writeProtected defaults to true; only Class 2 (.github/**) is protected for a DIFFERENT reason (operator/classifier gate, not history).",
-    "occurrencePins: file+line+matchText entries for specific `warpos` literals living INSIDE otherwise Class-1 (live, gets-renamed) files — e.g. a compat shim name, a historical relic-watch path, a HOME-anchored legacy directory literal. These do not change the file's path-level class (still 1); they pin one occurrence within it. disposition=pinned.",
-    "futureEntries: paths named by the BUILD-SPEC that do not exist in the tracked tree YET (created by a later ticket). Declaring them now means their eventual creation is NOT a 'post-freeze silent addition' (F8) — the warrant already exists, dated to this ticket, before the freeze."
+    "pathGlobs: whole path/dir exclusions for Class 2 (operator-gated) / Class 3 (historical or detector literal living inside otherwise-live tooling) / Class 4 (wholly historical trees). writeProtected defaults to true; only Class 2 (.github/**) is protected for a DIFFERENT reason (operator/classifier gate, not history).",
+    "occurrencePins (R4): (file, matchText [, anchor]) entries for specific `warpos` literals living INSIDE otherwise Class-1 (live, gets-renamed) files. NEVER a bare line number: an edit above a pinned line must not silently break the pin. A pin must match EXACTLY ONE line of its file (the gates fail a pin matching zero lines — stale, F7 — or several — ambiguous; add an anchor). disposition=pinned.",
+    "futureEntries: paths named by the BUILD-SPEC that do not exist in the tracked tree YET (created by a later ticket). Declaring them now means their eventual creation is NOT a 'post-freeze silent addition' (F8) — the warrant already exists, dated before the freeze.",
+    "R2 allow-view: there is NO separate allow-list file. 'Where the legacy slug may remain' is a VIEW of THIS artifact — its Class-3/4 pathGlobs + futureEntries plus its occurrencePins — exposed by partition-loader.js (`allowList` / `isAllowed`). Both gates read that view through the loader only.",
+    "$freeze (F8): baselineKeys are the entry keys frozen at T2 exit (node scripts/open-source/partition-loader.js --keys). After the freeze every added entry needs an `amendments` record {key, warrant} AND its own separate commit touching only this artifact (+ the occurrence ledger) whose message carries `partition-amendment:`. The baseline itself is immutable."
   ],
+
+  "$freeze": {
+    "frozenBy": "T-20260913-361 (T2 record-trust closure)",
+    "rule": "F8: every entry key must be in baselineKeys or carry an amendments record {key, warrant}; a post-freeze commit that adds a key must touch only this artifact (+ the occurrence ledger), carry `partition-amendment:` in its message, and record the amendment. baselineKeys never change after the freeze commit.",
+    "baselineKeys": [
+      "future|migrations/1.2.0-to-2.0.0/**",
+      "future|scripts/checks/warpos-tracked-transients.js",
+      "glob|.claude/dreams/**",
+      "glob|.claude/project/events/**",
+      "glob|.claude/project/memory/**",
+      "glob|.claude/project/sprint/**",
+      "glob|.github/**",
+      "glob|_archive/**",
+      "glob|_planning/**",
+      "glob|_reports/**",
+      "glob|docs/PROVENANCE.md",
+      "glob|framework/releases/**",
+      "glob|migrations/0.1.x-to-0.2.0/**",
+      "glob|runtime/**",
+      "glob|scripts/open-source/rename-mc.denylist.json",
+      "glob|scripts/open-source/rename-mc.js",
+      "glob|scripts/open-source/rename-mc.occurrences.json",
+      "glob|tests/regression/S-OS-06/**",
+      "pin|scripts/checks/cutover-completeness.js|\"warpos\"|const LEGACY_SLUG_NEEDLE = ",
+      "pin|scripts/checks/framework-purity.js|\"scripts/warpos/flag.js\",|",
+      "pin|scripts/checks/framework-purity.js|\"scripts/warpos/manifest/promote.js\",|",
+      "pin|scripts/checks/framework-purity.js|\"scripts/warpos/promote-flags.js\",|",
+      "pin|scripts/checks/framework-purity.js|\"scripts/warpos/promote.js\",|",
+      "pin|scripts/checks/framework-purity.js|\"warpos\"|const LEGACY_SLUG_NEEDLE = ",
+      "pin|scripts/checks/leak-gate.js|\"scripts/checks/warpos-tracked-transients.js\"|",
+      "pin|scripts/dispatch/safe-spawn.js|\".codex-warpos\"|",
+      "pin|scripts/portfolio/registry.js|\".warpos\"|",
+      "pin|scripts/portfolio/registry.js|~/.warpos/|// Creates ",
+      "pin|scripts/warpos/manifest/walk-skip.js|\".warpos\",|",
+      "pin|scripts/warpos/manifest/walk-skip.js|\".warpos-backup\",|",
+      "pin|scripts/warpos/manifest/walk-skip.js|\"WarpOS-Update\",|",
+      "view|.claude/framework-installed.json",
+      "view|.claude/framework-manifest.json",
+      "view|.claude/paths.json",
+      "view|_warpos/MANIFEST.json",
+      "view|scripts/hooks/lib/paths.generated.js"
+    ],
+    "amendments": []
+  },
 
   "generatedViews": [
     { "path": ".claude/paths.json", "class": 1, "warrant": "regenerated by scripts/paths/build.js from framework/paths.registry.json; a codemod hand-edit here is the exact lie AC-5.2 exists to catch" },
@@ -22,6 +68,9 @@
     { "pattern": ".github/**", "class": 2, "writeProtected": true, "warrant": "α auto-mode classifier denies every edit under .github/workflows (CI Bypass rule, 2026-09-12); operator-gated, not codemod-touched" },
 
     { "pattern": "migrations/0.1.x-to-0.2.0/**", "class": 3, "writeProtected": true, "warrant": "the 001-rename-warpos-to-framework.js migration OPERATES on the literal string 'warpos' as its DATA describing a past rename; that data is the historical record, not live identifier surface" },
+    { "pattern": "scripts/open-source/rename-mc.denylist.json", "class": 3, "writeProtected": true, "warrant": "the partition artifact itself: its pins and globs quote the legacy slug as DATA; an --apply rewrite would turn every pin's matchText into its own replacement and silently empty the partition (T2 finding)" },
+    { "pattern": "scripts/open-source/rename-mc.js", "class": 3, "writeProtected": true, "warrant": "the codemod's match/rename rules ARE the legacy-slug literals it searches for; rewriting them makes an idempotency re-run (AC-1.2) search for its own output and pass vacuously (T2 finding)" },
+    { "pattern": "tests/regression/S-OS-06/**", "class": 3, "writeProtected": true, "warrant": "the S-OS-06 regression + falsifier fixtures plant the legacy slug as DATA to prove the gates bite; a rewrite would plant the replacement instead and hollow every fixture" },
 
     { "pattern": "framework/releases/**", "class": 4, "writeProtected": true, "warrant": "200 checksum-pinned release capsules; a rewrite would break the checksum and falsify the release record" },
     { "pattern": ".claude/project/sprint/**", "class": 4, "writeProtected": true, "warrant": "closed-sprint requirements/checkpoints/reports are the historical record of what was actually asked/built; rewriting them retroactively falsifies sprint history" },
@@ -37,30 +86,33 @@
   ],
 
   "occurrencePins": [
-    { "file": "scripts/warpos/manifest/walk-skip.js", "line": 33, "matchText": ".warpos", "warrant": "DUAL old+new skip-set entry for the compat release (BUILD-SPEC 'walk-skip.js .warpos/.warpos-backup/WARPOS.md entries become DUAL'); a plain rewrite un-skips .warpos/ and the manifest build enumerates the >128k fixture tree -> BC-02" },
-    { "file": "scripts/warpos/manifest/walk-skip.js", "line": 34, "matchText": ".warpos-backup", "warrant": "same DUAL-entry compat rule as line 33, for the backup directory name" },
-    { "file": "scripts/warpos/manifest/walk-skip.js", "line": 35, "matchText": "WarpOS-Update", "warrant": "gitignored operator-scratch directory name, parallels .warpos; kept verbatim as a DUAL compat entry, not a live identifier to rename" },
+    { "file": "scripts/warpos/manifest/walk-skip.js", "matchText": "\".warpos\",", "warrant": "DUAL old+new skip-set entry for the compat release (BUILD-SPEC 'walk-skip.js .warpos/.warpos-backup/WARPOS.md entries become DUAL'); a plain rewrite un-skips .warpos/ and the manifest build enumerates the >128k fixture tree -> BC-02" },
+    { "file": "scripts/warpos/manifest/walk-skip.js", "matchText": "\".warpos-backup\",", "warrant": "same DUAL-entry compat rule as the .warpos skip entry, for the backup directory name" },
+    { "file": "scripts/warpos/manifest/walk-skip.js", "matchText": "\"WarpOS-Update\",", "warrant": "gitignored operator-scratch directory name, parallels .warpos; kept verbatim as a DUAL compat entry, not a live identifier to rename" },
 
-    { "file": "scripts/checks/framework-purity.js", "line": 133, "matchText": "scripts/warpos/promote.js", "warrant": "PROMOTE_RELIC_FILES relic-watch list; the old path is the DATA framework-purity checks for (a relic to detect), not a live import path to rewrite" },
-    { "file": "scripts/checks/framework-purity.js", "line": 134, "matchText": "scripts/warpos/promote-flags.js", "warrant": "same relic-watch pin as line 133" },
-    { "file": "scripts/checks/framework-purity.js", "line": 135, "matchText": "scripts/warpos/flag.js", "warrant": "same relic-watch pin as line 133" },
-    { "file": "scripts/checks/framework-purity.js", "line": 136, "matchText": "scripts/warpos/manifest/promote.js", "warrant": "same relic-watch pin as line 133" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/promote.js\",", "warrant": "PROMOTE_RELIC_FILES relic-watch list; the old path is the DATA framework-purity checks for (a relic to detect), not a live import path to rewrite" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/promote-flags.js\",", "warrant": "same relic-watch pin as scripts/warpos/promote.js" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/flag.js\",", "warrant": "same relic-watch pin as scripts/warpos/promote.js" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"scripts/warpos/manifest/promote.js\",", "warrant": "same relic-watch pin as scripts/warpos/promote.js" },
+    { "file": "scripts/checks/framework-purity.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG_NEEDLE = ", "warrant": "the live-dir legacy-slug detector's own search literal (R1); rewriting it makes the detector search for its own replacement and read green forever" },
 
-    { "file": "scripts/checks/leak-gate.js", "line": 35, "matchText": "scripts/checks/warpos-tracked-transients.js", "warrant": "the frozen gate name for the compat-shim alias; leak-gate.test.js:31-37 asserts the workflow-synced literal, and leak-gate.yml is unedited per AC-4.1 — the codemod must never touch this occurrence (S-4/AC-4.2)" },
+    { "file": "scripts/checks/cutover-completeness.js", "matchText": "\"warpos\"", "anchor": "const LEGACY_SLUG_NEEDLE = ", "warrant": "the suppressed-count emission's own search literal (AC-7.1); rewriting it zeroes every emitted count — the one defense against the allow-list silent catch-all" },
 
-    { "file": "scripts/dispatch/safe-spawn.js", "line": 65, "matchText": ".codex-warpos", "warrant": "isolated CODEX_HOME directory name (RI-009); an existing operator's ~/.codex-warpos on disk must keep resolving after the rebrand, so the literal segment is pinned, not renamed to .codex-mc" },
+    { "file": "scripts/checks/leak-gate.js", "matchText": "\"scripts/checks/warpos-tracked-transients.js\"", "warrant": "the frozen gate name for the compat-shim alias; leak-gate.test.js asserts the workflow-synced literal, and leak-gate.yml is unedited per AC-4.1 — the codemod must never touch this occurrence (S-4/AC-4.2)" },
 
-    { "file": "scripts/portfolio/registry.js", "line": 28, "matchText": ".warpos", "warrant": "HOME-anchored legacy path segment (~/.warpos/portfolio.json); BUILD-SPEC HOME-ANCHORED STATE requires T3 to read ~/.mc then fall back to ~/.warpos, NEVER auto-move in 2.0.0 -- this occurrence is the fallback read, pinned rather than replaced" },
-    { "file": "scripts/portfolio/registry.js", "line": 79, "matchText": "~/.warpos", "warrant": "comment documenting the same HOME-anchored legacy path as line 28; kept verbatim so the comment matches the pinned code below it" }
+    { "file": "scripts/dispatch/safe-spawn.js", "matchText": "\".codex-warpos\"", "warrant": "isolated CODEX_HOME directory name (RI-009); an existing operator's ~/.codex-warpos on disk must keep resolving after the rebrand, so the literal segment is pinned, not renamed to .codex-mc" },
+
+    { "file": "scripts/portfolio/registry.js", "matchText": "\".warpos\"", "warrant": "HOME-anchored legacy path segment (~/.warpos/portfolio.json); BUILD-SPEC HOME-ANCHORED STATE requires T3 to read ~/.mc then fall back to ~/.warpos, NEVER auto-move in 2.0.0 -- this occurrence is the fallback read, pinned rather than replaced" },
+    { "file": "scripts/portfolio/registry.js", "matchText": "~/.warpos/", "anchor": "// Creates ", "warrant": "comment documenting the same HOME-anchored legacy path as the pinned path.join segment; kept verbatim so the comment matches the pinned code" }
   ],
 
   "openQuestions": [
-    "The historical-vs-live split inside .claude/project/reference/** is NOT fully resolved here. Files that read as dated historical narrative by name (e.g. warpos-launch-roadmap.md, warpos-roadmap.md, warpos-system-updates-2026-04-15.md, private-to-public-history.md, evolution.md) were NOT denylisted in T1 -- guessing file-by-file historical-vs-live status without a design-lead read risked silently reclassifying a still-live guide as historical (or vice-versa). They default to Class 1 (rewritten) under this artifact until T2/design review names the split explicitly. Flagging per the contract-tie rule rather than reconciling silently."
+    "The historical-vs-live split inside .claude/project/reference/** is NOT fully resolved here. Files that read as dated historical narrative by name (e.g. warpos-launch-roadmap.md, warpos-roadmap.md, warpos-system-updates-2026-04-15.md, private-to-public-history.md, evolution.md) were NOT denylisted in T1 -- guessing file-by-file historical-vs-live status without a design-lead read risked silently reclassifying a still-live guide as historical (or vice-versa). They default to Class 1 (rewritten) under this artifact until design review names the split explicitly. Flagging per the contract-tie rule rather than reconciling silently.",
+    "framework-purity.js carries further relic-watch DATA beyond the four pinned PROMOTE_RELIC_FILES paths (warpos-to-update.md, .warpos-sync.json, .warpos-sync-commit-msg.txt, warpos-promoted-archive.md, and the three PROMOTE_RELIC_REGEX identifier patterns). T1 left them `rewritten`; T2 did not extend the pin set beyond the detector needles. A post-freeze decision to pin them is a warranted `partition-amendment:` commit (T3 review)."
   ],
 
   "futureEntries": [
     { "pattern": "migrations/1.2.0-to-2.0.0/**", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "the 2.0.0 downstream migration OPERATES on _warpos/.warpos/WARPOS_ literals as its DATA (what it migrates FROM); those literals are its payload, not live identifier surface, and must survive the codemod's own later re-runs unchanged" },
-    { "pattern": "scripts/checks/warpos-tracked-transients.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "one-line alias shim (old name requiring the new mc-tracked-transients.js) landing in the SAME commit as the rename per AC-4.1; the shim's old filename is permanently retained for the 2.0.x compat window, never re-renamed by an idempotent re-run" },
-    { "pattern": "scripts/open-source/rename-mc.allowlist.json", "class": 4, "writeProtected": true, "expectedCreatedBy": "T2", "warrant": "T2-authored allow-list half of the ONE partition artifact (β r2 Req1); frozen at T2 exit, amended only via a separately-committed, warranted F8 addition thereafter" }
+    { "pattern": "scripts/checks/warpos-tracked-transients.js", "class": 3, "writeProtected": true, "expectedCreatedBy": "T3", "warrant": "one-line alias shim (old name requiring the new mc-tracked-transients.js) landing in the SAME commit as the rename per AC-4.1; the shim's old filename is permanently retained for the 2.0.x compat window, never re-renamed by an idempotent re-run" }
   ]
 }
