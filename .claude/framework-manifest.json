@@ -3,11 +3,11 @@
   "version": "2.0.0",
   "generated_by": "scripts/generate-framework-manifest.js",
   "counts": {
-    "agent": 116,
+    "agent": 118,
     "skill": 266,
     "kernel": 42,
     "reference": 30,
-    "maps_baseline": 25,
+    "maps_baseline": 26,
     "hook": 83,
     "hook_lib": 28,
     "tool": 2,
@@ -69,7 +69,7 @@
     "module_scope": 1,
     "framework_doc": 5
   },
-  "total": 1804,
+  "total": 1807,
   "assets": {
     "agent": [
       {
@@ -570,6 +570,30 @@
         "dest": ".claude/agents/president/_system/beta/judgement-model.md",
         "kind": "agent",
         "sha256": "32c92a5752be5e91be0eef3eddeaecd89d94df36c32ba3717a6a7a39c80cc3af",
+        "owner": "framework",
+        "mergeStrategy": "three_way_markdown",
+        "introducedIn": "0.0.0",
+        "removedIn": null,
+        "replaces": null
+      },
+      {
+        "id": "agent.president._system.beta.mined.beta-source-data.md",
+        "src": ".claude/agents/president/_system/beta/mined/beta-source-data.md",
+        "dest": ".claude/agents/president/_system/beta/mined/beta-source-data.md",
+        "kind": "agent",
+        "sha256": "0ae9c868c8edb0933cef6bb88214b3080c13cdb126368d7243c990f62db3f60f",
+        "owner": "framework",
+        "mergeStrategy": "three_way_markdown",
+        "introducedIn": "0.0.0",
+        "removedIn": null,
+        "replaces": null
+      },
+      {
+        "id": "agent.president._system.beta.mined.judgement-model-recommendations-archive.md",
+        "src": ".claude/agents/president/_system/beta/mined/judgement-model-recommendations-archive.md",
+        "dest": ".claude/agents/president/_system/beta/mined/judgement-model-recommendations-archive.md",
+        "kind": "agent",
+        "sha256": "28a2788e20dc5e3338419c74d23dfdfd3661ff09cb8146f43557520b358887af",
         "owner": "framework",
         "mergeStrategy": "three_way_markdown",
         "introducedIn": "0.0.0",
@@ -5774,6 +5798,18 @@
         "dest": ".claude/project/maps/SPEC_GRAPH.json",
         "kind": "maps_baseline",
         "sha256": "5f37d6f2390fa3fce1a7d458a1a0aa633e6d0dee441c20f7fcb59cb4c9ab5c8b",
+        "owner": "generated",
+        "mergeStrategy": "regenerate",
+        "introducedIn": "0.0.0",
+        "removedIn": null,
+        "replaces": null
+      },
+      {
+        "id": "maps_baseline.system-coherence.graph.json",
+        "src": ".claude/project/maps/system-coherence.graph.json",
+        "dest": ".claude/project/maps/system-coherence.graph.json",
+        "kind": "maps_baseline",
+        "sha256": "668670a3dcf435ac422e8a7637136401179e1ece2992cb175b479ef31cb42fb8",
         "owner": "generated",
         "mergeStrategy": "regenerate",
         "introducedIn": "0.0.0",
