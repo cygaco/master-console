@@ -83,8 +83,20 @@ h.violation("(iii) build-chain role via in-process-agent is REJECTED", () =>
 h.violation("(ii) cross-provider reviewer via api is REJECTED (availability != authorization)", () =>
   validateDispatch({ role: "security-reviewer", shape: "api" }));
 // cross-provider reviewer via in-process-agent (kills provider diversity).
-h.violation("cross-provider reviewer via in-process-agent is REJECTED (diversity)", () =>
-  validateDispatch({ role: "qa-reviewer", shape: "in-process-agent" }));
+// The role is REGISTRY-DERIVED, not hard-coded: the operator ruling of 2026-08-18
+// re-pinned qa-/frontend-/backend-reviewer to claude (claude_pinned_reviewer, whose
+// ONE legal shape IS in-process-agent), so naming a literal role here rots the moment
+// the registry moves. Pick any live cross_provider_reviewer; fail loudly if none exist
+// (then the diversity invariant has no subject and this test must be revisited).
+const XP_REVIEWER = Object.keys(require("./dispatch-contract").loadRegistry().roles || {})
+  .find((r) => classForRole(r) === "cross_provider_reviewer");
+assert.ok(XP_REVIEWER, "registry has no cross_provider_reviewer role — the diversity invariant has no subject");
+h.violation(`cross-provider reviewer (${XP_REVIEWER}) via in-process-agent is REJECTED (diversity)`, () =>
+  validateDispatch({ role: XP_REVIEWER, shape: "in-process-agent" }));
+// Converse (operator ruling 2026-08-18): a claude-PINNED reviewer's one legal shape is
+// in-process-agent — the same shape that is a violation for the cross-provider class.
+h.pass("claude-pinned reviewer (qa-reviewer) via in-process-agent is allowed (2026-08-18 re-pin)", () =>
+  validateDispatch({ role: "qa-reviewer", shape: "in-process-agent", toolId: "agent-tool" }));
 // tool mismatch.
 h.violation("builder via subprocess-claude but tool=codex is REJECTED", () =>
   validateDispatch({ role: "frontend-builder", shape: "subprocess-claude", toolId: "codex" }));

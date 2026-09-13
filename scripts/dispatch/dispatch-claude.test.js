@@ -281,12 +281,23 @@ test("G1: generic build id 'builder' advisory is truthful — no '(fail-closed)'
 });
 
 // ── 11. review-fallback happy path ─────────────────────────
-test("review-fallback: reviewer role w/o -w → exit 0 + ok:true record with fallback:true + provider:claude + quota_fallback_from(openai)", () => {
+// The review-fallback lane applies to the cross_provider_reviewer class ONLY. The role
+// is REGISTRY-DERIVED, not a literal: the operator ruling of 2026-08-18 re-pinned
+// backend-reviewer (the former subject) to claude, which moved it to the
+// claude_pinned_reviewer class — a class the lane does not cover, so the wrapper now
+// (correctly) refuses it. Resolve a live cross_provider_reviewer and expect the
+// fallback-origin stamp to carry THAT role's registry provider (not a literal "openai").
+const { classForRole: _classForRole, loadRegistry: _loadRegistry } = require("./dispatch-contract");
+const XP_REVIEWER = Object.keys(_loadRegistry().roles || {}).find((r) => _classForRole(r) === "cross_provider_reviewer");
+assert(XP_REVIEWER, "registry has no cross_provider_reviewer role — the review-fallback lane has no subject");
+const XP_PROVIDER = _loadRegistry().roles[XP_REVIEWER].provider;
+assert(XP_PROVIDER && XP_PROVIDER !== "claude", `cross_provider_reviewer '${XP_REVIEWER}' must carry a non-claude provider (got ${XP_PROVIDER})`);
+test(`review-fallback: reviewer role (${XP_REVIEWER}) w/o -w → exit 0 + ok:true record with fallback:true + provider:claude + quota_fallback_from(${XP_PROVIDER})`, () => {
   const ledger = path.join(scratch, "l11");
   const res = runWrapper({
     fake: fakeHappy,
     ledgerDir: ledger,
-    role: "backend-reviewer",
+    role: XP_REVIEWER,
     iso: "none",
     extraArgs: ["--review-fallback"],
   });
@@ -296,9 +307,24 @@ test("review-fallback: reviewer role w/o -w → exit 0 + ok:true record with fal
   assert(comps[0].fallback === true, `expected fallback:true, got ${JSON.stringify(comps[0].fallback)}`);
   assert(comps[0].provider === "claude", `expected provider:"claude", got ${JSON.stringify(comps[0].provider)}`);
   assert(
-    comps[0].quota_fallback_from && comps[0].quota_fallback_from.provider === "openai",
-    `expected quota_fallback_from.provider==="openai", got ${JSON.stringify(comps[0].quota_fallback_from)}`,
+    comps[0].quota_fallback_from && comps[0].quota_fallback_from.provider === XP_PROVIDER,
+    `expected quota_fallback_from.provider==="${XP_PROVIDER}", got ${JSON.stringify(comps[0].quota_fallback_from)}`,
   );
+});
+// Converse: a claude-PINNED reviewer (backend-reviewer since 2026-08-18) is NOT on the
+// review-fallback lane — the wrapper must refuse it (exit≠0) and write NO completion.
+test("review-fallback: claude-pinned reviewer ('backend-reviewer') via --review-fallback → refused, no record", () => {
+  const ledger = path.join(scratch, "l11b");
+  const res = runWrapper({
+    fake: fakeHappy,
+    ledgerDir: ledger,
+    role: "backend-reviewer",
+    iso: "none",
+    extraArgs: ["--review-fallback"],
+  });
+  assert(res.status !== 0, `expected a non-zero exit for a claude-pinned reviewer on the review-fallback lane, got ${res.status}`);
+  const comps = completionsOnly(readLedger(ledger, "dispatch-completions.jsonl"));
+  assert(comps.length === 0, `no completion record should be written for a refused lane, got ${comps.length}`);
 });
 
 // ── 12. review-fallback + gauntlet-verify ──────────────────
@@ -307,7 +333,7 @@ test("review-fallback: gauntlet-verify sees the record → status 'fell-back' (n
   const comps = completionsOnly(readLedger(ledger, "dispatch-completions.jsonl"));
   const rec = comps[0];
   const v = verifyGauntlet({
-    roles: ["backend-reviewer"],
+    roles: [XP_REVIEWER],
     completionsFile: path.join(ledger, "dispatch-completions.jsonl"),
     since: rec.started_at,
   });
@@ -324,7 +350,7 @@ test("review-fallback: coverage-gate FLAGS claude record as cross_provider_requi
   const comps = readLedger(ledger, "dispatch-completions.jsonl");
   const result = coverageEvaluate({
     records: comps,
-    expected: [{ role: "backend-reviewer" }],
+    expected: [{ role: XP_REVIEWER }],
   });
   // The gate MUST NOT be ok:true — a claude-only fallback record never silently satisfies
   // the cross-provider requirement. The violation must name the provider-diversity problem.

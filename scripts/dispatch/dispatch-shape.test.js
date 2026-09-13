@@ -59,11 +59,21 @@ test("agent: frontend-builder → subprocess-claude (build-chain worker)", () =>
 test("agent: backend-builder → subprocess-claude", () => {
   assert.strictEqual(resolveShape({ kind: "agent", id: "backend-builder" }).shape, "subprocess-claude");
 });
-test("agent: qa-reviewer → subprocess-cross-provider (independent review)", () => {
-  assert.strictEqual(resolveShape({ kind: "agent", id: "qa-reviewer" }).shape, "subprocess-cross-provider");
+// The cross-provider reviewer is REGISTRY-DERIVED, not a literal: the operator ruling of
+// 2026-08-18 re-pinned qa-/frontend-/backend-reviewer to claude (claude_pinned_reviewer →
+// in-process-agent), so a hard-coded role id rots the moment the registry moves. Resolve
+// any live cross_provider_reviewer; fail loudly if the class has no member.
+const XP_REVIEWER = Object.keys(contract.loadRegistry().roles || {})
+  .find((r) => contract.classForRole(r) === "cross_provider_reviewer");
+assert.ok(XP_REVIEWER, "registry has no cross_provider_reviewer role — the cross-provider shape has no subject");
+test(`agent: cross-provider reviewer (${XP_REVIEWER}) → subprocess-cross-provider (independent review)`, () => {
+  assert.strictEqual(resolveShape({ kind: "agent", id: XP_REVIEWER }).shape, "subprocess-cross-provider");
 });
-test("agent: backend-reviewer → subprocess-cross-provider", () => {
-  assert.strictEqual(resolveShape({ kind: "agent", id: "backend-reviewer" }).shape, "subprocess-cross-provider");
+test("agent: qa-reviewer → in-process-agent (claude-pinned since the 2026-08-18 re-pin)", () => {
+  assert.strictEqual(resolveShape({ kind: "agent", id: "qa-reviewer" }).shape, "in-process-agent");
+});
+test("agent: backend-reviewer → in-process-agent (claude-pinned since the 2026-08-18 re-pin)", () => {
+  assert.strictEqual(resolveShape({ kind: "agent", id: "backend-reviewer" }).shape, "in-process-agent");
 });
 test("agent: director-of-engineering → in-process-agent (manager/face class)", () => {
   assert.strictEqual(resolveShape({ kind: "agent", id: "director-of-engineering" }).shape, "in-process-agent");
@@ -209,7 +219,7 @@ test("G2: an unknown shape string is flagged as a mismatch (not silently accepte
 // a DIFFERENT expected shape for the same actual shape.
 test("G2 teeth: shapeMismatch is unit-sensitive (not a constant) — reviewer vs builder differ", () => {
   const asBuilder = shapeMismatch("in-process-agent", { kind: "agent", id: "frontend-builder" });
-  const asReviewer = shapeMismatch("in-process-agent", { kind: "agent", id: "qa-reviewer" });
+  const asReviewer = shapeMismatch("in-process-agent", { kind: "agent", id: XP_REVIEWER });
   assert.strictEqual(asBuilder.expected, "subprocess-claude");
   assert.strictEqual(asReviewer.expected, "subprocess-cross-provider");
   assert.notStrictEqual(asBuilder.expected, asReviewer.expected, "if these were equal the resolver is a constant — false-green");
