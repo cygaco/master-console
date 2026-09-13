@@ -55,6 +55,14 @@ const VERDICT_TYPES = new Set([
   "fix-lock",
   "beta-consult-retraction",
   "boundary",
+  // Families the lane grew AFTER this enforcer's 2026-07-23 vocabulary snapshot (66c0caf9). Corpus-verified
+  // 2026-09-12: 17 `gauntlet-boundary-verdict` + 5 `release-gate-verdict` + 1 `ledger-correction` rows
+  // (2026-07-27..29, ED-286/287/310/267a), every one a β verdict carrying decision+class+confidence+msg_id.
+  // They were false-REDing as `verdict_shaped_unknown_type`; naming them here puts them UNDER the
+  // verdict-family requirement (valid decision or non-empty verdict) instead of outside it.
+  "gauntlet-boundary-verdict",
+  "release-gate-verdict",
+  "ledger-correction",
 ]);
 // Types that carry a reconcile payload — must have a non-empty `reconciles` array.
 const RECONCILE_TYPES = new Set(["beta-ledger-reconcile"]);
@@ -74,6 +82,10 @@ const KNOWN_TYPES = new Set([...VERDICT_TYPES, ...RECONCILE_TYPES, ...FLEX_TYPES
 const CONTENT_FIELDS = [
   "boundary", "decision", "verdict", "answer", "question", "summary",
   "topic", "note", "status", "key_rulings", "riders", "action", "recommendation", "from", "to",
+  // `subject` — the hand-append lane's universal one-line title since 2026-07-27 (corpus-verified: every
+  // post-snapshot row carries it; a `record_kind:"retraction"` envelope carries `subject` + retracted_claim /
+  // corrected_mechanism and nothing from the original list, so without it a real retraction false-REDs).
+  "subject",
 ];
 // Fields that mark a row as VERDICT-SHAPED — a row carrying these but an UNKNOWN or ABSENT `type` is a
 // structurally suspicious mutation (backend r1 HIGH-2: type is settable, so deleting/mutating it must not

@@ -44,13 +44,76 @@ function betaEventsPath() {
 }
 
 // ── REAL-CORPUS 0-false-reject + append-safe invariants (the binding tooth β byte-verifies) ─────────────
+//
+// KNOWN LEDGER DEFECTS — the ledger is APPEND-ONLY and gitignored (operator-local), so a row that was
+// malformed at write-time stays malformed forever; it can be superseded by a later correction row but never
+// rewritten, and this enforcer is STRUCTURAL (it does not honor `corrects`/supersession — that is the
+// SEMANTIC lane, ED-275). Each entry pins ONE row by writer-stamped msg_id + the exact finding code, with the
+// reason it is tolerated. Both directions are asserted: an unpinned structural finding still REDs (a NEW
+// malformed row is caught), and a pinned row that is PRESENT must still FIRE (a loosened vocab gate that
+// stops seeing the known defect is a dead gate, and a retired defect must retire its pin). The CLI enforcer
+// (`--enforce`, /scan:full) is NOT loosened by this list — it still reports the row.
+const KNOWN_LEDGER_DEFECTS = Object.freeze([
+  Object.freeze({
+    msg_id: "d5a6bc49-c1dc-4f71-a180-1d34d045d6a0",
+    code: "invalid_decision",
+    reason:
+      "2026-08-29 S-VLADW1-05 `beta-consult`/`consult-request` row: the controlled `decision` field holds a prose " +
+      "status sentence ('ANSWERED by beta row 342 …') instead of the vocab token REQUESTED; written by the " +
+      "epsilon Edit-anchor append lane, cannot be rewritten (append-only). Remedy owed: a correction row + " +
+      "ED-275 supersession semantics; until then the enforcer keeps reporting it and this pin keeps it visible.",
+  }),
+]);
+
 test("real betaEvents corpus: 0 structural findings + append-safe classification invariants", () => {
   const ledgerPath = betaEventsPath();
   if (!fs.existsSync(ledgerPath)) return; // fresh clone / CI: gitignored ledger absent — enforcer SKIPS.
   const text = fs.readFileSync(ledgerPath, "utf8");
   const res = MOD.computeFindings(text);
+  const lines = text.split(/\r?\n/);
 
-  assert.strictEqual(res.structuralCount, 0, `real corpus must be structurally clean; got: ${JSON.stringify(res.findings.filter((f) => f.severity !== "advisory"))}`);
+  // Structural findings, each joined to the writer-stamped msg_id of its row (findings carry only line numbers).
+  const structural = res.findings
+    .filter((f) => f.severity !== "advisory")
+    .map((f) => {
+      let msg_id = null;
+      try {
+        const row = JSON.parse(lines[f.line - 1]);
+        msg_id = MOD.isPlainObject(row) && typeof row.msg_id === "string" ? row.msg_id : null;
+      } catch {
+        /* malformed_json rows have no msg_id; they are never pinnable */
+      }
+      return { line: f.line, code: f.code, msg_id, detail: f.detail };
+    });
+  const isPinned = (f) => KNOWN_LEDGER_DEFECTS.some((k) => k.msg_id === f.msg_id && k.code === f.code);
+  const unexpected = structural.filter((f) => !isPinned(f));
+  assert.deepStrictEqual(
+    unexpected,
+    [],
+    `real corpus must be structurally clean apart from the pinned KNOWN_LEDGER_DEFECTS; unpinned finding(s) — either the ` +
+      `checker false-rejects a legitimate shape (fix the checker's vocabulary) or a NEW malformed row was appended ` +
+      `(report it; the ledger is append-only, never edit it): ${JSON.stringify(unexpected)}`,
+  );
+  // The other direction: a pinned defect whose row is PRESENT in this ledger must still be detected.
+  const presentMsgIds = new Set(
+    lines
+      .filter((l) => l.trim() !== "")
+      .map((l) => {
+        try {
+          const r = JSON.parse(l);
+          return MOD.isPlainObject(r) ? r.msg_id : null;
+        } catch {
+          return null;
+        }
+      }),
+  );
+  for (const k of KNOWN_LEDGER_DEFECTS) {
+    if (!presentMsgIds.has(k.msg_id)) continue; // another operator's ledger — the pin is simply unused here
+    assert.ok(
+      structural.some((f) => f.msg_id === k.msg_id && f.code === k.code),
+      `pinned defect ${k.msg_id}/${k.code} is present in the ledger but no longer fires — the ${k.code} gate loosened (dead gate) or the defect was superseded and this pin must be retired`,
+    );
+  }
   assert.strictEqual(res.malformedLines, 0, "real corpus has no malformed lines");
 
   // Ground-truth re-derivation from the SAME bytes (append-safe: no hardcoded totals).
