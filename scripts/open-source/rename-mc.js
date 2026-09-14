@@ -652,20 +652,22 @@ function buildLedgerAndPlan({ root, partition }) {
           warrant = "generated-view occurrence; permitted iff it corresponds to a Class-3 pin, asserted after manifest regen (T5)";
           derivedCount += 1;
         } else {
-          // β r3b: a registered compat occurrence is checked BEFORE pins in the chain below (the loader refuses a
-          // line claimed by both, so computing the pin unconditionally never changes a disposition).
-          const comp = partition.findCompatOccurrence(relPath, lineText);
-          // R4: a pin binds (file, matchText [, anchor]) — never a line number. This line is THE pin lever F6 mutates.
+          // Security fix-cycle r2 F1: the disposition is OCCURRENCE-scoped — partition.dispositionAt credits a compat
+          // occurrence / pin to THIS match only when m.index lies inside its matchText span (compat before pins, the
+          // loader's precedence), so an extra live slug beside a registered occurrence on the same line is rewritten.
+          const at = partition.dispositionAt(relPath, lineText, m.index);
+          // R4: a pin binds (file, matchText [, anchor]) — never a line number. This line is THE pin lever F6 mutates;
+          // it gates the pinned branch, and the occurrence-scoped `at` decides which occurrence the pin covers.
           const pin = partition.findOccurrencePin(relPath, lineText);
-          if (comp) {
+          if (at && at.kind === "compat") {
             disposition = "compat";
-            rule = `compat:${comp.window.surface}`;
-            warrant = comp.window.warrant;
-            noteCompat(comp.window, relPath, lineNum, matchText);
-          } else if (pin) {
+            rule = `compat:${at.window.surface}`;
+            warrant = at.window.warrant;
+            noteCompat(at.window, relPath, lineNum, matchText);
+          } else if (pin && at && at.kind === "pinned") {
             disposition = "pinned";
             rule = "occurrence-pin";
-            warrant = pin.warrant;
+            warrant = at.pin.warrant;
             pinnedCount += 1;
           } else if (isChangelog && changelogHistoricalLines.has(lineNum)) {
             disposition = "pinned";

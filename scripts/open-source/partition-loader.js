@@ -386,6 +386,41 @@ function buildPartition(denylist) {
     return hit ? { window: hit.window, occurrence: hit.occ } : null;
   }
 
+  // Security fix-cycle r2 F1 — the ONE occurrence-scoped disposition choke-point (loader tally + codemod ledger).
+  // A pin/compat covers a needle occurrence ONLY when the occurrence's character index lies inside a span of the
+  // pin/compat matchText on the line (occurrence-scoped, not line-scoped): an extra live slug beside a registered
+  // occurrence on the same line is never absorbed by it.
+  function _indexInMatchText(line, matchText, idx) {
+    if (!matchText) return false;
+    let from = 0;
+    let i;
+    while ((i = line.indexOf(matchText, from)) !== -1) {
+      if (idx >= i && idx < i + matchText.length) return true;
+      from = i + matchText.length;
+    }
+    return false;
+  }
+
+  /** -> { kind: "compat", window, occurrence } | { kind: "pinned", pin } | null for the needle match at matchIndex. */
+  function dispositionAt(file, lineText, matchIndex) {
+    if (typeof lineText !== "string" || !Number.isInteger(matchIndex)) {
+      throw new TypeError("partition-loader: dispositionAt(file, lineText, matchIndex) — pass the LINE TEXT and the match's character index");
+    }
+    const p = _toPosix(file);
+    // compat is checked BEFORE pins (existing precedence; the loader refuses a line claimed by both).
+    for (const { window, occ } of compatOccurrences) {
+      if (_toPosix(occ.file) !== p) continue;
+      if (!_pinMatchesLine(occ, lineText)) continue; // matchText present + anchor gate
+      if (_indexInMatchText(lineText, occ.matchText, matchIndex)) return { kind: "compat", window, occurrence: occ };
+    }
+    for (const pin of occurrencePins) {
+      if (!_pinFileCandidates(pin.file).includes(p)) continue;
+      if (!_pinMatchesLine(pin, lineText)) continue;
+      if (_indexInMatchText(lineText, pin.matchText, matchIndex)) return { kind: "pinned", pin };
+    }
+    return null;
+  }
+
   function isGeneratedView(file) {
     return generatedViewByPath.has(_toPosix(file));
   }
@@ -505,27 +540,26 @@ function buildPartition(denylist) {
     }
     const hist = p === CHANGELOG_REL ? historicalChangelogLines(content) : null;
     content.split(/\r?\n/).forEach((lineText, idx) => {
-      const n = count(lineText);
-      if (!n) return;
+      // Security fix-cycle r2 F1: one disposition per needle OCCURRENCE (dispositionAt), never one per line — a
+      // compat/pin match on the line no longer credits every hit on that line.
       // compat is checked BEFORE pins; validateEntries/checkStale refuse a line claimed by both (no occurrence holds two).
-      const comp = findCompatOccurrence(p, lineText);
-      if (comp) {
-        addCompat(comp.window, n, idx + 1, lineText);
-        return;
+      reAll.lastIndex = 0;
+      let m;
+      while ((m = reAll.exec(lineText)) !== null) {
+        const at = dispositionAt(p, lineText, m.index);
+        if (at && at.kind === "compat") {
+          addCompat(at.window, 1, idx + 1, lineText);
+        } else if (at && at.kind === "pinned") {
+          tally.pinnedTotal += 1;
+          add(tally.pinnedByPin, _pinLabel(at.pin), 1);
+        } else if (hist && hist.has(idx + 1)) {
+          tally.changelogHistoricalTotal += 1;
+        } else {
+          tally.pendingTotal += 1;
+          add(tally.pendingByFile, p, 1);
+          if (!tally.pendingSamples[p]) tally.pendingSamples[p] = `${idx + 1}: ${lineText.trim().slice(0, 160)}`;
+        }
       }
-      const pin = findOccurrencePin(p, lineText);
-      if (pin) {
-        tally.pinnedTotal += n;
-        add(tally.pinnedByPin, _pinLabel(pin), n);
-        return;
-      }
-      if (hist && hist.has(idx + 1)) {
-        tally.changelogHistoricalTotal += n;
-        return;
-      }
-      tally.pendingTotal += n;
-      add(tally.pendingByFile, p, n);
-      if (!tally.pendingSamples[p]) tally.pendingSamples[p] = `${idx + 1}: ${lineText.trim().slice(0, 160)}`;
     });
   }
 
@@ -993,6 +1027,7 @@ function buildPartition(denylist) {
     classifyPath,
     findOccurrencePin,
     findCompatOccurrence,
+    dispositionAt,
     compatWindows,
     isCompatMember: (file) => compatMemberByPath.has(_toPosix(file)),
     isGeneratedView,
