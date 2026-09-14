@@ -43,13 +43,16 @@ function cleanEnv() {
   return env;
 }
 
-function entry(file) {
+function entry(file, over) {
   return {
     file,
-    firstFailingAssertion: "AssertionError [ERR_ASSERTION]: dummy rot: still failing",
+    firstFailingAssertion: "dummy rot: still failing",
+    failCount: 1,
     cause: "falsifier-dummy",
     filedUnder: "ED-434",
     expiry: "S-OS-08 (test-rot cleanup sprint)",
+    expiryVersion: "3.0.0",
+    ...(over || {}),
   };
 }
 
@@ -64,6 +67,8 @@ function withRepo(files, quarantine, fn) {
     }
     const q = path.join(dir, "tests", "quarantine.json");
     fs.mkdirSync(path.dirname(q), { recursive: true });
+    // Default the EMPTY-SUBJECT floor to 1 for fixtures (few dummy test files) unless a case sets its own.
+    if (quarantine && typeof quarantine === "object" && quarantine.$floor === undefined) quarantine.$floor = 1;
     fs.writeFileSync(q, typeof quarantine === "string" ? quarantine : JSON.stringify(quarantine, null, 2) + "\n", "utf8");
     for (const args of [["init", "-q"], ["add", "-A"]]) {
       const g = spawnSync("git", args, { cwd: dir, env: cleanEnv(), encoding: "utf8" });
@@ -148,6 +153,33 @@ test(`${FALSIFIER_ID} (e): a malformed quarantine artifact fails closed`, { time
     const r = runRunner(dir);
     assert.notStrictEqual(r.status, 0, `an entry without its disposition fields left the runner green\n${r.out}`);
     assert.match(r.out, /missing a non-empty "firstFailingAssertion"/, r.out);
+  });
+});
+
+test(`${FALSIFIER_ID} (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero`, { timeout: RUNNER_TIMEOUT_MS + 60000 }, () => {
+  const files = { "tests/ok/pass.test.js": PASSING, "tests/q/still-fails.test.js": FAILING };
+  withRepo(files, { entries: [entry("tests/q/still-fails.test.js", { firstFailingAssertion: "a DIFFERENT assertion that never appears" })] }, (dir) => {
+    const r = runRunner(dir);
+    assert.notStrictEqual(r.status, 0, `CAUSE-LOCK did not fire: a new/different failure was absolved by the register\n${r.out}`);
+    assert.match(r.out, /QUARANTINE VIOLATION — CAUSE-LOCK: tests\/q\/still-fails\.test\.js/, r.out);
+  });
+});
+
+test(`${FALSIFIER_ID} (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass`, { timeout: RUNNER_TIMEOUT_MS + 60000 }, () => {
+  const files = { "tests/ok/pass.test.js": PASSING };
+  withRepo(files, { entries: [], $floor: 99 }, (dir) => {
+    const r = runRunner(dir);
+    assert.notStrictEqual(r.status, 0, `a broken/near-empty glob passed the floor\n${r.out}`);
+    assert.match(r.out, /below the committed floor of 99/, r.out);
+  });
+});
+
+test(`${FALSIFIER_ID} (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero`, { timeout: RUNNER_TIMEOUT_MS + 60000 }, () => {
+  const files = { "tests/ok/pass.test.js": PASSING, "tests/q/still-fails.test.js": FAILING, "package.json": '{ "name": "fx", "version": "3.0.0", "private": true }\n' };
+  withRepo(files, { entries: [entry("tests/q/still-fails.test.js", { expiryVersion: "3.0.0" })] }, (dir) => {
+    const r = runRunner(dir);
+    assert.notStrictEqual(r.status, 0, `an expired quarantine (tree 3.0.0 >= expiry 3.0.0) stayed green\n${r.out}`);
+    assert.match(r.out, /QUARANTINE VIOLATION — EXPIRED: tests\/q\/still-fails\.test\.js quarantine expired at 3\.0\.0/, r.out);
   });
 });
 

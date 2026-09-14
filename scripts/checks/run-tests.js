@@ -34,7 +34,7 @@ const QUARANTINE_REL = "tests/quarantine.json";
 const TEST_DIRS = ["scripts", "tests"];
 const TEST_FILE_RE = /^(?:scripts|tests)\/(?:.+\/)?[^/]+\.test\.js$/;
 const GLOB_META_RE = /[*?[\]{}]/; // node --test treats its file args as glob patterns
-const REQUIRED_FIELDS = ["file", "firstFailingAssertion", "cause", "filedUnder", "expiry"];
+const REQUIRED_FIELDS = ["file", "firstFailingAssertion", "cause", "filedUnder", "expiry", "expiryVersion"];
 const MAX_BATCH_CHARS = 12000; // well under the 32,767-char Windows CreateProcess limit
 const PRIMARY_BATCH_TIMEOUT_MS = 30 * 60 * 1000;
 const QUARANTINE_FILE_TIMEOUT_MS = 10 * 60 * 1000;
@@ -110,6 +110,11 @@ function loadQuarantine(file) {
   if (!doc || typeof doc !== "object" || !Array.isArray(doc.entries)) {
     throw new Error(`quarantine artifact ${file} must be an object with an "entries" array`);
   }
+  // EMPTY-SUBJECT guard (β): the artifact must carry a numeric $floor — the minimum number of test files
+  // discovery must find. A broken glob / empty tree that finds fewer than $floor is a FAILURE, not a pass.
+  if (!Number.isInteger(doc.$floor) || doc.$floor < 1) {
+    throw new Error(`quarantine artifact ${file} must carry an integer "$floor" >= 1 (the minimum discovered test-file count)`);
+  }
   const problems = [];
   const seen = new Set();
   doc.entries.forEach((e, i) => {
@@ -118,6 +123,10 @@ function loadQuarantine(file) {
     for (const f of REQUIRED_FIELDS) {
       if (typeof e[f] !== "string" || e[f].trim() === "") problems.push(`${at} (${e.file || "?"}) is missing a non-empty "${f}"`);
     }
+    // per-test count-lock (β per-TEST grain): the number of failing tests the entry absolves.
+    if (!Number.isInteger(e.failCount) || e.failCount < 1) problems.push(`${at} (${e.file || "?"}) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)`);
+    // per-entry expiry ON THE TREE VERSION (β): a semver at which the quarantine MUST be empty.
+    if (typeof e.expiryVersion === "string" && !parseSemver(e.expiryVersion)) problems.push(`${at} (${e.file || "?"}) "expiryVersion" must be a semver a.b.c`);
     if (typeof e.file !== "string") return;
     if (!TEST_FILE_RE.test(e.file) || e.file.split("/").includes("..")) {
       problems.push(`${at} file "${e.file}" is not a repo-relative scripts/** or tests/** *.test.js path`);
@@ -126,7 +135,7 @@ function loadQuarantine(file) {
     seen.add(e.file);
   });
   if (problems.length) throw new Error(`quarantine artifact ${file} is malformed:\n  - ${problems.join("\n  - ")}`);
-  return doc.entries;
+  return { entries: doc.entries, floor: doc.$floor };
 }
 
 function batches(files) {
@@ -206,19 +215,64 @@ function firstFailureLine(output) {
   return line ? line.slice(0, 240) : "(no failure line captured)";
 }
 
+/** Normalize a failure line for CAUSE-LOCK comparison: repo path -> <repo>, collapse whitespace, drop timings. */
+function normalizeFailure(s, root) {
+  return String(s)
+    .split(root).join("<repo>")
+    .split(root.split(path.sep).join("/")).join("<repo>")
+    .replace(/\(\d+(?:\.\d+)?ms\)/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Count reported test failures in node:test output (for the per-test count-lock). */
+function failCount(output) {
+  const c = counts(output);
+  return typeof c.fail === "number" ? c.fail : null;
+}
+
+/** Parse a semver "a.b.c" -> [a,b,c] or null. */
+function parseSemver(v) {
+  const m = /^(\d+)\.(\d+)\.(\d+)/.exec(String(v || "").trim());
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
+/** true iff version a >= b (both parsed semvers). */
+function semverGte(a, b) {
+  for (let i = 0; i < 3; i++) {
+    if (a[i] > b[i]) return true;
+    if (a[i] < b[i]) return false;
+  }
+  return true;
+}
+/** The tree's own version (package.json), for per-entry expiry checks. null if unreadable. */
+function treeVersion(root) {
+  try {
+    return parseSemver(JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version);
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
   const log = (s) => process.stdout.write(`${s}\n`);
 
   let discovered;
   let entries;
+  let floor;
   try {
     discovered = discoverTestFiles(opts.root);
-    entries = loadQuarantine(opts.quarantine);
+    ({ entries, floor } = loadQuarantine(opts.quarantine));
   } catch (e) {
     log(`run-tests: FAIL — ${e.message}`);
     return 1;
   }
+  // EMPTY-SUBJECT / broken-glob guard (β): discovery must find at least $floor test files.
+  if (discovered.length < floor) {
+    log(`run-tests: FAIL — discovered only ${discovered.length} test file(s), below the committed floor of ${floor} — a broken glob or empty tree is not a pass`);
+    return 1;
+  }
+  log(`run-tests: discovered ${discovered.length} test file(s) (floor ${floor})`);
   const bad = discovered.filter((f) => GLOB_META_RE.test(f));
   if (bad.length) {
     log(`run-tests: FAIL — test file path(s) contain glob metacharacters and cannot be passed literally to node --test: ${bad.join(", ")}`);
@@ -277,8 +331,26 @@ async function main() {
       unexpectedlyPassed++;
       violations.push(`UNEXPECTEDLY PASSED: quarantined file ${e.file} now passes (exit 0) — its disposition is no longer true; remove its entry from the quarantine`);
     } else {
-      stillFailing++;
-      log(`run-tests: quarantine ${e.file} still fails (exit ${r.status}) [${e.cause}; ${e.filedUnder}; expiry ${e.expiry}] — ${firstFailureLine(r.output)}`);
+      // CAUSE-LOCK (β): the observed first failure must match the REGISTERED one — otherwise the entry
+      // would silently absolve a NEW/different regression. COUNT-LOCK: no more failing tests than registered
+      // (per-TEST grain). EXPIRY: the entry must not be past its tree-version expiry.
+      const observed = normalizeFailure(firstFailureLine(r.output), opts.root);
+      const registered = normalizeFailure(e.firstFailingAssertion, opts.root);
+      const fc = failCount(r.output);
+      const tv = treeVersion(opts.root);
+      const ev = parseSemver(e.expiryVersion);
+      if (!registered || !observed.includes(registered)) {
+        violations.push(
+          `CAUSE-LOCK: ${e.file} fails, but its first failure does not match the registered assertion — a NEW/different regression the quarantine must not absolve.\n    observed:   ${observed}\n    registered: ${registered}`
+        );
+      } else if (fc !== null && fc > e.failCount) {
+        violations.push(`COUNT-LOCK: ${e.file} now has ${fc} failing test(s), more than the registered ${e.failCount} — a new failing test the quarantine must not absolve`);
+      } else if (ev && tv && semverGte(tv, ev)) {
+        violations.push(`EXPIRED: ${e.file} quarantine expired at ${e.expiryVersion} (tree ${tv.join(".")}) — resolve the rot or re-warrant [${e.filedUnder}, ${e.expiry}]`);
+      } else {
+        stillFailing++;
+        log(`run-tests: quarantine ${e.file} still fails (exit ${r.status}) [${e.cause}; ${e.filedUnder}; expiry ${e.expiry} / <${e.expiryVersion}] — ${firstFailureLine(r.output)}`);
+      }
     }
   }
   for (const v of violations) log(`run-tests: QUARANTINE VIOLATION — ${v}`);

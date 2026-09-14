@@ -121,6 +121,22 @@ test(`${FALSIFIER_ID} --apply is occurrence-scoped (finding 1): the pinned span 
   });
 });
 
+test(`${FALSIFIER_ID} R2: two rewritable occurrences on ONE line both transform (--apply spans, no line->rule collapse)`, () => {
+  H.withFixture({ version: "2.0.0" }, (fx) => {
+    // Two unprotected slugs on one line: --apply must rewrite BOTH (genericSlugRewriteScoped over every
+    // unprotected span), and the dry-run ledger must carry TWO rewritten rows — not one collapsed by line.
+    fx.write("src/two.js", `// ${H.SLUG} one and ${H.SLUG} two on one line\nmodule.exports = 1;\n`);
+    fx.git(["add", "src/two.js"]); // the codemod scans git-tracked files
+    const d = dryCounts(fx);
+    assert.ok(d.rewritten >= 2, `both occurrences must be dispositioned rewritten (no collapse): ${d.out.slice(0, 800)}`);
+    const apply = fx.runCodemod(["--apply"]);
+    assert.strictEqual(apply.status, 0, apply.out);
+    const after = fx.read("src/two.js");
+    assert.ok(!/warpos/i.test(after.split("\n")[0]), `both occurrences on the line must be rewritten: ${after}`);
+    assert.match(after, /\/\/ mc one and mc two on one line/, `both spans rewritten to mc: ${after}`);
+  });
+});
+
 test(`${FALSIFIER_ID} GREEN (compat): a registered compat line whose only slug is inside the matchText -> exit 0, compat 1`, () => {
   withCompatLine(COMPAT_LINE, (fx) => {
     const r = fx.runPurity(["--json"]);
