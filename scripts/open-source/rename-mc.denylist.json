@@ -672,6 +672,21 @@
       {
         "key": "pin|scripts/open-source/partition-loader.js|EVIDENCE_TAG_RE = /warpos@|",
         "warrant": "S-OS-06 fix-cycle r3 (F5-rule): tooling self-reference pin — the evidence-tag RULE regex source; the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE), never a live identifier"
+      },
+      {
+        "key": "future|scripts/checks/warpos-tracked-transients.js",
+        "removed": true,
+        "warrant": "S-OS-06 fix-cycle r3 (β R4): removal-amendment for a frozen baseline entry retired during S-OS-06 — its target is now covered by the current partition (Class-3 compat shim / rewritten-away literal); framework-purity + cutover-completeness confirm no live-unallowed occurrence results from the removal."
+      },
+      {
+        "key": "pin|scripts/portfolio/registry.js|\".warpos\"|",
+        "removed": true,
+        "warrant": "S-OS-06 fix-cycle r3 (β R4): removal-amendment for a frozen baseline entry retired during S-OS-06 — its target is now covered by the current partition (Class-3 compat shim / rewritten-away literal); framework-purity + cutover-completeness confirm no live-unallowed occurrence results from the removal."
+      },
+      {
+        "key": "pin|scripts/portfolio/registry.js|~/.warpos/|// Creates ",
+        "removed": true,
+        "warrant": "S-OS-06 fix-cycle r3 (β R4): removal-amendment for a frozen baseline entry retired during S-OS-06 — its target is now covered by the current partition (Class-3 compat shim / rewritten-away literal); framework-purity + cutover-completeness confirm no live-unallowed occurrence results from the removal."
       }
     ]
   },

@@ -75,14 +75,32 @@ test(`${FALSIFIER_ID} B RED: with the dispositionAt RULE return disabled, --appl
 
 test(`${FALSIFIER_ID} C: no tracked file presents an mc@<v<2.0.0> as an EXISTING git tag (fail-closed on git)`, () => {
   const root = H.REAL_ROOT;
-  let realMcTags;
-  try {
-    realMcTags = new Set(
-      execFileSync("git", ["-C", root, "tag", "-l", "mc@*"], { encoding: "utf8" }).split(/\r?\n/).filter(Boolean)
-    );
-  } catch (e) {
-    assert.fail(`fail-closed: could not read git tags to verify the invariant (${e.message})`);
+  const gitTags = (pat) => {
+    try {
+      return new Set(execFileSync("git", ["-C", root, "tag", "-l", pat], { encoding: "utf8" }).split(/\r?\n/).filter(Boolean));
+    } catch (e) {
+      return null; // git unavailable -> fail-closed below
+    }
+  };
+  let warposTags = gitTags("warpos@*");
+  let realMcTags = gitTags("mc@*");
+  // β R5: `git tag -l 'mc@*'` empty is a single-method LOCAL negative. A tag-less worktree makes BOTH lists
+  // empty and would falsely certify. Require warpos@* NON-EMPTY as proof the tags are present; if local tags
+  // are absent, try ls-remote as the second method before failing closed.
+  if (!warposTags || warposTags.size === 0) {
+    try {
+      const remote = execFileSync("git", ["-C", root, "ls-remote", "--tags", "origin"], { encoding: "utf8", timeout: 20000 });
+      warposTags = new Set([...remote.matchAll(/refs\/tags\/(warpos@\S+?)(?:\^\{\})?$/gim)].map((m) => m[1]));
+      realMcTags = new Set([...remote.matchAll(/refs\/tags\/(mc@\S+?)(?:\^\{\})?$/gim)].map((m) => m[1]));
+    } catch {
+      /* fall through to the fail-closed assertion */
+    }
   }
+  assert.ok(
+    warposTags && warposTags.size > 0,
+    "fail-closed: cannot prove the release tags are present (git tag -l 'warpos@*' empty and ls-remote unavailable) — the mc@ invariant is unverifiable here"
+  );
+  assert.ok(realMcTags, "fail-closed: could not read mc@ tags");
   const files = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8", maxBuffer: 1 << 28 })
     .split("\0")
     .filter(Boolean);

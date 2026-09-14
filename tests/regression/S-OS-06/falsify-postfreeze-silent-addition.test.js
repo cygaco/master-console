@@ -135,3 +135,27 @@ test(`${FALSIFIER_ID} RED: the $freeze block removed -> exit 1 (an unfrozen allo
     assertOnlyF8(fx, /carries no \$freeze block/);
   });
 });
+
+test(`${FALSIFIER_ID} RED (β R4 key-set equality): a frozen baseline entry REMOVED with no amendment -> exit 1`, () => {
+  H.withFixture({}, (fx) => {
+    const p = fx.readPartition();
+    const removed = p.occurrencePins.find((pin) => pin.file === "src/paths.js");
+    assert.ok(removed, "the base fixture must carry the src/paths.js pin");
+    p.occurrencePins = p.occurrencePins.filter((pin) => pin !== removed);
+    fx.writePartition(p);
+    assertOnlyF8(fx, /post-freeze silent removal '.*' — a frozen baseline entry is gone with no warranted amendment/);
+  });
+});
+
+test(`${FALSIFIER_ID} GREEN (β R4): a baseline entry removed WITH a warranted removal amendment -> exit 0`, () => {
+  H.withFixture({}, (fx) => {
+    const p = fx.readPartition();
+    const removed = p.occurrencePins.find((pin) => pin.file === "src/paths.js");
+    const key = `pin|${removed.file}|${removed.matchText}|${removed.anchor || ""}`;
+    p.occurrencePins = p.occurrencePins.filter((pin) => pin !== removed);
+    p.$freeze.amendments.push({ key, removed: true, warrant: "fixture: the pinned literal was rewritten away; the entry is retired as a warranted removal" });
+    fx.writePartition(p);
+    fx.commit("partition-amendment: retire the src/paths.js pin (literal rewritten away)", [H.REL.partition]);
+    assertGreen(fx);
+  });
+});

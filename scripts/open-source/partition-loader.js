@@ -975,9 +975,17 @@ function buildPartition(denylist) {
     }
     const baseSet = new Set(baseline || []);
     const amendSet = amendmentKeysOf(denylist);
-    for (const k of entryKeys(denylist)) {
+    const nowKeys = new Set(entryKeys(denylist));
+    // β R4 — the freeze is key-set EQUALITY, not "no additions": an ADDITION and a REMOVAL both need a
+    // warranted amendment. An unamended removal could silently retire a pin/entry that still guards a live leak.
+    for (const k of nowKeys) {
       if (!baseSet.has(k) && !amendSet.has(k)) {
         problems.push({ id: "F8", key: k, message: `post-freeze silent addition '${k}' — not in the frozen baseline and no warranted amendment record` });
+      }
+    }
+    for (const k of baseSet) {
+      if (!nowKeys.has(k) && !amendSet.has(k)) {
+        problems.push({ id: "F8", key: k, message: `post-freeze silent removal '${k}' — a frozen baseline entry is gone with no warranted amendment record (a removal must be amended too)` });
       }
     }
 

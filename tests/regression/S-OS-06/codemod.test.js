@@ -188,6 +188,10 @@ const RAW_LEGACY_ENV_READS = [
   ["lower-case bracket read", 'const home = process.env["warpos_home"];'],
   ["mixed-case bracket read", "const home = process.env[ 'Warpos_Home' ];"],
   ["upper-case dot read (control: refused before and after)", "const home = process.env.WARPOS_HOME;"],
+  ["optional-chained dot read (β R3 / finding 3)", "const home = process.env?.WARPOS_HOME;"],
+  ["optional-chained bracket read (β R3)", 'const home = process.env?.["WARPOS_HOME"];'],
+  ["destructure read (β R3: bucketed env at :365, was silently swapped)", "const { WARPOS_HOME } = process.env;"],
+  ["destructure read with siblings (β R3)", "const { OTHER, WARPOS_HOME, More } = process.env;"],
 ];
 for (const [label, line] of RAW_LEGACY_ENV_READS) {
   ok(`raw-legacy-env-read-refused: ${label}`, () => {

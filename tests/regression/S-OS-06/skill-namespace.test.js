@@ -71,7 +71,10 @@ function skillLine(stdout) {
 test("1c --dry-run counts + --apply-skill-namespace: moves, rewrites Class-1, preserves every protected byte, idempotent", () => {
   H.withFixture({ extraFiles: FIXTURE_FILES }, (fx) => {
     const before = {};
-    for (const rel of ["src/paths.js", "history/skills.md", "migrations/1.2.0-to-2.0.0/skills.js", ".claude/paths.json", ".claude/commands/warp/promote.md"]) {
+    // src/paths.js is NO LONGER fully verbatim under β R1b occurrence-grain: its pinned ".warpos" is
+    // preserved, but the unrelated live /warp:setup doc-ref in the same comment now rewrites to /mc:setup
+    // (an unrelated pin no longer freezes the whole line). Asserted explicitly below.
+    for (const rel of ["history/skills.md", "migrations/1.2.0-to-2.0.0/skills.js", ".claude/paths.json", ".claude/commands/warp/promote.md"]) {
       before[rel] = fx.read(rel);
     }
 
@@ -80,10 +83,10 @@ test("1c --dry-run counts + --apply-skill-namespace: moves, rewrites Class-1, pr
     assert.deepStrictEqual(skillLine(dry.stdout), {
       pathMoves: 1,
       refusedSkillMoves: 0,
-      tokensRewritable: 3, // check.md /warp:check + scan:<legacy>-staleness, CHANGELOG [Unreleased] /warp:update
+      tokensRewritable: 4, // check.md /warp:check + scan:<legacy>-staleness, CHANGELOG [Unreleased] /warp:update, src/paths.js /warp:setup (β R1b: no longer frozen by the .warpos pin on its line)
       pathRefsRewritable: 1, // src/gate.js
-      filesRewritable: 3,
-      verbatimTokens: 2, // pinned src/paths.js line + CHANGELOG [1.0.0] line
+      filesRewritable: 4,
+      verbatimTokens: 1, // CHANGELOG [1.0.0] line (the .warpos pin on src/paths.js no longer freezes the whole line — occurrence-grain)
       derivedViewTokens: 1, // .claude/paths.json
       keptNonClass1Tokens: 2, // history/** (4) + migrations/1.2.0-to-2.0.0/** (3)
       hyphenJoined: 0,
@@ -92,7 +95,13 @@ test("1c --dry-run counts + --apply-skill-namespace: moves, rewrites Class-1, pr
 
     const apply = fx.runCodemod(["--apply-skill-namespace"]);
     assert.strictEqual(apply.status, 0, apply.out);
-    assert.match(apply.stdout, /moved=1 filesRewritten=3 tokensRewritten=3 pathRefsRewritten=1/);
+    assert.match(apply.stdout, /moved=1 filesRewritten=4 tokensRewritten=4 pathRefsRewritten=1/);
+    // β R1b occurrence-grain: src/paths.js keeps its pinned ".warpos" byte AND rewrites the unrelated /warp:setup.
+    assert.strictEqual(
+      fx.read("src/paths.js"),
+      `const LEGACY_HOME_SEGMENT = ".${H.SLUG}"; // compat fallback read, see /mc:setup\nmodule.exports = { LEGACY_HOME_SEGMENT };\n`,
+      "the pinned .warpos is preserved; the unrelated /warp:setup skill ref is rewritten (occurrence-grain)"
+    );
 
     assert.ok(!fx.exists(".claude/commands/warp/check.md") && fx.exists(".claude/commands/mc/check.md"), "the enumerated skill moved");
     assert.strictEqual(fx.read(".claude/commands/mc/check.md"), "# /mc:check\r\nsee /warp:promote and /scan:mc-staleness\r\n", "CRLF preserved; residual untouched");

@@ -208,16 +208,29 @@ function residualWarpTokens(lineText) {
  * historical line stays verbatim.
  */
 function skillNamespaceLineDecision(partition, file, effective, hist, lineText, lineNum) {
-  const after = rewriteSkillPathRefs(rewriteSkillNamespaceTokens(lineText));
-  if (after === lineText) return { after, verbatimReason: null };
-  if (partition.findCompatOccurrence(file, lineText) || (effective !== file && partition.findCompatOccurrence(effective, lineText))) {
-    return { after: lineText, verbatimReason: "compat-occurrence" };
-  }
-  if (partition.findOccurrencePin(file, lineText) || (effective !== file && partition.findOccurrencePin(effective, lineText))) {
-    return { after: lineText, verbatimReason: "occurrence-pin" };
-  }
+  const plain = rewriteSkillPathRefs(rewriteSkillNamespaceTokens(lineText));
+  if (plain === lineText) return { after: lineText, verbatimReason: null };
+  // A CHANGELOG historical line is a verbatim record in full.
   if (hist && hist.has(lineNum)) return { after: lineText, verbatimReason: "changelog-historical" };
-  return { after, verbatimReason: null };
+  // β R1b: occurrence-grain. An unrelated pin/compat on the line no longer freezes the WHOLE line. Only a
+  // `scan:warpos-*` token carries a `warpos`, so it is kept verbatim iff its own warpos is partition-protected
+  // (occurrence pin / compat / evidence-tag). `warp:*` and `commands/warp/*` tokens carry no warpos; they
+  // always rewrite here — their historical-verbatim (per the ratified warp:*-historical ruling) is by the
+  // file's Class-3/4 classification upstream, not this line decision. Frozen tokens are COUNTED (β "uncounted").
+  const isProt = (i) =>
+    partition.dispositionAt(file, lineText, i) !== null || (effective !== file && partition.dispositionAt(effective, lineText, i) !== null);
+  let frozen = 0;
+  let after = lineText.replace(SCAN_TOKEN_RE, (match, g1, offset) => {
+    const wIdx = offset + match.indexOf("warpos");
+    if (wIdx >= offset && isProt(wIdx)) {
+      frozen += 1;
+      return match;
+    }
+    return "scan:mc-" + g1;
+  });
+  after = after.replace(SKILL_TOKEN_RE, "mc:$1").replace(SKILL_PATH_REF_RE, "commands/mc/$1.md");
+  if (after === lineText) return { after: lineText, verbatimReason: "occurrence-pin" };
+  return { after, verbatimReason: frozen > 0 ? "occurrence-pin-partial" : null };
 }
 
 /** Plan part 1c over the tracked tree: skill path moves + per-file content rewrites + honest residual counts. */
@@ -419,9 +432,17 @@ function genericSlugRewriteScoped(lineText, isProtected) {
 // is not a line-local edit. Such a line is untransformable -> counted in the delta -> the codemod refuses.
 // Matched case-INSENSITIVELY, aligned with categorizeOccurrence's case-insensitive env detection (7C-001): a mixed- or
 // lower-case read is still a raw legacy read, and the case-preserving generic rewrite would literal-swap it too.
-// Matches dot, optional-chained dot, bracket and optional-chained bracket raw legacy env reads
-// (S-OS-06 r3 finding 3): process.env.WARPOS_, process.env?.WARPOS_, process.env["WARPOS_"], process.env?.["WARPOS_"].
-const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:(?:\?\.|\.)\s*WARPOS_|(?:\?\.)?\s*\[\s*["'`]WARPOS_)/i;
+// A raw legacy env read has NO mechanical WARPOS_->MC_ transform (the read-both helper owns it), so the
+// codemod REFUSES the line rather than literal-swapping it. Covers every read shape (S-OS-06 r3 findings 3 + β R3):
+//   process.env.WARPOS_        process.env?.WARPOS_        (dot / optional-chained dot)
+//   process.env["WARPOS_"]     process.env?.["WARPOS_"]    (bracket / optional-chained bracket)
+//   const { WARPOS_X } = process.env                        (destructure — was silently rewritten)
+// categorizeOccurrence:365 buckets ANY WARPOS_[A-Z0-9_]+ as `env`; this refusal must fire on the same set,
+// so the two cannot drift (the env categorize-then-rewrite gap). Residual (named, NOT tracked-.js reads):
+// non-code WARPOS_ env references — .claude/settings.json#env allow-rules, .github/workflows, docs — are
+// carried by the compat register / historical dispositions, not this refusal.
+const RAW_LEGACY_ENV_READ_RE =
+  /process\.env\s*(?:(?:\?\.|\.)\s*WARPOS_|(?:\?\.)?\s*\[\s*["'`]WARPOS_)|\{[^}]*\bWARPOS_[A-Za-z0-9_]+[^}]*\}\s*=\s*process\.env/i;
 
 /**
  * Wrap a category transform so a raw legacy env read has NO transform (-> null -> refuse). Applied to EVERY category:
@@ -642,21 +663,53 @@ function buildLedgerAndPlan({ root, partition }) {
 
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
-      // Structural delta — ONE decision per slug-carrying LINE of a live, non-derived file. Compat-claimed lines are
-      // the compat disposition (never categorized for a rewrite); pinned lines count as pinned in their category.
+      // Structural delta — per-OCCURRENCE (β R1a). The category is a line property (categorizeOccurrence),
+      // but pinned-vs-transformed is decided per occurrence via dispositionAt, so a pin (or the evidence-tag /
+      // brand-history RULE) beside a live slug no longer marks the whole line pinned: the live slug counts
+      // toward `transformed`, and the occurrence-scoped transform must actually remove it (else `delta`). The
+      // r2 line-grain version stayed 0 on a pinned-beside-live line — the gap that let F1 pass a level up.
       if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText) && !partition.findCompatOccurrence(relPath, lineText)) {
-        const linePinned = Boolean(partition.findOccurrencePin(relPath, lineText)) || (isChangelog && changelogHistoricalLines.has(lineNum));
-        const dec = computeLineCategoryDecision(relPath, lineText, linePinned);
-        if (!dec.computable) {
-          categoryUncomputable.push({ file: relPath, line: lineNum, category: dec.category });
+        let category;
+        try {
+          category = categorizeOccurrence(relPath, lineText);
+        } catch (e) {
+          category = `<categorizer threw: ${e.message}>`;
+        }
+        const hasT = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, category);
+        const isProtected = (i) => partition.dispositionAt(relPath, lineText, i) !== null || (isChangelog && changelogHistoricalLines.has(lineNum));
+        const dre = /warpos/gi;
+        let dm;
+        let occN = 0;
+        let pinnedOnLine = 0;
+        while ((dm = dre.exec(lineText)) !== null) {
+          occN += 1;
+          if (isProtected(dm.index)) pinnedOnLine += 1;
+        }
+        const unprotected = occN - pinnedOnLine;
+        if (!OCCURRENCE_CATEGORIES.includes(category) || !hasT) {
+          // no registered transform / the categorizer threw -> uncomputable (fail-closed).
+          categoryUncomputable.push({ file: relPath, line: lineNum, category: String(category) });
         } else {
-          const slot = categoryDelta[dec.category];
-          slot.categorized += 1;
-          if (dec.outcome === "pinned") slot.pinned += 1;
-          else if (dec.outcome === "transformed") slot.transformed += 1;
-          else {
-            slot.delta += 1;
-            categoryUntransformed.push({ file: relPath, line: lineNum, category: dec.category, text: lineText.trim().slice(0, 160) });
+          const slot = categoryDelta[category];
+          slot.categorized += occN;
+          slot.pinned += pinnedOnLine;
+          if (RAW_LEGACY_ENV_READ_RE.test(lineText)) {
+            // A raw legacy env read has no mechanical transform (the WARPOS_->MC_ swap is disallowed; the
+            // read-both helper owns it), so every UNPROTECTED occurrence is UNTRANSFORMED = delta. A
+            // fully-pinned env-read line (a historical reference) has unprotected=0 and is clean.
+            if (unprotected > 0) {
+              slot.delta += unprotected;
+              categoryUntransformed.push({ file: relPath, line: lineNum, category, text: lineText.trim().slice(0, 160) });
+            }
+          } else {
+            const after = genericSlugRewriteScoped(lineText, isProtected);
+            const remaining = (after.match(/warpos/gi) || []).length;
+            const leaked = remaining - pinnedOnLine; // unprotected occurrences the scoped transform failed to remove
+            slot.transformed += unprotected - leaked;
+            if (leaked > 0) {
+              slot.delta += leaked;
+              categoryUntransformed.push({ file: relPath, line: lineNum, category, text: lineText.trim().slice(0, 160) });
+            }
           }
         }
       }
