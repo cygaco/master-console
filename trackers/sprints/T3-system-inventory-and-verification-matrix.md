@@ -56,7 +56,7 @@
 - **Verified Not Wired** (genuine findings, tracked under G-2): roadmap-mode consult (`grep -l TRACKER.md .claude/commands/roadmap/*.md` → no match); handoff/resume consult (`grep -l` over `session/{handoff,resume}.md` → no match); review/debug/refactor/doc/agent-coordination consult (no enterable mode command); definition-enforcement cross-file check; start/end/completion HARD hook; path/wiring HARD wiring (deferred T4).
 
 ## Git evidence verified (completed-work claims)
-- `git tag --list "mc@0.14*"` → `mc@0.14.0` (Verified Exists; release commit `0650e58`).
+- `git tag --list "warpos@0.14*"` → `warpos@0.14.0` (Verified Exists; release commit `0650e58`).
 - `git log -1 --format="%h %s"` resolves all 20 spot-checked E-ADR0007/release hashes with matching subjects: `09bac6f,9a132af,688b1e3,2e859d7,ec3f249,b29d331,2202abf,aa86338,f574a7e,2ac4c92,5c8377c,3f9470d,6dcd318,0320e11,34213e2,146108f,db0a778,f279b47,a6ab0bc,0650e58`. No hash unconfirmed.
 
 ## Dependencies
@@ -105,7 +105,7 @@
 | All §33 required files/dirs/templates | Yes | Verified Exists | repo root + `trackers/` | `ls -la` (sizes recorded) | 2026-06-05 | T3 systems builder |
 | Old mode-based agent tree | No | Verified Nonexistent | `.claude/agents/` | `ls` → ENOENT ×4 | 2026-06-05 | T3 systems builder |
 | 4 mode consults + scan gate + persistent team | Yes | Verified Wired | mode/*.md + scan/full.md | `grep` (lines recorded) | 2026-06-05 | T3 systems builder |
-| `mc@0.14.0` + E1–E8 hashes | Yes | Verified Exists | git | `git tag` + `git log -1` ×20 | 2026-06-05 | T3 systems builder |
+| `warpos@0.14.0` + E1–E8 hashes | Yes | Verified Exists | git | `git tag` + `git log -1` ×20 | 2026-06-05 | T3 systems builder |
 | Tracker validator | Yes | Verified Exists (12/12 PASS) | scripts/trackers/validate.js | `node scripts/trackers/validate.js` exit 0 | 2026-06-05 | T3 systems builder |
 
 ## Current next action

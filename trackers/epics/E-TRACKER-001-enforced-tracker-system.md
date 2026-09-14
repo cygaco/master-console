@@ -117,7 +117,7 @@
 - New state: Active, ~90%; T5 Completed; `ROADMAP.md` epic-based; 9 epic files Verified Exists; validator 12/12 PASS.
 
 ### 2026-06-05 — T3 Completed; epic advanced to ~80% (President via systems builder)
-- Changed: Sprint T3 (System Inventory + Verification Matrix) Completed — both sections fully disk-verified (40 inventory rows + 26 matrix rows, zero `Unknown`); E-ADR0007 E1–E8 hashes + the `mc@0.14.0` tag re-verified against `git`; epic percent ~65% → ~80%; DoD inventory/matrix + path/wiring + completed-evidence + resumability items updated; related-sprints T3 → Completed; Verification log inventory/matrix rows → Verified Exists and the non-enterable-postures row → Verified Not Wired.
+- Changed: Sprint T3 (System Inventory + Verification Matrix) Completed — both sections fully disk-verified (40 inventory rows + 26 matrix rows, zero `Unknown`); E-ADR0007 E1–E8 hashes + the `warpos@0.14.0` tag re-verified against `git`; epic percent ~65% → ~80%; DoD inventory/matrix + path/wiring + completed-evidence + resumability items updated; related-sprints T3 → Completed; Verification log inventory/matrix rows → Verified Exists and the non-enterable-postures row → Verified Not Wired.
 - Reason: Deliver sprint T3 of `_planning/tracker-system-improvements.md` (§9 System Inventory + §10 Verification Matrix) — prove every referenced artifact on disk.
 - Affected: this epic file; ../../TRACKER.md (inventory + matrix rewritten); trackers/sprints/T3 file.
 - Previous state: Active, ~65%; T3 Planned; inventory/matrix Exists But Incomplete; non-enterable-posture wiring Unknown.
@@ -167,7 +167,7 @@
 | Standing scan-suite gate (§28.7) | Yes | Verified Wired | `.claude/commands/scan/full.md` → `node scripts/trackers/validate.js` | Read post-edit + `scan-coverage.js` 0 findings | 2026-06-05 | President |
 | Mode wiring — non-enterable postures + hard hooks (§34) | Yes | Verified Not Wired | roadmap/session skills / hooks | `grep -l TRACKER.md` over roadmap/* + session/{handoff,resume} → no match; no enforcement hook (T3) | 2026-06-05 | T3 systems builder |
 | Old mode-based agent tree (§33) | No | Verified Nonexistent | `.claude/agents/` | `ls` of `00-alex/01-adhoc/02-oneshot/03-managers` → ENOENT ×4 (T3) | 2026-06-05 | T3 systems builder |
-| `mc@0.14.0` + E1–E8 hashes (§16/§26) | Yes | Verified Exists | git | `git tag` + `git log -1` ×20, all found (T3) | 2026-06-05 | T3 systems builder |
+| `warpos@0.14.0` + E1–E8 hashes (§16/§26) | Yes | Verified Exists | git | `git tag` + `git log -1` ×20, all found (T3) | 2026-06-05 | T3 systems builder |
 
 ## Current next action
 None — epic Completed (2026-06-06). Optional future hardening: a per-edit PostToolUse completion-gate (the current gate is the standing `/scan:full` + the Stop hook); flag the pre-existing settings/defaults security-hook drift discovered while wiring (now fixed in `defaults.json`).
