@@ -1,0 +1,184 @@
+{
+  "$question": "Which test files does `npm test` (scripts/checks/run-tests.js) subtract from the full scripts/** + tests/** *.test.js glob, and why is each one still broken?",
+  "$policy": "Every entry is pre-existing test rot, verified failing standalone (node --test <file>, repo root, CLAUDE_PROJECT_DIR unset, node v24.16.0) on the S-OS-06 fix2 tree AND identically on the pre-sprint base 669aadc1. The runner runs each quarantined file alone and FAILS if it passes (remove the entry) or is missing. Never add a file to green a red run: fix it, or file it here with its verbatim failure, cause, filing and expiry.",
+  "$format": "firstFailingAssertion = the verbatim first failing assertion line(s) from the standalone run, joined with ' | '; the absolute repo root is written <repo> and the OS temp dir <tmp>.",
+  "filedUnder": "ED-434",
+  "recordedAt": "2026-09-13",
+  "entries": [
+    {
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "firstFailingAssertion": "FAIL  KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+      "cause": "dangling-ref-allowlist-populated",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/mc/lib/provider-autofix.unit.test.js",
+      "firstFailingAssertion": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+      "cause": "adr-0007-cutover-path",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/mc/lib/provider-rca.unit.test.js",
+      "firstFailingAssertion": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+      "cause": "adr-0007-cutover-path",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/mc/product-bootstrap.unit.test.js",
+      "firstFailingAssertion": "Error: Cannot find module '<repo>\\scripts\\product\\bootstrap.js'",
+      "cause": "removed-module",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "firstFailingAssertion": "FAIL — 7 of 68 cases failed: | - KNOWN_PROVIDERS set: (no detail)",
+      "cause": "provider-catalog-contract-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "firstFailingAssertion": "- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\"ok\":false}",
+      "cause": "coverage-ledger-contract-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "firstFailingAssertion": "- mode_profiles.sprint.alpha_only_shapes === ['in-process-agent'] (ED-041): Expected values to be strictly deep-equal:",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/S-LC-07/spend-ledger.test.js",
+      "firstFailingAssertion": "FAIL  BLOCKER 1: prototype-key models price via _default — usd FINITE, not NaN | AssertionError [ERR_ASSERTION]: baseline _default cost is finite",
+      "cause": "spend-pricing-contract-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
+      "firstFailingAssertion": "FAIL real-scaffold-telemetry-tree-passes: AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal: | +   'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+      "cause": "scaffold-template-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "firstFailingAssertion": "- real-scaffold-admin-surface-passes: Expected values to be strictly deep-equal: | +   'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+      "cause": "scaffold-template-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "firstFailingAssertion": "- real-scaffold-founders-checklist-contract-passes: Expected values to be strictly deep-equal: | +   'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+      "cause": "scaffold-template-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
+      "firstFailingAssertion": "Error: ENOENT: no such file or directory, open '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\sprint-full-autonomy.json'",
+      "cause": "adr-0007-cutover-path",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
+      "firstFailingAssertion": "FAIL  test_settings_registers_lint_hook_output_between_path_guard_and_sprint_routing | order wrong: pg=6 lh=15 sr=7",
+      "cause": "settings-hook-order-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "firstFailingAssertion": "FAIL epsilon-agent / small (1000): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([\\\"codex\\\",\\\"agy\\\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "firstFailingAssertion": "FAIL qa-reviewer (cross_provider_reviewer) → sanctioned via review_fallback — {\"sanctioned\":false,\"lane\":\"review_fallback\",\"shape\":\"subprocess-claude\",\"reason\":\"role 'qa-reviewer' (class 'claude_pinned_reviewer') is not in lane 'review_fallback' applies_to_classes [cross_provider_reviewer, cross_provider_consult_lead] — not sanctioned\",\"classes\":[\"cross_provider_reviewer\",\"cross_provider_consult_lead\"]}",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
+      "firstFailingAssertion": "FAIL: sprint-id-match-preferred-both-checkers: matching sprint_id (window-edge) must correlate in hook-coverage | 1 !== 0",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
+      "firstFailingAssertion": "FAIL: planted-extreme-ts-cannot-widen-hook-coverage-window: a real in-window record should green the block-row even with spoofed ts present; got [{\"sprint_id\":\"SP-WC-HOOK\",\"role\":\"qa-reviewer\",\"step\":\"gauntlet\",\"mode\":\"block\",\"finding_type\":\"missing_block_agent\",\"evidence\":\"block-row qa-reviewer@gauntlet has a manager_consult record but no backing ok:true dispatch record correlated by sprint_id (or legacy clamped window) for this sprint (E-DISPATCH-INTEGRITY-001 F-1, post-2026-06-10)\"}] | 1 !== 0",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "firstFailingAssertion": "- MUTATION-VERIFY — without --expected-source, the LIVE CLI self-derives and does NOT report the missing role (this is the bug that was fixed): Self-derive (no external source) should show ok:true (no gap) — if this fails, the self-derive changed:",
+      "cause": "coverage-gate-contract-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "firstFailingAssertion": "- AC-5.3 when every externally-expected role DID produce a record → no gap: expected PASS, got {\"ok\":false,\"violations\":[\"expected role 'frontend-builder' has NO ok:true backed completion record for run run-wsg3a-source — coverage claim is UNBACKED (sprint-theater guard).\",\"expected role 'security-reviewer' has NO ok:true backed comp",
+      "cause": "coverage-gate-contract-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
+      "firstFailingAssertion": "FAIL  report-only-ramp-preserved-not-blocking | AssertionError [ERR_ASSERTION]: dispatch-agent report-only should proceed; stderr=[registry-roles] WARN: 'providers.DEFAULT_AGENT_PROVIDERS' fell back to its literal — registry derive failed: ENOENT: no such file or directory, open '<tmp>\\SP-20260611-002-T321-mode-<random>\\.claude\\agents\\_org\\role-registry.json' | [dispatch-agent] dispatch-contract VIOLATION: shape 'subprocess-cross-provider' is class-allowed for role 'security-reviewer' but NARROWED OUT by mode 'sprint' (mode allows: <none>).",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
+      "firstFailingAssertion": "FAIL  four-known-panels-seeded-and-openers-resolve | roadmap opener matches",
+      "cause": "panel-registry-opener-changed",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/roadmap-board-failsoft.test.js",
+      "firstFailingAssertion": "FAIL  clean fixture root: all four sections healthy (no false degrade) | clean section 'Open gaps / blockers' should be healthy",
+      "cause": "open-gaps-register-path-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/roadmap-board-render.test.js",
+      "firstFailingAssertion": "FAIL  board cites all four live sources | no enforcement-debt provenance",
+      "cause": "open-gaps-register-path-drift",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "firstFailingAssertion": "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    },
+    {
+      "file": "tests/regression/SP-20260627-001/negative-fixtures.test.js",
+      "firstFailingAssertion": "- AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via in-process-agent is REFUSED (kills diversity): expected the enforcer to FAIL the planted violation, but it PASSED ({\"ok\":true,\"violations\":[],\"contract\":{\"role\":\"qa-reviewer\",\"class\":\"claude_pinned_reviewer\",\"allowed_shapes\":[\"in-process-agent\"],\"forbidden_shapes\":[\"api\"],\"tool_id\":\"agent-tool\",\"cwd_policy\":\"canonical\",\"file_scope\":\"read-only\",\"env_allo) — FALSE-GREEN",
+      "cause": "dispatch-lane-change",
+      "filedUnder": "ED-434",
+      "expiry": "S-OS-08 (test-rot cleanup sprint)"
+    }
+  ]
+}

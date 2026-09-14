@@ -15,7 +15,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test \"scripts/**/*.test.js\" \"tests/**/*.test.js\"",
+    "test": "node scripts/checks/run-tests.js",
     "check:license": "node --test scripts/checks/license-match.test.js",
     "leak-gate": "node scripts/checks/leak-gate.js",
     "paths:build": "node scripts/paths/build.js",
