@@ -150,3 +150,12 @@ amendment (β R4) — were built ε-direct rather than via a dispatched security
 choke-point, so occurrence-scoped --apply falls out of the same span map; re-dispatching partition-loader work
 under the 20-min clamp on the last attempt is the worse risk. Evidence substitute = full re-gauntlet (security
 GPT/codex + backend) on the final head + green CI, plus a RED/GREEN falsifier pair per fix. RETRO ITEM.
+
+## r3 gauntlet result + residuals (2026-09-14)
+- SECURITY r3 = FAIL (attempt 3/3, last), backend r3 = PASS 90. HALT per policy; awaiting operator sign-off for r4. Findings + r4 scope: runtime/S-OS-06/gauntlet/security-r3-FAIL.md.
+- NAMED RESIDUAL (α ruling): scan:mc-manifest-honesty drift on 3 session-end files (agent-dispatch-guide.md, judgement-model.md, judgement-model-recommendations.md) vs .claude/framework-installed.json (from commit 2ed204cb). This is the RI-003 convergence class the /mc:release ceremony closes BY DESIGN (regen fm→installed→_mc after stage 6; stage-7 re-checks it). NOT fixed in S-OS-06. Goes in the release-plan residuals + β r4 artifact when release-prep runs.
+- RETRO ITEMS (4 LOW backend advisories on the r3 code, PASS-binding, not fixed):
+  1. run-tests.js CAUSE-LOCK depends on the spec reporter's AssertionError line; under the tap reporter it would false-RED (fail-closed, safe). Consider matching the registered cause anywhere in captured output.
+  2. run-tests.js COUNT-LOCK is skipped when failCount is unparseable (a minor FAIL-OPEN / teeth-weakening) → FLAGGED FOR S-OS-08 (should not outlive the test-rot sprint): treat a null failCount on a non-zero exit as a violation.
+  3. rename-mc.js duplicate comment blocks describing RAW_LEGACY_ENV_READ_RE — fold into one.
+  4. rename-mc.js destructure regex has bounded polynomial (not catastrophic) backtracking — tighten the inner class.
