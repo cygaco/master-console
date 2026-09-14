@@ -17,10 +17,12 @@ const H = require("./falsifier-harness");
 
 const LEGACY_PREFIX = `${H.SLUG.toUpperCase()}_`;
 const PREFIX_ALT = `(?:MC_|${LEGACY_PREFIX})`;
+// `i`: process.env is case-insensitive on Windows, so a lowercase / mixed-case prefix is the same raw read
+// (security gauntlet F3; falsify-raw-env-case-insensitive.test.js).
 const RAW_ENV_PATTERNS = Object.freeze([
-  { id: "dot", re: new RegExp(`process\\.env\\s*\\.\\s*${PREFIX_ALT}`) },
-  { id: "bracket", re: new RegExp(`process\\.env\\s*\\[\\s*[\`'"]${PREFIX_ALT}`) },
-  { id: "destructure", re: new RegExp(`\\{[^}]*\\b${PREFIX_ALT}[A-Za-z0-9_]+[^}]*\\}\\s*=\\s*process\\.env\\b`) },
+  { id: "dot", re: new RegExp(`process\\.env\\s*\\.\\s*${PREFIX_ALT}`, "i") },
+  { id: "bracket", re: new RegExp(`process\\.env\\s*\\[\\s*[\`'"]${PREFIX_ALT}`, "i") },
+  { id: "destructure", re: new RegExp(`\\{[^}]*\\b${PREFIX_ALT}[A-Za-z0-9_]+[^}]*\\}\\s*=\\s*process\\.env\\b`, "i") },
 ]);
 const HELPER_REL = "scripts/hooks/lib/mc-env.js";
 const CODE_EXT_RE = /\.(?:c|m)?js$/;
