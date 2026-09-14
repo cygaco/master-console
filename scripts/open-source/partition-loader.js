@@ -957,7 +957,9 @@ function buildPartition(denylist) {
     }
     const rel = _toPosix(path.relative(root, DENYLIST_PATH));
     const ledgerRel = _toPosix(path.relative(root, COMMITTED_LEDGER_PATH));
-    const log = _gitRun(root, ["log", "--no-merges", "--reverse", "--format=%H", "--", rel]);
+    // Security fix-cycle r2 F2: merge commits ARE inspected (no --no-merges) — an entry introduced by a merge commit
+    // (evil merge / conflict resolution) is judged exactly like any other post-freeze addition.
+    const log = _gitRun(root, ["log", "--reverse", "--format=%H", "--", rel]);
     if (log.status !== 0) {
       // A repo with no commits yet has no history to judge — the worktree layer above still ran.
       if (/does not have any commits|bad default revision/i.test(log.stderr || "")) {
@@ -999,7 +1001,13 @@ function buildPartition(denylist) {
       const before = new Set(parent ? entryKeys(parent) : []);
       const added = entryKeys(at).filter((k) => !before.has(k));
       if (added.length === 0) continue;
-      const files = _gitRun(root, ["diff-tree", "--no-commit-id", "--name-only", "-r", c]).stdout.split(/\r?\n/).filter(Boolean).map(_toPosix);
+      // First-parent diff (F2): identical to the single-parent set for a normal commit; for a merge it is everything the
+      // merge introduced relative to its first parent (diff-tree prints nothing for a merge). Fails CLOSED on a git error.
+      const diff = _gitRun(root, ["diff", "--name-only", `${c}^`, c]);
+      if (diff.status !== 0) {
+        throw new PartitionLoadError(`partition-loader: F8 git diff ${short}^ ${short} failed: ${(diff.stderr || "").trim()} — failing CLOSED`);
+      }
+      const files = diff.stdout.split(/\r?\n/).filter(Boolean).map(_toPosix);
       const foreign = files.filter((f) => f !== rel && f !== ledgerRel);
       const message = _gitRun(root, ["log", "-1", "--format=%B", c]).stdout;
       const amendedHere = amendmentKeysOf(at);
