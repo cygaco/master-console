@@ -103,7 +103,7 @@ function loadQuarantine(file) {
   }
   let doc;
   try {
-    doc = JSON.parse(raw.replace(/^﻿/, ""));
+    doc = JSON.parse(raw.charCodeAt(0) === 0xfeff ? raw.slice(1) : raw); // tolerate a UTF-8 BOM
   } catch (e) {
     throw new Error(`quarantine artifact ${file} is not valid JSON: ${e.message}`);
   }
