@@ -687,6 +687,10 @@
         "key": "pin|scripts/portfolio/registry.js|~/.warpos/|// Creates ",
         "removed": true,
         "warrant": "S-OS-06 fix-cycle r3 (β R4): removal-amendment for a frozen baseline entry retired during S-OS-06 — its target is now covered by the current partition (Class-3 compat shim / rewritten-away literal); framework-purity + cutover-completeness confirm no live-unallowed occurrence results from the removal."
+      },
+      {
+        "key": "pin|trackers/sprints/T3-system-inventory-and-verification-matrix.md|warpos@0.14*|",
+        "warrant": "partition-amendment: S-OS-06 (β 9c2d6e01) — pin the warpos@0.14* tag-listing glob restored in 7740e9ab; evidence-tag reference, keeps the gate green on the owed restore"
       }
     ]
   },
@@ -1512,6 +1516,11 @@
       "file": "scripts/open-source/partition-loader.js",
       "matchText": "EVIDENCE_TAG_RE = /warpos@",
       "warrant": "the evidence-tag RULE regex source; the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE), never a live identifier"
+    },
+    {
+      "file": "trackers/sprints/T3-system-inventory-and-verification-matrix.md",
+      "matchText": "warpos@0.14*",
+      "warrant": "evidence-tag LISTING glob in a restored verification transcript (`git tag --list \"warpos@0.14*\"`); a tag-reference, never a live identifier — the evidence-tag RULE covers warpos@<a.b.c> but not this version-glob form (r4 broadens the rule; pinned meanwhile so the β-owed restore is gate-clean regardless of the r4 decision)"
     }
   ],
   "openQuestions": [
