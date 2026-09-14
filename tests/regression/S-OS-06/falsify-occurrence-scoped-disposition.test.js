@@ -107,6 +107,20 @@ test(`${FALSIFIER_ID} RED: an extra live slug on the PINNED line, outside the pi
   });
 });
 
+test(`${FALSIFIER_ID} --apply is occurrence-scoped (finding 1): the pinned span survives, the same-line extra live slug is rewritten`, () => {
+  H.withFixture({ version: "2.0.0" }, (fx) => {
+    fx.write(PIN_FILE, `${PIN_DOUBLE_LINE}\nmodule.exports = { LEGACY_HOME_SEGMENT };\n`);
+    const apply = fx.runCodemod(["--apply"]);
+    assert.strictEqual(apply.status, 0, apply.out);
+    const after = fx.read(PIN_FILE);
+    // The pinned literal ".warpos" (inside the pin's matchText) is preserved byte-for-byte; the extra
+    // comment slug ~/.warpos/x (outside the span) is rewritten to ~/.mc/x. Line-scoped --apply would
+    // have rewritten BOTH — the F5 defect mechanism.
+    assert.ok(after.includes(`".${LEG}"`), `the pinned literal must survive --apply: ${after}`);
+    assert.ok(after.includes("~/.mc/x") && !after.includes(`~/.${LEG}/x`), `the same-line extra live slug must be rewritten: ${after}`);
+  });
+});
+
 test(`${FALSIFIER_ID} GREEN (compat): a registered compat line whose only slug is inside the matchText -> exit 0, compat 1`, () => {
   withCompatLine(COMPAT_LINE, (fx) => {
     const r = fx.runPurity(["--json"]);

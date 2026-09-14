@@ -394,12 +394,34 @@ function genericSlugRewrite(lineText) {
     .replace(/warpos/g, "mc");
 }
 
+// Occurrence-scoped rewrite (S-OS-06 fix-cycle r3, security finding 1): rewrite ONLY the legacy-slug
+// occurrences for which isProtected(charIndex) is false. A pinned / compat / evidence-tag / brand-history
+// occurrence that shares a line with a rewritable one is preserved byte-for-byte — so --apply can never
+// rewrite a pinned warpos@<semver> tag or "formerly WarpOS" just because the line also carries a
+// rewritable slug (the exact mechanism that produced the F5 defect at 7021ff55). Same four case forms as
+// genericSlugRewrite; any other case mix (e.g. "WarPos") is left untouched, matching the original.
+function genericSlugRewriteScoped(lineText, isProtected) {
+  const re = /WARPOS|WarpOS|Warpos|warpos/g;
+  const MAP = { WARPOS: "MC", WarpOS: "MC", Warpos: "Mc", warpos: "mc" };
+  let out = "";
+  let last = 0;
+  let m;
+  while ((m = re.exec(lineText)) !== null) {
+    out += lineText.slice(last, m.index);
+    out += isProtected(m.index) ? m[0] : MAP[m[0]];
+    last = m.index + m[0].length;
+  }
+  return out + lineText.slice(last);
+}
+
 // A raw process.env read of a legacy-named variable has NO mechanical transform: the literal WARPOS_->MC_ swap
 // silently drops the one-release legacy fallback, and the correct rewrite (a read-both helper CALL + its require)
 // is not a line-local edit. Such a line is untransformable -> counted in the delta -> the codemod refuses.
 // Matched case-INSENSITIVELY, aligned with categorizeOccurrence's case-insensitive env detection (7C-001): a mixed- or
 // lower-case read is still a raw legacy read, and the case-preserving generic rewrite would literal-swap it too.
-const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:\.\s*WARPOS_|\[\s*["'`]WARPOS_)/i;
+// Matches dot, optional-chained dot, bracket and optional-chained bracket raw legacy env reads
+// (S-OS-06 r3 finding 3): process.env.WARPOS_, process.env?.WARPOS_, process.env["WARPOS_"], process.env?.["WARPOS_"].
+const RAW_LEGACY_ENV_READ_RE = /process\.env\s*(?:(?:\?\.|\.)\s*WARPOS_|(?:\?\.)?\s*\[\s*["'`]WARPOS_)/i;
 
 /**
  * Wrap a category transform so a raw legacy env read has NO transform (-> null -> refuse). Applied to EVERY category:
@@ -656,18 +678,26 @@ function buildLedgerAndPlan({ root, partition }) {
           // occurrence / pin to THIS match only when m.index lies inside its matchText span (compat before pins, the
           // loader's precedence), so an extra live slug beside a registered occurrence on the same line is rewritten.
           const at = partition.dispositionAt(relPath, lineText, m.index);
-          // R4: a pin binds (file, matchText [, anchor]) — never a line number. This line is THE pin lever F6 mutates;
-          // it gates the pinned branch, and the occurrence-scoped `at` decides which occurrence the pin covers.
-          const pin = partition.findOccurrencePin(relPath, lineText);
           if (at && at.kind === "compat") {
             disposition = "compat";
             rule = `compat:${at.window.surface}`;
             warrant = at.window.warrant;
             noteCompat(at.window, relPath, lineNum, matchText);
-          } else if (pin && at && at.kind === "pinned") {
+          } else if (at && at.kind === "pinned") {
+            // Occurrence-scoped pinned: either a registered occurrence pin, OR the evidence-tag /
+            // brand-history RULE (S-OS-06 r3) — `at.rule` set means warpos@<semver> or "formerly WarpOS",
+            // kept forever with no per-file pin. Either way this occurrence is NEVER rewritten.
             disposition = "pinned";
-            rule = "occurrence-pin";
-            warrant = at.pin.warrant;
+            if (at.rule === "evidence-tag") {
+              rule = "rule:evidence-tag";
+              warrant = "prior-art release/evidence tag warpos@<semver>; kept forever, never rewritten (RULE)";
+            } else if (at.rule === "brand-history") {
+              rule = "rule:brand-history";
+              warrant = "sanctioned brand-history phrase 'formerly WarpOS'; kept verbatim, never rewritten (RULE)";
+            } else {
+              rule = "occurrence-pin";
+              warrant = at.pin ? at.pin.warrant : "occurrence pin";
+            }
             pinnedCount += 1;
           } else if (isChangelog && changelogHistoricalLines.has(lineNum)) {
             disposition = "pinned";
@@ -1019,8 +1049,16 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
       const idx = lineNum - 1;
       if (idx < 0 || idx >= lines.length) continue;
       const before = lines[idx];
-      const transform = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, rule) ? CATEGORY_TRANSFORMS[rule] : null;
-      const after = transform ? transform(before) : null;
+      const hasTransform = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, rule);
+      // Fail-closed: a category with no transform, or a raw legacy env read (no mechanical transform),
+      // refuses the whole apply — exactly as CATEGORY_TRANSFORMS = refuseRawLegacyEnvRead(genericSlugRewrite) did.
+      const after =
+        hasTransform && !RAW_LEGACY_ENV_READ_RE.test(before)
+          ? // OCCURRENCE-SCOPED (r3 finding 1): rewrite only occurrences the partition does NOT disposition
+            // (pin / compat / evidence-tag / brand-history are protected); changelog-historical lines never
+            // carry a `rewritten` row so they are not reached here.
+            genericSlugRewriteScoped(before, (charIdx) => partition.dispositionAt(targetRel, before, charIdx) !== null)
+          : null;
       if (typeof after !== "string") {
         // Unreachable after the delta refusal above; kept fail-closed so a table/categorizer drift can never skip a line.
         throw new Error(`rename-mc --apply refused: ${file}:${lineNum} [${rule}] has no mechanical transform`);

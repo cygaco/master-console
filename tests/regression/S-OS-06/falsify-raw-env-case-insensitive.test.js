@@ -63,3 +63,16 @@ test(`${FALSIFIER_ID} GREEN (non-env lowercase slug token): a comment or a non-p
   const benign = [`// ${leg} era`, `const note = "the ${leg} era";`, `const cfg = settings.${leg}_home;`, "const home = process.env.HOME;"].join("\n");
   assert.deepStrictEqual(scan.findRawEnvReads(benign), []);
 });
+
+test(`${FALSIFIER_ID} RED (optional chaining, finding 3): process.env?.<slug>_ and process.env?.["<slug>_"] are raw reads too`, () => {
+  const planted = [
+    `const a = process.env?.${leg}_home;`,
+    `const b = process.env?.["${leg}_x"];`,
+    `const c = process.env?.${mixedLeg}_HOME;`,
+  ].join("\n");
+  const hits = scan.findRawEnvReads(planted);
+  const ids = new Set(hits.map((h) => h.id));
+  assert.ok(ids.has("dot"), `optional-chained dot read not flagged: ${JSON.stringify(hits)}`);
+  assert.ok(ids.has("bracket"), `optional-chained bracket read not flagged: ${JSON.stringify(hits)}`);
+  assert.strictEqual(hits.length, 3, `all three optional-chained reads must be caught: ${JSON.stringify(hits)}`);
+});

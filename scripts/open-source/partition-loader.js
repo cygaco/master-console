@@ -65,6 +65,31 @@ const ROUTED_ENTRY_POINT = "scripts/open-source/partition-loader.js#loadPartitio
 const AMENDMENT_MARKER = "partition-amendment:";
 const VALID_CLASSES = [1, 2, 3, 4];
 const ALLOW_CLASSES = [3, 4];
+
+// ── evidence-tag + brand-history RULE (S-OS-06 fix-cycle r3, F5-widening / α msg 8f31cee3) ──
+// A prior-art release/evidence tag name `warpos@<semver>` and the sanctioned brand-history phrase
+// `formerly WarpOS` are NEVER a rename candidate and NEVER live-unallowed — dispositioned pinned by
+// RULE (not per-file pins), each under its own emitted sub-count. Every git release tag is `warpos@*`
+// (`git tag -l 'mc@*'` is empty), so a `warpos@<semver>` literal is always a real evidence tag and is
+// kept forever. This is the invariant the 7021ff55 apply violated (it rewrote warpos@0.1.4 -> mc@0.1.4).
+// An actual tag `warpos@0.1.4`, or an evidence-tag REFERENCE used to describe the rule itself
+// (the `warpos@<semver>` placeholder, the `warpos@*` glob, or this module's own regex source): all
+// are references to the prior-art evidence tag, never a live identifier — the `@`-prefixed slug form
+// is only ever a tag/version spec, so this never masks a real leak. The regex-source occurrence just
+// below is pinned as the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE).
+const EVIDENCE_TAG_RE = /warpos@(?:\d+\.\d+\.\d+|<semver>|\*|\\d)/gi;
+const BRAND_HISTORY_RE = /formerly WarpOS/gi;
+/** The rule ("evidence-tag" | "brand-history") covering the needle occurrence at `matchIndex`, or null. */
+function _ruleSpanAt(lineText, matchIndex) {
+  for (const [rule, re] of [["evidence-tag", EVIDENCE_TAG_RE], ["brand-history", BRAND_HISTORY_RE]]) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(lineText)) !== null) {
+      if (matchIndex >= m.index && matchIndex < m.index + m[0].length) return rule;
+    }
+  }
+  return null;
+}
 const CHANGELOG_REL = "CHANGELOG.md";
 const PLACEHOLDER_WARRANT = /^(todo|tbd|fixme|n\/a|na|none|null|undefined|-+|\.+|\?+|x+)$/i;
 const CODE_EXTENSIONS = new Set([".js", ".cjs", ".mjs", ".ts", ".cts", ".mts", ".ps1", ".sh", ".py"]);
@@ -407,6 +432,10 @@ function buildPartition(denylist) {
       throw new TypeError("partition-loader: dispositionAt(file, lineText, matchIndex) — pass the LINE TEXT and the match's character index");
     }
     const p = _toPosix(file);
+    // RULE first (S-OS-06 r3): warpos@<semver> evidence tags + "formerly WarpOS" are pinned-by-rule
+    // everywhere, no per-file pin needed — self-dispositioned, never rewritten.
+    const ruleKind = _ruleSpanAt(lineText, matchIndex);
+    if (ruleKind) return { kind: "pinned", rule: ruleKind };
     // compat is checked BEFORE pins (existing precedence; the loader refuses a line claimed by both).
     for (const { window, occ } of compatOccurrences) {
       if (_toPosix(occ.file) !== p) continue;
@@ -456,6 +485,8 @@ function buildPartition(denylist) {
       pendingSamples: {},
       pinnedTotal: 0,
       pinnedByPin: {},
+      pinnedEvidenceTag: 0,
+      pinnedBrandHistory: 0,
       derivedTotal: 0,
       derivedByView: {},
       changelogHistoricalTotal: 0,
@@ -551,7 +582,9 @@ function buildPartition(denylist) {
           addCompat(at.window, 1, idx + 1, lineText);
         } else if (at && at.kind === "pinned") {
           tally.pinnedTotal += 1;
-          add(tally.pinnedByPin, _pinLabel(at.pin), 1);
+          if (at.rule === "evidence-tag") tally.pinnedEvidenceTag += 1;
+          else if (at.rule === "brand-history") tally.pinnedBrandHistory += 1;
+          else add(tally.pinnedByPin, _pinLabel(at.pin), 1);
         } else if (hist && hist.has(idx + 1)) {
           tally.changelogHistoricalTotal += 1;
         } else {
@@ -574,6 +607,8 @@ function buildPartition(denylist) {
       ...sortDesc(tally.compatBySurface || {}).map(([k, v]) => [`compat ${k}`, v]),
       ...sortDesc(tally.compatExpiredBySurface || {}).map(([k, v]) => [`compat-EXPIRED ${k} (counted live-unallowed)`, v]),
     ];
+    if (tally.pinnedEvidenceTag) rows.push([`pinned:evidence-tag (warpos@<semver> — kept forever, by RULE)`, tally.pinnedEvidenceTag]);
+    if (tally.pinnedBrandHistory) rows.push([`pinned:brand-history ("formerly WarpOS" — by RULE)`, tally.pinnedBrandHistory]);
     if (tally.changelogHistoricalTotal) rows.push([`changelog-historical ${CHANGELOG_REL} (< 2.0.0 sections)`, tally.changelogHistoricalTotal]);
     if (rows.length === 0) lines.push(`${indent}  (none)`);
     for (const [k, v] of rows) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);

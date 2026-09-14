@@ -27,12 +27,15 @@ const H = require("./falsifier-harness");
 const BANNER = { "src/banner.js": `// ${H.SLUG} banner\n` };
 const MIGRATION_REL = "migrations/1.2.0-to-2.0.0/migrate.js";
 const PINNED_LITERAL = `".${H.SLUG}"`;
-const PIN_LEVER = "const pin = partition.findOccurrencePin(relPath, lineText);";
+// The occurrence-pin lever now lives in partition-loader#dispositionAt (S-OS-06 r3): the codemod pins
+// an occurrence iff dispositionAt returns kind "pinned". Disabling the pin-loop return there is the
+// real lever a mutant must pull to un-pin the Class-3 literal.
+const PIN_LEVER = 'return { kind: "pinned", pin };';
 
 function installPinLeverMutant(fx) {
-  const src = fx.read(H.REL.codemod);
-  assert.ok(src.includes(PIN_LEVER), "the codemod's pin lever must exist — otherwise this mutant is hollow and proves nothing");
-  fx.write(H.REL.codemod, src.replace(PIN_LEVER, "const pin = null; // F6 mutant: the pin lever is removed"));
+  const src = fx.read(H.REL.loader);
+  assert.ok(src.includes(PIN_LEVER), "the dispositionAt occurrence-pin lever must exist — otherwise this mutant is hollow and proves nothing");
+  fx.write(H.REL.loader, src.replace(PIN_LEVER, "return null; // F6 mutant: the occurrence-pin lever is removed"));
 }
 
 function assertPinTestRed(fx) {

@@ -97,7 +97,10 @@ ok("pinned-occurrences-each-resolve-to-a-real-warrant", () => {
   const pinnedRows = built.ledger.filter((r) => r.disposition === "pinned");
   assert.ok(pinnedRows.length > 0, "expected at least one pinned occurrence on the current tree (walk-skip.js / leak-gate.js / CHANGELOG historical entries)");
   for (const row of pinnedRows) {
-    assert.ok(["occurrence-pin", "changelog-historical"].includes(row.rule), `unexpected pin rule ${row.rule} for ${row.file}:${row.line}`);
+    assert.ok(
+      ["occurrence-pin", "changelog-historical", "rule:evidence-tag", "rule:brand-history"].includes(row.rule),
+      `unexpected pin rule ${row.rule} for ${row.file}:${row.line}`
+    );
   }
 });
 
