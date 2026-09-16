@@ -20,4 +20,4 @@ Behavior is identical (a superset — more scans run). Only the canonical name c
 
 ## Removal
 
-Scheduled for removal at `mc@1.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.
+Scheduled for removal at `warpos@1.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.
