@@ -691,6 +691,141 @@
       {
         "key": "pin|trackers/sprints/T3-system-inventory-and-verification-matrix.md|warpos@0.14*|",
         "warrant": "partition-amendment: S-OS-06 (β 9c2d6e01) — pin the warpos@0.14* tag-listing glob restored in 7740e9ab; evidence-tag reference, keeps the gate green on the owed restore"
+      },
+      {
+        "key": "future|.claude/commands/scan/warpos-*.md",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — converted at a7b36fd2 into the compat register surface 'alias-skills' (14 enumerated key(s) added in the same commit; no occurrence holds two); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "future|scripts/checks/warpos-*.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — converted at a7b36fd2 into the compat register surface 'check-shims' (16 enumerated key(s) added in the same commit; no occurrence holds two); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|scripts/hooks/lib/mc-env.js|\"warpos\"|const LEGACY_SLUG = ",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — converted at a7b36fd2 into the compat register surface 'env-helper' (1 enumerated key(s) added in the same commit; no occurrence holds two); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|_warpos/EXAMPLES/|Last Updated: 2026-09-12 (**2026-09-12 S-OS-04 + S-OS-05 BUILT — leak gate GREEN, brand layer landed on `open-source/S-OS-04-05`:** E-OPEN-S",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — re-keyed at 978135f2: the stale anchor no longer bound its line, so the same file+matchText was re-pinned as 'pin|TRACKER.md|_warpos/EXAMPLES/|'; the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|ROADMAP.md|warpos@0.1.4|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|formerly WarpOS|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@0.1.4|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 7 occurrence(s) this pin covered on 4 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@0.15.3|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@1.0.0|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 15 occurrence(s) this pin covered on 11 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@1.1.0|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 11 occurrence(s) this pin covered on 8 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@1.2.0|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 3 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS| + story 'formerly WarpOS",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS' line; CH",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS) with the",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS)' once an",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS)' once. (",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS).**` (the",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 3 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS)` pin) — ",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4) predates",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4) provably",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4=de9ba8eb;",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4^{commit}`",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4` on disk ",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4` tag name",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4`; the epi",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4`=`de9ba8e",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@<semver>|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 3 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
       }
     ]
   },
