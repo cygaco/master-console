@@ -128,6 +128,30 @@ test("RED: two hex ids sharing the prefix ceiling make short-id resolution ambig
   assert.match(out, /PREFIX-COLLISION c0ffee00/);
 });
 
+test("CEILING is printed: GREEN says what it cannot see (β e79b4d13)", () => {
+  const { rc, out } = run([{ msg_id: A }, { msg_id: B, precedent: A.slice(0, 8) }]);
+  assert.equal(rc, 0, out);
+  assert.match(out, /CEILING: .*never cited and never stubbed is OUTSIDE this instrument/);
+});
+
+test("RED: an issued-stub with no full verdict row is unfulfilled (the uncited-verdict class made visible)", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: GHOST, record_kind: "issued-stub", issued_to: "epsilon", boundary: "r4 lane I parser" },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, new RegExp(`UNFULFILLED-STUB row 2: ${GHOST} issued to epsilon`));
+});
+
+test("GREEN: an issued-stub followed by its full verdict row is fulfilled", () => {
+  const { rc, out } = run([
+    { msg_id: GHOST, record_kind: "issued-stub", issued_to: "epsilon", boundary: "r4 lane I parser" },
+    { msg_id: GHOST, record_kind: "verdict", decision: "DECIDE", answer: "the ruling" },
+  ]);
+  assert.equal(rc, 0, out);
+  assert.match(out, /1 issued-stubs \(0 unfulfilled\)/);
+});
+
 test("LIVE LEDGER: referential integrity holds on paths.betaEvents (this is the CI hook, β F4)", () => {
   const r = spawnSync(process.execPath, [SCRIPT], { encoding: "utf8", cwd: path.resolve(__dirname, "../../..") });
   assert.equal(r.status, 0, `live ledger RED:\n${r.stdout}${r.stderr}`);
