@@ -79,8 +79,29 @@ const RENAME_SIMILARITY = "50%";
  */
 const AUTHOR_ERROR_FAILURE_TYPES = new Set(["testCodeFailure", "hookFailed", "uncaughtException", "unhandledRejection"]);
 
+/**
+ * The HERMETIC CHILD ENVIRONMENT (β row 486, lane I7). Every child this runner spawns (each primary batch,
+ * each quarantined file run alone, each --verify-base run, and every git call) receives ONLY the variables
+ * named here, copied from the runner's own environment when they are present there, names matched without
+ * regard to case. Everything else is scrubbed, so an ambient variable that makes the code under test write
+ * to stderr cannot reach the capture: the capture is a property of the code, not of the machine.
+ *
+ * win32: exactly the set libuv itself copies from the parent into any child whose env block lacks them
+ * (measured, lane I7: a child spawned with an EMPTY env on Windows receives these eleven and no others), so
+ * a smaller Windows list would be a false declaration. other: the POSIX essentials for spawning a program
+ * by name (PATH), git's global config (HOME) and the temp dir the normalizer masks (TMPDIR).
+ * `node --test` itself adds NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process; those
+ * are the runner's own, not ambient. The declaration is generated from this object into the normalizer's
+ * declaration below, so declared and actual cannot drift.
+ */
+const CHILD_ENV_ALLOWLIST = Object.freeze({
+  win32: Object.freeze(["HOMEDRIVE", "HOMEPATH", "LOGONSERVER", "PATH", "SYSTEMDRIVE", "SYSTEMROOT", "TEMP", "USERDOMAIN", "USERNAME", "USERPROFILE", "WINDIR"]),
+  other: Object.freeze(["HOME", "PATH", "TMPDIR"]),
+});
+
 /** The declared normalizer. The register's `$normalizer` must equal this array, element for element. */
 const NORMALIZER_DECLARATION = [
+  `E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: ${CHILD_ENV_ALLOWLIST.win32.join(", ")}. Other platforms: ${CHILD_ENV_ALLOWLIST.other.join(", ")}. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.`,
   "0 input: every captured line enters in TAP comment rendering. A YAML error value is decoded from its YAML scalar and re-rendered with node's own TAP comment escape before step 1, so both regimes share one normalizer.",
   "1 unescape: a single left-to-right scan decoding \\\\ to \\ and \\# to #; every other backslash pair is left as its two characters.",
   "2 separators: every run of one or more backslashes becomes one /. It runs AFTER unescape (ordering trap: in the other order an escaped pair becomes //).",
@@ -145,10 +166,13 @@ function parseArgs(argv) {
   return opts;
 }
 
-function childEnv() {
-  const env = { ...process.env };
-  delete env.NODE_TEST_CONTEXT; // children must not report into an enclosing test runner
-  return env;
+/** The hermetic child environment: CHILD_ENV_ALLOWLIST applied to `source` (default: this process's env). */
+function childEnv(source, platform) {
+  const src = source || process.env;
+  const allowed = new Set(((platform || process.platform) === "win32" ? CHILD_ENV_ALLOWLIST.win32 : CHILD_ENV_ALLOWLIST.other).map((n) => n.toUpperCase()));
+  const env = {};
+  for (const [k, v] of Object.entries(src)) if (allowed.has(k.toUpperCase()) && typeof v === "string") env[k] = v;
+  return env; // NODE_TEST_CONTEXT is never allowed: children must not report into an enclosing test runner
 }
 
 function gitEnv() {
@@ -869,6 +893,8 @@ module.exports = {
   EXPECTED_REAL_BASE,
   RENAME_SIMILARITY,
   NORMALIZER_DECLARATION,
+  CHILD_ENV_ALLOWLIST,
+  childEnv,
   DROP_CLASS_DECLARATION,
   CEILINGS,
   AUTHOR_ERROR_FAILURE_TYPES,

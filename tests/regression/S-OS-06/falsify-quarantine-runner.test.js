@@ -249,6 +249,26 @@ test(`${FALSIFIER_ID} (j) VACUITY (β row 473 §3): a non-empty observed capture
   });
 });
 
+// (lane I7) a quarantined file that writes one EXTRA stderr line only when an AMBIENT variable is set in the
+// runner's own environment. The variable is not in the runner's declared child allow-list, so the hermetic
+// scrub must keep it from the child: the capture stays the registered multiset. Without the scrub the ambient
+// line joins the capture and the CAUSE-LOCK breaks: the capture would be a property of the machine.
+const AMBIENT_VAR = "MC_I7_AMBIENT_STDERR_WRITER";
+const AMBIENT_WRITER_FAILING =
+  'const test = require("node:test");\nconst assert = require("node:assert");\n' +
+  `test("dummy rotted", () => { if (process.env.${AMBIENT_VAR}) process.stderr.write("ambient writer: this line depends on the machine\\n"); assert.strictEqual(1, 2, "dummy rot: still failing"); });\n`;
+
+test(`${FALSIFIER_ID} (k) HERMETIC SCRUB (β row 486): an ambient variable outside the declared allow-list never reaches a test child`, { timeout: RUNNER_TIMEOUT_MS + 60000 }, () => {
+  const files = { "tests/ok/pass.test.js": PASSING, "tests/q/ambient.test.js": AMBIENT_WRITER_FAILING };
+  withRepo(files, { entries: [entry("tests/q/ambient.test.js")] }, (dir) => {
+    const r = spawnSync(process.execPath, [RUNNER, "--root", dir], { cwd: dir, env: { ...cleanEnv(), [AMBIENT_VAR]: "1" }, encoding: "utf8", timeout: RUNNER_TIMEOUT_MS, maxBuffer: 64 * 1024 * 1024, windowsHide: true });
+    const out = `${r.stdout || ""}\n${r.stderr || ""}`;
+    assert.strictEqual(r.error, undefined, `runner did not run to an exit code: ${r.error && r.error.message}\n${out}`);
+    assert.strictEqual(r.status, 0, `the ambient ${AMBIENT_VAR} reached the test child and changed the capture\n${out}`);
+    assert.match(out, /run-tests: quarantine tests\/q\/ambient\.test\.js still fails \(exit 1\).*a multiset equal to the register/, out);
+  });
+});
+
 test(`${FALSIFIER_ID}: the real tests/quarantine.json is never touched`, () => {
   const realAfter = fs.existsSync(REAL_QUARANTINE) ? fs.readFileSync(REAL_QUARANTINE) : null;
   assert.ok(realBefore === null ? realAfter === null : realAfter !== null && realBefore.equals(realAfter), "the real quarantine artifact changed during the falsifier");
