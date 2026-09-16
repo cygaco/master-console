@@ -1,0 +1,307 @@
+TAP version 13
+# Subtest: QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+ok 1 - QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+  ---
+  duration_ms: 823.0475
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+not ok 2 - QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+  ---
+  duration_ms: 940.8966
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\i6m\\M_oldparser\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:155:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    quarantine did not hold: runner exited 1
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base ac308b6d2a47521e24fd0ff0d136b50739c79612
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.5297
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 75.6147
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/still-fails.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:159:12
+    withRepo (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+    TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:157:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+ok 3 - QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+  ---
+  duration_ms: 810.0886
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+ok 4 - QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+  ---
+  duration_ms: 533.0749
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+ok 5 - QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+  ---
+  duration_ms: 1133.422
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+not ok 6 - QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+  ---
+  duration_ms: 686.486
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\i6m\\M_oldparser\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:206:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base f97ddf3381b948be5e03913a92f137a9dcb542ab
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.5409
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 67.5754
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/still-fails.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base f97ddf3381b948be5e03913a92f137a9dcb542ab
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.5409
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 67.5754
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/still-fails.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:211:12
+    withRepo (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+    TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:208:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+ok 7 - QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+  ---
+  duration_ms: 343.6522
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+not ok 8 - QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+  ---
+  duration_ms: 645.6103
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\i6m\\M_oldparser\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:224:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 53ceb709b8834e34d07a14a08647c3385ef1422c
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.6173
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 71.9031
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/still-fails.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 53ceb709b8834e34d07a14a08647c3385ef1422c
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.6173
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 71.9031
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/still-fails.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:229:12
+    withRepo (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+    TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:226:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+ok 9 - QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+  ---
+  duration_ms: 592.8765
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+not ok 10 - QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+  ---
+  duration_ms: 616.3486
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\i6m\\M_oldparser\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:243:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 36ce606299635f53a61c679b94d6bbdcfe5223df
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.5629
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 67.2091
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/vacant.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 36ce606299635f53a61c679b94d6bbdcfe5223df
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.5629
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 67.2091
+    run-tests: QUARANTINE VIOLATION — INDETERMINATE: tests/q/vacant.test.js fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 1 unobserved, 0 not verified at base
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:248:12
+    withRepo (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+    TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldparser\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:245:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+ok 11 - QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+  ---
+  duration_ms: 0.4994
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 7
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7220.7693
+exit 1

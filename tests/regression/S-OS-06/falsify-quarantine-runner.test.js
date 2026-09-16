@@ -51,6 +51,8 @@ const FAILING_CAUSE_LINES = ["1 !== 2", "dummy rot: still failing"];
 // (lane I6) a quarantined file that FAILS while emitting no author cause at all: a file-level exit code, no test,
 // no output. Its observed cause capture is EMPTY (the whole-file block carries exitCode and is not authored).
 const SILENT_FAILING = "process.exitCode = 1;\n";
+// (lane I6) a quarantined file whose ONLY cause line is its own test name (measured capture: ["vacant"], names ["vacant"]).
+const VACANT_FAILING = 'const test = require("node:test");\ntest("vacant", () => { throw new Error("vacant"); });\n';
 
 function entry(file, over) {
   const e = {
@@ -235,6 +237,15 @@ test(`${FALSIFIER_ID} (i) INDETERMINATE (β row 490): an EMPTY observed cause ca
     assert.notStrictEqual(r.status, 0, `an empty cause capture left the runner green\n${r.out}`);
     assert.match(r.out, /QUARANTINE VIOLATION — INDETERMINATE: tests\/q\/silent\.test\.js fails, but the observed cause capture is EMPTY/, r.out);
     assert.match(r.out, /0 still failing, 0 unexpectedly passed, 0 missing\/undiscovered, 1 unobserved/, r.out);
+  });
+});
+
+test(`${FALSIFIER_ID} (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register`, { timeout: RUNNER_TIMEOUT_MS + 60000 }, () => {
+  const files = { "tests/ok/pass.test.js": PASSING, "tests/q/vacant.test.js": VACANT_FAILING };
+  withRepo(files, { entries: [entry("tests/q/vacant.test.js", { firstFailingAssertion: "vacant" })] }, (dir) => {
+    const r = runRunner(dir);
+    assert.notStrictEqual(r.status, 0, `a vacuous cause lock equal to the register left the runner green\n${r.out}`);
+    assert.match(r.out, /QUARANTINE VIOLATION — CAUSE-LOCK: tests\/q\/vacant\.test\.js fails, but the observed cause lines are vacuous/, r.out);
   });
 });
 
