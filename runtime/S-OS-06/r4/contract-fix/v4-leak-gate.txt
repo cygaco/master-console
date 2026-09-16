@@ -1,0 +1,465 @@
+
+=== leak-gate: privacy — node scripts/check/privacy.js
+# scanned 4476 file(s); 2066 finding(s) (0 HIGH, 0 MED); mode=default
+  LOW  .claude/agents/president/_system/policy/adr/0033-brokered-transport-live-fence.md:27  homedir-windows  C:/Users/Vlad
+  LOW  .claude/project/sprint/approvals/AP-20260521-026.yaml:13  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:10  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:11  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:12  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:13  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:14  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:19  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:20  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:21  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:22  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:23  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:24  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:25  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:26  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:27  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:31  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:35  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:36  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:37  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:38  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:43  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:44  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:45  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:46  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:51  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:52  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:60  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:61  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:62  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:63  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:64  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:65  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:66  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:67  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:68  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:69  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:70  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:72  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:73  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:74  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:75  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:76  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:77  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:78  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:79  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:80  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:81  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:82  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:83  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:84  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:85  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:86  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:87  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:88  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:89  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:90  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:91  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:92  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:93  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:94  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:95  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:96  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:97  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:98  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:99  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:100  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:101  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:102  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:103  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:104  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:105  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:106  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:107  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:108  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:109  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:110  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:111  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:112  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:113  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:114  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:115  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:116  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:117  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:118  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:119  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:120  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:121  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:122  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:123  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:124  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:125  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:126  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:127  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:128  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:129  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:130  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:131  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:132  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:133  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:134  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:135  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:136  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:137  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:138  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:139  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:140  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:141  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:142  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:143  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:144  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:145  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:146  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:147  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:148  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:149  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:150  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:151  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:152  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:153  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:154  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:155  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:156  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:157  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:158  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:159  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:160  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:161  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:162  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:163  homedir-windows  C:\\Users\\Vladislav
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:164  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:165  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:166  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:167  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:168  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:169  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:170  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:171  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:172  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:173  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:174  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:175  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:176  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:177  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:178  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:179  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:180  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:181  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:182  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:183  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:184  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:185  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:186  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:187  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:188  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:189  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:190  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:191  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:192  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:193  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:194  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:195  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:196  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:197  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:198  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:199  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:200  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:201  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:202  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:203  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:204  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:205  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:206  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:207  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:208  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:209  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:210  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:211  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:212  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:213  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:214  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:215  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:216  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:220  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:222  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:226  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:229  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:230  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:231  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:232  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:233  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:234  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:235  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:236  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:237  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:238  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:239  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:240  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:241  homedir-windows  C:\\Users\\Vlad
+  LOW  .claude/project/sprint/decisions/routing-trace.jsonl:242  homedir-windows  C:\\Users\\Vlad
+  ... and 1866 more
+# result: OK (exit 0)
+=== leak-gate: privacy → exit 0
+
+=== leak-gate: framework-purity — node scripts/checks/framework-purity.js --full
+scripts/checks/framework-purity.js — full mode
+  scanned files:  4478
+
+  violations:
+    client_slug:     0
+    abs_path:        0
+    promote_relic:   0
+    legacy_slug:     0  [ENFORCING: package.json 2.0.0 >= 2.0.0]
+
+  legacy slug partition tally:
+    suppressed counts (review as NUMBERS — a jump is a live leak behind an exemption):
+        11173  class-4 framework/releases/**
+         6353  class-4 .claude/project/sprint/**
+         3099  class-4 runtime/**
+         1050  class-4 scripts/open-source/rename-mc.occurrences.json
+          842  class-3 scripts/open-source/rename-mc.denylist.json
+          311  class-4 _planning/**
+          110  class-3 tests/regression/S-OS-06/**
+           86  class-4 _reports/**
+           73  class-3 scripts/open-source/rename-mc.js
+           64  class-4 .claude/dreams/**
+           60  class-3 migrations/1.2.0-to-2.0.0/**
+           30  class-3 scripts/open-source/mc-alias-map.json
+           26  class-4 _archive/**
+           18  class-4 docs/PROVENANCE.md
+           16  class-3 migrations/0.1.x-to-0.2.0/**
+           10  class-4 .claude/agents/president/_system/policy/adr/**
+            1  class-2 .github/**
+            1  class-3 migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js
+            4  pin CHANGELOG.md :: warp:* / scan:warpos-* skill aliases, WARPOS_* env, and _warpos//.warpos/ directory fallbacks are supported through 2.0.x and REMOVED in 2.1.0.
+            3  pin TRACKER.md :: _warpos/EXAMPLES/
+            3  pin TRACKER.md :: cygaco/WarpOS
+            3  pin TRACKER.md :: warpos-sprint
+            3  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: warpos-to-mc-
+            2  pin TRACKER.md :: WARPOS.md
+            2  pin TRACKER.md :: WARPOS_ACTOR_KIND/WARPOS_BOUND_ROLE @ **✅ SP-20260718-004 (Phase 2: Identity + host portability) — COMPLETE + MERGED to `main` @ `e768e5c6` (2026-07-19, Epsilon3 fresh-conductor 
+            2  pin TRACKER.md :: WarpOS 1.0.0
+            2  pin TRACKER.md :: WarpOS 1.1.0
+            2  pin TRACKER.md :: WarpOS 1.2.0
+            2  pin TRACKER.md :: warpos-lifecycle
+            2  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_RUN_ID/WARPOS_PHASE_ID @ - [ ] W0 ids/clocks true: the generic 'builder' role id resolves identically in the wrapper and the dispatch contract (bijection — alias row
+            2  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_SOFT @ WARPOS_TEAM_GATE_SOFT !== "1"` (team-guard.js ~L255), i
+            2  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_SOFT @ WARPOS_TEAM_GATE_SOFT !== "1"` (team-guard.js ~L255); t
+            1  pin .claude/commands/mc/reconcile.md :: WARPOS_NEXT_STEPS.md @ files. (Ignore dead relics like `WARPOS_NEXT_STEPS.md`.)
+            1  pin CHANGELOG.md :: ../WarpOS/
+            1  pin CHANGELOG.md :: ../warpos/
+            1  pin CHANGELOG.md :: .claude/manifest.json#warpos.version
+            1  pin CHANGELOG.md :: /check:warpos-*
+            1  pin CHANGELOG.md :: WarpOS @ First major release,
+            1  pin CHANGELOG.md :: WarpOS @ The hardened update
+            1  pin CHANGELOG.md :: _planning/warpos-1.0-plan/
+            1  pin CHANGELOG.md :: _warpos/MANIFEST.json
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.4]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.10.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.11.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.11.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.12.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.12.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.13.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.13.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.14.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.16.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.17.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.2.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.2.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.2.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.3]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.4]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.8.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.8.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.9.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [1.0.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [1.1.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [1.2.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [Unreleased]:
+            1  pin CHANGELOG.md :: manifest.json#warpos.source
+            1  pin CHANGELOG.md :: scan:warpos-layer-diff
+            1  pin CHANGELOG.md :: scripts/warpos/release-gates.js
+            1  pin CHANGELOG.md :: warpos/ @ - Structural rename
+            1  pin CHANGELOG.md :: warpos/guides/registry/v1
+            1  pin REGRESSIONS.md :: WARPOS_ROOT
+            1  pin REGRESSIONS.md :: scripts/portfolio/new-lib.js#_installWarpOS @ - **Regression:** When a CONSUMER product (e.g. the Master Console cockpit) drives the engine to create a new project, `scripts/portfolio/ne
+            1  pin RELEASES.md :: WARPOS_ROADMAP.md @ | [RL-20260519-013](.claude/project/sprint/releases/RL-20260519-013.yaml) | [SP-20260518-009](.claude/project/sprint/sprints/SP-20260518-009
+            1  pin ROADMAP.md :: ../Warpos @ - **[shipped — SP-20260522-004/T-20260523-193+T-20260523-194]** `scripts/mc/manifest/bootstrap.js` (~350 lines, no npm deps) — converts a pr
+            1  pin ROADMAP.md :: WARPOS_ROADMAP.md @ | [SP-20260518-009](.claude/project/sprint/sprints/SP-20260518-009/) | Consolidate ROADMAP.md and WARPOS_ROADMAP.md into single canonical RO
+            1  pin ROADMAP.md :: populateWarposMirror @ Before this milestone, MC has **two manifests** that drifted with nothing gating their reconciliation: `_mc/MANIFEST.json` is the authoritat
+            1  pin ROADMAP.md :: scaffold-core.js#resolveWarposVersion @ - **[partial — cheap-slice shipped 2026-05-29] Artifact-first, contract-tested release gate** — install ONLY the sealed capsule into a dispo
+            1  pin TRACKER.md :: WARPOS_RUN_ID
+            1  pin TRACKER.md :: _warpos/settings/
+            1  pin TRACKER.md :: `warpos`
+            1  pin TRACKER.md :: process.env.WARPOS_TEAM_GATE_SOFT @ - Changed: Reconciled the S-12c hard team-readiness gate's DEFAULT-ON drift across the two surfaces (P-057 two-surface), code-authoritative.
+            1  pin TRACKER.md :: release(warpos): 1.1.0
+            1  pin TRACKER.md :: release(warpos): 1.2.0
+            1  pin TRACKER.md :: scan:warpos-
+            1  pin TRACKER.md :: scripts/warpos/
+            1  pin TRACKER.md :: shipping/_warpos
+            1  pin TRACKER.md :: warpos-install-baseline
+            1  pin TRACKER.md :: warpos-md-sweep
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` — clean product scaffold (framework backlog moved to WARPOS_ROADMAP.md)
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `WARPOS_ROADMAP.md`
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `scripts/path-lint.js` and `scripts/paths/gate.js` — `WARPOS_ROADMAP.md`
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ `WARPOS_ROADMAP.md`; canonical `ROADMAP.md` becomes the product
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ framework backlog moved to `WARPOS_ROADMAP.md`. Bookmarks may break.
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed canonical `ROADMAP.md` → `WARPOS_ROADMAP.md`.
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed: `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical content); a
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ pointer to `WARPOS_ROADMAP.md`.
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ ✓ WARPOS_ROADMAP.md exists
+            1  pin _docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ - Rename canonical `ROADMAP.md` → `WARPOS_ROADMAP.md` (framework backlog
+            1  pin _docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ doc that names `ROADMAP.md` to also accept `WARPOS_ROADMAP.md`.
+            1  pin _docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ to never propagate either `ROADMAP.md` or `WARPOS_ROADMAP.md` to
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical-only framework backlog).
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ Mitigated by `WARPOS_ROADMAP.md` being explicitly in path-lint
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ and `WARPOS_ROADMAP.md` to `EXCLUDE_PREFIXES` (literal entries).
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ — update to `WARPOS_ROADMAP.md`.
+            1  pin _docs/sprint/FINDINGS.md :: WARPOS_ROADMAP.md @ | F — ROADMAP split | `WARPOS_ROADMAP.md` (framework) + `ROADMAP.md` (product scaffold) | present |
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` — clean product scaffold (framework backlog moved to WARPOS_ROADMAP.md)
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `WARPOS_ROADMAP.md`
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `scripts/path-lint.js` and `scripts/paths/gate.js` — `WARPOS_ROADMAP.md`
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ `WARPOS_ROADMAP.md`; canonical `ROADMAP.md` becomes the product
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ framework backlog moved to `WARPOS_ROADMAP.md`. Bookmarks may break.
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed canonical `ROADMAP.md` → `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed: `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical content); a
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ pointer to `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ ✓ WARPOS_ROADMAP.md exists
+            1  pin _mc/BASELINE/_docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ - Rename canonical `ROADMAP.md` → `WARPOS_ROADMAP.md` (framework backlog
+            1  pin _mc/BASELINE/_docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ doc that names `ROADMAP.md` to also accept `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ to never propagate either `ROADMAP.md` or `WARPOS_ROADMAP.md` to
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical-only framework backlog).
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ Mitigated by `WARPOS_ROADMAP.md` being explicitly in path-lint
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ and `WARPOS_ROADMAP.md` to `EXCLUDE_PREFIXES` (literal entries).
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ — update to `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/sprint/FINDINGS.md :: WARPOS_ROADMAP.md @ | F — ROADMAP split | `WARPOS_ROADMAP.md` (framework) + `ROADMAP.md` (product scaffold) | present |
+            1  pin scripts/checks/cutover-completeness.js :: "warpos" @ const LEGACY_SLUG_NEEDLE = 
+            1  pin scripts/checks/framework-purity.js :: ".warpos-sync-commit-msg.txt",
+            1  pin scripts/checks/framework-purity.js :: ".warpos-sync.json",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/flag.js",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/manifest/promote.js",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/promote-flags.js",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/promote.js",
+            1  pin scripts/checks/framework-purity.js :: "warpos" @ const LEGACY_SLUG_NEEDLE = 
+            1  pin scripts/checks/framework-purity.js :: "warpos-promoted-archive.md",
+            1  pin scripts/checks/framework-purity.js :: "warpos-to-update.md",
+            1  pin scripts/checks/framework-purity.js :: /\bwarposFlagLedger\b/,
+            1  pin scripts/checks/framework-purity.js :: /\bwarposPromoteReports\b/,
+            1  pin scripts/checks/framework-purity.js :: /\bwarposPromotedArchive\b/,
+            1  pin scripts/checks/leak-gate.js :: "scripts/checks/warpos-tracked-transients.js"
+            1  pin scripts/checks/mc-tracked-transients.js :: prefix: ".warpos/",
+            1  pin scripts/dispatch/safe-spawn.js :: ".codex-warpos"
+            1  pin scripts/mc/manifest/walk-skip.js :: parallels .warpos
+            1  pin scripts/open-source/partition-loader.js :: EVIDENCE_TAG_RE = /warpos@
+            1  pin scripts/warpos/manifest/walk-skip.js :: ".warpos",
+            1  pin scripts/warpos/manifest/walk-skip.js :: ".warpos-backup",
+            1  pin scripts/warpos/manifest/walk-skip.js :: "WarpOS-Update",
+            1  pin trackers/epics/E-CONTENT-DELIVERY-001-content-delivery-integrity.md :: populateWarposMirror @ - **Background:** MC has two manifests that drifted with nothing gating reconciliation — `_mc/MANIFEST.json` (authoritative ownership taxono
+            1  pin trackers/epics/E-CONTENT-DELIVERY-001-content-delivery-integrity.md :: populateWarposMirror @ - Detail/location: scripts/checks/mc-ship-coverage.js (the enforcer); `framework/templates` + `hooks.registry` added to ASSET_DIRS; `scaffol
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_DISABLE_SHAPE_DOOR
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_DISPATCH_CONTRACT_ENFORCE @ **✅ DONE — SP-20260627-001 LANDED on main 2026-06-28 @85f8a563.** Both remaining DoD items shipped: **(A)** the dispatch-contract enforce CO
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_DISPATCH_CONTRACT_ENFORCE @ WARPOS_DISPATCH_CONTRACT_ENFORCE` back-com
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_RUN_ID @ WARPOS_RUN_ID/PHASE_ID/
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_SHAPE_DOOR @ - **Percent completion:** ~88% — **W2 ENFORCE WINDOW MOSTLY LANDED 2026-06-16 (this session, 11 commits on `main`, all blast-sensitive chang
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_SHAPE_DOOR @ 1. **The ENFORCE flip (N2)** — flip a wrapper's `WARPOS_SHAPE_DOOR` from report→enforce after one advisory-noise-zero sprint each (start wit
+            1  pin trackers/epics/E-GOLDEN-FLOW-001-golden-flow-consumer-contract.md :: scaffold-core.js#resolveWarposVersion @ - Detail/location: `scripts/mc/test-fresh-install-smoke.js` (commit `ff04cd9`) — spins up a fresh empty repo, runs the consumer install, ass
+            1  pin trackers/epics/E-LIFECYCLE-001-mode-lifecycle-enforcement.md :: WARPOS_DISABLE_TEAM_GATE @ 2. **Report-only → blocking flip (§22 #4, HIGH-risk):** flip the gates from report-only to blocking INCREMENTALLY, keeping the kill-switch (
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: `warpos` @ `warpos` hits in `
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: `warpos` @ `warpos` hits, `sc
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: `warpos` @ `warpos` hits. `mi
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan/warpos-
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*` → `scan
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*`) agains
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*`); `migr
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*`→`scan:m
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_DISABLE_TEAM_GATE @ - **BUILT 2026-06-08 — to-the-t:** `team-guard.js` now carries (1) module-scope `teamHeartbeatFresh(projectDir)` — sid-keyed `~/.claude/runt
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_DISABLE_TEAM_GATE @ 3. **Kill-switch** — honor `WARPOS_DISABLE_TEAM_GATE=1` (env) OR a `.claude/runtime/.team-gate-off` marker so a stuck gate is bypassable wit
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_HARD
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_SOFT @ WARPOS_TEAM_GATE_SOFT !== "1"`,
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WarpOS @ - 2026-06-08 (S-12 — once-and-for-all persistent-team init, operator-escalated) — the team-skip recurred a 3rd surface; operator: "you alway
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WarpOS @ - [x] **S-12 (system-sourced persistent-team initialization — the once-and-for-all team-init fix):** ROOT FIX, operator-escalated 2026-06-08
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: process.env.WARPOS_TEAM_GATE_SOFT @ - 2026-06-09 (S-12c DEFAULT-ON doc-drift reconcile — done under E-LIFECYCLE-001 / S-LC-01, P-057 two-surface, code-authoritative) — the epic
+            1  pin trackers/sprints/S-VLADW1-01-vlad-engine-skeleton.md :: WARPOS_SPRINT_ID @ - Mechanism (read from `scripts/sprint/plan.js` and the offending payload, not inferred): the target sprint was supplied through a channel t
+            1  pin trackers/sprints/S-VLADW1-04-custody-claims-un-invertible.md :: WARPOS_DISPATCH_BACKGROUND @ - [ ] **Set `WARPOS_DISPATCH_BACKGROUND=1` on every backgrounded build-chain dispatch** (ED-353) — absence fail-closed clamps to 540 s.
+           90  derived (generated view) .claude/framework-manifest.json
+           65  derived (generated view) _mc/MANIFEST.json
+           60  derived (generated view) .claude/framework-installed.json
+           70  compat alias-skills (expires 2.1.0)
+            2  compat home-read-both (expires 2.1.0)
+            1  compat clone-dir-fallback (expires 2.1.0)
+            1  compat doc-ref-legacy-rename (expires 2.1.0)
+            1  compat env-allow-rule (expires 2.1.0)
+            1  compat env-helper (expires 2.1.0)
+          134  pinned:evidence-tag (warpos@<semver> — kept forever, by RULE)
+           18  pinned:brand-history ("formerly WarpOS" — by RULE)
+            5  pinned:tag-glob (version-listing glob COMPUTED against the real tag list — satisfied iff >= 1 member, members below)
+        tag-glob lab warpos pattern *: 4 occurrence(s) -> 37 member(s): 0.1.3 0.1.4 0.2.1 0.2.2 0.4.0 0.4.1 0.4.2 0.4.3 0.4.4 0.5.0 0.6.0 0.6.1 0.7.0 0.7.1 0.7.2 0.8.0 0.8.1 0.8.2 0.9.0 0.10.0 0.11.0 0.11.1 0.12.0 0.12.1 0.13.0 0.13.1 0.14.0 0.15.0 0.15.1 0.15.2 0.15.3 0.15.4 0.16.0 0.17.0 1.0.0 1.1.0 1.2.0
+        tag-glob lab warpos pattern 0.14*: 1 occurrence(s) -> 1 member(s): 0.14.0
+      tag-glob residue (matches NO real tag or uncomputable — a violation unless a registered warrant closes it): 0 (none)
+    totals: suppressed=23323 pinned=334 derived=215 live-unallowed=0
+    dispositions (5, each closed by a registered artifact): pinned=1466 derived=215 compat=76 historical-allow-listed=22191 · rewritten occurrences are gone from the tree; un-dispositioned residue live-unallowed=0 (compat-expired=0) · compat clock: version 2.0.0
+    legacy_slug_path: 0  [ENFORCING]
+    path-name tally (tracked paths with the legacy slug in the NAME — review as NUMBERS):
+           46  class-4 _planning/**
+           22  class-4 runtime/**
+           14  compat alias-skills (expires 2.1.0)
+            3  class-3 migrations/1.2.0-to-2.0.0/**
+            2  class-4 _archive/**
+            1  class-3 migrations/0.1.x-to-0.2.0/**
+            1  class-3 tests/regression/S-OS-06/**
+            1  compat check-shims (expires 2.1.0)
+    path-name dispositions (5): pinned=5 derived=0 compat=15 historical-allow-listed=70 · live-unallowed=0 · total=90 · compat clock: version 2.0.0
+
+  advisory (report-only, does NOT affect exit code):
+    root_leak:       174
+    domain_vocab:    24
+
+  ROOT_LEAK (advisory):
+    - _docs/.gitkeep
+    - _docs/HOW2CLEANMEMORY.md
+    - _docs/imports/mc/mc.questionnaire.md
+    - _docs/imports/roundtrip-skipped/roundtrip-skipped.answers.json
+    - _docs/imports/roundtrip-test/roundtrip-test.answers.json
+    ... and 169 more
+
+  DOMAIN_VOCAB (advisory):
+    - ROADMAP.md  [debitRockets]
+    - ROADMAP.md  [masterResume]
+    - runtime/sp-dp-w4/recon-vocab-map.md  [debitRockets]
+    - runtime/sp-dp-w4/recon-vocab-map.md  [untrusted_job_data]
+    - runtime/sp-dp-w4/recon-vocab-map.md  [masterResume]
+    ... and 19 more
+
+  result: OK (exit 0)
+=== leak-gate: framework-purity → exit 0
+
+=== leak-gate: tracked-transients — node scripts/checks/warpos-tracked-transients.js
+OK   [mc-tracked-transients] no transient files tracked
+=== leak-gate: tracked-transients → exit 0
+
+=== leak-gate: leak-denylist — node scripts/checks/leak-denylist.js
+OK   [leak-denylist] scanned 4478 file(s) against 27 hashed entries, 0 hits
+=== leak-gate: leak-denylist → exit 0
+
+=== leak-gate: readme-drift — node scripts/checks/readme-drift.js
+OK   [readme-drift] README.md: version 2.0.0 · 266 slash commands · 75 automated hooks
+=== leak-gate: readme-drift → exit 0
+
+=== leak-gate summary
+  OK    privacy  (exit 0)
+  OK    framework-purity  (exit 0)
+  OK    tracked-transients  (exit 0)
+  OK    leak-denylist  (exit 0)
+  OK    readme-drift  (exit 0)
+=== leak-gate: GREEN (exit 0)

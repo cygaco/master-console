@@ -1,0 +1,12 @@
+[neuter-preload] N1 applied to in-memory copy of C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-contract-fix\scripts\dispatch\dispatch-contract.js
+SP-20260627-001-negative-fixtures fixture-test: 9/9 passed (incl. 7 planted-violation/fail-closed assertion(s))
+✔ tests\regression\SP-20260627-001\negative-fixtures.test.js (91.4076ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.7401
+[neuter-preload] N1 NOT APPLIED — enforcer never loaded in this process

@@ -1,0 +1,236 @@
+scripts/checks/framework-purity.js — full mode
+  scanned files:  4498
+
+  violations:
+    client_slug:     0
+    abs_path:        0
+    promote_relic:   0
+    legacy_slug:     0  [ENFORCING: package.json 2.0.0 >= 2.0.0]
+
+  legacy slug partition tally:
+    suppressed counts (review as NUMBERS — a jump is a live leak behind an exemption):
+        11173  class-4 framework/releases/**
+         6353  class-4 .claude/project/sprint/**
+         3548  class-4 runtime/**
+         1050  class-4 scripts/open-source/rename-mc.occurrences.json
+          842  class-3 scripts/open-source/rename-mc.denylist.json
+          311  class-4 _planning/**
+          110  class-3 tests/regression/S-OS-06/**
+           86  class-4 _reports/**
+           73  class-3 scripts/open-source/rename-mc.js
+           64  class-4 .claude/dreams/**
+           60  class-3 migrations/1.2.0-to-2.0.0/**
+           30  class-3 scripts/open-source/mc-alias-map.json
+           26  class-4 _archive/**
+           18  class-4 docs/PROVENANCE.md
+           16  class-3 migrations/0.1.x-to-0.2.0/**
+           10  class-4 .claude/agents/president/_system/policy/adr/**
+            1  class-2 .github/**
+            1  class-3 migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js
+            4  pin CHANGELOG.md :: warp:* / scan:warpos-* skill aliases, WARPOS_* env, and _warpos//.warpos/ directory fallbacks are supported through 2.0.x and REMOVED in 2.1.0.
+            3  pin TRACKER.md :: _warpos/EXAMPLES/
+            3  pin TRACKER.md :: cygaco/WarpOS
+            3  pin TRACKER.md :: warpos-sprint
+            3  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: warpos-to-mc-
+            2  pin TRACKER.md :: WARPOS.md
+            2  pin TRACKER.md :: WARPOS_ACTOR_KIND/WARPOS_BOUND_ROLE @ **✅ SP-20260718-004 (Phase 2: Identity + host portability) — COMPLETE + MERGED to `main` @ `e768e5c6` (2026-07-19, Epsilon3 fresh-conductor 
+            2  pin TRACKER.md :: WarpOS 1.0.0
+            2  pin TRACKER.md :: WarpOS 1.1.0
+            2  pin TRACKER.md :: WarpOS 1.2.0
+            2  pin TRACKER.md :: warpos-lifecycle
+            2  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_RUN_ID/WARPOS_PHASE_ID @ - [ ] W0 ids/clocks true: the generic 'builder' role id resolves identically in the wrapper and the dispatch contract (bijection — alias row
+            2  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_SOFT @ WARPOS_TEAM_GATE_SOFT !== "1"` (team-guard.js ~L255), i
+            2  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_SOFT @ WARPOS_TEAM_GATE_SOFT !== "1"` (team-guard.js ~L255); t
+            1  pin .claude/commands/mc/reconcile.md :: WARPOS_NEXT_STEPS.md @ files. (Ignore dead relics like `WARPOS_NEXT_STEPS.md`.)
+            1  pin CHANGELOG.md :: ../WarpOS/
+            1  pin CHANGELOG.md :: ../warpos/
+            1  pin CHANGELOG.md :: .claude/manifest.json#warpos.version
+            1  pin CHANGELOG.md :: /check:warpos-*
+            1  pin CHANGELOG.md :: WarpOS @ First major release,
+            1  pin CHANGELOG.md :: WarpOS @ The hardened update
+            1  pin CHANGELOG.md :: _planning/warpos-1.0-plan/
+            1  pin CHANGELOG.md :: _warpos/MANIFEST.json
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.1.4]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.10.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.11.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.11.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.12.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.12.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.13.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.13.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.14.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.16.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.17.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.2.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.2.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.2.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.3]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.4.4]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.8.1]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.8.2]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [0.9.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [1.0.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [1.1.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [1.2.0]:
+            1  pin CHANGELOG.md :: cygaco/WarpOS/ @ [Unreleased]:
+            1  pin CHANGELOG.md :: manifest.json#warpos.source
+            1  pin CHANGELOG.md :: scan:warpos-layer-diff
+            1  pin CHANGELOG.md :: scripts/warpos/release-gates.js
+            1  pin CHANGELOG.md :: warpos/ @ - Structural rename
+            1  pin CHANGELOG.md :: warpos/guides/registry/v1
+            1  pin REGRESSIONS.md :: WARPOS_ROOT
+            1  pin REGRESSIONS.md :: scripts/portfolio/new-lib.js#_installWarpOS @ - **Regression:** When a CONSUMER product (e.g. the Master Console cockpit) drives the engine to create a new project, `scripts/portfolio/ne
+            1  pin RELEASES.md :: WARPOS_ROADMAP.md @ | [RL-20260519-013](.claude/project/sprint/releases/RL-20260519-013.yaml) | [SP-20260518-009](.claude/project/sprint/sprints/SP-20260518-009
+            1  pin ROADMAP.md :: ../Warpos @ - **[shipped — SP-20260522-004/T-20260523-193+T-20260523-194]** `scripts/mc/manifest/bootstrap.js` (~350 lines, no npm deps) — converts a pr
+            1  pin ROADMAP.md :: WARPOS_ROADMAP.md @ | [SP-20260518-009](.claude/project/sprint/sprints/SP-20260518-009/) | Consolidate ROADMAP.md and WARPOS_ROADMAP.md into single canonical RO
+            1  pin ROADMAP.md :: populateWarposMirror @ Before this milestone, MC has **two manifests** that drifted with nothing gating their reconciliation: `_mc/MANIFEST.json` is the authoritat
+            1  pin ROADMAP.md :: scaffold-core.js#resolveWarposVersion @ - **[partial — cheap-slice shipped 2026-05-29] Artifact-first, contract-tested release gate** — install ONLY the sealed capsule into a dispo
+            1  pin TRACKER.md :: WARPOS_RUN_ID
+            1  pin TRACKER.md :: _warpos/settings/
+            1  pin TRACKER.md :: `warpos`
+            1  pin TRACKER.md :: process.env.WARPOS_TEAM_GATE_SOFT @ - Changed: Reconciled the S-12c hard team-readiness gate's DEFAULT-ON drift across the two surfaces (P-057 two-surface), code-authoritative.
+            1  pin TRACKER.md :: release(warpos): 1.1.0
+            1  pin TRACKER.md :: release(warpos): 1.2.0
+            1  pin TRACKER.md :: scan:warpos-
+            1  pin TRACKER.md :: scripts/warpos/
+            1  pin TRACKER.md :: shipping/_warpos
+            1  pin TRACKER.md :: warpos-install-baseline
+            1  pin TRACKER.md :: warpos-md-sweep
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` — clean product scaffold (framework backlog moved to WARPOS_ROADMAP.md)
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `WARPOS_ROADMAP.md`
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `scripts/path-lint.js` and `scripts/paths/gate.js` — `WARPOS_ROADMAP.md`
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ `WARPOS_ROADMAP.md`; canonical `ROADMAP.md` becomes the product
+            1  pin _docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ framework backlog moved to `WARPOS_ROADMAP.md`. Bookmarks may break.
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed canonical `ROADMAP.md` → `WARPOS_ROADMAP.md`.
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed: `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical content); a
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ pointer to `WARPOS_ROADMAP.md`.
+            1  pin _docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ ✓ WARPOS_ROADMAP.md exists
+            1  pin _docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ - Rename canonical `ROADMAP.md` → `WARPOS_ROADMAP.md` (framework backlog
+            1  pin _docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ doc that names `ROADMAP.md` to also accept `WARPOS_ROADMAP.md`.
+            1  pin _docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ to never propagate either `ROADMAP.md` or `WARPOS_ROADMAP.md` to
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical-only framework backlog).
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ Mitigated by `WARPOS_ROADMAP.md` being explicitly in path-lint
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ and `WARPOS_ROADMAP.md` to `EXCLUDE_PREFIXES` (literal entries).
+            1  pin _docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ — update to `WARPOS_ROADMAP.md`.
+            1  pin _docs/sprint/FINDINGS.md :: WARPOS_ROADMAP.md @ | F — ROADMAP split | `WARPOS_ROADMAP.md` (framework) + `ROADMAP.md` (product scaffold) | present |
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` — clean product scaffold (framework backlog moved to WARPOS_ROADMAP.md)
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `WARPOS_ROADMAP.md`
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ - `scripts/path-lint.js` and `scripts/paths/gate.js` — `WARPOS_ROADMAP.md`
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ `WARPOS_ROADMAP.md`; canonical `ROADMAP.md` becomes the product
+            1  pin _mc/BASELINE/_docs/phase0/CHANGELOG_0.3.0.md :: WARPOS_ROADMAP.md @ framework backlog moved to `WARPOS_ROADMAP.md`. Bookmarks may break.
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed canonical `ROADMAP.md` → `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ - Renamed: `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical content); a
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ pointer to `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/phase0/FINAL_REPORT.md :: WARPOS_ROADMAP.md @ ✓ WARPOS_ROADMAP.md exists
+            1  pin _mc/BASELINE/_docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ - Rename canonical `ROADMAP.md` → `WARPOS_ROADMAP.md` (framework backlog
+            1  pin _mc/BASELINE/_docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ doc that names `ROADMAP.md` to also accept `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/phase0/FINDINGS.md :: WARPOS_ROADMAP.md @ to never propagate either `ROADMAP.md` or `WARPOS_ROADMAP.md` to
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ - `ROADMAP.md` → `WARPOS_ROADMAP.md` (canonical-only framework backlog).
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ Mitigated by `WARPOS_ROADMAP.md` being explicitly in path-lint
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ and `WARPOS_ROADMAP.md` to `EXCLUDE_PREFIXES` (literal entries).
+            1  pin _mc/BASELINE/_docs/phase0/IMPLEMENTATION_PLAN.md :: WARPOS_ROADMAP.md @ — update to `WARPOS_ROADMAP.md`.
+            1  pin _mc/BASELINE/_docs/sprint/FINDINGS.md :: WARPOS_ROADMAP.md @ | F — ROADMAP split | `WARPOS_ROADMAP.md` (framework) + `ROADMAP.md` (product scaffold) | present |
+            1  pin scripts/checks/cutover-completeness.js :: "warpos" @ const LEGACY_SLUG_NEEDLE = 
+            1  pin scripts/checks/framework-purity.js :: ".warpos-sync-commit-msg.txt",
+            1  pin scripts/checks/framework-purity.js :: ".warpos-sync.json",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/flag.js",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/manifest/promote.js",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/promote-flags.js",
+            1  pin scripts/checks/framework-purity.js :: "scripts/warpos/promote.js",
+            1  pin scripts/checks/framework-purity.js :: "warpos" @ const LEGACY_SLUG_NEEDLE = 
+            1  pin scripts/checks/framework-purity.js :: "warpos-promoted-archive.md",
+            1  pin scripts/checks/framework-purity.js :: "warpos-to-update.md",
+            1  pin scripts/checks/framework-purity.js :: /\bwarposFlagLedger\b/,
+            1  pin scripts/checks/framework-purity.js :: /\bwarposPromoteReports\b/,
+            1  pin scripts/checks/framework-purity.js :: /\bwarposPromotedArchive\b/,
+            1  pin scripts/checks/leak-gate.js :: "scripts/checks/warpos-tracked-transients.js"
+            1  pin scripts/checks/mc-tracked-transients.js :: prefix: ".warpos/",
+            1  pin scripts/dispatch/safe-spawn.js :: ".codex-warpos"
+            1  pin scripts/mc/manifest/walk-skip.js :: parallels .warpos
+            1  pin scripts/open-source/partition-loader.js :: EVIDENCE_TAG_RE = /warpos@
+            1  pin scripts/warpos/manifest/walk-skip.js :: ".warpos",
+            1  pin scripts/warpos/manifest/walk-skip.js :: ".warpos-backup",
+            1  pin scripts/warpos/manifest/walk-skip.js :: "WarpOS-Update",
+            1  pin trackers/epics/E-CONTENT-DELIVERY-001-content-delivery-integrity.md :: populateWarposMirror @ - **Background:** MC has two manifests that drifted with nothing gating reconciliation — `_mc/MANIFEST.json` (authoritative ownership taxono
+            1  pin trackers/epics/E-CONTENT-DELIVERY-001-content-delivery-integrity.md :: populateWarposMirror @ - Detail/location: scripts/checks/mc-ship-coverage.js (the enforcer); `framework/templates` + `hooks.registry` added to ASSET_DIRS; `scaffol
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_DISABLE_SHAPE_DOOR
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_DISPATCH_CONTRACT_ENFORCE @ **✅ DONE — SP-20260627-001 LANDED on main 2026-06-28 @85f8a563.** Both remaining DoD items shipped: **(A)** the dispatch-contract enforce CO
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_DISPATCH_CONTRACT_ENFORCE @ WARPOS_DISPATCH_CONTRACT_ENFORCE` back-com
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_RUN_ID @ WARPOS_RUN_ID/PHASE_ID/
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_SHAPE_DOOR @ - **Percent completion:** ~88% — **W2 ENFORCE WINDOW MOSTLY LANDED 2026-06-16 (this session, 11 commits on `main`, all blast-sensitive chang
+            1  pin trackers/epics/E-DISPATCH-SHAPE-001-dispatch-shape-decision-spine.md :: WARPOS_SHAPE_DOOR @ 1. **The ENFORCE flip (N2)** — flip a wrapper's `WARPOS_SHAPE_DOOR` from report→enforce after one advisory-noise-zero sprint each (start wit
+            1  pin trackers/epics/E-GOLDEN-FLOW-001-golden-flow-consumer-contract.md :: scaffold-core.js#resolveWarposVersion @ - Detail/location: `scripts/mc/test-fresh-install-smoke.js` (commit `ff04cd9`) — spins up a fresh empty repo, runs the consumer install, ass
+            1  pin trackers/epics/E-LIFECYCLE-001-mode-lifecycle-enforcement.md :: WARPOS_DISABLE_TEAM_GATE @ 2. **Report-only → blocking flip (§22 #4, HIGH-risk):** flip the gates from report-only to blocking INCREMENTALLY, keeping the kill-switch (
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: `warpos` @ `warpos` hits in `
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: `warpos` @ `warpos` hits, `sc
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: `warpos` @ `warpos` hits. `mi
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan/warpos-
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*` → `scan
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*`) agains
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*`); `migr
+            1  pin trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md :: scan:warpos- @ scan:warpos-*`→`scan:m
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_DISABLE_TEAM_GATE @ - **BUILT 2026-06-08 — to-the-t:** `team-guard.js` now carries (1) module-scope `teamHeartbeatFresh(projectDir)` — sid-keyed `~/.claude/runt
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_DISABLE_TEAM_GATE @ 3. **Kill-switch** — honor `WARPOS_DISABLE_TEAM_GATE=1` (env) OR a `.claude/runtime/.team-gate-off` marker so a stuck gate is bypassable wit
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_HARD
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WARPOS_TEAM_GATE_SOFT @ WARPOS_TEAM_GATE_SOFT !== "1"`,
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WarpOS @ - 2026-06-08 (S-12 — once-and-for-all persistent-team init, operator-escalated) — the team-skip recurred a 3rd surface; operator: "you alway
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: WarpOS @ - [x] **S-12 (system-sourced persistent-team initialization — the once-and-for-all team-init fix):** ROOT FIX, operator-escalated 2026-06-08
+            1  pin trackers/epics/E-SYSTEM-ORG-001-agent-system-org-cleanup.md :: process.env.WARPOS_TEAM_GATE_SOFT @ - 2026-06-09 (S-12c DEFAULT-ON doc-drift reconcile — done under E-LIFECYCLE-001 / S-LC-01, P-057 two-surface, code-authoritative) — the epic
+            1  pin trackers/sprints/S-VLADW1-01-vlad-engine-skeleton.md :: WARPOS_SPRINT_ID @ - Mechanism (read from `scripts/sprint/plan.js` and the offending payload, not inferred): the target sprint was supplied through a channel t
+            1  pin trackers/sprints/S-VLADW1-04-custody-claims-un-invertible.md :: WARPOS_DISPATCH_BACKGROUND @ - [ ] **Set `WARPOS_DISPATCH_BACKGROUND=1` on every backgrounded build-chain dispatch** (ED-353) — absence fail-closed clamps to 540 s.
+           90  derived (generated view) .claude/framework-manifest.json
+           65  derived (generated view) _mc/MANIFEST.json
+           60  derived (generated view) .claude/framework-installed.json
+           70  compat alias-skills (expires 2.1.0)
+            2  compat home-read-both (expires 2.1.0)
+            1  compat clone-dir-fallback (expires 2.1.0)
+            1  compat doc-ref-legacy-rename (expires 2.1.0)
+            1  compat env-allow-rule (expires 2.1.0)
+            1  compat env-helper (expires 2.1.0)
+          134  pinned:evidence-tag (warpos@<semver> — kept forever, by RULE)
+           18  pinned:brand-history ("formerly WarpOS" — by RULE)
+            5  pinned:tag-glob (version-listing glob COMPUTED against the real tag list — satisfied iff >= 1 member, members below)
+        tag-glob lab warpos pattern *: 4 occurrence(s) -> 37 member(s): 0.1.3 0.1.4 0.2.1 0.2.2 0.4.0 0.4.1 0.4.2 0.4.3 0.4.4 0.5.0 0.6.0 0.6.1 0.7.0 0.7.1 0.7.2 0.8.0 0.8.1 0.8.2 0.9.0 0.10.0 0.11.0 0.11.1 0.12.0 0.12.1 0.13.0 0.13.1 0.14.0 0.15.0 0.15.1 0.15.2 0.15.3 0.15.4 0.16.0 0.17.0 1.0.0 1.1.0 1.2.0
+        tag-glob lab warpos pattern 0.14*: 1 occurrence(s) -> 1 member(s): 0.14.0
+      tag-glob residue (matches NO real tag or uncomputable — a violation unless a registered warrant closes it): 0 (none)
+    totals: suppressed=23772 pinned=334 derived=215 live-unallowed=0
+    dispositions (5, each closed by a registered artifact): pinned=1466 derived=215 compat=76 historical-allow-listed=22640 · rewritten occurrences are gone from the tree; un-dispositioned residue live-unallowed=0 (compat-expired=0) · compat clock: version 2.0.0
+    legacy_slug_path: 0  [ENFORCING]
+    path-name tally (tracked paths with the legacy slug in the NAME — review as NUMBERS):
+           46  class-4 _planning/**
+           22  class-4 runtime/**
+           14  compat alias-skills (expires 2.1.0)
+            3  class-3 migrations/1.2.0-to-2.0.0/**
+            2  class-4 _archive/**
+            1  class-3 migrations/0.1.x-to-0.2.0/**
+            1  class-3 tests/regression/S-OS-06/**
+            1  compat check-shims (expires 2.1.0)
+    path-name dispositions (5): pinned=5 derived=0 compat=15 historical-allow-listed=70 · live-unallowed=0 · total=90 · compat clock: version 2.0.0
+
+  advisory (report-only, does NOT affect exit code):
+    root_leak:       174
+    domain_vocab:    30
+
+  ROOT_LEAK (advisory):
+    - _docs/.gitkeep
+    - _docs/HOW2CLEANMEMORY.md
+    - _docs/imports/mc/mc.questionnaire.md
+    - _docs/imports/roundtrip-skipped/roundtrip-skipped.answers.json
+    - _docs/imports/roundtrip-test/roundtrip-test.answers.json
+    ... and 169 more
+
+  DOMAIN_VOCAB (advisory):
+    - ROADMAP.md  [debitRockets]
+    - ROADMAP.md  [masterResume]
+    - runtime/S-OS-06/r4/contract-fix/v3-framework-purity.txt  [debitRockets]
+    - runtime/S-OS-06/r4/contract-fix/v3-framework-purity.txt  [untrusted_job_data]
+    - runtime/S-OS-06/r4/contract-fix/v3-framework-purity.txt  [masterResume]
+    ... and 25 more
+
+  result: OK (exit 0)

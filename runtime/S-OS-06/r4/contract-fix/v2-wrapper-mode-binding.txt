@@ -1,0 +1,36 @@
+  ok  wrappers-thread-mode-at-both-relocated-call-sites
+  ok  mode-narrowing-gates-live-dispatch
+FAIL  report-only-ramp-preserved-not-blocking
+      AssertionError [ERR_ASSERTION]: dispatch-agent report-only should proceed; stderr=[registry-roles] WARN: 'providers.DEFAULT_AGENT_PROVIDERS' fell back to its literal — registry derive failed: ENOENT: no such file or directory, open 'C:\Users\Vlad\AppData\Local\Temp\SP-20260611-002-T321-mode-1VdPKf\.claude\agents\_org\role-registry.json'
+[dispatch-agent] dispatch-contract VIOLATION: shape 'subprocess-cross-provider' is class-allowed for role 'security-reviewer' but NARROWED OUT by mode 'sprint' (mode allows: <none>).
+
+
+1 !== 0
+
+    at C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-contract-fix\tests\regression\SP-20260611-002\wrapper-mode-binding.test.js:189:10
+    at ok (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-contract-fix\tests\regression\SP-20260611-002\wrapper-mode-binding.test.js:27:5)
+    at Object.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-contract-fix\tests\regression\SP-20260611-002\wrapper-mode-binding.test.js:186:1)
+    at Module._compile (node:internal/modules/cjs/loader:1854:14)
+    at Object..js (node:internal/modules/cjs/loader:1985:10)
+    at Module.load (node:internal/modules/cjs/loader:1577:32)
+    at Module._load (node:internal/modules/cjs/loader:1379:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+wrapper-mode-binding: 2/3 pass
+✖ tests\regression\SP-20260611-002\wrapper-mode-binding.test.js (337.114ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 341.4948
+
+✖ failing tests:
+
+test at tests\regression\SP-20260611-002\wrapper-mode-binding.test.js:1:1
+✖ tests\regression\SP-20260611-002\wrapper-mode-binding.test.js (337.114ms)
+  'test failed'
