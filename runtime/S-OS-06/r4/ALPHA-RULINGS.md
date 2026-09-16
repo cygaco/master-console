@@ -58,6 +58,8 @@ it is issued; the SendMessage is a notification, not the record.
 | `e0b3d951` | The `--artifact` mode was proven on a fixture and wired to nothing — wire it against the real rulings file WITH a registered expiry; print the git-object ceiling and the bucket order; record why a missing ledger SKIPS (absent by design) but a missing artifact REDS (absent unexpectedly) |
 | `f8d3a607` | The derived-gap disposition is stated as ARITHMETIC (215 = 110 + 105 per view) with tightened wording ("nothing left unaccountably", never "nothing vanished"); the FINAL regen no-op proof is a tracked close item; every plant asserts the ABSENCE of the neighbouring finding; lane J's landing is attested, cite by SHA |
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
+| `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
+| `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
 
 ## R-63 — lane J landed with a binding condition UNDISCHARGED; the moving test count; the scrub result
 ε self-reported (e-21): lane J was merged at `438ff2f0` WITHOUT discharging r-03a condition (b) (prove
@@ -82,6 +84,20 @@ REFUTED by measurement (libuv refills eleven names; the win32 allow-list is that
 declared into the normalizer's own declaration, register synced, entries untouched; case (k)
 RED-then-GREEN. NEXT per R-52a: re-validate 23 under the hermetic set with the scrub interpretation
 pre-committed (expect 17 match / 6 mismatch), re-register the six, confirm 23/23.
+
+**β `a2f74e09` rulings on R-63 (binding):** (a) condition (b) is a NAMED RESIDUAL, not discharged — the
+RED leg was never run; standalone ≠ in-suite; a fifteen-name scan is enumeration-by-name. It is
+low-likelihood and UNPROVEN, not suspected. CLOSABLE NOW in a throwaway worktree (never committed —
+`migrations/**` is fenced): plant a reference from migration 003 to a deleted shim path, confirm the
+fixture-product test goes RED in-suite, revert, confirm GREEN; if it cannot red, that is a finding about
+the test. (b) The MOVING TEST COUNT blocks certification until the four movers are NAMED; a stable
+superset is acceptable only if each mover's absence has a STATED RULE and the suite EMITS its population
+count beside its result; check whether the four cluster near the head-advanced-after-check race first.
+(c) The scrub premise is β's SIXTH refuted mechanism claim, caught by β's own verify-before-building
+instruction; DECLARE the eleven libuv-refilled names as the OBSERVED FLOOR in the normalizer's
+declaration, source named, platform stamped. (d) No objection to the J4 regression fix; the regression
+goes in DONE-REPORT as landed-and-caught, beside the defence-in-depth positive (a neighbouring enforcer
+caught a lane's new enforcing case within minutes).
 
 UNLOGGED: (none — every id above resolves as of this rewrite; re-run `beta-ledger-refs --artifact` to check)
 
