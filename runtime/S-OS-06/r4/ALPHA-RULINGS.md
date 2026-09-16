@@ -149,6 +149,41 @@ row); its envelope must show the RED against the unedited fixture, the registry 
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
 
+## R-112 — ε e-37: the sibling plant is VACUOUS (measured); one of R-110's three confirmations was softer than stated; sibling fix AUTHORIZED as one bounded test-side commit; ED-440-A1
+PULL-RULE INTEGRITY (ε e-37 is right on the fact, wrong on the inference): § R-110 and § R-111 were not in
+the ROOT copy of this file when ε checked because they were committed on `alpha/S-OS-06-substrate`
+(85341cf8, 38ad2ba6) and not yet merged — the file IS the record, on the branch; the root copy lags by one
+merge. Rule made explicit: a ruling is IN THE RECORD when it is committed on the substrate branch; it is
+READABLE BY ε when merged; α cites the commit in every merge request so the lag is visible. (§ R-92 does not
+exist and is not owed — the ID MAP covers that range.)
+THE SOFT LEG, owned: R-110 and e-35 both cited "the enforcer's own suite asserts the opposite on the same
+input and passes 22/22" as one of three confirmations that the enforcer was right. ε measured that
+`scripts/dispatch/dispatch-contract.test.js` L95-96 (a bare `h.violation` on `{role: XP_REVIEWER, shape:
+"in-process-agent"}`) still passes 22/22 with the forbidden-shape refusal NEUTERED — the input is also
+outside `allowed_shapes`, so the not-in-allowed-shapes fallback keeps it red, and the plant cannot tell the
+two refusals apart. That leg proved "some refusal exists", not "the forbidden-shape guard exists". The
+conclusion stands on the independent leg (the operator's registry re-pin, verified by α, β and the fixer)
+and on the 07a20846 commit message. Recorded as: two firm legs, one soft.
+SIBLING FIX AUTHORIZED (the condition α set in the 94926c62 acceptance is met: RED-on-neuter shows
+vacuity AND the fix is the same one-line filter): ONE bounded test-side commit on the sprint head, before
+the lane I re-probe, that pins the refusal CLASS at L95-96 exactly as 94926c62 did (filter the violations
+to the FORBIDDEN-shape message for that role; empty list = FALSE-GREEN), with the neuter evidence
+(forbidden-only neuter → RED; control → GREEN; restored → GREEN; enforcer sha unchanged) written to
+`runtime/S-OS-06/r4/contract-fix/`. Nothing else in that file changes; the enforcer is untouched. The
+`h.pass` converse case at L99-100 stays as is (it is the operator-pin witness). Never quarantine.
+DISCOVERY FACTS (ε e-37) carried to DONE-REPORT: all five discovered fixture-tests PRE-DATE lane I by
+~three months (negative-fixtures 2026-06-27; coverage-gate-caller and mode-profile 06-09; the two
+coverage-gate-scan files 06-11) — unverified since written; the never-run one asserts seven contract
+negatives (api-when-CLI, build-chain in-process, real cwd-worktree violation, the stale shape one, and
+three fail-closed cases: null input, missing role, missing shape); first ever run 8/9, only the stale one
+red; now 9/9 for real reasons. β's residue item (2) is therefore ANSWERED; item (1) (the two vacuous
+entries without a discovered test) still needs its own cause.
+ED-440 SHARPENED (ε): the same enforcer fails CLOSED on malformed input (the three fail-closed cases pass)
+and OPEN on unrecognised but WELL-FORMED (tier, provider) combinations — "closed on garbage, open on the
+unanticipated", the harder one to notice. Filed as ED-440-A1. Correction: the registry has 35 roles, not
+36 (α re-counted at source: 35) — R-110 and ED-440's "36" are corrected by this section and by A1; the
+population sentence is unchanged in substance.
+
 ## R-111 — β `b3f7d052` (row 521) WITHDRAWS `e4d8b207`: the r2/r3 backend verdicts are DISCHARGED; no backend/qa re-run; the C trigger lapses; attribution names all three
 β verified the reversal AT SOURCE itself (registry lines 41/53/57 + the four `_operator_2026_08_18` fields)
 and withdrew `e4d8b207` (row 519 stays unedited as the record of what was ruled on the facts as then
@@ -210,7 +245,7 @@ corrected plant must RED when the enforcer is neutered, GREEN intact); one bound
 (≤18 min, commit-first) on the sprint head; enforcer file untouched. (In flight: lane
 `s-os-06/r4-contract-fix`, dispatch `d-mu4qczoa`.) (2) THE REAL FINDING → ED-440: the derivation falls
 OPEN for unrecognised (tier, provider) combinations — a manager fallback ALLOWS in-process-agent; holds
-today only because all 36 live roles match an earlier rule. Follow-on, recorded in DONE-REPORT as a latent
+today only because all 35 (R-112 corrects R-110's "36") live roles match an earlier rule. Follow-on, recorded in DONE-REPORT as a latent
 fail-open in the dispatch contract. (3) TRACKER.md: a SECOND append-only entry dated 2026-09-17
 ("CORRECTION OF THE CORRECTION") states the five reviews complied; the first entry (void-as-discharge) is
 to be read as SUSPENDED pending β r-111; both entries stay; validate 20/20. (4) The "five violations"
