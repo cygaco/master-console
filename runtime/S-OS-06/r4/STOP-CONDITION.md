@@ -243,6 +243,31 @@ before the land, and a criterion satisfiable in neither order is not a criterion
 
 **Section 6 is therefore CLOSED**, and a certifying run may now be cited — subject to section 8.
 
+## 7b. THE MEASUREMENT ARTIFACTS ARE INSIDE THE SWEPT POPULATION — stated, never excluded by path
+
+A second contamination channel surfaced during stage 2: oracle (i)'s candidate count rose from 514 to 517
+because **the round's own artifacts entered the tree**. The oracles were built so that a printout cannot seed
+the next run's population — the grammar is printed with its separator escaped, and lab and version are stored
+apart. That defence covers the printed grammar. It does not cover committed artifacts.
+
+**Ruling (α, applying § 1's record property).** The round's artifacts under `runtime/S-OS-06/r4/**` — join
+member sets, oracle printouts, measurement records — legitimately carry legacy tokens **as measurement
+records**. Rewriting them would falsify the record of what was measured, so they qualify under the RECORD
+property and lane K adjudicates them as records.
+
+**The consequence for the certifying run is a framing requirement, not an exclusion.** The population frame
+must **state that the measurement artifacts are inside the swept population and how many occurrences they
+contribute.** They are NOT excluded by path.
+
+The reason excluding them would be wrong: a path-based exclusion is exactly the location test β has refused
+three times, and it would let the round quietly shrink its own denominator to flatter its own zero. Stating
+the contribution keeps the zero auditable. A reader can then see that the number includes the round's own
+paperwork and by how much.
+
+**This also means the denominator moves** as artifacts are added and as the alias drop removes roughly thirty
+files. Every certifying figure is measured on **the tree that actually lands**, and the head is named beside
+it. A zero measured across a tree that changed under it is a zero about a different tree.
+
 ## 8. OWED BEFORE THE CERTIFYING RUN (β verdict id `8e5f3a02`, self-test reading)
 
 β read the oracle self-test at source and named two gaps. Both are owed before any citable run:
