@@ -36,7 +36,9 @@
  *
  * Exit: 0 measured, zero violations | 1 measured, violations | 2 REFUSED (no count is a result).
  *
- * Usage: node runtime/S-OS-06/r4/oracles/oracle-iv-occupancy.js [--out <frame.out>] [--emit <set.json>] [--keep-regen]
+ * Usage: node runtime/S-OS-06/r4/oracles/oracle-iv-occupancy.js [--out <frame.out>] [--emit <set.json>] [--keep-regen] [--with-text]
+ *   --with-text quotes line text in the frame samples and in the set: LOCAL ONLY, never commit that output (the
+ *   framework-purity gate forbids the client-slug / relic strings such quotes can carry in any tracked file).
  *
  * Self-reference hygiene: the root token is assembled at runtime; this file lives under runtime/** (a section 1 class).
  */
@@ -599,7 +601,7 @@ function compatOccurrenceSpans(partition, loader, rel, lineText, version) {
 
 // ── format ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-function format(r, { emitPath } = {}) {
+function format(r, { emitPath, withText = false } = {}) {
   const out = [];
   const contentUncontested = r.contentViolations.length - r.contestedContent;
   const nameContested = r.nameViolations.filter((v) => v.contested).length;
@@ -652,7 +654,7 @@ function format(r, { emitPath } = {}) {
   for (const [k, v] of L.sortedEntries(r.violationsByFile).slice(0, 60)) out.push(`      ${String(v).padStart(7)}  ${k}`);
   if (r.contentViolations.length) {
     out.push(`  CONTENT VIOLATION SAMPLES (first 40 of ${r.contentViolations.length}):`);
-    for (const v of r.contentViolations.slice(0, 40)) out.push(`    ${v.file}:${v.line}:${v.col} [${v.form}]${v.contested ? " [CONTESTED]" : ""} "${v.match}" :: ${v.text.slice(0, 140)}`);
+    for (const v of r.contentViolations.slice(0, 40)) out.push(`    ${v.file}:${v.line}:${v.col} [${v.form}]${v.contested ? " [CONTESTED]" : ""} "${v.match}"${withText ? ` :: ${v.text.slice(0, 140)}` : ""}`);
   }
   if (r.derivedViolations.length) {
     out.push(`  DERIVED VIOLATION SAMPLES (first 20 of ${r.derivedViolations.length} rows):`);
@@ -667,7 +669,7 @@ function format(r, { emitPath } = {}) {
   return { lines: out, code: total === 0 ? 0 : 1 };
 }
 
-function emitSet(r, emitPath) {
+function emitSet(r, emitPath, { withText = false } = {}) {
   const data = {
     $oracle: "S-OS-06 r4 oracle (iv) — legacy-token occupancy of LIVE surfaces",
     head: r.head,
@@ -694,7 +696,9 @@ function emitSet(r, emitPath) {
       namesContested: r.nameViolations.filter((v) => v.contested).length,
     },
     subs: [],
-    contentViolationColumns: ["file", "line", "col", "form", "subIndex", "contested", "text(<=120)"],
+    contentViolationColumns: withText ? ["file", "line", "col", "form", "subIndex", "contested", "text(<=120)"] : ["file", "line", "col", "form", "subIndex", "contested"],
+    $noText:
+      "line text is NOT emitted by default: this set is committed, and quoted lines would carry the very client-slug / relic strings the framework-purity gate forbids in tracked files; every row is reproducible at the measured head with `git show <sha>:<file>` (pass --with-text for a LOCAL, uncommitted copy)",
     contentViolations: [],
     derivedViolations: r.derivedViolations,
     nameViolations: r.nameViolations,
@@ -705,7 +709,9 @@ function emitSet(r, emitPath) {
       subIdx.set(v.sub, data.subs.length);
       data.subs.push(v.sub);
     }
-    data.contentViolations.push([v.file, v.line, v.col, v.form, subIdx.get(v.sub), v.contested ? 1 : 0, v.text.slice(0, 120)]);
+    const row = [v.file, v.line, v.col, v.form, subIdx.get(v.sub), v.contested ? 1 : 0];
+    if (withText) row.push(v.text.slice(0, 120));
+    data.contentViolations.push(row);
   }
   const body = JSON.stringify({ ...data, contentViolations: "__ROWS__" }, null, 1);
   const rows = data.contentViolations.map((row) => "  " + JSON.stringify(row)).join(",\n");
@@ -718,8 +724,9 @@ if (require.main === module) {
   const emitPath = emitIdx >= 0 ? path.resolve(args[emitIdx + 1]) : null;
   L.runCli(NAME, (argv, lines) => {
     const r = measure({ keepRegen: argv.includes("--keep-regen") });
-    if (emitPath) emitSet(r, emitPath);
-    const f = format(r, { emitPath });
+    const withText = argv.includes("--with-text");
+    if (emitPath) emitSet(r, emitPath, { withText });
+    const f = format(r, { emitPath, withText });
     lines.push(...f.lines);
     return { code: f.code };
   });
