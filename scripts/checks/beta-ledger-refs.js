@@ -225,6 +225,7 @@ function main() {
   else {
     console.log(`beta-ledger-refs: ${rows.length} rows, ${fieldsScanned} fields scanned (default-scan; excluded by name-property), ${refsChecked} refs checked, ${baseline.length} baselined historical holes, prefix ceiling ${PREFIX_LEN} hex (${prefixCollisions.length} collisions), ${stubs.length} issued-stubs (${unfulfilledStubs.length} unfulfilled)`);
     console.log(`  CEILING: this check proves that every CITED id resolves and every ISSUED-STUB is fulfilled. A verdict that was never cited and never stubbed is OUTSIDE this instrument — GREEN does not mean every ruling is in the record.`);
+    console.log(`  BASELINE-KEYING CEILING: the baseline applies to the exact canonical path OR any file at a canonical-shaped path (…/.claude/agents/president/_system/beta/events.jsonl); a stray copy at that shape inherits the row-numbered baseline and may read STALE-BASELINE. Applied here: ${baselineFile ? "yes" : "no"} (target ${targetIsCanonical ? "canonical-shaped" : "non-canonical"}).`);
     console.log(`  excluded-by-property (${excludedList.length} field names; id-shaped tokens NOT checked, for audit): ${excludedList.map(([k, c]) => `${k}=${c}`).join(" ") || "(none)"}`);
     for (const p of parseErrors) console.log(`  PARSE-ERROR row ${p.row}: ${p.error}`);
     for (const s of unfulfilledStubs) console.log(`  UNFULFILLED-STUB row ${s.row}: ${s.id} issued to ${s.party || "?"} re ${s.boundary || "?"} — no verdict (or withdrawn) row carries this id`);
