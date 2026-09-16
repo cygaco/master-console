@@ -43,8 +43,12 @@ function cleanEnv() {
   return env;
 }
 
+// Register-format declarations the runner requires its artifact to carry verbatim (declared = actual).
+// Imported, not copied: the fixture must not fork the runner's own declarations. (S-OS-06 r4 lane I5)
+const RUNNER_DECL = require(RUNNER);
+
 function entry(file, over) {
-  return {
+  const e = {
     file,
     firstFailingAssertion: "dummy rot: still failing",
     failCount: 1,
@@ -54,6 +58,22 @@ function entry(file, over) {
     expiryVersion: "3.0.0",
     ...(over || {}),
   };
+  // FIXTURE CONSTRUCTION ONLY (lane I5): the register format replaced the single "firstFailingAssertion"
+  // with a "causeLines" multiset and requires an "observedOn" provenance stamp. The registered cause is
+  // carried over unchanged as a one-line multiset; the stamp is this platform/node/pinned reporter.
+  if (e.causeLines === undefined && e.firstFailingAssertion !== undefined) e.causeLines = [e.firstFailingAssertion];
+  delete e.firstFailingAssertion;
+  if (e.observedOn === undefined) e.observedOn = RUNNER_DECL.currentStamp();
+  return e;
+}
+
+/** The fixture repo's HEAD commit (the register's base: every fixture test file exists there). */
+function fixtureCommit(dir) {
+  const c = spawnSync("git", ["-c", "user.name=falsifier-fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "-q", "--no-verify", "--allow-empty", "-m", "fixture base"], { cwd: dir, env: cleanEnv(), encoding: "utf8" });
+  if (c.status !== 0) throw new Error(`git commit failed: ${c.stderr || c.stdout}`);
+  const h = spawnSync("git", ["rev-parse", "HEAD"], { cwd: dir, env: cleanEnv(), encoding: "utf8" });
+  if (h.status !== 0) throw new Error(`git rev-parse HEAD failed: ${h.stderr || h.stdout}`);
+  return h.stdout.trim();
 }
 
 /** Throwaway git repo with `files` (rel -> content) and a stub quarantine (object, or raw string). */
@@ -67,13 +87,25 @@ function withRepo(files, quarantine, fn) {
     }
     const q = path.join(dir, "tests", "quarantine.json");
     fs.mkdirSync(path.dirname(q), { recursive: true });
-    // Default the EMPTY-SUBJECT floor to 1 for fixtures (few dummy test files) unless a case sets its own.
-    if (quarantine && typeof quarantine === "object" && quarantine.$floor === undefined) quarantine.$floor = 1;
-    fs.writeFileSync(q, typeof quarantine === "string" ? quarantine : JSON.stringify(quarantine, null, 2) + "\n", "utf8");
     for (const args of [["init", "-q"], ["add", "-A"]]) {
       const g = spawnSync("git", args, { cwd: dir, env: cleanEnv(), encoding: "utf8" });
       if (g.status !== 0) throw new Error(`git ${args.join(" ")} failed: ${g.stderr || g.stdout}`);
     }
+    // FIXTURE CONSTRUCTION ONLY (lane I5): the runner verifies base identity, so the fixture's test files
+    // are committed and that commit is the register's base. The register itself is written after it.
+    const baseCommit = fixtureCommit(dir);
+    if (quarantine && typeof quarantine === "object") {
+      // Default the EMPTY-SUBJECT floor to 1 for fixtures (few dummy test files) unless a case sets its own.
+      if (quarantine.$floor === undefined) quarantine.$floor = 1;
+      // Required register header fields, unless a case sets its own.
+      if (quarantine.base === undefined) quarantine.base = baseCommit;
+      if (quarantine.$normalizer === undefined) quarantine.$normalizer = RUNNER_DECL.NORMALIZER_DECLARATION;
+      if (quarantine.$dropClass === undefined) quarantine.$dropClass = RUNNER_DECL.DROP_CLASS_DECLARATION;
+      if (quarantine.$ceilings === undefined) quarantine.$ceilings = RUNNER_DECL.CEILINGS;
+    }
+    fs.writeFileSync(q, typeof quarantine === "string" ? quarantine : JSON.stringify(quarantine, null, 2) + "\n", "utf8");
+    const g = spawnSync("git", ["add", "-A"], { cwd: dir, env: cleanEnv(), encoding: "utf8" });
+    if (g.status !== 0) throw new Error(`git add -A failed: ${g.stderr || g.stdout}`);
     return fn(dir);
   } finally {
     try {
