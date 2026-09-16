@@ -685,11 +685,31 @@ function emitSet(r, emitPath) {
     covered: r.covered,
     coveredDetail: r.coveredSub,
     nameCovered: r.nameCovered,
-    contentViolations: r.contentViolations,
+    violationCounts: {
+      content: r.contentViolations.length,
+      contentContested: r.contestedContent,
+      derivedOccurrences: r.derivedViolationN,
+      derivedContested: r.derivedContested,
+      names: r.nameViolations.length,
+      namesContested: r.nameViolations.filter((v) => v.contested).length,
+    },
+    subs: [],
+    contentViolationColumns: ["file", "line", "col", "form", "subIndex", "contested", "text(<=120)"],
+    contentViolations: [],
     derivedViolations: r.derivedViolations,
     nameViolations: r.nameViolations,
   };
-  L.writeOut(emitPath, [JSON.stringify(data, null, 1)]);
+  const subIdx = new Map();
+  for (const v of r.contentViolations) {
+    if (!subIdx.has(v.sub)) {
+      subIdx.set(v.sub, data.subs.length);
+      data.subs.push(v.sub);
+    }
+    data.contentViolations.push([v.file, v.line, v.col, v.form, subIdx.get(v.sub), v.contested ? 1 : 0, v.text.slice(0, 120)]);
+  }
+  const body = JSON.stringify({ ...data, contentViolations: "__ROWS__" }, null, 1);
+  const rows = data.contentViolations.map((row) => "  " + JSON.stringify(row)).join(",\n");
+  L.writeOut(emitPath, [body.replace('"__ROWS__"', () => `[\n${rows}\n ]`)]);
 }
 
 if (require.main === module) {
