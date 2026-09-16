@@ -63,6 +63,35 @@ it is issued; the SendMessage is a notification, not the record.
 | `b7e04c31` | The issued-stub protocol covers a failure mode NOT observed tonight (line survives, body lost) — the close must not claim it addresses the whole-message losses; the β→α direction has no durable pull record by construction (G-25) — a retro STRUCTURAL GAP; α's own rule applied one step up: before re-asking β, check the ISSUED index and ask for a body by id |
 | `d6b18f04` | The hermetic 23/23 (0 moved) SATISFIES Q3 by measurement (pending the register path+SHA); residual = the six's `observedOn` stamp (re-stamp post-scrub or annotate capture≡checking, dated); β's 17/6 expectation was a WORSE error than its six refuted claims (it contradicted a measurement already in hand) — own class, guard: check the thread for an existing measurement before predicting an artifact's state; the builder's scope limit adopted verbatim; the CERTIFYING RUN must be taken on a tree NOTHING ELSE writes to (§ 5.5 condition); the live-mutable-state class is a named residual whose members each still owe the location question |
 
+## CLOSE CHECKLIST — β's held-items index, adopted verbatim (each item cites the verdict that created it)
+**BLOCKS THE STOP CONDITION** (must close before a certifying zero is citable):
+1. Oracle (ii)'s path-name tally + the deferred shim's filename disposition emitted beside the zero — `f1a93c68`.
+2. The four suite-population movers NAMED, each absence explained by a stated rule, the suite emitting its population count beside its result — `a2f74e09` (check the race-clustering first).
+3. The certifying run on an EXCLUSIVE tree, nothing else writing — `d6b18f04` Q4.
+4. The FINAL register regeneration shown a NO-OP diff, or the derived-gap set re-emitted on the final state — `d5c8a271` (distinct from the regen already run).
+5. § 8's two gaps: oracle (i) demonstrated GREEN on a fixture; cases covering the computed class and the cross-lab join, each with its RED and its control — `8e5f3a02`.
+6. The three-part triple per oracle: green control with the scanned population emitted; RED on a plant sited where the old predicate was blind and provably inside the swept population; revert and re-observe green — STOP-CONDITION § 5.2.
+7. CI green on the final head — the operator's push; no agent in this session can close it.
+**OWED, RECORDED, NOT BLOCKING:** 8. lane J condition (b) — named residual, closable by the throwaway plant — `a2f74e09`. 9. the six's `observedOn` stamp — `d6b18f04` Q1. 10. the register path + SHA for the hermetic 23/23 and the six's non-empty branch causeLines — r-65 Q2 (β's Q1 ruling is conditional on it). 11. the COUNT-LOCK conjunction falsifier — `b2c94e18`. 12. the location question per instance (check-then-read) — `d6b18f04` Q4. 13. the (f) causal story settled in ONE version (mechanism, tree, population) — `b2c94e18`. 14. the eleven-name runtime floor declared with source + platform — `a2f74e09` (c). 15. the deferred check-shim's per-entry expiry keyed to the operator's workflow edit — `c7a4e2b9`.
+**SETTLED — do not reopen:** HIGH for the six committed entries (scoped); MEDIUM re-based onto the fixed runner's evidence; lane J's landing form; case (e); the parser authorization; the vacuity property. **β's own for the retro:** the historical ledger holes at rows 299, 345, 168.
+
+## R-73 — lane I merge probe RED on two blockers; dispositions under the PROPERTIES; land only on a green probe
+ε's probe (`bcefa687` = lane I merged into 8b3ad24b, pristine): purity 1, leak-gate 1, cutover 0, npm test
+1 (one failure downstream of purity). BLOCKER ONE — two committed suite captures (`s2i3/i6/SUITE_run.txt`,
+`s2i3/i7/SUITE_hermetic_run.txt`) quote a legacy-slug ledger id: the THIRD instance of the
+round's-own-evidence class (§ 7b); remedy = lane C's shape (no quoted line text in committed output;
+local-only text form) or untrack with a WHY note; name the class in DONE-REPORT. BLOCKER TWO — six
+live-unallowed legacy-slug occurrences in the rewritten quarantine register: the FIVE `basePath` fields
+are DISPOSITIONED under PROPERTY A (rewriting the literal breaks the runner's own base-identity function —
+at base the file genuinely is at the legacy path; lane I's absent / present-and-correct /
+present-but-not-a-rename falsifier is the mechanical test) AND PROPERTY B (the pre-rename path is the
+rename provenance β ordered); the ONE policy-prose sentence (the codemod once rewrote text inside a cause
+line) under PROPERTY B (a record of a past event). GRAIN: occurrence, each enumerated with its property
+test. FORM: a partition-only warranted amendment commit, teeth-inspected (R-21 shape, add-side). β
+consulted (r-74) on the property reading, the dual A+B record, and the prose sentence. DISPATCH: one
+bounded lane I dispatch carrying the amendment + the evidence-file remedy + the r-71 items; then RE-PROBE
+on a pristine tree; LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
+
 ## R-71 — first honest green at `8b3ad24b`; lane I lands as ONE UNIT after ONE more dispatch; the close sequence
 Pristine at `8b3ad24b`: 378 files / 1249 tests / 1246 pass / 0 fail / 3 skipped; quarantine 23/23 still
 failing; framework-purity, leak-gate, cutover-completeness, record-trust-exit, privacy all 0;
