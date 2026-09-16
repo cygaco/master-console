@@ -222,6 +222,39 @@ test("PLANT (β d5c8a271): the same existence-gated path goes RED on a present-a
   assert.match(absent.out, /^SKIP: paths\.betaEvents not present/);
 });
 
+// β verdict c1d47a92 (targeted widening): a PRESENCE-CLAIM artifact (a file whose purpose is to assert
+// what is in the ledger) is in the enforcer's population. Tokens bucket as ledger-row / git-object /
+// declared-unlogged / UNKNOWN; UNKNOWN is RED. This is NOT a general artifact sweep.
+test("ARTIFACT MODE: an id cited in a presence-claim artifact that is neither a ledger row nor a git object is RED; declared UNLOGGED passes; git SHAs pass", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "beta-ledger-refs-artifact-"));
+  const ledger = path.join(dir, "events.jsonl");
+  fs.writeFileSync(ledger, JSON.stringify({ msg_id: A }) + "\n");
+  const headSha = spawnSync("git", ["-C", path.resolve(__dirname, "../../.."), "rev-parse", "--short=8", "HEAD"], { encoding: "utf8" }).stdout.trim();
+  assert.match(headSha, /^[0-9a-f]{8}$/, "needs a git repo to resolve a real object");
+  const art = path.join(dir, "RULINGS.md");
+  const write = (body) => fs.writeFileSync(art, body);
+  const runArt = () => { const r = spawnSync(process.execPath, [SCRIPT, "--file", ledger, "--artifact", art], { encoding: "utf8" }); return { rc: r.status, out: r.stdout + r.stderr }; };
+  // GREEN: a ledger id + a real commit sha
+  write(`Ruled per β \`${A.slice(0, 8)}\`, landed at ${headSha}.\n`);
+  let r = runArt();
+  assert.equal(r.rc, 0, r.out);
+  assert.match(r.out, /ledger-row 1, git-object 1, declared-unlogged 0, UNKNOWN 0/);
+  // RED: a cited id with no row and no object (the row-495 class at the moment β read it)
+  write(`Ruled per β \`${GHOST.slice(0, 8)}\` (row 495).\n`);
+  r = runArt();
+  assert.equal(r.rc, 1, r.out);
+  assert.match(r.out, new RegExp(`UNKNOWN-IN-ARTIFACT .*: ${GHOST.slice(0, 8)}`));
+  // GREEN: the same id declared UNLOGGED (the shared honesty convention)
+  write(`Ruled per β \`${GHOST.slice(0, 8)}\`.\n\nUNLOGGED: ${GHOST.slice(0, 8)} — cited before its row exists\n`);
+  r = runArt();
+  assert.equal(r.rc, 0, r.out);
+  assert.match(r.out, /declared-unlogged 1, UNKNOWN 0/);
+  // RED: a missing artifact file is a defect, not a skip
+  const missing = spawnSync(process.execPath, [SCRIPT, "--file", ledger, "--artifact", path.join(dir, "nope.md")], { encoding: "utf8" });
+  assert.equal(missing.status, 1, missing.stdout);
+  assert.match(missing.stdout, /ARTIFACT-MISSING/);
+});
+
 test("GREEN: correction notes cite the wrong id by design and are exempt (reported, not failed)", () => {
   const { rc, out } = run([
     { msg_id: A },
