@@ -4,10 +4,25 @@
 //
 // ::each-malformed-or-missing-source-degrades-to-section-unavailable-without-throwing
 //   The GENERATOR fails SOFT on its human-authored inputs (β-4). Build a TEMP
-//   fixture root (copy the real four sources in), then INDEPENDENTLY break each
-//   one and assert that ONE section degrades to a "section unavailable"
-//   placeholder while the REST of the board still renders, the generator NEVER
-//   throws, and the render is exit-0 clean.
+//   fixture root (copy the three TRACKED sources in; WRITE the two runtime
+//   open-gaps registers), then INDEPENDENTLY break each one and assert that ONE
+//   section degrades to a "section unavailable" placeholder while the REST of the
+//   board still renders, the generator NEVER throws, and the render is exit-0 clean.
+//
+//   Fixture preconditions (amended 2026-09-16, S-OS-06 r4 lane H, β verdict
+//   7d3e9f51 / betaEvents row 475 — see the AC-R4a amendment): the open-gaps
+//   registers are gitignored (.gitignore `.claude/project/memory/`), owner:runtime
+//   files a clean checkout NEVER carries. The pre-amendment fixture COPIED them
+//   "if present", so its "clean" root silently depended on the host's runtime
+//   state: in any clean checkout (CI included) the gaps section correctly degraded
+//   (the B4 contract below), so 6 of 15 cases failed on a gaps section that was
+//   never broken on purpose. The
+//   fixture now WRITES its own minimal registers and never copies host runtime
+//   state. The B4-missing and EISDIR cases remove/replace those fixture files, so
+//   they now exercise the degradation they name (pre-amendment, in a clean
+//   checkout, the EISDIR case passed only because the OTHER register was absent).
+//   Authored 2026-06-14; first surfaced when `npm test` was wired into CI on
+//   2026-09-12.
 //
 //   Covered degradations (each independent):
 //     - ROADMAP §  : renamed "Ranked do-next:" marker            → Ranked unavailable
@@ -62,15 +77,32 @@ function ok(name, fn) {
   }
 }
 
-// Build a fresh fixture root with the real five sources copied in.
+// Sources a clean checkout carries (tracked) vs. runtime registers it never has.
+const TRACKED = [REL.roadmap, REL.tracker, REL.sprints];
+const FIXTURE_REGISTERS = {
+  [REL.debt]: [
+    { id: "ED-FIXTURE-1", status: "open", policy: "fixture open debt" },
+    { id: "ED-FIXTURE-2", status: "closed", policy: "fixture closed debt" },
+  ],
+  [REL.issues]: [
+    { id: "RI-FIXTURE-1", status: "open", title: "fixture open issue" },
+    { id: "RI-FIXTURE-2", status: "resolved", title: "fixture resolved issue" },
+  ],
+};
+
+// Build a fresh fixture root: the three tracked sources copied from the real tree,
+// the two runtime registers WRITTEN by the fixture (never copied from the host).
 function makeFixtureRoot() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "roadmap-failsoft-"));
   fs.mkdirSync(path.join(dir, ".claude", "project", "sprint"), { recursive: true });
   fs.mkdirSync(path.join(dir, ".claude", "project", "memory"), { recursive: true });
-  for (const rel of Object.values(REL)) {
+  for (const rel of TRACKED) {
     const srcFile = path.join(ROOT, rel);
     const dstFile = path.join(dir, rel);
     if (fs.existsSync(srcFile)) fs.copyFileSync(srcFile, dstFile);
+  }
+  for (const [rel, rows] of Object.entries(FIXTURE_REGISTERS)) {
+    fs.writeFileSync(path.join(dir, rel), rows.map((r) => JSON.stringify(r)).join("\n") + "\n");
   }
   return dir;
 }
