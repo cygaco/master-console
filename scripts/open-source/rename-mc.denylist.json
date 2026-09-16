@@ -994,6 +994,11 @@
       {
         "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.0]:",
         "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:225 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|trackers/sprints/T3-system-inventory-and-verification-matrix.md|warpos@0.14*|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B B4: retire the interim d5c74318 listing-glob pin — the widened evidence-tag RULE (partition-loader EVIDENCE_TAG_RE, numeric-prefix listing glob) now owns this occurrence (verified: bound=1 covered=1 rule-dispositioned=1), so the case is closed by RULE, not by a per-file pin"
       }
     ]
   },
@@ -1819,11 +1824,6 @@
       "file": "scripts/open-source/partition-loader.js",
       "matchText": "EVIDENCE_TAG_RE = /warpos@",
       "warrant": "the evidence-tag RULE regex source; the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE), never a live identifier"
-    },
-    {
-      "file": "trackers/sprints/T3-system-inventory-and-verification-matrix.md",
-      "matchText": "warpos@0.14*",
-      "warrant": "evidence-tag LISTING glob in a restored verification transcript (`git tag --list \"warpos@0.14*\"`); a tag-reference, never a live identifier — the evidence-tag RULE covers warpos@<a.b.c> but not this version-glob form (r4 broadens the rule; pinned meanwhile so the β-owed restore is gate-clean regardless of the r4 decision)"
     },
     {
       "file": "CHANGELOG.md",
