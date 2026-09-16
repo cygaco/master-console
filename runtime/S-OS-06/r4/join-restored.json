@@ -1,0 +1,1051 @@
+{
+ "$question": "Which cross-lab join members did the codemod falsify (provenance = rewrite), and — per occurrence — what was restored? Lab and version are stored apart; excerpts render the at-sign as \\x40.",
+ "joinRecord": "runtime/S-OS-06/r4/cross-lab-join.members.json",
+ "joinMeasuredHead": "73b36112ff9cb821bd8ca0e51a281acc79c4a3ca",
+ "appliedOnHead": "56139ca369a769ef42594a90ebedb950c1a3dbe9",
+ "currentLab": "mc",
+ "legacyLab": "warpos",
+ "counts": {
+  "members": 43,
+  "rewrite": 22,
+  "authored": 21,
+  "restored": 16,
+  "gateDeferred": 5,
+  "held": 1
+ },
+ "countsNote": "rewrite and authored travel together: the codemod-falsification hypothesis holds for the rewrite members only; the authored members were hand-written after the rename and are NOT restorations (handed to lane K). rewrite = restored + gateDeferred + held.",
+ "computedGlobRule": "NOT landed on this tree: lane J's committed implementation s-os-06/s2b-codemod@92865fee scripts/open-source/partition-loader.js (blob 5e5dbcdc), called unchanged",
+ "computedGlobTagSource": "local",
+ "restored": [
+  {
+   "file": ".claude/commands/check/all.md",
+   "line": 23,
+   "col": 27,
+   "colAfter": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.",
+   "lineBefore": "Scheduled for removal at `mc\\x401.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.",
+   "lineAfter": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/commands/check/framework-purity.md",
+   "line": 23,
+   "col": 27,
+   "colAfter": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:fra…",
+   "lineBefore": "Scheduled for removal at `mc\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:framewo…",
+   "lineAfter": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:fra…",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/commands/check/framework-views-fresh.md",
+   "line": 23,
+   "col": 27,
+   "colAfter": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-views-fresh` → `/sca…",
+   "lineBefore": "Scheduled for removal at `mc\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-views-fresh` → `/scan:fr…",
+   "lineAfter": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-views-fresh` → `/sca…",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/commands/check/install.md",
+   "line": 23,
+   "col": 27,
+   "colAfter": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:install` → `/scan:install`.",
+   "lineBefore": "Scheduled for removal at `mc\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:install` → `/scan:install`.",
+   "lineAfter": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:install` → `/scan:install`.",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/commands/commit/both.md",
+   "line": 12,
+   "col": 21,
+   "colAfter": 21,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "will be removed at `warpos\\x401.0.0`.",
+   "lineBefore": "will be removed at `mc\\x401.0.0`.",
+   "lineAfter": "will be removed at `warpos\\x401.0.0`.",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/commands/mc/sync.md",
+   "line": 2,
+   "col": 143,
+   "colAfter": 143,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "…rp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /warp:update.\"",
+   "lineBefore": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc\\x401.0.0; superseded by /mc:update.\"",
+   "lineAfter": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /mc:update.\"",
+   "restoredLineEqualsPreimageExcerpt": false,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/commands/mc/sync.md",
+   "line": 28,
+   "col": 41,
+   "colAfter": 41,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "This alias is scheduled for removal at `warpos\\x401.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/warp:sync`.",
+   "lineBefore": "This alias is scheduled for removal at `mc\\x401.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/mc:sync`.",
+   "lineAfter": "This alias is scheduled for removal at `warpos\\x401.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/mc:sync`.",
+   "restoredLineEqualsPreimageExcerpt": false,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/project/maps/inventory-skills.json",
+   "line": 4096,
+   "col": 157,
+   "colAfter": 157,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "…rp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /warp:update.\\\"\",",
+   "lineBefore": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc\\x401.0.0; superseded by /mc:update.\\\"\",",
+   "lineAfter": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /mc:update.\\\"\",",
+   "restoredLineEqualsPreimageExcerpt": false,
+   "computedGlob": null
+  },
+  {
+   "file": ".claude/project/maps/skills.jsonl",
+   "line": 227,
+   "col": 238,
+   "colAfter": 238,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "…rp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /warp:update.\\\"\",\"exists\":true,\"size\":1626,\"modified\":\"2026-05-30T01:25:38.769Z\",\"…",
+   "lineBefore": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc\\x401.0.0; superseded by /mc:update.\\\"\",\"exists\":true,\"size\":1626,\"modified\":\"2026-05-30T01:25:38.769Z\",\"user_i…",
+   "lineAfter": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /mc:update.\\\"\",\"exists\":true,\"size\":1626,\"modified\":\"2026-05-30T01:25:38.769Z\",\"us…",
+   "restoredLineEqualsPreimageExcerpt": false,
+   "computedGlob": null
+  },
+  {
+   "file": "docs/RENAME-RUNBOOK.md",
+   "line": 38,
+   "col": 274,
+   "colAfter": 274,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "…tead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `warpos\\x40*` tags keep their names.",
+   "lineBefore": "…tead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `mc\\x40*` tags keep their names.",
+   "lineAfter": "…tead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `warpos\\x40*` tags keep their names.",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.1.3",
+      "0.1.4",
+      "0.2.1",
+      "0.2.2",
+      "0.4.0",
+      "0.4.1",
+      "0.4.2",
+      "0.4.3",
+      "0.4.4",
+      "0.5.0",
+      "0.6.0",
+      "0.6.1",
+      "0.7.0",
+      "0.7.1",
+      "0.7.2",
+      "0.8.0",
+      "0.8.1",
+      "0.8.2",
+      "0.9.0",
+      "0.10.0",
+      "0.11.0",
+      "0.11.1",
+      "0.12.0",
+      "0.12.1",
+      "0.13.0",
+      "0.13.1",
+      "0.14.0",
+      "0.15.0",
+      "0.15.1",
+      "0.15.2",
+      "0.15.3",
+      "0.15.4",
+      "0.16.0",
+      "0.17.0",
+      "1.0.0",
+      "1.1.0",
+      "1.2.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.1.3",
+      "0.1.4",
+      "0.2.1",
+      "0.2.2",
+      "0.4.0",
+      "0.4.1",
+      "0.4.2",
+      "0.4.3",
+      "0.4.4",
+      "0.5.0",
+      "0.6.0",
+      "0.6.1",
+      "0.7.0",
+      "0.7.1",
+      "0.7.2",
+      "0.8.0",
+      "0.8.1",
+      "0.8.2",
+      "0.9.0",
+      "0.10.0",
+      "0.11.0",
+      "0.11.1",
+      "0.12.0",
+      "0.12.1",
+      "0.13.0",
+      "0.13.1",
+      "0.14.0",
+      "0.15.0",
+      "0.15.1",
+      "0.15.2",
+      "0.15.3",
+      "0.15.4",
+      "0.16.0",
+      "0.17.0",
+      "1.0.0",
+      "1.1.0",
+      "1.2.0"
+     ]
+    }
+   }
+  },
+  {
+   "file": "docs/RENAME-RUNBOOK.md",
+   "line": 60,
+   "col": 24,
+   "colAfter": 24,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "Do **not** rename the `warpos\\x40*` tags, the `_warpos/` directory, the `WARPOS_*` environment variables or the `warp:*` skills here — t…",
+   "lineBefore": "Do **not** rename the `mc\\x40*` tags, the `_mc/` directory, the `MC_*` environment variables or the `warp:*` skills here — that is the i…",
+   "lineAfter": "Do **not** rename the `warpos\\x40*` tags, the `_mc/` directory, the `MC_*` environment variables or the `warp:*` skills here — that is t…",
+   "restoredLineEqualsPreimageExcerpt": false,
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.1.3",
+      "0.1.4",
+      "0.2.1",
+      "0.2.2",
+      "0.4.0",
+      "0.4.1",
+      "0.4.2",
+      "0.4.3",
+      "0.4.4",
+      "0.5.0",
+      "0.6.0",
+      "0.6.1",
+      "0.7.0",
+      "0.7.1",
+      "0.7.2",
+      "0.8.0",
+      "0.8.1",
+      "0.8.2",
+      "0.9.0",
+      "0.10.0",
+      "0.11.0",
+      "0.11.1",
+      "0.12.0",
+      "0.12.1",
+      "0.13.0",
+      "0.13.1",
+      "0.14.0",
+      "0.15.0",
+      "0.15.1",
+      "0.15.2",
+      "0.15.3",
+      "0.15.4",
+      "0.16.0",
+      "0.17.0",
+      "1.0.0",
+      "1.1.0",
+      "1.2.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.1.3",
+      "0.1.4",
+      "0.2.1",
+      "0.2.2",
+      "0.4.0",
+      "0.4.1",
+      "0.4.2",
+      "0.4.3",
+      "0.4.4",
+      "0.5.0",
+      "0.6.0",
+      "0.6.1",
+      "0.7.0",
+      "0.7.1",
+      "0.7.2",
+      "0.8.0",
+      "0.8.1",
+      "0.8.2",
+      "0.9.0",
+      "0.10.0",
+      "0.11.0",
+      "0.11.1",
+      "0.12.0",
+      "0.12.1",
+      "0.13.0",
+      "0.13.1",
+      "0.14.0",
+      "0.15.0",
+      "0.15.1",
+      "0.15.2",
+      "0.15.3",
+      "0.15.4",
+      "0.16.0",
+      "0.17.0",
+      "1.0.0",
+      "1.1.0",
+      "1.2.0"
+     ]
+    }
+   }
+  },
+  {
+   "file": "migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js",
+   "line": 34,
+   "col": 1,
+   "colAfter": 1,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "warpos\\x401.0.0.",
+   "lineBefore": "mc\\x401.0.0.",
+   "lineAfter": "warpos\\x401.0.0.",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": "scripts/check/privacy.js",
+   "line": 103,
+   "col": 18,
+   "colAfter": 18,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "  // range (e.g. warpos\\x401.2.0), not an address: the \"domain\" is a bare version.",
+   "lineBefore": "  // range (e.g. mc\\x401.2.0), not an address: the \"domain\" is a bare version.",
+   "lineAfter": "  // range (e.g. warpos\\x401.2.0), not an address: the \"domain\" is a bare version.",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": "scripts/check/privacy.test.js",
+   "line": 58,
+   "col": 42,
+   "colAfter": 42,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "  assert.strictEqual(isAllowlistedEmail(\"warpos\\x401.2.0\", allow), true);",
+   "lineBefore": "  assert.strictEqual(isAllowlistedEmail(\"mc\\x401.2.0\", allow), true);",
+   "lineAfter": "  assert.strictEqual(isAllowlistedEmail(\"warpos\\x401.2.0\", allow), true);",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": "scripts/check/privacy.test.js",
+   "line": 59,
+   "col": 42,
+   "colAfter": 42,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "  assert.strictEqual(isAllowlistedEmail(\"warpos\\x401.2.0...main\", allow), true);",
+   "lineBefore": "  assert.strictEqual(isAllowlistedEmail(\"mc\\x401.2.0...main\", allow), true);",
+   "lineAfter": "  assert.strictEqual(isAllowlistedEmail(\"warpos\\x401.2.0...main\", allow), true);",
+   "restoredLineEqualsPreimageExcerpt": true,
+   "computedGlob": null
+  },
+  {
+   "file": "scripts/check/privacy.test.js",
+   "line": 61,
+   "col": 73,
+   "colAfter": 73,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "  const f = tmpFile(\"[Unreleased]: https://github.com/cygaco/WarpOS/compare/warpos\\x401.2.0...main\\n\");",
+   "lineBefore": "  const f = tmpFile(\"[Unreleased]: https://github.com/cygaco/MC/compare/mc\\x401.2.0...main\\n\");",
+   "lineAfter": "  const f = tmpFile(\"[Unreleased]: https://github.com/cygaco/MC/compare/warpos\\x401.2.0...main\\n\");",
+   "restoredLineEqualsPreimageExcerpt": false,
+   "computedGlob": null
+  }
+ ],
+ "gateDeferred": [
+  {
+   "file": "TRACKER.md",
+   "line": 521,
+   "col": 130,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "…elease tag | Roadmap artifact | git tag | Yes | Verified Exists (release commit `0650e58`) | `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0` |",
+   "lineAsFound": "…elease tag | Roadmap artifact | git tag | Yes | Verified Exists (release commit `0650e58`) | `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0` |",
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "0.14*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.14.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "0.14*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.14.0"
+     ]
+    }
+   },
+   "status": "VERIFIED restore, NOT applied on this branch",
+   "gate": "scripts/hooks/framework-purity-guard.js -> scripts/checks/framework-purity.js --staged (legacy_slug ENFORCING at package.json 2.0.0)",
+   "reason": "the restored numeric-prefix listing glob is live-unallowed under this branch's EVIDENCE_TAG_RE (full semver, <semver>, bare glob, regex source — no numeric-prefix glob arm; the interim pin d5c74318 is not on this branch). Lane J's computed rule closes it by expansion; bypassing the guard is not an option.",
+   "evidence": "commit attempt on 56139ca3 with all 21 restorations staged: purity guard REFUSED, legacy_slug=5, LEGACY_SLUG: TRACKER.md [5 live-unallowed]; the other 16 restorations are not flagged"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 561,
+   "col": 105,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "| `warpos\\x400.14.0` tag | Yes (evidence for completed release) | Yes | Verified Exists | `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0` |",
+   "lineAsFound": "| `warpos\\x400.14.0` tag | Yes (evidence for completed release) | Yes | Verified Exists | `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0` |",
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "0.14*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.14.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "0.14*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.14.0"
+     ]
+    }
+   },
+   "status": "VERIFIED restore, NOT applied on this branch",
+   "gate": "scripts/hooks/framework-purity-guard.js -> scripts/checks/framework-purity.js --staged (legacy_slug ENFORCING at package.json 2.0.0)",
+   "reason": "the restored numeric-prefix listing glob is live-unallowed under this branch's EVIDENCE_TAG_RE (full semver, <semver>, bare glob, regex source — no numeric-prefix glob arm; the interim pin d5c74318 is not on this branch). Lane J's computed rule closes it by expansion; bypassing the guard is not an option.",
+   "evidence": "commit attempt on 56139ca3 with all 21 restorations staged: purity guard REFUSED, legacy_slug=5, LEGACY_SLUG: TRACKER.md [5 live-unallowed]; the other 16 restorations are not flagged"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 639,
+   "col": 928,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "…c,3f9470d,6dcd318,0320e11,34213e2,146108f,db0a778,f279b47,a6ab0bc,0650e58` — all found), and `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0`. No hash was unconfirmed.",
+   "lineAsFound": "…c,3f9470d,6dcd318,0320e11,34213e2,146108f,db0a778,f279b47,a6ab0bc,0650e58` — all found), and `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0`. No hash was unconfirmed.",
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "0.14*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.14.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "0.14*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.14.0"
+     ]
+    }
+   },
+   "status": "VERIFIED restore, NOT applied on this branch",
+   "gate": "scripts/hooks/framework-purity-guard.js -> scripts/checks/framework-purity.js --staged (legacy_slug ENFORCING at package.json 2.0.0)",
+   "reason": "the restored numeric-prefix listing glob is live-unallowed under this branch's EVIDENCE_TAG_RE (full semver, <semver>, bare glob, regex source — no numeric-prefix glob arm; the interim pin d5c74318 is not on this branch). Lane J's computed rule closes it by expansion; bypassing the guard is not an option.",
+   "evidence": "commit attempt on 56139ca3 with all 21 restorations staged: purity guard REFUSED, legacy_slug=5, LEGACY_SLUG: TRACKER.md [5 live-unallowed]; the other 16 restorations are not flagged"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 698,
+   "col": 573,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "… → ENOENT for the old `00-alex/01-adhoc/02-oneshot/03-managers` tree (Verified Nonexistent); `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0`; `git log -1` resolving all 20 spot-checked E-ADR0007/release hashes with mat…",
+   "lineAsFound": "… → ENOENT for the old `00-alex/01-adhoc/02-oneshot/03-managers` tree (Verified Nonexistent); `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0`; `git log -1` resolving all 20 spot-checked E-ADR0007/release hashes with matchin…",
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "0.14*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.14.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "0.14*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.14.0"
+     ]
+    }
+   },
+   "status": "VERIFIED restore, NOT applied on this branch",
+   "gate": "scripts/hooks/framework-purity-guard.js -> scripts/checks/framework-purity.js --staged (legacy_slug ENFORCING at package.json 2.0.0)",
+   "reason": "the restored numeric-prefix listing glob is live-unallowed under this branch's EVIDENCE_TAG_RE (full semver, <semver>, bare glob, regex source — no numeric-prefix glob arm; the interim pin d5c74318 is not on this branch). Lane J's computed rule closes it by expansion; bypassing the guard is not an option.",
+   "evidence": "commit attempt on 56139ca3 with all 21 restorations staged: purity guard REFUSED, legacy_slug=5, LEGACY_SLUG: TRACKER.md [5 live-unallowed]; the other 16 restorations are not flagged"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 1064,
+   "col": 524,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "newToken": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional"
+   },
+   "preimage": "… `node` require of `release-build.js` → KNOWN_DANGLING_REFS length 32 (A:4, B:11, C:17). (8) `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0`.",
+   "lineAsFound": "… `node` require of `release-build.js` → KNOWN_DANGLING_REFS length 32 (A:4, B:11, C:17). (8) `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0`.",
+   "computedGlob": {
+    "asFound": {
+     "lab": "mc",
+     "pattern": "0.14*",
+     "treatment": "restore",
+     "legacyMembers": [
+      "0.14.0"
+     ]
+    },
+    "restored": {
+     "lab": "warpos",
+     "pattern": "0.14*",
+     "treatment": "computed-satisfied",
+     "members": [
+      "0.14.0"
+     ]
+    }
+   },
+   "status": "VERIFIED restore, NOT applied on this branch",
+   "gate": "scripts/hooks/framework-purity-guard.js -> scripts/checks/framework-purity.js --staged (legacy_slug ENFORCING at package.json 2.0.0)",
+   "reason": "the restored numeric-prefix listing glob is live-unallowed under this branch's EVIDENCE_TAG_RE (full semver, <semver>, bare glob, regex source — no numeric-prefix glob arm; the interim pin d5c74318 is not on this branch). Lane J's computed rule closes it by expansion; bypassing the guard is not an option.",
+   "evidence": "commit attempt on 56139ca3 with all 21 restorations staged: purity guard REFUSED, legacy_slug=5, LEGACY_SLUG: TRACKER.md [5 live-unallowed]; the other 16 restorations are not flagged"
+  }
+ ],
+ "held": [
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 1262,
+   "col": 61,
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "0.17.0"
+   },
+   "wouldRestoreTo": {
+    "lab": "warpos",
+    "version": "0.17.0"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "    return tagExists(\"0.17.0\", () => ({ status: 0, stdout: \"warpos\\x400.17.0\\n\", stderr: \"\", error: null, signal: null })) === true;",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "    return tagExists(\"0.17.0\", () => ({ status: 0, stdout: \"mc\\x400.17.0\\n\", stderr: \"\", error: null, signal: null })) === true;",
+   "reason": "the token is the fake `git tag -l` stdout inside selfTest()'s F1 positive control; tagExists() (lines 120 and 132) builds and compares the tag through an INTERPOLATION template the same codemod commit 7021ff55 rewrote to the current lab, so restoring this one occurrence alone makes the control compare the legacy lab against a current-lab template and FAIL. Restoring it together with lines 120/132 would restore two interpolation-slice occurrences, whose treatment (beta 8e5f3a02: warrantable with the ceiling printed) is NOT restoration, and would make tagExists wrong for every tag minted from 2.0.0 on. Contradictory -> held, escalated, not guessed.",
+   "evidence": [
+    "on 56139ca3: selfTest (node scripts/mc/test-upgrade-current-to-new.js --self-test) pass=42 fail=0 overall=PASS",
+    "same tree with ONLY this occurrence's lab restored (working tree, reverted, never committed): pass=41 fail=1 overall=FAIL; [FAIL] F1: tagExists positive control — a CLEAN exit-0 matching result returns true",
+    "LIVE DEFECT the interpolation ceiling hides: on 56139ca3 require('./scripts/mc/test-upgrade-current-to-new.js').tagExists returns false for 0.17.0 and 1.2.0 although the legacy-lab tags of both versions exist (git tag -l lists the 1.2.0 one) — the codemod's template rewrite made every shipped release read as untagged to resolveVersions()"
+   ],
+   "routeTo": "alpha / backend-lead (live code decision: a lab-aware tag lookup, legacy lab below 2.0.0 and current lab from 2.0.0); lane K for the property-A reading of the stub"
+  }
+ ]
+}

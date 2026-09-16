@@ -35,7 +35,7 @@ Equivalent CLI: `gh repo rename master-console --repo cygaco/MC`.
 - **Git over HTTPS and SSH** — `git clone`, `fetch`, `pull`, `push` against the old URL keep working through the redirect. Old clones do not break.
 - **REST/GraphQL API** — requests to the old name return a redirect to the new one.
 
-The redirect lives **only as long as nobody creates a new repository named `cygaco/MC`.** Never create one; if the old name must be reserved, keep the redirect instead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `mc@*` tags keep their names.
+The redirect lives **only as long as nobody creates a new repository named `cygaco/MC`.** Never create one; if the old name must be reserved, keep the redirect instead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `warpos@*` tags keep their names.
 
 ## What does NOT change by itself — update afterwards
 
@@ -57,7 +57,7 @@ Do these in one follow-up commit on `main`, in this order.
 | GitHub repository **About** panel | Description, website `https://masterconsole.ai`, topics (`claude-code`, `ai-agents`, `agent-framework`, `agpl`); social preview image | UI only |
 | Announcement (S-OS-07) | Use the new URL everywhere; mention that old links redirect | — |
 
-Do **not** rename the `mc@*` tags, the `_mc/` directory, the `MC_*` environment variables or the `warp:*` skills here — that is the identifier-layer migration (S-OS-06, `mc@2.0.0`) with aliases for one release.
+Do **not** rename the `warpos@*` tags, the `_mc/` directory, the `MC_*` environment variables or the `warp:*` skills here — that is the identifier-layer migration (S-OS-06, `mc@2.0.0`) with aliases for one release.
 
 ## Verify
 
