@@ -269,6 +269,35 @@ test(`${FALSIFIER_ID} (k) HERMETIC SCRUB (β row 486): an ambient variable outsi
   });
 });
 
+// (lane I8, β a94f0d26 / b2c94e18, α R-71) COUNT-LOCK refuses, never skips. The plants go straight to the runner's own
+// exported lock decision: `node --test` always prints its "# fail N" summary unless its own process dies, and that death
+// lands in UNOBSERVED on POSIX but can exit with a code on win32, so an end-to-end plant would be platform-shaped.
+// β plant form: every case asserts the EXACT rule list, so the plant trips its own rule and NO neighbouring one.
+const LOCK_FILE = "tests/q/still-fails.test.js";
+const LOCK_NAMES = ["dummy rotted"];
+function verdictRules(over) {
+  const v = RUNNER_DECL.lockVerdict(entry(LOCK_FILE), { observed: RUNNER_DECL.causeMultiset(FAILING_CAUSE_LINES), testNames: LOCK_NAMES, fc: 1, tv: [2, 0, 0], here: RUNNER_DECL.currentStamp(), ...over });
+  return { rules: v.findings.map((f) => f.rule), messages: v.findings.map((f) => f.message).join("\n"), unobserved: v.unobserved };
+}
+
+test(`${FALSIFIER_ID} (l) COUNT-LOCK REFUSES (β a94f0d26): an unobservable failing-test count never renders as agreement`, () => {
+  const control = verdictRules({});
+  assert.deepStrictEqual(control.rules, [], `control: an equal cause multiset with an OBSERVED count of 1 must still-fail cleanly\n${control.messages}`);
+  const plant = verdictRules({ fc: null });
+  assert.deepStrictEqual(plant.rules, ["COUNT-UNOBSERVABLE"], `an unobservable count must trip COUNT-UNOBSERVABLE and nothing else (no NO-LOCK, INDETERMINATE, CAUSE-LOCK, COUNT-LOCK or EXPIRED)\n${plant.messages}`);
+  assert.match(plant.messages, /^COUNT-LOCK UNOBSERVABLE: tests\/q\/still-fails\.test\.js fails/, plant.messages);
+  assert.strictEqual(plant.unobserved, true, "an unobservable count is counted as unobserved");
+});
+
+test(`${FALSIFIER_ID} (m) NO LOCK (β b2c94e18, the CONJUNCTION): an entry whose EVERY layer is unobservable refuses loudly as having no lock at all`, () => {
+  const control = verdictRules({ observed: [] });
+  assert.deepStrictEqual(control.rules, ["INDETERMINATE"], `control: an EMPTY capture with an OBSERVED count is the cause layer's refusal alone (no NO-LOCK)\n${control.messages}`);
+  const plant = verdictRules({ observed: [], fc: null });
+  assert.deepStrictEqual(plant.rules, ["NO-LOCK"], `EMPTY capture AND unobservable count must trip NO-LOCK and nothing else (no INDETERMINATE, COUNT-UNOBSERVABLE, CAUSE-LOCK, COUNT-LOCK or EXPIRED)\n${plant.messages}`);
+  assert.match(plant.messages, /^NO LOCK: tests\/q\/still-fails\.test\.js fails, but EVERY lock layer is unobservable/, plant.messages);
+  assert.strictEqual(plant.unobserved, true, "an entry with no lock is counted as unobserved");
+});
+
 test(`${FALSIFIER_ID}: the real tests/quarantine.json is never touched`, () => {
   const realAfter = fs.existsSync(REAL_QUARANTINE) ? fs.readFileSync(REAL_QUARANTINE) : null;
   assert.ok(realBefore === null ? realAfter === null : realAfter !== null && realBefore.equals(realAfter), "the real quarantine artifact changed during the falsifier");

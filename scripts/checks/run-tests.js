@@ -678,7 +678,15 @@ function lockVerdict(e, { observed, testNames, fc, tv, here }) {
   const ev = parseSemver(e.expiryVersion);
   const stampDiffers = e.observedOn.platform !== here.platform || e.observedOn.nodeMajor !== here.nodeMajor;
   let unobserved = false;
-  if (observed.length === 0) {
+  // REFUSE, NEVER SKIP (β a94f0d26 / b2c94e18, α R-71, lane I8): an unobservable layer may never render as agreement.
+  const causeObservable = observed.length > 0;
+  const countObservable = Number.isInteger(fc) && fc >= 0;
+  if (!causeObservable && !countObservable) {
+    // NO LOCK (the CONJUNCTION): every layer is unobservable, so this entry has no lock at all. Its own named refusal,
+    // not the cause layer's INDETERMINATE: refusing each layer separately does not say the entry is entirely unlocked.
+    unobserved = true;
+    add("NO-LOCK", `NO LOCK: ${e.file} fails, but EVERY lock layer is unobservable (the cause capture is EMPTY and the failing-test count is not observed) — this entry has no lock at all and absolves anything; refused`);
+  } else if (observed.length === 0) {
     // INDETERMINATE (β row 490, α r-32): an EMPTY observed capture means the runner could not look. It knows
     // nothing about whether the cause changed, so it REFUSES, independently of the vacuity rule below. It may never pass.
     unobserved = true;
@@ -696,7 +704,11 @@ function lockVerdict(e, { observed, testNames, fc, tv, here }) {
           : "") +
         `\n    observed, canonical order (${observed.length}):\n${listing(observed)}\n    registered, canonical order (${e.causeLines.length}):\n${listing(e.causeLines)}`
     );
-  } else if (fc !== null && fc > e.failCount) {
+  } else if (!countObservable) {
+    // COUNT-LOCK UNOBSERVABLE: before lane I8 an unobserved count skipped COUNT-LOCK SILENTLY and the entry passed.
+    unobserved = true;
+    add("COUNT-UNOBSERVABLE", `COUNT-LOCK UNOBSERVABLE: ${e.file} fails, but its failing-test count is not observed (no reporter fail summary) — not an observation that no new test fails; refused`);
+  } else if (fc > e.failCount) {
     add("COUNT-LOCK", `COUNT-LOCK: ${e.file} now has ${fc} failing test(s), more than the registered ${e.failCount} — a new failing test the quarantine must not absolve`);
   } else if (ev && tv && semverGte(tv, ev)) {
     add("EXPIRED", `EXPIRED: ${e.file} quarantine expired at ${e.expiryVersion} (tree ${tv.join(".")}) — resolve the rot or re-warrant [${e.filedUnder}, ${e.expiry}]`);

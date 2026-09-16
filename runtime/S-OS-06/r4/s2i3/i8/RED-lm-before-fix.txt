@@ -1,0 +1,10 @@
+# RED: new cases (l)(m) against runner at 823bf72f (behaviour-preserving extraction, fix NOT applied). Path-free extract of the spec output: result lines + assertion actual/expected only. exit=1
+✖ QUARANTINE-RUNNER (l) COUNT-LOCK REFUSES (β a94f0d26): an unobservable failing-test count never renders as agreement (1.4817ms)
+✖ QUARANTINE-RUNNER (m) NO LOCK (β b2c94e18, the CONJUNCTION): an entry whose EVERY layer is unobservable refuses loudly as having no lock at all (0.2642ms)
+ℹ tests 2
+ℹ pass 0
+ℹ fail 2
+    actual: [],
+    expected: [ 'COUNT-UNOBSERVABLE' ],
+    actual: [ 'INDETERMINATE' ],
+    expected: [ 'NO-LOCK' ],
