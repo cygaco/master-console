@@ -56,6 +56,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `a94f0d26` | Vacuity count: HIGH recorded as decided, scoped to the six committed entries; MEDIUM on the ambient finding RE-BASED onto the fixed runner's 23/23; COUNT-LOCK refuse-not-skip in the SAME lane I unit + a CONJUNCTION falsifier; re-register the six AFTER the scrub (attributability) with a scrub-specific pre-committed interpretation |
 | `d8471fa6` | The unfulfilled-stub plant tripped two rules at once (no `authoritative:false`) — a plant must isolate the defect it names |
 | `e0b3d951` | The `--artifact` mode was proven on a fixture and wired to nothing — wire it against the real rulings file WITH a registered expiry; print the git-object ceiling and the bucket order; record why a missing ledger SKIPS (absent by design) but a missing artifact REDS (absent unexpectedly) |
+| `f8d3a607` | The derived-gap disposition is stated as ARITHMETIC (215 = 110 + 105 per view) with tightened wording ("nothing left unaccountably", never "nothing vanished"); the FINAL regen no-op proof is a tracked close item; every plant asserts the ABSENCE of the neighbouring finding; lane J's landing is attested, cite by SHA |
 
 UNLOGGED: (none — every id above resolves as of this rewrite; re-run `beta-ledger-refs --artifact` to check)
 
@@ -93,10 +94,18 @@ for the CONJUNCTION (an entry where every layer is unobservable has no lock at a
 loudly). HIGH is scoped to the six entries on the COMMITTED side only; MEDIUM on the ambient finding is
 RE-BASED onto the fixed runner's 23/23 — superseded, not corroborated; the old committed 23/23 never
 appears in the close as support. Lane J LANDED at `438ff2f0` (REMOVED 15 carried separately; both β
-conditions in the merge message). The derived gap is BENIGN and measured per view (215 committed vs 110
-regenerated across the three manifests; nothing vanished; strict check zero) — R-39(a) SATISFIED,
-R-39(b) UNBLOCKED; the register regen runs twice (now, and LAST after the triple manifest regen, shown a
-no-op or the set re-emitted); ε's pre-committed falsifier: derived lands at 110 after the manifest regen.
+conditions in the merge message — ATTESTED; the close cites the SHA and lets a reader resolve it).
+The derived gap is BENIGN, and per β `f8d3a607` the claim is stated as ARITHMETIC, not a conclusion:
+**215 = 110 + 105**, the 105 attributed per generated view — `framework-manifest.json` 90 → 45 (−45),
+`framework-installed.json` 60 → 30 (−30), `_mc/MANIFEST.json` 65 → 35 (−35). Tightened wording (the
+only defensible form; "nothing vanished" is FALSE as written and must not appear in the close): *no
+occurrence left the register unaccountably; 105 derived occurrences were legitimately removed by
+regenerating the views that contained them; the strict derived-without-pinned-source check is zero.*
+R-39(a) SATISFIED on that emission; R-39(b) UNBLOCKED; the register regen runs twice (now, and LAST
+after the triple manifest regen). CLOSE-CHECKLIST ITEM, tracked separately from the regen about to run:
+the FINAL regen must be shown a NO-OP diff (`d5c8a271`), or the derived-gap set is re-emitted on the
+final state. ε's pre-committed falsifier: derived lands at 110 after the manifest regen; anything else
+is a finding.
 
 ## STATUS TABLE — the e-16 "blocked" list, answered
 
