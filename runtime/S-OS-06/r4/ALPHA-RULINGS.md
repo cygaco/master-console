@@ -122,7 +122,10 @@ appears in the close as support. Lane J LANDED at `438ff2f0` (REMOVED 15 carried
 conditions in the merge message — ATTESTED; the close cites the SHA and lets a reader resolve it).
 The derived gap is BENIGN, and per β `f8d3a607` the claim is stated as ARITHMETIC, not a conclusion:
 **215 = 110 + 105**, the 105 attributed per generated view — `framework-manifest.json` 90 → 45 (−45),
-`framework-installed.json` 60 → 30 (−30), `_mc/MANIFEST.json` 65 → 35 (−35). Tightened wording (the
+`framework-installed.json` 60 → 30 (−30), `_mc/MANIFEST.json` 65 → 35 (**−30**; α first printed −35 —
+caught by β `c5e91b73` on one subtraction; the printed deltas summed to 110 against a gap of 105; the
+totals were right and one figure was mistyped — the emission audited itself on first reading, which is
+the whole argument for arithmetic over conclusions). Tightened wording (the
 only defensible form; "nothing vanished" is FALSE as written and must not appear in the close): *no
 occurrence left the register unaccountably; 105 derived occurrences were legitimately removed by
 regenerating the views that contained them; the strict derived-without-pinned-source check is zero.*
