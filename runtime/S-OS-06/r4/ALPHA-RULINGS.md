@@ -169,6 +169,12 @@ a registry derivation with no assert that it yielded a subject), the files are i
 closed by repairing files and the shape ships again; this one is closed by fixing how plants are written
 (fixture-harness candidate: a pinned-refusal form as the easy form). Mixed state reported cleanly: one plant
 repaired and demonstrated, one authorized, three measure-only with their result stated.
+ED-440-A3 (β form point): the defect is stated at the ENFORCER'S GRAIN — "a plant must fail for exactly
+the reason it names, and for no other" (attributability); A2's two sub-shapes ("might fail for a different
+reason" / "might not fail at all") are its instances, files are instances of sub-shapes. β also recorded
+that its own file-A2-only-if-vacuous condition coupled the entry to a result — the coupling the
+pre-commitment existed to prevent — and that α's early filing corrected it. β's iteration on ED-440 is
+closed; the pre-commitment covers both branches of the sibling measurement without a further consult.
 
 ## R-112 — ε e-37: the sibling plant is VACUOUS (measured); one of R-110's three confirmations was softer than stated; sibling fix AUTHORIZED as one bounded test-side commit; ED-440-A1
 PULL-RULE INTEGRITY (ε e-37 is right on the fact, wrong on the inference): § R-110 and § R-111 were not in
