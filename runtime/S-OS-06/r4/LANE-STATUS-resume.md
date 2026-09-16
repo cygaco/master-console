@@ -318,3 +318,116 @@ it. Re-running all 23 under a fixed parser is **cannot-assess**.
 | Case (e) assertion literal (the one genuine contract flip) | β/α | (e) |
 | Lane K's two measured contradictions of β's residue expectation | β | lane K's sets being final |
 | CI green on the final head | **operator only** | section 5.5 — no agent in this session can close it |
+
+---
+
+# PART 4 — Lane J LANDED, register regenerated, sprint head FULLY GREEN
+
+## Sprint head `8b3ad24b` — the first honest green of the resume
+
+Measured on a pristine tree, restored and cleaned immediately before EACH run (see the Part 2 lesson —
+a reused worktree stops being a clean-state measurement after the first gate):
+
+| measurement | result |
+|---|---|
+| `npm test` | **exit 0** — 378 files, 1249 tests, 1246 pass, **0 fail**, 3 skipped |
+| quarantine | 23 entries, 23 still failing as expected, 0 unexpectedly passing |
+| framework-purity · leak-gate · cutover-completeness · record-trust-exit · privacy | all **rc 0** |
+
+## Lane J LANDED at `438ff2f0`
+
+15 shims **REMOVED** (its own count, never folded into FIXED), 1 deferred. Split form per α r-21 / β
+`f1a93c68` row 484. Both β honesty conditions are in the merge commit message itself, not in a report:
+the contiguity is **PROCEDURAL not enforced**, and the intermediate commit `a097eec9` is named with what
+is red in it and why, citing probe `b054b9ac`.
+
+**Two conductor misses on that landing, both found afterwards, both repaired:**
+
+1. **A binding condition was never discharged.** α r-03 condition (b) — prove migration 003 does not read
+   the deleted files, fixture-product test RED-then-GREEN, BEFORE the removal commit — was carried
+   UNCHANGED into r-03a and never done. Lane J's report never mentions it. **I merged without checking.**
+   Measured afterwards (weaker evidence than the condition asked for, but it addresses the hazard): the
+   migrations tree names NONE of the 15 deleted shims, and the migration test is green 3/3 standalone. The
+   hazard does not materialise — which is NOT the same as the condition being met.
+2. **The landing introduced a real regression, and the project's own guard caught it.** `alias-map.test.js`
+   L133 read the partition artifact directly, bypassing `partition-loader.js`. The single-loader guard failed
+   naming the file and line. Attribution measured: absent at `25bb6541`, introduced by `44481a6c`, failing in
+   all 3 in-suite runs (deterministic, not a flake). **Fixed and merged at `2febdd05`**; both guards verified
+   rc 0 individually before merge.
+
+## Register regenerated — `8b3ad24b` (α r-39 item b)
+
+Run deliberately via the codemod's `--dry-run`, **not** taken as a gate side-effect. Delta measured before
+and after: **pinned 319 → 334**, derived unchanged 215, compat unchanged 76, rewritten 0.
+
+**The root cause of the two record-trust-exit reds is now fixed, not suppressed:** the committed register
+had drifted from the tree, so the gate regenerated and therefore MUTATED on every run, and its own test
+("the exit gate must not change the committed ledger") caught that. Confirmed: record-trust-exit now leaves
+**zero tracked files modified**.
+
+**r-39 item (a) discharged first, as ordered.** The 215-vs-110 derived gap is **BENIGN**, measured per view:
+oracle (ii) sweeps REGENERATED manifest bytes (framework-manifest 90→45, framework-installed 60→30,
+_mc/MANIFEST 65→35) while the register counts the COMMITTED ones. Nothing vanished — all 215 are present at
+HEAD, counted in the committed blobs. Both other discriminators refuted on evidence.
+
+**PREDICTION ON RECORD, written before the run:** when the triple manifest regen runs LAST under r-03a item
+4, derived should land at **110**. Anything else is a finding.
+
+Item (c) still owed: the regeneration REPEATS as the last step, and lane K's sets re-derive on that tree.
+
+## Lane I — still HELD. Merge probe measured RED, blockers are concrete
+
+Probe `eps-laneI-probe` @ `bcefa687` (NOT for landing): framework-purity rc 1, leak-gate rc 1,
+cutover-completeness rc 0, `npm test` rc 1. The test failure is downstream of purity, so there are two real
+blockers:
+
+1. **`promote_relic` ×2** — `s2i3/i6/SUITE_run.txt` and `s2i3/i7/SUITE_hermetic_run.txt` carry a
+   legacy-slug-prefixed ledger identifier. **Third instance of one pattern this round**; remedy established
+   (lane C's never-quote-line-text at `f490592e`; two untrackings by ε).
+2. **`legacy_slug` ×6 live-unallowed, all in the rewritten quarantine register** — enumerated, not counted:
+   one is the register's own policy prose recording that the codemod once rewrote a cause line; **five are
+   `basePath` fields naming each test's pre-rename path.**
+
+   **The five exist because β required rename provenance.** Rewriting them would destroy that provenance AND
+   break the runner's base-identity check, since at base the file genuinely IS at the legacy path. They are
+   record (property B) and instrument (property A) at once. This is a gate and a ruling in tension; the
+   resolution is a **warranted disposition**, not a code change — and that is a partition amendment, so its
+   commit form is not mine to guess after row 478. **Routed for a ruling.**
+
+## What lane I now carries (why landing it matters)
+
+The refuse-on-empty runner property; the parser key-indent fix as a property accepting both indent forms;
+case (e) repointed under β row 488; falsifiers (f), (i), (j) each shown red-then-green INDIVIDUALLY; the
+hermetic environment scrub with a declared allow-list generated into the normalizer's own declaration; and
+the vacuity count.
+
+**The vacuity count is the round's finding.** COMMITTED runner at `6d46a818`: **6 of 23 entries observed
+EMPTY**, register holds the empty sentinel, observed equals it, lock reports **MATCH**. An empty capture read
+as agreement — β's row-472 path, measured. FIXED runner: **0 of 23**. By β's pre-committed rule that is
+**HIGH** for those six.
+
+So the tree we would ship today is green **and carries six locks that cannot fail**, and the change that
+removes them is the one blocked behind the two items above. β fenced "don't land lane I" as a way to stay
+green BEFORE this count existed.
+
+## Flakes characterized, not labelled (α r-39 failure 3)
+
+- `head-advanced-after-check`: 3 standalone + 3 in-suite green at `438ff2f0`; with the one earlier in-suite
+  failure that is 7 observations, 1 failure. Rare flake under parallel suite load.
+- `migration.test.js`: 1 in-suite failure in 3; 3/3 green standalone.
+- The suite's own test COUNT varied across three identical runs (1245 / 1249 / 1249). Not explained away.
+- Lane I7 named a fourth of the same shape and refused to clean it up: the failure SET swaps by one between
+  ambient and hermetic runs, and it states plainly it has NOT shown whether the cause is the scrub or live
+  tree state. **Open, by the builder's own honesty.**
+
+Four instances of one class: tests that read live mutable state while a parallel suite writes to the tree.
+
+## Still blocked, none of it ε's to decide
+
+| item | owner |
+|---|---|
+| Disposition for the 6 quarantine-register occurrences | β / α |
+| Lane I landing (gated on the above + the evidence files) | α |
+| The COUNT-LOCK — same empty-reads-as-agreement shape, named by lane I6, deliberately not fixed | β |
+| Push to origin, bare from the project root | **operator** |
+| CI green on the final head — § 5.5 | **operator** |
