@@ -142,9 +142,23 @@ function main() {
   }
   // Baseline: shrink-only. Applies to the canonical ledger by default; an explicit --file
   // (fixture) uses no baseline unless --baseline <path> is passed.
+  // Baseline is keyed on the resolved TARGET, never on how the path arrived (β verdict a71e5c34:
+  // `--file` answers "where is the ledger"; reading it as "this is a fixture, suppress the baseline"
+  // was one field answering two questions and produced false REDs on the real ledger from any
+  // non-root cwd). Canonical ledger ⇒ baseline applies; any other target ⇒ off; `--baseline <path>`
+  // sets it explicitly; `--no-baseline` is the explicit override.
   let baseline = [];
   const bi = argv.indexOf("--baseline");
-  const baselineFile = bi >= 0 && argv[bi + 1] ? path.resolve(argv[bi + 1]) : (argv.includes("--file") ? null : BASELINE_FILE);
+  const canonicalLedger = (() => {
+    try { const { PATHS } = require("../hooks/lib/paths"); if (PATHS && PATHS.betaEvents) return path.resolve(PATHS.betaEvents).toLowerCase(); } catch (_) { /* fall through */ }
+    return path.resolve(__dirname, "../../.claude/agents/president/_system/beta/events.jsonl").toLowerCase();
+  })();
+  const norm = (p) => path.resolve(p).toLowerCase().replace(/\\/g, "/");
+  const CANONICAL_SUFFIX = ".claude/agents/president/_system/beta/events.jsonl";
+  const targetIsCanonical = norm(file) === canonicalLedger.replace(/\\/g, "/") || norm(file).endsWith(CANONICAL_SUFFIX);
+  const baselineFile = argv.includes("--no-baseline") ? null
+    : (bi >= 0 && argv[bi + 1]) ? path.resolve(argv[bi + 1])
+    : (targetIsCanonical ? BASELINE_FILE : null);
   if (baselineFile && fs.existsSync(baselineFile)) {
     try { baseline = JSON.parse(fs.readFileSync(baselineFile, "utf8")).entries || []; }
     catch (e) { parseErrors.push({ row: 0, error: `baseline unreadable: ${e.message}` }); }
@@ -167,18 +181,61 @@ function main() {
   const fulfilledIds = new Set(rows.filter(({ o }) => (o.record_kind !== "issued-stub") && typeof o.msg_id === "string").map(({ o }) => o.msg_id.toLowerCase()));
   const unfulfilledStubs = stubs.filter(({ o }) => !fulfilledIds.has(o.msg_id.toLowerCase())).map(({ n, o }) => ({ row: n, id: o.msg_id, party: o.issued_to || "", boundary: o.boundary || "" }));
   const malformedStubs = stubs.filter(({ o }) => o.authoritative !== false || "decision" in o || "answer" in o).map(({ n, o }) => ({ row: n, id: o.msg_id, why: o.authoritative !== false ? "missing authoritative:false" : "carries decision/answer (readable as a ruling)" }));
+  // ARTIFACT MODE (β verdict c1d47a92, the targeted widening): `--artifact <file>` (repeatable) scans a
+  // PRESENCE-CLAIM artifact — a file whose purpose is to assert what is in the ledger (e.g.
+  // runtime/S-OS-06/r4/ALPHA-RULINGS.md). Not a general artifact sweep (that was refused by
+  // measurement: uncited verdicts appear nowhere on disk). Every id-shaped token is bucketed:
+  // ledger-row | git-object | declared-unlogged (an `UNLOGGED:` line naming it) | UNKNOWN → RED.
+  const artifactFiles = [];
+  for (let i = 0; i < argv.length; i++) if (argv[i] === "--artifact" && argv[i + 1]) artifactFiles.push(path.resolve(argv[++i]));
+  const repoRoot = path.resolve(__dirname, "../..");
+  const isGitObject = (tok) => {
+    try { return require("child_process").spawnSync("git", ["-C", repoRoot, "cat-file", "-e", `${tok}^{object}`], { encoding: "utf8" }).status === 0; }
+    catch (_) { return false; }
+  };
+  const artifacts = [];
+  for (const af of artifactFiles) {
+    const a = { file: af, exists: fs.existsSync(af), tokens: 0, ledger: [], gitObject: [], declaredUnlogged: [], unknown: [] };
+    if (a.exists) {
+      const text = fs.readFileSync(af, "utf8");
+      const declared = new Set();
+      for (const line of text.split(/\r?\n/)) if (/^\s*>?\s*UNLOGGED:/i.test(line)) { let m; ID_RE.lastIndex = 0; while ((m = ID_RE.exec(line))) declared.add(m[1].toLowerCase()); }
+      const seen = new Set();
+      let m;
+      ID_RE.lastIndex = 0;
+      while ((m = ID_RE.exec(text))) {
+        const full = m[0].toLowerCase(), short = m[1].toLowerCase();
+        if (/^\d{8}$/.test(short) || seen.has(short)) continue;
+        seen.add(short);
+        a.tokens++;
+        if (own.has(full) || own.has(short)) a.ledger.push(m[0]);
+        else if (declared.has(short)) a.declaredUnlogged.push(m[0]);
+        else if (isGitObject(m[0])) a.gitObject.push(m[0]);
+        else a.unknown.push(m[0]);
+      }
+    }
+    artifacts.push(a);
+  }
+  const artifactDefects = artifacts.flatMap((a) => (a.exists ? a.unknown.map((id) => ({ file: a.file, id })) : [{ file: a.file, id: "(artifact file not found)" }]));
   // A prefix collision means short-id resolution is ambiguous → fail closed.
-  const ok = parseErrors.length === 0 && newDefects.length === 0 && staleBaseline.length === 0 && prefixCollisions.length === 0 && unfulfilledStubs.length === 0 && malformedStubs.length === 0;
+  const ok = parseErrors.length === 0 && newDefects.length === 0 && staleBaseline.length === 0 && prefixCollisions.length === 0 && unfulfilledStubs.length === 0 && malformedStubs.length === 0 && artifactDefects.length === 0;
   const excludedList = Object.entries(fieldsExcluded).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-  const result = { file, rows: rows.length, parseErrors, fieldsScanned, fieldsExcluded, refsChecked, prefixLen: PREFIX_LEN, prefixCollisions, baselined: baseline.length, newDefects, staleBaseline, declaredUnlogged, correctionNoteRefs, issuedStubs: stubs.length, unfulfilledStubs, malformedStubs, ceiling: "checks that every CITED id resolves and every ISSUED-STUB is fulfilled; a verdict that was never cited and never stubbed is OUTSIDE this instrument", ok };
+  const result = { file, rows: rows.length, parseErrors, fieldsScanned, fieldsExcluded, refsChecked, prefixLen: PREFIX_LEN, prefixCollisions, baselined: baseline.length, newDefects, staleBaseline, declaredUnlogged, correctionNoteRefs, issuedStubs: stubs.length, unfulfilledStubs, malformedStubs, artifacts, artifactDefects, ceiling: "checks that every CITED id resolves and every ISSUED-STUB is fulfilled; a verdict that was never cited and never stubbed is OUTSIDE this instrument", ok };
   if (asJson) console.log(JSON.stringify(result, null, 2));
   else {
     console.log(`beta-ledger-refs: ${rows.length} rows, ${fieldsScanned} fields scanned (default-scan; excluded by name-property), ${refsChecked} refs checked, ${baseline.length} baselined historical holes, prefix ceiling ${PREFIX_LEN} hex (${prefixCollisions.length} collisions), ${stubs.length} issued-stubs (${unfulfilledStubs.length} unfulfilled)`);
     console.log(`  CEILING: this check proves that every CITED id resolves and every ISSUED-STUB is fulfilled. A verdict that was never cited and never stubbed is OUTSIDE this instrument — GREEN does not mean every ruling is in the record.`);
+    console.log(`  BASELINE-KEYING CEILING: the baseline applies to the exact canonical path OR any file at a canonical-shaped path (…/.claude/agents/president/_system/beta/events.jsonl); a stray copy at that shape inherits the row-numbered baseline and may read STALE-BASELINE. Applied here: ${baselineFile ? "yes" : "no"} (target ${targetIsCanonical ? "canonical-shaped" : "non-canonical"}).`);
     console.log(`  excluded-by-property (${excludedList.length} field names; id-shaped tokens NOT checked, for audit): ${excludedList.map(([k, c]) => `${k}=${c}`).join(" ") || "(none)"}`);
     for (const p of parseErrors) console.log(`  PARSE-ERROR row ${p.row}: ${p.error}`);
     for (const s of unfulfilledStubs) console.log(`  UNFULFILLED-STUB row ${s.row}: ${s.id} issued to ${s.party || "?"} re ${s.boundary || "?"} — no verdict (or withdrawn) row carries this id`);
     for (const s of malformedStubs) console.log(`  MALFORMED-STUB row ${s.row}: ${s.id} — ${s.why}; a stub must be authoritative:false and carry no judgment`);
+    if (artifacts.length) console.log(`  artifact-mode bucket order: ledger-row → declared-unlogged → git-object → UNKNOWN. GIT-OBJECT CEILING: an 8-hex token that is not a ledger row is resolved against the object database (git cat-file -e), so a prefix that coincidentally names a real object is absolved (≈1 in 50,000 per token in this repo; grows with repo size and token count). ABSENCE DISCRIMINATOR: a missing LEDGER is absent BY DESIGN (gitignored; the falsifier's live case SKIPS visibly) — a missing ARTIFACT is absent UNEXPECTEDLY (committed; RED).`);
+    for (const a of artifacts) {
+      if (!a.exists) { console.log(`  ARTIFACT-MISSING ${a.file} — a presence-claim artifact is committed; its absence is a defect, not a skip`); continue; }
+      console.log(`  artifact ${path.relative(repoRoot, a.file)}: ${a.tokens} id-shaped tokens → ledger-row ${a.ledger.length}, git-object ${a.gitObject.length}, declared-unlogged ${a.declaredUnlogged.length}, UNKNOWN ${a.unknown.length}`);
+      for (const id of a.unknown) console.log(`  UNKNOWN-IN-ARTIFACT ${path.relative(repoRoot, a.file)}: ${id} — resolves to neither a ledger row nor a git object and is not declared UNLOGGED`);
+    }
     for (const c of prefixCollisions) console.log(`  PREFIX-COLLISION ${c.prefix}: ${c.ids.join(", ")} — short-id resolution ambiguous; raise PREFIX_LEN`);
     for (const u of newDefects) console.log(`  UNRESOLVED row ${u.row} ${u.field}: ${u.id} — no row carries this as its own msg_id`);
     for (const b of staleBaseline) console.log(`  STALE-BASELINE row ${b.row} ${b.field}: ${b.id} — now resolves (or vanished); remove it from the baseline`);
