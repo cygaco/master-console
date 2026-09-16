@@ -146,3 +146,87 @@ codemod dry-run.
 Named residuals, each carrying its measurement rather than a fix: CI lane (five false premises), A
 (7 findings), E (clean-checkout hermeticity, not CI-platform), H2 (vacuous on a bare host), H3 (ED-435),
 F's fix (sequenced after I).
+
+---
+
+# PART 2 — Lane I and lane K outcomes (ε, after the resume dispatches)
+
+## The dispatch lesson, recorded because it cost a full cycle
+
+Both lanes were first re-dispatched with a **100-minute time box inherited from an earlier ratified brief.**
+The wrapper hard-kills at 20 minutes. Both died at exactly 1200162 ms and 1200364 ms,
+`reason: builder_timeout_reap`, **stdout 0 bytes**. Their WORK survived on disk; their REPORTS did not,
+because the reports existed only in stdout.
+
+Re-dispatched narrowed, ordered to **commit first and write the report TO A FILE second**, both finished in
+**394 s and 338 s** with `ok=true`, real stdout, and committed reports. Same builders, same work, same models.
+The difference was the brief.
+
+Two rules follow, and they are now conductor defaults:
+1. Never write a time box larger than the wrapper bound. If the work needs more, SPLIT it.
+2. Order every build-chain builder to commit, then write its report to a named file, then analyse.
+   A committed report survives a reap. stdout does not.
+
+## Lane K — COMPLETE, merged at `b7f5517b`
+
+| Set | Files | Occurrences |
+|---|---:|---:|
+| A (instrument) | 35 | 2520 |
+| B (record) | 1437 | 23854 |
+| **RESIDUE (the fix population)** | **206** | **1013** |
+| cannot-assess | 5 | 5 |
+| CI hit, identified but unruled | 1 | 1 |
+| REMOVED | 0 | 0 |
+
+Self-reconciling: 1684 adjudicated equals 1684 with-occurrence. Counted its own round artifacts INSIDE the
+swept population per section 7b rather than excluding them by path.
+
+**It contradicts β's recorded expectation in two places and says so plainly** rather than bending to fit:
+a live README describing the present repository by the legacy brand, and an ADR whose mitigations and
+reversal-plan sections are OPERATIVE instructions naming legacy-prefixed variables, not records. Both
+contradictions are with β for ruling.
+
+## Lane I — report COMPLETE, lane NOT complete, HELD OUT of the merge
+
+Five falsifiers green (F1, F2, F4, F5, F6). **F3 is RED as an unconditional claim.**
+
+The register's cause-line lock is **environment-dependent, and nothing declares it.** Mechanism, read from
+the code: the runner passes the full ambient environment to the quarantined children it captures, deleting
+only one variable. Any ambient variable that makes the code under test write to stderr displaces the
+captured cause text. Measured: one variable set → 3 of 23 entries diverge every pass (10 quiet + 6 load);
+unset → 23 of 23 match (230 quiet + 92 load observations).
+
+For one test the real cause text is **absent from the capture entirely**, replaced by a deprecation line.
+A register re-captured in that environment could never detect a change to the assertion it exists to lock.
+Today the direction is fail-closed (a false RED, not a false green), but **re-capture environment is
+uncontrolled.** None of the seven declared ceilings is an ambient-environment ceiling.
+
+**The variable was set by ME, the conductor, when dispatching the lane.** Recorded as conductor error.
+The lane isolated it with a single-variable toggle and re-measured with it unset, which is why the mechanism
+is known and not merely the symptom.
+
+Also open on lane I:
+- **I11 not done**, and the corrected brief contradicts itself: it authorizes editing the falsifier file AND
+  lists that file as out-of-scope. The builder refused to pick and flagged it. With β.
+- The sprint's own falsifier file measures **1 pass / 8 fail** against the committed runner.
+- An **orphan grandchild of the reaped dispatch** wrote one summary file ~20 s after the next dispatch
+  started (ED-039/RI-004 class). The builder accepted it as evidence and labelled it as orphan-produced.
+
+**Why held:** lane I's only substantive payload is the 1233-line runner and register rewrite; everything
+else on the branch is evidence. Merging would put a runner on the branch whose own falsifier file is 8/9 red
+and whose remedy is exactly what β is being asked to rule on.
+
+## Gate state at `b7f5517b` (clean detached worktree, not the root)
+
+| gate | rc |
+|---|---|
+| framework-purity | 0 |
+| leak-gate | 0 |
+| cutover-completeness | 0 |
+| record-trust-exit | 0 |
+| privacy | 0 |
+| npm test | 0 — 377 files, 1225 tests, 1222 pass, 0 fail, quarantine 23/23 still failing as expected |
+
+Platform caveat, not glossed: measured on win32; CI runs Linux, and lane E's finding is that its failures are
+clean-checkout hermeticity defects. This licenses "green at this head from a clean checkout on this
+platform", NOT "CI will be green".
