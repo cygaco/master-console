@@ -60,6 +60,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `b9d5e321` | `d6b18f04` Q1 DISCHARGED on the evidence β named in advance (branch register at `21ba435c`; six non-empty, counted) — Q3 satisfied by measurement, no post-scrub re-registration; the pull rule is ADOPTED, NOT EXERCISED until ε resolves something no relay covered (a "read the file" statement is a completion claim from the party who owes the action) |
 | `e2a7d4c9` | The population condition restated as the INVARIANT (count == max observed across repeated runs ON THE CERTIFYING HEAD; shortfall explained per mover); the 8b3ad24b green is a MILESTONE, not the certification; the pull rule is measured without intervening — record per relay whether ε had already read this file (evidence so far: r-77 relay after e-25 was NECESSARY, the file was not yet in ε's tree; e-26 after the merge = ONE data point that the pull works) |
 | `c8b52d17` | The six register occurrences: A and B are ADMISSION tests (each holds exactly one of the five dispositions); the A limb GOVERNS (verbatim + test-pinned); cite the pin falsifier per occurrence; the prose sentence at TOKEN grain; one dispatch, TWO COMMITS minimum; § 7b re-derived on the final artifact set |
 | `f4a1c86d` | Row absence measures the WRITE, not the DELIVERY ("no row yet" is the only honest output of a ledger search); the certifying run must EMIT its population count, equal to the superset 1249 or the movers named; the final regen no-op is downstream of the manifest regen |
@@ -106,6 +107,25 @@ third instance of the round's-own-evidence class gets its own retro line (twice 
 designed around by lane C, none anticipated). DISPATCH: one bounded lane I dispatch carrying the
 amendment (own commit) + the evidence-file remedy + the r-71 items; then RE-PROBE on a pristine tree;
 LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
+
+## R-83 — the moving test count SOLVED with a root cause (ε e-27); fix the fixture path BEFORE the certifying run
+The movers are ONE FILE, not four tests: `tests/regression/S-OS-06/migration.test.js` (five declared cases)
+died AT LOAD in one of three runs — `EPERM: operation not permitted, rename` at `materializeFixture`,
+renaming a process-unique temp dir onto the FIXED SHARED PATH `runtime/S-OS-06/fixture-product`; on Windows
+a rename onto an existing destination fails when anything holds a handle; under parallel suite batches the
+rename loses; standalone there is no contention (3/3 alone, 1-in-3 in-suite — the exact shape). LOCATION
+ANSWERED for this instance: TEST-SIDE determinism, not a product race; it does not ship. The
+head-advanced-after-check case stays SEPARATE (different mechanism) with its own location question open.
+RULINGS: (1) FIX BEFORE CERTIFYING — one bounded dispatch after I8 lands: materialize into a
+process-unique directory, never a rename onto a shared name; RED leg = reproduce the collision
+deterministically and show the current test dies at load; GREEN under the same contention after; then
+three consecutive in-suite runs at that head with the population count PRINTED. (2) The LAST UNIT of the
+1245 vs 1249 delta (five cases moved; totals differ by four; the file-level failure prints twice) is
+accounted BEFORE certification — which line, which counter — or named as an unexplained unit with the
+population = max observed on the certifying head (β consulted, r-84). (3) ε states in every report whether
+it read this file first; β holds the pull rule as ADOPTED, NOT EXERCISED (β `b9d5e321`) until ε resolves
+something no relay covered — the "one data point" recorded under `e2a7d4c9` is DOWNGRADED: e-26 was
+confounded by the r-77 relay, e-27 by r-69.
 
 ## R-71 — first honest green at `8b3ad24b`; lane I lands as ONE UNIT after ONE more dispatch; the close sequence
 Pristine at `8b3ad24b`: 378 files / 1249 tests / 1246 pass / 0 fail / 3 skipped; quarantine 23/23 still
