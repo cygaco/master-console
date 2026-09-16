@@ -175,68 +175,16 @@
   ],
   "checkScripts": [
     {
-      "legacy": "scripts/checks/warpos-applied-migrations.js",
-      "canonical": "scripts/checks/mc-applied-migrations.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-capsule-resolvable.js",
-      "canonical": "scripts/checks/mc-capsule-resolvable.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-enforcer-shippability.js",
-      "canonical": "scripts/checks/mc-enforcer-shippability.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-install-baseline.js",
-      "canonical": "scripts/checks/mc-install-baseline.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-layer-diff.js",
-      "canonical": "scripts/checks/mc-layer-diff.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-manifest-honesty.js",
-      "canonical": "scripts/checks/mc-manifest-honesty.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-migration-coverage.js",
-      "canonical": "scripts/checks/mc-migration-coverage.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-migration-presence.js",
-      "canonical": "scripts/checks/mc-migration-presence.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-path-resolution.js",
-      "canonical": "scripts/checks/mc-path-resolution.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-promote-coverage.js",
-      "canonical": "scripts/checks/mc-promote-coverage.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-roundtrip.js",
-      "canonical": "scripts/checks/mc-roundtrip.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-ship-coverage.js",
-      "canonical": "scripts/checks/mc-ship-coverage.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-staleness.js",
-      "canonical": "scripts/checks/mc-staleness.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-structure-parity.js",
-      "canonical": "scripts/checks/mc-structure-parity.js"
-    },
-    {
       "legacy": "scripts/checks/warpos-tracked-transients.js",
-      "canonical": "scripts/checks/mc-tracked-transients.js"
-    },
-    {
-      "legacy": "scripts/checks/warpos-version-quorum.js",
-      "canonical": "scripts/checks/mc-version-quorum.js"
+      "canonical": "scripts/checks/mc-tracked-transients.js",
+      "expiry": {
+        "kind": "trigger",
+        "trigger": "operator edit of .github/workflows/leak-gate.yml line 36 (`run: node scripts/checks/warpos-tracked-transients.js`) to invoke scripts/checks/mc-tracked-transients.js",
+        "removeWhen": "in the same commit that lands that workflow edit: delete this shim, retire this entry, retire its compat|check-shims row, and repoint scripts/checks/leak-gate.js GATES (tracked-transients) + its rename-mc.js:505 exception",
+        "notBefore": null,
+        "supersedesTopLevelRemoveIn": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 — α r-03a adopting β c7a4e2b9: blocked-ness is PER MEMBER; the live-consumer break is demonstrated for THIS member only (the operator-only, classifier-denied leak-gate.yml:36 invocation), so its expiry is per-entry and keyed to that named trigger, not to the top-level removeIn"
+      }
     }
   ]
 }
