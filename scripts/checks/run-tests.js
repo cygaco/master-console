@@ -665,6 +665,45 @@ function failCount(output) {
   return typeof c.fail === "number" ? c.fail : null;
 }
 
+/**
+ * The per-entry lock decision for a quarantined file that FAILED with an exit code (extracted in S-OS-06 r4 lane I8
+ * so every layer can be planted exactly). Inputs are observations: `observed` = the canonical cause multiset,
+ * `testNames` = the capture's test names, `fc` = the observed failing-test count (null = not observed),
+ * `tv` = tree version (parsed semver or null), `here` = this platform stamp.
+ * -> { findings: [{ rule, message }], unobserved: boolean }. No findings = the entry still fails as registered.
+ */
+function lockVerdict(e, { observed, testNames, fc, tv, here }) {
+  const findings = [];
+  const add = (rule, message) => findings.push({ rule, message });
+  const ev = parseSemver(e.expiryVersion);
+  const stampDiffers = e.observedOn.platform !== here.platform || e.observedOn.nodeMajor !== here.nodeMajor;
+  let unobserved = false;
+  if (observed.length === 0) {
+    // INDETERMINATE (β row 490, α r-32): an EMPTY observed capture means the runner could not look. It knows
+    // nothing about whether the cause changed, so it REFUSES, independently of the vacuity rule below. It may never pass.
+    unobserved = true;
+    add("INDETERMINATE", `INDETERMINATE: ${e.file} fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused`);
+  } else if (isVacuous(observed, { file: e.file, basePath: e.basePath, testNames })) {
+    add("CAUSE-LOCK", `CAUSE-LOCK: ${e.file} fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure\n${listing(observed)}`);
+  } else if (!sameMultiset(observed, e.causeLines)) {
+    const diff = multisetDifference(observed, e.causeLines);
+    add(
+      "CAUSE-LOCK",
+      `CAUSE-LOCK: ${e.file} fails, but the multiset of its cause lines does not equal the registered one — a NEW/different regression the quarantine must not absolve.` +
+        `\n    observed but not registered (${diff.onlyA.length}):\n${listing(diff.onlyA)}\n    registered but not observed (${diff.onlyB.length}):\n${listing(diff.onlyB)}` +
+        (stampDiffers
+          ? ` Registered on ${e.observedOn.platform}/node${e.observedOn.nodeMajor}, observed on ${here.platform}/node${here.nodeMajor}: per the pre-committed interpretation this is a FINDING ABOUT THE NORMALIZER, not a violation to wave through.`
+          : "") +
+        `\n    observed, canonical order (${observed.length}):\n${listing(observed)}\n    registered, canonical order (${e.causeLines.length}):\n${listing(e.causeLines)}`
+    );
+  } else if (fc !== null && fc > e.failCount) {
+    add("COUNT-LOCK", `COUNT-LOCK: ${e.file} now has ${fc} failing test(s), more than the registered ${e.failCount} — a new failing test the quarantine must not absolve`);
+  } else if (ev && tv && semverGte(tv, ev)) {
+    add("EXPIRED", `EXPIRED: ${e.file} quarantine expired at ${e.expiryVersion} (tree ${tv.join(".")}) — resolve the rot or re-warrant [${e.filedUnder}, ${e.expiry}]`);
+  }
+  return { findings, unobserved };
+}
+
 /** Parse a semver "a.b.c" -> [a,b,c] or null. */
 function parseSemver(v) {
   const m = /^(\d+)\.(\d+)\.(\d+)/.exec(String(v || "").trim());
@@ -835,31 +874,10 @@ async function main() {
         // EXPIRY: the entry must not be past its tree-version expiry.
         const cap = captureCauseLines(r.output, ctx);
         const observed = causeMultiset(cap.lines);
-        const fc = failCount(r.output);
-        const tv = treeVersion(opts.root);
-        const ev = parseSemver(e.expiryVersion);
-        const stampDiffers = e.observedOn.platform !== here.platform || e.observedOn.nodeMajor !== here.nodeMajor;
-        if (observed.length === 0) {
-          // INDETERMINATE (β row 490, α r-32): an EMPTY observed capture means the runner could not look. It knows
-          // nothing about whether the cause changed, so it REFUSES, independently of the vacuity rule below. It may never pass.
-          unobserved++;
-          violations.push(`INDETERMINATE: ${e.file} fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused`);
-        } else if (isVacuous(observed, { file: e.file, basePath: e.basePath, testNames: cap.testNames })) {
-          violations.push(`CAUSE-LOCK: ${e.file} fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure\n${listing(observed)}`);
-        } else if (!sameMultiset(observed, e.causeLines)) {
-          const diff = multisetDifference(observed, e.causeLines);
-          violations.push(
-            `CAUSE-LOCK: ${e.file} fails, but the multiset of its cause lines does not equal the registered one — a NEW/different regression the quarantine must not absolve.` +
-              `\n    observed but not registered (${diff.onlyA.length}):\n${listing(diff.onlyA)}\n    registered but not observed (${diff.onlyB.length}):\n${listing(diff.onlyB)}` +
-              (stampDiffers
-                ? ` Registered on ${e.observedOn.platform}/node${e.observedOn.nodeMajor}, observed on ${here.platform}/node${here.nodeMajor}: per the pre-committed interpretation this is a FINDING ABOUT THE NORMALIZER, not a violation to wave through.`
-                : "") +
-              `\n    observed, canonical order (${observed.length}):\n${listing(observed)}\n    registered, canonical order (${e.causeLines.length}):\n${listing(e.causeLines)}`
-          );
-        } else if (fc !== null && fc > e.failCount) {
-          violations.push(`COUNT-LOCK: ${e.file} now has ${fc} failing test(s), more than the registered ${e.failCount} — a new failing test the quarantine must not absolve`);
-        } else if (ev && tv && semverGte(tv, ev)) {
-          violations.push(`EXPIRED: ${e.file} quarantine expired at ${e.expiryVersion} (tree ${tv.join(".")}) — resolve the rot or re-warrant [${e.filedUnder}, ${e.expiry}]`);
+        const verdict = lockVerdict(e, { observed, testNames: cap.testNames, fc: failCount(r.output), tv: treeVersion(opts.root), here });
+        if (verdict.unobserved) unobserved++;
+        if (verdict.findings.length) {
+          for (const f of verdict.findings) violations.push(f.message);
         } else {
           stillFailing++;
           log(`run-tests: quarantine ${e.file} still fails (exit ${r.status}) [${e.cause}; ${e.filedUnder}; expiry ${e.expiry} / <${e.expiryVersion}]${e.basePath ? ` [basePath ${e.basePath}]` : ""} — ${observed.length} cause line(s), a multiset equal to the register:\n${listing(observed)}`);
@@ -915,6 +933,8 @@ module.exports = {
   baseIdentityProblems,
   runNodeTest,
   currentStamp,
+  failCount,
+  lockVerdict,
 };
 
 if (require.main === module) {
