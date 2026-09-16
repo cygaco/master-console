@@ -1,0 +1,5 @@
+not ok 115 tests\\regression\\SP-20260615-001\\roadmap-board-failsoft.test.js
+not ok 117 tests\\regression\\SP-20260615-001\\roadmap-board-render.test.js
+not ok 179 record-trust-exit GREEN: the real clean tree -> exit 0, all five items PASS, the committed ledger unchanged
+not ok 217 real betaEvents corpus: 0 structural findings + append-safe classification invariants
+not ok 88 live tree: the tracked repository passes the default gate (exit 0)
