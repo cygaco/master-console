@@ -60,6 +60,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `c17f9e08` | Item 2's naming half DISCHARGED; the last unit ACCOUNTED before certification (max-observed is a lower bound; counting vs discovery artifact named before rating; read the runner's tally of a load-death); the fixture fix's proof is the forced-contention RED leg — three greens are a control (~30% under the untouched bug) |
 | `b9d5e321` | `d6b18f04` Q1 DISCHARGED on the evidence β named in advance (branch register at `21ba435c`; six non-empty, counted) — Q3 satisfied by measurement, no post-scrub re-registration; the pull rule is ADOPTED, NOT EXERCISED until ε resolves something no relay covered (a "read the file" statement is a completion claim from the party who owes the action) |
 | `e2a7d4c9` | The population condition restated as the INVARIANT (count == max observed across repeated runs ON THE CERTIFYING HEAD; shortfall explained per mover); the 8b3ad24b green is a MILESTONE, not the certification; the pull rule is measured without intervening — record per relay whether ε had already read this file (evidence so far: r-77 relay after e-25 was NECESSARY, the file was not yet in ε's tree; e-26 after the merge = ONE data point that the pull works) |
 | `c8b52d17` | The six register occurrences: A and B are ADMISSION tests (each holds exactly one of the five dispositions); the A limb GOVERNS (verbatim + test-pinned); cite the pin falsifier per occurrence; the prose sentence at TOKEN grain; one dispatch, TWO COMMITS minimum; § 7b re-derived on the final artifact set |
@@ -125,7 +126,18 @@ accounted BEFORE certification — which line, which counter — or named as an 
 population = max observed on the certifying head (β consulted, r-84). (3) ε states in every report whether
 it read this file first; β holds the pull rule as ADOPTED, NOT EXERCISED (β `b9d5e321`) until ε resolves
 something no relay covered — the "one data point" recorded under `e2a7d4c9` is DOWNGRADED: e-26 was
-confounded by the r-77 relay, e-27 by r-69.
+confounded by the r-77 relay, e-27 by r-69. ε cites the SECTION(S) read, not a bare affirmation.
+**β `c17f9e08` (0.91) on R-83:** the NAMING half of checklist item 2 DISCHARGES (a mechanism with a
+reproduction shape); naming ≠ accounting. The LAST UNIT is ACCOUNTED before certification — not because
+the certifying run would be incomplete (a run at max-observed has no shortfall) but because max-observed
+is a LOWER BOUND on the population and an unaccounted unit is evidence the variance model is incomplete.
+Discriminator before rating: COUNTING artifact (the runner tallies a file-level failure twice or counts a
+load-death differently from a case failure → benign, certification proceeds) vs DISCOVERY artifact (a
+test sometimes not found → the population question reopens); β expects counting; the work is to READ how
+the runner tallies a file that dies at load. The fixture fix's PROOF is the forced-contention RED leg;
+three in-suite greens are a CONTROL only — at a one-in-three failure rate, three greens occur with ~30%
+probability (8/27) under the untouched bug. Conduct recorded as correct: ε not rounding five movers to a
+tidy four; ε not folding the head-advanced case into this mechanism.
 
 ## R-71 — first honest green at `8b3ad24b`; lane I lands as ONE UNIT after ONE more dispatch; the close sequence
 Pristine at `8b3ad24b`: 378 files / 1249 tests / 1246 pass / 0 fail / 3 skipped; quarantine 23/23 still
