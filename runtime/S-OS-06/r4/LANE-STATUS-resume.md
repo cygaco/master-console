@@ -230,3 +230,91 @@ and whose remedy is exactly what β is being asked to rule on.
 Platform caveat, not glossed: measured on win32; CI runs Linux, and lane E's finding is that its failures are
 clean-checkout hermeticity defects. This licenses "green at this head from a clean checkout on this
 platform", NOT "CI will be green".
+
+---
+
+# PART 3 — Lane J and lane I5 outcomes, and two rulings outstanding
+
+## Lane J — HELD on a governance contradiction. REMOVED = 0.
+
+β `c7a4e2b9` / α r-03a overruled the conductor's defer-as-a-unit proposal. Blocked-ness is **PER MEMBER**:
+the live-consumer break is demonstrated for ONE of the sixteen shims and undemonstrated for fifteen.
+Deferring all sixteen was "one list answering two questions"; for the fifteen the same words would be
+"a warrant in compat costume". **The conductor assembled that bag and β was right to refuse it.**
+
+The builder then did the work per member and hit a genuine contradiction between two governing decisions:
+
+| Form | B2 teeth (`cutover-completeness`, F8) |
+|---|---|
+| α r-03a as written — shim delete + alias-map retire + partition rows in ONE commit | **exit 1.** A post-freeze partition removal must be its OWN warranted amendment commit, never folded into a gate-fixing commit. That was the only problem; marker and all 15 removal records passed. |
+| Split — a code commit, then a partition-only amendment commit | **exit 0, zero problems.** |
+
+**Both rulings cannot hold**, and no ordering makes every commit green — only the head. Code-first gives 15
+stale-member errors; partition-first leaves live legacy files with no register row. β row-478 ordered the
+teeth to land FIRST precisely so a retirement would be checked by them, and they have now checked a ruling
+made after them. The builder did not guess. **Awaiting α.**
+
+**15 of 15 per-member consumer checks PASS**, run BEFORE any removal, method stated per member. Fourteen are
+referenced only by the alias map, partition rows and closed-sprint prose. The fifteenth (structure-parity)
+has a genuinely executable consumer in old release capsules' post-update checks; the builder read the update
+code, showed a missing script yields *degraded* not *failed*, and cited a precedent deletion. Characterized,
+not waved away.
+
+**Landing-mechanics warning MEASURED AND NOT REPRODUCED.** The report warned a merge commit would recreate
+the rejected form because F8 judges a merge by first-parent diff, and said plainly it had NOT tested that.
+The conductor tested it: merging the green split into the sprint head yields `cutover-completeness` rc=0,
+`framework-purity` rc=0, `leak-gate` rc=0. Probe branch `eps-mergecase-probe` @ `b054b9ac`, not for landing.
+An untested warning is a hypothesis; three minutes of measurement retired it.
+
+**The owed oracle-(ii) measurement is ANSWERED on that same tree:** `violations=0`, residue 0, over 23597
+occurrences in 4457 files, exit 0. **The retained filename does NOT create a violation, so section 5.1's
+zero IS satisfiable with the deferral applied** — no section-1 amendment, no trigger-keyed residual slot.
+Caveat: β later narrowed sequencing to spend no oracle measurement until the lane I remedy lands. This run
+predates that line reaching me; it stands for the tree measured and **must be re-run on the final head**.
+
+**Carried correction:** β verified the quarantine register already carries per-entry `expiry`/`expiryVersion`/
+`filedUnder` with a case enforcing expiry at runtime. The deferred shim's per-entry expiry must COPY that
+shape rather than the invented one lane J built — which also gives the deferred member a falsifier.
+
+## Lane I5 — fixture diagnosis COMPLETE; a runner defect and a vacuous falsifier
+
+β `a5e2c418` removed the licence to edit eight assertions: the signature (only the non-spawning case passes)
+is a SHARED FIXTURE defect, not eight reversals. Correct, and the shared cause was in the helper — three
+layers, all construction: missing register header fields, outdated entry format, and a fixture repo that
+never committed so no base commit existed. Construction-only fix, nine case bodies proven byte-identical by
+comparison: **1/9 → 6/9**.
+
+**β's prediction was CONTRADICTED**, as β invited. Predicted: helper explains 7 of 8, only (b) genuine.
+Measured: helper explains **5 of 8**; **(b) is not a contract flip**; **(e) is the genuine one**.
+
+**(b) and (h) share a RUNNER defect.** The diagnostic parser expects YAML keys two spaces deeper than the
+marker; node 24's reporter emits them at the SAME indent. No key matches, the authored error value is never
+captured, the observed cause set is EMPTY, and the runner reports vacuity before reaching either case's
+branch. Proven by a mutant matrix over temp mirrors: fixture-alone cannot fix it, runner-alone cannot fix it,
+only both together with assertions byte-unchanged.
+
+**β's own falsifier (f) is PASSING VACUOUSLY.** Green on the committed state — but neutralizing the multiset
+lock (f) names leaves it GREEN. It passes through the vacuity branch the parser defect creates, so today it
+would not detect removal of the guard it exists to protect. With the parser fixed it fails alone, so the
+assertion is sound and only its environment is not. **β's insistence that each falsifier be demonstrated
+red-then-green INDIVIDUALLY, never absorbed into a suite green, is what caught this.** (g) discharged.
+(h) red for the parser cause, not its own. Side finding: **no case covers the vacuity branch itself.**
+
+**A false green was available and DECLINED.** Rewriting the failing dummy to emit its cause as a comment line
+would turn (b) and (h) green. The builder refused: it routes around a dead capture path the runner claims to
+have.
+
+**Scope limit, not upgraded:** effect on the REAL register was checked STATICALLY. No real entry imports the
+node test module and their comparison lines arrive as TAP comments, so a parser fix is not expected to change
+it. Re-running all 23 under a fixed parser is **cannot-assess**.
+
+## Outstanding — nothing further can land without these
+
+| Ruling | Owner | Blocks |
+|---|---|---|
+| Same-commit vs partition-only-commit retirement form | α | lane J landing (green split is built) |
+| Ambient-environment remedy; does F3 red block the stop-condition | β | lane I landing |
+| Runner diagnostic-parser key-indent fix | β/α | (b), (h), and falsifier (f)'s non-vacuity |
+| Case (e) assertion literal (the one genuine contract flip) | β/α | (e) |
+| Lane K's two measured contradictions of β's residue expectation | β | lane K's sets being final |
+| CI green on the final head | **operator only** | section 5.5 — no agent in this session can close it |

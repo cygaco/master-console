@@ -1,0 +1,53 @@
+{
+ "$lane": "S-OS-06 r4 lane K5 — per-occurrence overlay on the STANDING lane K adjudication (grain correction; consumed by occurrence-k5.js)",
+ "beta": "b3f81d47-2c9a-4e60-8571-0d94a7e3c6b2",
+ "lines": {
+  ".claude/agents/president/_system/policy/adr/0013-two-dispatch-shape-gates.md": {
+   "32": { "d": "B", "w": "β SPLIT: the decision body is record and stays VERBATIM (it names the env variables as they were decided at the time)" }
+  },
+  "_planning/principle.md": {
+   "6": { "d": "A", "sub": "reference-to-kept-name", "pin": "target filename pinned by tests/regression/S-OS-06/denylist.test.js keptHistoricalPaths; this reference's own pin OWED", "w": "cites _planning/<legacy>-lifecycle-plan.md by its real, kept filename. Rewriting leaves a dangling reference (standing reason: 'resolves and is not a fix unless that file is renamed')" },
+   "113": { "d": "B", "w": "provenance line 'distilled from … on 2026-06-08' (standing reason: B-line)" }
+  },
+  "_planning/README.md": {
+   "19": { "d": "A", "sub": "reference-to-kept-name", "pin": "target filename pinned by denylist.test.js keptHistoricalPaths; this reference's own pin OWED", "w": "names the long-form lifecycle-plan doc by its kept filename; rewriting leaves the reference dangling" }
+  },
+  "_planning/warpos-lifecycle-plan.md": {
+   "1": { "d": "B", "w": "plan title as authored; it matches the kept, test-pinned filename" },
+   "5": { "d": "B", "w": "provenance: 'Source prompt:' records the ingest file the plan was built from. The file is absent at head; the line records origin, not a pointer to follow" },
+   "15": { "d": "B", "w": "Phase-0 analysis prose, dated to authoring (the brand is the subject analysed)" },
+   "17": { "d": "B", "w": "Phase-0 finding '(grounded in Phase 0)', a record of what was found" },
+   "23": { "d": "B", "w": "reframe (principle 13) as authored, a record of the framing decision" },
+   "39": { "d": "B", "w": "Phase-0 finding about the harness classifier, as authored" },
+   "58": { "d": "RESIDUE", "sub": "fix", "w": "STANDING-RULE APPLICATION: a present-tense inventory row names schema id <legacy>/mode-marker/v2, but scripts emit only mc/mode-marker/v2 (3 hits, 0 legacy). Same class as the standing live lines L90/L107/L455 (the identifier no longer resolves at head). The standing liveLines missed this line." },
+   "76": { "d": "RESIDUE", "sub": "fix", "w": "STANDING-RULE APPLICATION: present-tense 'Source of truth: … (schema <legacy>/mode-marker/v2)'; the identifier does not resolve at head (scripts use mc/mode-marker/v2)" },
+   "82": { "d": "RESIDUE", "sub": "fix", "w": "STANDING-RULE APPLICATION: legacy env name <LEGACY>_AUTO_MODE in an operative description of the mechanism. Scripts read MC_AUTO_MODE (2 hits, 0 legacy). Same class as the standing live lines L90/L107/L455." },
+   "100": { "d": "B", "w": "design-decision prose as authored ('… standardizes on the JSON form'), a record of the decision" },
+   "121": { "d": "RESIDUE", "sub": "fix", "w": "STANDING RULE + β ADR reasoning: names the legacy ship-coverage check as the live wiring, but it resolves only through the compat shim, which expires 2.1.0 (scripts/checks/mc-ship-coverage.js is canonical)" },
+   "122": { "d": "RESIDUE", "sub": "fix", "w": "STANDING-RULE APPLICATION: a present-tense corpus claim names the ingest lifecycle file, which is ABSENT at head (same class as the standing live line principle.md L4)" },
+   "161": { "d": "RESIDUE", "sub": "fix", "w": "STANDING RULE + β ADR reasoning: an operative work-table row names the legacy {setup,health,update} skills. They are alias skills that expire 2.1.0" },
+   "171": { "d": "RESIDUE", "sub": "fix", "w": "STANDING RULE + β ADR reasoning: the risk table's enforcer column names the legacy ship-coverage check, a compat shim that expires 2.1.0. The instruction goes false at 2.1.0" },
+   "189": { "d": "B", "w": "plan thesis prose as authored" },
+   "228": { "d": "RESIDUE", "sub": "fix", "w": "STANDING-RULE APPLICATION: the architecture diagram labels the mode SoT schema <legacy>/mode-marker/v2, which does not resolve at head" },
+   "262": { "d": "B", "w": "mode-definition prose as authored" },
+   "280": { "d": "B", "w": "PROOF paragraph (two occurrences), a record of a proof carried out" },
+   "302": { "d": "B", "w": "epic title as minted (E-LIFECYCLE-001)" },
+   "423": { "d": "A", "sub": "reference-to-kept-name", "pin": "target filename pinned by denylist.test.js keptHistoricalPaths; reference pin OWED", "w": "self-path to the kept filename; rewriting leaves it dangling" },
+   "478": { "d": "A", "sub": "reference-to-kept-name", "pin": "target filename pinned by denylist.test.js keptHistoricalPaths; reference pin OWED", "w": "self-path to the kept filename; rewriting leaves it dangling" }
+  },
+  ".claude/project/sprint/active-sprints.yaml": {
+   "*": { "d": "B", "w": "registry title as minted (standing reason: 'Registry titles are B-lines recording sprint names as minted')" }
+  },
+  "_planning/design/WARP-cross-project-nervous-system.md": {
+   "28": { "d": "B", "w": "inside the 'verified-real gap as of 0.15.1' block, L28-38 (standing reason: B-lines inside a live spec)" },
+   "38": { "d": "B", "w": "inside the 'verified-real gap as of 0.15.1' block, L28-38 (standing reason: B-lines inside a live spec)" }
+  }
+ },
+ "cannotAssessFive": {
+  ".claude/project/sprint/sprints/_no-active-sprint/reasoning-auto-approval.md": { "line": 119, "d": "B", "w": "Reasoning episode RT-003, dated 2026-05-13 (header L1-8). Candidate 3 proposes a flag-file shape {schema:'<legacy>/auth/v1'}, so the line records what that episode proposed. The shipped writer and reader use mc/auth/v1 (scripts/hooks/authorization-gate.js:315, scripts/turbo/apply.js:10), and nothing reads this document as a contract. Rewriting would falsify the episode. Sprint state does not apply: _no-active-sprint is a bucket, not a sprint." },
+  ".claude/project/sprint/sprints/SP-20260528-002/current.yaml": { "line": 1, "d": "RESIDUE", "sub": "fix", "w": "The registry lists SP-20260528-002 with status: planning (active-sprints.yaml L598-600), and the file says status: not_started, current_phase: idle. The sprint is registered and non-terminal. The standing adjudication already puts schema-id lines of this plan-only state in RESIDUE (SP-20260525-*). The schema line '<legacy>/sprint/current-sprint/v1' is live state data that a resuming runtime reads against the mc/ const. The registry could have established the state; the earlier time box did not get to it." },
+  ".claude/project/sprint/sprints/SP-20260528-002/progress.yaml": { "line": 1, "d": "RESIDUE", "sub": "fix", "w": "Same sprint, read separately. progress.yaml says status: starting, last_completed_step: tracker_initialized, current_phase: idle. The registry says planning, so the sprint is non-terminal. The schema line '<legacy>/sprint/sprint-progress/v1' is live state data for the plan-only class. The disposition matches the standing SP-20260525-* schema-id rows." },
+  ".claude/project/sprint/sprints/SP-20260619-001/current.yaml": { "line": 1, "d": "B", "w": "UNREGISTERED. It is absent from active-sprints.yaml, and runtime/<legacy>-v1-discovery/lanes/03-sprint.md:36 lists it as orphaned (on disk, not in registry). Status not_started. It was committed in 17c54bd2 as one of '23 settled sprint artifacts'. No registry-driven reader reaches it, so the schema line has no live consumer and records what the initializer wrote. Rewriting would falsify that record. Whether to REMOVE the orphan is not this lane's call." },
+  ".claude/project/sprint/sprints/SP-20260619-001/progress.yaml": { "line": 1, "d": "B", "w": "Same orphan, read separately. progress.yaml says status: starting, last_completed_step: tracker_initialized. There is no registry entry, so no runtime reader reaches the file, and it was committed as a settled artifact (17c54bd2). The schema line '<legacy>/sprint/sprint-progress/v1' records the initializer's output." }
+ }
+}

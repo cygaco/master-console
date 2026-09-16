@@ -1,0 +1,15 @@
+{
+  "$schema": "mc/beta-ledger-refs-baseline/v1",
+  "rule": "Shrink-only. Historical cross-references in paths.betaEvents that predate the beta-ledger-refs enforcer (built 2026-09-16, S-OS-06 r4, beta-proposed). An entry that starts resolving is STALE and turns the check RED until removed; an unresolved reference NOT listed here is a NEW defect and turns the check RED. Never add an entry for a row written after 2026-09-16.",
+  "filedBy": "alpha",
+  "filedOn": "2026-09-16",
+  "entries": [
+    { "row": 137, "field": "precedent", "id": "0defcd64", "note": "MEASURED not a ruling: 0defcd64 is a git commit SHA quoted inside precedent prose (row 135 logged_by: 'executed by the lead @0defcd64'). Registered here (not an inline exemption) because it sits in a scanned cross-ref field; shrink-only rule applies." },
+    { "row": 168, "field": "subsumes", "id": "4760bd94-0613-473b-9cf6-9c4c0c6fa1be", "note": "2026-07 verdict subsumes an id never appended as a row; surfaced by the default-scan widening (β d9c17e45 F1). For β adjudication." },
+    { "row": 299, "field": "amendments", "id": "c17d5e92-4b38-4a06-9f21-6e83b0d47c15", "note": "amendment id never appended as a row" },
+    { "row": 345, "field": "parent_msg_id", "id": "ac4e85ff-c275-4c0c-bf78-0209c2a37e86", "note": "parent verdict id not in the ledger (1 of 165 parent refs)" }
+  ],
+  "adjudicated_out": [
+    { "row": 463, "field": "voids", "id": "21a5d351", "by": "beta d9c17e45", "reason": "consult sent to a dead teammate handle, re-sent as c935288f; no verdict was ever produced, so the voids field honestly records a message that went nowhere. voids is excluded from the scan by construction." }
+  ]
+}
