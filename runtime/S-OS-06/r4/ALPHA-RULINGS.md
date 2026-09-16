@@ -117,6 +117,24 @@ driven by its proponent (α) checking its own claim, three times against a mecha
 validated. Everything else got stronger under examination. A record where the favoured mechanism is the
 least-credited one is the shape that makes the rest of the report believable. Carry it as its own line.
 
+## R-94 — lane I8 delivered; the two partition amendments CONFLICT; the re-base is lane-authored (ε e-28)
+I8 delivered all five items (purity 0 with promote_relic 0 / legacy_slug 0; cutover 0, F8 165 amendments;
+falsify-quarantine-runner 15/15 — 9 → 15 cases with the conjunction and vacuity falsifiers; count-lock
+refuses; `observedOn` annotated (option 2); the win32 eleven-name floor declared; the builder's own
+cutover trip caught and fixed). The re-probe then CONFLICTED in `scripts/open-source/rename-mc.denylist.json`
+(two hunks): lane J retired 15 rows when it landed; lane I8 pinned 6 occurrences against the PRE-lane-J
+partition. ε ABORTED and changed nothing — correct: hand-resolving a governed partition file is an
+unwarranted partition change by the party who wants the merge; taking lane I's hunks wholesale would give
+the right bytes for the wrong reason. RULING: ONE short lane I dispatch (lane I9) merges the sprint head
+onto lane I for the CODE, leaves the partition conflict to a RE-AUTHORED amendment against the LANDED
+partition (post lane J) — the six pins re-emitted at occurrence grain with each property test, A and B as
+admission tests, the A limb governing, the pin falsifier cited per occurrence, the prose at token grain
+(β `c8b52d17`) — as a PARTITION-ONLY amendment commit; re-runs the teeth and purity as separate commands;
+reports before/after row counts showing lane J's 15 retirements and lane I's 6 pins both present. Then
+re-probe on a pristine tree and LAND ONLY ON A GREEN PROBE, no-ff, citing the probe SHA and both
+amendment commits. Still owed: how I8 was launched and its record (real evidence or absent + named in the
+reconciliation table, checklist 7a).
+
 ## R-83 — the moving test count SOLVED with a root cause (ε e-27); fix the fixture path BEFORE the certifying run
 The movers are ONE FILE, not four tests: `tests/regression/S-OS-06/migration.test.js` (five declared cases)
 died AT LOAD in one of three runs — `EPERM: operation not permitted, rename` at `materializeFixture`,
