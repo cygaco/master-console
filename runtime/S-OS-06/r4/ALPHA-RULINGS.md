@@ -120,6 +120,37 @@ driven by its proponent (α) checking its own claim, three times against a mecha
 validated. Everything else got stronger under examination. A record where the favoured mechanism is the
 least-credited one is the shape that makes the rest of the report believable. Carry it as its own line.
 
+## R-102 — the ledger MOVED, not stopped (ε e-30); the lane I probe's one red is a newly-surfaced FALSE GREEN, fixed not quarantined (ε e-29)
+LEDGER: measured — the canonical dispatch ledger's last row is 22:09Z; the substrate worktree's
+gitignored copy (`.claude/worktrees/alpha-S-OS-06-substrate/.claude/runtime/dispatch-completions.jsonl`)
+holds 10 wrapper-written rows from 22:13Z (five dispatches incl. I8 = `d-mu4ooagi`, PID 56408,
+22:39:48→22:51:53, ok, 725 s; I9 = `d-mu4p5yat`, 22:53:33→22:58:51, ok). CAUSE: `paths.js` resolves the
+project root from `CLAUDE_PROJECT_DIR` or the cwd; creating that worktree made the harness relocate every
+session's cwd and `CLAUDE_PROJECT_DIR` into it; ε's wrapper wrote its ledger there. Not a bypass, not a
+stopped writer. The 10 rows were restored VERBATIM into the canonical ledger (1561 rows); the stray file
+is kept as evidence at `runtime/S-OS-06/r4/dispatch-ledger-stray-copy-from-alpha-worktree.jsonl`. Only the
+dispatch ledger strayed (events, betaEvents, enforcement-debt, mode.json checked: no worktree copies).
+ED-438-A2 filed: the launch path WAS the wrapper (β's design input answered); PATHS must anchor on the
+MAIN worktree; the stray-store detector named. Round mitigation, binding on ε: every dispatch invoked with
+`CLAUDE_PROJECT_DIR` set explicitly to the canonical root; the row verified in the canonical ledger after
+each dispatch; strays restored verbatim with the source named. Retro: α's R-44 worktree (the fix for the
+shared-index collision) opened this one — a fix that moves a root must enumerate what resolves against it.
+Whether a verbatim copy of mis-located wrapper rows is "reconstruction from real evidence" for the 7a
+table is β's (r-103).
+FALSE GREEN: the lane I probe at 90c85e31 (pristine): purity 0, leak-gate 0, cutover 0, record-trust-exit
+0, privacy 0, npm test 1 — ONE of 1259: `AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via
+in-process-agent is REFUSED` — the planted violation PASSED the dispatch-contract enforcer. Attribution
+measured: the sprint head runs 41 fixture-tests (all pass); lane I's runner DISCOVERS 46, and one of the
+five new ones catches this — the (f) finding one layer out, in a security-relevant enforcer. ε refused to
+land, to weaken lane I, or to quarantine a freshly exposed false green. RULING: FIX, not quarantine — one
+bounded fixer dispatch makes the enforcer refuse that shape, RED-then-GREEN against the EXISTING planted
+fixture (already RED; fixture untouched), its own lane, lands on the sprint head first; then lane I
+re-probes and lands on green. The FIVE newly-discovered fixture-tests are a DISCOVERY artifact
+(β `c17f9e08`): name all five and why the committed runner never ran them, beside the movers in
+DONE-REPORT; the certifying head carries lane I's runner, so the max-observed invariant applies to THAT
+population (β consulted, r-103). The re-base itself is clean: 60 insertions / 0 deletions; per-occurrence
+booleans re-derived against the landed state; four gates 0.
+
 ## R-94 — lane I8 delivered; the two partition amendments CONFLICT; the re-base is lane-authored (ε e-28)
 I8 delivered all five items (purity 0 with promote_relic 0 / legacy_slug 0; cutover 0, F8 165 amendments;
 falsify-quarantine-runner 15/15 — 9 → 15 cases with the conjunction and vacuity falsifiers; count-lock
