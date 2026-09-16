@@ -53,7 +53,7 @@ const XP_PROVIDER = loadRegistry().roles[XP_REVIEWER].provider;
 assert.ok(XP_PROVIDER && XP_PROVIDER !== "claude", `cross_provider_reviewer '${XP_REVIEWER}' must carry a non-claude provider (got ${XP_PROVIDER})`);
 // Pin the refusal CLASS, not merely "some refusal": this input is ALSO outside the class's
 // allowed_shapes, so a bare ok:false stays green even with the forbidden_shapes refusal
-// neutered (proven: runtime/S-OS-06/r4/contract-fix/neuter/N1-*). Count only the
+// neutered (proven: runtime/S-OS-06/r4/contract-fix/neuter/A-N1-sibling-shape-plant-VACUOUS-green.txt). Count only the
 // FORBIDDEN-shape violation for this role — an empty list reads as PASS → FALSE-GREEN.
 h.violation(`AC-2.4 forbidden_shape: cross-provider reviewer (${XP_REVIEWER}) via in-process-agent is REFUSED as a FORBIDDEN shape (kills diversity)`, () => {
   const r = validateDispatch({ role: XP_REVIEWER, shape: "in-process-agent" });
