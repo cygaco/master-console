@@ -358,10 +358,12 @@ function measureJoin({ root = L.REPO_ROOT, regenFn, remoteFn, provenance = true 
   const members = [];
   const notJoinable = {};
   const noHit = {};
+  const unjoinable = [];
   for (const o of currentCands) {
     const matched = expandAgainst(o.form, o.version, legacyVersions);
     if (matched === null) {
       L.bump(notJoinable, o.form);
+      unjoinable.push({ o });
       continue;
     }
     if (!matched.length) {
@@ -371,11 +373,12 @@ function measureJoin({ root = L.REPO_ROOT, regenFn, remoteFn, provenance = true 
     members.push({ o, kind: EXACT_FORMS.has(o.form) ? "exact" : "pattern", matched });
   }
   if (provenance) {
-    for (const m of members) {
+    // members, then (DESCRIPTIVE ONLY, never join members) the current-lab candidates whose form is uncheckable against a tag list
+    for (const m of [...members, ...unjoinable]) {
       m.prov = traceOccurrence(root, r.grammar, { file: m.o.file, line: m.o.line, col0: m.o.col0, lab: currentLab, version: m.o.version, legacyLab });
     }
   }
-  return { r, currentLab, legacyLab, legacyVersions, currentCands, members, notJoinable, noHit, expansionChecked, provenance };
+  return { r, currentLab, legacyLab, legacyVersions, currentCands, members, notJoinable, noHit, unjoinable, expansionChecked, provenance };
 }
 
 function tallyLine(j) {
@@ -424,6 +427,15 @@ function format(j) {
       `    ${m.o.file}:${m.o.line}:${m.o.col0 + 1}  ${m.kind}  ${m.o.form}  ${m.o.cls}  lab=${j.currentLab} version=${m.o.version} -> lab=${j.legacyLab} version=${m.o.version}  [${m.matched.length === j.legacyVersions.length ? `all ${m.matched.length}` : m.matched.join(" ")}]  ${pv}`
     );
   }
+  if (j.provenance && j.unjoinable.length) {
+    const b = {};
+    for (const u of j.unjoinable) L.bump(b, `${u.o.form}:${u.prov.kind}`);
+    out.push(`  NOT JOINABLE BY FORM — provenance, DESCRIPTIVE ONLY (not join members; the same trace, keyed on the exact version string): ${L.sortedEntries(b).map(([k, v]) => `${k}=${v}`).join("; ")}`);
+    for (const u of j.unjoinable) {
+      const pv = `${u.prov.kind}${u.prov.commit ? ` ${u.prov.commit.slice(0, 8)} ${u.prov.date || ""}` : ""}${u.prov.kind === "unresolved" ? ` (${escapeAt(u.prov.reason)})` : ""}`;
+      out.push(`    ${u.o.file}:${u.o.line}:${u.o.col0 + 1}  ${u.o.form}  ${u.o.cls}  lab=${j.currentLab} version=${escapeAt(u.o.version)}  ${pv}`);
+    }
+  }
   out.push(`  VERDICT: CROSS-LAB MEMBERS=${j.members.length} of ${j.currentCands.length} current-lab candidate(s) over N=${r.pop.terms.scanned} scanned files (population reconciliation above), ${r.occurrences.length} G token(s)`);
   return { lines: out, code: j.members.length === 0 ? 0 : 1 };
 }
@@ -455,6 +467,16 @@ function membersDoc(j) {
       legacyTagsMatched: m.matched,
       provenance: m.prov || null,
       lineExcerpt: excerpt(m.o.lineText, m.o.col0),
+    })),
+    unjoinableRowsDescriptiveOnly: (j.unjoinable || []).map((u) => ({
+      file: u.o.file,
+      line: u.o.line,
+      col: u.o.col0 + 1,
+      form: u.o.form,
+      partitionClass: u.o.cls,
+      token: { lab: j.currentLab, version: escapeAt(u.o.version) },
+      provenance: u.prov || null,
+      lineExcerpt: excerpt(u.o.lineText, u.o.col0),
     })),
   };
 }
