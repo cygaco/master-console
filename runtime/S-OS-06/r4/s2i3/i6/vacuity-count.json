@@ -1,0 +1,739 @@
+{
+  "summary": {
+    "entries": 23,
+    "committed": {
+      "observedEmpty": 6,
+      "registeredEmptySentinel": 6,
+      "emptyReadAsAgreement": 6,
+      "lockMatches": 23
+    },
+    "prefix": {
+      "observedEmpty": 0,
+      "vacuous": 0,
+      "lockMatches": 23
+    },
+    "fixed": {
+      "observedEmpty": 0,
+      "vacuous": 0,
+      "lockMatches": 23
+    },
+    "movedUnderParserFix": 0,
+    "node": "v24.16.0",
+    "platform": "win32"
+  },
+  "rows": [
+    {
+      "n": 1,
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+        "registered": "FAIL KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 92,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 92,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 92
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 2,
+      "file": "tests/mc/lib/provider-autofix.unit.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+        "registered": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 8
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 3,
+      "file": "tests/mc/lib/provider-rca.unit.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+        "registered": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 8
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 4,
+      "file": "tests/mc/product-bootstrap.unit.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "Error: Cannot find module '<repo>\\scripts\\product\\bootstrap.js'",
+        "registered": "Error: Cannot find module '<repo>\\scripts\\product\\bootstrap.js'",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 8
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 5,
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL — 7 of 68 cases failed:",
+        "registered": "FAIL — 7 of 68 cases failed:",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 8
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 6,
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": true,
+        "observed": "(no failure line captured)",
+        "registered": "(no failure line captured)",
+        "registeredIsEmptySentinel": true,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": true
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 2,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 2,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 2
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 7,
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": true,
+        "observed": "(no failure line captured)",
+        "registered": "(no failure line captured)",
+        "registeredIsEmptySentinel": true,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": true
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 8,
+      "file": "tests/regression/S-LC-07/spend-ledger.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL BLOCKER 1: prototype-key models price via _default — usd FINITE, not NaN",
+        "registered": "FAIL BLOCKER 1: prototype-key models price via _default — usd FINITE, not NaN",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 35,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 35,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 35
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 9,
+      "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL real-scaffold-telemetry-tree-passes: AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+        "registered": "FAIL real-scaffold-telemetry-tree-passes: AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 31,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 31,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 31
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 10,
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": true,
+        "observed": "(no failure line captured)",
+        "registered": "(no failure line captured)",
+        "registeredIsEmptySentinel": true,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": true
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 9,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 9,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 9
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 11,
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": true,
+        "observed": "(no failure line captured)",
+        "registered": "(no failure line captured)",
+        "registeredIsEmptySentinel": true,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": true
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 12,
+      "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "Error: ENOENT: no such file or directory, open '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\sprint-full-autonomy.json'",
+        "registered": "Error: ENOENT: no such file or directory, open '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\sprint-full-autonomy.json'",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 13,
+      "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL test_settings_registers_lint_hook_output_between_path_guard_and_sprint_routing",
+        "registered": "FAIL test_settings_registers_lint_hook_output_between_path_guard_and_sprint_routing",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 15,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 15,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 15
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 14,
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL epsilon-agent / small (1000): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([\\",
+        "registered": "FAIL epsilon-agent / small (1000): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([\\",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 51,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 51,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 51
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 15,
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL qa-reviewer (cross_provider_reviewer) → sanctioned via review_fallback — {\"sanctioned\":false,\"lane\":\"review_fallback\",\"shape\":\"subprocess-claude\",\"reason\":\"role 'qa-reviewer' (class 'claude_pinned_reviewer') is not in lane 'review_fall",
+        "registered": "FAIL qa-reviewer (cross_provider_reviewer) → sanctioned via review_fallback — {\"sanctioned\":false,\"lane\":\"review_fallback\",\"shape\":\"subprocess-claude\",\"reason\":\"role 'qa-reviewer' (class 'claude_pinned_reviewer') is not in lane 'review_fall",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 27,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 27,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 27
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 16,
+      "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL: sprint-id-match-preferred-both-checkers: matching sprint_id (window-edge) must correlate in hook-coverage",
+        "registered": "FAIL: sprint-id-match-preferred-both-checkers: matching sprint_id (window-edge) must correlate in hook-coverage",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 17,
+      "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL: planted-extreme-ts-cannot-widen-hook-coverage-window: a real in-window record should green the block-row even with spoofed ts present; got [{\"sprint_id\":\"SP-WC-HOOK\",\"role\":\"qa-reviewer\",\"step\":\"gauntlet\",\"mode\":\"block\",\"finding_type\"",
+        "registered": "FAIL: planted-extreme-ts-cannot-widen-hook-coverage-window: a real in-window record should green the block-row even with spoofed ts present; got [{\"sprint_id\":\"SP-WC-HOOK\",\"role\":\"qa-reviewer\",\"step\":\"gauntlet\",\"mode\":\"block\",\"finding_type\"",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 18,
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": true,
+        "observed": "(no failure line captured)",
+        "registered": "(no failure line captured)",
+        "registeredIsEmptySentinel": true,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": true
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 32,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 32,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 32
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 19,
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": true,
+        "observed": "(no failure line captured)",
+        "registered": "(no failure line captured)",
+        "registeredIsEmptySentinel": true,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": true
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 8,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 8
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 20,
+      "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL report-only-ramp-preserved-not-blocking",
+        "registered": "FAIL report-only-ramp-preserved-not-blocking",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 21,
+      "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL four-known-panels-seeded-and-openers-resolve",
+        "registered": "FAIL four-known-panels-seeded-and-openers-resolve",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 7,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 7
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 22,
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned",
+        "registered": "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 16,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 16,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 16
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    },
+    {
+      "n": 23,
+      "file": "tests/regression/SP-20260627-001/negative-fixtures.test.js",
+      "committed": {
+        "status": 1,
+        "observedEmpty": false,
+        "observed": "- AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via in-process-agent is REFUSED (kills diversity): expected the enforcer to FAIL the planted violation, but it PASSED ({\"ok\":true,\"violations\":[],\"contract\":{\"role\":\"qa-reviewe",
+        "registered": "- AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via in-process-agent is REFUSED (kills diversity): expected the enforcer to FAIL the planted violation, but it PASSED ({\"ok\":true,\"violations\":[],\"contract\":{\"role\":\"qa-reviewe",
+        "registeredIsEmptySentinel": false,
+        "lockMatches": true,
+        "failCount": 1,
+        "emptyReadAsAgreement": false
+      },
+      "prefix": {
+        "observedEmpty": false,
+        "observedCount": 2,
+        "vacuous": false,
+        "lockMatches": true
+      },
+      "fixed": {
+        "status": 1,
+        "truncated": false,
+        "observedEmpty": false,
+        "observedCount": 2,
+        "vacuous": false,
+        "lockMatches": true,
+        "registeredCount": 2
+      },
+      "movedUnderParserFix": false,
+      "addedByParser": []
+    }
+  ]
+}
