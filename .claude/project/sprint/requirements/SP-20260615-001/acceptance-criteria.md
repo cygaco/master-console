@@ -91,6 +91,29 @@
   next-action + in-flight sprints + blockers. The board is **strictly read-only**: the generator
   performs no write to any source file (only its own output artifact).
   verified_by: tests/regression/SP-20260615-001/roadmap-board-render.test.js::renders-board-from-four-live-sources-reads-only
+  - **AMENDMENT 2026-09-16 (S-OS-06 r4 lane H; β verdict `7d3e9f51-2b84-4a06-8c95-1f60b3e74d28`,
+    betaEvents row 475): the verification is SPLIT BY SOURCE AVAILABILITY. The claim above is unchanged.**
+    (a) The three TRACKED sources, ROADMAP.md, TRACKER.md and `active-sprints.yaml`, are in every clean
+    checkout. The test keeps running the generator against the REAL repo (its default root, with any
+    roadmap-root env override removed). It asserts that each of those three sections resolves healthy and
+    carries its source's provenance line. That covers the "do the board's configured source paths still
+    resolve against the real tree" regression class. The check reads the provenance line inside the section
+    and never matches a bare filename, because a missing source's "section unavailable" reason can contain
+    the filename (e.g. `active-sprints.yaml not found`).
+    (b) The two open-gaps registers, `.claude/project/memory/enforcement-debt.jsonl` and
+    `recurring-issues.jsonl`, are gitignored runtime registers that no clean checkout has. Their provenance
+    is asserted on a fixture root that WRITES both registers and copies in the three tracked sources. The
+    root is rendered through the generator's existing `--root` seam, and the gaps section must report the
+    fixture's own open counts. The read-only proof covers both runs.
+    **Warrant:** the test never proved the registers exist. It proved that on a machine which happens to
+    carry them, the board cites them. The real-repo run was an incidental way of obtaining sources, not the
+    claim, and a test that asserts a state must create that state. The product is right: with the registers
+    absent, the gaps section correctly reads "section unavailable" under AC-R4c, which the AC-R4c test
+    asserts. The pre-amendment test encoded an environment assumption that never held in a clean checkout.
+    **Provenance of the defect:** inherited, not caused by S-OS-06. The test was authored 2026-06-14
+    (`7faa1728`) and first surfaced when `npm test` was wired into CI on 2026-09-12 (`cd07638e`).
+    The AC-R4c fixture (`roadmap-board-failsoft.test.js`) gets the same correction: it writes its own
+    registers instead of copying host runtime state. The AC-R4c text itself needs no change.
 - AC-R4b (READ-ONLY v1 — any write path is out of scope) **[β-4]**: Given the roadmap board module,
   when its surface is inspected, then it exposes **no mutate/reorder/mark-done path** — there is no
   code path that writes back to ROADMAP/TRACKER/active-sprints (any such write would be a
