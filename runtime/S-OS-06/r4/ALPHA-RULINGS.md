@@ -60,7 +60,30 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `b7e04c31` | The issued-stub protocol covers a failure mode NOT observed tonight (line survives, body lost) — the close must not claim it addresses the whole-message losses; the β→α direction has no durable pull record by construction (G-25) — a retro STRUCTURAL GAP; α's own rule applied one step up: before re-asking β, check the ISSUED index and ask for a body by id |
 | `d6b18f04` | The hermetic 23/23 (0 moved) SATISFIES Q3 by measurement (pending the register path+SHA); residual = the six's `observedOn` stamp (re-stamp post-scrub or annotate capture≡checking, dated); β's 17/6 expectation was a WORSE error than its six refuted claims (it contradicted a measurement already in hand) — own class, guard: check the thread for an existing measurement before predicting an artifact's state; the builder's scope limit adopted verbatim; the CERTIFYING RUN must be taken on a tree NOTHING ELSE writes to (§ 5.5 condition); the live-mutable-state class is a named residual whose members each still owe the location question |
+
+## R-71 — first honest green at `8b3ad24b`; lane I lands as ONE UNIT after ONE more dispatch; the close sequence
+Pristine at `8b3ad24b`: 378 files / 1249 tests / 1246 pass / 0 fail / 3 skipped; quarantine 23/23 still
+failing; framework-purity, leak-gate, cutover-completeness, record-trust-exit, privacy all 0;
+record-trust-exit leaves ZERO tracked files modified (root cause: the register now matches the tree —
+regen (b) as its own commit, pinned 319 → 334, derived 215 unchanged, compat 76, rewritten 0; ε's
+derived-110 prediction is in that commit message). Loader-fix merged at `2febdd05`. COUNT-LOCK is RULED
+(β `a94f0d26`, `b2c94e18`): refuse-never-skip, IN the lane I unit, plus a planted CONJUNCTION falsifier.
+The lane I landing decision is TAKEN (R-52): ONE more lane I dispatch carries (1) count-lock refuse +
+conjunction falsifier; (2) the six's `observedOn` re-stamped post-scrub or the register annotated
+capture≡checking, dated (β `d6b18f04`); (3) the eleven libuv-refilled names DECLARED as the observed floor,
+source + platform stamped (β `a2f74e09`); (4) the register path + SHA the hermetic 23/23 was measured
+against, the six's branch causeLines shown non-empty. Then LAND lane I (no-ff), re-run the pristine suite +
+gates at the new head. CLOSE SEQUENCE, in order: (a) NAME the four moving tests with their stated rules —
+certification blocked until this exists (β `a2f74e09`); (b) the triple manifest regen (derived-110 checked
+here); (c) the FINAL register regen shown a NO-OP diff or the derived-gap set re-emitted (β `d5c8a271`),
+lane K's sets re-derived; (d) oracles (i)(ii)(iii) + occupancy certifying run on an EXCLUSIVE tree
+(β `d6b18f04`), oracle (ii) with the path-name tally + the deferred member's filename disposition beside
+the zero (β `f1a93c68`), § 8 discharged first; (e) security (codex/GPT via `dispatch-agent.js`) + backend
+gauntlet on the final head; (f) the condition-(b) throwaway-plant result recorded; (g) DONE-REPORT
+carrying every item β holds for the next boundary; then the operator push → CI → β release consult keyed
+"S-OS-06 r4". The one-swap stays a named residual with its location question open.
 
 ## R-69 — the hermetic re-validation result and the certifying-run condition — β `d6b18f04`
 IF ε confirms the 23/23 was measured against the lane I BRANCH register (path + SHA; the six's branch
