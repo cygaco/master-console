@@ -109,6 +109,12 @@ designed around by lane C, none anticipated). DISPATCH: one bounded lane I dispa
 amendment (own commit) + the evidence-file remedy + the r-71 items; then RE-PROBE on a pristine tree;
 LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
 
+## RETRO LINE (β, no id) — the pull rule is the only mechanism in this round whose evidence was revised DOWNWARD
+From one data point → a confounded data point → adopted-but-unexercised → no current evidence, each step
+driven by its proponent (α) checking its own claim, three times against a mechanism α had reason to want
+validated. Everything else got stronger under examination. A record where the favoured mechanism is the
+least-credited one is the shape that makes the rest of the report believable. Carry it as its own line.
+
 ## R-83 — the moving test count SOLVED with a root cause (ε e-27); fix the fixture path BEFORE the certifying run
 The movers are ONE FILE, not four tests: `tests/regression/S-OS-06/migration.test.js` (five declared cases)
 died AT LOAD in one of three runs — `EPERM: operation not permitted, rename` at `materializeFixture`,
@@ -152,9 +158,15 @@ capture≡checking, dated (β `d6b18f04`); (3) the eleven libuv-refilled names D
 source + platform stamped (β `a2f74e09`); (4) the register path + SHA the hermetic 23/23 was measured
 against, the six's branch causeLines shown non-empty. Then LAND lane I (no-ff), re-run the pristine suite +
 gates at the new head. CLOSE SEQUENCE, in order: (a) NAME the four moving tests with their stated rules —
-certification blocked until this exists (β `a2f74e09`); (b) the triple manifest regen (derived-110 checked
-here); (c) the FINAL register regen shown a NO-OP diff or the derived-gap set re-emitted (β `d5c8a271`),
-lane K's sets re-derived; (d) oracles (i)(ii)(iii) + occupancy certifying run on an EXCLUSIVE tree
+certification blocked until this exists (β `a2f74e09`); (a′) the fixture-path fix dispatch (§ R-83) with
+its forced-contention RED leg and the last-unit accounting; (a″) **the `head-advanced-after-check`
+LOCATION READ (β `d5c8a271`, `d6b18f04` Q4) — ASSIGNED to ε (r-90): name the test file:line and the gate
+it exercises; read the gate's check-then-read ordering; head read AFTER the check → a product TOCTOU
+finding (its own fix or a named residual stating the defect); otherwise test-side determinism, fix the
+test. If not read before the certifying run, DONE-REPORT names it as a RESIDUAL with the open question
+verbatim — never the silent third option (held, undispatched, absent from the report);** (b) the triple
+manifest regen (derived-110 checked here); (c) the FINAL register regen shown a NO-OP diff or the
+derived-gap set re-emitted (β `d5c8a271`), lane K's sets re-derived; (d) oracles (i)(ii)(iii) + occupancy certifying run on an EXCLUSIVE tree
 (β `d6b18f04`), oracle (ii) with the path-name tally + the deferred member's filename disposition beside
 the zero (β `f1a93c68`), § 8 discharged first; (e) security (codex/GPT via `dispatch-agent.js`) + backend
 gauntlet on the final head; (f) the condition-(b) throwaway-plant result recorded; (g) DONE-REPORT
