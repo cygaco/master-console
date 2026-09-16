@@ -20,4 +20,4 @@ Behavior is identical — only the canonical name changed.
 
 ## Removal
 
-Scheduled for removal at `mc@1.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:framework-purity`.
+Scheduled for removal at `warpos@1.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:framework-purity`.

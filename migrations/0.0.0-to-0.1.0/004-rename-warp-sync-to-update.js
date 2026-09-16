@@ -31,7 +31,7 @@ arguments. The canonical entry point is **/warp:update**.
 Phase 4 split that operation into update (apply incoming) + promote (push
 outgoing), with /warp:update being the canonical update path. The old name
 remains so docs, READMEs, and habit don't break — but expect a removal at
-mc@1.0.0.
+warpos@1.0.0.
 
 ## Behavior
 

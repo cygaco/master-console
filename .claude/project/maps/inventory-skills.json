@@ -4093,7 +4093,7 @@
         {
           "id": "mc:sync",
           "name": "sync",
-          "description": "\"Legacy alias for /mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc@1.0.0; superseded by /mc:update.\"",
+          "description": "\"Legacy alias for /mc:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos@1.0.0; superseded by /mc:update.\"",
           "file": ".claude/commands/mc/sync.md",
           "user_invocable": true,
           "data_flow": {

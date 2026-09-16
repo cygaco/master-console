@@ -623,8 +623,6 @@ function buildLedgerAndPlan({ root, partition }) {
     pathRenames.push(c.generatedViewMove ? { from: c.from, to: c.to, generatedViewMove: true } : { from: c.from, to: c.to });
   }
 
-  const changelogHistoricalLines = computeChangelogHistoricalLines(path.join(root, "CHANGELOG.md"));
-
   const ledger = [];
   const categoryCounts = {};
   let derivedCount = 0;
@@ -659,7 +657,6 @@ function buildLedgerAndPlan({ root, partition }) {
 
     const lines = content.split(/\r?\n/);
     const isGenerated = partition.isGeneratedView(relPath);
-    const isChangelog = relPath === "CHANGELOG.md";
 
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
@@ -668,7 +665,10 @@ function buildLedgerAndPlan({ root, partition }) {
       // brand-history RULE) beside a live slug no longer marks the whole line pinned: the live slug counts
       // toward `transformed`, and the occurrence-scoped transform must actually remove it (else `delta`). The
       // r2 line-grain version stayed 0 on a pinned-beside-live line — the gap that let F1 pass a level up.
-      if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText) && !partition.findCompatOccurrence(relPath, lineText)) {
+      // S-OS-06 r4 B3: compat lines are NOT skipped whole. A registered compat occurrence is protected through
+      // dispositionAt like any pin, so it counts toward `pinned`; an UNPROTECTED occurrence sharing that line (e.g.
+      // an odd-case mix the four-form rewrite cannot touch) is measured and, if the transform leaves it, is `delta`.
+      if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText)) {
         let category;
         try {
           category = categorizeOccurrence(relPath, lineText);
@@ -676,7 +676,9 @@ function buildLedgerAndPlan({ root, partition }) {
           category = `<categorizer threw: ${e.message}>`;
         }
         const hasT = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, category);
-        const isProtected = (i) => partition.dispositionAt(relPath, lineText, i) !== null || (isChangelog && changelogHistoricalLines.has(lineNum));
+        // S-OS-06 r4 B1 (β 6d4a2f18): protection is ONLY a registered disposition. The changelog-historical inline
+        // boolean that was ORed in here absolved occurrences with no register entry behind them; it is gone.
+        const isProtected = (i) => partition.dispositionAt(relPath, lineText, i) !== null;
         const dre = /warpos/gi;
         let dm;
         let occN = 0;
@@ -741,7 +743,12 @@ function buildLedgerAndPlan({ root, partition }) {
             // brand-history RULE (S-OS-06 r3) — `at.rule` set means warpos@<semver> or "formerly WarpOS",
             // kept forever with no per-file pin. Either way this occurrence is NEVER rewritten.
             disposition = "pinned";
-            if (at.rule === "evidence-tag") {
+            if (at.rule === "tag-glob") {
+              // S-OS-06 r4 lane J: a version-listing glob closed by COMPUTATION (partition-loader#computeTagGlob), never by a
+              // form rule or a warrant — the members it expands to are EMITTED on the row (lab and version kept apart).
+              rule = "computed:tag-glob";
+              warrant = `version-listing glob COMPUTED against the named lab's real tag list: pattern ${at.glob.pattern} expands to ${at.glob.members.length} real tag(s) [${at.glob.members.join(" ")}] — satisfied by computation, never by warrant`;
+            } else if (at.rule === "evidence-tag") {
               rule = "rule:evidence-tag";
               warrant = "prior-art release/evidence tag warpos@<semver>; kept forever, never rewritten (RULE)";
             } else if (at.rule === "brand-history") {
@@ -752,12 +759,9 @@ function buildLedgerAndPlan({ root, partition }) {
               warrant = at.pin ? at.pin.warrant : "occurrence pin";
             }
             pinnedCount += 1;
-          } else if (isChangelog && changelogHistoricalLines.has(lineNum)) {
-            disposition = "pinned";
-            rule = "changelog-historical";
-            warrant = "changelog entry for a shipped release < 2.0.0; historical record, verbatim";
-            pinnedCount += 1;
           } else {
+            // S-OS-06 r4 B1: no section-based `changelog-historical` absolution — an occurrence with no registered
+            // disposition is `rewritten` wherever it sits, CHANGELOG < 2.0.0 lines included.
             disposition = "rewritten";
             rule = categorizeOccurrence(relPath, lineText);
             warrant = null;
@@ -954,6 +958,11 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   console.log(
     `  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} compat=${built.dispositionCounts.compat} derived=${built.dispositionCounts.derived}`
   );
+  // S-OS-06 r4 lane J: the COMPUTED tag-glob sub-kind of pinned, members emitted beside the count (never a bare number).
+  const globRows = built.ledger.filter((r) => r.rule === "computed:tag-glob");
+  console.log(
+    `  pinned:computed-tag-glob=${globRows.length} (version-listing globs satisfied by expanding to >= 1 real tag)${globRows.length ? `: ${globRows.map((r) => `${r.file}:${r.line} ${(/\[([^\]]*)\]/.exec(r.warrant) || [])[1].split(" ").length} member(s)`).join("; ")}` : ""}`
+  );
   const surfaces = Object.entries(built.compatBySurface).sort((a, b) => (a[0] < b[0] ? -1 : 1));
   console.log(`  compat clock: ${built.treeVersion.reason}`);
   console.log(`  compat by surface: ${surfaces.length ? surfaces.map(([k, v]) => `${k}=${v}`).join("; ") : "(none registered)"}`);
@@ -1108,8 +1117,8 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
       const after =
         hasTransform && !RAW_LEGACY_ENV_READ_RE.test(before)
           ? // OCCURRENCE-SCOPED (r3 finding 1): rewrite only occurrences the partition does NOT disposition
-            // (pin / compat / evidence-tag / brand-history are protected); changelog-historical lines never
-            // carry a `rewritten` row so they are not reached here.
+            // (pin / compat / evidence-tag / brand-history are protected). S-OS-06 r4 B1: a CHANGELOG < 2.0.0
+            // occurrence is protected here ONLY by its registered pin — the same predicate the ledger used.
             genericSlugRewriteScoped(before, (charIdx) => partition.dispositionAt(targetRel, before, charIdx) !== null)
           : null;
       if (typeof after !== "string") {

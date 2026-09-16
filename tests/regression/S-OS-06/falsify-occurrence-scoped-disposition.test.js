@@ -163,3 +163,71 @@ test(`${FALSIFIER_ID} RED (compat): a second live slug on the registered compat 
     assert.strictEqual(d.rewritten, 1);
   });
 });
+
+// ── S-OS-06 r4 B3: the category delta is measured per OCCURRENCE on compat lines too ─────────────────────────────
+// rename-mc.js used to skip a WHOLE LINE from the structural delta when the compat matcher hit it, so an unprotected
+// occurrence sharing a compat line escaped BOTH the rewrite (an odd-case mix is outside the four case forms) and the
+// detection (the delta never looked). The plant sits exactly there; the swept population is the codemod's own emitted
+// `categorized` total, which must count the compat line's occurrences.
+
+// "WarPos": a case mix outside WARPOS / WarpOS / Warpos / warpos, built from the slug so this file plants no literal.
+const ODD_CASE = `${LEG[0].toUpperCase()}${LEG.slice(1, 3)}${LEG[3].toUpperCase()}${LEG.slice(4)}`;
+const COMPAT_ODD_LINE = `  "Bash(${COMPAT_MATCH} node run.js --home ~/.${ODD_CASE}/x *)",`;
+
+/** The codemod dry-run's structural-delta frame: exit, total categorized (the swept occurrence population), total delta. */
+function deltaFrame(fx) {
+  const dry = fx.runCodemod(["--dry-run"]);
+  const line = dry.stdout.split(/\r?\n/).find((l) => l.includes("per-category delta ("));
+  assert.ok(line, `the dry-run must print its per-category delta: ${dry.out.slice(0, 1500)}`);
+  const categorized = [...line.matchAll(/categorized=(\d+)/g)].reduce((a, m) => a + Number(m[1]), 0);
+  const pinned = [...line.matchAll(/ pinned=(\d+)/g)].reduce((a, m) => a + Number(m[1]), 0);
+  const total = dry.stdout.match(/categoryDeltaTotal=(\d+) uncomputableCategoryLines=(\d+)/);
+  assert.ok(total, dry.out.slice(0, 1500));
+  const tracked = dry.stdout.match(/rename-mc --dry-run: (\d+) tracked files/);
+  return { status: dry.status, categorized, pinned, delta: Number(total[1]), uncomputable: Number(total[2]), tracked: tracked ? Number(tracked[1]) : null, line, out: dry.out };
+}
+
+test(`${FALSIFIER_ID} r4 B3 unit: the odd-case plant is outside the rewriter's case forms and is NOT compat-protected`, () => {
+  assert.ok(!/WARPOS|WarpOS|Warpos|warpos/.test(ODD_CASE) && new RegExp(LEG, "i").test(ODD_CASE), "fixture sanity: an odd-case slug");
+  const partition = H.LOADER.buildPartition(H.basePartition({ mutate: registerCompat }));
+  assert.ok(partition.findCompatOccurrence(SETTINGS, COMPAT_ODD_LINE), "the plant line IS a registered compat line (the whole-line skip fired on it)");
+  const occ = [...COMPAT_ODD_LINE.matchAll(new RegExp(LEG, "gi"))].map((m) => m.index);
+  assert.strictEqual(occ.length, 2);
+  assert.strictEqual(partition.dispositionAt(SETTINGS, COMPAT_ODD_LINE, occ[0]).kind, "compat", "the registered slug is compat");
+  assert.strictEqual(partition.dispositionAt(SETTINGS, COMPAT_ODD_LINE, occ[1]), null, "the odd-case slug beside it is unprotected");
+});
+
+test(`${FALSIFIER_ID} r4 B3 TRIPLE: compat line with only its registered slug GREEN -> odd-case mix planted on it RED -> revert GREEN (categorized emitted)`, (t) => {
+  withCompatLine(COMPAT_LINE, (fx) => {
+    // (1) GREEN control: the compat line is INSIDE the delta population (its registered occurrence counts as pinned).
+    const green = deltaFrame(fx);
+    t.diagnostic(`control: exit=${green.status} delta=${green.delta} uncomputable=${green.uncomputable} over categorized=${green.categorized} (pinned=${green.pinned}) in ${green.tracked} tracked files`);
+    assert.strictEqual(green.status, 0, green.out.slice(0, 1500));
+    assert.strictEqual(green.delta, 0);
+    assert.strictEqual(green.uncomputable, 0);
+    assert.ok(green.categorized >= 2, `the compat line's registered occurrence must be categorized (population proof): ${green.line}`);
+
+    // (2) RED plant: an odd-case slug on the SAME registered compat line — the old whole-line skip never measured it.
+    fx.write(SETTINGS, settingsFile(COMPAT_ODD_LINE));
+    const red = deltaFrame(fx);
+    t.diagnostic(`plant: exit=${red.status} delta=${red.delta} uncomputable=${red.uncomputable} over categorized=${red.categorized} (pinned=${red.pinned}) in ${red.tracked} tracked files`);
+    assert.strictEqual(red.status, 1, `an unprotected, untransformable occurrence on a compat line must fail the dry-run: ${red.out.slice(0, 1500)}`);
+    assert.strictEqual(red.categorized, green.categorized + 1, "the plant is inside the swept population: exactly one more categorized occurrence");
+    assert.strictEqual(red.pinned, green.pinned, "the plant is not protected by the compat entry");
+    assert.strictEqual(red.delta, 1);
+    assert.match(red.out, new RegExp(`untransformed ${SETTINGS.replace(/[.]/g, "\\.")}:\\d+`));
+    const before = fx.read(SETTINGS);
+    const apply = fx.runCodemod(["--apply"]);
+    assert.notStrictEqual(apply.status, 0, `--apply must refuse on the delta: ${apply.out.slice(0, 800)}`);
+    assert.match(apply.out, /refused \(β r3c structural delta\)/);
+    assert.strictEqual(fx.read(SETTINGS), before, "a refused --apply touches nothing");
+
+    // (3) revert the plant -> GREEN over the same population.
+    fx.write(SETTINGS, settingsFile(COMPAT_LINE));
+    const again = deltaFrame(fx);
+    t.diagnostic(`reverted: exit=${again.status} delta=${again.delta} uncomputable=${again.uncomputable} over categorized=${again.categorized} (pinned=${again.pinned}) in ${again.tracked} tracked files`);
+    assert.strictEqual(again.status, 0, again.out.slice(0, 1500));
+    assert.strictEqual(again.delta, 0);
+    assert.strictEqual(again.categorized, green.categorized);
+  });
+});

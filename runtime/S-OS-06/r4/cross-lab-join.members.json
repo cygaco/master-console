@@ -1,0 +1,2642 @@
+{
+ "$question": "Which oracle (i) candidates of the CURRENT lab name a version that exists as a LEGACY-lab tag (the Amendment 2 cross-lab tag-reality join), and — per member — did the codemod rewrite a legacy token into this one, or was the current-lab token written? Lab and version are stored APART; excerpts render the at-sign as \\x40.",
+ "measuredHead": "73b36112ff9cb821bd8ca0e51a281acc79c4a3ca",
+ "currentLab": "mc",
+ "legacyLab": "warpos",
+ "legacyTagVersions": [
+  "0.1.3",
+  "0.1.4",
+  "0.2.1",
+  "0.2.2",
+  "0.4.0",
+  "0.4.1",
+  "0.4.2",
+  "0.4.3",
+  "0.4.4",
+  "0.5.0",
+  "0.6.0",
+  "0.6.1",
+  "0.7.0",
+  "0.7.1",
+  "0.7.2",
+  "0.8.0",
+  "0.8.1",
+  "0.8.2",
+  "0.9.0",
+  "0.10.0",
+  "0.11.0",
+  "0.11.1",
+  "0.12.0",
+  "0.12.1",
+  "0.13.0",
+  "0.13.1",
+  "0.14.0",
+  "0.15.0",
+  "0.15.1",
+  "0.15.2",
+  "0.15.3",
+  "0.15.4",
+  "0.16.0",
+  "0.17.0",
+  "1.0.0",
+  "1.1.0",
+  "1.2.0"
+ ],
+ "filesScanned": 4430,
+ "tokensMatchingG": 740,
+ "candidates": 517,
+ "currentLabCandidates": 323,
+ "outsideJoin": {
+  "noLegacyTag": {
+   "full-semver": 245
+  },
+  "notJoinableByForm": {
+   "placeholder": 9,
+   "unparsed(empty)": 10,
+   "unparsed": 3,
+   "interpolation": 13
+  }
+ },
+ "members": 43,
+ "provenanceComputed": true,
+ "rows": [
+  {
+   "file": ".claude/commands/check/all.md",
+   "line": 23,
+   "col": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "Scheduled for removal at `mc\\x401.0.0`. Update any docs, scripts, or skill references that still call `/check:all` → `/scan:full`."
+  },
+  {
+   "file": ".claude/commands/check/framework-purity.md",
+   "line": 23,
+   "col": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:fra…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "Scheduled for removal at `mc\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-purity` → `/scan:framewo…"
+  },
+  {
+   "file": ".claude/commands/check/framework-views-fresh.md",
+   "line": 23,
+   "col": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-views-fresh` → `/sca…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "Scheduled for removal at `mc\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:framework-views-fresh` → `/scan:fr…"
+  },
+  {
+   "file": ".claude/commands/check/install.md",
+   "line": 23,
+   "col": 27,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "Scheduled for removal at `warpos\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:install` → `/scan:install`.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "Scheduled for removal at `mc\\x401.0.0`. Update any docs/scripts/skill references that still call `/check:install` → `/scan:install`."
+  },
+  {
+   "file": ".claude/commands/commit/both.md",
+   "line": 12,
+   "col": 21,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "will be removed at `warpos\\x401.0.0`.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "will be removed at `mc\\x401.0.0`."
+  },
+  {
+   "file": ".claude/commands/mc/sync.md",
+   "line": 2,
+   "col": 143,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…rp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /warp:update.\"",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc\\x401.0.0; superseded by /mc:update.\""
+  },
+  {
+   "file": ".claude/commands/mc/sync.md",
+   "line": 28,
+   "col": 41,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "This alias is scheduled for removal at `warpos\\x401.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/warp:sync`.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "This alias is scheduled for removal at `mc\\x401.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/mc:sync`."
+  },
+  {
+   "file": ".claude/project/maps/inventory-skills.json",
+   "line": 4096,
+   "col": 157,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…rp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /warp:update.\\\"\",",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc\\x401.0.0; superseded by /mc:update.\\\"\","
+  },
+  {
+   "file": ".claude/project/maps/skills.jsonl",
+   "line": 227,
+   "col": 238,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…rp:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos\\x401.0.0; superseded by /warp:update.\\\"\",\"exists\":true,\"size\":1626,\"modified\":\"2026-05-30T01:25:38.769Z\",\"…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc\\x401.0.0; superseded by /mc:update.\\\"\",\"exists\":true,\"size\":1626,\"modified\":\"2026-05-30T01:25:38.769Z\",\"user_i…"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 7,
+   "col": 6707,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 5,
+    "commit": "68ba50d149625d223ab42d5415fcb004d615b6e4",
+    "summary": "tracker(2026-09-13): S-OS-06 built + CI-green, gauntlet RED (security FAIL) — E-OPEN-SOURCE-001 90%, r4 not consulted, not landed; manifests regenerated",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 2,
+    "preimage": "Last Updated: 2026-09-12 (**2026-09-12 S-OS-04 + S-OS-05 BUILT — leak gate GREEN, brand layer landed on `open-source/S-OS-04-05`:** E-OPEN-SOURCE-001 at 70%. S-…",
+    "reason": "the current-lab token appeared on the line while no legacy-lab token of this version left it"
+   },
+   "lineExcerpt": "…racker prose — the tag is `warpos\\x400.1.4` on disk but the epic and `ROADMAP.md` § Epics had been rewritten to `mc\\x400.1.4` (restored to `warpos\\x400.1.4` in gauntlet fix-cycle r2), and the README brand-history pin is `(formerl…"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 521,
+   "col": 130,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…elease tag | Roadmap artifact | git tag | Yes | Verified Exists (release commit `0650e58`) | `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0` |",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…elease tag | Roadmap artifact | git tag | Yes | Verified Exists (release commit `0650e58`) | `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0` |"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 561,
+   "col": 105,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "| `warpos\\x400.14.0` tag | Yes (evidence for completed release) | Yes | Verified Exists | `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0` |",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "| `warpos\\x400.14.0` tag | Yes (evidence for completed release) | Yes | Verified Exists | `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0` |"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 639,
+   "col": 928,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…c,3f9470d,6dcd318,0320e11,34213e2,146108f,db0a778,f279b47,a6ab0bc,0650e58` — all found), and `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0`. No hash was unconfirmed.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…c,3f9470d,6dcd318,0320e11,34213e2,146108f,db0a778,f279b47,a6ab0bc,0650e58` — all found), and `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0`. No hash was unconfirmed."
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 698,
+   "col": 573,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "… → ENOENT for the old `00-alex/01-adhoc/02-oneshot/03-managers` tree (Verified Nonexistent); `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0`; `git log -1` resolving all 20 spot-checked E-ADR0007/release hashes with mat…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "… → ENOENT for the old `00-alex/01-adhoc/02-oneshot/03-managers` tree (Verified Nonexistent); `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0`; `git log -1` resolving all 20 spot-checked E-ADR0007/release hashes with matchin…"
+  },
+  {
+   "file": "TRACKER.md",
+   "line": 1064,
+   "col": 524,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.14*"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "… `node` require of `release-build.js` → KNOWN_DANGLING_REFS length 32 (A:4, B:11, C:17). (8) `git tag --list \"warpos\\x400.14*\"` → `warpos\\x400.14.0`.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "… `node` require of `release-build.js` → KNOWN_DANGLING_REFS length 32 (A:4, B:11, C:17). (8) `git tag --list \"mc\\x400.14*\"` → `warpos\\x400.14.0`."
+  },
+  {
+   "file": "docs/RENAME-RUNBOOK.md",
+   "line": 38,
+   "col": 274,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…tead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `warpos\\x40*` tags keep their names.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…tead (that is what GitHub recommends). Release asset download URLs under the old name also redirect, and the `mc\\x40*` tags keep their names."
+  },
+  {
+   "file": "docs/RENAME-RUNBOOK.md",
+   "line": 60,
+   "col": 24,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "Do **not** rename the `warpos\\x40*` tags, the `_warpos/` directory, the `WARPOS_*` environment variables or the `warp:*` skills here — t…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "Do **not** rename the `mc\\x40*` tags, the `_mc/` directory, the `MC_*` environment variables or the `warp:*` skills here — that is the i…"
+  },
+  {
+   "file": "migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js",
+   "line": 34,
+   "col": 1,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "warpos\\x401.0.0.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "mc\\x401.0.0."
+  },
+  {
+   "file": "runtime/S-OS-06/gauntlet/fix-brief-r2.md",
+   "line": 33,
+   "col": 76,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-4",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "b68d5cf0c0b4217c0e9594243aad9be12a2eceba",
+    "summary": "test(S-OS-06 fix2 F5): historical-literal-preserved falsifier + fix-brief r2",
+    "date": "2026-09-14",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "`trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md`: restore `mc\\x400.1.4` → `warpos\\x400.1.4` (§ Goal line 11, § Scope line 12/13, DoD 5 line 23; `mc\\x400.1.4` does not exist as a …"
+  },
+  {
+   "file": "runtime/S-OS-06/gauntlet/fix-brief-r2.md",
+   "line": 33,
+   "col": 156,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-4",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "b68d5cf0c0b4217c0e9594243aad9be12a2eceba",
+    "summary": "test(S-OS-06 fix2 F5): historical-literal-preserved falsifier + fix-brief r2",
+    "date": "2026-09-14",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…ole-open-source.md`: restore `mc\\x400.1.4` → `warpos\\x400.1.4` (§ Goal line 11, § Scope line 12/13, DoD 5 line 23; `mc\\x400.1.4` does not exist as a tag) and \"formerly MC\" → \"formerly WarpOS\" (DoD 8 line 26). Add invariant + fals…"
+  },
+  {
+   "file": "scripts/check/privacy.js",
+   "line": 103,
+   "col": 18,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  // range (e.g. warpos\\x401.2.0), not an address: the \"domain\" is a bare version.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  // range (e.g. mc\\x401.2.0), not an address: the \"domain\" is a bare version."
+  },
+  {
+   "file": "scripts/check/privacy.test.js",
+   "line": 58,
+   "col": 42,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  assert.strictEqual(isAllowlistedEmail(\"warpos\\x401.2.0\", allow), true);",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  assert.strictEqual(isAllowlistedEmail(\"mc\\x401.2.0\", allow), true);"
+  },
+  {
+   "file": "scripts/check/privacy.test.js",
+   "line": 59,
+   "col": 42,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  assert.strictEqual(isAllowlistedEmail(\"warpos\\x401.2.0...main\", allow), true);",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  assert.strictEqual(isAllowlistedEmail(\"mc\\x401.2.0...main\", allow), true);"
+  },
+  {
+   "file": "scripts/check/privacy.test.js",
+   "line": 61,
+   "col": 73,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.2.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.2.0"
+   },
+   "legacyTagsMatched": [
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  const f = tmpFile(\"[Unreleased]: https://github.com/cygaco/WarpOS/compare/warpos\\x401.2.0...main\\n\");",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  const f = tmpFile(\"[Unreleased]: https://github.com/cygaco/MC/compare/mc\\x401.2.0...main\\n\");"
+  },
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 1262,
+   "col": 61,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.17.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.17.0"
+   },
+   "legacyTagsMatched": [
+    "0.17.0"
+   ],
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "    return tagExists(\"0.17.0\", () => ({ status: 0, stdout: \"warpos\\x400.17.0\\n\", stderr: \"\", error: null, signal: null })) === true;",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "    return tagExists(\"0.17.0\", () => ({ status: 0, stdout: \"mc\\x400.17.0\\n\", stderr: \"\", error: null, signal: null })) === true;"
+  },
+  {
+   "file": "scripts/open-source/partition-loader.js",
+   "line": 73,
+   "col": 18,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "// (`git tag -l 'mc\\x40*'` is empty), so a `warpos\\x40<semver>` literal is always a real evidence tag and is"
+  },
+  {
+   "file": "scripts/open-source/partition-loader.js",
+   "line": 74,
+   "col": 96,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "// kept forever. This is the invariant the 7021ff55 apply violated (it rewrote warpos\\x400.1.4 -> mc\\x400.1.4)."
+  },
+  {
+   "file": "scripts/open-source/rename-mc.denylist.json",
+   "line": 66,
+   "col": 136,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 2,
+    "commit": "26a16d7b7e2432db3efaa001835abf9d15a5a593",
+    "summary": "T3 pre-apply: pin 10 tooling self-reference literals the --apply would corrupt",
+    "date": "2026-09-13",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 2,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…e-apply self-reference audit: the SHA-preservation assertion resolves the REAL tag warpos\\x400.1.4; a rewrite to mc\\x400.1.4 makes gate G2 assert a nonexistent tag and fail\""
+  },
+  {
+   "file": "scripts/open-source/rename-mc.denylist.json",
+   "line": 924,
+   "col": 109,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 2,
+    "commit": "26a16d7b7e2432db3efaa001835abf9d15a5a593",
+    "summary": "T3 pre-apply: pin 10 tooling self-reference literals the --apply would corrupt",
+    "date": "2026-09-13",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 2,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "      \"warrant\": \"the SHA-preservation assertion (gate G2) resolves the REAL tag warpos\\x400.1.4; a rewrite to mc\\x400.1.4 asserts a nonexistent tag and fails\""
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 6,
+   "col": 90,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": " * brand-history phrase `formerly WarpOS`. Every release tag is `warpos\\x40*` (`git tag -l 'mc\\x40*'` is"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 8,
+   "col": 43,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": " * produced exactly that (warpos\\x400.1.4 -> mc\\x400.1.4, formerly WarpOS -> formerly MC) because --apply was"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 19,
+   "col": 31,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": " *    (driven by `git tag -l 'mc\\x40*'`; fail-closed if git is unavailable) — the codemod-falsified-tag class."
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 86,
+   "col": 29,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "8f1bfd87bdbdb86bc547bc50ecd35e321b5e95b3",
+    "summary": "security(S-OS-06 fix2 r3 / β R1-R5): occurrence-grain delta + skill-namespace, destructure env-refusal, F8 removal-as-amendment, fail-closed tag proof",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  let realMcTags = gitTags(\"mc\\x40*\");"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 87,
+   "col": 25,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "*"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "*"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "8f1bfd87bdbdb86bc547bc50ecd35e321b5e95b3",
+    "summary": "security(S-OS-06 fix2 r3 / β R1-R5): occurrence-grain delta + skill-namespace, destructure env-refusal, F8 removal-as-amendment, fail-closed tag proof",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  // β R5: `git tag -l 'mc\\x40*'` empty is a single-method LOCAL negative. A tag-less worktree makes BOTH lists"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 107,
+   "col": 33,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "X"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "X"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  // A git-ref ASSERTION: \"tag `mc\\x40X`\", \"tags mc\\x40X\", \"refs/tags/mc\\x40X\" (not a description like"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 107,
+   "col": 47,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "X"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "X"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  // A git-ref ASSERTION: \"tag `mc\\x40X`\", \"tags mc\\x40X\", \"refs/tags/mc\\x40X\" (not a description like"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 107,
+   "col": 65,
+   "joinKind": "pattern",
+   "form": "glob",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "X"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "X"
+   },
+   "legacyTagsMatched": [
+    "0.1.3",
+    "0.1.4",
+    "0.10.0",
+    "0.11.0",
+    "0.11.1",
+    "0.12.0",
+    "0.12.1",
+    "0.13.0",
+    "0.13.1",
+    "0.14.0",
+    "0.15.0",
+    "0.15.1",
+    "0.15.2",
+    "0.15.3",
+    "0.15.4",
+    "0.16.0",
+    "0.17.0",
+    "0.2.1",
+    "0.2.2",
+    "0.4.0",
+    "0.4.1",
+    "0.4.2",
+    "0.4.3",
+    "0.4.4",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1",
+    "0.7.0",
+    "0.7.1",
+    "0.7.2",
+    "0.8.0",
+    "0.8.1",
+    "0.8.2",
+    "0.9.0",
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  // A git-ref ASSERTION: \"tag `mc\\x40X`\", \"tags mc\\x40X\", \"refs/tags/mc\\x40X\" (not a description like"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 108,
+   "col": 7,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  // \"mc\\x400.1.4 does not exist\" or a version-milestone \"removal at mc\\x401.0.0\")."
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 108,
+   "col": 67,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-3",
+   "oldToken": {
+    "lab": "mc",
+    "version": "1.0.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "1.0.0"
+   },
+   "legacyTagsMatched": [
+    "1.0.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  // \"mc\\x400.1.4 does not exist\" or a version-milestone \"removal at mc\\x401.0.0\")."
+  },
+  {
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 47,
+   "col": 1268,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.14.0"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.14.0"
+   },
+   "legacyTagsMatched": [
+    "0.14.0"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 2,
+    "commit": "cf11478c741e89b6cd3d8cb0f06210d9b2a89c1b",
+    "summary": "tracker(2026-09-14): S-OS-06 fix-cycles r2+r3 executed, security still FAIL x2, r4 oracle round pending the operator (beta ESCALATE 9c2d6e01) - epic Blockers/next-action/logs + TRACKER header/Change Log; held at 85%",
+    "date": "2026-09-14",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…l text `runtime/S-OS-06/gauntlet/security-r3-FAIL.md`) with three verified findings: (1) four more falsified `mc\\x400.14.0` tag refs in `trackers/sprints/T3-…md:59,108` + `trackers/epics/E-TRACKER-001-…md:120,170` (trailing…"
+  },
+  {
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 76,
+   "col": 353,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 2,
+    "commit": "68ba50d149625d223ab42d5415fcb004d615b6e4",
+    "summary": "tracker(2026-09-13): S-OS-06 built + CI-green, gauntlet RED (security FAIL) — E-OPEN-SOURCE-001 90%, r4 not consulted, not landed; manifests regenerated",
+    "date": "2026-09-13",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "… written criteria stopped resolving. (a) The prior-art tag is `warpos\\x400.1.4` on disk (`git tag -l` confirms; `mc\\x400.1.4` does not exist), but § Goal, § Scope and DoD item 5's `git rev-parse` had been rewritten to `mc\\x400.1.…"
+  },
+  {
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 76,
+   "col": 456,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 2,
+    "commit": "68ba50d149625d223ab42d5415fcb004d615b6e4",
+    "summary": "tracker(2026-09-13): S-OS-06 built + CI-green, gauntlet RED (security FAIL) — E-OPEN-SOURCE-001 90%, r4 not consulted, not landed; manifests regenerated",
+    "date": "2026-09-13",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…irms; `mc\\x400.1.4` does not exist), but § Goal, § Scope and DoD item 5's `git rev-parse` had been rewritten to `mc\\x400.1.4`. (b) The single sanctioned brand-history line pinned in `README.md` is `**Master Console (formerly W…"
+  },
+  {
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 238,
+   "col": 16,
+   "joinKind": "exact",
+   "form": "full-semver",
+   "partitionClass": "class-1-live",
+   "oldToken": {
+    "lab": "mc",
+    "version": "0.1.4"
+   },
+   "tagRealityRestoreTo": {
+    "lab": "warpos",
+    "version": "0.1.4"
+   },
+   "legacyTagsMatched": [
+    "0.1.4"
+   ],
+   "provenance": {
+    "kind": "authored",
+    "steps": 3,
+    "commit": "68ba50d149625d223ab42d5415fcb004d615b6e4",
+    "summary": "tracker(2026-09-13): S-OS-06 built + CI-green, gauntlet RED (security FAIL) — E-OPEN-SOURCE-001 90%, r4 not consulted, not landed; manifests regenerated",
+    "date": "2026-09-13",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 2,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "| Whether the `mc\\x400.1.4` string the codemod had injected into § Goal, § Scope and DoD item 5 names a real tag | No — the prio…"
+  }
+ ],
+ "unjoinableRowsDescriptiveOnly": [
+  {
+   "file": ".claude/commands/mc/release.md",
+   "line": 46,
+   "col": 31,
+   "form": "placeholder",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "<v>"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "| 10 | tag-and-push | git tag warpos\\x40<v> + push (--no-tag skips) |",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "| 10 | tag-and-push | git tag mc\\x40<v> + push (--no-tag skips) |"
+  },
+  {
+   "file": "CHANGELOG.md",
+   "line": 5,
+   "col": 152,
+   "form": "placeholder",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "<version>"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 2,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…er `framework/releases/<version>/` (`release.json`, `changelog.md`, `framework-manifest.json`) and a git tag `warpos\\x40<version>`. This file condenses those changelogs. Where a capsule's notes were left as the generated pl…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…r `framework/releases/<version>/` (`release.json`, `changelog.md`, `framework-manifest.json`) and a git tag: `mc\\x40<version>` from 2.0.0 on, while releases before 2.0.0 keep the tags they were cut with. This file condenses…"
+  },
+  {
+   "file": "CHANGELOG.md",
+   "line": 13,
+   "col": 296,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "47e441ea34afb8abca503e44c7c8cc32dacb1da4",
+    "summary": "T5-A: version 2.0.0 + CHANGELOG [2.0.0] deprecation policy",
+    "date": "2026-09-13",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…ead-both helper that prefers the new name), the `_mc/` and `.mc/` directories, the `MC.md` gap register, and `mc\\x40` release tags from this release on. Installs at 1.2.0 upgrade through `migrations/1.2.0-to-2.0.0/` (direct…"
+  },
+  {
+   "file": "README.md",
+   "line": 20,
+   "col": 252,
+   "form": "placeholder",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "<version>"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "2373e51d47d3e68249a129eb58dbaa441ca75193",
+    "summary": "T5-D: gates @2.0.0 — readme-drift GREEN, cutover-completeness GREEN, framework-purity RED (683 live legacy_slug, escalated)",
+    "date": "2026-09-13",
+    "alignment": "positional-partner-carries-neither->content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…framework directory is `_mc/` and per-install state is `.mc/`; the gap register is `MC.md`; release tags are `mc\\x40<version>` from 2.0.0 on. The previous identifiers keep working through 2.0.x as deprecated aliases and rea…"
+  },
+  {
+   "file": "_planning/epics/E-OPEN-SOURCE-001.md",
+   "line": 66,
+   "col": 102,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-4",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "8ff8e85b1edfcf4c7a261dd52eaf3ac4352e8f0e",
+    "summary": "epic(E-OPEN-SOURCE-001): open-source the engine as Master Console (AGPL-3.0) — seven-phase plan minted, ROADMAP ⭐⭐ TOP, TRACKER 2026-09-02 change log; planning only, nothing executed",
+    "date": "2026-09-02",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "- **S-OS-06** — candidate — Rebrand identifier layer mc\\x402.0.0: slug applied (mc:*, MC_*, _mc/, .mc/, mc\\x40 tags), aliases for one release, paths registry rename + build, migrations entry, cutover-completeness gree…"
+  },
+  {
+   "file": "docs/RENAME-RUNBOOK.md",
+   "line": 10,
+   "col": 131,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "1327e76430a74d77f54e342f5984e588bb82b6c8",
+    "summary": "rebrand(S-OS-05): Master Console brand layer — README rewrite, community docs, provenance page, root clutter cleared",
+    "date": "2026-09-12",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…d, not the slug.** The brand is \"Master Console\"; the identifier slug `mc` (commands, env vars, directories, `mc\\x40` tags — decided for `2.0.0`) is deliberately short and would be a poor repository name (`cygaco/mc` says n…"
+  },
+  {
+   "file": "runtime/S-OS-06/r4/oracles/self-test.js",
+   "line": 187,
+   "col": 41,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-4",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "deb0be10a529822bd0e98d44bdfbf2b445ddccea",
+    "summary": "sprint(S-OS-06 r4 lane G): carry the stage-1 oracle instrument bytes onto the lane (additions only, byte-identical)",
+    "date": "2026-09-16",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "    `placeholder ${S}\\x40<semver> and bare mc\\x40 here and mc\\x401.2.3rc1`, // placeholder, empty, unparsed -> 3 candidates"
+  },
+  {
+   "file": "runtime/S-OS-06/r4/oracles/self-test.js",
+   "line": 187,
+   "col": 54,
+   "form": "unparsed",
+   "partitionClass": "class-4",
+   "token": {
+    "lab": "mc",
+    "version": "1.2.3rc1"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "deb0be10a529822bd0e98d44bdfbf2b445ddccea",
+    "summary": "sprint(S-OS-06 r4 lane G): carry the stage-1 oracle instrument bytes onto the lane (additions only, byte-identical)",
+    "date": "2026-09-16",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "    `placeholder ${S}\\x40<semver> and bare mc\\x40 here and mc\\x401.2.3rc1`, // placeholder, empty, unparsed -> 3 candidates"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 30,
+   "col": 13,
+   "form": "placeholder",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "<v>"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": " *  10  Tag warpos\\x40<v> + push                                  [--no-tag skips]",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": " *  10  Tag mc\\x40<v> + push                                  [--no-tag skips]"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1194,
+   "col": 28,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "      `[dry-run] Would tag warpos\\x40${next} and push to origin`,",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "      `[dry-run] Would tag mc\\x40${next} and push to origin`,"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1199,
+   "col": 40,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  const tag = gitC(canonical, [\"tag\", `warpos\\x40${next}`]);",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  const tag = gitC(canonical, [\"tag\", `mc\\x40${next}`]);"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1206,
+   "col": 35,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "      `git -C ${canonical} tag -d warpos\\x40${next}; --resume-from 10`,",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "      `git -C ${canonical} tag -d mc\\x40${next}; --resume-from 10`,"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1209,
+   "col": 52,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  const push = gitC(canonical, [\"push\", \"origin\", `warpos\\x40${next}`]);",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  const push = gitC(canonical, [\"push\", \"origin\", `mc\\x40${next}`]);"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1216,
+   "col": 51,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "      `git -C ${canonical} push origin :refs/tags/warpos\\x40${next} to remove remote tag if partial`,",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "      `git -C ${canonical} push origin :refs/tags/mc\\x40${next} to remove remote tag if partial`,"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1222,
+   "col": 13,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "    `Tagged warpos\\x40${next} and pushed to origin`,",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "    `Tagged mc\\x40${next} and pushed to origin`,"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1224,
+   "col": 49,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 2,
+    "legacyCountPost": 0,
+    "preimage": "    `git -C ${canonical} push origin :refs/tags/warpos\\x40${next} && git -C ${canonical} tag -d warpos\\x40${next}`,",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "    `git -C ${canonical} push origin :refs/tags/mc\\x40${next} && git -C ${canonical} tag -d mc\\x40${next}`,"
+  },
+  {
+   "file": "scripts/mc/release-canonical.js",
+   "line": 1224,
+   "col": 90,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${next}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 2,
+    "legacyCountPost": 0,
+    "preimage": "    `git -C ${canonical} push origin :refs/tags/warpos\\x40${next} && git -C ${canonical} tag -d warpos\\x40${next}`,",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "    `git -C ${canonical} push origin :refs/tags/mc\\x40${next} && git -C ${canonical} tag -d mc\\x40${next}`,"
+  },
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 120,
+   "col": 43,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${version}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  const r = spawnFn(\"git\", [\"tag\", \"-l\", `warpos\\x40${version}`], { cwd: REPO_ROOT, encoding: \"utf8\", timeout: 15_000 });",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  const r = spawnFn(\"git\", [\"tag\", \"-l\", `mc\\x40${version}`], { cwd: REPO_ROOT, encoding: \"utf8\", timeout: 15_000 });"
+  },
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 132,
+   "col": 39,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${version}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "  return (r.stdout || \"\").trim() === `warpos\\x40${version}`;",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "  return (r.stdout || \"\").trim() === `mc\\x40${version}`;"
+  },
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 164,
+   "col": 4,
+   "form": "placeholder",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "<v>"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "// warpos\\x40<v> tag already exists is a SHIPPED, frozen release.",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "// mc\\x40<v> tag already exists is a SHIPPED, frozen release."
+  },
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 165,
+   "col": 48,
+   "form": "placeholder",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "<v>"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "//   - unreleasedCut = highest capsule with NO warpos\\x40<v> tag AND strictly above",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "//   - unreleasedCut = highest capsule with NO mc\\x40<v> tag AND strictly above"
+  },
+  {
+   "file": "scripts/mc/test-upgrade-current-to-new.js",
+   "line": 837,
+   "col": 20,
+   "form": "interpolation",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": "${from_version}"
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 1,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "      const tag = `warpos\\x40${from_version}`;",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "      const tag = `mc\\x40${from_version}`;"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 7,
+   "col": 16,
+   "form": "placeholder",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "<semver>"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": " * empty), so `mc\\x40<semver>` below 2.0.0 that names a tag is a codemod-falsified ref. The 7021ff55 apply"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 18,
+   "col": 8,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": " *  C (mc\\x40 nonexistent-tag flag): no tracked file presents an `mc\\x40<v<2.0.0>` as an EXISTING git tag"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 18,
+   "col": 64,
+   "form": "placeholder",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "<v<2.0.0>"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": " *  C (mc\\x40 nonexistent-tag flag): no tracked file presents an `mc\\x40<v<2.0.0>` as an EXISTING git tag"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 76,
+   "col": 54,
+   "form": "placeholder",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "<v<2.0.0>"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "test(`${FALSIFIER_ID} C: no tracked file presents an mc\\x40<v<2.0.0> as an EXISTING git tag (fail-closed on git)`, () => {"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 94,
+   "col": 62,
+   "form": "unparsed",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "\\S+?"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "8f1bfd87bdbdb86bc547bc50ecd35e321b5e95b3",
+    "summary": "security(S-OS-06 fix2 r3 / β R1-R5): occurrence-grain delta + skill-namespace, destructure env-refusal, F8 removal-as-amendment, fail-closed tag proof",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "      realMcTags = new Set([...remote.matchAll(/refs\\/tags\\/(mc\\x40\\S+?)(?:\\^\\{\\})?$/gim)].map((m) => m[1]));"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 101,
+   "col": 123,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "8f1bfd87bdbdb86bc547bc50ecd35e321b5e95b3",
+    "summary": "security(S-OS-06 fix2 r3 / β R1-R5): occurrence-grain delta + skill-namespace, destructure env-refusal, F8 removal-as-amendment, fail-closed tag proof",
+    "date": "2026-09-14",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…osed: cannot prove the release tags are present (git tag -l 'warpos\\x40*' empty and ls-remote unavailable) — the mc\\x40 invariant is unverifiable here\""
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 103,
+   "col": 54,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "8f1bfd87bdbdb86bc547bc50ecd35e321b5e95b3",
+    "summary": "security(S-OS-06 fix2 r3 / β R1-R5): occurrence-grain delta + skill-namespace, destructure env-refusal, F8 removal-as-amendment, fail-closed tag proof",
+    "date": "2026-09-14",
+    "alignment": "pure-addition",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  assert.ok(realMcTags, \"fail-closed: could not read mc\\x40 tags\");"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 109,
+   "col": 54,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "  const assertRe = /(?:\\btags?\\s+[`'\"]?|refs\\/tags\\/)mc\\x40(\\d+)\\.(\\d+)\\.(\\d+)/gi;"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 118,
+   "col": 11,
+   "form": "unparsed",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "\\d/.test"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "    if (!/mc\\x40\\d/.test(text)) continue;"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 124,
+   "col": 28,
+   "form": "interpolation",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "${ver}"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "      if (!realMcTags.has(`mc\\x40${ver}`)) offenders.push(`${rel}: \"tag mc\\x40${ver}\" — no such tag (real tag is warpos\\x40${ver})`);"
+  },
+  {
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 124,
+   "col": 70,
+   "form": "interpolation",
+   "partitionClass": "class-3",
+   "token": {
+    "lab": "mc",
+    "version": "${ver}"
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 1,
+    "commit": "39f35789ee3c176223021608e4fa3ee6c05bf012",
+    "summary": "security(S-OS-06 fix2 r3): evidence-tag/brand RULE + occurrence-scoped --apply + optional-chaining env",
+    "date": "2026-09-14",
+    "alignment": "content",
+    "legacyCountPre": 0,
+    "legacyCountPost": 1,
+    "preimage": null,
+    "reason": "the line was added with the token already in it and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "      if (!realMcTags.has(`mc\\x40${ver}`)) offenders.push(`${rel}: \"tag mc\\x40${ver}\" — no such tag (real tag is warpos\\x40${ver})`);"
+  },
+  {
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 13,
+   "col": 2937,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "rewrite",
+    "steps": 3,
+    "commit": "7021ff55d51592e5f3a79346834ea7dd967bcf65",
+    "summary": "T3 part 1: codemod --apply (458 renames, warpos->mc live surface)",
+    "date": "2026-09-13",
+    "alignment": "positional",
+    "legacyCountPre": 1,
+    "legacyCountPost": 0,
+    "preimage": "…/, .warpos/ → .mc/, WARPOS.md, scan:warpos-* skills; paths registry values via /paths:rename + build.js; keep warpos\\x40 tags forever; migrations/ entry for the 8 downstream products; /scan:cutover-completeness + framework-…",
+    "reason": "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it"
+   },
+   "lineExcerpt": "…; _mc/ → _mc/, .mc/ → .mc/, MC.md, scan:mc-* skills; paths registry values via /paths:rename + build.js; keep mc\\x40 tags forever; migrations/ entry for the 8 downstream products; /scan:cutover-completeness + framework-puri…"
+  },
+  {
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 39,
+   "col": 1805,
+   "form": "unparsed(empty)",
+   "partitionClass": "class-1-live",
+   "token": {
+    "lab": "mc",
+    "version": ""
+   },
+   "provenance": {
+    "kind": "authored",
+    "steps": 3,
+    "commit": "8ff8e85b1edfcf4c7a261dd52eaf3ac4352e8f0e",
+    "summary": "epic(E-OPEN-SOURCE-001): open-source the engine as Master Console (AGPL-3.0) — seven-phase plan minted, ROADMAP ⭐⭐ TOP, TRACKER 2026-09-02 change log; planning only, nothing executed",
+    "date": "2026-09-02",
+    "alignment": "no-in-file-previous",
+    "legacyCountPre": 0,
+    "legacyCountPost": 0,
+    "preimage": null,
+    "reason": "the line first appears in this commit and no same-commit pre-image carries either token"
+   },
+   "lineExcerpt": "…let is GREEN; release-prep not run — Rebrand identifier layer mc\\x402.0.0: slug applied (mc:*, MC_*, _mc/, .mc/, mc\\x40 tags), aliases for one release, paths registry rename + build, migrations entry, cutover-completeness gree…"
+  }
+ ]
+}
