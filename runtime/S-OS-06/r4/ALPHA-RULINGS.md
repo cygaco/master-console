@@ -127,8 +127,11 @@ cutover trip caught and fixed). The re-probe then CONFLICTED in `scripts/open-so
 (two hunks): lane J retired 15 rows when it landed; lane I8 pinned 6 occurrences against the PRE-lane-J
 partition. ε ABORTED and changed nothing — correct: hand-resolving a governed partition file is an
 unwarranted partition change by the party who wants the merge; taking lane I's hunks wholesale would give
-the right bytes for the wrong reason. RULING: ONE short lane I dispatch (lane I9) merges the sprint head
-onto lane I for the CODE, leaves the partition conflict to a RE-AUTHORED amendment against the LANDED
+the right bytes for the wrong reason. RULING: ONE short lane I dispatch merges the sprint head onto lane
+I for the CODE (SEQUENCE, stated precisely per β: lane I9 STARTED before r-94 was written — its stub
+report commit 1c51969d predates it; r-94 specified the re-base; I9's commits AFTER r-94 match that scope
+exactly — scoped work on a running dispatch, which is normal; α's earlier "approved before it ran" (r-96)
+claimed slightly more than the record supports and is withdrawn), leaves the partition conflict to a RE-AUTHORED amendment against the LANDED
 partition (post lane J) — the six pins re-emitted at occurrence grain with each property test, A and B as
 admission tests, the A limb governing, the pin falsifier cited per occurrence, the prose at token grain
 (β `c8b52d17`) — as a PARTITION-ONLY amendment commit; re-runs the teeth and purity as separate commands;
