@@ -743,7 +743,12 @@ function buildLedgerAndPlan({ root, partition }) {
             // brand-history RULE (S-OS-06 r3) — `at.rule` set means warpos@<semver> or "formerly WarpOS",
             // kept forever with no per-file pin. Either way this occurrence is NEVER rewritten.
             disposition = "pinned";
-            if (at.rule === "evidence-tag") {
+            if (at.rule === "tag-glob") {
+              // S-OS-06 r4 lane J: a version-listing glob closed by COMPUTATION (partition-loader#computeTagGlob), never by a
+              // form rule or a warrant — the members it expands to are EMITTED on the row (lab and version kept apart).
+              rule = "computed:tag-glob";
+              warrant = `version-listing glob COMPUTED against the named lab's real tag list: pattern ${at.glob.pattern} expands to ${at.glob.members.length} real tag(s) [${at.glob.members.join(" ")}] — satisfied by computation, never by warrant`;
+            } else if (at.rule === "evidence-tag") {
               rule = "rule:evidence-tag";
               warrant = "prior-art release/evidence tag warpos@<semver>; kept forever, never rewritten (RULE)";
             } else if (at.rule === "brand-history") {
@@ -952,6 +957,11 @@ function runDryRun({ root = REPO_ROOT } = {}) {
   // `derived=` stays LAST on this line (record-trust-exit reads it anchored at end of line).
   console.log(
     `  disposition counts: rewritten=${built.dispositionCounts.rewritten} pinned=${built.dispositionCounts.pinned} compat=${built.dispositionCounts.compat} derived=${built.dispositionCounts.derived}`
+  );
+  // S-OS-06 r4 lane J: the COMPUTED tag-glob sub-kind of pinned, members emitted beside the count (never a bare number).
+  const globRows = built.ledger.filter((r) => r.rule === "computed:tag-glob");
+  console.log(
+    `  pinned:computed-tag-glob=${globRows.length} (version-listing globs satisfied by expanding to >= 1 real tag)${globRows.length ? `: ${globRows.map((r) => `${r.file}:${r.line} ${(/\[([^\]]*)\]/.exec(r.warrant) || [])[1].split(" ").length} member(s)`).join("; ")}` : ""}`
   );
   const surfaces = Object.entries(built.compatBySurface).sort((a, b) => (a[0] < b[0] ? -1 : 1));
   console.log(`  compat clock: ${built.treeVersion.reason}`);
