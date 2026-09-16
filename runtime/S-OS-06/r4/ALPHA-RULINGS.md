@@ -60,6 +60,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
 | `d4b26a71` | The missing I8 dispatch row is the instance; the class is a verifier that cannot see an absent record (fifth "green over the wrong population" tonight); close condition = a hand reconciliation table of lanes-with-commits vs dispatch records naming any lane without one; a reconstructed record only from real evidence, else absent + the finding filed (ED-438) |
@@ -153,6 +154,16 @@ simplification would omit a merge resolved to NEITHER parent — the hand-resolu
 to catch — so DONE-REPORT names it as an F8 LIMIT and β rules whether it is debt. Retro line: the
 two-commits condition paid off on a hazard it was not aimed at (it made the conflict legible; folded into
 a code commit the hunks would likely have auto-merged into a file neither lane authored).
+**MEASURED (α ran β's `b5d84f13` fixture; row 516; ED-439):** a merge resolved to content matching
+NEITHER parent IS listed by default `git log -- <file>` — F8 catches the evil-merge case; α's "dangerous
+half" above was BACKWARDS and is withdrawn. The REAL hole: a merge that TAKES ONE SIDE WHOLESALE is
+omitted by default simplification and the OTHER side's amendment commit VANISHES from the path history —
+a silent revert of a committed amendment, invisible by design. `--full-history` lists every merge.
+Disposition: NOT a blocker for I9's merge (its partition equals the landed parent; F8 judged bcbcbf09);
+the class is ED-439 (HIGH) with the `--full-history` + amendment-or-propagation-marker remedy as a
+verified direction and a falsifier fixture named. DONE-REPORT names BOTH F8 mechanisms distinctly (r3:
+explicit `--no-merges`; this: implicit default simplification). ε's unprompted "byte-identical" disclosure
+recorded as the strongest correct-conduct instance of the night.
 
 ## R-83 — the moving test count SOLVED with a root cause (ε e-27); fix the fixture path BEFORE the certifying run
 The movers are ONE FILE, not four tests: `tests/regression/S-OS-06/migration.test.js` (five declared cases)
