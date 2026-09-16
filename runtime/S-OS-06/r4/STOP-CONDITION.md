@@ -38,6 +38,41 @@ shims. The historical set preserved here is the story's own.
 break a live consumer, that goes in the compat register **with a per-entry expiry**, never as a permanent
 warrant. No new permanent escape class is minted in this round.
 
+### AMENDMENT 1 — computed disposition `forthcoming-release-self-reference` (β verdict id `8e5f3a02`, row 474)
+
+Section 1 gains ONE computed disposition: an occurrence whose version equals **the tree's own declared
+version**, decided by COMPUTATION against `package.json`, **never by registration**.
+
+β declared this a LOOSENING and showed its work because β is the party that recommended this round:
+the oracle's predicate is a proxy for "does this sentence falsely claim a tag exists", and for a tree naming
+the version it is becoming the proxy diverges from its own purpose — those sentences are TRUE. It is closed by
+computation, which is stronger than registration: no list, no enumeration, no member addable by hand. **Its
+members are EMITTED** with their count, or it is not auditable. It is **not an absolution**: the post-land
+re-run must show every one resolving to a real tag.
+
+β also ran the conflict backwards: had ε proposed treating those occurrences as violations requiring the
+sentences rewritten, β would have refused that too, because a tree whose documents may not say which release
+it is has been made unable to describe itself. The verdict holds in both directions.
+
+**Window:** this lands inside the amendment window because it precedes any certifying run, and it must be
+committed BEFORE the first certifying run, not alongside it. This commit is that.
+
+### AMENDMENT 2 — ORDERING: the cross-lab tag-reality join runs BEFORE the historical slice is dispositioned
+
+β re-read its own r3-plan R4 and corrected a relay of it: R4 ruled that evidence-tag and brand-history are
+SUB-KINDS of pinned with their own sub-counts. **It ruled STRUCTURE, not MEMBERSHIP.**
+
+**The qualifying test for `pinned:evidence-tag` is TAG REALITY, never the file's partition class.** A legacy-lab
+token naming a real legacy tag pins as evidence. A current-lab token naming no current-lab tag, where the
+legacy tag of that version exists, is a codemod falsification and gets **RESTORED** — regardless of the file it
+sits in. 418 of the 514 candidates sit in class-3/class-4 historical files, and trackers and epics are exactly
+where version references live, so that is where the falsifications will be. **A falsified sentence sitting in a
+historical file is not historical evidence.** It is a false sentence the codemod wrote into a historical file,
+and the slice holds both kinds with nothing in their location to tell them apart.
+
+If any part of the historical slice has already been dispositioned, that ordering is **unwound before the
+certifying run**, not after: a pin written before the join is a pin whose warrant was never tested.
+
 ## 2. Scope re-expansion (new occurrence class, must be oracle-covered)
 
 The residual α ruled out of scope on 2026-09-13 is **back in scope for live surfaces**: `warp:promote` /
@@ -117,6 +152,43 @@ the moment the tag exists**, at which point the oracle flips to REQUIRING the ta
 
 Until β rules, a certifying run is a measurement only. **No zero from this round may be cited as closing the
 stop condition while section 6 is open.**
+
+### RESOLVED — β verdict id `8e5f3a02-4c71-4d96-b183-2a90f6e4c517` (ledger row 474)
+
+β ruled the 514 into six treatments, and **most of it is computable rather than warrantable**. β named the
+discriminator for form rules: *a form rule is admissible when the form makes the claim UNCHECKABLE, never when
+checking is merely WORK.*
+
+| Slice | Treatment |
+|---|---|
+| Placeholder and empty versions | Rule-warrantable, property-keyed, occurrence-grain |
+| Globs | **NOT warranted — COMPUTED.** Expand against that lab's tag list; satisfied iff it matches ≥1 real tag. Only the zero-matching residue is warranted, and that warrant is then checkable |
+| Interpolations | Warrantable **with the ceiling printed in the oracle's own output** — a template can still render to a false claim, which is outside this instrument. A ceiling that lives only in a consult is not a ceiling |
+| Unparsed | **No rule. Read individually.** Refuse-never-skip; a rule over four is where the fifth hides |
+| Version == tree's declared version | **Computed, zero warrants** (Amendment 1 above) |
+| Version beyond the tree | **FIX THE SENTENCE.** It uses the TAG form to mean the RELEASE; write the bare version. Live-surface work, so the tightened bar says fix, not warrant |
+| Current-lab tokens below the tree major | **NOT a warrant question.** Cross-lab join; hits are r3 falsifications and get RESTORED (Amendment 2) |
+
+**β refused the bundled form-rule bag.** Warranting every glob would have buried the fact that some globs match
+nothing and are very likely further falsifications.
+
+**PRE-COMMITTED CIRCULARITY FENCE, written before results.** Every forward warrant records the minting event it
+depends on. After the tag is minted, oracle (i) is re-run and every forward warrant must then resolve to a real
+tag. **That is a RELEASE CRITERION for the 2.0.0 ceremony, NOT a gate on the land** — the tag cannot exist
+before the land, and a criterion satisfiable in neither order is not a criterion.
+
+**Section 6 is therefore CLOSED**, and a certifying run may now be cited — subject to section 8.
+
+## 8. OWED BEFORE THE CERTIFYING RUN (β verdict id `8e5f3a02`, self-test reading)
+
+β read the oracle self-test at source and named two gaps. Both are owed before any citable run:
+
+1. **Oracle (i) has no GREEN control.** Oracles (ii) and (iii) each demonstrate a clean control beside their
+   RED; (i) demonstrates detection and refusal only and **has never been shown capable of printing zero**. An
+   oracle that has only ever printed non-zero is unproven in the same way one that has only ever printed zero
+   is. Demonstrate (i) green on a fixture, or its eventual zero means nothing.
+2. **No case covers the newly computed class or the cross-lab join.** Both are owed with Amendment 1 and
+   Amendment 2, each with its RED and its control.
 
 ## 7. Fence (β 9a1e5f60, narrow and non-negotiable)
 
