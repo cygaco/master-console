@@ -36,6 +36,7 @@ const outFile = process.argv[4] || path.join(__dirname, `stability-committed-${m
         const eq = r.status === 1 && !r.truncated && rt.sameMultiset(cap.lines, e.causeLines) && Number(fc) === e.failCount;
         s.eqRegister.push(eq);
         s.orderings.add(JSON.stringify(cap.lines));
+        (s.orderingByPass = s.orderingByPass || []).push([...s.orderings].indexOf(JSON.stringify(cap.lines)) + 1);
         if (!eq) s.mismatches.push({ pass: p + 1, exit: r.status, truncated: r.truncated, failCount: fc, diff: rt.multisetDifference(cap.lines, e.causeLines) });
       }
     }
@@ -44,7 +45,7 @@ const outFile = process.argv[4] || path.join(__dirname, `stability-committed-${m
   }
   const rows = [...per.values()].map((s) => ({ ...s, orderings: s.orderings.size }));
   const summary = {
-    env: { platform: process.platform, node: process.versions.node, reporter: rt.REPORTER, cpus: os.cpus().length, mode, burners: burners.length, CLAUDE_PROJECT_DIR: process.env.CLAUDE_PROJECT_DIR || null },
+    env: { platform: process.platform, node: process.versions.node, reporter: rt.REPORTER, cpus: os.cpus().length, mode, burners: burners.length, CLAUDE_PROJECT_DIR: process.env.CLAUDE_PROJECT_DIR || null, WARPOS_DISPATCH_BACKGROUND: process.env.WARPOS_DISPATCH_BACKGROUND === undefined ? "<unset>" : process.env.WARPOS_DISPATCH_BACKGROUND, warposMcVarsPresent: Object.keys(process.env).filter((k) => /^(WARPOS_|MC_)/.test(k)).sort() },
     at: new Date().toISOString(),
     base,
     passes,
