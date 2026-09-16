@@ -1074,6 +1074,30 @@
         "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-version-quorum.js",
         "removed": true,
         "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-version-quorum.js remains"
+      },
+      {
+        "key": "pin|tests/quarantine.json|tests/warpos/dispatch-readiness.test.js|\"basePath\": ",
+        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O1 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+      },
+      {
+        "key": "pin|tests/quarantine.json|tests/warpos/lib/provider-autofix.unit.test.js|\"basePath\": ",
+        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O2 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+      },
+      {
+        "key": "pin|tests/quarantine.json|tests/warpos/lib/provider-rca.unit.test.js|\"basePath\": ",
+        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O3 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+      },
+      {
+        "key": "pin|tests/quarantine.json|tests/warpos/product-bootstrap.unit.test.js|\"basePath\": ",
+        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O4 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+      },
+      {
+        "key": "pin|tests/quarantine.json|tests/warpos/provider-smoke.unit.test.js|\"basePath\": ",
+        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O5 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+      },
+      {
+        "key": "pin|tests/quarantine.json|WARPOS_SHAPE_DOOR became MC_SHAPE_DOOR|the codemod rewrote text inside",
+        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O6 — $policy codemod-event sentence, PROPERTY B (record of a past event; rewrite = tautology), per-occurrence probe committed at 9d17fec7"
       }
     ]
   },
@@ -2141,6 +2165,42 @@
       "matchText": "cygaco/WarpOS/",
       "anchor": "[0.1.0]:",
       "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "tests/quarantine.json",
+      "matchText": "tests/warpos/dispatch-readiness.test.js",
+      "anchor": "\"basePath\": ",
+      "warrant": "S-OS-06 r4 lane I8 O1 (α R-73) basePath of the dispatch-readiness quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+    },
+    {
+      "file": "tests/quarantine.json",
+      "matchText": "tests/warpos/lib/provider-autofix.unit.test.js",
+      "anchor": "\"basePath\": ",
+      "warrant": "S-OS-06 r4 lane I8 O2 (α R-73) basePath of the provider-autofix quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+    },
+    {
+      "file": "tests/quarantine.json",
+      "matchText": "tests/warpos/lib/provider-rca.unit.test.js",
+      "anchor": "\"basePath\": ",
+      "warrant": "S-OS-06 r4 lane I8 O3 (α R-73) basePath of the provider-rca quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+    },
+    {
+      "file": "tests/quarantine.json",
+      "matchText": "tests/warpos/product-bootstrap.unit.test.js",
+      "anchor": "\"basePath\": ",
+      "warrant": "S-OS-06 r4 lane I8 O4 (α R-73) basePath of the product-bootstrap quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+    },
+    {
+      "file": "tests/quarantine.json",
+      "matchText": "tests/warpos/provider-smoke.unit.test.js",
+      "anchor": "\"basePath\": ",
+      "warrant": "S-OS-06 r4 lane I8 O5 (α R-73) basePath of the provider-smoke quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+    },
+    {
+      "file": "tests/quarantine.json",
+      "matchText": "WARPOS_SHAPE_DOOR became MC_SHAPE_DOOR",
+      "anchor": "the codemod rewrote text inside",
+      "warrant": "S-OS-06 r4 lane I8 O6 (α R-73) the register's $policy sentence recording that the codemod once rewrote text inside a cause line: PROPERTY B only — a record of a past event; rewriting it makes the sentence a tautology and falsifies the explanation of the thing it documents (PROPERTY A n/a: not a path, no base-identity function reads it); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
     }
   ],
   "openQuestions": [
