@@ -145,15 +145,47 @@ test("RED: an issued-stub with no full verdict row is unfulfilled (the uncited-v
 
 test("GREEN: an issued-stub followed by its full verdict row is fulfilled", () => {
   const { rc, out } = run([
-    { msg_id: GHOST, record_kind: "issued-stub", issued_to: "epsilon", boundary: "r4 lane I parser" },
+    { msg_id: GHOST, record_kind: "issued-stub", authoritative: false, issued_to: "epsilon", boundary: "r4 lane I parser" },
     { msg_id: GHOST, record_kind: "verdict", decision: "DECIDE", answer: "the ruling" },
   ]);
   assert.equal(rc, 0, out);
   assert.match(out, /1 issued-stubs \(0 unfulfilled\)/);
 });
 
-test("LIVE LEDGER: referential integrity holds on paths.betaEvents (this is the CI hook, β F4)", () => {
-  const r = spawnSync(process.execPath, [SCRIPT], { encoding: "utf8", cwd: path.resolve(__dirname, "../../..") });
+test("GREEN: a WITHDRAWN row resolves a stub whose verdict is legitimately never appended (β b8e5f3c7 cond. 2)", () => {
+  const { rc, out } = run([
+    { msg_id: GHOST, record_kind: "issued-stub", authoritative: false, issued_to: "epsilon", boundary: "r4" },
+    { msg_id: GHOST, record_kind: "withdrawn", reason: "superseded before append" },
+  ]);
+  assert.equal(rc, 0, out);
+});
+
+test("RED: a stub that could be read as a ruling is malformed (β b8e5f3c7 cond. 1)", () => {
+  const noFlag = run([{ msg_id: GHOST, record_kind: "issued-stub", issued_to: "epsilon" }, { msg_id: GHOST, record_kind: "verdict" }]);
+  assert.equal(noFlag.rc, 1, noFlag.out);
+  assert.match(noFlag.out, /MALFORMED-STUB row 1: .*missing authoritative:false/);
+  const withAnswer = run([{ msg_id: GHOST, record_kind: "issued-stub", authoritative: false, answer: "looks like a ruling" }, { msg_id: GHOST, record_kind: "verdict" }]);
+  assert.equal(withAnswer.rc, 1, withAnswer.out);
+  assert.match(withAnswer.out, /MALFORMED-STUB row 1: .*carries decision\/answer/);
+});
+
+// β verdict c4a06f28 (OPTION C): the ledger is gitignored by design, so a pristine tree and CI
+// have no subject. Absent SUBJECT → SKIP, printed, with the path looked for. Present subject →
+// the assertion runs exactly as before (present-and-broken is RED). The existence check is
+// DIRECT (fs.existsSync), never inferred from exit code 2, which is also the code for other
+// setup errors. This narrows row 485's "landing precondition" to a LOCAL-SUITE precondition.
+test("LIVE LEDGER: referential integrity holds on paths.betaEvents when it is present; absent ledger SKIPS visibly (β c4a06f28)", (t) => {
+  const root = path.resolve(__dirname, "../../..");
+  let ledger;
+  try { ledger = require(path.join(root, "scripts/hooks/lib/paths")).PATHS.betaEvents; } catch (_) { ledger = null; }
+  if (!ledger) ledger = path.join(root, ".claude/agents/president/_system/beta/events.jsonl");
+  if (!fs.existsSync(ledger)) {
+    const msg = `SKIP: paths.betaEvents not present in this tree (gitignored by design) — looked for ${ledger}; referential integrity NOT evaluated here`;
+    console.log(msg);
+    t.diagnostic(msg);
+    return;
+  }
+  const r = spawnSync(process.execPath, [SCRIPT], { encoding: "utf8", cwd: root });
   assert.equal(r.status, 0, `live ledger RED:\n${r.stdout}${r.stderr}`);
 });
 

@@ -159,20 +159,26 @@ function main() {
   // and α appends a row with record_kind "issued-stub"; a stub whose id never receives a full
   // verdict row (record_kind "verdict" carrying the same msg_id) is RED. issued-vs-logged is then
   // computable from the store instead of from anyone's memory.
+  // β conditions (verdict b8e5f3c7): (1) a stub carries NO judgment and is explicitly
+  // non-authoritative — a stub that carries decision/answer, or lacks `authoritative:false`,
+  // is itself a defect (it could be read as a ruling); (2) a WITHDRAWAL path closed by
+  // registration: a later row with the same id and record_kind "withdrawn" resolves the stub.
   const stubs = rows.filter(({ o }) => o.record_kind === "issued-stub" && typeof o.msg_id === "string");
-  const verdictIds = new Set(rows.filter(({ o }) => o.record_kind !== "issued-stub" && typeof o.msg_id === "string").map(({ o }) => o.msg_id.toLowerCase()));
-  const unfulfilledStubs = stubs.filter(({ o }) => !verdictIds.has(o.msg_id.toLowerCase())).map(({ n, o }) => ({ row: n, id: o.msg_id, party: o.issued_to || "", boundary: o.boundary || "" }));
+  const fulfilledIds = new Set(rows.filter(({ o }) => (o.record_kind !== "issued-stub") && typeof o.msg_id === "string").map(({ o }) => o.msg_id.toLowerCase()));
+  const unfulfilledStubs = stubs.filter(({ o }) => !fulfilledIds.has(o.msg_id.toLowerCase())).map(({ n, o }) => ({ row: n, id: o.msg_id, party: o.issued_to || "", boundary: o.boundary || "" }));
+  const malformedStubs = stubs.filter(({ o }) => o.authoritative !== false || "decision" in o || "answer" in o).map(({ n, o }) => ({ row: n, id: o.msg_id, why: o.authoritative !== false ? "missing authoritative:false" : "carries decision/answer (readable as a ruling)" }));
   // A prefix collision means short-id resolution is ambiguous → fail closed.
-  const ok = parseErrors.length === 0 && newDefects.length === 0 && staleBaseline.length === 0 && prefixCollisions.length === 0 && unfulfilledStubs.length === 0;
+  const ok = parseErrors.length === 0 && newDefects.length === 0 && staleBaseline.length === 0 && prefixCollisions.length === 0 && unfulfilledStubs.length === 0 && malformedStubs.length === 0;
   const excludedList = Object.entries(fieldsExcluded).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-  const result = { file, rows: rows.length, parseErrors, fieldsScanned, fieldsExcluded, refsChecked, prefixLen: PREFIX_LEN, prefixCollisions, baselined: baseline.length, newDefects, staleBaseline, declaredUnlogged, correctionNoteRefs, issuedStubs: stubs.length, unfulfilledStubs, ceiling: "checks that every CITED id resolves and every ISSUED-STUB is fulfilled; a verdict that was never cited and never stubbed is OUTSIDE this instrument", ok };
+  const result = { file, rows: rows.length, parseErrors, fieldsScanned, fieldsExcluded, refsChecked, prefixLen: PREFIX_LEN, prefixCollisions, baselined: baseline.length, newDefects, staleBaseline, declaredUnlogged, correctionNoteRefs, issuedStubs: stubs.length, unfulfilledStubs, malformedStubs, ceiling: "checks that every CITED id resolves and every ISSUED-STUB is fulfilled; a verdict that was never cited and never stubbed is OUTSIDE this instrument", ok };
   if (asJson) console.log(JSON.stringify(result, null, 2));
   else {
     console.log(`beta-ledger-refs: ${rows.length} rows, ${fieldsScanned} fields scanned (default-scan; excluded by name-property), ${refsChecked} refs checked, ${baseline.length} baselined historical holes, prefix ceiling ${PREFIX_LEN} hex (${prefixCollisions.length} collisions), ${stubs.length} issued-stubs (${unfulfilledStubs.length} unfulfilled)`);
     console.log(`  CEILING: this check proves that every CITED id resolves and every ISSUED-STUB is fulfilled. A verdict that was never cited and never stubbed is OUTSIDE this instrument — GREEN does not mean every ruling is in the record.`);
     console.log(`  excluded-by-property (${excludedList.length} field names; id-shaped tokens NOT checked, for audit): ${excludedList.map(([k, c]) => `${k}=${c}`).join(" ") || "(none)"}`);
     for (const p of parseErrors) console.log(`  PARSE-ERROR row ${p.row}: ${p.error}`);
-    for (const s of unfulfilledStubs) console.log(`  UNFULFILLED-STUB row ${s.row}: ${s.id} issued to ${s.party || "?"} re ${s.boundary || "?"} — no full verdict row carries this id`);
+    for (const s of unfulfilledStubs) console.log(`  UNFULFILLED-STUB row ${s.row}: ${s.id} issued to ${s.party || "?"} re ${s.boundary || "?"} — no verdict (or withdrawn) row carries this id`);
+    for (const s of malformedStubs) console.log(`  MALFORMED-STUB row ${s.row}: ${s.id} — ${s.why}; a stub must be authoritative:false and carry no judgment`);
     for (const c of prefixCollisions) console.log(`  PREFIX-COLLISION ${c.prefix}: ${c.ids.join(", ")} — short-id resolution ambiguous; raise PREFIX_LEN`);
     for (const u of newDefects) console.log(`  UNRESOLVED row ${u.row} ${u.field}: ${u.id} — no row carries this as its own msg_id`);
     for (const b of staleBaseline) console.log(`  STALE-BASELINE row ${b.row} ${b.field}: ${b.id} — now resolves (or vanished); remove it from the baseline`);
