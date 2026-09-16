@@ -1,5 +1,5 @@
 ---
-description: "Legacy alias for /mc:update that forwards to the canonical update flow so older references and muscle memory keep working until mc@1.0.0; superseded by /mc:update."
+description: "Legacy alias for /mc:update that forwards to the canonical update flow so older references and muscle memory keep working until warpos@1.0.0; superseded by /mc:update."
 user-invocable: true
 tags: [mc, sync, deprecated]
 ---
@@ -25,7 +25,7 @@ If you want to push outgoing changes: that was never `/mc:sync`'s job. You want 
 
 ## Removal
 
-This alias is scheduled for removal at `mc@1.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/mc:sync`.
+This alias is scheduled for removal at `warpos@1.0.0`. Update any docs, READMEs, scripts, or skill references that still call `/mc:sync`.
 
 ## Implementation
 

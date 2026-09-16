@@ -100,7 +100,7 @@ function isAllowlistedEmail(email, allow) {
   const e = email.toLowerCase();
   if (allow.emails.has(e)) return true;
   // `name@1.2.3` / `name@1.2.3...main` is a release tag or a GitHub compare
-  // range (e.g. mc@1.2.0), not an address: the "domain" is a bare version.
+  // range (e.g. warpos@1.2.0), not an address: the "domain" is a bare version.
   if (/@\d+\.\d+\.\d+/.test(e)) return true;
   const at = e.lastIndexOf("@");
   if (at === -1) return false;
