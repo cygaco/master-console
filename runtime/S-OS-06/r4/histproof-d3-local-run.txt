@@ -1,0 +1,43 @@
+assert-evidence — repo C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2d-histproof — ref HEAD
+  ok   cd37d410 exists as a commit (headline — 2026-04-12) — got commit
+  ok   29908188 exists as a commit (headline — 2026-04-16) — got commit
+  ok   bb06646d exists as a commit (headline — 2026-04-16) — got commit
+  ok   38d771bf exists as a commit (headline — 2026-04-18) — got commit
+  ok   de9ba8eb exists as a commit (tag warpos@0.1.4 commit — 2026-05-01) — got commit
+  ok   signed commit db6292e2 exists
+  ok   signed commit db6292e2 still carries its gpgsig header (a re-imported commit would have lost it)
+  ok   tag warpos@0.1.4 → de9ba8eb (expected de9ba8eb)
+  ok   cd37d410 is an ancestor of HEAD
+  ok   29908188 is an ancestor of HEAD
+  ok   bb06646d is an ancestor of HEAD
+  ok   38d771bf is an ancestor of HEAD
+  ok   de9ba8eb is an ancestor of HEAD
+  ok   db6292e2 is an ancestor of HEAD
+history sweep: 20 literal(s) from replace-rules.clean.txt (digests only)
+population (GIT_NO_REPLACE_OBJECTS=1; selection = rev-list --all: every ref under refs/ plus HEAD):
+  refs      571 — heads 240 · tags 41 · remotes 289 · notes 1 · stash 0 · replace 0 · pull 0 · other 0 · HEAD yes · ref-set sha256 cef662608afdfff6…
+  objects   37622 reachable — commits 3826 · tags 8 · trees 18263 · blobs 15525 · missing 0
+  searched  diffs (pickaxe -S -i over --all, merge commits included via -m) · commit message (subject + body) · author name · author email · committer name · committer email · other commit headers (encoding, mergetag, gpgsig, unknown) · annotated tag message · tagger name · tagger email · annotated tag name header · other tag headers · ref names
+  NOT searched (declared, outside this claim): tree entry names (file paths) · reflogs · unreachable / dangling objects · refs and objects not in this repository (other clones, the host's PR/unreachable-object store)
+  FAIL sha256 2a236c4341d636d6… (len 27) — diffs 9 [c2cf51c9,f019bbdc,bf7b5aa3,81847f40,cb050a74,…] · msg 2 [3a2607b2,d9fa542f] · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 c5cc22e510e748f2… (len 100) — diffs 2 [40f4e818,a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 21744d2eda70f167… (len 66) — diffs 2 [40f4e818,a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 9fde8bb9adb2d647… (len 116) — diffs 1 [a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 884af32f98398ab1… (len 95) — diffs 3 [c305b555,40f4e818,a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 bc46a96daa49430d… (len 56) — diffs 3 [c305b555,40f4e818,a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 ab3b7ee21d8c62c9… (len 29) — diffs 1 [25415ce9] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 9b094ddf98756fe5… (len 21) — diffs 1 [25415ce9] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 35c2b80f1671945e… (len 33) — diffs 1 [a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 b0620e7cf9668483… (len 22) — diffs 1 [a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 f9d8f4ee6231bac1… (len 17) — diffs 1 [bf894984] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 cac975e0b39886db… (len 11) — diffs 2 [40f4e818,a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 ffe5cec20c4b8d07… (len 16) — diffs 2 [40f4e818,a97d2f76] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  FAIL sha256 96a7933697e8da14… (len 12) — diffs 3 [9138c5c8,affc8589,6779f6e6] · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  ok   sha256 1912ee8d718d978b… (len 36) — diffs 0 · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  ok   sha256 b95fd2a4f2905ad3… (len 36) — diffs 0 · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  ok   sha256 b49a3fa522f003e2… (len 22) — diffs 0 · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  ok   sha256 93299206531123c8… (len 25) — diffs 0 · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  ok   sha256 9aff63951f2f3fa2… (len 22) — diffs 0 · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+  ok   sha256 69006337086a85f3… (len 20) — diffs 0 · msg 0 · author-name 0 · author-email 0 · committer-name 0 · committer-email 0 · commit-hdr 0 · tag-msg 0 · tagger-name 0 · tagger-email 0 · tag-name 0 · tag-hdr 0 · refname 0
+
+RESULT: FAIL (14 assertion(s)) — history sweep: 14 of 20 literal(s) with hits over 571 refs · 3826 commits · 8 tag objects · 37622 reachable objects (surfaces searched and NOT searched as declared above)
