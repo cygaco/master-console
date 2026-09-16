@@ -97,6 +97,19 @@ test("Excluded-by-property fields (consult ids, git SHAs, narrative) do not fail
   assert.equal(rc, 0, out);
 });
 
+test("Population reconciliation: every EXCLUDED field is emitted with its id-shaped token count (β e4b7d209)", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, epsilon_consult_msg_id: GHOST, commit: "0defcd64", summary: `see ${GHOST} and deadbeef`, answer: "none" },
+  ]);
+  assert.equal(rc, 0, out);
+  assert.match(out, /excluded-by-property \(\d+ field names/);
+  assert.match(out, /\bsummary=2\b/);
+  assert.match(out, /\bcommit=1\b/);
+  assert.match(out, /\bepsilon_consult_msg_id=1\b/);
+  assert.match(out, /\banswer=0\b/);
+});
+
 test("Prefix ceiling is printed; slug-style own ids do not collide on prefix", () => {
   const { rc, out } = run([
     { msg_id: "evt-s-sp-20260512-001-beta-001" },

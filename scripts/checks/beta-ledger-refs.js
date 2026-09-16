@@ -110,6 +110,11 @@ function main() {
   const declaredUnlogged = [];
   let refsChecked = 0;
   let fieldsScanned = 0;
+  // POPULATION RECONCILIATION (β verdict e4b7d209): every field the check DECLINES to scan is
+  // emitted with the count of id-shaped tokens it held, so an over-matching exclusion is
+  // auditable instead of invisible. Every printed GREEN ships what it did not scan.
+  const fieldsExcluded = {};
+  const countIdTokens = (v) => { ID_RE.lastIndex = 0; let c = 0, m; while ((m = ID_RE.exec(v))) if (!/^\d{8}$/.test(m[1])) c++; return c; };
   const scan = (n, f, v, sink, unloggedSet) => {
     let m;
     ID_RE.lastIndex = 0;
@@ -130,7 +135,7 @@ function main() {
     for (const [f, v] of Object.entries(o)) {
       if (typeof v !== "string" || f === UNLOGGED_FIELD) continue;
       if (CORRECTION_NOTE_RE.test(f)) { scan(n, f, v, correctionNoteRefs, unloggedSet); continue; }
-      if (EXCLUDE_NAME_RE.test(f)) continue;
+      if (EXCLUDE_NAME_RE.test(f)) { fieldsExcluded[f] = (fieldsExcluded[f] || 0) + countIdTokens(v); continue; }
       fieldsScanned++;
       scan(n, f, v, unresolved, unloggedSet);
     }
@@ -151,10 +156,12 @@ function main() {
   const staleBaseline = baseline.filter((b) => !unresolvedKeys.has(key(b)));
   // A prefix collision means short-id resolution is ambiguous → fail closed.
   const ok = parseErrors.length === 0 && newDefects.length === 0 && staleBaseline.length === 0 && prefixCollisions.length === 0;
-  const result = { file, rows: rows.length, parseErrors, fieldsScanned, refsChecked, prefixLen: PREFIX_LEN, prefixCollisions, baselined: baseline.length, newDefects, staleBaseline, declaredUnlogged, correctionNoteRefs, ok };
+  const excludedList = Object.entries(fieldsExcluded).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const result = { file, rows: rows.length, parseErrors, fieldsScanned, fieldsExcluded, refsChecked, prefixLen: PREFIX_LEN, prefixCollisions, baselined: baseline.length, newDefects, staleBaseline, declaredUnlogged, correctionNoteRefs, ok };
   if (asJson) console.log(JSON.stringify(result, null, 2));
   else {
     console.log(`beta-ledger-refs: ${rows.length} rows, ${fieldsScanned} fields scanned (default-scan; excluded by name-property), ${refsChecked} refs checked, ${baseline.length} baselined historical holes, prefix ceiling ${PREFIX_LEN} hex (${prefixCollisions.length} collisions)`);
+    console.log(`  excluded-by-property (${excludedList.length} field names; id-shaped tokens NOT checked, for audit): ${excludedList.map(([k, c]) => `${k}=${c}`).join(" ") || "(none)"}`);
     for (const p of parseErrors) console.log(`  PARSE-ERROR row ${p.row}: ${p.error}`);
     for (const c of prefixCollisions) console.log(`  PREFIX-COLLISION ${c.prefix}: ${c.ids.join(", ")} — short-id resolution ambiguous; raise PREFIX_LEN`);
     for (const u of newDefects) console.log(`  UNRESOLVED row ${u.row} ${u.field}: ${u.id} — no row carries this as its own msg_id`);
