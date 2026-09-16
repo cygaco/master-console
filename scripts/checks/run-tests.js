@@ -99,9 +99,23 @@ const CHILD_ENV_ALLOWLIST = Object.freeze({
   other: Object.freeze(["HOME", "PATH", "TMPDIR"]),
 });
 
+/**
+ * The win32 OBSERVED FLOOR (β a2f74e09, lane I8). Relying on the runtime to refill these names is an undocumented
+ * implementation detail that can move at the next major, so it is DECLARED here: source named, platform stamped,
+ * evidence cited. It is generated into the normalizer's element E, and falsifier case (n) re-measures it on win32, so a
+ * runtime that refills a different set trips a test instead of silently changing every child's environment.
+ */
+const CHILD_ENV_OBSERVED_FLOOR = Object.freeze({
+  platform: "win32",
+  names: CHILD_ENV_ALLOWLIST.win32,
+  source: "libuv's win32 spawn (src/win/process.c: the required variables make_program_env copies from the parent into a child env block that lacks them; identified by the name set matching the measurement)",
+  observedOn: "win32 / node 24.16.0 / libuv 1.52.1, 2026-09-16",
+  evidence: "runtime/S-OS-06/r4/s2i3/i7/spawn-min-probe.json",
+});
+
 /** The declared normalizer. The register's `$normalizer` must equal this array, element for element. */
 const NORMALIZER_DECLARATION = [
-  `E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: ${CHILD_ENV_ALLOWLIST.win32.join(", ")}. Other platforms: ${CHILD_ENV_ALLOWLIST.other.join(", ")}. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.`,
+  `E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: ${CHILD_ENV_ALLOWLIST.win32.join(", ")}. Other platforms: ${CHILD_ENV_ALLOWLIST.other.join(", ")}. OBSERVED FLOOR (${CHILD_ENV_OBSERVED_FLOOR.platform}): a child spawned with an EMPTY environment still receives exactly these ${CHILD_ENV_OBSERVED_FLOOR.names.length} names (${CHILD_ENV_OBSERVED_FLOOR.names.join(", ")}), refilled by the runtime, not by this runner. Source: ${CHILD_ENV_OBSERVED_FLOOR.source}. Observed on ${CHILD_ENV_OBSERVED_FLOOR.observedOn} (${CHILD_ENV_OBSERVED_FLOOR.evidence}). This is an implementation detail declared as an observation, not a contract. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.`,
   "0 input: every captured line enters in TAP comment rendering. A YAML error value is decoded from its YAML scalar and re-rendered with node's own TAP comment escape before step 1, so both regimes share one normalizer.",
   "1 unescape: a single left-to-right scan decoding \\\\ to \\ and \\# to #; every other backslash pair is left as its two characters.",
   "2 separators: every run of one or more backslashes becomes one /. It runs AFTER unescape (ordering trap: in the other order an escaped pair becomes //).",
@@ -924,6 +938,7 @@ module.exports = {
   RENAME_SIMILARITY,
   NORMALIZER_DECLARATION,
   CHILD_ENV_ALLOWLIST,
+  CHILD_ENV_OBSERVED_FLOOR,
   childEnv,
   DROP_CLASS_DECLARATION,
   CEILINGS,

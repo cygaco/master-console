@@ -298,6 +298,18 @@ test(`${FALSIFIER_ID} (m) NO LOCK (β b2c94e18, the CONJUNCTION): an entry whose
   assert.strictEqual(plant.unobserved, true, "an entry with no lock is counted as unobserved");
 });
 
+// (lane I8, β a2f74e09) the win32 OBSERVED FLOOR is a declared observation of the runtime, so it is re-measured here:
+// a child spawned with an EMPTY env must receive only declared floor names, and every floor name the parent has.
+test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09): an EMPTY child env on win32 is refilled with exactly the declared floor`, { skip: process.platform === RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform ? false : `the floor is declared as a ${RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform} observation only` }, () => {
+  const floor = RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.names.map((n) => n.toUpperCase());
+  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION[0].includes(`OBSERVED FLOOR (${RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform})`), "the floor is not declared in the normalizer's element E");
+  const r = spawnSync(process.execPath, ["-e", "process.stdout.write(JSON.stringify(Object.keys(process.env)))"], { env: {}, encoding: "utf8", windowsHide: true });
+  assert.strictEqual(r.status, 0, `empty-env child did not run: ${r.error && r.error.message} ${r.stderr}`);
+  const got = JSON.parse(r.stdout).map((k) => k.toUpperCase()).sort();
+  const parentHas = floor.filter((n) => Object.keys(process.env).some((k) => k.toUpperCase() === n)).sort();
+  assert.deepStrictEqual(got, parentHas, `the runtime refilled a set other than the declared floor: got [${got}], declared-and-present [${parentHas}]`);
+});
+
 test(`${FALSIFIER_ID}: the real tests/quarantine.json is never touched`, () => {
   const realAfter = fs.existsSync(REAL_QUARANTINE) ? fs.readFileSync(REAL_QUARANTINE) : null;
   assert.ok(realBefore === null ? realAfter === null : realAfter !== null && realBefore.equals(realAfter), "the real quarantine artifact changed during the falsifier");
