@@ -1,0 +1,10 @@
+dispatch-shape fixture-test: 32/32 passed (incl. 12 planted/mismatch assertion(s))
+✔ scripts\dispatch\dispatch-shape.test.js (35.2254ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.6507
