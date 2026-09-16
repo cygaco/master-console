@@ -51,12 +51,73 @@ test("RED: a silently absent precedent row (the 4f7b2c93 class)", () => {
   assert.match(out, /UNRESOLVED row 2 precedent: 4f7b2c93/);
 });
 
-test("GREEN: a reference that honestly says it is unlogged is not a false presence claim", () => {
+test("GREEN: an honest absence is declared STRUCTURALLY in unlogged_refs, per id", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, related_beta_verdict_ids: `${GHOST} — unlogged at time of writing`, unlogged_refs: [GHOST] },
+  ]);
+  assert.equal(rc, 0, out);
+  assert.match(out, /declared in unlogged_refs/);
+});
+
+test("RED: a prose 'unlogged' marker is NOT an escape (β d9c17e45 F2 — absolution by regex removed)", () => {
   const { rc, out } = run([
     { msg_id: A },
     { msg_id: B, related_beta_verdict_ids: `${GHOST} — UNLOGGED at time of writing, see row 3` },
   ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, new RegExp(`UNRESOLVED row 2 related_beta_verdict_ids: ${GHOST}`));
+});
+
+test("RED: one honest declaration must not absolve a NEIGHBOURING id in the same string", () => {
+  const GHOST2 = "feedface-0000-4000-8000-000000000000";
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, related_beta_verdict_ids: `${GHOST} (unlogged, see below); ${GHOST2} (epsilon-logged)`, unlogged_refs: [GHOST] },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, new RegExp(`UNRESOLVED row 2 related_beta_verdict_ids: ${GHOST2}`));
+  assert.doesNotMatch(out, new RegExp(`UNRESOLVED row 2 related_beta_verdict_ids: ${GHOST}\\b`));
+});
+
+test("Field selection is a PROPERTY: a never-seen cross-ref field name is scanned by default (β F1)", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, ratifies_prior_ruling_ids: `${GHOST}` },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, /UNRESOLVED row 2 ratifies_prior_ruling_ids/);
+});
+
+test("Excluded-by-property fields (consult ids, git SHAs, narrative) do not fail on foreign ids", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, epsilon_consult_msg_id: GHOST, consult_thread: "deadbeef", commit: "0defcd64", verified_head: "9699d7fc", summary: `see ${GHOST}`, answer: "harness msg deadbeef" },
+  ]);
   assert.equal(rc, 0, out);
+});
+
+test("Prefix ceiling is printed; slug-style own ids do not collide on prefix", () => {
+  const { rc, out } = run([
+    { msg_id: "evt-s-sp-20260512-001-beta-001" },
+    { msg_id: "evt-s-sp-20260512-001-beta-002", precedent: "evt-s-sp-20260512-001-beta-001" },
+  ]);
+  assert.equal(rc, 0, out);
+  assert.match(out, /prefix ceiling 8 hex \(0 collisions\)/);
+});
+
+test("RED: two hex ids sharing the prefix ceiling make short-id resolution ambiguous", () => {
+  const { rc, out } = run([
+    { msg_id: "c0ffee00-1111-4111-8111-111111111111" },
+    { msg_id: "c0ffee00-2222-4222-8222-222222222222" },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, /PREFIX-COLLISION c0ffee00/);
+});
+
+test("LIVE LEDGER: referential integrity holds on paths.betaEvents (this is the CI hook, β F4)", () => {
+  const r = spawnSync(process.execPath, [SCRIPT], { encoding: "utf8", cwd: path.resolve(__dirname, "../../..") });
+  assert.equal(r.status, 0, `live ledger RED:\n${r.stdout}${r.stderr}`);
 });
 
 test("GREEN: correction notes cite the wrong id by design and are exempt (reported, not failed)", () => {
