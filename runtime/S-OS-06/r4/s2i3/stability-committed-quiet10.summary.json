@@ -1,0 +1,1624 @@
+{
+  "env": {
+    "platform": "win32",
+    "node": "24.16.0",
+    "reporter": "tap",
+    "cpus": 32,
+    "mode": "quiet",
+    "burners": 0,
+    "CLAUDE_PROJECT_DIR": null
+  },
+  "at": "2026-09-16T20:39:17.079Z",
+  "base": "669aadc1ab7dc03d74f5b95cb613a5573f4e54a6",
+  "passes": 10,
+  "elapsedMs": 84753,
+  "entries": 23,
+  "observations": 230,
+  "entriesEqualRegisterEveryPass": 20,
+  "observationsEqualRegister": 200,
+  "orderedSequenceStableAcrossPasses": 22,
+  "orderFlappingEntries": [
+    "tests/mc/dispatch-readiness.test.js (2 orderings)"
+  ],
+  "rows": [
+    {
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "stored": 92,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 2,
+      "mismatches": []
+    },
+    {
+      "file": "tests/mc/lib/provider-autofix.unit.test.js",
+      "stored": 8,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/mc/lib/provider-rca.unit.test.js",
+      "stored": 8,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/mc/product-bootstrap.unit.test.js",
+      "stored": 8,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "stored": 8,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "stored": 2,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/S-LC-07/spend-ledger.test.js",
+      "stored": 35,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
+      "stored": 31,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "stored": 9,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
+      "stored": 15,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "stored": 51,
+      "eqRegister": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": [
+        {
+          "pass": 1,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 2,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 3,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 4,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 5,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 6,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 7,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 8,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 9,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        },
+        {
+          "pass": 10,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)"
+            ],
+            "onlyB": []
+          }
+        }
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "stored": 27,
+      "eqRegister": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": [
+        {
+          "pass": 1,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 2,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 3,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 4,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 5,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 6,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 7,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 8,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 9,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        },
+        {
+          "pass": 10,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros",
+              "[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cros stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ],
+            "onlyB": [
+              "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+              "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+              "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "stored": 32,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "stored": 8,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
+      "stored": 7,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    },
+    {
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "stored": 16,
+      "eqRegister": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": [
+        {
+          "pass": 1,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 2,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 3,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 4,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 5,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 6,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 7,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 8,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 9,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        },
+        {
+          "pass": 10,
+          "exit": 1,
+          "truncated": false,
+          "failCount": "1",
+          "diff": {
+            "onlyA": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (O"
+            ],
+            "onlyB": [
+              "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260627-001/negative-fixtures.test.js",
+      "stored": 2,
+      "eqRegister": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "orderings": 1,
+      "mismatches": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+✖ QUARANTINE-RUNNER (k) HERMETIC SCRUB (β row 486): an ambient variable outside the declared allow-list never reaches a test child (600.9593ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 673.6119
+
+✖ failing tests:
+
+test at tests\regression\S-OS-06\falsify-quarantine-runner.test.js:261:1
+✖ QUARANTINE-RUNNER (k) HERMETIC SCRUB (β row 486): an ambient variable outside the declared allow-list never reaches a test child (600.9593ms)
+  AssertionError [ERR_ASSERTION]: the ambient MC_I7_AMBIENT_STDERR_WRITER reached the test child and changed the capture
+  run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 90eda445940b79ebe653b237214b6b79001becae
+  run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+  TAP version 13
+  # Subtest: dummy passes
+  ok 1 - dummy passes
+    ---
+    duration_ms: 0.3761
+    type: 'test'
+    ...
+  1..1
+  # tests 1
+  # suites 0
+  # pass 1
+  # fail 0
+  # cancelled 0
+  # skipped 0
+  # todo 0
+  # duration_ms 55.5921
+  run-tests: QUARANTINE VIOLATION — CAUSE-LOCK: tests/q/ambient.test.js fails, but the multiset of its cause lines does not equal the registered one — a NEW/different regression the quarantine must not absolve.
+      observed but not registered (1):
+         1| ambient writer: this line depends on the machine
+      registered but not observed (0):
+        (none)
+      observed, canonical order (3):
+         1| 1 !== 2
+         2| ambient writer: this line depends on the machine
+         3| dummy rot: still failing
+      registered, canonical order (2):
+         1| 1 !== 2
+         2| dummy rot: still failing
+  run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base
+  
+  
+  
+  1 !== 0
+  
+      at C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:267:12
+      at withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+      at TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:263:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.start (node:internal/test_runner/test:1177:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

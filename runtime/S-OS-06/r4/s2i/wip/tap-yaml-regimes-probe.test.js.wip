@@ -1,0 +1,10 @@
+const test = require("node:test");
+const assert = require("node:assert");
+test("single-line quoted", () => { throw new Error("it's a back\slash # hash\ttab"); });
+test("multi-line", () => { assert.strictEqual(1, 2, "dummy rot: still failing"); });
+test("parent", async (t) => {
+  await t.test("child", () => { assert.deepStrictEqual({a:1},{a:2}); });
+  t.diagnostic("author diagnostic line");
+});
+test("both quotes", () => { throw new Error(`a'b"c`); });
+console.log("stdout line # with hash \ back");

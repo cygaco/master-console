@@ -1,0 +1,11 @@
+(a)              before 9dce938c4d98eee5 after 9dce938c4d98eee5 BYTE-UNCHANGED
+(b)              before 7cd00393eb23c1bf after 7cd00393eb23c1bf BYTE-UNCHANGED
+(c)              before 4b411f34edfa929f after 4b411f34edfa929f BYTE-UNCHANGED
+(d)              before e46af9e463895a52 after e46af9e463895a52 BYTE-UNCHANGED
+(e)              before 39e92990c50d33aa after 2d70253fdb182126 CHANGED
+(f)              before b731472c85b0fbd9 after b731472c85b0fbd9 BYTE-UNCHANGED
+(g)              before 2740c3a2a429115e after 2740c3a2a429115e BYTE-UNCHANGED
+(h)              before 22772b0eb79fe9ea after 22772b0eb79fe9ea BYTE-UNCHANGED
+(real-register)  before 0eed99bb03d68f82 after 0eed99bb03d68f82 BYTE-UNCHANGED
+(i)              before (absent)         after d7959560ad3cd565 NET-ADDED
+(j)              before (absent)         after 47fa36d5ace5f084 NET-ADDED

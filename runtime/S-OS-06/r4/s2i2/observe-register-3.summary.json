@@ -1,0 +1,478 @@
+{
+  "env": {
+    "platform": "win32",
+    "node": "24.16.0",
+    "reporter": "tap",
+    "CLAUDE_PROJECT_DIR": null
+  },
+  "at": "2026-09-16T09:28:11.514Z",
+  "base": "669aadc1ab7dc03d74f5b95cb613a5573f4e54a6",
+  "passes": 3,
+  "elapsedMs": 24438,
+  "entries": 23,
+  "multisetEqualsRegisterEveryPass": 23,
+  "orderedSequenceStableAcrossPasses": 23,
+  "orderFlappingEntries": [],
+  "rows": [
+    {
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "stored": 92,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/mc/lib/provider-autofix.unit.test.js",
+      "stored": 8,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/mc/lib/provider-rca.unit.test.js",
+      "stored": 8,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/mc/product-bootstrap.unit.test.js",
+      "stored": 8,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "stored": 8,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "stored": 2,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/S-LC-07/spend-ledger.test.js",
+      "stored": 35,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
+      "stored": 31,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "stored": 9,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
+      "stored": 15,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "stored": 51,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "stored": 27,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "stored": 32,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "stored": 8,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
+      "stored": 7,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "stored": 16,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    },
+    {
+      "file": "tests/regression/SP-20260627-001/negative-fixtures.test.js",
+      "stored": 2,
+      "multisetEqualsRegister": [
+        true,
+        true,
+        true
+      ],
+      "exit": [
+        1,
+        1,
+        1
+      ],
+      "failCount": [
+        1,
+        1,
+        1
+      ],
+      "orderings": 1
+    }
+  ]
+}

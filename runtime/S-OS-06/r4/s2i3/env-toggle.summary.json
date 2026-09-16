@@ -1,0 +1,96 @@
+{
+  "ambientValue": "1",
+  "otherWarposMcVars": [
+    "MC_ACTOR_KIND",
+    "MC_BOUND_ROLE",
+    "WARPOS_ACTOR_KIND",
+    "WARPOS_BOUND_ROLE",
+    "WARPOS_DISPATCH_BACKGROUND"
+  ],
+  "rows": [
+    {
+      "arm": "unset",
+      "pass": 1,
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "exit": 1,
+      "eqRegister": true
+    },
+    {
+      "arm": "unset",
+      "pass": 1,
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "exit": 1,
+      "eqRegister": true
+    },
+    {
+      "arm": "unset",
+      "pass": 1,
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "exit": 1,
+      "eqRegister": true
+    },
+    {
+      "arm": "unset",
+      "pass": 2,
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "exit": 1,
+      "eqRegister": true
+    },
+    {
+      "arm": "unset",
+      "pass": 2,
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "exit": 1,
+      "eqRegister": true
+    },
+    {
+      "arm": "unset",
+      "pass": 2,
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "exit": 1,
+      "eqRegister": true
+    },
+    {
+      "arm": "set_to_1",
+      "pass": 1,
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "exit": 1,
+      "eqRegister": false
+    },
+    {
+      "arm": "set_to_1",
+      "pass": 1,
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "exit": 1,
+      "eqRegister": false
+    },
+    {
+      "arm": "set_to_1",
+      "pass": 1,
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "exit": 1,
+      "eqRegister": false
+    },
+    {
+      "arm": "set_to_1",
+      "pass": 2,
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "exit": 1,
+      "eqRegister": false
+    },
+    {
+      "arm": "set_to_1",
+      "pass": 2,
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "exit": 1,
+      "eqRegister": false
+    },
+    {
+      "arm": "set_to_1",
+      "pass": 2,
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "exit": 1,
+      "eqRegister": false
+    }
+  ]
+}

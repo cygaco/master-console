@@ -15,8 +15,8 @@
  *    command line. A failing batch's exit code is the runner's exit code.
  * 4. TEETH: every quarantined file runs ALONE, sequentially, under the same PINNED reporter (TAP).
  *    The runner FAILS if a quarantined file passes, is missing, is not at the register's base
- *    (or its basePath is not a rename there), or fails with a different MULTISET of cause lines
- *    than registered (CAUSE-LOCK), more failing tests (COUNT-LOCK) or past its expiry.
+ *    (or its basePath is not a rename there), or fails with a different ordered sequence of cause
+ *    lines than registered (CAUSE-LOCK), more failing tests (COUNT-LOCK) or past its expiry.
  *
  * THE CAPTURE RULE (β row 476 P3): the reporter synthesizes the CONTAINER, the test authors the
  * CONTENT. Strip the reporter's rendering, keep the author's content, in both regimes:
@@ -27,12 +27,10 @@
  *     `error` VALUE is the author's assertion message, captured when node unwraps it from an
  *     author-thrown error (see AUTHOR_ERROR_FAILURE_TYPES).
  * Every captured line is then normalized (NORMALIZER, a declared six-step order) and the
- * drop class (DROP_CLASS, stated as shapes) is removed. The result is the entry's UNORDERED MULTISET
- * of cause lines (duplicates kept; β verdict 2d7f5b83, ledger row 479, correcting the ordered-set
- * rule of row 473 §2). The register must DECLARE exactly this normalizer, drop class and ceiling set
- * (`$normalizer`, `$dropClass`, `$ceilings`); every stored line must be a FIXED POINT of the
- * normalizer, and the stored lines must already be in canonical (sorted) order, so stored and observed
- * are mechanically guaranteed identical treatment, order included.
+ * drop class (DROP_CLASS, stated as shapes) is removed. The result is the entry's ordered sequence
+ * of cause lines. The register must DECLARE exactly this normalizer, drop class and ceiling set
+ * (`$normalizer`, `$dropClass`, `$ceilings`), and every stored line must be a FIXED POINT of the
+ * normalizer, so stored and observed text are mechanically guaranteed identical treatment.
  *
  * --verify-base (registration check, additive only): also materializes the register's base tree in
  * a temp dir and requires every entry's base path to FAIL there. It never relaxes a check.
@@ -79,43 +77,8 @@ const RENAME_SIMILARITY = "50%";
  */
 const AUTHOR_ERROR_FAILURE_TYPES = new Set(["testCodeFailure", "hookFailed", "uncaughtException", "unhandledRejection"]);
 
-/**
- * The HERMETIC CHILD ENVIRONMENT (β row 486, lane I7). Every child this runner spawns (each primary batch,
- * each quarantined file run alone, each --verify-base run, and every git call) receives ONLY the variables
- * named here, copied from the runner's own environment when they are present there, names matched without
- * regard to case. Everything else is scrubbed, so an ambient variable that makes the code under test write
- * to stderr cannot reach the capture: the capture is a property of the code, not of the machine.
- *
- * win32: exactly the set libuv itself copies from the parent into any child whose env block lacks them
- * (measured, lane I7: a child spawned with an EMPTY env on Windows receives these eleven and no others), so
- * a smaller Windows list would be a false declaration. other: the POSIX essentials for spawning a program
- * by name (PATH), git's global config (HOME) and the temp dir the normalizer masks (TMPDIR).
- * `node --test` itself adds NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process; those
- * are the runner's own, not ambient. The declaration is generated from this object into the normalizer's
- * declaration below, so declared and actual cannot drift.
- */
-const CHILD_ENV_ALLOWLIST = Object.freeze({
-  win32: Object.freeze(["HOMEDRIVE", "HOMEPATH", "LOGONSERVER", "PATH", "SYSTEMDRIVE", "SYSTEMROOT", "TEMP", "USERDOMAIN", "USERNAME", "USERPROFILE", "WINDIR"]),
-  other: Object.freeze(["HOME", "PATH", "TMPDIR"]),
-});
-
-/**
- * The win32 OBSERVED FLOOR (β a2f74e09, lane I8). Relying on the runtime to refill these names is an undocumented
- * implementation detail that can move at the next major, so it is DECLARED here: source named, platform stamped,
- * evidence cited. It is generated into the normalizer's element E, and falsifier case (n) re-measures it on win32, so a
- * runtime that refills a different set trips a test instead of silently changing every child's environment.
- */
-const CHILD_ENV_OBSERVED_FLOOR = Object.freeze({
-  platform: "win32",
-  names: CHILD_ENV_ALLOWLIST.win32,
-  source: "libuv's win32 spawn (src/win/process.c: the required variables make_program_env copies from the parent into a child env block that lacks them; identified by the name set matching the measurement)",
-  observedOn: "win32 / node 24.16.0 / libuv 1.52.1, 2026-09-16",
-  evidence: "runtime/S-OS-06/r4/s2i3/i7/spawn-min-probe.json",
-});
-
 /** The declared normalizer. The register's `$normalizer` must equal this array, element for element. */
 const NORMALIZER_DECLARATION = [
-  `E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: ${CHILD_ENV_ALLOWLIST.win32.join(", ")}. Other platforms: ${CHILD_ENV_ALLOWLIST.other.join(", ")}. OBSERVED FLOOR (${CHILD_ENV_OBSERVED_FLOOR.platform}): a child spawned with an EMPTY environment still receives exactly these ${CHILD_ENV_OBSERVED_FLOOR.names.length} names (${CHILD_ENV_OBSERVED_FLOOR.names.join(", ")}), refilled by the runtime, not by this runner. Source: ${CHILD_ENV_OBSERVED_FLOOR.source}. Observed on ${CHILD_ENV_OBSERVED_FLOOR.observedOn} (${CHILD_ENV_OBSERVED_FLOOR.evidence}). This is an implementation detail declared as an observation, not a contract. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.`,
   "0 input: every captured line enters in TAP comment rendering. A YAML error value is decoded from its YAML scalar and re-rendered with node's own TAP comment escape before step 1, so both regimes share one normalizer.",
   "1 unescape: a single left-to-right scan decoding \\\\ to \\ and \\# to #; every other backslash pair is left as its two characters.",
   "2 separators: every run of one or more backslashes becomes one /. It runs AFTER unescape (ordering trap: in the other order an escaped pair becomes //).",
@@ -123,7 +86,7 @@ const NORMALIZER_DECLARATION = [
   "4 timings: every (N ms) timing, (Nms) or (N.Nms), is deleted, repeated until none remains.",
   "5 whitespace: every run of whitespace becomes one space, then the line is trimmed.",
   "6 markers: a leading reporter marker token (ℹ or #, followed by a space or the end of the line) is stripped, repeated until none remains.",
-  "7 after the six steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an UNORDERED MULTISET of lines (duplicates kept). Its canonical form is the lines sorted in ascending UTF-16 code-unit order (JavaScript's default sort, locale-independent). Stored and observed are compared in canonical form by exact equality of every element and of the length, never containment, never a hash. A stored causeLines not already in canonical form is refused.",
+  "7 after the six steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an ORDERED SEQUENCE (duplicates kept) compared by exact equality, never containment, never a hash.",
 ];
 
 /** The drop class, stated as SHAPES (never as specific frames). Applied to normalized lines. */
@@ -147,7 +110,6 @@ const CEILINGS = [
   "SYNTHESIZED-SHAPE COLLISION: an author line printed as exactly Subtest: <x>, or a counter line after the top-level plan, is indistinguishable from the reporter's own and is not captured.",
   "TEMP MASK: step 3 masks the last 6 alphanumerics of ANY first segment under <tmp>/ (at least 6 alphanumerics long), not only real fs.mkdtemp suffixes.",
   "BENIGN OUTPUT CHURN BREAKS A LOCK: every author-emitted line is captured, so a harmless console-output change fails the lock. This is intended and fail-closed: for a rotted test, changed output is the moment to re-examine the entry.",
-  "ORDER IS NOT LOCKED: the lock is the unordered multiset (duplicates kept), so a pure reordering of identical lines is not detected. The capture reads the TAP reporter's output, where a line from the child's stdout and a line from its stderr render as identical comment lines, so which stream a line came from, and therefore the cross-stream order, is not observable in what the capture consumes (the order is pipe scheduling; measured flapping on a control entry, 3 orderings in 6 passes). A different sub-case changes line CONTENT, and so changes the multiset. A line appearing twice and later once is a change and is detected.",
 ];
 
 const ENTRY_FIELDS_REQUIRED = ["file", "causeLines", "failCount", "cause", "filedUnder", "expiry", "expiryVersion", "observedOn"];
@@ -180,13 +142,10 @@ function parseArgs(argv) {
   return opts;
 }
 
-/** The hermetic child environment: CHILD_ENV_ALLOWLIST applied to `source` (default: this process's env). */
-function childEnv(source, platform) {
-  const src = source || process.env;
-  const allowed = new Set(((platform || process.platform) === "win32" ? CHILD_ENV_ALLOWLIST.win32 : CHILD_ENV_ALLOWLIST.other).map((n) => n.toUpperCase()));
-  const env = {};
-  for (const [k, v] of Object.entries(src)) if (allowed.has(k.toUpperCase()) && typeof v === "string") env[k] = v;
-  return env; // NODE_TEST_CONTEXT is never allowed: children must not report into an enclosing test runner
+function childEnv() {
+  const env = { ...process.env };
+  delete env.NODE_TEST_CONTEXT; // children must not report into an enclosing test runner
+  return env;
 }
 
 function gitEnv() {
@@ -311,23 +270,10 @@ function decodeInspectLiteral(v) {
 /**
  * Parse one YAML diagnostic block starting at lines[start] (the `---` line, indent `ind`).
  * Returns { end, error: string|null, authored: boolean }.
- *
- * KEY INDENT IS A PROPERTY, NOT A LITERAL (S-OS-06 r4 lane I6): a reporter may put the block's keys AT the
- * marker's indent (node 24: `  ---` then `  error: |-`) or DEEPER (`  ---` then `    error: |-`). Both are one
- * variance. The block's key indent is the indent of its first key-shaped line at >= ind, and the whole block is
- * read at that indent. A block scalar's content indent is the indent of its first content line, when deeper.
  */
 function parseDiagnosticBlock(lines, start, ind) {
-  let keyInd = -1;
-  for (let j = start + 1; j < lines.length; j++) {
-    if (lines[j] === `${" ".repeat(ind)}...`) break;
-    const k = /^( *)[A-Za-z_][\w]*:(?: .*)?$/.exec(lines[j]);
-    if (k && k[1].length >= ind) {
-      keyInd = k[1].length;
-      break;
-    }
-  }
-  const keyRe = keyInd < 0 ? /(?!)/ : new RegExp(`^ {${keyInd}}([A-Za-z_][\\w]*):(?: (.*))?$`);
+  const keyInd = ind + 2;
+  const keyRe = new RegExp(`^ {${keyInd}}([A-Za-z_][\\w]*):(?: (.*))?$`);
   const keys = new Map();
   let error = null;
   let i = start + 1;
@@ -341,8 +287,7 @@ function parseDiagnosticBlock(lines, start, ind) {
     keys.set(key, inline);
     if (key !== "error") continue;
     if (/^\|[-+]?$/.test(inline)) {
-      const next = i + 1 < lines.length ? /^( *)/.exec(lines[i + 1])[1].length : 0;
-      const contentInd = " ".repeat(next > keyInd ? next : keyInd + 2);
+      const contentInd = " ".repeat(keyInd + 2);
       const body = [];
       while (i + 1 < lines.length && (lines[i + 1].startsWith(contentInd) || (lines[i + 1].trim() === "" && lines[i + 1] !== ""))) {
         body.push(lines[++i].slice(contentInd.length));
@@ -358,9 +303,8 @@ function parseDiagnosticBlock(lines, start, ind) {
 }
 
 /**
- * Capture the cause lines from a TAP run's output.
- * Returns { lines, testNames } where lines are normalized, non-empty and outside the drop class, in the
- * order they appeared in the reporter's output. That order is NOT part of the lock: see causeMultiset().
+ * Capture the ordered sequence of cause lines from a TAP run's output.
+ * Returns { lines, testNames } where lines are normalized, non-empty and outside the drop class.
  */
 function captureCauseLines(output, ctx) {
   const all = String(output).split(/\r?\n/);
@@ -404,52 +348,6 @@ function captureCauseLines(output, ctx) {
     if (shape === "internal module path" && i + 2 < normalized.length && /^\^+$/.test(normalized[i + 2])) i += 2;
   }
   return { lines, testNames: testNames.map((n) => normalizeLine(`# ${n}`, ctx)).filter(Boolean) };
-}
-
-/**
- * THE LOCK IS THE UNORDERED MULTISET OF CAUSE LINES, DUPLICATES KEPT (β verdict 2d7f5b83, ledger row 479).
- * Its canonical form is the lines sorted by ascending UTF-16 code unit (the default sort: no locale).
- *
- * Why not the ordered sequence (the earlier rule, row 473 §2): order was never a property of the subject
- * under test. It is PIPE SCHEDULING. A lock that varies with which pipe the operating system drained first
- * asserts on the harness, not on the code. Measured: over six sequential passes of all 23 entries the
- * ordered sequence was identical for 22 of 23 (a CONTROL entry flapped, three distinct orderings) and the
- * multiset was identical for 23 of 23. The ordered form existed to stop a different sub-case failing behind
- * an identical lock; a different sub-case changes line CONTENT, so it changes the multiset, and order was
- * never doing that work. The only thing the ordered form catches that the multiset does not is a pure
- * reordering with identical content, which is exactly the scheduling artifact: the entire loss is false
- * positives.
- *
- * Why duplicates are kept (a multiset, not a set): a line appearing twice and later once is a real change,
- * and a plain set would erase it.
- *
- * Where the stream separation went, stated so nobody re-derives it as a miss: at the PROCESS layer the
- * child's stdout and stderr do arrive on separate pipes, so an implementation that read the child's pipes
- * directly could keep order WITHIN each stream, which is strictly more information. At the REPORTER layer,
- * which is what this capture consumes, the TAP reporter renders lines from both streams as identical comment
- * lines and the origin is erased in the bytes read here. The separation exists upstream and is DECLINED
- * DELIBERATELY, not missed: the multiset is measured, simple and reversible (row 479, epsilon's resolution).
- */
-function causeMultiset(lines) {
-  return [...lines].sort();
-}
-
-/** true iff a and b hold the same lines the same number of times (multiset equality, via canonical form). */
-function sameMultiset(a, b) {
-  // an EMPTY side is never a match: "I could not look" must never render as "it matches" (S-OS-06 r4 lane I6)
-  return Array.isArray(a) && Array.isArray(b) && a.length > 0 && b.length > 0 && sameArray(causeMultiset(a), causeMultiset(b));
-}
-
-/** The multiset difference, for the violation report: lines (with multiplicity) only in a, and only in b. */
-function multisetDifference(a, b) {
-  const count = (xs) => xs.reduce((m, x) => m.set(x, (m.get(x) || 0) + 1), new Map());
-  const ca = count(a);
-  const cb = count(b);
-  const onlyA = [];
-  const onlyB = [];
-  for (const [x, n] of ca) for (let k = cb.get(x) || 0; k < n; k++) onlyA.push(x);
-  for (const [x, n] of cb) for (let k = ca.get(x) || 0; k < n; k++) onlyB.push(x);
-  return { onlyA: causeMultiset(onlyA), onlyB: causeMultiset(onlyB) };
 }
 
 /**
@@ -530,15 +428,10 @@ function loadQuarantine(file, root) {
     } else if (o.reporter !== REPORTER) {
       problems.push(`${who} "observedOn.reporter" is "${o.reporter}"; the reporter is pinned to "${REPORTER}"`);
     }
-    // CAUSE LINES: a non-empty multiset of stored lines, each a FIXED POINT of the normalizer, stored in
-    // canonical (sorted) form so the stored array is a fixed point of the whole capture, order included.
+    // CAUSE LINES: a non-empty ordered sequence of stored lines, each a FIXED POINT of the normalizer.
     if (!Array.isArray(e.causeLines) || e.causeLines.length === 0) {
-      problems.push(`${who} is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)`);
+      problems.push(`${who} is missing a non-empty "causeLines" array (the ordered sequence of cause lines)`);
     } else {
-      if (e.causeLines.every((l) => typeof l === "string") && !sameArray(e.causeLines, causeMultiset(e.causeLines))) {
-        const k = e.causeLines.findIndex((l, j) => l !== causeMultiset(e.causeLines)[j]);
-        problems.push(`${who} "causeLines" is not in canonical order (ascending UTF-16 code units; first out of place at causeLines[${k}]): the lock is an unordered multiset, so its stored form is the sorted one and any other order is refused`);
-      }
       e.causeLines.forEach((line, j) => {
         if (typeof line !== "string" || line === "") return problems.push(`${who} causeLines[${j}] must be a non-empty string`);
         if (line === LEGACY_EMPTY_SENTINEL) return problems.push(`${who} causeLines[${j}] is the empty-capture placeholder, not an observation`);
@@ -677,57 +570,6 @@ function counts(output) {
 function failCount(output) {
   const c = counts(output);
   return typeof c.fail === "number" ? c.fail : null;
-}
-
-/**
- * The per-entry lock decision for a quarantined file that FAILED with an exit code (extracted in S-OS-06 r4 lane I8
- * so every layer can be planted exactly). Inputs are observations: `observed` = the canonical cause multiset,
- * `testNames` = the capture's test names, `fc` = the observed failing-test count (null = not observed),
- * `tv` = tree version (parsed semver or null), `here` = this platform stamp.
- * -> { findings: [{ rule, message }], unobserved: boolean }. No findings = the entry still fails as registered.
- */
-function lockVerdict(e, { observed, testNames, fc, tv, here }) {
-  const findings = [];
-  const add = (rule, message) => findings.push({ rule, message });
-  const ev = parseSemver(e.expiryVersion);
-  const stampDiffers = e.observedOn.platform !== here.platform || e.observedOn.nodeMajor !== here.nodeMajor;
-  let unobserved = false;
-  // REFUSE, NEVER SKIP (β a94f0d26 / b2c94e18, α R-71, lane I8): an unobservable layer may never render as agreement.
-  const causeObservable = observed.length > 0;
-  const countObservable = Number.isInteger(fc) && fc >= 0;
-  if (!causeObservable && !countObservable) {
-    // NO LOCK (the CONJUNCTION): every layer is unobservable, so this entry has no lock at all. Its own named refusal,
-    // not the cause layer's INDETERMINATE: refusing each layer separately does not say the entry is entirely unlocked.
-    unobserved = true;
-    add("NO-LOCK", `NO LOCK: ${e.file} fails, but EVERY lock layer is unobservable (the cause capture is EMPTY and the failing-test count is not observed) — this entry has no lock at all and absolves anything; refused`);
-  } else if (observed.length === 0) {
-    // INDETERMINATE (β row 490, α r-32): an EMPTY observed capture means the runner could not look. It knows
-    // nothing about whether the cause changed, so it REFUSES, independently of the vacuity rule below. It may never pass.
-    unobserved = true;
-    add("INDETERMINATE", `INDETERMINATE: ${e.file} fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused`);
-  } else if (isVacuous(observed, { file: e.file, basePath: e.basePath, testNames })) {
-    add("CAUSE-LOCK", `CAUSE-LOCK: ${e.file} fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure\n${listing(observed)}`);
-  } else if (!sameMultiset(observed, e.causeLines)) {
-    const diff = multisetDifference(observed, e.causeLines);
-    add(
-      "CAUSE-LOCK",
-      `CAUSE-LOCK: ${e.file} fails, but the multiset of its cause lines does not equal the registered one — a NEW/different regression the quarantine must not absolve.` +
-        `\n    observed but not registered (${diff.onlyA.length}):\n${listing(diff.onlyA)}\n    registered but not observed (${diff.onlyB.length}):\n${listing(diff.onlyB)}` +
-        (stampDiffers
-          ? ` Registered on ${e.observedOn.platform}/node${e.observedOn.nodeMajor}, observed on ${here.platform}/node${here.nodeMajor}: per the pre-committed interpretation this is a FINDING ABOUT THE NORMALIZER, not a violation to wave through.`
-          : "") +
-        `\n    observed, canonical order (${observed.length}):\n${listing(observed)}\n    registered, canonical order (${e.causeLines.length}):\n${listing(e.causeLines)}`
-    );
-  } else if (!countObservable) {
-    // COUNT-LOCK UNOBSERVABLE: before lane I8 an unobserved count skipped COUNT-LOCK SILENTLY and the entry passed.
-    unobserved = true;
-    add("COUNT-UNOBSERVABLE", `COUNT-LOCK UNOBSERVABLE: ${e.file} fails, but its failing-test count is not observed (no reporter fail summary) — not an observation that no new test fails; refused`);
-  } else if (fc > e.failCount) {
-    add("COUNT-LOCK", `COUNT-LOCK: ${e.file} now has ${fc} failing test(s), more than the registered ${e.failCount} — a new failing test the quarantine must not absolve`);
-  } else if (ev && tv && semverGte(tv, ev)) {
-    add("EXPIRED", `EXPIRED: ${e.file} quarantine expired at ${e.expiryVersion} (tree ${tv.join(".")}) — resolve the rot or re-warrant [${e.filedUnder}, ${e.expiry}]`);
-  }
-  return { findings, unobserved };
 }
 
 /** Parse a semver "a.b.c" -> [a,b,c] or null. */
@@ -884,7 +726,7 @@ async function main() {
         // "fails at base" is the claim. Whether the cause lines are ALSO identical at base is reported, never required:
         // the codemod rewrote text inside at least one entry's own cause line, so the stronger claim cannot hold.
         const baseLines = captureCauseLines(br.output, normalizerContext(baseDir)).lines;
-        log(`run-tests: base check ${bp} fails at ${base.slice(0, 8)} (exit ${br.status}); cause-line multiset at base ${sameMultiset(baseLines, e.causeLines) ? "EQUALS the register" : `DIFFERS from the register (informational):\n${listing(causeMultiset(baseLines))}`}`);
+        log(`run-tests: base check ${bp} fails at ${base.slice(0, 8)} (exit ${br.status}); cause lines at base ${sameArray(baseLines, e.causeLines) ? "EQUAL the register" : `DIFFER from the register (informational):\n${listing(baseLines)}`}`);
       }
       const r = await runNodeTest(opts.root, [e.file], { tee: false, timeoutMs: QUARANTINE_FILE_TIMEOUT_MS });
       if (r.status === null || r.truncated) {
@@ -894,19 +736,34 @@ async function main() {
         unexpectedlyPassed++;
         violations.push(`UNEXPECTEDLY PASSED: quarantined file ${e.file} now passes (exit 0) — its disposition is no longer true; remove its entry from the quarantine`);
       } else {
-        // CAUSE-LOCK (β): the observed MULTISET of cause lines (duplicates kept, order not locked; see causeMultiset)
-        // must EQUAL the registered one, otherwise the entry would silently absolve a NEW/different regression.
-        // COUNT-LOCK: no more failing tests than registered (per-TEST grain), a separate redundant check.
-        // EXPIRY: the entry must not be past its tree-version expiry.
+        // CAUSE-LOCK (β): the observed ORDERED SEQUENCE of cause lines must EQUAL the registered one, otherwise the
+        // entry would silently absolve a NEW/different regression. COUNT-LOCK: no more failing tests than registered
+        // (per-TEST grain), a separate redundant check. EXPIRY: the entry must not be past its tree-version expiry.
         const cap = captureCauseLines(r.output, ctx);
-        const observed = causeMultiset(cap.lines);
-        const verdict = lockVerdict(e, { observed, testNames: cap.testNames, fc: failCount(r.output), tv: treeVersion(opts.root), here });
-        if (verdict.unobserved) unobserved++;
-        if (verdict.findings.length) {
-          for (const f of verdict.findings) violations.push(f.message);
+        const observed = cap.lines;
+        const fc = failCount(r.output);
+        const tv = treeVersion(opts.root);
+        const ev = parseSemver(e.expiryVersion);
+        const stampDiffers = e.observedOn.platform !== here.platform || e.observedOn.nodeMajor !== here.nodeMajor;
+        if (isVacuous(observed, { file: e.file, basePath: e.basePath, testNames: cap.testNames })) {
+          violations.push(`CAUSE-LOCK: ${e.file} fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure\n${listing(observed)}`);
+        } else if (!sameArray(observed, e.causeLines)) {
+          let k = 0;
+          while (k < observed.length && k < e.causeLines.length && observed[k] === e.causeLines[k]) k++;
+          violations.push(
+            `CAUSE-LOCK: ${e.file} fails, but its ordered cause lines do not equal the registered ones (first difference at line ${k + 1}) — a NEW/different regression the quarantine must not absolve.` +
+              (stampDiffers
+                ? ` Registered on ${e.observedOn.platform}/node${e.observedOn.nodeMajor}, observed on ${here.platform}/node${here.nodeMajor}: per the pre-committed interpretation this is a FINDING ABOUT THE NORMALIZER, not a violation to wave through.`
+                : "") +
+              `\n    observed (${observed.length}):\n${listing(observed)}\n    registered (${e.causeLines.length}):\n${listing(e.causeLines)}`
+          );
+        } else if (fc !== null && fc > e.failCount) {
+          violations.push(`COUNT-LOCK: ${e.file} now has ${fc} failing test(s), more than the registered ${e.failCount} — a new failing test the quarantine must not absolve`);
+        } else if (ev && tv && semverGte(tv, ev)) {
+          violations.push(`EXPIRED: ${e.file} quarantine expired at ${e.expiryVersion} (tree ${tv.join(".")}) — resolve the rot or re-warrant [${e.filedUnder}, ${e.expiry}]`);
         } else {
           stillFailing++;
-          log(`run-tests: quarantine ${e.file} still fails (exit ${r.status}) [${e.cause}; ${e.filedUnder}; expiry ${e.expiry} / <${e.expiryVersion}]${e.basePath ? ` [basePath ${e.basePath}]` : ""} — ${observed.length} cause line(s), a multiset equal to the register:\n${listing(observed)}`);
+          log(`run-tests: quarantine ${e.file} still fails (exit ${r.status}) [${e.cause}; ${e.filedUnder}; expiry ${e.expiry} / <${e.expiryVersion}]${e.basePath ? ` [basePath ${e.basePath}]` : ""} — ${observed.length} cause line(s), equal to the register:\n${listing(observed)}`);
         }
       }
     }
@@ -937,9 +794,6 @@ module.exports = {
   EXPECTED_REAL_BASE,
   RENAME_SIMILARITY,
   NORMALIZER_DECLARATION,
-  CHILD_ENV_ALLOWLIST,
-  CHILD_ENV_OBSERVED_FLOOR,
-  childEnv,
   DROP_CLASS_DECLARATION,
   CEILINGS,
   AUTHOR_ERROR_FAILURE_TYPES,
@@ -951,17 +805,12 @@ module.exports = {
   tapCommentEscape,
   decodeInspectLiteral,
   captureCauseLines,
-  causeMultiset,
-  sameMultiset,
-  multisetDifference,
   isVacuous,
   loadQuarantine,
   checkRealRegisterBase,
   baseIdentityProblems,
   runNodeTest,
   currentStamp,
-  failCount,
-  lockVerdict,
 };
 
 if (require.main === module) {

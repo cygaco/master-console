@@ -1,0 +1,77 @@
+TAP version 13
+# Subtest: QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+ok 1 - QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+  ---
+  duration_ms: 480.321
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+ok 2 - QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+  ---
+  duration_ms: 504.1785
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+ok 3 - QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+  ---
+  duration_ms: 445.5427
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+ok 4 - QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+  ---
+  duration_ms: 330.7404
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+ok 5 - QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+  ---
+  duration_ms: 796.7889
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+ok 6 - QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+  ---
+  duration_ms: 494.9477
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+ok 7 - QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+  ---
+  duration_ms: 240.1222
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+ok 8 - QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+  ---
+  duration_ms: 472.45
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+ok 9 - QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+  ---
+  duration_ms: 462.8239
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+ok 10 - QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+  ---
+  duration_ms: 429.0953
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+ok 11 - QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+  ---
+  duration_ms: 0.4451
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4710.8158
+exit 0

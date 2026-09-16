@@ -1,0 +1,5 @@
+ scripts/open-source/rename-mc.occurrences.json | 96 ++++++++++++++------------
+ 1 file changed, 50 insertions(+), 46 deletions(-)
+runtime/S-OS-06/fixture-product
+runtime/S-OS-06/rename-occurrences.full.json
+runtime/S-OS-06/rename-plan.json

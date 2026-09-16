@@ -1,0 +1,177 @@
+✔ QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero (392.7159ms)
+✖ QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0 (389.8612ms)
+✔ QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero (379.1843ms)
+✔ QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero (299.4697ms)
+✖ QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed (332.4667ms)
+✔ QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero (389.0122ms)
+✖ QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass (268.3427ms)
+✖ QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero (376.0316ms)
+✔ QUARANTINE-RUNNER: the real tests/quarantine.json is never touched (0.388ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 5
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2876.787
+
+✖ failing tests:
+
+test at ..\..\..\..\..\..\..\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:146:1
+✖ QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0 (389.8612ms)
+  AssertionError [ERR_ASSERTION]: quarantine did not hold: runner exited 1
+  run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 0f7ecd618f367e5cb1873f66ab137671e0e108f1
+  run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+  TAP version 13
+  # Subtest: dummy passes
+  ok 1 - dummy passes
+    ---
+    duration_ms: 0.3148
+    type: 'test'
+    ...
+  1..1
+  # tests 1
+  # suites 0
+  # pass 1
+  # fail 0
+  # cancelled 0
+  # skipped 0
+  # todo 0
+  # duration_ms 40.5062
+  run-tests: QUARANTINE VIOLATION — CAUSE-LOCK: tests/q/still-fails.test.js fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure
+        (none)
+  run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base
+  
+  
+  
+  1 !== 0
+  
+      at C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:150:12
+      at withRepo (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:109:12)
+      at TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:148:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\..\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:176:1
+✖ QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed (332.4667ms)
+  AssertionError [ERR_ASSERTION]: run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-CcgQM4\tests\quarantine.json is malformed:
+    - entries[0] (tests/ok/pass.test.js) is missing a non-empty "cause"
+    - entries[0] (tests/ok/pass.test.js) is missing a non-empty "filedUnder"
+    - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiry"
+    - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiryVersion"
+    - entries[0] (tests/ok/pass.test.js) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)
+    - entries[0] (tests/ok/pass.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+    - entries[0] (tests/ok/pass.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+  
+  
+      at C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:187:12
+      at withRepo (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:109:12)
+      at TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:184:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'run-tests: FAIL — quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\sos06-quarantine-CcgQM4\\tests\\quarantine.json is malformed:\n  - entries[0] (tests/ok/pass.test.js) is missing a non-empty "cause"\n  - entries[0] (tests/ok/pass.test.js) is missing a non-empty "filedUnder"\n  - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiry"\n  - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiryVersion"\n  - entries[0] (tests/ok/pass.test.js) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)\n  - entries[0] (tests/ok/pass.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)\n  - entries[0] (tests/ok/pass.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)\n\n',
+    expected: /missing a non-empty "firstFailingAssertion"/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\..\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:200:1
+✖ QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass (268.3427ms)
+  AssertionError [ERR_ASSERTION]: a broken/near-empty glob passed the floor
+  run-tests: discovered 1 test file(s) (floor 99); reporter pinned to tap; register base 5f03723a08430190e0f756f3f9ae84d62972eea3
+  run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+  TAP version 13
+  # Subtest: dummy passes
+  ok 1 - dummy passes
+    ---
+    duration_ms: 0.3247
+    type: 'test'
+    ...
+  1..1
+  # tests 1
+  # suites 0
+  # pass 1
+  # fail 0
+  # cancelled 0
+  # skipped 0
+  # todo 0
+  # duration_ms 43.3538
+  run-tests: PASS — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 0 entries, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base
+  
+  
+      at C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:204:12
+      at withRepo (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:109:12)
+      at TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:202:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 0,
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\..\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:209:1
+✖ QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero (376.0316ms)
+  AssertionError [ERR_ASSERTION]: run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 0e9b6eb6d640e08372658f11f5c6b88f3f0f4e90
+  run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+  TAP version 13
+  # Subtest: dummy passes
+  ok 1 - dummy passes
+    ---
+    duration_ms: 0.3167
+    type: 'test'
+    ...
+  1..1
+  # tests 1
+  # suites 0
+  # pass 1
+  # fail 0
+  # cancelled 0
+  # skipped 0
+  # todo 0
+  # duration_ms 39.357
+  run-tests: QUARANTINE VIOLATION — CAUSE-LOCK: tests/q/still-fails.test.js fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure
+        (none)
+  run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base
+  
+  
+      at C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:214:12
+      at withRepo (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:109:12)
+      at TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\tmp.qeoMTs0d6U\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:211:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: "run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base 0e9b6eb6d640e08372658f11f5c6b88f3f0f4e90\nrun-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)\nTAP version 13\n# Subtest: dummy passes\nok 1 - dummy passes\n  ---\n  duration_ms: 0.3167\n  type: 'test'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 39.357\nrun-tests: QUARANTINE VIOLATION — CAUSE-LOCK: tests/q/still-fails.test.js fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure\n      (none)\nrun-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base\n\n",
+    expected: /QUARANTINE VIOLATION — EXPIRED: tests\/q\/still-fails\.test\.js quarantine expired at 3\.0\.0/,
+    operator: 'match',
+    diff: 'simple'
+  }

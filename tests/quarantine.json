@@ -1,216 +1,771 @@
 {
   "$question": "Which test files does `npm test` (scripts/checks/run-tests.js) subtract from the full scripts/** + tests/** *.test.js glob, and why is each one still broken?",
-  "$policy": "Every entry is pre-existing test rot, verified failing standalone (node --test <file>, repo root, CLAUDE_PROJECT_DIR unset, node v24.16.0) on the S-OS-06 fix2 tree AND identically on the pre-sprint base 669aadc1. The runner runs each quarantined file alone and FAILS if it passes (remove the entry) or is missing. Never add a file to green a red run: fix it, or file it here with its verbatim failure, cause, filing and expiry.",
-  "$format": "firstFailingAssertion = the verbatim first failing assertion line(s) from the standalone run, joined with ' | '; the absolute repo root is written <repo> and the OS temp dir <tmp>. | v2: +failCount (per-test count-lock), +expiryVersion (tree-version auto-expire), +$floor (empty-subject guard); CAUSE-LOCK enforced by run-tests.js | v2: +failCount (per-test count-lock), +expiryVersion (tree-version auto-expire), +$floor (empty-subject guard); CAUSE-LOCK enforced by run-tests.js | v2: +failCount (per-test count-lock), +expiryVersion (tree-version auto-expire), +$floor (empty-subject guard); CAUSE-LOCK enforced by run-tests.js",
+  "$policy": "Every entry is pre-existing test rot: its test exists at the register's base commit (at basePath when S-OS-06's codemod renamed it) and FAILS there (exit code non-zero). `node scripts/checks/run-tests.js --verify-base` checks both. The policy says FAILS AT BASE, not fails IDENTICALLY at base: the codemod rewrote text inside SP-20260616-001/wrapper-door's own cause line (WARPOS_SHAPE_DOOR became MC_SHAPE_DOOR), so the rename touched its own evidence and the stronger claim cannot hold for all entries. A test absent at base (sprint-authored) cannot enter. The runner runs each quarantined file alone and FAILS if it passes (remove the entry), is missing, is not at base, or fails with a different multiset of cause lines or more failing tests than registered. Never add a file to green a red run: fix it, or file it here with its observed cause lines, cause, filing and expiry.",
+  "$format": "base = the full commit id every entry was verified against. For THIS register the runner refuses any value other than the pre-sprint base 669aadc1ab7dc03d74f5b95cb613a5573f4e54a6. The field is committed, so a change is visible in a diff and in review. That is all it is: it is weaker than freeze coverage, and nothing freezes this file. causeLines = the UNORDERED MULTISET (duplicates kept) of cause lines observed when the file runs alone under the pinned reporter (node --test --test-reporter=tap). Capture rule: the reporter synthesizes the container and the test authors the content. Kept: every TAP comment line the test emitted (console output, stderr, t.diagnostic), and the YAML `error` value when node unwraps it from an author-thrown error. Not kept: the reporter's `# Subtest:` lines, its run summary after the top-level plan, TAP structure lines, the rest of each YAML block, and runner-composed error values. Each kept line passes through $normalizer, then $dropClass removes whole lines. The multiset is stored in canonical form, sorted by ascending UTF-16 code unit, and a stored causeLines in any other order is refused. Comparison is exact equality of the two multisets in canonical form, never containment, never a hash. ORDER IS NOT LOCKED (see $ceilings): the TAP reporter renders stdout and stderr lines identically, so cross-stream order is pipe scheduling, not a property of the test. Every stored line must be a fixed point of the normalizer, or the register is refused. failCount = per-test count-lock (no more failing tests than this). expiryVersion = the tree version at which the entry expires. observedOn = the stamp of the registering observation { platform, nodeMajor, reporter }; reporter must be tap. basePath = OPTIONAL. Absent means the test had the same path at base. Present means the path the test had at base before S-OS-06's codemod renamed it. This is TRUE RENAME PROVENANCE, recorded because it is a fact, not as a workaround. It is verified by a pair-limited `git diff -M50% --name-status <base> HEAD -- <basePath> <file>`, which must report R or the entry is refused. The 50% similarity threshold is declared here and in the runner; no automatic rename map is used. $floor = the minimum number of discovered test files (empty-subject guard). $normalizer, $dropClass and $ceilings must equal the runner's own declarations, or the register is refused.",
+  "$normalizer": [
+    "E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: HOMEDRIVE, HOMEPATH, LOGONSERVER, PATH, SYSTEMDRIVE, SYSTEMROOT, TEMP, USERDOMAIN, USERNAME, USERPROFILE, WINDIR. Other platforms: HOME, PATH, TMPDIR. OBSERVED FLOOR (win32): a child spawned with an EMPTY environment still receives exactly these 11 names (HOMEDRIVE, HOMEPATH, LOGONSERVER, PATH, SYSTEMDRIVE, SYSTEMROOT, TEMP, USERDOMAIN, USERNAME, USERPROFILE, WINDIR), refilled by the runtime, not by this runner. Source: libuv's win32 spawn (src/win/process.c: the required variables make_program_env copies from the parent into a child env block that lacks them; identified by the name set matching the measurement). Observed on win32 / node 24.16.0 / libuv 1.52.1, 2026-09-16 (runtime/S-OS-06/r4/s2i3/i7/spawn-min-probe.json). This is an implementation detail declared as an observation, not a contract. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.",
+    "0 input: every captured line enters in TAP comment rendering. A YAML error value is decoded from its YAML scalar and re-rendered with node's own TAP comment escape before step 1, so both regimes share one normalizer.",
+    "1 unescape: a single left-to-right scan decoding \\\\ to \\ and \\# to #; every other backslash pair is left as its two characters.",
+    "2 separators: every run of one or more backslashes becomes one /. It runs AFTER unescape (ordering trap: in the other order an escaped pair becomes //).",
+    "3 roots: the absolute repo root (in / form) becomes <repo>; THEN the OS temp dir (in / form, not preceded by a word character or >, not followed by a word character, . or -) becomes <tmp>, and the trailing 6 alphanumerics of the first path segment under <tmp>/ become XXXXXX (the fs.mkdtemp suffix).",
+    "4 timings: every (N ms) timing, (Nms) or (N.Nms), is deleted, repeated until none remains.",
+    "5 whitespace: every run of whitespace becomes one space, then the line is trimmed.",
+    "6 markers: a leading reporter marker token (ℹ or #, followed by a space or the end of the line) is stripped, repeated until none remains.",
+    "7 after the six steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an UNORDERED MULTISET of lines (duplicates kept). Its canonical form is the lines sorted in ascending UTF-16 code-unit order (JavaScript's default sort, locale-independent). Stored and observed are compared in canonical form by exact equality of every element and of the length, never containment, never a hash. A stored causeLines not already in canonical form is refused."
+  ],
+  "$dropClass": [
+    "stack frame: a line of the V8 frame shape, at [async] [<callee> (]<location>:<line>[:<col>][)] with an optional trailing { (the error's own property dump begins on that line), where <location> starts with <repo>, <tmp>, node:, file:, a drive letter or /; or a frame whose location is (native) or (<anonymous>).",
+    "runtime banner: a line of the shape Node.js v<major>.<minor>.<patch>.",
+    "internal module path: a line that is only a node: builtin module location, node:<id>[:<line>[:<col>]] (for example node:fs:441 or node:internal/modules/cjs/loader:1503). When it heads a runtime source excerpt (the next two lines are one source line and a line of only ^ carets), those two lines are the runtime's own source, not the test's, and are dropped with it."
+  ],
+  "$ceilings": [
+    "NON-INJECTIVE ESCAPE (lock collision): node's TAP comment escape renders a real tab and a literal backslash-t identically (likewise \\n, \\r, \\b, \\f, \\v). Two different source strings can therefore normalize identically.",
+    "SEPARATOR COLLAPSE (lock collision): step 2 maps every backslash run to one /, so a message differing only in backslash count, or in \\ versus /, normalizes identically.",
+    "TEST NAMES ARE METADATA: test names are not captured. Two tests failing with the same author lines and the same count normalize identically.",
+    "SYNTHESIZED-SHAPE COLLISION: an author line printed as exactly Subtest: <x>, or a counter line after the top-level plan, is indistinguishable from the reporter's own and is not captured.",
+    "TEMP MASK: step 3 masks the last 6 alphanumerics of ANY first segment under <tmp>/ (at least 6 alphanumerics long), not only real fs.mkdtemp suffixes.",
+    "BENIGN OUTPUT CHURN BREAKS A LOCK: every author-emitted line is captured, so a harmless console-output change fails the lock. This is intended and fail-closed: for a rotted test, changed output is the moment to re-examine the entry.",
+    "ORDER IS NOT LOCKED: the lock is the unordered multiset (duplicates kept), so a pure reordering of identical lines is not detected. The capture reads the TAP reporter's output, where a line from the child's stdout and a line from its stderr render as identical comment lines, so which stream a line came from, and therefore the cross-stream order, is not observable in what the capture consumes (the order is pipe scheduling; measured flapping on a control entry, 3 orderings in 6 passes). A different sub-case changes line CONTENT, and so changes the multiset. A line appearing twice and later once is a change and is detected."
+  ],
+  "$ciInterpretation": "Pre-committed 2026-09-16, BEFORE any CI run of these registrations, while the outcome is unknown. Every entry was observed on win32 / node 24 / tap. If any entry mismatches on CI (linux / node 22 / tap), that is a FINDING ABOUT THE NORMALIZER. It is not a quarantine violation to wave through, and it is not grounds to re-open the admissibility of a local observation. Known at registration and deliberately NOT normalized away: the win32 errno value `errno: -4058` in SP-20260518-007/docs-and-skill-bodies (ENOENT is -2 on linux).",
+  "$observedOnEnvironment": "Recorded 2026-09-16 (lane I8, β d6b18f04, α R-71). Every entry's observedOn { platform, nodeMajor, reporter } describes the CAPTURE environment of its registering observation. It has no field for the child environment. The causeLines were captured with the AMBIENT (pre-scrub) child environment. That includes the six formerly-decorative entries the lane I rewrite re-captured, whose causeLines are non-empty (2, 7, 9, 7, 32 and 8 lines). The gate now CHECKS with the hermetic child environment ($normalizer element E). The two environments were MEASURED EQUAL for this register on this date: lane I7 ran every entry hermetic against this register at 21ba435c, and 23/23 still failed with a cause multiset equal to the registered one; 0 moved (runtime/S-OS-06/r4/s2i3/i7/per-entry-hermetic.txt). No re-stamp was taken. observedOn has no environment field, so a post-scrub re-stamp would be byte-identical and would record nothing. Re-capturing an entry in any other environment voids this equality claim for that entry.",
+  "base":"669aadc1ab7dc03d74f5b95cb613a5573f4e54a6",
   "filedUnder": "ED-434",
-  "recordedAt": "2026-09-13",
+  "recordedAt": "2026-09-16",
   "entries": [
     {
       "file": "tests/mc/dispatch-readiness.test.js",
-      "firstFailingAssertion": "FAIL  KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+      "basePath": "tests/warpos/dispatch-readiness.test.js",
+      "causeLines": [
+        "- KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+        "1. provider-health-check exit-code contract",
+        "10. FIX4 — unreadable shipped skill blocks with informative message",
+        "11. FIX5 — skill script-ref extraction: invocation-context + extensions",
+        "2. runtimeExclusionGate",
+        "3. skillScriptCompletenessGate",
+        "4. isExcluded agreement between E1 gate and generator",
+        "5. SessionStart per-role nudge — fail-open",
+        "6. Skill .md content assertions",
+        "7. FIX1 — cli.js --smoke/--full routing",
+        "8. FIX2 — RUNTIME_JSONL_PATTERN backslash + case coverage",
+        "9. FIX3 — production CLI bypass flags removed",
+        "FAIL KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+        "FAIL — 1 of 79 cases failed:",
+        "ok FIX1: --full alias routes to provider-smoke.js --per-role",
+        "ok FIX1: --smoke propagates exit 0 (green)",
+        "ok FIX1: --smoke propagates exit 2 (RED — not swallowed to 0)",
+        "ok FIX1: --smoke routes to provider-smoke.js --per-role",
+        "ok FIX1: signal-killed (status=null) → exit 2 (treated as failure)",
+        "ok FIX2: RUNTIME_JSONL_PATTERN catches beta/events.jsonl (backslash sep)",
+        "ok FIX2: RUNTIME_JSONL_PATTERN catches beta/skill-usage.JSONL",
+        "ok FIX2: RUNTIME_JSONL_PATTERN catches events.JSONL (case-insensitive)",
+        "ok FIX2: runtimeExclusionGate blocks asset with backslash path (beta/events.jsonl)",
+        "ok FIX2: runtimeExclusionGate still blocks forward-slash path (regression guard)",
+        "ok FIX3: --skip-runtime-exclusion-check not parsed from CLI args",
+        "ok FIX3: --skip-skill-script-check not parsed from CLI args",
+        "ok FIX3: programmatic opts.skipRuntimeExclusionCheck still bypasses (for tests)",
+        "ok FIX3: usage string does not mention --skip-runtime-exclusion-check",
+        "ok FIX3: usage string does not mention --skip-skill-script-check",
+        "ok FIX4: offender reason mentions 'unreadable'",
+        "ok FIX4: offenders list contains the unreadable skill",
+        "ok FIX4: unreadable shipped skill → blocked=true",
+        "ok FIX5: .cjs ref in invocation context → caught",
+        "ok FIX5: .mjs ref in fenced code block → caught",
+        "ok FIX5: `node scripts/mc/shipped.js` → shipped → passes",
+        "ok FIX5: `node scripts/real-dep.js` invocation → caught → blocks (not shipped)",
+        "ok FIX5: bash scripts/setup/install.sh in invocation context → caught",
+        "ok FIX5: prose mention 'see scripts/example.js for reference' → NOT caught (no false-positive block)",
+        "ok FIX5: scripts/ ref inside fenced code block → caught even without node prefix",
+        "ok exit code: green → 0",
+        "ok exit code: red → 2",
+        "ok exit code: yellow → 0",
+        "ok health.md: documents exit 2 contract",
+        "ok health.md: fellback status documented",
+        "ok health.md: per-role statuses documented (model_unavailable)",
+        "ok health.md: references provider-smoke.js --per-role",
+        "ok health.md: section 12 (Dispatch Hygiene) still present",
+        "ok isExcluded agrees: should-NOT-exclude \".claude/agents/00-alex/alpha.md\"",
+        "ok isExcluded agrees: should-NOT-exclude \".claude/commands/mc/health.md\"",
+        "ok isExcluded agrees: should-NOT-exclude \".claude/project/reference/reasoning-frameworks.md\"",
+        "ok isExcluded agrees: should-NOT-exclude \"framework/releases/0.18.0/release.json\"",
+        "ok isExcluded agrees: should-NOT-exclude \"scripts/hooks/session-start.js\"",
+        "ok isExcluded agrees: should-NOT-exclude \"scripts/mc/provider-smoke.js\"",
+        "ok isExcluded agrees: should-exclude \".claude/agents/00-alex/.system/events.jsonl\"",
+        "ok isExcluded agrees: should-exclude \".claude/agents/president/_system/oneshot/retros/run-009/HYGIENE.md\"",
+        "ok isExcluded agrees: should-exclude \".claude/project/events/\"",
+        "ok isExcluded agrees: should-exclude \".claude/project/events/events.jsonl\"",
+        "ok isExcluded agrees: should-exclude \".claude/project/maps/skill-usage.jsonl\"",
+        "ok isExcluded agrees: should-exclude \".claude/project/maps/tools.jsonl\"",
+        "ok isExcluded agrees: should-exclude \".claude/runtime/\"",
+        "ok isExcluded agrees: should-exclude \".claude/runtime/handoffs/somefile.md\"",
+        "ok provider-health-check: exit(2) on red is present",
+        "ok provider-health-check: unconditional exit(0) is gone",
+        "ok runtimeExclusionGate: clean manifest → 0 offenders",
+        "ok runtimeExclusionGate: clean manifest → not blocked",
+        "ok runtimeExclusionGate: empty assets → passes",
+        "ok runtimeExclusionGate: events.jsonl path → blocked (W-8 class)",
+        "ok runtimeExclusionGate: message names remediation",
+        "ok runtimeExclusionGate: null manifest → fails closed",
+        "ok runtimeExclusionGate: offenders list non-empty",
+        "ok runtimeExclusionGate: owner=runtime → blocked",
+        "ok runtimeExclusionGate: skill-usage.jsonl → blocked",
+        "ok runtimeExclusionGate: skipRuntimeExclusionCheck bypass → not blocked",
+        "ok runtimeExclusionGate: string manifest → fails closed",
+        "ok session-start: dispatchReadinessNudge added to injection guard",
+        "ok session-start: exits 0 even with invalid stdin input (fail-open)",
+        "ok session-start: nudge only on startup or clear (gated)",
+        "ok session-start: per-role nudge wrapped in try/catch",
+        "ok session-start: uses --no-ping for token-free resolve",
+        "ok skillScriptCompletenessGate: all refs shipped → passes",
+        "ok skillScriptCompletenessGate: message names remediation",
+        "ok skillScriptCompletenessGate: missing script ref → blocked",
+        "ok skillScriptCompletenessGate: no skill assets → passes",
+        "ok skillScriptCompletenessGate: null manifest → fails closed",
+        "ok skillScriptCompletenessGate: offenders list non-empty",
+        "ok skillScriptCompletenessGate: one shipped one missing → blocked",
+        "ok skillScriptCompletenessGate: only missing-tool in offenders",
+        "ok skillScriptCompletenessGate: skipSkillScriptCheck bypass → passes",
+        "ok skillScriptCompletenessGate: unreadable shipped skill → blocks (fail-closed)",
+        "ok test.md: --smoke / --full passthrough documented",
+        "ok test.md: documents non-zero exit on RED",
+        "ok test.md: explains relationship between cli.js and smoke"
+      ],
       "failCount": 1,
       "cause": "dangling-ref-allowlist-populated",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/mc/lib/provider-autofix.unit.test.js",
-      "firstFailingAssertion": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+      "basePath": "tests/warpos/lib/provider-autofix.unit.test.js",
+      "causeLines": [
+        "'<repo>/tests/mc/lib/provider-autofix.unit.test.js'",
+        "- <repo>/tests/mc/lib/provider-autofix.unit.test.js",
+        "Error: Cannot find module '<repo>/.claude/agents/00-alex/.system/policy/provider-failure-modes.json'",
+        "Require stack:",
+        "]",
+        "code: 'MODULE_NOT_FOUND',",
+        "requireStack: [",
+        "}"
+      ],
       "failCount": 1,
       "cause": "adr-0007-cutover-path",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/mc/lib/provider-rca.unit.test.js",
-      "firstFailingAssertion": "Error: Cannot find module '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\provider-failure-modes.json'",
+      "basePath": "tests/warpos/lib/provider-rca.unit.test.js",
+      "causeLines": [
+        "'<repo>/tests/mc/lib/provider-rca.unit.test.js'",
+        "- <repo>/tests/mc/lib/provider-rca.unit.test.js",
+        "Error: Cannot find module '<repo>/.claude/agents/00-alex/.system/policy/provider-failure-modes.json'",
+        "Require stack:",
+        "]",
+        "code: 'MODULE_NOT_FOUND',",
+        "requireStack: [",
+        "}"
+      ],
       "failCount": 1,
       "cause": "adr-0007-cutover-path",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/mc/product-bootstrap.unit.test.js",
-      "firstFailingAssertion": "Error: Cannot find module '<repo>\\scripts\\product\\bootstrap.js'",
+      "basePath": "tests/warpos/product-bootstrap.unit.test.js",
+      "causeLines": [
+        "'<repo>/tests/mc/product-bootstrap.unit.test.js'",
+        "- <repo>/tests/mc/product-bootstrap.unit.test.js",
+        "Error: Cannot find module '<repo>/scripts/product/bootstrap.js'",
+        "Require stack:",
+        "]",
+        "code: 'MODULE_NOT_FOUND',",
+        "requireStack: [",
+        "}"
+      ],
       "failCount": 1,
       "cause": "removed-module",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/mc/provider-smoke.unit.test.js",
-      "firstFailingAssertion": "FAIL — 7 of 68 cases failed:",
+      "basePath": "tests/warpos/provider-smoke.unit.test.js",
+      "causeLines": [
+        "- AC-3.2: corrupt catalog → exit 1 (not 2): exit=0 stderr=",
+        "- AC-3.2: corrupt catalog → stderr contains catalog_load_error: (no detail)",
+        "- AC-3.2: corrupt catalog → stderr names parse_failed reason: (no detail)",
+        "- AC-3.2: missing entries map → exit 1: (no detail)",
+        "- AC-3.2: non-object root → exit 1: exit=0 stderr=",
+        "- AC-3.2: non-object root → stderr contains schema_invalid: (no detail)",
+        "- KNOWN_PROVIDERS set: (no detail)",
+        "FAIL — 7 of 68 cases failed:"
+      ],
       "failCount": 1,
       "cause": "provider-catalog-contract-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
-      "firstFailingAssertion": "(no failure line captured)",
+      "causeLines": [
+        "- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\"ok\":false}",
+        "S-LC-06/coverage-gate-caller fixture-test: 7/8 passed, 1 FAILED"
+      ],
       "failCount": 1,
       "cause": "coverage-ledger-contract-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/S-LC-06/mode-profile.test.js",
-      "firstFailingAssertion": "(no failure line captured)",
+      "causeLines": [
+        "+ []",
+        "+ actual - expected",
+        "- 'in-process-agent'",
+        "- [",
+        "- ]",
+        "- mode_profiles.sprint.alpha_only_shapes === ['in-process-agent'] (ED-041): Expected values to be strictly deep-equal:",
+        "S-LC-06/mode-profile fixture-test: 10/11 passed, 1 FAILED"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/S-LC-07/spend-ledger.test.js",
-      "firstFailingAssertion": "FAIL  BLOCKER 1: prototype-key models price via _default — usd FINITE, not NaN",
+      "causeLines": [
+        "0 !== 1",
+        "AssertionError [ERR_ASSERTION]: a finite total still trips the ceiling — bypass closed",
+        "AssertionError [ERR_ASSERTION]: a present-but-unparseable exit_code (Number(\"abc\")=NaN) must NOT skip metering",
+        "AssertionError [ERR_ASSERTION]: an absent exit_code must be metered exactly as before",
+        "AssertionError [ERR_ASSERTION]: baseline _default cost is finite",
+        "AssertionError [ERR_ASSERTION]: exit_code:\"0\" (string success) must produce a metered record, not null",
+        "AssertionError [ERR_ASSERTION]: record still produced",
+        "AssertionError [ERR_ASSERTION]: the \"0\"-string record is counted as a real metered call",
+        "FAIL BLOCKER 1: prototype-key models price via _default — usd FINITE, not NaN",
+        "FAIL BLOCKER 2: NaN / Infinity / non-numeric bytes clamp to 0 (no Infinity, no NaN)",
+        "FAIL BLOCKER 2: negative byte counts clamp to 0 — usd >= 0, never subtracts",
+        "FAIL BLOCKER 3 (ledger level): a crafted exit_code:\"0\" record does NOT under-report the total",
+        "FAIL BLOCKER 3: a garbage exit_code (\"abc\", unparseable) is METERED — no under-report",
+        "FAIL BLOCKER 3: an absent exit_code is METERED (preserved)",
+        "FAIL BLOCKER 3: exit_code:\"0\" (STRING success) is METERED — not spoofed into a skip",
+        "FAIL LEDGER total stays finite + monotonic + ceiling trips with a poisoned record",
+        "FAIL happy path intact: a real model with positive bytes prices exactly as before",
+        "S-LC-07 spend-ledger: 14 passed, 9 failed",
+        "TypeError: Cannot read properties of null (reading 'inBytes')",
+        "TypeError: Cannot read properties of null (reading 'inBytes')",
+        "false !== true",
+        "ok BLOCKER 3: a real numeric non-zero exit_code (1) stays NO-CHARGE (failure preserved)",
+        "ok budget-approach warning fires ≥80% and is report-only (no blocking)",
+        "ok claude (subscription) records are NOT metered",
+        "ok computeLedger uses the $100 framework default when no override granted",
+        "ok computeLedger uses the $500 runtime override (NOT hardcoded)",
+        "ok fail-open: a malformed completions line is skipped, never crashes",
+        "ok fail-open: a missing completions file → $0 spend, no warnings, no crash",
+        "ok failed (non-zero exit) paid calls are not charged",
+        "ok over-ceiling is reported (report-only) — still does not block",
+        "ok records before granted_at are excluded from the session ledger",
+        "ok resolveCeiling falls back to the framework default ($100) when no auth",
+        "ok resolveCeiling ignores an invalid/zero/negative override → framework default",
+        "ok resolveCeiling reads the runtime override ($500) when present",
+        "ok under-budget emits a notice, no warning"
+      ],
       "failCount": 1,
       "cause": "spend-pricing-contract-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
-      "firstFailingAssertion": "FAIL real-scaffold-telemetry-tree-passes: AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+      "causeLines": [
+        "+ 'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+        "+ [",
+        "+ ]",
+        "+ actual - expected",
+        "- []",
+        "FAIL real-scaffold-telemetry-tree-passes: AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+        "PASS activation-confidence-range-fixture-fails",
+        "PASS activation-definition-shape-required",
+        "PASS analytics-track-fixture-fails",
+        "PASS comment-spoofed-track-boundary-fixture-fails",
+        "PASS commented-event-fixture-fails",
+        "PASS commented-stage-fixture-fails",
+        "PASS duplicate-sink-fixture-fails",
+        "PASS dynamic-import-drift-fixture-fails",
+        "PASS event-name-drift-fixture-fails",
+        "PASS fetch-analytics-fixture-fails",
+        "PASS fetch-collect-fixture-fails",
+        "PASS fetch-telemetry-fixture-fails",
+        "PASS fetch-variable-endpoint-fixture-fails",
+        "PASS lifecycle-events-exact-set",
+        "PASS missing-sink-export-fixture-fails",
+        "PASS missing-track-export-fixture-fails",
+        "PASS no-global-click-wrapper",
+        "PASS require-drift-fixture-fails",
+        "PASS seam-missing-fixture-fails",
+        "PASS sendbeacon-fixture-fails",
+        "PASS track-event-type-derives-from-events",
+        "PASS unfilled-activation-fixture-fails",
+        "PASS unfilled-activation-provenance-fixture-fails",
+        "PASS unfilled-activation-source-fixture-fails",
+        "scaffold-coverage-telemetry: 24 passed, 1 failed"
+      ],
       "failCount": 1,
       "cause": "scaffold-template-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/S-PF-03/admin-surface.test.js",
-      "firstFailingAssertion": "(no failure line captured)",
+      "causeLines": [
+        "+ 'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+        "+ [",
+        "+ ]",
+        "+ actual - expected",
+        "- []",
+        "- real-scaffold-admin-surface-passes: Expected values to be strictly deep-equal:",
+        "- unsafe-cookie-email-delimiter-fixture-fails: missing error /encode the email segment safely/; got [\"duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl\"]",
+        "- unsigned-header-auth-fixture-fails: missing error /signed request-bound admin session cookie/; got [\"duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl\"]",
+        "S-PF-03 admin surface: 11 passed, 3 FAILED"
+      ],
       "failCount": 1,
       "cause": "scaffold-template-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/S-PF-04/founders-checklist.test.js",
-      "firstFailingAssertion": "(no failure line captured)",
+      "causeLines": [
+        "+ 'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+        "+ [",
+        "+ ]",
+        "+ actual - expected",
+        "- []",
+        "- real-scaffold-founders-checklist-contract-passes: Expected values to be strictly deep-equal:",
+        "S-PF-04 founders checklist: 5 passed, 1 FAILED"
+      ],
       "failCount": 1,
       "cause": "scaffold-template-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
-      "firstFailingAssertion": "Error: ENOENT: no such file or directory, open '<repo>\\.claude\\agents\\00-alex\\.system\\policy\\sprint-full-autonomy.json'",
+      "causeLines": [
+        "Error: ENOENT: no such file or directory, open '<repo>/.claude/agents/00-alex/.system/policy/sprint-full-autonomy.json'",
+        "code: 'ENOENT',",
+        "errno: -4058,",
+        "ok test_sprint_workflow_reference_has_goal_verification_section",
+        "path: '<repo>/.claude/agents/00-alex/.system/policy/sprint-full-autonomy.json'",
+        "syscall: 'open',",
+        "}"
+      ],
       "failCount": 1,
       "cause": "adr-0007-cutover-path",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
-      "firstFailingAssertion": "FAIL  test_settings_registers_lint_hook_output_between_path_guard_and_sprint_routing",
+      "causeLines": [
+        "12 passed, 1 failed",
+        "FAIL test_settings_registers_lint_hook_output_between_path_guard_and_sprint_routing",
+        "ok test_execute_md_warns_against_run_in_background_in_ralph_test_phase",
+        "ok test_format_js_remains_fail_open",
+        "ok test_format_js_taskkill_path_on_windows",
+        "ok test_format_js_uses_binary_resolution",
+        "ok test_lint_hook_silent_on_well_formed_event",
+        "ok test_lint_hook_warns_on_missing_edit_field",
+        "ok test_lint_hook_warns_on_missing_write_field",
+        "ok test_node_procs_helper_returns_array",
+        "ok test_node_procs_json_output_parses",
+        "ok test_node_procs_skill_body_conventions",
+        "ok test_operational_loop_has_background_tasks_section",
+        "ok test_prettier_binary_resolution_path_is_attempted",
+        "order wrong: pg=6 lh=15 sr=7"
+      ],
       "failCount": 1,
       "cause": "settings-hook-order-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
-      "firstFailingAssertion": "FAIL epsilon-agent / small (1000): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([\\",
+      "causeLines": [
+        "(1) PARENT_GRACE_MS is a named constant in the β window (30–60s):",
+        "(2) parent-bound-exceeds-child-bound-at-both-sites:",
+        "(3) graceful-death-record-wins-race-both-sites:",
+        "(4) parent-strictly-exceeds-child-under-opts-override-both-sites (FIX-A1 propagation link):",
+        "(5) epsilon-agent-parent-strictly-exceeds-child-REAL-bounds (T-322 — child CONSUMES the propagated bound):",
+        "(5b) quota-retry-runProvider-also-bound-by-childBaseMs (T-322 attempt#3 — WI-18 retry path):",
+        "(6) β build-constraint — foreground slot-wait shrink ACCEPTED, background unaffected:",
+        "(6b) FIX-3c — spawnAgent stamps the background signal on the child env (no hand-set env):",
+        "FAIL FIX-3c end-to-end: child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL background ε: child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL epsilon-agent / huge (9_000_000): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL epsilon-agent / small (1000): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL epsilon-agent / unset (epsilon-agent default): child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL foreground ε: child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL non-ε caller: child probe ran — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL quota-retry / huge (9_000_000): child probe ran (retry path fired) — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL quota-retry / small (1000): child probe ran (retry path fired) — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL quota-retry / unset (epsilon-agent default): child probe ran (retry path fired) — no probe line; stdout={\"ok\":false,\"provider\":\"gemini\",\"role\":\"security-reviewer\",\"error\":\"dispatch_contract_violation\",\"violations\":[\"tool 'gemini' does not match the contract tool_id ([/\"codex/\",/\"agy/\"]) for role 'securi stderr=[dispatch-agent] dispatch-contract VIOLATION: tool 'gemini' does not match the contract tool_id ([\"codex\",\"agy\"]) for role 'security-reviewer'.",
+        "FAIL — epsilon-spawn-grace: 32 passed, 10 failed",
+        "ok PARENT_GRACE_MS is exported as a number",
+        "ok PARENT_GRACE_MS within 30000–60000ms",
+        "ok background dispatch: parent still = child bound + grace (race closed at full bound too)",
+        "ok epsilon-agent / huge (9_000_000): child env DISPATCH_BUILDER_TIMEOUT_MS == childBaseMs (propagation link present)",
+        "ok epsilon-agent / huge (9_000_000): parent STRICTLY exceeds child (race closed for this opts override)",
+        "ok epsilon-agent / huge (9_000_000): parent timeout == childBaseMs + PARENT_GRACE_MS (by construction)",
+        "ok epsilon-agent / small (1000): child env DISPATCH_BUILDER_TIMEOUT_MS == childBaseMs (propagation link present)",
+        "ok epsilon-agent / small (1000): parent STRICTLY exceeds child (race closed for this opts override)",
+        "ok epsilon-agent / small (1000): parent timeout == childBaseMs + PARENT_GRACE_MS (by construction)",
+        "ok epsilon-agent / unset: child env DISPATCH_BUILDER_TIMEOUT_MS == childBaseMs (propagation link present)",
+        "ok epsilon-agent / unset: parent STRICTLY exceeds child (race closed for this opts override)",
+        "ok epsilon-agent / unset: parent timeout == childBaseMs + PARENT_GRACE_MS (by construction)",
+        "ok epsilon-agent site: parent STRICTLY exceeds child (not backstop-only)",
+        "ok epsilon-agent site: parent timeout = child bound + PARENT_GRACE_MS",
+        "ok epsilon-agent: OLD race (parent == child) is closed",
+        "ok epsilon-agent: child bound < parent bound with ≥30s margin",
+        "ok epsilon-claude / huge (9_000_000): child env DISPATCH_BUILDER_TIMEOUT_MS == childBaseMs (propagation link present)",
+        "ok epsilon-claude / huge (9_000_000): parent STRICTLY exceeds child (race closed for this opts override)",
+        "ok epsilon-claude / huge (9_000_000): parent timeout == childBaseMs + PARENT_GRACE_MS (by construction)",
+        "ok epsilon-claude / small (1000): child env DISPATCH_BUILDER_TIMEOUT_MS == childBaseMs (propagation link present)",
+        "ok epsilon-claude / small (1000): parent STRICTLY exceeds child (race closed for this opts override)",
+        "ok epsilon-claude / small (1000): parent timeout == childBaseMs + PARENT_GRACE_MS (by construction)",
+        "ok epsilon-claude / unset: child env DISPATCH_BUILDER_TIMEOUT_MS == childBaseMs (propagation link present)",
+        "ok epsilon-claude / unset: parent STRICTLY exceeds child (race closed for this opts override)",
+        "ok epsilon-claude / unset: parent timeout == childBaseMs + PARENT_GRACE_MS (by construction)",
+        "ok epsilon-claude site: parent STRICTLY exceeds child (not backstop-only)",
+        "ok epsilon-claude site: parent timeout = child bound + PARENT_GRACE_MS",
+        "ok epsilon-claude: OLD race (parent == child) is closed",
+        "ok epsilon-claude: child bound < parent bound with ≥30s margin",
+        "ok spawnAgent: background childBaseMs is the full bound (900s, NOT foreground-clamped to 540s)",
+        "ok spawnAgent: opts.background:true sets child env MC_DISPATCH_BACKGROUND='1' (signal propagated by construction)",
+        "ok spawnAgent: parent timeout = full childBaseMs + grace (background lane keeps the race closed at 900s)"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
-      "firstFailingAssertion": "FAIL qa-reviewer (cross_provider_reviewer) → sanctioned via review_fallback — {\"sanctioned\":false,\"lane\":\"review_fallback\",\"shape\":\"subprocess-claude\",\"reason\":\"role 'qa-reviewer' (class 'claude_pinned_reviewer') is not in lane 'review_fall",
+      "causeLines": [
+        "(1) fallback-lane-is-registered-valid-shape:",
+        "(2) enforce-flip-does-not-brick-sanctioned-lane:",
+        "(3) w2-entry-gate-text-present:",
+        "(4) advisory-suppression-keyed-on-sanctioned-verdict-not-the-flag (FIX-A3):",
+        "FAIL ENFORCE=block + --review-fallback reviewer → does NOT exit 1 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+        "FAIL ENFORCE=block + --review-fallback reviewer → exit 0 (happy path runs) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+        "FAIL design-lead is NOT sanctioned on review_fallback (precondition) — {\"sanctioned\":true,\"lane\":\"review_fallback\",\"shape\":\"subprocess-claude\",\"reason\":\"sanctioned lane 'review_fallback': shape 'subprocess-claude' registered for class 'cross_provider_consult_lead'\",\"classes\":[\"cross_provider_reviewer\",\"cross_provider_consult_lead\"],\"class\":\"cross_provider_consult_lead\"}",
+        "FAIL no dispatch_contract_violation emitted for the sanctioned lane under ENFORCE — stdout={\"ok\":false,\"provider\":\"claude\",\"role\":\"backend-reviewer\",\"reaped\":false,\"reason\":\"dispatch_contract_violation\",\"violations\":[\"shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.\"]}",
+        "FAIL non-sanctioned --review-fallback STILL emits the shape-resolver advisory (not silenced by the flag) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+        "FAIL non-sanctioned --review-fallback does NOT print the sanctioned-lane note (it is not sanctioned) — stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+        "FAIL non-sanctioned --review-fallback under ENFORCE is NOT silenced by the flag (advisory or violation present) — status=0 stderr=[dispatch-shape] review-fallback: sanctioned lane (registered shape) — allowed under ENFORCE (role 'design-lead', class 'cross_provider_consult_lead'; cross-provider quota exhausted, fallback origin: openai).",
+        "FAIL qa-reviewer (cross_provider_reviewer) → sanctioned via review_fallback — {\"sanctioned\":false,\"lane\":\"review_fallback\",\"shape\":\"subprocess-claude\",\"reason\":\"role 'qa-reviewer' (class 'claude_pinned_reviewer') is not in lane 'review_fallback' applies_to_classes [cross_provider_reviewer, cross_provider_consult_lead] — not sanctioned\",\"classes\":[\"cross_provider_reviewer\",\"cross_provider_consult_lead\"]}",
+        "FAIL report-only + --review-fallback reviewer → exit 0 (unchanged from before the fix) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+        "FAIL sanctioned --review-fallback reviewer prints the sanctioned-lane note instead — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+        "FAIL sanctioned verdict names the lane + class",
+        "FAIL stderr distinguishes 'sanctioned lane' from a suppressed mismatch (C-2) — stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+        "FAIL — review-fallback-shape: 9 passed, 12 failed",
+        "ok ENFORCE=block + non-sanctioned unknown role → STILL exits 1 (refusal preserved)",
+        "ok backend-builder (build_chain_worker) → NOT sanctioned (no over-breadth)",
+        "ok qa-reviewer + wrong shape (in-process-agent) → NOT sanctioned",
+        "ok sanctioned --review-fallback reviewer does NOT emit the shape-resolver advisory",
+        "ok security-reviewer (gemini, cross_provider_reviewer) → also sanctioned",
+        "ok the non-sanctioned refusal still carries dispatch_contract_violation",
+        "ok unregistered lane name → NOT sanctioned (fail closed)",
+        "ok §12.2 entry gate carries the sanctioned-lane precondition line",
+        "ok §12.2 section exists in the epic",
+        "stdout={\"ok\":true,\"provider\":\"claude\",\"role\":\"design-lead\",\"reaped\":false,\"output\":\"{/\"agent/\":/\"reviewer/\",/\"ok/\":true,/\"findings/\":[]}\"}"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
-      "firstFailingAssertion": "FAIL: sprint-id-match-preferred-both-checkers: matching sprint_id (window-edge) must correlate in hook-coverage",
+      "causeLines": [
+        "1 !== 0",
+        "1 !== 0",
+        "1 !== 0",
+        "FAIL: forged-sprint-id-still-needs-in-clamped-window: a matching sprint_id IN the window correlates (both conditions satisfied)",
+        "FAIL: legacy-fallback-keeps-clamped-window: legacy (no sprint_id) record inside the clamped window must correlate",
+        "FAIL: sprint-id-match-preferred-both-checkers: matching sprint_id (window-edge) must correlate in hook-coverage",
+        "sprint-id-correlation.test: 1 passed, 3 FAILED"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
-      "firstFailingAssertion": "FAIL: planted-extreme-ts-cannot-widen-hook-coverage-window: a real in-window record should green the block-row even with spoofed ts present; got [{\"sprint_id\":\"SP-WC-HOOK\",\"role\":\"qa-reviewer\",\"step\":\"gauntlet\",\"mode\":\"block\",\"finding_type\"",
+      "causeLines": [
+        "1 !== 0",
+        "1 !== 0",
+        "1 !== 0",
+        "FAIL: boundary-ts-at-created_at-plus-cap-inside-kept-outside-discarded: ts at exactly created_at + cap should be KEPT (inclusive) and the record should correlate; got [{\"sprint_id\":\"SP-WC-EDGE\",\"role\":\"qa-reviewer\",\"step\":\"gauntlet\",\"mode\":\"block\",\"finding_type\":\"missing_block_agent\",\"evidence\":\"block-row qa-reviewer@gauntlet has a manager_consult record but no backing ok:true dispatch record correlated by sprint_id (or legacy clamped window) for this sprint (E-DISPATCH-INTEGRITY-001 F-1, post-2026-06-10)\"}]",
+        "FAIL: planted-extreme-ts-cannot-widen-hook-coverage-window: a real in-window record should green the block-row even with spoofed ts present; got [{\"sprint_id\":\"SP-WC-HOOK\",\"role\":\"qa-reviewer\",\"step\":\"gauntlet\",\"mode\":\"block\",\"finding_type\":\"missing_block_agent\",\"evidence\":\"block-row qa-reviewer@gauntlet has a manager_consult record but no backing ok:true dispatch record correlated by sprint_id (or legacy clamped window) for this sprint (E-DISPATCH-INTEGRITY-001 F-1, post-2026-06-10)\"}]",
+        "FAIL: planted-extreme-ts-cannot-widen-manager-consult-window: a real in-window record should satisfy the design-quality backing requirement; got [{\"sprint_id\":\"SP-WC-MGR\",\"manager\":\"design-quality\",\"evidence\":\"sprint has a manager_consult event for 'design-quality' but no backing ok:true dispatch record correlated by sprint_id (or legacy clamped window) for this sprint (E-DISPATCH-INTEGRITY-001 F-1; post-2026-06-10 record-backed coverage required)\",\"finding_type\":\"missing_design_consult\"}]",
+        "window-clamp.test: 5 passed, 3 FAILED"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
-      "firstFailingAssertion": "(no failure line captured)",
+      "causeLines": [
+        "\"a completion record (role=frontend-builder) claims ok:true and is field-backed but carries NO valid origin-proof signature — a forged/unsigned liveness record REJECTED (ED-231 same-session verification).\"",
+        "\"check\": \"coverage-gate-scan\",",
+        "\"counts\": {",
+        "\"covered\": 0,",
+        "\"covered\": [],",
+        "\"cutoff\": \"2026-06-11\",",
+        "\"gaps\": 1,",
+        "\"legacyExempt\": false",
+        "\"legacyExemptRuns\": 0",
+        "\"missing\": [],",
+        "\"ok\": false,",
+        "\"ok\": false,",
+        "\"reportOnly\": true,",
+        "\"runId\": \"run-live-cli-exploit-g3a\",",
+        "\"runs\": 1,",
+        "\"runs\": [",
+        "\"violations\": [",
+        "\"waived\": 0,",
+        "\"waived\": [],",
+        "\"waived\": [],",
+        "- FIX2 production /scan shape with no --expected-source reports no gap when all block roles have records: expected PASS, got {\"ok\":false,\"check\":\"coverage-gate-scan\",\"reportOnly\":true,\"cutoff\":\"2026-06-11\",\"counts\":{\"runs\":1,\"covered\":0,\"gaps\":8,\"waived\":0,\"legacyExemptRuns\":0},\"waived\":[],\"runs\":[{\"runId\":\"run-prod-clean-g3a\",\"ok\":false,\"violations\":[\"expected r",
+        "- LIVE CLI with --expected-source reports no gap when BOTH expected roles have records: expected PASS, got {\"ok\":false,\"check\":\"coverage-gate-scan\",\"reportOnly\":true,\"cutoff\":\"2026-06-11\",\"counts\":{\"runs\":1,\"covered\":0,\"gaps\":4,\"waived\":0,\"legacyExemptRuns\":0},\"waived\":[],\"runs\":[{\"runId\":\"run-live-cli-exploit-g3a\",\"ok\":false,\"violations\":[\"expe",
+        "- MUTATION-VERIFY — without --expected-source, the LIVE CLI self-derives and does NOT report the missing role (this is the bug that was fixed): Self-derive (no external source) should show ok:true (no gap) — if this fails, the self-derive changed:",
+        "SP-002-FIX1-G3a/coverage-gate-scan-live-cli fixture-test: 4/7 passed, 3 FAILED",
+        "]",
+        "],",
+        "false !== true",
+        "{",
+        "{",
+        "}",
+        "}",
+        "},"
+      ],
       "failCount": 1,
       "cause": "coverage-gate-contract-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
-      "firstFailingAssertion": "(no failure line captured)",
+      "causeLines": [
+        "'security-reviewer'",
+        "+ actual - expected",
+        "- 'frontend-builder',",
+        "- AC-5.3 when every externally-expected role DID produce a record → no gap: expected PASS, got {\"ok\":false,\"violations\":[\"expected role 'frontend-builder' has NO ok:true backed completion record for run run-wsg3a-source — coverage claim is UNBACKED (sprint-theater guard).\",\"expected role 'security-reviewer' has NO ok:true backed comp",
+        "- resolveExpected UNIONs the external set with claimed roles: Expected values to be strictly deep-equal:",
+        "SP-002-WS-G3a/coverage-gate-scan-source fixture-test: 4/6 passed, 2 FAILED",
+        "[",
+        "]"
+      ],
       "failCount": 1,
       "cause": "coverage-gate-contract-drift",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
-      "firstFailingAssertion": "FAIL  report-only-ramp-preserved-not-blocking",
+      "causeLines": [
+        "1 !== 0",
+        "AssertionError [ERR_ASSERTION]: dispatch-agent report-only should proceed; stderr=[registry-roles] WARN: 'providers.DEFAULT_AGENT_PROVIDERS' fell back to its literal — registry derive failed: ENOENT: no such file or directory, open '<tmp>/SP-20260611-002-T321-mode-XXXXXX/.claude/agents/_org/role-registry.json'",
+        "FAIL report-only-ramp-preserved-not-blocking",
+        "[dispatch-agent] dispatch-contract VIOLATION: shape 'subprocess-cross-provider' is class-allowed for role 'security-reviewer' but NARROWED OUT by mode 'sprint' (mode allows: <none>).",
+        "ok mode-narrowing-gates-live-dispatch",
+        "ok wrappers-thread-mode-at-both-relocated-call-sites",
+        "wrapper-mode-binding: 2/3 pass"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
-      "firstFailingAssertion": "FAIL  four-known-panels-seeded-and-openers-resolve",
+      "causeLines": [
+        "+ 'node scripts/panel/roadmap-gui.js'",
+        "+ actual - expected",
+        "- 'node scripts/panel/roadmap.js'",
+        "FAIL four-known-panels-seeded-and-openers-resolve",
+        "^",
+        "registry-seed-resolves: 0/1 pass",
+        "roadmap opener matches"
+      ],
       "failCount": 1,
       "cause": "panel-registry-opener-changed",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     },
     {
       "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
-      "firstFailingAssertion": "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned",
+      "causeLines": [
+        "(1) report-mode-no-regression-both-wrappers:",
+        "(2) dispatch-claude-sanctioned-lane-preserved (new MC_SHAPE_DOOR toggle):",
+        "(3) two-toggle-coherence-backcompat (β#2, DoE-C2 — STRUCTURAL):",
+        "FAIL sanctioned --review-fallback + MC_SHAPE_DOOR=enforce → exit 0 (lane not bricked) — status=1 stderr=[dispatch-claude] dispatch-contract VIOLATION: shape 'subprocess-claude' is not allowed for role 'backend-reviewer' (class claude_pinned_reviewer). Allowed: in-process-agent.",
+        "FAIL — wrapper-door: 11 passed, 1 failed",
+        "ok dispatch-agent door refusal uses exit 2",
+        "ok dispatch-agent shape block calls shapeDoor(subprocess-cross-provider)",
+        "ok dispatch-claude contract =report kill-switch → exit 0 (advisory, reversible)",
+        "ok dispatch-claude contract DEFAULT is now ENFORCE (ADR-0013 amended SP-20260627-001) → exit 1 (VIOLATION)",
+        "ok dispatch-claude contract enforce (explicit, = the default now) → exit 1 (VIOLATION) on a real shape-not-allowed",
+        "ok dispatch-claude door refusal uses exit 2",
+        "ok dispatch-claude report mode (CONTRACT_ENFORCE=report) → exit 0 (advisory, no refuse)",
+        "ok dispatch-claude shape block calls shapeDoor(subprocess-claude)",
+        "ok dispatch-claude shape block no longer inlines a DISPATCH_CONTRACT_ENFORCE env check",
+        "ok report-mode shape-door advisory is byte-identical legacy form (no mode label — β#4)",
+        "ok the contract-consult enforce is env-controllable via contractEnforceMode (ADR-0013; kept, not removed)"
+      ],
       "failCount": 1,
       "cause": "dispatch-lane-change",
       "filedUnder": "ED-434",
       "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
-    },
-    {
-      "file": "tests/regression/SP-20260627-001/negative-fixtures.test.js",
-      "firstFailingAssertion": "- AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via in-process-agent is REFUSED (kills diversity): expected the enforcer to FAIL the planted violation, but it PASSED ({\"ok\":true,\"violations\":[],\"contract\":{\"role\":\"qa-reviewe",
-      "failCount": 1,
-      "cause": "dispatch-lane-change",
-      "filedUnder": "ED-434",
-      "expiry": "S-OS-08 (test-rot cleanup sprint)",
-      "expiryVersion": "3.0.0"
+      "expiryVersion": "3.0.0",
+      "observedOn": {
+        "platform": "win32",
+        "nodeMajor": 24,
+        "reporter": "tap"
+      }
     }
   ],
   "$floor": 350

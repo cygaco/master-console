@@ -1,0 +1,59 @@
+[
+ {
+  "occurrence": "O1 basePath of entry #0",
+  "A_legacyPathExistsAtBase": true,
+  "A_renamedPathExistsAtBase": false,
+  "A_pairLimitedDiffIsRename": true,
+  "A_rewriteEqualsFile_schemaRefuses": true,
+  "A_rewriteExistsAtBase": false,
+  "PROPERTY_A": true,
+  "PROPERTY_B_recordsPreRenamePath": true
+ },
+ {
+  "occurrence": "O2 basePath of entry #1",
+  "A_legacyPathExistsAtBase": true,
+  "A_renamedPathExistsAtBase": false,
+  "A_pairLimitedDiffIsRename": true,
+  "A_rewriteEqualsFile_schemaRefuses": true,
+  "A_rewriteExistsAtBase": false,
+  "PROPERTY_A": true,
+  "PROPERTY_B_recordsPreRenamePath": true
+ },
+ {
+  "occurrence": "O3 basePath of entry #2",
+  "A_legacyPathExistsAtBase": true,
+  "A_renamedPathExistsAtBase": false,
+  "A_pairLimitedDiffIsRename": true,
+  "A_rewriteEqualsFile_schemaRefuses": true,
+  "A_rewriteExistsAtBase": false,
+  "PROPERTY_A": true,
+  "PROPERTY_B_recordsPreRenamePath": true
+ },
+ {
+  "occurrence": "O4 basePath of entry #3",
+  "A_legacyPathExistsAtBase": true,
+  "A_renamedPathExistsAtBase": false,
+  "A_pairLimitedDiffIsRename": true,
+  "A_rewriteEqualsFile_schemaRefuses": true,
+  "A_rewriteExistsAtBase": false,
+  "PROPERTY_A": true,
+  "PROPERTY_B_recordsPreRenamePath": true
+ },
+ {
+  "occurrence": "O5 basePath of entry #4",
+  "A_legacyPathExistsAtBase": true,
+  "A_renamedPathExistsAtBase": false,
+  "A_pairLimitedDiffIsRename": true,
+  "A_rewriteEqualsFile_schemaRefuses": true,
+  "A_rewriteExistsAtBase": false,
+  "PROPERTY_A": true,
+  "PROPERTY_B_recordsPreRenamePath": true
+ },
+ {
+  "occurrence": "O6 $policy codemod-event sentence",
+  "legacyHitsInPolicy": 1,
+  "PROPERTY_A": "n/a (not a path; no base-identity function reads it)",
+  "B_afterRewriteSentenceIsTautology": true,
+  "PROPERTY_B": true
+ }
+]

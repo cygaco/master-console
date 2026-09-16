@@ -1,0 +1,376 @@
+{
+  "env": {
+    "platform": "win32",
+    "node": "24.16.0",
+    "reporter": "tap",
+    "CLAUDE_PROJECT_DIR": null
+  },
+  "at": "2026-09-16T20:34:18.079Z",
+  "rows": [
+    {
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "role": "degenerate + CONTROL",
+      "shape": "check",
+      "forcedPass": "KNOWN_PROVIDERS set",
+      "forcedFail": "KNOWN_PROVIDERS length 3",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/mc/__s2i3probe__provider-smoke.unit.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 8,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 8
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- KNOWN_PROVIDERS length 3: (no detail)"
+        ],
+        "onlyInFidelity": [
+          "- KNOWN_PROVIDERS set: (no detail)"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "FAIL — 7 of 68 cases failed:"
+        ],
+        "swap": [
+          "FAIL — 7 of 68 cases failed:"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "role": "degenerate",
+      "shape": "harness",
+      "forcedPass": "auditLedger: a clean backed+proof ledger has 0 gaps",
+      "forcedFail": "CLI: clean ledger → exit 0 (report-only)",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/regression/S-LC-06/__s2i3probe__coverage-gate-caller.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 2,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 2
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- CLI: clean ledger → exit 0 (report-only): expected PASS, got {\"ok\":false}"
+        ],
+        "onlyInFidelity": [
+          "- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\"ok\":false}"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "S-LC-06/coverage-gate-caller fixture-test: 7/8 passed, 1 FAILED"
+        ],
+        "swap": [
+          "S-LC-06/coverage-gate-caller fixture-test: 7/8 passed, 1 FAILED"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "role": "degenerate",
+      "shape": "harness",
+      "forcedPass": "mode_profiles.sprint.alpha_only_shapes === ['in-process-agent'] (ED-041)",
+      "forcedFail": "runtime narrowing returns the class default when a mode does not narrow the role",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/regression/S-LC-06/__s2i3probe__mode-profile.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 7,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 2
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- runtime narrowing returns the class default when a mode does not narrow the role: Expected values to be strictly deep-equal:"
+        ],
+        "onlyInFidelity": [
+          "+ []",
+          "+ actual - expected",
+          "- 'in-process-agent'",
+          "- [",
+          "- ]",
+          "- mode_profiles.sprint.alpha_only_shapes === ['in-process-agent'] (ED-041): Expected values to be strictly deep-equal:"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "S-LC-06/mode-profile fixture-test: 10/11 passed, 1 FAILED"
+        ],
+        "swap": [
+          "S-LC-06/mode-profile fixture-test: 10/11 passed, 1 FAILED"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "role": "degenerate",
+      "shape": "tests",
+      "forcedPass": "unsigned-header-auth-fixture-fails",
+      "forcedFail": "missing-audit-fixture-fails",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/regression/S-PF-03/__s2i3probe__admin-surface.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 9,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 9
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- missing-audit-fixture-fails: missing error /signed request-bound admin session cookie/; got [\"duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl\"]"
+        ],
+        "onlyInFidelity": [
+          "- unsigned-header-auth-fixture-fails: missing error /signed request-bound admin session cookie/; got [\"duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl\"]"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "S-PF-03 admin surface: 11 passed, 3 FAILED"
+        ],
+        "swap": [
+          "S-PF-03 admin surface: 11 passed, 3 FAILED"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "role": "degenerate",
+      "shape": "tests",
+      "forcedPass": "real-scaffold-founders-checklist-contract-passes",
+      "forcedFail": "missing-template-fixture-fails-scaffold-coverage",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/regression/S-PF-04/__s2i3probe__founders-checklist.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 7,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 2
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- missing-template-fixture-fails-scaffold-coverage: Expected values to be strictly deep-equal:"
+        ],
+        "onlyInFidelity": [
+          "+ 'duplicate telemetry sink/raw emit outside sink.ts: src/hooks/useVoiceInput.ts.tmpl'",
+          "+ [",
+          "+ ]",
+          "+ actual - expected",
+          "- []",
+          "- real-scaffold-founders-checklist-contract-passes: Expected values to be strictly deep-equal:"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "S-PF-04 founders checklist: 5 passed, 1 FAILED"
+        ],
+        "swap": [
+          "S-PF-04 founders checklist: 5 passed, 1 FAILED"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "role": "degenerate",
+      "shape": "harness",
+      "forcedPass": "LIVE CLI with --expected-source reports no gap when BOTH expected roles have records",
+      "forcedFail": "LIVE CLI with a malformed --expected-source falls back to self-derive (fail-open, exit 0)",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/regression/SP-20260611-002/__s2i3probe__coverage-gate-scan-live-cli.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 32,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 32
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- LIVE CLI with a malformed --expected-source falls back to self-derive (fail-open, exit 0): expected PASS, got {\"ok\":false}"
+        ],
+        "onlyInFidelity": [
+          "- LIVE CLI with --expected-source reports no gap when BOTH expected roles have records: expected PASS, got {\"ok\":false,\"check\":\"coverage-gate-scan\",\"reportOnly\":true,\"cutoff\":\"2026-06-11\",\"counts\":{\"runs\":1,\"covered\":0,\"gaps\":4,\"waived\":0,\"legacyExemptRuns\":0},\"waived\":[],\"runs\":[{\"runId\":\"run-live-cli-exploit-g3a\",\"ok\":false,\"violations\":[\"expe"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "SP-002-FIX1-G3a/coverage-gate-scan-live-cli fixture-test: 4/7 passed, 3 FAILED"
+        ],
+        "swap": [
+          "SP-002-FIX1-G3a/coverage-gate-scan-live-cli fixture-test: 4/7 passed, 3 FAILED"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "role": "degenerate",
+      "shape": "harness",
+      "forcedPass": "resolveExpected UNIONs the external set with claimed roles",
+      "forcedFail": "AC-5.3 the gap names the omitted (no-record) role",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/regression/SP-20260611-002/__s2i3probe__coverage-gate-scan-source.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 8,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 3
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- AC-5.3 the gap names the omitted (no-record) role: Expected values to be strictly deep-equal:"
+        ],
+        "onlyInFidelity": [
+          "'security-reviewer'",
+          "+ actual - expected",
+          "- 'frontend-builder',",
+          "- resolveExpected UNIONs the external set with claimed roles: Expected values to be strictly deep-equal:",
+          "[",
+          "]"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "SP-002-WS-G3a/coverage-gate-scan-source fixture-test: 4/6 passed, 2 FAILED"
+        ],
+        "swap": [
+          "SP-002-WS-G3a/coverage-gate-scan-source fixture-test: 4/6 passed, 2 FAILED"
+        ]
+      },
+      "keywordGrainBlind": true,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    },
+    {
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "role": "CONTROL (the order-flapping one)",
+      "shape": "check",
+      "forcedPass": "KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist)",
+      "forcedFail": "exit code: green → 0",
+      "sameDetail": true,
+      "anchorHits": 1,
+      "copy": "tests/mc/__s2i3probe__dispatch-readiness.probe.js",
+      "fidelity": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 92,
+        "multisetEqualsRegister": true,
+        "onlyInCopy": [],
+        "onlyInRegister": []
+      },
+      "swap": {
+        "exit": 1,
+        "failCount": "1",
+        "lines": 92
+      },
+      "countSummaryUnchanged": true,
+      "multisetLockFlips": true,
+      "swapVsFidelity": {
+        "onlyInSwap": [
+          "- exit code: green → 0: length=33",
+          "FAIL exit code: green → 0: length=33",
+          "ok KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist)"
+        ],
+        "onlyInFidelity": [
+          "- KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+          "FAIL KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+          "ok exit code: green → 0"
+        ]
+      },
+      "keywordGrainReconstruction": {
+        "fidelity": [
+          "FAIL KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+          "FAIL — 1 of 79 cases failed:"
+        ],
+        "swap": [
+          "FAIL exit code: green → 0: length=33",
+          "FAIL — 1 of 79 cases failed:"
+        ]
+      },
+      "keywordGrainBlind": false,
+      "verdict": "GREEN: same failing count, different sub-case, multiset lock FLIPS"
+    }
+  ]
+}

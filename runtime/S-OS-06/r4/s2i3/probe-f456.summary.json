@@ -1,0 +1,258 @@
+{
+  "env": {
+    "platform": "win32",
+    "node": "24.16.0",
+    "reporter": "tap",
+    "CLAUDE_PROJECT_DIR": null
+  },
+  "at": "2026-09-16T20:36:16.607Z",
+  "passed": 36,
+  "failed": 1,
+  "results": [
+    {
+      "falsifier": "F4",
+      "name": "nodeTestArgs pins --test-reporter=tap",
+      "pass": true
+    },
+    {
+      "falsifier": "F4",
+      "name": "every node spawn in run-tests.js goes through nodeTestArgs (static)",
+      "pass": true,
+      "detail": "[\"spawn(process.execPath, nodeTestArgs(files)\"]"
+    },
+    {
+      "falsifier": "F4",
+      "name": "runNodeTest is the only runner of tests (primary + quarantine + base = 3 call sites + definition)",
+      "pass": true,
+      "detail": "runNodeTest( occurrences: 4"
+    },
+    {
+      "falsifier": "F4",
+      "name": "RED HALF: the pre-rewrite runner (132a2222) spawned node --test with NO reporter flag",
+      "pass": true
+    },
+    {
+      "falsifier": "F4",
+      "name": "a real quarantined run emits TAP (TAP version 13 header)",
+      "pass": true,
+      "detail": "TAP version 13\n# S-LC-06/coverage-gate-caller fixture-test: 7/8 passed, 1 FAILED\n#   - auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\"ok\":false}\n# Subtest: tests\\\\regression"
+    },
+    {
+      "falsifier": "F4",
+      "name": "register refuses an entry observed under a non-tap reporter",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-ioo1deu6uf.json is malformed:\n  - entries[0] (tests/mc/dispatch-readiness.test.js) \"observedOn.reporter\" is \"spec\"; the reporter is pinned to \"tap\""
+    },
+    {
+      "falsifier": "F4",
+      "name": "EDGE (informational): ambient NODE_OPTIONS=--test-reporter=spec does not create a FALSE GREEN (lock either still equal with TAP output, or fails closed)",
+      "pass": true,
+      "detail": "{\"exit\":1,\"tapHeader\":false,\"specMarkers\":false,\"multisetEqualsRegister\":false,\"observedLines\":0}",
+      "edge": {
+        "exit": 1,
+        "tapHeader": false,
+        "specMarkers": false,
+        "multisetEqualsRegister": false,
+        "observedLines": 0
+      }
+    },
+    {
+      "falsifier": "F5",
+      "name": "GREEN CONTROL: the committed register loads (every stored line is a fixed point, canonical order)",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (leading reporter marker) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-j1zfnczu6o.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"# - auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (leading info marker) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-0opcc3s8aw9j.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[1] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"ℹ - auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (double internal space) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-nkyedd1b0ao.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"-  auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (trailing space) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-gc806tq8bdc.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} \" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (backslash separator) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-d2xvare49it.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} a\\\\b\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} a/b\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (escaped hash) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-idrnuy6j62.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} \\\\#x\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} #x\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (timing) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-9e485pun5u.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} (12ms)\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (absolute repo root) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-kexnxt3wrek.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} C:/Users/Vlad/Desktop/Claude/Projects/WarpOS/.claude/worktrees/S-OS-06-s2i-capture/x\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} <repo>/x\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "planted non-fixed-point line (tab) is REFUSED",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-2s7ef8tmaly.json is malformed:\n  - entries[5] (tests/regression/S-LC-06/coverage-gate-caller.test.js) causeLines[0] is not a fixed point of the normalizer (stored and observed text would not have had identical treatment): \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false}\\tz\" normalizes to \"- auditLedger: a clean backed+proof ledger has 0 gaps: expected PASS, got {\\\"ok\\\":false} z\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "stored causeLines out of canonical order is REFUSED (order part of the stored fixed point)",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-g4628ii4ieo.json is malformed:\n  - entries[0] (tests/mc/dispatch-readiness.test.js) \"causeLines\" is not in canonical order (ascending UTF-16 code units; first out of place at causeLines[0]): the lock is an unordered multiset, so its stored form is the sorted one and any other order is refused"
+    },
+    {
+      "falsifier": "F5",
+      "name": "a stored line in the drop class is REFUSED (could never be observed)",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-s1g9o9zn1oo.json is malformed:\n  - entries[0] (tests/mc/dispatch-readiness.test.js) causeLines[14] is in the drop class (stack frame) and can never be observed: \"at foo (<repo>/x.js:1:2)\""
+    },
+    {
+      "falsifier": "F5",
+      "name": "normalizer idempotent over 781 real raw TAP comment lines (23 entries, 1 pass) + 200000 fuzz strings",
+      "pass": true,
+      "detail": "{\"violations\":0,\"examples\":[]}",
+      "counterexamples": [],
+      "counterexampleCount": 0
+    },
+    {
+      "falsifier": "F6",
+      "name": "exactly 5 entries carry basePath, all tests/mc/* renamed from tests/warpos/*",
+      "pass": true,
+      "detail": "[[\"tests/warpos/dispatch-readiness.test.js\",\"tests/mc/dispatch-readiness.test.js\"],[\"tests/warpos/lib/provider-autofix.unit.test.js\",\"tests/mc/lib/provider-autofix.unit.test.js\"],[\"tests/warpos/lib/provider-rca.unit.test.js\",\"tests/mc/lib/provider-rca.unit.test.js\"],[\"tests/warpos/product-bootstrap.unit.test.js\",\"tests/mc/product-bootstrap.unit.test.js\"],[\"tests/warpos/provider-smoke.unit.test.js\",\"tests/mc/provider-smoke.unit.test.js\"]]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "all 23 real entries pass base identity (absent=identical for 18, present-and-correct for 5)",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "ABSENT on a renamed entry -> refused NOT AT BASE (absence means identical, and identical is false)",
+      "pass": true,
+      "detail": "[\"NOT AT BASE: tests/mc/dispatch-readiness.test.js does not exist at base 669aadc1ab7dc03d74f5b95cb613a5573f4e54a6 (a test absent at base is not pre-existing rot and cannot be quarantined; if it was renamed, record \\\"basePath\\\")\"]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "ABSENT on a non-renamed entry -> accepted (identical)",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "PRESENT-AND-CORRECT -> accepted",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "PRESENT-BUT-NOT-A-RENAME (basePath exists at base, is another file's rename source) -> refused",
+      "pass": true,
+      "detail": "[\"BASEPATH NOT A RENAME: tests/mc/dispatch-readiness.test.js names basePath tests/warpos/lib/provider-autofix.unit.test.js, but the pair-limited diff 669aadc1ab7d..HEAD at -M50% does not report a rename between them: \\\"A\\\\ttests/mc/dispatch-readiness.test.js\\\\nD\\\\ttests/warpos/lib/provider-autofix.unit.test.js\\\"\"]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "PRESENT-BUT-NOT-A-RENAME (basePath exists at base and still at HEAD, unrenamed) -> refused",
+      "pass": true,
+      "detail": "[\"BASEPATH NOT A RENAME: tests/regression/S-LC-06/coverage-gate-caller.test.js names basePath tests/regression/S-LC-06/mode-profile.test.js, but the pair-limited diff 669aadc1ab7d..HEAD at -M50% does not report a rename between them: \\\"M\\\\ttests/regression/S-LC-06/mode-profile.test.js\\\"\"]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "basePath naming a file absent at base -> refused NOT AT BASE",
+      "pass": true,
+      "detail": "[\"NOT AT BASE: tests/mc/dispatch-readiness.test.js names basePath tests/warpos/no-such-file.test.js, which does not exist at base 669aadc1ab7dc03d74f5b95cb613a5573f4e54a6\"]"
+    },
+    {
+      "falsifier": "F6",
+      "name": "basePath equal to file -> register refused",
+      "pass": true,
+      "detail": "quarantine artifact C:\\Users\\Vlad\\AppData\\Local\\Temp\\s2i3-probe-PcyZRf\\q-5vdopae1n86.json is malformed:\n  - entries[0] (tests/mc/dispatch-readiness.test.js) \"basePath\" must be a repo-relative *.test.js path different from \"file\" (absent means identical)"
+    },
+    {
+      "falsifier": "F6",
+      "name": "RED HALF: single-path pathspec reports A (no rename); the pair-limited pathspec reports R",
+      "pass": true,
+      "detail": "{\"single\":\"A\\ttests/mc/dispatch-readiness.test.js\",\"pair\":\"R095\\ttests/warpos/dispatch-readiness.test.js\\ttests/mc/dispatch-readiness.test.js\"}"
+    },
+    {
+      "falsifier": "F6",
+      "name": "real-register base assertion refuses a different base",
+      "pass": true
+    },
+    {
+      "falsifier": "F6",
+      "name": "real-register base assertion does not apply to a fixture register",
+      "pass": true
+    },
+    {
+      "falsifier": "I6",
+      "name": "sentences mentioning freeze (review by eye: none may claim the register IS under freeze)",
+      "pass": true,
+      "detail": "[{\"where\":\"register\",\"sentence\":\"That is all it is: it is weaker than freeze coverage, and nothing freezes this file.\"},{\"where\":\"runner\",\"sentence\":\"* It is NOT freeze coverage: nothing freezes tests/quarantine.json.\"},{\"where\":\"runner\",\"sentence\":\"* is visible in a diff and in review, and that is all (enforcement debt filed for the freeze extension).\"},{\"where\":\"runner\",\"sentence\":\"return `the real register ${QUARANTINE_REL} names base ${base}, but the expected pre-sprint base is ${EXPECTED_REAL_BASE}; changing it is refused here (this is a runner check, not freeze coverage)`;\"}]",
+      "freezeSentences": [
+        {
+          "where": "register",
+          "sentence": "That is all it is: it is weaker than freeze coverage, and nothing freezes this file."
+        },
+        {
+          "where": "runner",
+          "sentence": "* It is NOT freeze coverage: nothing freezes tests/quarantine.json."
+        },
+        {
+          "where": "runner",
+          "sentence": "* is visible in a diff and in review, and that is all (enforcement debt filed for the freeze extension)."
+        },
+        {
+          "where": "runner",
+          "sentence": "return `the real register ${QUARANTINE_REL} names base ${base}, but the expected pre-sprint base is ${EXPECTED_REAL_BASE}; changing it is refused here (this is a runner check, not freeze coverage)`;"
+        }
+      ]
+    },
+    {
+      "falsifier": "I7",
+      "name": "$policy says 'fails at base' and not 'fails identically at base' as the claim",
+      "pass": false,
+      "detail": "Every entry is pre-existing test rot: its test exists at the register's base commit (at basePath when S-OS-06's codemod renamed it) and FAILS there (exit code non-zero). `node scripts/checks/run-tests.js --verify-base` checks both. The policy says FAILS AT BASE, not fails IDENTICALLY at base: the codemod rewrote text inside SP-20260616-001/wrapper-door's own cause line (WARPOS_SHAPE_DOOR became MC_SHAPE_DOOR), so the rename touched its own evidence and the stronger claim cannot hold for all entries. A test absent at base (sprint-authored) cannot enter. The runner runs each quarantined file alone and FAILS if it passes (remove the entry), is missing, is not at base, or fails with a different multiset of cause lines or more failing tests than registered. Never add a file to green a red run: fix it, or file it here with its observed cause lines, cause, filing and expiry."
+    },
+    {
+      "falsifier": "I5",
+      "name": "register records basePath as rename provenance",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "falsifier": "I7",
+      "name": "$format no longer declares a temp substitution the code does not perform (temp IS performed now: step 3)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "falsifier": "I10",
+      "name": "no cap on stored lines (no truncation of causeLines in capture or load)",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

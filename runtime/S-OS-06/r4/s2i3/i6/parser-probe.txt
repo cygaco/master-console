@@ -1,0 +1,2 @@
+node v24.16.0 REAL node24 tap capture: {"lines":["dummy rot: still failing","1 !== 2"],"testNames":["dummy rotted"]}
+SAME output, keys at marker+2: {"lines":["dummy rot: still failing","1 !== 2"],"testNames":["dummy rotted"]}
