@@ -999,6 +999,81 @@
         "key": "pin|trackers/sprints/T3-system-inventory-and-verification-matrix.md|warpos@0.14*|",
         "removed": true,
         "warrant": "S-OS-06 r4 lane B B4: retire the interim d5c74318 listing-glob pin — the widened evidence-tag RULE (partition-loader EVIDENCE_TAG_RE, numeric-prefix listing glob) now owns this occurrence (verified: bound=1 covered=1 rule-dispositioned=1), so the case is closed by RULE, not by a per-file pin"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-applied-migrations.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-applied-migrations.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-capsule-resolvable.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-capsule-resolvable.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-enforcer-shippability.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-enforcer-shippability.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-install-baseline.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-install-baseline.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-layer-diff.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-layer-diff.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-manifest-honesty.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-manifest-honesty.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-migration-coverage.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-migration-coverage.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-migration-presence.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-migration-presence.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-path-resolution.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-path-resolution.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-promote-coverage.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-promote-coverage.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-roundtrip.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-roundtrip.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-ship-coverage.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-ship-coverage.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-staleness.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-staleness.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-structure-parity.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-structure-parity.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-version-quorum.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-version-quorum.js remains"
       }
     ]
   },
@@ -2122,22 +2197,7 @@
       "expires": "2.1.0",
       "warrant": "the one-release scripts/checks/warpos-*.js alias shims (BUILD-SPEC lane B / AC-4.1): each spawns or re-exports its mc-*.js twin; warpos-tracked-transients.js is also named by the frozen leak-gate.yml, so its 2.1.0 removal is an operator-gated workflow edit",
       "members": [
-        "scripts/checks/warpos-applied-migrations.js",
-        "scripts/checks/warpos-capsule-resolvable.js",
-        "scripts/checks/warpos-enforcer-shippability.js",
-        "scripts/checks/warpos-install-baseline.js",
-        "scripts/checks/warpos-layer-diff.js",
-        "scripts/checks/warpos-manifest-honesty.js",
-        "scripts/checks/warpos-migration-coverage.js",
-        "scripts/checks/warpos-migration-presence.js",
-        "scripts/checks/warpos-path-resolution.js",
-        "scripts/checks/warpos-promote-coverage.js",
-        "scripts/checks/warpos-roundtrip.js",
-        "scripts/checks/warpos-ship-coverage.js",
-        "scripts/checks/warpos-staleness.js",
-        "scripts/checks/warpos-structure-parity.js",
-        "scripts/checks/warpos-tracked-transients.js",
-        "scripts/checks/warpos-version-quorum.js"
+        "scripts/checks/warpos-tracked-transients.js"
       ]
     },
     {
