@@ -60,6 +60,16 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `d7b91e46` | The relocated ledger rows QUALIFY (original records relocated, not reconstructed) under three conditions; α's "self-read would have caught it" withdrawn — A2 is the precondition for candidate 2; fix-not-quarantine endorsed; MEASURE the exposure (done: five forbidden-shape reviewer dispatches this round); the fix refuses the CLASS; re-establish max-observed on the certifying head; READ the other four discovered tests |
+| `c96f2a58` | The fixture result recorded as true-but-unmeasured → measured (narrow claim); ED-439's severity sentence (a committed amendment can be un-recorded by someone else's merge resolution); `--full-history` alone floods; the discriminator is COMPUTED, not marked |
+| `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
+| `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
+| `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
+| `d4b26a71` | The missing I8 dispatch row is the instance; the class is a verifier that cannot see an absent record (fifth "green over the wrong population" tonight); close condition = a hand reconciliation table of lanes-with-commits vs dispatch records naming any lane without one; a reconstructed record only from real evidence, else absent + the finding filed (ED-438) |
+| `c17f9e08` | Item 2's naming half DISCHARGED; the last unit ACCOUNTED before certification (max-observed is a lower bound; counting vs discovery artifact named before rating; read the runner's tally of a load-death); the fixture fix's proof is the forced-contention RED leg — three greens are a control (~30% under the untouched bug) |
+| `b9d5e321` | `d6b18f04` Q1 DISCHARGED on the evidence β named in advance (branch register at `21ba435c`; six non-empty, counted) — Q3 satisfied by measurement, no post-scrub re-registration; the pull rule is ADOPTED, NOT EXERCISED until ε resolves something no relay covered (a "read the file" statement is a completion claim from the party who owes the action) |
+| `e2a7d4c9` | The population condition restated as the INVARIANT (count == max observed across repeated runs ON THE CERTIFYING HEAD; shortfall explained per mover); the 8b3ad24b green is a MILESTONE, not the certification; the pull rule is measured without intervening — record per relay whether ε had already read this file (evidence so far: r-77 relay after e-25 was NECESSARY, the file was not yet in ε's tree; e-26 after the merge = ONE data point that the pull works) |
+| `c8b52d17` | The six register occurrences: A and B are ADMISSION tests (each holds exactly one of the five dispositions); the A limb GOVERNS (verbatim + test-pinned); cite the pin falsifier per occurrence; the prose sentence at TOKEN grain; one dispatch, TWO COMMITS minimum; § 7b re-derived on the final artifact set |
 | `f4a1c86d` | Row absence measures the WRITE, not the DELIVERY ("no row yet" is the only honest output of a ledger search); the certifying run must EMIT its population count, equal to the superset 1249 or the movers named; the final regen no-op is downstream of the manifest regen |
 | `b7e04c31` | The issued-stub protocol covers a failure mode NOT observed tonight (line survives, body lost) — the close must not claim it addresses the whole-message losses; the β→α direction has no durable pull record by construction (G-25) — a retro STRUCTURAL GAP; α's own rule applied one step up: before re-asking β, check the ISSUED index and ask for a body by id |
 | `d6b18f04` | The hermetic 23/23 (0 moved) SATISFIES Q3 by measurement (pending the register path+SHA); residual = the six's `observedOn` stamp (re-stamp post-scrub or annotate capture≡checking, dated); β's 17/6 expectation was a WORSE error than its six refuted claims (it contradicted a measurement already in hand) — own class, guard: check the thread for an existing measurement before predicting an artifact's state; the builder's scope limit adopted verbatim; the CERTIFYING RUN must be taken on a tree NOTHING ELSE writes to (§ 5.5 condition); the live-mutable-state class is a named residual whose members each still owe the location question |
@@ -67,12 +77,13 @@ it is issued; the SendMessage is a notification, not the record.
 ## CLOSE CHECKLIST — β's held-items index, adopted verbatim (each item cites the verdict that created it)
 **BLOCKS THE STOP CONDITION** (must close before a certifying zero is citable):
 1. Oracle (ii)'s path-name tally + the deferred shim's filename disposition emitted beside the zero — `f1a93c68`.
-2. The four suite-population movers NAMED, each absence explained by a stated rule, the suite emitting its population count beside its result — `a2f74e09` (check the race-clustering first). **Refined by `f4a1c86d`: the CERTIFYING RUN must EMIT its test population count, and that count must EQUAL THE SUPERSET (1249, the strong green at `8b3ad24b`) — or the movers must be named with a stated rule. A certifying green at 1245 looks identical to one at 1249 unless the number is printed beside it.**
+2. The four suite-population movers NAMED, each absence explained by a stated rule, the suite emitting its population count beside its result — `a2f74e09` (check the race-clustering first). **Restated as the INVARIANT by `e2a7d4c9` (the `f4a1c86d` figure "1249" went stale within hours — the 628d13f0 merge added test cases): the CERTIFYING RUN emits its population count; that count EQUALS THE MAXIMUM OBSERVED ACROSS REPEATED RUNS ON THE HEAD BEING CERTIFIED; any shortfall is explained per mover by a stated rule. The number is head-specific and re-established on the certifying head, never carried forward. The 8b3ad24b green (1249 / 0 fail) is a MILESTONE — the first honest green of the round — NOT the certification; it describes a tree that no longer exists and must not travel into the close as if it certified anything.**
 3. The certifying run on an EXCLUSIVE tree, nothing else writing — `d6b18f04` Q4.
 4. The FINAL register regeneration shown a NO-OP diff, or the derived-gap set re-emitted on the final state — `d5c8a271`. **DOWNSTREAM of the manifest regen (close step b), never satisfied by it, and distinct from the regen already run** (`f4a1c86d`).
 5. § 8's two gaps: oracle (i) demonstrated GREEN on a fixture; cases covering the computed class and the cross-lab join, each with its RED and its control — `8e5f3a02`.
 6. The three-part triple per oracle: green control with the scanned population emitted; RED on a plant sited where the old predicate was blind and provably inside the swept population; revert and re-observe green — STOP-CONDITION § 5.2.
 7. CI green on the final head — the operator's push; no agent in this session can close it.
+7a. **(β `d4b26a71`) The gauntlet's POPULATION: DONE-REPORT carries a HAND RECONCILIATION TABLE — every lane with commits on the sprint branch vs its dispatch record (id, started, completed, ok) — naming any lane WITHOUT a record. A gauntlet green over a population that excludes a landed lane does not cover that lane's changes. The lane I8 row is reconstructed ONLY from real evidence (wrapper logs, the PID's process record, commit timestamps) with its sources stated, or left ABSENT with the finding filed (ED-438). Never a record written from memory.**
 **OWED, RECORDED, NOT BLOCKING:** 8. lane J condition (b) — named residual, closable by the throwaway plant — `a2f74e09`. 9. the six's `observedOn` stamp — `d6b18f04` Q1. 10. the register path + SHA for the hermetic 23/23 and the six's non-empty branch causeLines — r-65 Q2 (β's Q1 ruling is conditional on it). 11. the COUNT-LOCK conjunction falsifier — `b2c94e18`. 12. the location question per instance (check-then-read) — `d6b18f04` Q4. 13. the (f) causal story settled in ONE version (mechanism, tree, population) — `b2c94e18`. 14. the eleven-name runtime floor declared with source + platform — `a2f74e09` (c). 15. the deferred check-shim's per-entry expiry keyed to the operator's workflow edit — `c7a4e2b9`.
 **SETTLED — do not reopen:** HIGH for the six committed entries (scoped); MEDIUM re-based onto the fixed runner's evidence; lane J's landing form; case (e); the parser authorization; the vacuity property. **β's own for the retro:** the historical ledger holes at rows 299, 345, 168.
 
@@ -89,9 +100,171 @@ present-but-not-a-rename falsifier is the mechanical test) AND PROPERTY B (the p
 rename provenance β ordered); the ONE policy-prose sentence (the codemod once rewrote text inside a cause
 line) under PROPERTY B (a record of a past event). GRAIN: occurrence, each enumerated with its property
 test. FORM: a partition-only warranted amendment commit, teeth-inspected (R-21 shape, add-side). β
-consulted (r-74) on the property reading, the dual A+B record, and the prose sentence. DISPATCH: one
-bounded lane I dispatch carrying the amendment + the evidence-file remedy + the r-71 items; then RE-PROBE
-on a pristine tree; LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
+consulted (r-74) on the property reading, the dual A+B record, and the prose sentence. **β `c8b52d17`
+RULED (0.91, position-stable):** the function test holds (the base-identity check is the FILE's own
+function breaking, not a caller's); A and B are ADMISSION TESTS, not dispositions — each of the six still
+holds exactly ONE of the five partition dispositions (say so where they are recorded); THE A LIMB GOVERNS
+(verbatim AND test-pinned; B alone would silently drop the pin); NAME THE PIN FALSIFIER PER OCCURRENCE —
+lane I's absent / present-and-correct / present-but-not-a-rename case is Property A's required pin; cite
+it beside each of the five. The prose sentence: PROPERTY B at TOKEN grain — the token naming what the
+codemod actually rewrote stays verbatim; framing in legacy terms is live prose and comes current (the ADR
+split). FORM: one dispatch, **TWO COMMITS MINIMUM** — the partition-only amendment is ITS OWN commit,
+never folded with code (F8; the R-21 lesson) — the brief says so before it runs. § 7b's statement of what
+the round's own artifacts contribute is RE-DERIVED on the FINAL artifact set, never copied forward. The
+third instance of the round's-own-evidence class gets its own retro line (twice caught by a gate, once
+designed around by lane C, none anticipated). DISPATCH: one bounded lane I dispatch carrying the
+amendment (own commit) + the evidence-file remedy + the r-71 items; then RE-PROBE on a pristine tree;
+LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
+
+## RETRO LINE (β, no id) — the pull rule is the only mechanism in this round whose evidence was revised DOWNWARD
+From one data point → a confounded data point → adopted-but-unexercised → no current evidence, each step
+driven by its proponent (α) checking its own claim, three times against a mechanism α had reason to want
+validated. Everything else got stronger under examination. A record where the favoured mechanism is the
+least-credited one is the shape that makes the rest of the report believable. Carry it as its own line.
+
+## R-106 — the ROOT-tree suite red (ε e-33) is `reasoned-consult-honesty`'s vocabulary, not the ledger enforcer; fixed
+From the root tree at 628d13f0: 1253 tests, 1 fail — `reasoned-consult-honesty.test.js`'s live-corpus case:
+row 478 (`6e2a91f4`, type `beta-prerequisite-flag`, decision DIRECTIVE, class B — β's unprompted ordering
+constraint, load-bearing all round) reported as `verdict_shaped_unknown_type`. The worktree suites skip
+that case (the ledger is gitignored) — "where a measurement is taken changes what it can see", third
+instance. ε attributed it to α's enforcer; it is `scripts/checks/reasoned-consult-honesty.js` (2026-09-12
+vocabulary). The checker failed HONESTLY (refused what it did not recognise) — the opposite of the
+round's silent-success class. Remedy = a vocabulary entry (`beta-prerequisite-flag` under the
+verdict-family requirement), never a pin in KNOWN_LEDGER_DEFECTS and never a ledger edit. Applied on
+`alpha/S-OS-06-substrate`; measured against the canonical ledger with `CLAUDE_PROJECT_DIR` anchored: the
+checker's 32/32 pass incl. the live-corpus case; 1 structural finding remains and it is the pinned known
+defect (L345, `d5a6bc49`); 3 advisories (unrecognised non-verdict types: `beta-premise-correction`,
+`beta-provenance-correction`, `alpha-correction`) — advisory by design, not findings. ε's
+enforcer-fix dispatch (`d-mu4pv99v`, backend-fixer) wrote its started row to the CANONICAL ledger — the
+r-102 mitigation works.
+
+## R-102 — the ledger MOVED, not stopped (ε e-30); the lane I probe's one red is a newly-surfaced FALSE GREEN, fixed not quarantined (ε e-29)
+LEDGER: measured — the canonical dispatch ledger's last row is 22:09Z; the substrate worktree's
+gitignored copy (`.claude/worktrees/alpha-S-OS-06-substrate/.claude/runtime/dispatch-completions.jsonl`)
+holds 10 wrapper-written rows from 22:13Z (five dispatches incl. I8 = `d-mu4ooagi`, PID 56408,
+22:39:48→22:51:53, ok, 725 s; I9 = `d-mu4p5yat`, 22:53:33→22:58:51, ok). CAUSE: `paths.js` resolves the
+project root from `CLAUDE_PROJECT_DIR` or the cwd; creating that worktree made the harness relocate every
+session's cwd and `CLAUDE_PROJECT_DIR` into it; ε's wrapper wrote its ledger there. Not a bypass, not a
+stopped writer. The 10 rows were restored VERBATIM into the canonical ledger (1561 rows); the stray file
+is kept as evidence at `runtime/S-OS-06/r4/dispatch-ledger-stray-copy-from-alpha-worktree.jsonl`. Only the
+dispatch ledger strayed (events, betaEvents, enforcement-debt, mode.json checked: no worktree copies).
+ED-438-A2 filed: the launch path WAS the wrapper (β's design input answered); PATHS must anchor on the
+MAIN worktree; the stray-store detector named. Round mitigation, binding on ε: every dispatch invoked with
+`CLAUDE_PROJECT_DIR` set explicitly to the canonical root; the row verified in the canonical ledger after
+each dispatch; strays restored verbatim with the source named. Retro: α's R-44 worktree (the fix for the
+shared-index collision) opened this one — a fix that moves a root must enumerate what resolves against it.
+Whether a verbatim copy of mis-located wrapper rows is "reconstruction from real evidence" for the 7a
+table is β's (r-103).
+FALSE GREEN: the lane I probe at 90c85e31 (pristine): purity 0, leak-gate 0, cutover 0, record-trust-exit
+0, privacy 0, npm test 1 — ONE of 1259: `AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via
+in-process-agent is REFUSED` — the planted violation PASSED the dispatch-contract enforcer. Attribution
+measured: the sprint head runs 41 fixture-tests (all pass); lane I's runner DISCOVERS 46, and one of the
+five new ones catches this — the (f) finding one layer out, in a security-relevant enforcer. ε refused to
+land, to weaken lane I, or to quarantine a freshly exposed false green. RULING: FIX, not quarantine — one
+bounded fixer dispatch makes the enforcer refuse that shape, RED-then-GREEN against the EXISTING planted
+fixture (already RED; fixture untouched), its own lane, lands on the sprint head first; then lane I
+re-probes and lands on green. The FIVE newly-discovered fixture-tests are a DISCOVERY artifact
+(β `c17f9e08`): name all five and why the committed runner never ran them, beside the movers in
+DONE-REPORT; the certifying head carries lane I's runner, so the max-observed invariant applies to THAT
+population (β consulted, r-103). The re-base itself is clean: 60 insertions / 0 deletions; per-occurrence
+booleans re-derived against the landed state; four gates 0.
+**β `d7b91e46` / `c96f2a58` and the EXPOSURE MEASUREMENT (α r-104/r-105):** (a) the verbatim copy
+QUALIFIES — "the original record, relocated", not reconstruction; a `relocation-note` row now follows the
+ten rows in the dispatch ledger (row order ≠ write order; provenance; stray path cited); α's
+"candidate 2 would have caught it" is WITHDRAWN — a wrapper self-read from the same resolution reads the
+wrong file successfully; A2 (anchor on the main worktree) is the PRECONDITION for candidate 2
+(ED-438-A3). ROOT CAUSE, read at source by ε (e-32): `canonicalFile()`'s acceptance test is a PREFIX test
+that admits the worktree-bent path its own comment excludes — linked worktrees live INSIDE the project
+root; containment is the wrong relation. (b) EXPOSURE, measured on the canonical ledger since the round
+base: the forbidden shape ALREADY OCCURRED FIVE TIMES this round — `qa-reviewer` via `in-process-agent`
+(claude) 2026-09-13T19:40Z (d-mu08ei43); `backend-reviewer` via `in-process-agent` (claude) ×4:
+09-13 19:48Z (d-mu08ei6f), 21:07Z (d-mu0b317o), 09-14 03:51Z (d-mu0pkt04 = the r2 backend PASS 92),
+05:59Z (d-mu0u91t5 = the r3 backend PASS 90); security reviews ran cross-provider correctly. So the
+enforcer's false green is not latent: two BINDING backend verdicts cited as PASS were same-lab reviews with
+provider diversity lost. The fix must refuse the CLASS (every cross-provider reviewer role via the
+in-process shape, roles named), not the fixture's combination. The close gauntlet re-runs the backend AND
+qa reviews CROSS-PROVIDER via `dispatch-agent.js` on the final head; DONE-REPORT names the five dispatches
+as forbidden-shape reviews; the STANDING of the r2/r3 verdicts and whether an upstream correction is owed
+now is β's (r-105). (c) The five discovered fixture-tests: state whether they pre-existed (never run) and
+READ the other four; the max-observed population is RE-ESTABLISHED on the certifying head with repeated
+runs; the old counts are RETIRED, not adjusted. ED-439-A1: the un-recording sentence is the severity
+reason; `--full-history` alone would flood false reds; the discriminator is COMPUTED (equals a parent AND
+no row of the other parent absent), never a marker.
+
+## R-94 — lane I8 delivered; the two partition amendments CONFLICT; the re-base is lane-authored (ε e-28)
+I8 delivered all five items (purity 0 with promote_relic 0 / legacy_slug 0; cutover 0, F8 165 amendments;
+falsify-quarantine-runner 15/15 — 9 → 15 cases with the conjunction and vacuity falsifiers; count-lock
+refuses; `observedOn` annotated (option 2); the win32 eleven-name floor declared; the builder's own
+cutover trip caught and fixed). The re-probe then CONFLICTED in `scripts/open-source/rename-mc.denylist.json`
+(two hunks): lane J retired 15 rows when it landed; lane I8 pinned 6 occurrences against the PRE-lane-J
+partition. ε ABORTED and changed nothing — correct: hand-resolving a governed partition file is an
+unwarranted partition change by the party who wants the merge; taking lane I's hunks wholesale would give
+the right bytes for the wrong reason. RULING: ONE short lane I dispatch merges the sprint head onto lane
+I for the CODE (SEQUENCE, stated precisely per β: lane I9 STARTED before r-94 was written — its stub
+report commit 1c51969d predates it; r-94 specified the re-base; I9's commits AFTER r-94 match that scope
+exactly — scoped work on a running dispatch, which is normal; α's earlier "approved before it ran" (r-96)
+claimed slightly more than the record supports and is withdrawn), leaves the partition conflict to a RE-AUTHORED amendment against the LANDED
+partition (post lane J) — the six pins re-emitted at occurrence grain with each property test, A and B as
+admission tests, the A limb governing, the pin falsifier cited per occurrence, the prose at token grain
+(β `c8b52d17`) — as a PARTITION-ONLY amendment commit; re-runs the teeth and purity as separate commands;
+reports before/after row counts showing lane J's 15 retirements and lane I's 6 pins both present. Then
+re-probe on a pristine tree and LAND ONLY ON A GREEN PROBE, no-ff, citing the probe SHA and both
+amendment commits. Still owed: how I8 was launched and its record (real evidence or absent + named in the
+reconciliation table, checklist 7a).
+**β `a8e5c740` — form endorsed, three BINDING conditions on I9's amendment:** (1) RE-AUTHOR ≠ PORT — I9's
+report says bcbcbf09's change lines are byte-identical to d780206a's (a port); each of the six must be
+STATED to still resolve against the LANDED partition after lane J's 15 retirements; a non-resolver is a
+reported FINDING, never a silent 6 → 5. (2) EMIT THE ARITHMETIC: `before − 15 + 6 = after` with the real
+numbers (cutover on the branch: pinned 340 = 334 + 6; live-unallowed 0; derived 215). (3) ε's abort
+reasoning VERBATIM in DONE-REPORT: "right bytes for the wrong reason with no amendment record". β's
+QUESTION (does the merge carrying lane J's retirements trip F8?) is answered by I9's report: F8 sweeps
+`git log -- <denylist>` with default history simplification, so a merge whose partition equals one parent
+is NOT LISTED; cutover returned 0 and judged bcbcbf09. α's reading, β to rule: benign BY CONSTRUCTION for
+this merge (its partition equals the landed parent; no unamended text entered), but the same
+simplification would omit a merge resolved to NEITHER parent — the hand-resolution case the teeth exist
+to catch — so DONE-REPORT names it as an F8 LIMIT and β rules whether it is debt. Retro line: the
+two-commits condition paid off on a hazard it was not aimed at (it made the conflict legible; folded into
+a code commit the hunks would likely have auto-merged into a file neither lane authored).
+**MEASURED (α ran β's `b5d84f13` fixture; row 516; ED-439):** a merge resolved to content matching
+NEITHER parent IS listed by default `git log -- <file>` — F8 catches the evil-merge case; α's "dangerous
+half" above was BACKWARDS and is withdrawn. The REAL hole: a merge that TAKES ONE SIDE WHOLESALE is
+omitted by default simplification and the OTHER side's amendment commit VANISHES from the path history —
+a silent revert of a committed amendment, invisible by design. `--full-history` lists every merge.
+Disposition: NOT a blocker for I9's merge (its partition equals the landed parent; F8 judged bcbcbf09);
+the class is ED-439 (HIGH) with the `--full-history` + amendment-or-propagation-marker remedy as a
+verified direction and a falsifier fixture named. DONE-REPORT names BOTH F8 mechanisms distinctly (r3:
+explicit `--no-merges`; this: implicit default simplification). ε's unprompted "byte-identical" disclosure
+recorded as the strongest correct-conduct instance of the night.
+
+## R-83 — the moving test count SOLVED with a root cause (ε e-27); fix the fixture path BEFORE the certifying run
+The movers are ONE FILE, not four tests: `tests/regression/S-OS-06/migration.test.js` (five declared cases)
+died AT LOAD in one of three runs — `EPERM: operation not permitted, rename` at `materializeFixture`,
+renaming a process-unique temp dir onto the FIXED SHARED PATH `runtime/S-OS-06/fixture-product`; on Windows
+a rename onto an existing destination fails when anything holds a handle; under parallel suite batches the
+rename loses; standalone there is no contention (3/3 alone, 1-in-3 in-suite — the exact shape). LOCATION
+ANSWERED for this instance: TEST-SIDE determinism, not a product race; it does not ship. The
+head-advanced-after-check case stays SEPARATE (different mechanism) with its own location question open.
+RULINGS: (1) FIX BEFORE CERTIFYING — one bounded dispatch after I8 lands: materialize into a
+process-unique directory, never a rename onto a shared name; RED leg = reproduce the collision
+deterministically and show the current test dies at load; GREEN under the same contention after; then
+three consecutive in-suite runs at that head with the population count PRINTED. (2) The LAST UNIT of the
+1245 vs 1249 delta (five cases moved; totals differ by four; the file-level failure prints twice) is
+accounted BEFORE certification — which line, which counter — or named as an unexplained unit with the
+population = max observed on the certifying head (β consulted, r-84). (3) ε states in every report whether
+it read this file first; β holds the pull rule as ADOPTED, NOT EXERCISED (β `b9d5e321`) until ε resolves
+something no relay covered — the "one data point" recorded under `e2a7d4c9` is DOWNGRADED: e-26 was
+confounded by the r-77 relay, e-27 by r-69. ε cites the SECTION(S) read, not a bare affirmation.
+**β `c17f9e08` (0.91) on R-83:** the NAMING half of checklist item 2 DISCHARGES (a mechanism with a
+reproduction shape); naming ≠ accounting. The LAST UNIT is ACCOUNTED before certification — not because
+the certifying run would be incomplete (a run at max-observed has no shortfall) but because max-observed
+is a LOWER BOUND on the population and an unaccounted unit is evidence the variance model is incomplete.
+Discriminator before rating: COUNTING artifact (the runner tallies a file-level failure twice or counts a
+load-death differently from a case failure → benign, certification proceeds) vs DISCOVERY artifact (a
+test sometimes not found → the population question reopens); β expects counting; the work is to READ how
+the runner tallies a file that dies at load. The fixture fix's PROOF is the forced-contention RED leg;
+three in-suite greens are a CONTROL only — at a one-in-three failure rate, three greens occur with ~30%
+probability (8/27) under the untouched bug. Conduct recorded as correct: ε not rounding five movers to a
+tidy four; ε not folding the head-advanced case into this mechanism.
 
 ## R-71 — first honest green at `8b3ad24b`; lane I lands as ONE UNIT after ONE more dispatch; the close sequence
 Pristine at `8b3ad24b`: 378 files / 1249 tests / 1246 pass / 0 fail / 3 skipped; quarantine 23/23 still
@@ -106,9 +279,15 @@ capture≡checking, dated (β `d6b18f04`); (3) the eleven libuv-refilled names D
 source + platform stamped (β `a2f74e09`); (4) the register path + SHA the hermetic 23/23 was measured
 against, the six's branch causeLines shown non-empty. Then LAND lane I (no-ff), re-run the pristine suite +
 gates at the new head. CLOSE SEQUENCE, in order: (a) NAME the four moving tests with their stated rules —
-certification blocked until this exists (β `a2f74e09`); (b) the triple manifest regen (derived-110 checked
-here); (c) the FINAL register regen shown a NO-OP diff or the derived-gap set re-emitted (β `d5c8a271`),
-lane K's sets re-derived; (d) oracles (i)(ii)(iii) + occupancy certifying run on an EXCLUSIVE tree
+certification blocked until this exists (β `a2f74e09`); (a′) the fixture-path fix dispatch (§ R-83) with
+its forced-contention RED leg and the last-unit accounting; (a″) **the `head-advanced-after-check`
+LOCATION READ (β `d5c8a271`, `d6b18f04` Q4) — ASSIGNED to ε (r-90): name the test file:line and the gate
+it exercises; read the gate's check-then-read ordering; head read AFTER the check → a product TOCTOU
+finding (its own fix or a named residual stating the defect); otherwise test-side determinism, fix the
+test. If not read before the certifying run, DONE-REPORT names it as a RESIDUAL with the open question
+verbatim — never the silent third option (held, undispatched, absent from the report);** (b) the triple
+manifest regen (derived-110 checked here); (c) the FINAL register regen shown a NO-OP diff or the
+derived-gap set re-emitted (β `d5c8a271`), lane K's sets re-derived; (d) oracles (i)(ii)(iii) + occupancy certifying run on an EXCLUSIVE tree
 (β `d6b18f04`), oracle (ii) with the path-name tally + the deferred member's filename disposition beside
 the zero (β `f1a93c68`), § 8 discharged first; (e) security (codex/GPT via `dispatch-agent.js`) + backend
 gauntlet on the final head; (f) the condition-(b) throwaway-plant result recorded; (g) DONE-REPORT
@@ -116,8 +295,17 @@ carrying every item β holds for the next boundary; then the operator push → C
 "S-OS-06 r4". The one-swap stays a named residual with its location question open.
 
 ## R-69 — the hermetic re-validation result and the certifying-run condition — β `d6b18f04`
-IF ε confirms the 23/23 was measured against the lane I BRANCH register (path + SHA; the six's branch
-causeLines shown non-empty): Q3 of `a94f0d26` is SATISFIED BY MEASUREMENT — zero moved, nothing to
+**CONFIRMED by ε (e-26, measured):** the hermetic 23/23 was measured against the lane I BRANCH register —
+`tests/quarantine.json` on `s-os-06/s2i-capture` at `21ba435c` — not the committed one; the six
+formerly-decorative entries carry NON-EMPTY causeLines there, counted: coverage-gate-caller 2,
+mode-profile 7, admin-surface 9, founders-checklist 7, coverage-gate-scan-live-cli 32,
+coverage-gate-scan-source 8; re-captured by the rewrite under AMBIENT pre-scrub; the 0-moved result is
+the measurement that those captures are stable post-scrub. So Q3 of `a94f0d26` is SATISFIED BY
+MEASUREMENT; the `observedOn` stamp residual rides in the lane I8 dispatch (PID 56408; two commits
+minimum, the partition amendment its own commit). The pull rule is WORKING: ε read this file before
+writing e-26 — the first inbound channel to ε that has held all night. (Original conditional text
+follows for the record.) IF ε confirms the 23/23 was measured against the lane I BRANCH register (path +
+SHA; the six's branch causeLines shown non-empty): Q3 of `a94f0d26` is SATISFIED BY MEASUREMENT — zero moved, nothing to
 disentangle; registered values equal what the checking environment produces, established by measurement
 rather than by construction, and the two environments are shown to agree on these 23. RESIDUAL (cheap,
 not optional): the six's `observedOn` STAMP — re-stamp post-scrub (changes no value) OR record in the
