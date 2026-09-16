@@ -24,7 +24,9 @@
  *   - findOccurrencePin(file, text)    R4: pins key on (file, matchText [, anchor]) — never
  *                                      a bare line number, so an edit above a pinned line
  *                                      cannot silently break the pin
- *   - historicalChangelogLines(text)   CHANGELOG sections < 2.0.0 are historical record
+ *   - historicalChangelogLines(text)   CHANGELOG sections < 2.0.0 (a SECTION MAP only: it is NOT a legacy-slug
+ *                                      disposition — S-OS-06 r4 B1 retired the inline boolean that absolved
+ *                                      those lines; each such occurrence is closed by its own occurrence pin)
  *   - tallyLegacySlug(...)             per-file disposition tally (pending / pinned /
  *                                      derived / suppressed-per-entry) — the NUMBERS both
  *                                      gates emit
@@ -39,8 +41,8 @@
  *                                      "no occurrence holds two" (a compat member / occurrence
  *                                      that is also a view, glob, future entry or pin)
  *   - checkStale({ trackedFiles })     F7: an entry that matches nothing is a NON-ZERO exit
- *   - checkFreeze()                    F8: post-freeze additions must be separate, warranted
- *                                      `partition-amendment:` commits
+ *   - checkFreeze()                    F8: post-freeze additions AND removals must be separate, warranted
+ *                                      `partition-amendment:` commits (a removal needs a removed:true record)
  *   - findUnroutedReaders()            Req1 guard
  *
  * Fail-closed (F3): a missing, empty, unparseable, or header-less artifact THROWS
@@ -77,7 +79,11 @@ const ALLOW_CLASSES = [3, 4];
 // are references to the prior-art evidence tag, never a live identifier — the `@`-prefixed slug form
 // is only ever a tag/version spec, so this never masks a real leak. The regex-source occurrence just
 // below is pinned as the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE).
-const EVIDENCE_TAG_RE = /warpos@(?:\d+\.\d+\.\d+|<semver>|\*|\\d)/gi;
+// S-OS-06 r4 B4: the RULE also owns the tag-LISTING glob form — a numeric version prefix of one to three parts
+// ending in `*` (the `git tag --list "<lab>@0.14*"` shape), which the r3 rule missed and interim pin d5c74318
+// carried per file. Numeric-prefix globs only: `@` + digits/dots + `*`, never a free-form token, so it cannot
+// absorb a live identifier (the `@`-suffixed slug form is only ever a tag / version spec).
+const EVIDENCE_TAG_RE = /warpos@(?:\d+\.\d+\.\d+|\d+(?:\.\d+){0,2}\.?\*|<semver>|\*|\\d)/gi;
 const BRAND_HISTORY_RE = /formerly WarpOS/gi;
 /** The rule ("evidence-tag" | "brand-history") covering the needle occurrence at `matchIndex`, or null. */
 function _ruleSpanAt(lineText, matchIndex) {
@@ -90,7 +96,6 @@ function _ruleSpanAt(lineText, matchIndex) {
   }
   return null;
 }
-const CHANGELOG_REL = "CHANGELOG.md";
 const PLACEHOLDER_WARRANT = /^(todo|tbd|fixme|n\/a|na|none|null|undefined|-+|\.+|\?+|x+)$/i;
 const CODE_EXTENSIONS = new Set([".js", ".cjs", ".mjs", ".ts", ".cts", ".mts", ".ps1", ".sh", ".py"]);
 
@@ -226,8 +231,10 @@ function compatLabel(w) {
 /**
  * The FIVE-disposition view of a legacy-slug tally (β r3b re-ratification). `rewritten` occurrences no longer exist
  * in the tree, so what a gate sees is: pinned (occurrence pins + Class-3 path entries), derived (generated views),
- * compat (unexpired registered windows), historical-allow-listed (Class-4 path entries + CHANGELOG < 2.0.0 sections
- * + the Class-2 operator-gated tree) — and the un-dispositioned residue (live-unallowed, incl. expired compat).
+ * compat (unexpired registered windows), historical-allow-listed (Class-4 path entries + the Class-2 operator-gated
+ * tree) — and the un-dispositioned residue (live-unallowed, incl. expired compat). Every term is closed by a
+ * registered artifact: CHANGELOG < 2.0.0 section lines are NOT a term (S-OS-06 r4 B1 — that inline boolean absolved
+ * occurrences with no register entry behind them; each is now its own occurrence pin, counted under pinned).
  */
 function dispositionSummary(tally) {
   const byClass = (tally && tally.suppressedByClass) || {};
@@ -236,8 +243,8 @@ function dispositionSummary(tally) {
     pinned: (tally.pinnedTotal || 0) + cls(3),
     derived: tally.derivedTotal || 0,
     compat: tally.compatTotal || 0,
-    historicalAllowListed: cls(4) + cls(2) + (tally.changelogHistoricalTotal || 0),
-    historicalAllowListedBreakdown: { class4: cls(4), class2Gated: cls(2), changelogHistorical: tally.changelogHistoricalTotal || 0 },
+    historicalAllowListed: cls(4) + cls(2),
+    historicalAllowListedBreakdown: { class4: cls(4), class2Gated: cls(2) },
     pinnedBreakdown: { occurrencePins: tally.pinnedTotal || 0, class3Paths: cls(3) },
     liveUnallowed: tally.pendingTotal || 0,
     compatExpired: tally.compatExpiredTotal || 0,
@@ -489,7 +496,6 @@ function buildPartition(denylist) {
       pinnedBrandHistory: 0,
       derivedTotal: 0,
       derivedByView: {},
-      changelogHistoricalTotal: 0,
       suppressedTotal: 0,
       suppressedByEntry: {},
       suppressedByClass: {},
@@ -569,11 +575,12 @@ function buildPartition(denylist) {
       add(tally.suppressedByClass, cls.class, n);
       return;
     }
-    const hist = p === CHANGELOG_REL ? historicalChangelogLines(content) : null;
     content.split(/\r?\n/).forEach((lineText, idx) => {
       // Security fix-cycle r2 F1: one disposition per needle OCCURRENCE (dispositionAt), never one per line — a
       // compat/pin match on the line no longer credits every hit on that line.
       // compat is checked BEFORE pins; validateEntries/checkStale refuse a line claimed by both (no occurrence holds two).
+      // S-OS-06 r4 B1: NO section-based absolution — a CHANGELOG < 2.0.0 line is closed only by a registered
+      // disposition like every other line; an unregistered occurrence there is live-unallowed (RED), never a pass.
       reAll.lastIndex = 0;
       let m;
       while ((m = reAll.exec(lineText)) !== null) {
@@ -585,8 +592,6 @@ function buildPartition(denylist) {
           if (at.rule === "evidence-tag") tally.pinnedEvidenceTag += 1;
           else if (at.rule === "brand-history") tally.pinnedBrandHistory += 1;
           else add(tally.pinnedByPin, _pinLabel(at.pin), 1);
-        } else if (hist && hist.has(idx + 1)) {
-          tally.changelogHistoricalTotal += 1;
         } else {
           tally.pendingTotal += 1;
           add(tally.pendingByFile, p, 1);
@@ -609,11 +614,10 @@ function buildPartition(denylist) {
     ];
     if (tally.pinnedEvidenceTag) rows.push([`pinned:evidence-tag (warpos@<semver> — kept forever, by RULE)`, tally.pinnedEvidenceTag]);
     if (tally.pinnedBrandHistory) rows.push([`pinned:brand-history ("formerly WarpOS" — by RULE)`, tally.pinnedBrandHistory]);
-    if (tally.changelogHistoricalTotal) rows.push([`changelog-historical ${CHANGELOG_REL} (< 2.0.0 sections)`, tally.changelogHistoricalTotal]);
     if (rows.length === 0) lines.push(`${indent}  (none)`);
     for (const [k, v] of rows) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
     lines.push(
-      `${indent}totals: suppressed=${tally.suppressedTotal} pinned=${tally.pinnedTotal} derived=${tally.derivedTotal} changelog-historical=${tally.changelogHistoricalTotal} live-unallowed=${tally.pendingTotal}`
+      `${indent}totals: suppressed=${tally.suppressedTotal} pinned=${tally.pinnedTotal} derived=${tally.derivedTotal} live-unallowed=${tally.pendingTotal}`
     );
     const d = dispositionSummary(tally);
     lines.push(
@@ -966,6 +970,10 @@ function buildPartition(denylist) {
       const f = dl && dl.$freeze;
       return new Set(((f && f.amendments) || []).map((a) => a && a.key).filter((k) => typeof k === "string"));
     };
+    const removalKeysOf = (dl) => {
+      const f = dl && dl.$freeze;
+      return new Set(((f && f.amendments) || []).filter((a) => a && a.removed === true).map((a) => a.key).filter((k) => typeof k === "string"));
+    };
     for (const a of freeze.amendments || []) {
       if (!a || typeof a.key !== "string" || !a.key) {
         problems.push({ id: "F8", key: "$freeze.amendments", message: "an amendment record has no key" });
@@ -975,6 +983,7 @@ function buildPartition(denylist) {
     }
     const baseSet = new Set(baseline || []);
     const amendSet = amendmentKeysOf(denylist);
+    const removalSet = removalKeysOf(denylist);
     const nowKeys = new Set(entryKeys(denylist));
     // β R4 — the freeze is key-set EQUALITY, not "no additions": an ADDITION and a REMOVAL both need a
     // warranted amendment. An unamended removal could silently retire a pin/entry that still guards a live leak.
@@ -989,8 +998,8 @@ function buildPartition(denylist) {
       }
     }
 
-    // git layer: every post-freeze commit that ADDS an entry must be a separate,
-    // partition-only, marked amendment; the baseline itself is immutable after freeze.
+    // git layer: every post-freeze commit that ADDS or REMOVES an entry key must be a separate,
+    // partition-only, marked amendment with a record per key; the baseline itself is immutable after freeze.
     const inside = _gitRun(root, ["rev-parse", "--is-inside-work-tree"]);
     if (inside.status !== 0 || inside.stdout.trim() !== "true") {
       throw new PartitionLoadError(`partition-loader: F8 needs git history but ${root} is not a git work tree — failing CLOSED`);
@@ -1014,6 +1023,12 @@ function buildPartition(denylist) {
     const commits = log.stdout.split(/\r?\n/).filter(Boolean);
     let freezeCommit = null;
     let frozenBaseline = null;
+    // The swept history population, emitted beside the result (a zero over no inspected commits is not a clean zero).
+    let historyInspected = 0;
+    let historyAdding = 0;
+    let historyRemoving = 0;
+    let historyKeysAdded = 0;
+    let historyKeysRemoved = 0;
     for (const c of commits) {
       let at;
       try {
@@ -1041,9 +1056,26 @@ function buildPartition(denylist) {
       } catch {
         parent = null;
       }
+      historyInspected += 1;
       const before = new Set(parent ? entryKeys(parent) : []);
-      const added = entryKeys(at).filter((k) => !before.has(k));
-      if (added.length === 0) continue;
+      const nowAt = entryKeys(at);
+      const nowAtSet = new Set(nowAt);
+      const added = nowAt.filter((k) => !before.has(k));
+      // S-OS-06 r4 B2: the REMOVED set (parent minus this commit) gets the same history teeth as additions. Before r4
+      // this loop continued whenever nothing was ADDED, so a removal-amendment could ride a live-code commit unseen.
+      const removed = [...before].filter((k) => !nowAtSet.has(k)).sort();
+      if (added.length === 0 && removed.length === 0) continue;
+      if (added.length) {
+        historyAdding += 1;
+        historyKeysAdded += added.length;
+      }
+      if (removed.length) {
+        historyRemoving += 1;
+        historyKeysRemoved += removed.length;
+      }
+      const change = [added.length ? `adds [${added.join(", ")}]` : null, removed.length ? `removes [${removed.join(", ")}]` : null]
+        .filter(Boolean)
+        .join(" and ");
       // First-parent diff (F2): identical to the single-parent set for a normal commit; for a merge it is everything the
       // merge introduced relative to its first parent (diff-tree prints nothing for a merge). Fails CLOSED on a git error.
       const diff = _gitRun(root, ["diff", "--name-only", `${c}^`, c]);
@@ -1058,18 +1090,35 @@ function buildPartition(denylist) {
         problems.push({
           id: "F8",
           key: short,
-          message: `commit ${short} adds allow-list entr${added.length === 1 ? "y" : "ies"} [${added.join(", ")}] inside a commit that also changes ${foreign.slice(0, 5).join(", ")} — a post-freeze addition must be its OWN warranted amendment commit, never folded into a gate-fixing commit`,
+          message: `commit ${short} ${change} inside a commit that also changes ${foreign.slice(0, 5).join(", ")} — a post-freeze addition or removal must be its OWN warranted amendment commit, never folded into a gate-fixing commit`,
         });
       }
       if (!message.includes(AMENDMENT_MARKER)) {
-        problems.push({ id: "F8", key: short, message: `commit ${short} adds [${added.join(", ")}] without the '${AMENDMENT_MARKER}' marker in its message` });
+        problems.push({ id: "F8", key: short, message: `commit ${short} ${change} without the '${AMENDMENT_MARKER}' marker in its message` });
       }
       for (const k of added) {
         if (!amendedHere.has(k)) problems.push({ id: "F8", key: k, message: `commit ${short} adds '${k}' without an amendment record in $freeze.amendments` });
       }
+      // A removal is warranted only by an explicit REMOVAL record ({key, removed: true, warrant}) — an entry's own ADDITION
+      // record does not warrant retiring it. The record may sit at the removing commit or on the current artifact
+      // (a later, still-registered removal record; the β R4 precedent of 8f1bfd87), but it must exist somewhere.
+      const removalRecordsHere = removalKeysOf(at);
+      for (const k of removed) {
+        if (!removalRecordsHere.has(k) && !removalSet.has(k)) {
+          problems.push({
+            id: "F8",
+            key: k,
+            message: `commit ${short} removes '${k}' without a removal amendment record ({key, removed: true, warrant}) in $freeze.amendments — neither at that commit nor on the current artifact`,
+          });
+        }
+      }
     }
     if (!freezeCommit) notes.push("F8: the freeze is not committed yet — the working-tree baseline is authoritative until it is");
-    else notes.push(`F8: frozen at ${freezeCommit.slice(0, 12)}; ${amendSet.size} amendment(s) on record`);
+    else {
+      notes.push(
+        `F8: frozen at ${freezeCommit.slice(0, 12)}; ${amendSet.size} amendment(s) on record; history swept: ${historyInspected} post-freeze partition commit(s) — ${historyAdding} adding ${historyKeysAdded} key(s), ${historyRemoving} removing ${historyKeysRemoved} key(s), every one judged for marker + partition-only + amendment record`
+      );
+    }
     return { problems, notes };
   }
 

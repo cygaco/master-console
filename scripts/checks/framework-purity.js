@@ -535,7 +535,8 @@ function run(opts) {
       suppressed: slugTally.suppressedTotal,
       pinned: slugTally.pinnedTotal,
       derived: slugTally.derivedTotal,
-      changelog_historical: slugTally.changelogHistoricalTotal,
+      // S-OS-06 r4 B1: no changelog_historical term — that inline-boolean absolution is retired; each CHANGELOG
+      // < 2.0.0 occurrence is closed by its own occurrence pin and counted under `pinned`.
       // β r3b: the fifth disposition, emitted PER SURFACE (reviewed as numbers). Expired windows are counted
       // separately AND inside live_unallowed (they fail the gate).
       compat: slugTally.compatTotal,

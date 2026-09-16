@@ -98,7 +98,9 @@ ok("pinned-occurrences-each-resolve-to-a-real-warrant", () => {
   assert.ok(pinnedRows.length > 0, "expected at least one pinned occurrence on the current tree (walk-skip.js / leak-gate.js / CHANGELOG historical entries)");
   for (const row of pinnedRows) {
     assert.ok(
-      ["occurrence-pin", "changelog-historical", "rule:evidence-tag", "rule:brand-history"].includes(row.rule),
+      // S-OS-06 r4 B1: `changelog-historical` is NOT a pin rule — that inline-boolean absolution is retired, so a
+      // ledger row carrying it is a regression, not an accepted rule.
+      ["occurrence-pin", "rule:evidence-tag", "rule:brand-history"].includes(row.rule),
       `unexpected pin rule ${row.rule} for ${row.file}:${row.line}`
     );
   }

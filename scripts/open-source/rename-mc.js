@@ -623,8 +623,6 @@ function buildLedgerAndPlan({ root, partition }) {
     pathRenames.push(c.generatedViewMove ? { from: c.from, to: c.to, generatedViewMove: true } : { from: c.from, to: c.to });
   }
 
-  const changelogHistoricalLines = computeChangelogHistoricalLines(path.join(root, "CHANGELOG.md"));
-
   const ledger = [];
   const categoryCounts = {};
   let derivedCount = 0;
@@ -659,7 +657,6 @@ function buildLedgerAndPlan({ root, partition }) {
 
     const lines = content.split(/\r?\n/);
     const isGenerated = partition.isGeneratedView(relPath);
-    const isChangelog = relPath === "CHANGELOG.md";
 
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
@@ -668,7 +665,10 @@ function buildLedgerAndPlan({ root, partition }) {
       // brand-history RULE) beside a live slug no longer marks the whole line pinned: the live slug counts
       // toward `transformed`, and the occurrence-scoped transform must actually remove it (else `delta`). The
       // r2 line-grain version stayed 0 on a pinned-beside-live line — the gap that let F1 pass a level up.
-      if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText) && !partition.findCompatOccurrence(relPath, lineText)) {
+      // S-OS-06 r4 B3: compat lines are NOT skipped whole. A registered compat occurrence is protected through
+      // dispositionAt like any pin, so it counts toward `pinned`; an UNPROTECTED occurrence sharing that line (e.g.
+      // an odd-case mix the four-form rewrite cannot touch) is measured and, if the transform leaves it, is `delta`.
+      if (!isGenerated && !writeProtected && LEGACY_SLUG_ANY_RE.test(lineText)) {
         let category;
         try {
           category = categorizeOccurrence(relPath, lineText);
@@ -676,7 +676,9 @@ function buildLedgerAndPlan({ root, partition }) {
           category = `<categorizer threw: ${e.message}>`;
         }
         const hasT = Object.prototype.hasOwnProperty.call(CATEGORY_TRANSFORMS, category);
-        const isProtected = (i) => partition.dispositionAt(relPath, lineText, i) !== null || (isChangelog && changelogHistoricalLines.has(lineNum));
+        // S-OS-06 r4 B1 (β 6d4a2f18): protection is ONLY a registered disposition. The changelog-historical inline
+        // boolean that was ORed in here absolved occurrences with no register entry behind them; it is gone.
+        const isProtected = (i) => partition.dispositionAt(relPath, lineText, i) !== null;
         const dre = /warpos/gi;
         let dm;
         let occN = 0;
@@ -752,12 +754,9 @@ function buildLedgerAndPlan({ root, partition }) {
               warrant = at.pin ? at.pin.warrant : "occurrence pin";
             }
             pinnedCount += 1;
-          } else if (isChangelog && changelogHistoricalLines.has(lineNum)) {
-            disposition = "pinned";
-            rule = "changelog-historical";
-            warrant = "changelog entry for a shipped release < 2.0.0; historical record, verbatim";
-            pinnedCount += 1;
           } else {
+            // S-OS-06 r4 B1: no section-based `changelog-historical` absolution — an occurrence with no registered
+            // disposition is `rewritten` wherever it sits, CHANGELOG < 2.0.0 lines included.
             disposition = "rewritten";
             rule = categorizeOccurrence(relPath, lineText);
             warrant = null;
@@ -1108,8 +1107,8 @@ function runApply({ root = REPO_ROOT, useGitMv = true } = {}) {
       const after =
         hasTransform && !RAW_LEGACY_ENV_READ_RE.test(before)
           ? // OCCURRENCE-SCOPED (r3 finding 1): rewrite only occurrences the partition does NOT disposition
-            // (pin / compat / evidence-tag / brand-history are protected); changelog-historical lines never
-            // carry a `rewritten` row so they are not reached here.
+            // (pin / compat / evidence-tag / brand-history are protected). S-OS-06 r4 B1: a CHANGELOG < 2.0.0
+            // occurrence is protected here ONLY by its registered pin — the same predicate the ledger used.
             genericSlugRewriteScoped(before, (charIdx) => partition.dispositionAt(targetRel, before, charIdx) !== null)
           : null;
       if (typeof after !== "string") {
