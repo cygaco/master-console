@@ -16,11 +16,14 @@
 > `beta-ledger-refs --artifact` population: an id cited here that resolves to neither a ledger row nor a
 > git object is RED.
 >
-> **Worktree trap (β `e6f2b840`):** `paths.betaEvents` is gitignored, so it does not exist in ANY worktree
-> (including `alpha-S-OS-06-substrate`); `beta-ledger-refs` run from a worktree cwd resolves the ledger
-> relative to that cwd and reports it missing (exit 2). Verify ledger rows ONLY against the canonical
-> absolute path `C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\agents\president\_system\beta\events.jsonl`,
-> passing `--file <that path> --baseline <root>/scripts/checks/beta-ledger-refs.baseline.json` explicitly.
+> **Worktree trap (β `e6f2b840`, mechanism corrected per β `a71e5c34` / `f3a8c057`):** `paths.betaEvents` is
+> gitignored, so it does not exist in ANY worktree (including `alpha-S-OS-06-substrate`). MEASURED: the
+> `beta-ledger-refs` SCRIPT run from a worktree cwd resolves the ledger relative to that cwd and
+> **REFUSES — exit 2, "ledger not found", naming the path** (fail-closed; NOT a skip). The option-C SKIP
+> lives only in the falsifier's live-ledger TEST CASE. Verify ledger rows ONLY against the canonical
+> absolute path `C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\agents\president\_system\beta\events.jsonl`
+> via `--file <that path>`; the baseline is keyed on the resolved TARGET (canonical ledger ⇒ baseline
+> applies however the path arrived; any other target ⇒ off; `--no-baseline` is the explicit override).
 
 Written by α 2026-09-16 ~23:20Z (rewritten ids-only ~00:00Z) after ε's e-16 listed four items as "blocked
 on α/β" that had been ruled between 22:00Z and 23:10Z via SendMessage and never arrived (ε e-07 and e-11
@@ -48,8 +51,30 @@ it is issued; the SendMessage is a notification, not the record.
 | `b8e5f3c7` | Issued-stub protocol accepted with four conditions (non-authoritative stub; withdrawal path; falsifier before arming; off the critical path) |
 | `e79b4d13` | The enforcer's CEILING (an uncited verdict is invisible); print it; ED under both names |
 | `c82f4b16` | Pre-commitment: the remedy for a red live-ledger case is to append the row, never relax the case |
+| `a71e5c34` | β's skip prediction refuted (the script REFUSES exit 2 from a worktree; the skip is in the test case); the `--file`/baseline coupling is P-146 inside the enforcer — key the baseline on the resolved TARGET, add `--no-baseline`; β's calibration finding = five refuted mechanism claims |
+| `f3a8c057` | Three corrections to this file (false mechanism sentence; stripped citation; inconsistent id rule) — all landed in the ids-only rewrite; retro line: a new authoritative surface accrues the old surface's defects from the moment it exists |
 
 UNLOGGED: (none — every id above resolves as of this rewrite; re-run `beta-ledger-refs --artifact` to check)
+
+## R-52 — the vacuity count is HIGH: lane I is a LANDING PRECONDITION and lands as ONE UNIT — β `a3e8f572`, `f57c1a80`, `b3f81d47`
+Measured (lane I6, both runners, per entry): COMMITTED runner — 6 of 23 observed EMPTY (entries 6, 7, 10,
+11, 18, 19: coverage-gate-caller, mode-profile, admin-surface, founders-checklist,
+coverage-gate-scan-live-cli, coverage-gate-scan-source); each lock reported MATCH on the empty sentinel via
+the containment path (`b3f81d47`'s row-472 candidate, now measured). FIXED runner — 0 of 23 empty, 23 of
+23 match; 0 of 23 moved under the parser fix (the parser-vacuity path is confined to the branch; the six
+come from the OTHER path — two distinct mechanisms). By β's pre-committed rule: HIGH for the six on the
+committed side (store-state falsehood); MEDIUM stands on the branch. Consequences: (1) lane I is a LANDING
+PRECONDITION — the landing candidate carries six locks that cannot fail; `f57c1a80`'s fence ("don't land
+lane I" is not a way to stay green) is now concrete. (2) Lane I lands as ONE UNIT: runner rewrite + parser
+fix + case (e) + vacuity-branch falsifier + HERMETIC SCRUB (`b3f81d47` D1); the scrub is dispatched NOW
+(declared allow-list carrying the Windows platform essentials, in the normalizer's own declaration,
+RED-then-GREEN, verify-before-build, come back if the allow-list cannot carry it), then all 23 re-validated
+under the hermetic set as a THIRD environment with the interpretation pre-committed. (3) The six are
+RE-REGISTERED from real observations under the fixed runner (non-empty observed sets, `observedOn`
+three-stamp), never carried; before/after emitted per entry. (4) COUNT-LOCK's silent skip on an
+unobservable count is the same class and is ROUTED TO β (α r-53); no builder touches it until β's id is
+in the ledger. Land order once the scrub returns: lane J (R-21/R-25) → lane I unit → register regen
+(R-39 b) → oracles + certifying run → gauntlet.
 
 ## STATUS TABLE — the e-16 "blocked" list, answered
 

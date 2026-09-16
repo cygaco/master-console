@@ -289,6 +289,27 @@ test("Baseline is shrink-only: a baselined hole that starts resolving turns RED"
   assert.match(healed.out, /STALE-BASELINE row 2 precedent/);
 });
 
+test("Baseline is keyed on the resolved TARGET, not on --file (β a71e5c34): canonical-shaped path ⇒ baseline applies; --no-baseline overrides", () => {
+  // A fixture living at a canonical-shaped path gets the shipped baseline (row-keyed, so on a
+  // 2-row fixture its entries are STALE → RED with STALE-BASELINE lines) — proving the baseline
+  // was applied because of the TARGET, not because a flag was absent.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "beta-ledger-refs-canon-"));
+  const canonShaped = path.join(dir, ".claude", "agents", "president", "_system", "beta", "events.jsonl");
+  fs.mkdirSync(path.dirname(canonShaped), { recursive: true });
+  fs.writeFileSync(canonShaped, [JSON.stringify({ msg_id: A }), JSON.stringify({ msg_id: B, precedent: A.slice(0, 8) })].join("\n") + "\n");
+  const withBaseline = spawnSync(process.execPath, [SCRIPT, "--file", canonShaped], { encoding: "utf8" });
+  assert.match(withBaseline.stdout, /4 baselined historical holes/, withBaseline.stdout);
+  assert.match(withBaseline.stdout, /STALE-BASELINE/, "the shipped baseline was applied to a canonical-shaped target");
+  // The same fixture at a non-canonical path: no baseline, GREEN.
+  const plain = run([{ msg_id: A }, { msg_id: B, precedent: A.slice(0, 8) }]);
+  assert.equal(plain.rc, 0, plain.out);
+  assert.match(plain.out, /0 baselined historical holes/);
+  // --no-baseline is the explicit override on a canonical-shaped target.
+  const noBaseline = spawnSync(process.execPath, [SCRIPT, "--file", canonShaped, "--no-baseline"], { encoding: "utf8" });
+  assert.equal(noBaseline.status, 0, noBaseline.stdout);
+  assert.match(noBaseline.stdout, /0 baselined historical holes/);
+});
+
 test("RED: malformed ledger line fails closed", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "beta-ledger-refs-bad-"));
   const file = path.join(dir, "events.jsonl");

@@ -142,9 +142,23 @@ function main() {
   }
   // Baseline: shrink-only. Applies to the canonical ledger by default; an explicit --file
   // (fixture) uses no baseline unless --baseline <path> is passed.
+  // Baseline is keyed on the resolved TARGET, never on how the path arrived (β verdict a71e5c34:
+  // `--file` answers "where is the ledger"; reading it as "this is a fixture, suppress the baseline"
+  // was one field answering two questions and produced false REDs on the real ledger from any
+  // non-root cwd). Canonical ledger ⇒ baseline applies; any other target ⇒ off; `--baseline <path>`
+  // sets it explicitly; `--no-baseline` is the explicit override.
   let baseline = [];
   const bi = argv.indexOf("--baseline");
-  const baselineFile = bi >= 0 && argv[bi + 1] ? path.resolve(argv[bi + 1]) : (argv.includes("--file") ? null : BASELINE_FILE);
+  const canonicalLedger = (() => {
+    try { const { PATHS } = require("../hooks/lib/paths"); if (PATHS && PATHS.betaEvents) return path.resolve(PATHS.betaEvents).toLowerCase(); } catch (_) { /* fall through */ }
+    return path.resolve(__dirname, "../../.claude/agents/president/_system/beta/events.jsonl").toLowerCase();
+  })();
+  const norm = (p) => path.resolve(p).toLowerCase().replace(/\\/g, "/");
+  const CANONICAL_SUFFIX = ".claude/agents/president/_system/beta/events.jsonl";
+  const targetIsCanonical = norm(file) === canonicalLedger.replace(/\\/g, "/") || norm(file).endsWith(CANONICAL_SUFFIX);
+  const baselineFile = argv.includes("--no-baseline") ? null
+    : (bi >= 0 && argv[bi + 1]) ? path.resolve(argv[bi + 1])
+    : (targetIsCanonical ? BASELINE_FILE : null);
   if (baselineFile && fs.existsSync(baselineFile)) {
     try { baseline = JSON.parse(fs.readFileSync(baselineFile, "utf8")).entries || []; }
     catch (e) { parseErrors.push({ row: 0, error: `baseline unreadable: ${e.message}` }); }
