@@ -122,6 +122,22 @@ driven by its proponent (α) checking its own claim, three times against a mecha
 validated. Everything else got stronger under examination. A record where the favoured mechanism is the
 least-credited one is the shape that makes the rest of the report believable. Carry it as its own line.
 
+## R-106 — the ROOT-tree suite red (ε e-33) is `reasoned-consult-honesty`'s vocabulary, not the ledger enforcer; fixed
+From the root tree at 628d13f0: 1253 tests, 1 fail — `reasoned-consult-honesty.test.js`'s live-corpus case:
+row 478 (`6e2a91f4`, type `beta-prerequisite-flag`, decision DIRECTIVE, class B — β's unprompted ordering
+constraint, load-bearing all round) reported as `verdict_shaped_unknown_type`. The worktree suites skip
+that case (the ledger is gitignored) — "where a measurement is taken changes what it can see", third
+instance. ε attributed it to α's enforcer; it is `scripts/checks/reasoned-consult-honesty.js` (2026-09-12
+vocabulary). The checker failed HONESTLY (refused what it did not recognise) — the opposite of the
+round's silent-success class. Remedy = a vocabulary entry (`beta-prerequisite-flag` under the
+verdict-family requirement), never a pin in KNOWN_LEDGER_DEFECTS and never a ledger edit. Applied on
+`alpha/S-OS-06-substrate`; measured against the canonical ledger with `CLAUDE_PROJECT_DIR` anchored: the
+checker's 32/32 pass incl. the live-corpus case; 1 structural finding remains and it is the pinned known
+defect (L345, `d5a6bc49`); 3 advisories (unrecognised non-verdict types: `beta-premise-correction`,
+`beta-provenance-correction`, `alpha-correction`) — advisory by design, not findings. ε's
+enforcer-fix dispatch (`d-mu4pv99v`, backend-fixer) wrote its started row to the CANONICAL ledger — the
+r-102 mitigation works.
+
 ## R-102 — the ledger MOVED, not stopped (ε e-30); the lane I probe's one red is a newly-surfaced FALSE GREEN, fixed not quarantined (ε e-29)
 LEDGER: measured — the canonical dispatch ledger's last row is 22:09Z; the substrate worktree's
 gitignored copy (`.claude/worktrees/alpha-S-OS-06-substrate/.claude/runtime/dispatch-completions.jsonl`)
