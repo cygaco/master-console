@@ -161,6 +161,14 @@ files; the repair is follow-on scope). R-112's authorization stands ONLY for the
 not four. STANDING RULE (β): whenever a fix is supposed to leave a judge untouched, the evidence is the
 judge file's HASH identical before and after, not a diff — a hash cannot be misread. Attribution corrected:
 the sha-before/after artifacts were produced by ε's fixer lane (94926c62); α read them at source.
+ADDENDUM (β follow-up, no id): ED-440-A2 is filed NOW — not on the three-sibling result — because the
+pattern already has TWO measured instances (negative-fixtures AC-2.4, dispatch-contract.test.js L95-96):
+the DEFECT is the 09-12 remedy PATTERN (a bare refusal assert on an input that trips more than one refusal;
+a registry derivation with no assert that it yielded a subject), the files are its INSTANCES, and the
+94926c62 plant is cited as the REFERENCE FORM rather than described in prose. An entry that lists files is
+closed by repairing files and the shape ships again; this one is closed by fixing how plants are written
+(fixture-harness candidate: a pinned-refusal form as the easy form). Mixed state reported cleanly: one plant
+repaired and demonstrated, one authorized, three measure-only with their result stated.
 
 ## R-112 — ε e-37: the sibling plant is VACUOUS (measured); one of R-110's three confirmations was softer than stated; sibling fix AUTHORIZED as one bounded test-side commit; ED-440-A1
 PULL-RULE INTEGRITY (ε e-37 is right on the fact, wrong on the inference): § R-110 and § R-111 were not in
