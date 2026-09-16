@@ -63,6 +63,15 @@ const VERDICT_TYPES = new Set([
   "gauntlet-boundary-verdict",
   "release-gate-verdict",
   "ledger-correction",
+  // S-OS-06 r4 (2026-09-16): `beta-prerequisite-flag` — a β-INITIATED ruling-shaped record (β raised it
+  // unprompted against an α ruling and pre-committed an id so it is citable; row 478, `6e2a91f4`,
+  // decision DIRECTIVE, class B). It carries decision+class+msg_id like every verdict row, so it belongs
+  // UNDER the verdict-family requirement (valid decision or non-empty verdict), not outside it. It was
+  // false-REDing the live-corpus case as `verdict_shaped_unknown_type` from the ROOT tree only (the
+  // ledger is gitignored, so worktrees skip the case — "where a measurement is taken changes what it
+  // can see"). The row is legitimate and load-bearing (the removal-teeth-before-retirement ordering);
+  // the ledger is append-only; the remedy is this vocabulary entry, never a pin in KNOWN_LEDGER_DEFECTS.
+  "beta-prerequisite-flag",
 ]);
 // Types that carry a reconcile payload — must have a non-empty `reconciles` array.
 const RECONCILE_TYPES = new Set(["beta-ledger-reconcile"]);

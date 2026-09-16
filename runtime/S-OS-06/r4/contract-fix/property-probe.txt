@@ -1,0 +1,10 @@
+PLANT  security-reviewer(antigravity) in-process-agent: {"ok":false,"violations":["shape 'in-process-agent' is FORBIDDEN for role 'security-reviewer' (class cross_provider_reviewer). Allowed: subprocess-cross-provider."],"class":"cross_provider_reviewer"}
+PLANT  product-lead(openai) in-process-agent: {"ok":false,"violations":["shape 'in-process-agent' is FORBIDDEN for role 'product-lead' (class cross_provider_consult_lead). Allowed: subprocess-cross-provider."],"class":"cross_provider_consult_lead"}
+PLANT  security-reviewer subprocess-claude (no lane): {"ok":false,"violations":["shape 'subprocess-claude' is not allowed for role 'security-reviewer' (class cross_provider_reviewer). Allowed: subprocess-cross-provider."],"class":"cross_provider_reviewer"}
+NEIGH  security-reviewer subprocess-cross-provider/agy: {"ok":true,"violations":[],"class":"cross_provider_reviewer"}
+NEIGH  qa-reviewer(claude) in-process-agent: {"ok":true,"violations":[],"class":"claude_pinned_reviewer"}
+NEIGH  design-quality(claude_pinned) in-process-agent: {"ok":true,"violations":[],"class":"claude_pinned_reviewer"}
+LANE   security_claude_hunter lane: true
+LATENT synthetic {"tier":"worker","kind":"consult","provider":"openai","build_chain":false,"claude_pinned":false} -> manager allowed ["in-process-agent"]
+LATENT synthetic {"tier":"worker","kind":"reviewer","provider":"openai","build_chain":false,"claude_pinned":true} -> claude_pinned_reviewer allowed ["in-process-agent"]
+LATENT synthetic {"tier":"worker","kind":"reviewer","provider":"xai","build_chain":false,"claude_pinned":false} -> manager allowed ["in-process-agent"]

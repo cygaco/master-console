@@ -1,0 +1,1 @@
+dispatch-contract fixture-test: 22/22 passed (incl. 11 planted-violation/fail-closed assertion(s))
