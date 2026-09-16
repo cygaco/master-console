@@ -174,19 +174,52 @@ test("RED: a stub that could be read as a ruling is malformed (β b8e5f3c7 cond.
 // the assertion runs exactly as before (present-and-broken is RED). The existence check is
 // DIRECT (fs.existsSync), never inferred from exit code 2, which is also the code for other
 // setup errors. This narrows row 485's "landing precondition" to a LOCAL-SUITE precondition.
-test("LIVE LEDGER: referential integrity holds on paths.betaEvents when it is present; absent ledger SKIPS visibly (β c4a06f28)", (t) => {
-  const root = path.resolve(__dirname, "../../..");
-  let ledger;
-  try { ledger = require(path.join(root, "scripts/hooks/lib/paths")).PATHS.betaEvents; } catch (_) { ledger = null; }
-  if (!ledger) ledger = path.join(root, ".claude/agents/president/_system/beta/events.jsonl");
+// ONE gated path, used by the live case AND by the plant below (β d5c8a271: the skip branch had
+// been proven only in its two passing directions; the plant proves present-and-BROKEN still
+// reaches the assertion and goes RED, i.e. the existence gate does not swallow breakage).
+function existenceGatedCheck(ledger, t) {
   if (!fs.existsSync(ledger)) {
     const msg = `SKIP: paths.betaEvents not present in this tree (gitignored by design) — looked for ${ledger}; referential integrity NOT evaluated here`;
     console.log(msg);
-    t.diagnostic(msg);
-    return;
+    if (t) t.diagnostic(msg);
+    return { skipped: true, status: null, out: msg };
   }
-  const r = spawnSync(process.execPath, [SCRIPT], { encoding: "utf8", cwd: root });
-  assert.equal(r.status, 0, `live ledger RED:\n${r.stdout}${r.stderr}`);
+  const args = [SCRIPT];
+  if (ledger !== resolveLiveLedger()) args.push("--file", ledger);
+  const r = spawnSync(process.execPath, args, { encoding: "utf8", cwd: path.resolve(__dirname, "../../..") });
+  return { skipped: false, status: r.status, out: r.stdout + r.stderr };
+}
+
+function resolveLiveLedger() {
+  const root = path.resolve(__dirname, "../../..");
+  try { const p = require(path.join(root, "scripts/hooks/lib/paths")).PATHS.betaEvents; if (p) return p; } catch (_) { /* fall through */ }
+  return path.join(root, ".claude/agents/president/_system/beta/events.jsonl");
+}
+
+test("LIVE LEDGER: referential integrity holds on paths.betaEvents when it is present; absent ledger SKIPS visibly (β c4a06f28)", (t) => {
+  const r = existenceGatedCheck(resolveLiveLedger(), t);
+  if (r.skipped) return;
+  assert.equal(r.status, 0, `live ledger RED:\n${r.out}`);
+});
+
+test("PLANT (β d5c8a271): the same existence-gated path goes RED on a present-and-BROKEN ledger, then GREEN once repaired", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "beta-ledger-refs-plant-"));
+  const file = path.join(dir, "events.jsonl");
+  // present-and-broken: a cited id with no row
+  fs.writeFileSync(file, [JSON.stringify({ msg_id: A }), JSON.stringify({ msg_id: B, precedent: `row 1 (${GHOST.slice(0, 8)})` })].join("\n") + "\n");
+  const broken = existenceGatedCheck(file);
+  assert.equal(broken.skipped, false, "a present ledger must never take the skip branch");
+  assert.equal(broken.status, 1, `present-and-broken must be RED through the gated path:\n${broken.out}`);
+  assert.match(broken.out, new RegExp(`UNRESOLVED row 2 precedent: ${GHOST.slice(0, 8)}`));
+  // repair by late-append → the same path goes GREEN
+  fs.appendFileSync(file, JSON.stringify({ msg_id: GHOST, record_kind: "verdict" }) + "\n");
+  const repaired = existenceGatedCheck(file);
+  assert.equal(repaired.skipped, false);
+  assert.equal(repaired.status, 0, `repaired ledger must be GREEN:\n${repaired.out}`);
+  // and absence through the SAME path is the skip, not a pass-by-accident
+  const absent = existenceGatedCheck(path.join(dir, "does-not-exist.jsonl"));
+  assert.equal(absent.skipped, true);
+  assert.match(absent.out, /^SKIP: paths\.betaEvents not present/);
 });
 
 test("GREEN: correction notes cite the wrong id by design and are exempt (reported, not failed)", () => {
