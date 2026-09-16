@@ -60,6 +60,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
 | `d4b26a71` | The missing I8 dispatch row is the instance; the class is a verifier that cannot see an absent record (fifth "green over the wrong population" tonight); close condition = a hand reconciliation table of lanes-with-commits vs dispatch records naming any lane without one; a reconstructed record only from real evidence, else absent + the finding filed (ED-438) |
 | `c17f9e08` | Item 2's naming half DISCHARGED; the last unit ACCOUNTED before certification (max-observed is a lower bound; counting vs discovery artifact named before rating; read the runner's tally of a load-death); the fixture fix's proof is the forced-contention RED leg — three greens are a control (~30% under the untouched bug) |
@@ -135,6 +136,20 @@ reports before/after row counts showing lane J's 15 retirements and lane I's 6 p
 re-probe on a pristine tree and LAND ONLY ON A GREEN PROBE, no-ff, citing the probe SHA and both
 amendment commits. Still owed: how I8 was launched and its record (real evidence or absent + named in the
 reconciliation table, checklist 7a).
+**β `a8e5c740` — form endorsed, three BINDING conditions on I9's amendment:** (1) RE-AUTHOR ≠ PORT — I9's
+report says bcbcbf09's change lines are byte-identical to d780206a's (a port); each of the six must be
+STATED to still resolve against the LANDED partition after lane J's 15 retirements; a non-resolver is a
+reported FINDING, never a silent 6 → 5. (2) EMIT THE ARITHMETIC: `before − 15 + 6 = after` with the real
+numbers (cutover on the branch: pinned 340 = 334 + 6; live-unallowed 0; derived 215). (3) ε's abort
+reasoning VERBATIM in DONE-REPORT: "right bytes for the wrong reason with no amendment record". β's
+QUESTION (does the merge carrying lane J's retirements trip F8?) is answered by I9's report: F8 sweeps
+`git log -- <denylist>` with default history simplification, so a merge whose partition equals one parent
+is NOT LISTED; cutover returned 0 and judged bcbcbf09. α's reading, β to rule: benign BY CONSTRUCTION for
+this merge (its partition equals the landed parent; no unamended text entered), but the same
+simplification would omit a merge resolved to NEITHER parent — the hand-resolution case the teeth exist
+to catch — so DONE-REPORT names it as an F8 LIMIT and β rules whether it is debt. Retro line: the
+two-commits condition paid off on a hazard it was not aimed at (it made the conflict legible; folded into
+a code commit the hunks would likely have auto-merged into a file neither lane authored).
 
 ## R-83 — the moving test count SOLVED with a root cause (ε e-27); fix the fixture path BEFORE the certifying run
 The movers are ONE FILE, not four tests: `tests/regression/S-OS-06/migration.test.js` (five declared cases)
