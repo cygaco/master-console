@@ -146,9 +146,70 @@ function parseHunks(diffText) {
   return hunks;
 }
 
+/** Word-set similarity with every G token and every lab/slug spelling neutralised, so a rewritten line still aligns with its pre-image. */
+function similarity(grammar, a, b) {
+  const norm = (s) =>
+    new Set(
+      String(s)
+        .replace(grammar.tokenRe(), " TOK ")
+        .replace(new RegExp(`${L.SLUG}|warp|mc`, "gi"), " S ")
+        .toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter(Boolean)
+    );
+  const A = norm(a);
+  const B = norm(b);
+  if (!A.size || !B.size) return 0;
+  let inter = 0;
+  for (const w of A) if (B.has(w)) inter += 1;
+  return inter / (A.size + B.size - inter);
+}
+
+const CROSS_FILE_MIN_SIMILARITY = 0.6;
+
+/**
+ * When the line has no in-file pre-image (a new file, or a pure addition), look for it in the pre-images of every
+ * OTHER file the same commit deleted, renamed or modified (a rename-with-edits falls below blame's rename threshold).
+ * Only lines carrying the current-lab token (past the ordinal) or the legacy-lab token of the version qualify; the most
+ * similar at or above CROSS_FILE_MIN_SIMILARITY wins. -> { pre, preRev, prePath, preLine, score } | null
+ */
+function crossFilePreimage(root, grammar, { commit, targetPath, targetText, lab, version, legacyLab, ordinal }) {
+  const parent = L.git(root, ["rev-parse", "--verify", "--quiet", `${commit}^1`]);
+  if (parent.status !== 0) return null;
+  const preRev = parent.stdout.trim();
+  const ns = L.git(root, ["diff", "--no-color", "--name-status", "-M", preRev, commit]);
+  if (ns.status !== 0) return null;
+  const changed = new Set();
+  for (const row of ns.stdout.split(/\r?\n/).filter(Boolean)) {
+    const cols = row.split("\t");
+    const status = cols[0][0];
+    if (!"DRMC".includes(status)) continue;
+    if (status === "M" && cols[1] === targetPath) continue; // the in-file hunk was already examined
+    changed.add(cols[1]);
+  }
+  if (!changed.size) return null;
+  // one fixed-string, case-insensitive grep of the parent tree for either spelling of the token; exact G re-check below
+  const g = L.git(root, ["grep", "-z", "-n", "-I", "-i", "-F", "--full-name", "-e", [lab, version].join(AT), "-e", [legacyLab, version].join(AT), preRev]);
+  if (g.status !== 0 && g.status !== 1) return null;
+  const NUL = String.fromCharCode(0);
+  let best = null;
+  for (const rec of g.stdout.split("\n").filter(Boolean)) {
+    const parts = rec.split(NUL);
+    if (parts.length < 3) continue;
+    const pth = parts[0].slice(preRev.length + 1);
+    if (!changed.has(pth)) continue;
+    const l = parts.slice(2).join(NUL).replace(/\r$/, "");
+    const qualifies = tokenPositions(grammar, l, lab, version).length > ordinal || tokenPositions(grammar, l, legacyLab, version).length > 0;
+    if (!qualifies) continue;
+    const score = similarity(grammar, l, targetText);
+    if (score >= CROSS_FILE_MIN_SIMILARITY && (!best || score > best.score)) best = { pre: l, preRev, prePath: pth, preLine: Number(parts[1]), score };
+  }
+  return best;
+}
+
 /**
  * Trace one occurrence (ordinal k of the exact current-lab token on its line) back to the commit that introduced it.
- * -> { kind: rewrite|authored|unresolved, commit, summary, date, steps, alignment, preimage, reason }
+ * -> { kind: rewrite|authored|unresolved, commit, summary, date, steps, alignment, preimage, legacyCountPre, legacyCountPost, reason }
  */
 function traceOccurrence(root, grammar, { file, line, col0, lab, version, legacyLab }) {
   const shaRes = L.git(root, ["rev-parse", "HEAD"]);
@@ -158,7 +219,7 @@ function traceOccurrence(root, grammar, { file, line, col0, lab, version, legacy
   let lineText = null;
   let ordinal = null;
   for (let step = 0; step < TRACE_CAP; step += 1) {
-    const b = L.git(root, ["blame", "--porcelain", "-L", `${ln},${ln}`, rev, "--", p]);
+    const b = L.git(root, ["blame", "-M", "-C", "--porcelain", "-L", `${ln},${ln}`, rev, "--", p]);
     if (b.status !== 0) return { kind: "unresolved", steps: step, reason: `git blame ${rev.slice(0, 8)} ${p}:${ln} failed: ${(b.stderr || "").trim().slice(0, 160)}` };
     const rec = parseBlame(b.stdout);
     if (!rec) return { kind: "unresolved", steps: step, reason: `unparseable blame for ${p}:${ln}` };
@@ -177,42 +238,79 @@ function traceOccurrence(root, grammar, { file, line, col0, lab, version, legacy
       if (ordinal < 0) return { kind: "unresolved", steps: step, commit: rec.commit, reason: `the measured token is not at col ${col0 + 1} of the blamed line (working-tree/HEAD drift?)` };
     }
     if (posTarget.length <= ordinal) return { kind: "unresolved", steps: step, commit: rec.commit, reason: `ordinal ${ordinal} of the token not present on the blamed line in ${rec.commit.slice(0, 8)}` };
-    if (rec.boundary || !rec.previous) {
-      return { kind: "authored", steps: step + 1, commit: rec.commit, summary: rec.summary, date, alignment: "boundary", preimage: null, reason: "the line first appears in a root/boundary commit" };
-    }
-    const d = L.git(root, ["diff", "--no-color", "--no-ext-diff", "-U0", "-M", rec.previous.commit, rec.commit, "--", rec.previous.path, blamedPath]);
-    if (d.status !== 0) return { kind: "unresolved", steps: step, commit: rec.commit, reason: `git diff failed: ${(d.stderr || "").trim().slice(0, 160)}` };
-    const hunk = parseHunks(d.stdout).find((h) => h.newLen > 0 && rec.origLine >= h.newStart && rec.origLine < h.newStart + h.newLen);
-    if (!hunk) return { kind: "unresolved", steps: step, commit: rec.commit, reason: `no -U0 hunk covers ${blamedPath}:${rec.origLine} in ${rec.commit.slice(0, 8)}` };
-    const idx = rec.origLine - hunk.newStart;
     let pre = null;
+    let preRev = null;
+    let prePath = null;
     let preLine = null;
     let alignment;
-    if (hunk.removed.length === 0) alignment = "pure-addition";
-    else if (hunk.removed.length === hunk.added.length) {
-      alignment = "positional";
-      pre = hunk.removed[idx].replace(/\r$/, "");
-      preLine = hunk.oldStart + idx;
-    } else {
-      // unequal hunk: prefer a removed line still carrying the current-lab token; else one carrying the legacy token of the version
-      alignment = "content";
-      let j = hunk.removed.findIndex((r) => tokenPositions(grammar, r, lab, version).length > ordinal);
-      if (j < 0) j = hunk.removed.findIndex((r) => tokenPositions(grammar, r, legacyLab, version).length > 0);
-      if (j >= 0) {
-        pre = hunk.removed[j].replace(/\r$/, "");
-        preLine = hunk.oldStart + j;
+    if (rec.previous) {
+      const d = L.git(root, ["diff", "--no-color", "--no-ext-diff", "-U0", "-M", rec.previous.commit, rec.commit, "--", rec.previous.path, blamedPath]);
+      if (d.status !== 0) return { kind: "unresolved", steps: step, commit: rec.commit, reason: `git diff failed: ${(d.stderr || "").trim().slice(0, 160)}` };
+      const hunk = parseHunks(d.stdout).find((h) => h.newLen > 0 && rec.origLine >= h.newStart && rec.origLine < h.newStart + h.newLen);
+      if (!hunk) return { kind: "unresolved", steps: step, commit: rec.commit, reason: `no -U0 hunk covers ${blamedPath}:${rec.origLine} in ${rec.commit.slice(0, 8)}` };
+      const idx = rec.origLine - hunk.newStart;
+      const carries = (r) => tokenPositions(grammar, r, lab, version).length > ordinal || tokenPositions(grammar, r, legacyLab, version).length > 0;
+      if (hunk.removed.length === 0) alignment = "pure-addition";
+      else if (hunk.removed.length === hunk.added.length && carries(hunk.removed[idx].replace(/\r$/, ""))) {
+        alignment = "positional";
+        pre = hunk.removed[idx].replace(/\r$/, "");
+        preLine = hunk.oldStart + idx;
+      } else {
+        // unequal hunk, or the positional partner carries neither token: the most similar removed line that carries the
+        // current-lab token (past the ordinal) or the legacy token of the version, at or above the similarity floor
+        alignment = hunk.removed.length === hunk.added.length ? "positional-partner-carries-neither->content" : "content";
+        let bestJ = -1;
+        let bestScore = -1;
+        hunk.removed.forEach((raw, j) => {
+          const r = raw.replace(/\r$/, "");
+          if (!carries(r)) return;
+          const s = similarity(grammar, r, targetText);
+          if (s >= CROSS_FILE_MIN_SIMILARITY && s > bestScore) {
+            bestScore = s;
+            bestJ = j;
+          }
+        });
+        if (bestJ >= 0) {
+          pre = hunk.removed[bestJ].replace(/\r$/, "");
+          preLine = hunk.oldStart + bestJ;
+          alignment += `(similarity ${bestScore.toFixed(2)})`;
+        }
+      }
+      if (pre !== null) {
+        preRev = rec.previous.commit;
+        prePath = rec.previous.path;
+      }
+    } else alignment = "no-in-file-previous";
+    if (pre === null) {
+      const x = crossFilePreimage(root, grammar, { commit: rec.commit, targetPath: blamedPath, targetText, lab, version, legacyLab, ordinal });
+      if (x) {
+        ({ pre, preRev, prePath, preLine } = x);
+        alignment = `${alignment}+cross-file(${x.prePath}, similarity ${x.score.toFixed(2)})`;
       }
     }
     const summary = rec.summary;
     if (pre !== null && tokenPositions(grammar, pre, lab, version).length > ordinal) {
       // the occurrence pre-existed this commit: keep walking
-      rev = rec.previous.commit;
-      p = rec.previous.path;
+      rev = preRev;
+      p = prePath;
       ln = preLine;
       continue;
     }
-    if (pre !== null && tokenPositions(grammar, pre, legacyLab, version).length > 0) {
-      return { kind: "rewrite", steps: step + 1, commit: rec.commit, summary, date, alignment, preimage: excerpt(pre, Math.max(0, tokenPositions(grammar, pre, legacyLab, version)[0])), reason: "pre-image line carried the legacy-lab token of this version" };
+    const legacyPre = pre === null ? 0 : tokenPositions(grammar, pre, legacyLab, version).length;
+    const legacyPost = tokenPositions(grammar, targetText, legacyLab, version).length;
+    if (legacyPre > legacyPost) {
+      return {
+        kind: "rewrite",
+        steps: step + 1,
+        commit: rec.commit,
+        summary,
+        date,
+        alignment,
+        legacyCountPre: legacyPre,
+        legacyCountPost: legacyPost,
+        preimage: excerpt(pre, tokenPositions(grammar, pre, legacyLab, version)[0]),
+        reason: "the legacy-lab token of this version LEFT the line in the commit where the current-lab token appeared on it",
+      };
     }
     return {
       kind: "authored",
@@ -221,8 +319,15 @@ function traceOccurrence(root, grammar, { file, line, col0, lab, version, legacy
       summary,
       date,
       alignment,
+      legacyCountPre: legacyPre,
+      legacyCountPost: legacyPost,
       preimage: pre === null ? null : excerpt(pre, 0, 160),
-      reason: pre === null ? "the line was added with the token already in it" : "the pre-image line carried neither the current-lab token nor the legacy-lab token of this version",
+      reason:
+        pre === null
+          ? rec.previous
+            ? "the line was added with the token already in it and no same-commit pre-image carries either token"
+            : "the line first appears in this commit and no same-commit pre-image carries either token"
+          : "the current-lab token appeared on the line while no legacy-lab token of this version left it",
     };
   }
   return { kind: "unresolved", steps: TRACE_CAP, reason: `trace cap ${TRACE_CAP} reached` };
