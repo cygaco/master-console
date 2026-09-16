@@ -60,11 +60,12 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
-| `e4d8b207` | **PREMISE REVERSED — see R-110; re-submitted as r-111.** The five forbidden-shape reviews STAND AS OBSERVATIONS and are VOID AS DISCHARGE; TRACKER corrected now (append-only); fix-cycle exits noted not unwound; the re-run's interpretation pre-committed; Class B with a disclosure section and a C TRIGGER (re-run cannot complete before the land → operator's call); the role set is a property read from the registry, not a list; the exposure count is a lower bound |
+| `e4d8b207` | **WITHDRAWN by β `b3f7d052` (row 521; see R-111) — row 519 kept unedited as the record.** The five forbidden-shape reviews STAND AS OBSERVATIONS and are VOID AS DISCHARGE; TRACKER corrected now (append-only); fix-cycle exits noted not unwound; the re-run's interpretation pre-committed; Class B with a disclosure section and a C TRIGGER (re-run cannot complete before the land → operator's call); the role set is a property read from the registry, not a list; the exposure count is a lower bound |
 | `d7b91e46` | The relocated ledger rows QUALIFY (original records relocated, not reconstructed) under three conditions; α's "self-read would have caught it" withdrawn — A2 is the precondition for candidate 2; fix-not-quarantine endorsed; MEASURE the exposure (done: five forbidden-shape reviewer dispatches this round); the fix refuses the CLASS; re-establish max-observed on the certifying head; READ the other four discovered tests |
 | `c96f2a58` | The fixture result recorded as true-but-unmeasured → measured (narrow claim); ED-439's severity sentence (a committed amendment can be un-recorded by someone else's merge resolution); `--full-history` alone floods; the discriminator is COMPUTED, not marked |
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
 | `f5a2c81e` | The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
+| `b3f7d052` | WITHDRAWS `e4d8b207` (β verified the registry itself): the r2/r3 backend verdicts and the qa review are DISCHARGED; the close states the Claude-pin configuration neutrally, never as a lack; security-reviewer cross-provider run = the gate (owed); backend/qa cross-provider re-run NOT owed; C trigger and pre-committed interpretation LAPSE; first tracker entry WITHDRAWN not suspended; attribution names ε, α and β; ED-440 = the real finding, follow-on; the discovery gap has three consequences (one defect, three stores) |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
 | `d4b26a71` | The missing I8 dispatch row is the instance; the class is a verifier that cannot see an absent record (fifth "green over the wrong population" tonight); close condition = a hand reconciliation table of lanes-with-commits vs dispatch records naming any lane without one; a reconstructed record only from real evidence, else absent + the finding filed (ED-438) |
@@ -140,13 +141,49 @@ evidence of the shared-failure-mode cost; no new finding = one observation, NOT 
 diversity was unnecessary. Class B with a HARD DISCLOSURE (its own section of DONE-REPORT: five contract
 violations, two binding gate verdicts). **C TRIGGER: if the cross-provider re-run cannot complete before
 the land, landing with an undischarged gate is the OPERATOR's decision, never a default.** THE FIX: α's
-five-role list WITHDRAWN (CLAUDE.md also names redteam and consult); the enforcer reads the ROLE
+five-role list WITHDRAWN (CLAUDE.md also names redteam and consult — β later marked this "list was short" claim UNVERIFIED: prose, not the registry; see R-111); the enforcer reads the ROLE
 REGISTRY's own cross-provider declaration — any such role dispatched in-process is refused; roles derived,
 never listed. EXPOSURE re-run over the full canonical ledger (incl. the ten restored rows): exactly five;
 one stray store only (restored); recorded as a LOWER BOUND. ε's fixer `d-mu4pv99v` completed ok (canonical
 row); its envelope must show the RED against the unedited fixture, the registry field it reads, the
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
+
+## R-111 — β `b3f7d052` (row 521) WITHDRAWS `e4d8b207`: the r2/r3 backend verdicts are DISCHARGED; no backend/qa re-run; the C trigger lapses; attribution names all three
+β verified the reversal AT SOURCE itself (registry lines 41/53/57 + the four `_operator_2026_08_18` fields)
+and withdrew `e4d8b207` (row 519 stays unedited as the record of what was ruled on the facts as then
+stated). β's own error, in β's words: it listed the registry as NOT-READ in that verdict and ruled anyway —
+"disclosure is not mitigation" — and its "your five-role list is already incomplete" claim cited CLAUDE.md
+prose, not the registry: UNVERIFIED, struck from R-107's record (the property remedy stands on its own).
+APPLIED: (Q1) the r2 backend PASS 92 and r3 PASS 90 and the qa review are DISCHARGED gate verdicts; the
+close states the configuration NEUTRALLY — these roles are Claude-pinned by operator decision, so reviewer
+and builder shared a lab — and may NOT frame it as something the reviews lacked (that would relitigate a
+settled operator trade in a report they will read); the pre-committed re-run interpretation LAPSES.
+(Q2) `security-reviewer` is genuinely cross-provider (antigravity / gemini-3.1-pro-high): its cross-provider
+run on the final head IS the gate and stays OWED; the backend/qa cross-provider re-run is NOT owed and is
+not run (not a gate; costs a dispatch; would implicitly question the pin). (Q3) the C TRIGGER LAPSES — β
+refused α's offer to keep it as "show the pin's cost at the land" (manufacturing an escalation from a dead
+premise; self-serving). (Q4) the first tracker entry is WITHDRAWN, not suspended — a third append-only
+entry says so; α's second entry's "SUSPENDED" wording is itself corrected by the third; all three stay.
+ATTRIBUTION, per β, names all three: ε characterised the shape without the registry; α ruled on the
+characterisation; β ruled on it while declaring the registry unread. Never written as ε's error alone.
+(Q5) the registry-property enforcer is STILL OWED — ED-440 is the real finding of the thread: a
+derivation green because of its POPULATION (36 live roles happen to match an earlier rule), not because
+the rule is sound — FOLLOW-ON, not in-round; ED-440's policy text carries the population sentence
+(verified). In-round: the stale-fixture fix only (landed on the lane at 94926c62; report 02e39bc8; the
+fixer `d-mu4qczoa` completed ok:true on the canonical ledger).
+CLOSE CHECKLIST DELTA: item "disclosure section: five violations" DELETED; item "cross-provider re-run
+(backend/qa)" DELETED; item "security cross-provider gauntlet on the final head" UNCHANGED (the gate);
+item 7a (population reconciliation) UNCHANGED. NEW close line (β): the discovery gap has THREE consequences
+— five tests never run, four vacuous quarantine locks, one stale fixture that survived the 09-12 sibling
+fix — one defect, three stores: the round's central mechanism finding. The fixer's refusal is recorded as
+the best conduct of the exchange: right against the weight of two rulings above it.
+ε e-36 arrived AFTER r-110 was answered by the lane (inbox batching, again): its one live fact — the
+root-tree record-trust red was α's uncommitted root TRACKER.md shifting eight occurrence line numbers, the
+register regen scanning the WORKING tree — is now moot (root clean; α's edits committed on the substrate
+branch) but it is the concrete proof of the exclusive-tree condition and goes in the close as such; every
+substrate merge that touches TRACKER.md shifts those occurrences again → the register regen (its own
+commit) must follow the LAST merge, and the final no-op proof must be on the quiet certifying tree.
 
 ## R-110 — R-102/R-105/R-107 RESTED ON A FALSE PREMISE (owned by α): the in-process qa/backend reviews were CONTRACT-COMPLIANT; the fixture is stale; the remedy is a TEST FIX — ε e-35; β `f5a2c81e`; consult r-111 pending
 THE ERROR. ε e-29 stated that the five in-process qa-/backend-reviewer dispatches were a forbidden shape; α
