@@ -149,6 +149,32 @@ row); its envelope must show the RED against the unedited fixture, the registry 
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
 
+## R-114 — ε e-39: the head-advanced location read is ANSWERED (test-side, not product); the mechanism read is authorized as ONE bounded read; the fixture-path proof pair accepted
+LOCATION (verified at source by α): the intermittent case is `scripts/dispatch/falsifiers/
+head-advanced-after-check.falsifier.test.js` L16 (G4.2, delegates to validation-to-merge-race); the gate is
+`commitIntegration` in `scripts/dispatch/acceptance-record.js` — the post-merge ref-update precondition is
+DELIBERATELY separate from the pre-merge authorization (L434 header, AC-5); the live head is resolved fresh
+from the real target ref at commit time (`git rev-parse --verify`, L80-85), an unresolvable head fails
+closed, `expectedHead` must be a full SHA bound to the record's own base (L450-454, ED-238), and the mutation
+is `git update-ref <target> <new> <expected>` (L439-440) — git's own atomic compare-and-swap; a moved head is
+refused by GIT, returned as `ref-update-refused`. The product does no check-then-write of its own. NOT A
+PRODUCT TOCTOU; nothing ships; the nondeterminism is TEST-SIDE. Close step a″ DISCHARGED at the location
+binary.
+MECHANISM: authorized as ONE bounded read (≤15 min, report-to-file, no code change) — because a test that
+fails intermittently inside the certifying population will otherwise be explained at the worst moment.
+First hypothesis to test, stated so the read is falsifiable: the same shared-fixture-path class as
+migration.test.js (a fixed path under parallel load; the delegate validation-to-merge-race may hold one).
+If a test-side fix is trivial and comes with a FORCED-contention RED/GREEN pair (as the fixture-path fix
+did), it is authorized in the same dispatch; otherwise DONE-REPORT lists it as "test-side nondeterminism —
+location established, mechanism unknown" with the test's result printed across the repeated certifying
+runs. NEVER quarantined: "flake" is not a disposition (β `d5c8a271`).
+FIXTURE-PATH FIX (migration.test.js): the proof PAIR is what β required — RED under FORCED contention with
+the shared path held (dies at load with EPERM), GREEN under the same forced contention after materializing
+into a process-unique directory — ACCEPTED on that pair; the three control runs are a CONTROL (ε briefed
+them as such: three greens occur ~30% of the time with the bug untouched at a 1-in-3 failure rate), not the
+proof. Still owed from that dispatch: the control runs with population counts printed and the runner-tally
+read for the fourth unit of the 1245-vs-1249 delta (one unit still unaccounted per R-63).
+
 ## R-113 — ε e-38: lane I LANDED at 1e06b991 (verified at source by α); CORRECTION to R-110 item (4) and to `f5a2c81e` residue item (2)
 LANDED on green probe da4abae9 (lane I onto 13f10f0d, restored-and-cleaned tree): purity 0, leak-gate 0,
 cutover 0, record-trust-exit 0, privacy 0, npm test 0 — POPULATION 1260 tests / 1257 pass / 0 fail / 3 skipped
