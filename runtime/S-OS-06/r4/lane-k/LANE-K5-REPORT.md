@@ -54,7 +54,7 @@ Where the mixed dispositions come from:
 
 ### Finding to flag: the standing `liveLines` for `_planning/warpos-lifecycle-plan.md` under-enumerated
 
-The standing row listed 6 live lines (L90/L107/L129/L334/L455/L482) under the warrant *present-tense claims with legacy identifiers that no longer resolve at head*. Reading the 26 non-live occurrences one by one turned up 8 more of the **same class under the same warrant**. They are recorded as RESIDUE/fix and labelled `STANDING-RULE APPLICATION` in the output:
+The standing row listed 6 live lines (L90/L107/L129/L334/L455/L482) under the warrant *present-tense claims with legacy identifiers that no longer resolve at head*. Reading the 22 non-live occurrences one by one (the 6 live lines carry 10) turned up 8 more of the **same class under the same warrant**. They are recorded as RESIDUE/fix and labelled `STANDING-RULE APPLICATION` in the output:
 - L58, L76, L228: schema id `…/mode-marker/v2`. Scripts emit only `mc/mode-marker/v2` (3 hits, 0 legacy).
 - L82: env name `…_AUTO_MODE`. Scripts read only `MC_AUTO_MODE` (2 hits, 0 legacy).
 - L121, L171: the legacy ship-coverage check named as the live wiring or enforcer. It resolves only through the compat shim that expires at 2.1.0; this is β's ADR reasoning applied.
