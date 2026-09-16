@@ -826,6 +826,174 @@
         "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@<semver>|",
         "removed": true,
         "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 3 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|CHANGELOG.md|WarpOS|First major release,",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:40 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|_planning/warpos-1.0-plan/|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:40 col 192, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|_warpos/MANIFEST.json|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:73 col 121, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|warpos/guides/registry/v1|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:86 col 198, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|scan:warpos-layer-diff|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:91 col 141, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|.claude/manifest.json#warpos.version|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:98 col 54, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|WarpOS|The hardened update",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:126 col 100, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|../WarpOS/|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:146 col 60, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|../warpos/|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:146 col 74, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|manifest.json#warpos.source|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:146 col 99, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|warpos/|- Structural rename",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:170 col 83, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|/check:warpos-*|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:172 col 69, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|scripts/warpos/release-gates.js|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:188 col 78, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[Unreleased]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:197 col 40, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[1.2.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:198 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[1.1.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:199 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[1.0.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:200 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.17.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:201 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.16.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:202 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.14.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:203 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.13.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:204 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.13.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:205 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.12.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:206 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.12.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:207 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.11.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:208 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.11.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:209 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.10.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:210 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.9.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:211 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.8.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:212 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.8.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:213 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.4]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:214 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.3]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:215 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:216 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:217 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:218 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.2.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:219 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.2.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:220 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.2.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:221 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.4]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:222 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:223 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:224 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:225 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
       }
     ]
   },
@@ -1656,6 +1824,248 @@
       "file": "trackers/sprints/T3-system-inventory-and-verification-matrix.md",
       "matchText": "warpos@0.14*",
       "warrant": "evidence-tag LISTING glob in a restored verification transcript (`git tag --list \"warpos@0.14*\"`); a tag-reference, never a live identifier — the evidence-tag RULE covers warpos@<a.b.c> but not this version-glob form (r4 broadens the rule; pinned meanwhile so the β-owed restore is gate-clean regardless of the r4 decision)"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "WarpOS",
+      "anchor": "First major release,",
+      "warrant": "CHANGELOG history: `WarpOS` inside the [1.0.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "_planning/warpos-1.0-plan/",
+      "warrant": "CHANGELOG history: `_planning/warpos-1.0-plan/` inside the [1.0.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "_warpos/MANIFEST.json",
+      "warrant": "CHANGELOG history: `_warpos/MANIFEST.json` inside the [0.13.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "warpos/guides/registry/v1",
+      "warrant": "CHANGELOG history: `warpos/guides/registry/v1` inside the [0.12.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "scan:warpos-layer-diff",
+      "warrant": "CHANGELOG history: `scan:warpos-layer-diff` inside the [0.12.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": ".claude/manifest.json#warpos.version",
+      "warrant": "CHANGELOG history: `.claude/manifest.json#warpos.version` inside the [0.11.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "WarpOS",
+      "anchor": "The hardened update",
+      "warrant": "CHANGELOG history: `WarpOS` inside the [0.8.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "../WarpOS/",
+      "warrant": "CHANGELOG history: `../WarpOS/` inside the [0.4.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "../warpos/",
+      "warrant": "CHANGELOG history: `../warpos/` inside the [0.4.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "manifest.json#warpos.source",
+      "warrant": "CHANGELOG history: `manifest.json#warpos.source` inside the [0.4.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "warpos/",
+      "anchor": "- Structural rename",
+      "warrant": "CHANGELOG history: `warpos/` inside the [0.2.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "/check:warpos-*",
+      "warrant": "CHANGELOG history: `/check:warpos-*` inside the [0.2.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "scripts/warpos/release-gates.js",
+      "warrant": "CHANGELOG history: `scripts/warpos/release-gates.js` inside the [0.1.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[Unreleased]:",
+      "warrant": "CHANGELOG link-reference block (sits under the [0.1.0] section only because Keep-a-Changelog link references close the file): `cygaco/WarpOS/` is the GitHub repository slug inside the [Unreleased] compare link, a URL that must resolve against the published repository name — NOT a shipped-release history entry; registered per occurrence by S-OS-06 r4 B1 and FLAGGED as arguably LIVE under the raised disposition bar"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[1.2.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [1.2.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[1.1.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [1.1.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[1.0.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [1.0.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.17.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.17.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.16.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.16.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.14.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.14.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.13.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.13.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.13.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.13.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.12.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.12.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.12.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.12.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.11.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.11.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.11.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.11.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.10.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.10.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.9.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.9.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.8.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.8.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.8.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.8.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.4]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.4] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.3]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.3] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.2.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.2.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.2.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.2.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.2.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.2.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.4]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.4] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
     }
   ],
   "openQuestions": [
