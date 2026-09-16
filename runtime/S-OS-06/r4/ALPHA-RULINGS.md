@@ -57,6 +57,31 @@ it is issued; the SendMessage is a notification, not the record.
 | `d8471fa6` | The unfulfilled-stub plant tripped two rules at once (no `authoritative:false`) — a plant must isolate the defect it names |
 | `e0b3d951` | The `--artifact` mode was proven on a fixture and wired to nothing — wire it against the real rulings file WITH a registered expiry; print the git-object ceiling and the bucket order; record why a missing ledger SKIPS (absent by design) but a missing artifact REDS (absent unexpectedly) |
 | `f8d3a607` | The derived-gap disposition is stated as ARITHMETIC (215 = 110 + 105 per view) with tightened wording ("nothing left unaccountably", never "nothing vanished"); the FINAL regen no-op proof is a tracked close item; every plant asserts the ABSENCE of the neighbouring finding; lane J's landing is attested, cite by SHA |
+| `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
+
+## R-63 — lane J landed with a binding condition UNDISCHARGED; the moving test count; the scrub result
+ε self-reported (e-21): lane J was merged at `438ff2f0` WITHOUT discharging r-03a condition (b) (prove
+migration 003 does not read the deleted files via the fixture-product test RED-then-GREEN BEFORE the
+removal commit). Compensating measurement after the fact: none of the 15 deleted names appear in
+`migrations/**`; the migration test is green 3/3 STANDALONE at the landed head. DISPOSITION: DONE-REPORT
+records verbatim "landed with binding condition (b) undischarged; compensating measurement taken after the
+fact"; the green never stands in for the discharge; whether the measurement DISCHARGES (b) or (b) becomes
+a named residual is β's (α r-64). Retro item (conductor): a landing's binding conditions are a checklist
+read BEFORE the merge — enforcer candidate: the merge message cites each condition's evidence line and the
+teeth reject a lane merge whose message lacks them. The J4 enforcing case introduced an un-routed
+partition reader (`alias-map.test.js` L133 JSON.parse instead of the loader; commit `44481a6c`;
+deterministic 3/3) — caught by the single-loader guard within minutes; fix dispatched (reroute through
+the loader, keep the expiry falsifier, stop rather than widen the loader). The race case: seven
+observations, one failure — "rare flake" is NOT a disposition (`d5c8a271`); the LOCATION question (the
+exit gate's check-then-read ordering) is still owed; the migration test's identical 1-in-3 in-suite shape
+is a second data point for the same question. THE MOVING TEST COUNT (1245 → 1249 → 1249 across identical
+in-suite runs) is a FINDING: name the four tests that appear or disappear and why; a suite whose
+population moves between identical runs cannot certify § 5.5 until the population is fixed (β consulted,
+r-64). SCRUB complete (ok, exit 0): β's premise that an empty environment breaks Windows spawn was
+REFUTED by measurement (libuv refills eleven names; the win32 allow-list is that floor); allow-list
+declared into the normalizer's own declaration, register synced, entries untouched; case (k)
+RED-then-GREEN. NEXT per R-52a: re-validate 23 under the hermetic set with the scrub interpretation
+pre-committed (expect 17 match / 6 mismatch), re-register the six, confirm 23/23.
 
 UNLOGGED: (none — every id above resolves as of this rewrite; re-run `beta-ledger-refs --artifact` to check)
 
