@@ -60,10 +60,11 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
-| `e4d8b207` | The five forbidden-shape reviews STAND AS OBSERVATIONS and are VOID AS DISCHARGE; TRACKER corrected now (append-only); fix-cycle exits noted not unwound; the re-run's interpretation pre-committed; Class B with a disclosure section and a C TRIGGER (re-run cannot complete before the land → operator's call); the role set is a property read from the registry, not a list; the exposure count is a lower bound |
+| `e4d8b207` | **PREMISE REVERSED — see R-110; re-submitted as r-111.** The five forbidden-shape reviews STAND AS OBSERVATIONS and are VOID AS DISCHARGE; TRACKER corrected now (append-only); fix-cycle exits noted not unwound; the re-run's interpretation pre-committed; Class B with a disclosure section and a C TRIGGER (re-run cannot complete before the land → operator's call); the role set is a property read from the registry, not a list; the exposure count is a lower bound |
 | `d7b91e46` | The relocated ledger rows QUALIFY (original records relocated, not reconstructed) under three conditions; α's "self-read would have caught it" withdrawn — A2 is the precondition for candidate 2; fix-not-quarantine endorsed; MEASURE the exposure (done: five forbidden-shape reviewer dispatches this round); the fix refuses the CLASS; re-establish max-observed on the certifying head; READ the other four discovered tests |
 | `c96f2a58` | The fixture result recorded as true-but-unmeasured → measured (narrow claim); ED-439's severity sentence (a committed amendment can be un-recorded by someone else's merge resolution); `--full-history` alone floods; the discriminator is COMPUTED, not marked |
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
+| `f5a2c81e` | The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
 | `d4b26a71` | The missing I8 dispatch row is the instance; the class is a verifier that cannot see an absent record (fifth "green over the wrong population" tonight); close condition = a hand reconciliation table of lanes-with-commits vs dispatch records naming any lane without one; a reconstructed record only from real evidence, else absent + the finding filed (ED-438) |
@@ -146,6 +147,55 @@ one stray store only (restored); recorded as a LOWER BOUND. ε's fixer `d-mu4pv9
 row); its envelope must show the RED against the unedited fixture, the registry field it reads, the
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
+
+## R-110 — R-102/R-105/R-107 RESTED ON A FALSE PREMISE (owned by α): the in-process qa/backend reviews were CONTRACT-COMPLIANT; the fixture is stale; the remedy is a TEST FIX — ε e-35; β `f5a2c81e`; consult r-111 pending
+THE ERROR. ε e-29 stated that the five in-process qa-/backend-reviewer dispatches were a forbidden shape; α
+ruled r-102, r-105 and r-107 on that statement and consulted β (`e4d8b207`) on it WITHOUT opening the
+role registry — the verify-canonical rule α holds everyone else to. VERIFIED NOW at source
+(`.claude/agents/_org/role-registry.json`, commit 826a80ac): qa-reviewer, backend-reviewer and
+frontend-reviewer carry provider `claude` with an `_operator_2026_08_18` field recording the operator's
+re-pin from openai/gpt-5 and naming the corpus-diversity loss as the accepted consequence. The contract
+derives shape from that provider field, so in-process IS the compliant shape for those three roles since
+2026-08-18. The "forbidden shape" plant in the contract test is STALE — the missed-file instance of the
+07a20846 stale-plant fix (three siblings corrected 09-12; this file missed because the committed quarantine
+runner never discovered it — lane I's discovery finding, again). Three confirmations measured by the fixer:
+the enforcer's own suite asserts the OPPOSITE on the same input (22/22); a sibling test agrees; 07a20846's
+message says in words that the enforcer was right and the fixtures stale.
+THE FIXER'S REFUSAL (`d-mu4pv99v`, ok:true, ZERO diff) is CORRECT — the seventh refusal-with-evidence of the
+round: it declined to special-case a role (the enumeration failure the brief forbade), to refuse in-process
+for every Claude reviewer (two passing tests red + reversing an operator ruling from a fixer lane), and to
+"fix" diversity by shape when the loss came from the provider pin (in-process and subprocess-claude are
+both Claude). It left the fixture byte-unchanged as evidence and out of scope.
+RE-RULING R-102 (Class B): (1) REMEDY = fix the STALE FIXTURE, not the enforcer, not a quarantine: the
+plant derives its subject from the registry (any live cross-provider reviewer — today security-reviewer /
+cabinet-class), exactly as 07a20846 did; RED-then-GREEN in the ordinary direction for a test fix (the
+corrected plant must RED when the enforcer is neutered, GREEN intact); one bounded test-side dispatch
+(≤18 min, commit-first) on the sprint head; enforcer file untouched. (In flight: lane
+`s-os-06/r4-contract-fix`, dispatch `d-mu4qczoa`.) (2) THE REAL FINDING → ED-440: the derivation falls
+OPEN for unrecognised (tier, provider) combinations — a manager fallback ALLOWS in-process-agent; holds
+today only because all 36 live roles match an earlier rule. Follow-on, recorded in DONE-REPORT as a latent
+fail-open in the dispatch contract. (3) TRACKER.md: a SECOND append-only entry dated 2026-09-17
+("CORRECTION OF THE CORRECTION") states the five reviews complied; the first entry (void-as-discharge) is
+to be read as SUSPENDED pending β r-111; both entries stay; validate 20/20. (4) The "five violations"
+disclosure section is WITHDRAWN pending β; the exposure count is moot as a violation count (it remains a
+true count of same-lab reviews). (5) β's e4d8b207 items that SURVIVE regardless of r-111: the fix-cycle
+exits are noted not unwound; the pre-committed interpretation of any cross-provider re-run stays written
+(a new finding = measured diversity cost; none = one observation); the role set is a PROPERTY read from
+the registry, never a list (now the ED-440 candidate). RE-SUBMITTED to β as r-111: whether the r2/r3
+backend PASS verdicts are DISCHARGED under the operator's pin; whether the cross-provider re-run is still
+OWED or now an optional measured-diversity check (α's lean: security-reviewer cross-provider stays the gate;
+backend/qa cross-provider = observation, said so in the close); whether the C TRIGGER lapses or survives as
+"the pin's cost shown at the land"; whether the first tracker entry reads SUSPENDED or WITHDRAWN-with-record
+(α prefers the latter); whether the registry-property enforcer is in-round or follow-on.
+β `f5a2c81e` (row 520) on the consolidation, applied: the consolidation (one discovery gap → two symptoms
+in two stores) gets its own close line; the HIGH on the six decorative locks DOES NOT MOVE — "one bug"
+language is barred from the close; the RESIDUE is accounted INDIVIDUALLY in DONE-REPORT: the two vacuous
+entries with no discovered test (admin-surface, founders-checklist) have a DIFFERENT cause — named, or
+named unknown; the one discovered non-quarantine test that has never run (SP-20260627-001-negative-fixtures)
+is READ and its assertion + pass-reason reported. β's hardest condition (enforcer-fix envelope must show a
+registry read, not a list) is MOOT — no enforcer fix exists — and its substance moves to ED-440.
+RETRO LINE (α): the lead ruled three times on a peer's statement of a contract it could have opened in one
+read. Same failure shape as the round's enforcers — trusting an input without recognising it.
 
 ## R-106 — the ROOT-tree suite red (ε e-33) is `reasoned-consult-honesty`'s vocabulary, not the ledger enforcer; fixed
 From the root tree at 628d13f0: 1253 tests, 1 fail — `reasoned-consult-honesty.test.js`'s live-corpus case:
