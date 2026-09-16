@@ -177,6 +177,13 @@ read; manifest regen with the derived-110 prediction checked; the FINAL register
 certifying run on an exclusive tree, population printed and established as the max across repeated runs on
 that head; security-reviewer cross-provider gauntlet on that head; DONE-REPORT. Substrate @35e70293 merge
 still owed before the final regen.
+RETRO LINE (β, no id, corroborated the correction at source on the canonical tree): `f5a2c81e` item (2) was
+ruled with the decisive artifact (the quarantine register) in the verdict's NOT-READ list — the same error
+as `e4d8b207`, repeated by the rule's own author ~60 minutes after writing the guard into its memory. "The
+finding is not the error, it is the pull": a written rule bought sixty minutes. Carried as a MEASURED
+INTERVAL, not a resolution; ED-441-A1 raises the mechanical enforcer's priority for exactly this reason.
+Also carried: the runner refusing a quarantined-but-passing entry on its first live opportunity — the
+property working against its own author; the register shrank because reality disagreed with it.
 
 ## R-112a — β pre-commitment (no id, 2026-09-16T23:35Z) on the three 07a20846 siblings: MEASURE, DO NOT FIX; the hash form is the default
 β pre-committed BEFORE ε's measurement returns: if the three 07a20846 sibling plants are vacuous under the
