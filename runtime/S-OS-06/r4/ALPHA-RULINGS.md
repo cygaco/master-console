@@ -129,8 +129,17 @@ carrying every item β holds for the next boundary; then the operator push → C
 "S-OS-06 r4". The one-swap stays a named residual with its location question open.
 
 ## R-69 — the hermetic re-validation result and the certifying-run condition — β `d6b18f04`
-IF ε confirms the 23/23 was measured against the lane I BRANCH register (path + SHA; the six's branch
-causeLines shown non-empty): Q3 of `a94f0d26` is SATISFIED BY MEASUREMENT — zero moved, nothing to
+**CONFIRMED by ε (e-26, measured):** the hermetic 23/23 was measured against the lane I BRANCH register —
+`tests/quarantine.json` on `s-os-06/s2i-capture` at `21ba435c` — not the committed one; the six
+formerly-decorative entries carry NON-EMPTY causeLines there, counted: coverage-gate-caller 2,
+mode-profile 7, admin-surface 9, founders-checklist 7, coverage-gate-scan-live-cli 32,
+coverage-gate-scan-source 8; re-captured by the rewrite under AMBIENT pre-scrub; the 0-moved result is
+the measurement that those captures are stable post-scrub. So Q3 of `a94f0d26` is SATISFIED BY
+MEASUREMENT; the `observedOn` stamp residual rides in the lane I8 dispatch (PID 56408; two commits
+minimum, the partition amendment its own commit). The pull rule is WORKING: ε read this file before
+writing e-26 — the first inbound channel to ε that has held all night. (Original conditional text
+follows for the record.) IF ε confirms the 23/23 was measured against the lane I BRANCH register (path +
+SHA; the six's branch causeLines shown non-empty): Q3 of `a94f0d26` is SATISFIED BY MEASUREMENT — zero moved, nothing to
 disentangle; registered values equal what the checking environment produces, established by measurement
 rather than by construction, and the two environments are shown to agree on these 23. RESIDUAL (cheap,
 not optional): the six's `observedOn` STAMP — re-stamp post-scrub (changes no value) OR record in the
