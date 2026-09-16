@@ -134,13 +134,16 @@ test("CEILING is printed: GREEN says what it cannot see (β e79b4d13)", () => {
   assert.match(out, /CEILING: .*never cited and never stubbed is OUTSIDE this instrument/);
 });
 
-test("RED: an issued-stub with no full verdict row is unfulfilled (the uncited-verdict class made visible)", () => {
+test("RED: an issued-stub with no full verdict row is unfulfilled (the uncited-verdict class made visible) — plant isolated to ONE defect (β d8471fa6)", () => {
+  // The stub is well-formed (authoritative:false) so the ONLY defect is the missing verdict row and
+  // the red is attributable to exactly one rule; the case also asserts MALFORMED-STUB did NOT fire.
   const { rc, out } = run([
     { msg_id: A },
-    { msg_id: GHOST, record_kind: "issued-stub", issued_to: "epsilon", boundary: "r4 lane I parser" },
+    { msg_id: GHOST, record_kind: "issued-stub", authoritative: false, issued_to: "epsilon", boundary: "r4 lane I parser" },
   ]);
   assert.equal(rc, 1, out);
   assert.match(out, new RegExp(`UNFULFILLED-STUB row 2: ${GHOST} issued to epsilon`));
+  assert.doesNotMatch(out, /MALFORMED-STUB/, "the plant must trip only the rule in its title");
 });
 
 test("GREEN: an issued-stub followed by its full verdict row is fulfilled", () => {
@@ -253,6 +256,34 @@ test("ARTIFACT MODE: an id cited in a presence-claim artifact that is neither a 
   const missing = spawnSync(process.execPath, [SCRIPT, "--file", ledger, "--artifact", path.join(dir, "nope.md")], { encoding: "utf8" });
   assert.equal(missing.status, 1, missing.stdout);
   assert.match(missing.stdout, /ARTIFACT-MISSING/);
+  assert.match(missing.stdout, /bucket order: ledger-row → declared-unlogged → git-object → UNKNOWN/);
+  assert.match(missing.stdout, /GIT-OBJECT CEILING/);
+});
+
+// LIVE ARTIFACT (β e0b3d951): the widening was proven on a fixture and wired to nothing — the third
+// "enforcer exists and is not on the path" tonight. This case runs the artifact mode against the REAL
+// rulings file, mirroring the live-ledger case. ABSENCE DISCRIMINATOR, recorded beside both behaviours:
+//   - the LEDGER is gitignored → absent BY DESIGN in a pristine tree → visible SKIP (nothing to check
+//     ledger ids against);
+//   - the RULINGS FILE is committed → absent UNEXPECTEDLY → RED (a presence-claim artifact must exist).
+// REGISTERED EXPIRY (β e0b3d951): this case is round-scoped. REMOVE IT when S-OS-06 closes and the
+// rulings move into runtime/S-OS-06/DONE-REPORT.md — a permanent fixture pointing at a round artifact
+// is the F7 stale-pin shape. Trigger: the S-OS-06 close commit. Filed under: S-OS-06 r4 close checklist.
+test("LIVE ARTIFACT: runtime/S-OS-06/r4/ALPHA-RULINGS.md resolves against the live ledger (EXPIRES at S-OS-06 close; β e0b3d951)", (t) => {
+  const root = path.resolve(__dirname, "../../..");
+  const ledger = resolveLiveLedger();
+  const rulings = path.join(root, "runtime", "S-OS-06", "r4", "ALPHA-RULINGS.md");
+  if (!fs.existsSync(ledger)) {
+    const msg = `SKIP: paths.betaEvents not present in this tree (gitignored by design) — looked for ${ledger}; the rulings file cannot be resolved against an absent ledger`;
+    console.log(msg);
+    t.diagnostic(msg);
+    return;
+  }
+  // The artifact is committed: its absence is a defect, so no skip branch here.
+  assert.ok(fs.existsSync(rulings), `presence-claim artifact missing: ${rulings}`);
+  const r = spawnSync(process.execPath, [SCRIPT, "--file", ledger, "--artifact", rulings], { encoding: "utf8", cwd: root });
+  assert.equal(r.status, 0, `live artifact RED:\n${r.stdout}${r.stderr}`);
+  assert.match(r.stdout, /artifact .*ALPHA-RULINGS\.md: \d+ id-shaped tokens → ledger-row \d+, git-object \d+, declared-unlogged \d+, UNKNOWN 0/);
 });
 
 test("GREEN: correction notes cite the wrong id by design and are exempt (reported, not failed)", () => {

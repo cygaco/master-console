@@ -229,8 +229,9 @@ function main() {
     for (const p of parseErrors) console.log(`  PARSE-ERROR row ${p.row}: ${p.error}`);
     for (const s of unfulfilledStubs) console.log(`  UNFULFILLED-STUB row ${s.row}: ${s.id} issued to ${s.party || "?"} re ${s.boundary || "?"} — no verdict (or withdrawn) row carries this id`);
     for (const s of malformedStubs) console.log(`  MALFORMED-STUB row ${s.row}: ${s.id} — ${s.why}; a stub must be authoritative:false and carry no judgment`);
+    if (artifacts.length) console.log(`  artifact-mode bucket order: ledger-row → declared-unlogged → git-object → UNKNOWN. GIT-OBJECT CEILING: an 8-hex token that is not a ledger row is resolved against the object database (git cat-file -e), so a prefix that coincidentally names a real object is absolved (≈1 in 50,000 per token in this repo; grows with repo size and token count). ABSENCE DISCRIMINATOR: a missing LEDGER is absent BY DESIGN (gitignored; the falsifier's live case SKIPS visibly) — a missing ARTIFACT is absent UNEXPECTEDLY (committed; RED).`);
     for (const a of artifacts) {
-      if (!a.exists) { console.log(`  ARTIFACT-MISSING ${a.file}`); continue; }
+      if (!a.exists) { console.log(`  ARTIFACT-MISSING ${a.file} — a presence-claim artifact is committed; its absence is a defect, not a skip`); continue; }
       console.log(`  artifact ${path.relative(repoRoot, a.file)}: ${a.tokens} id-shaped tokens → ledger-row ${a.ledger.length}, git-object ${a.gitObject.length}, declared-unlogged ${a.declaredUnlogged.length}, UNKNOWN ${a.unknown.length}`);
       for (const id of a.unknown) console.log(`  UNKNOWN-IN-ARTIFACT ${path.relative(repoRoot, a.file)}: ${id} — resolves to neither a ledger row nor a git object and is not declared UNLOGGED`);
     }

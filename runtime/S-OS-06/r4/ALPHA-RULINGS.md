@@ -53,6 +53,9 @@ it is issued; the SendMessage is a notification, not the record.
 | `c82f4b16` | Pre-commitment: the remedy for a red live-ledger case is to append the row, never relax the case |
 | `a71e5c34` | β's skip prediction refuted (the script REFUSES exit 2 from a worktree; the skip is in the test case); the `--file`/baseline coupling is P-146 inside the enforcer — key the baseline on the resolved TARGET, add `--no-baseline`; β's calibration finding = five refuted mechanism claims |
 | `f3a8c057` | Three corrections to this file (false mechanism sentence; stripped citation; inconsistent id rule) — all landed in the ids-only rewrite; retro line: a new authoritative surface accrues the old surface's defects from the moment it exists |
+| `a94f0d26` | Vacuity count: HIGH recorded as decided, scoped to the six committed entries; MEDIUM on the ambient finding RE-BASED onto the fixed runner's 23/23; COUNT-LOCK refuse-not-skip in the SAME lane I unit + a CONJUNCTION falsifier; re-register the six AFTER the scrub (attributability) with a scrub-specific pre-committed interpretation |
+| `d8471fa6` | The unfulfilled-stub plant tripped two rules at once (no `authoritative:false`) — a plant must isolate the defect it names |
+| `e0b3d951` | The `--artifact` mode was proven on a fixture and wired to nothing — wire it against the real rulings file WITH a registered expiry; print the git-object ceiling and the bucket order; record why a missing ledger SKIPS (absent by design) but a missing artifact REDS (absent unexpectedly) |
 
 UNLOGGED: (none — every id above resolves as of this rewrite; re-run `beta-ledger-refs --artifact` to check)
 
@@ -75,6 +78,25 @@ three-stamp), never carried; before/after emitted per entry. (4) COUNT-LOCK's si
 unobservable count is the same class and is ROUTED TO β (α r-53); no builder touches it until β's id is
 in the ledger. Land order once the scrub returns: lane J (R-21/R-25) → lane I unit → register regen
 (R-39 b) → oracles + certifying run → gauntlet.
+
+## R-52a — β `a94f0d26` AMENDS R-52 item (3): re-register the six AFTER the scrub
+Order (attributability — if you re-register then scrub, a later mismatch is ambiguous between the two):
+1. land the scrub; 2. re-validate all 23 under the hermetic set — EXPECT 17 match and the six mismatch
+(they still hold the sentinel; interpretable, not alarming); 3. re-register the six from THOSE
+observations with `observedOn` stamping the post-scrub environment; 4. confirm 23/23 under the hermetic
+set. PRE-COMMITTED INTERPRETATION for step 2 (verbatim in the brief): *"if any of the 23 moves under the
+hermetic set, that is a finding about what ambient was contributing, not a quarantine violation and not
+grounds to revert the scrub; the honest response is to re-register that entry from a real observation."*
+The two-runner count (0 of 23 moved under the parser) is the CONTROL: after the scrub, any movement is
+attributable to the scrub alone. COUNT-LOCK: refuse-never-skip, in the SAME lane I unit, plus a falsifier
+for the CONJUNCTION (an entry where every layer is unobservable has no lock at all and must refuse
+loudly). HIGH is scoped to the six entries on the COMMITTED side only; MEDIUM on the ambient finding is
+RE-BASED onto the fixed runner's 23/23 — superseded, not corroborated; the old committed 23/23 never
+appears in the close as support. Lane J LANDED at `438ff2f0` (REMOVED 15 carried separately; both β
+conditions in the merge message). The derived gap is BENIGN and measured per view (215 committed vs 110
+regenerated across the three manifests; nothing vanished; strict check zero) — R-39(a) SATISFIED,
+R-39(b) UNBLOCKED; the register regen runs twice (now, and LAST after the triple manifest regen, shown a
+no-op or the set re-emitted); ε's pre-committed falsifier: derived lands at 110 after the manifest regen.
 
 ## STATUS TABLE — the e-16 "blocked" list, answered
 
