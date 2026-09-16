@@ -149,6 +149,19 @@ row); its envelope must show the RED against the unedited fixture, the registry 
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
 
+## R-112a — β pre-commitment (no id, 2026-09-16T23:35Z) on the three 07a20846 siblings: MEASURE, DO NOT FIX; the hash form is the default
+β pre-committed BEFORE ε's measurement returns: if the three 07a20846 sibling plants are vacuous under the
+forbidden-shape-only neuter, the close may NOT claim those classes are covered by the enforcer's suite — it
+says the plants exist and their detection power is nil or unmeasured (the seventh green-without-its-subject
+instance, inside a remedy applied to three files on the belief it fixed them); if not vacuous, nothing
+changes. α ADOPTS the scoping and NARROWS the 94926c62 acceptance condition: the three 07a20846 siblings are
+MEASURE-ONLY this round (a vacuous result → the close sentence above + an ED-440-A2 amendment naming the
+files; the repair is follow-on scope). R-112's authorization stands ONLY for the already-measured
+`dispatch-contract.test.js` L95-96 plant (the enforcer's own suite; one line; evidence in hand) — one fix,
+not four. STANDING RULE (β): whenever a fix is supposed to leave a judge untouched, the evidence is the
+judge file's HASH identical before and after, not a diff — a hash cannot be misread. Attribution corrected:
+the sha-before/after artifacts were produced by ε's fixer lane (94926c62); α read them at source.
+
 ## R-112 — ε e-37: the sibling plant is VACUOUS (measured); one of R-110's three confirmations was softer than stated; sibling fix AUTHORIZED as one bounded test-side commit; ED-440-A1
 PULL-RULE INTEGRITY (ε e-37 is right on the fact, wrong on the inference): § R-110 and § R-111 were not in
 the ROOT copy of this file when ε checked because they were committed on `alpha/S-OS-06-substrate`
