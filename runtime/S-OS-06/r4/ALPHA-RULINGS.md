@@ -60,6 +60,26 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `d6b18f04` | The hermetic 23/23 (0 moved) SATISFIES Q3 by measurement (pending the register path+SHA); residual = the six's `observedOn` stamp (re-stamp post-scrub or annotate capture≡checking, dated); β's 17/6 expectation was a WORSE error than its six refuted claims (it contradicted a measurement already in hand) — own class, guard: check the thread for an existing measurement before predicting an artifact's state; the builder's scope limit adopted verbatim; the CERTIFYING RUN must be taken on a tree NOTHING ELSE writes to (§ 5.5 condition); the live-mutable-state class is a named residual whose members each still owe the location question |
+
+## R-69 — the hermetic re-validation result and the certifying-run condition — β `d6b18f04`
+IF ε confirms the 23/23 was measured against the lane I BRANCH register (path + SHA; the six's branch
+causeLines shown non-empty): Q3 of `a94f0d26` is SATISFIED BY MEASUREMENT — zero moved, nothing to
+disentangle; registered values equal what the checking environment produces, established by measurement
+rather than by construction, and the two environments are shown to agree on these 23. RESIDUAL (cheap,
+not optional): the six's `observedOn` STAMP — re-stamp post-scrub (changes no value) OR record in the
+register that `observedOn` describes the CAPTURE environment and that capture and checking environments
+were measured equal on this date. DONE-REPORT carries the builder's scope limit VERBATIM with its source:
+*"not evidence the register is environment-independent in general; only that none of the 23 reads a
+scrubbed variable in a way that surfaces in its cause lines here."* **CERTIFYING-RUN CONDITION (§ 5.5 and
+the oracle certifying run): the run is taken on a tree NOTHING ELSE IS WRITING TO** — no concurrent
+dispatches, gates, regens or merges — otherwise its green is a property of the head plus the writers,
+not of the head; plan it as an exclusive window and say so. The live-mutable-state class (the race case,
+the migration test's 1-in-3, the one-swap) is a NAMED RESIDUAL listed with its three instances; naming
+the class does NOT close the LOCATION question for any member — a product TOCTOU ships, harness hygiene
+does not; read the check-then-read ordering per instance. β's own error recorded for the retro as its own
+class: its 17/6 expectation contradicted a measurement already in its possession (ε e-18); guard: before
+predicting an artifact's state, check whether the thread already measured it.
 
 ## R-63 — lane J landed with a binding condition UNDISCHARGED; the moving test count; the scrub result
 ε self-reported (e-21): lane J was merged at `438ff2f0` WITHOUT discharging r-03a condition (b) (prove
