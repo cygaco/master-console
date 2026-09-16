@@ -17,17 +17,81 @@ Authorities: operator directive 2026-09-16 ~08:00Z (relayed by α); β rows 470 
 A legacy-slug or legacy-lab occurrence on a **LIVE surface** — code, skills, hooks, configs, docs, filenames,
 paths, env names, live ROADMAP sections — **gets FIXED. It may not be warranted.**
 
-The ONLY warrants that survive on any surface are the ratified HISTORICAL classes:
+### RESTATED AS PROPERTIES — β verdict ids `4a6d8c30` (row 476) and `9c4b7e18` (row 477)
 
-| Warrant class | Basis |
+The first version of this section was a LIST of surviving classes. β refused it, and the refusal was earned:
+the occupancy oracle fail-closed 2610 occurrences the partition already allow-lists but the list did not
+admit. **Adding rows until that number falls is the enumeration failure recurring inside its own correction.**
+So section 1 now states PROPERTIES, and the partition's existing classes are RECONCILED against them.
+
+There are **TWO** properties, deliberately kept apart, because the literal is load-bearing for two different
+reasons and the dispositions differ.
+
+**PROPERTY A — INSTRUMENT.** *Rewriting the legacy literal would break the file's own function.*
+Disposition: **verbatim AND test-pinned.**
+It is a per-file, mechanically checkable FUNCTION test, never a role list — "the rename instrument, its
+registers, its falsifiers" enumerates three roles and the fourth arrives next week. Apply the test: rewrite the
+token in the codemod and it stops finding legacy tokens; in the occurrence register and it no longer records
+which occurrences carry it; on the old side of the alias map and the mapping is destroyed. This is the same
+invariant as `migrations/**` — historical-literal-in-live-code is a function test, not a location one.
+
+**PROPERTY B — RECORD.** *Rewriting would falsify a record of something that happened.*
+Disposition: **verbatim.**
+**Partition class is EVIDENCE for this property, never the test itself.** β refused "historical-record by
+partition class" twice for the same reason: class membership is a LOCATION test, and a class-3 or class-4 file
+can hold a LIVE reference. A planning document telling a reader to run a legacy-named command is an
+INSTRUCTION, not a record, and location would absolve precisely what the operator's bar targets.
+
+### The GUARD, so property A does not swallow the live suite
+
+`tests/regression` is the **LIVE** suite, adjudicated **PER FILE** (β at r3b, and twice since):
+
+- a test whose assertion has the legacy literal as its **SUBJECT** is a falsifier and QUALIFIES;
+- a test that merely carries a legacy identifier **of its own** is LIVE and gets RENAMED.
+
+A property written loosely enough to swallow that directory re-opens the bundle β has now refused three times.
+**"Roughly 161" is a count without its set** — the per-file breakdown is emitted BEFORE any member is admitted.
+
+### RECONCILIATION — compute the difference, do not list the members
+
+Derive section 1's admitted set by APPLYING the properties to the partition's existing classes, then **EMIT THE
+DIFFERENCE**: paths the partition allow-lists that neither property admits.
+
+- **Zero** means section 1 covers the partition.
+- **Non-zero members are adjudicated INDIVIDUALLY**, and they are the FIX population — not an argument about
+  the property.
+
+β's stated expectation, recorded so the result can contradict it: the residue should be **zero** for dreams,
+reports, archive and the decision records, and **non-zero for `_planning/**`**, because planning documents are
+the genre most likely to carry forward-looking instructions using legacy names.
+
+### Evidence for the properties (NOT the test — these are the classes the properties should reproduce)
+
+| Class | Which property, and why |
 |---|---|
-| The 37 `warpos@*` tags, kept forever | 2026-09-02 decision; prior-art evidence; epic success criterion |
-| The single README brand-history line "Master Console (formerly WarpOS)" | S-OS-06 H-1 |
-| `migrations/**` historical-literal-in-live-code | β r1 hole 3 |
-| `framework/releases/**` capsules | β r1, checksum-pinned |
-| CHANGELOG history, tracker / sprint / epic history bodies | S-OS-06 H-1 |
-| `runtime/**` records | per-run artifacts |
-| Alias shims **with a per-entry expiry in the compat register** | β r3b |
+| The 37 legacy version tags, kept forever | B — prior-art record; 2026-09-02 decision and the epic success criterion |
+| The single README brand-history line | B — records what the project was called |
+| `migrations/**` | A — rewriting the literal breaks the migration's function (β r1 hole 3) |
+| `framework/releases/**` capsules | B — checksum-pinned records of what shipped |
+| CHANGELOG, tracker, sprint and epic history bodies | B |
+| `runtime/**` records | B — per-run artifacts |
+| The codemod, its registers, the alias map | A — the instrument cannot find what it may not name |
+| Alias shims with a per-entry expiry in the compat register | Neither; a time-boxed compat seam, and see § 9 |
+
+**PROVISIONAL MEMBER.** The provenance document is property B's strongest member — its occurrences are the
+point of the file. It is also the artifact most exposed if the operator rules for the maximal reading of "this
+was never WarpOS", so **its disposition is provisional on that Class C** and must be recorded as provisional
+rather than settled.
+
+**PROPERTY D is UNRULED.** The single hit under the continuous-integration directory is not adjudicated until
+it is identified. If it sits under the workflows directory, any change is **operator-run** with the exact lines
+handed over, because the classifier auto-denies edits there.
+
+### A THIRD disposition, which is not a warrant: REMOVED
+
+β (row 478): deleting a file that carries legacy branding is a legitimate disposition and it is **NOT the same
+act as repairing an occurrence**. The removed count is **emitted separately** in every tally and in the close,
+or the report implies occurrences were repaired when the files were deleted.
 
 β 9a1e5f60 notes this is not a concession invented tonight: S-OS-06's own H-1 at
 `.claude/project/sprint/requirements/S-OS-06/high-level-stories.md:10` already scopes the sprint to no
@@ -178,6 +242,31 @@ tag. **That is a RELEASE CRITERION for the 2.0.0 ceremony, NOT a gate on the lan
 before the land, and a criterion satisfiable in neither order is not a criterion.
 
 **Section 6 is therefore CLOSED**, and a certifying run may now be cited — subject to section 8.
+
+## 7b. THE MEASUREMENT ARTIFACTS ARE INSIDE THE SWEPT POPULATION — stated, never excluded by path
+
+A second contamination channel surfaced during stage 2: oracle (i)'s candidate count rose from 514 to 517
+because **the round's own artifacts entered the tree**. The oracles were built so that a printout cannot seed
+the next run's population — the grammar is printed with its separator escaped, and lab and version are stored
+apart. That defence covers the printed grammar. It does not cover committed artifacts.
+
+**Ruling (α, applying § 1's record property).** The round's artifacts under `runtime/S-OS-06/r4/**` — join
+member sets, oracle printouts, measurement records — legitimately carry legacy tokens **as measurement
+records**. Rewriting them would falsify the record of what was measured, so they qualify under the RECORD
+property and lane K adjudicates them as records.
+
+**The consequence for the certifying run is a framing requirement, not an exclusion.** The population frame
+must **state that the measurement artifacts are inside the swept population and how many occurrences they
+contribute.** They are NOT excluded by path.
+
+The reason excluding them would be wrong: a path-based exclusion is exactly the location test β has refused
+three times, and it would let the round quietly shrink its own denominator to flatter its own zero. Stating
+the contribution keeps the zero auditable. A reader can then see that the number includes the round's own
+paperwork and by how much.
+
+**This also means the denominator moves** as artifacts are added and as the alias drop removes roughly thirty
+files. Every certifying figure is measured on **the tree that actually lands**, and the head is named beside
+it. A zero measured across a tree that changed under it is a zero about a different tree.
 
 ## 8. OWED BEFORE THE CERTIFYING RUN (β verdict id `8e5f3a02`, self-test reading)
 

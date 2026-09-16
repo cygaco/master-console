@@ -163,6 +163,7 @@ A literal NUL byte (0x00) never legitimately appears in our `.js/.json/.md/.ts` 
 
 ```bash
 node scripts/checks/no-nul-bytes.js   # scans scripts/** + .claude/** text sources for a NUL byte; exit 0/1/2, fail-closed
+node scripts/checks/beta-ledger-refs.js   # S-OS-06 r4 (β-proposed 2026-09-16, BLOCKING): referential integrity over paths.betaEvents — every β-verdict id cited in a cross-ref field (precedent / parent_msg_id / related_beta_verdict_ids / supplements / supersedes / voids / amends / amendments) must resolve to a row carrying it as its own msg_id. Catches BOTH ledger-slip classes: the silently absent row (4f7b2c93) and the falsely annotated one ("epsilon-logged" b3f81d47, row 481). Correction-note fields are reported but exempt (they cite the wrong id by design); an explicit "unlogged" marker passes. Shrink-only baseline of pre-enforcer holes in scripts/checks/beta-ledger-refs.baseline.json (a hole that starts resolving → RED until removed). exit 0/1/2, fail-closed on a malformed line. Falsifier: tests/regression/S-OS-06/beta-ledger-refs.test.js (8/8).
 ```
 
 A non-zero exit names the corrupted file + byte offset. The fix is `\u0000` (the escape) not a literal NUL. This is the enforcer pairing for the regex-charclass-space-becomes-NUL learning; it caught a real latent NUL in `scripts/trackers/validate.js` on first run.

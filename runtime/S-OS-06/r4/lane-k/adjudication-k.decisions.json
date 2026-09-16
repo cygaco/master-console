@@ -1,0 +1,1458 @@
+{
+ "$lane": "S-OS-06 r4 lane K — adjudication decision record (consumed by adjudicate-k.js)",
+ "measuredHead": "56a16fc19269d217879e0a844a15253d9a24bdbc",
+ "removed": {
+  "files": 0,
+  "occurrences": 0,
+  "note": "NOTHING REMOVED at this head. Lane J Part 2 is BLOCKED on the CI binding and deleted nothing (brief correction 3). REMOVED remains a disposition separate from FIXED; if the alias drop lands later, its count is emitted separately."
+ },
+ "files": {
+  "tests/regression/S-OS-06/alias-map.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "asserts the alias map's LEGACY side (every enumerated skill is mapped warp:<skill> -> mc:<skill>; the legacy skill/scan/check path regex). The LEGACY constant builds exactly the legacy names under assertion; rewriting it makes the test assert mc->mc.",
+   "pin": "self (falsifier; pins scripts/open-source/mc-alias-map.json)"
+  },
+  "tests/regression/S-OS-06/codemod.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "every occurrence is codemod INPUT under test: fixture files/dirs the codemod must rewrite (scripts/warpos/ -> scripts/mc/), the protected class-4 historical fixture, the write-protected .github fixture, and the raw env-read forms the codemod must refuse. Rewriting the fixtures removes what the assertions exercise.",
+   "pin": "self (falsifier; pins scripts/open-source/rename-mc.js)"
+  },
+  "tests/regression/S-OS-06/denylist.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "asserts the generated-view MOVE _warpos/MANIFEST.json -> _mc/MANIFEST.json is done and that the class-4 _planning/warpos-lifecycle-plan.md keeps its legacy name (keptHistoricalPaths). The legacy paths ARE the assertion subject.",
+   "pin": "self (falsifier; pins scripts/open-source/rename-mc.denylist.json)"
+  },
+  "tests/regression/S-OS-06/falsifier-harness.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "SLUG is the legacy slug every falsifier plants and detects (H.SLUG is imported across the suite). Rewriting it makes every falsifier plant and look for the current slug, so none can go RED on a legacy leak. The function test fails.",
+   "pin": "consumed by every S-OS-06 falsifier"
+  },
+  "tests/regression/S-OS-06/falsify-codemod-touches-generated-view.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "asserts the exact refusal for the legacy-named generated view .claude/warpos-views.json -> .claude/mc-views.json. The legacy path is the assertion subject.",
+   "pin": "self (falsifier)"
+  },
+  "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "the legacy release tags (warpos@<semver>) and the brand-history phrase are the assertion SUBJECT. gitTags() over the legacy-lab glob at L85 is functional (the fail-closed proof the tags exist). Occurrence-grain note, NOT an admission change: the local variable name at L85/L90/L93/L100 names the subject set and could be renamed without breaking function. The current-lab members authored in this file are adjudicated separately in authored21 (one of them, L6, is RESIDUE there).",
+   "pin": "self (falsifier)"
+  },
+  "tests/regression/S-OS-06/falsify-live-warpos-off-allowlist.test.js": {
+   "set": "RESIDUE",
+   "sub": "rename",
+   "guard": "OWN-IDENTIFIER",
+   "reason": "its ONLY legacy occurrences are its OWN identifier: the filename, the falsifier name in its header (L4) and its own run command (L12). The planted subject is built from H.SLUG and carries no literal. Rename the file and its self-references. The only other tree reference is the generated _mc/MANIFEST.json (regenerated), plus mentions inside S-OS-06 sprint records.",
+   "liveLines": [
+    4,
+    12
+   ]
+  },
+  "tests/regression/S-OS-06/falsify-occurrence-scoped-disposition.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "pinned-vs-rewritten occurrence-grain behaviour on legacy literals (the .warpos pin, the ~/.warpos/x rewrite, the odd-case sanity regex listing the legacy case variants). The legacy forms are the assertion subject.",
+   "pin": "self (falsifier)"
+  },
+  "tests/regression/S-OS-06/falsify-refused-rename.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "asserts the exact refusal for renaming records/warpos/guide.md onto a write-protected path. The legacy path is the subject.",
+   "pin": "self (falsifier)"
+  },
+  "tests/regression/S-OS-06/max-scan-bytes-fail-not-skip.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "the header (L7) states the regression under test: a legacy occurrence inside an oversized file went unledgered. The test plants that occurrence via H.SLUG (L28/L59). The legacy literal is the subject.",
+   "pin": "self (falsifier)"
+  },
+  "tests/regression/S-OS-06/migration.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "NS (the legacy skill namespace), the three migration ids (named for what they migrate), the fixture update-transaction id and fixture reason text are INPUTS the 1.2.0->2.0.0 migration must transform. ALIAS_RE is loaded from the migration itself.",
+   "pin": "self (pins migrations/1.2.0-to-2.0.0/**)"
+  },
+  "tests/regression/S-OS-06/occurrence-ledger.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "L70 describes the legacy generated-view move whose derived-row identity the assertion checks (subject).",
+   "pin": "self (pins scripts/open-source/rename-mc.occurrences.json)"
+  },
+  "tests/regression/S-OS-06/raw-env-scan.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "the AC-3.3 scanner for raw legacy-prefixed env reads (prefix built from H.SLUG). The comment examples at L22-23 are the exact forms it must catch.",
+   "pin": "consumed by env-read-both.test.js"
+  },
+  "tests/regression/S-OS-06/skill-namespace.test.js": {
+   "set": "A",
+   "guard": "SUBJECT",
+   "reason": "tests the warp: -> mc: skill-namespace rewrite, its enumeration boundary (non-enumerated legacy skills untouched), path renames of .claude/commands/warp/*.md and the named residual counter. Every legacy token is rewrite input or expected residual.",
+   "pin": "self (falsifier)"
+  },
+  "scripts/open-source/rename-mc.js": {
+   "set": "A",
+   "reason": "the codemod: its legacy literals are the patterns it finds and the categories it assigns. Rewrite them and it stops finding legacy tokens.",
+   "pin": "tests/regression/S-OS-06/codemod.test.js, skill-namespace.test.js"
+  },
+  "scripts/open-source/rename-mc.occurrences.json": {
+   "set": "A",
+   "reason": "the occurrence register. Rewrite the literals and it no longer records which occurrences carry the legacy token.",
+   "pin": "tests/regression/S-OS-06/occurrence-ledger.test.js"
+  },
+  "scripts/open-source/rename-mc.denylist.json": {
+   "set": "A",
+   "reason": "the denylist/pin register: it names the legacy literals and paths the codemod must not rewrite, with warrants. Rewrite them and the pins match nothing.",
+   "pin": "tests/regression/S-OS-06/denylist.test.js"
+  },
+  "scripts/open-source/mc-alias-map.json": {
+   "set": "A",
+   "reason": "the alias map: its old side IS the legacy names. Rewrite it and the mapping is destroyed.",
+   "pin": "tests/regression/S-OS-06/alias-map.test.js"
+  },
+  "migrations/0.0.0-to-0.1.0/004-rename-warp-sync-to-update.js": {
+   "set": "A",
+   "reason": "renames the legacy sync skill to the update skill in installs. The legacy tokens are the migration's input and output.",
+   "pin": "OWED (no file under tests/ references this migration)"
+  },
+  "migrations/0.1.x-to-0.2.0/001-rename-warpos-to-framework.js": {
+   "set": "A",
+   "reason": "renames the legacy-named install directory to framework/. The legacy path is its input.",
+   "pin": "OWED (no file under tests/ references this migration)"
+  },
+  "migrations/0.1.x-to-0.2.0/002-rename-requirements-to-_requirements.js": {
+   "set": "B",
+   "reason": "PROPERTY TEST DIVERGES FROM CLASS: the only occurrence is the header comment (L2) naming the product line it migrated (WarpOS 0.1.x -> 0.2.0). Rewriting it breaks no function, so it is not A. It records which release line the migration was written for, so it is B."
+  },
+  "migrations/0.1.x-to-0.2.0/003-rename-docs-to-_docs.js": {
+   "set": "A",
+   "reason": "L45-47: the CLI-mode fallback backup dir sits under the legacy hidden home where 0.1.x installs kept state (functional). The L2 header is a B-line.",
+   "pin": "OWED (no file under tests/ references this migration)"
+  },
+  "migrations/0.1.x-to-0.2.0/004-paths-schema-v4-to-v5.js": {
+   "set": "A",
+   "reason": "L30 writes the v5 paths schema id as it existed at 0.2.0; rewriting it makes the migration emit an id that version never had. The L2 header is a B-line.",
+   "pin": "OWED (no file under tests/ references this migration)"
+  },
+  "migrations/1.2.0-to-2.0.0/001-warpos-to-mc-layout.js": {
+   "set": "A",
+   "reason": "the 2.0.0 downstream migration: the legacy layout/settings/skill names are exactly what it finds and renames in installed products.",
+   "pin": "tests/regression/S-OS-06/migration.test.js"
+  },
+  "migrations/1.2.0-to-2.0.0/002-warpos-to-mc-settings.js": {
+   "set": "A",
+   "reason": "the 2.0.0 downstream migration: the legacy layout/settings/skill names are exactly what it finds and renames in installed products.",
+   "pin": "tests/regression/S-OS-06/migration.test.js"
+  },
+  "migrations/1.2.0-to-2.0.0/003-warpos-to-mc-skills.js": {
+   "set": "A",
+   "reason": "the 2.0.0 downstream migration: the legacy layout/settings/skill names are exactly what it finds and renames in installed products.",
+   "pin": "tests/regression/S-OS-06/migration.test.js"
+  },
+  ".claude/commands/warp/check.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:check (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/deprecate.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:deprecate (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/diff.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:diff (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/doctor.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:doctor (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/flag.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:flag (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/health.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:health (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/md.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:md (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/reconcile.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:reconcile (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/release.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:release (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/setup.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:setup (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/sync.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:sync (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/tour.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:tour (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/uninstall.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:uninstall (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/warp/update.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /mc:update (registered compat, expires 2.1.0). The STOP-CONDITION section 1 evidence table rules alias shims NEITHER property. Disposition is compat-with-expiry or REMOVED, never FIXED. Tension recorded: the function test alone would admit it (rewriting the alias's legacy name destroys the alias); the spec rules it out because the seam is time-boxed, not permanent."
+  },
+  ".claude/commands/scan/warpos-applied-migrations.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-applied-migrations (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-capsule-resolvable.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-capsule-resolvable (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-install-baseline.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-install-baseline (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-layer-diff.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-layer-diff (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-manifest-coverage.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-manifest-coverage (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-manifest-honesty.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-manifest-honesty (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-migration-coverage.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-migration-coverage (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-migration-presence.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-migration-presence (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-path-resolution.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-path-resolution (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-ship-coverage.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-ship-coverage (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-staleness.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-staleness (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-structure-parity.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-structure-parity (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-tracked-transients.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-tracked-transients (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  ".claude/commands/scan/warpos-version-quorum.md": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated alias skill forwarding to /scan:mc-version-quorum (registered compat, expires 2.1.0). Neither property per the spec table. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-applied-migrations.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-applied-migrations.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-capsule-resolvable.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-capsule-resolvable.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-enforcer-shippability.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-enforcer-shippability.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-install-baseline.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-install-baseline.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-layer-diff.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-layer-diff.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-manifest-honesty.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-manifest-honesty.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-migration-coverage.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-migration-coverage.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-migration-presence.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-migration-presence.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-path-resolution.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-path-resolution.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-promote-coverage.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-promote-coverage.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-roundtrip.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-roundtrip.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-ship-coverage.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-ship-coverage.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-staleness.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-staleness.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-structure-parity.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-structure-parity.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  "scripts/checks/warpos-tracked-transients.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-tracked-transients.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED. CI-BOUND: invoked by .github/workflows/leak-gate.yml:36 (see ci)."
+  },
+  "scripts/checks/warpos-version-quorum.js": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "deprecated check shim forwarding to mc-version-quorum.js (registered compat, expires 2.1.0). Legacy name only (0 content occurrences). Neither property. Disposition is compat or REMOVED."
+  },
+  ".github/workflows/leak-gate.yml": {
+   "set": "CI-UNRULED",
+   "reason": "IDENTIFIED, NOT ADJUDICATED (property D unruled). L36, step 'tracked-transients', runs node scripts/checks/warpos-tracked-transients.js: the CI binding to the legacy-named compat shim, which is the binding lane J Part 2 stopped on per the brief. It sits under .github/workflows/, so any change is operator-run (the classifier auto-denies edits there). Not edited."
+  },
+  "docs/PROVENANCE.md": {
+   "set": "B",
+   "provisional": true,
+   "reason": "PROVISIONAL, NOT SETTLED. Property B's strongest member: its legacy tags, brand-history phrase and legacy command names are the record of what the project was called and shipped as, and rewriting falsifies that record. Disposition provisional on the operator Class C (the maximal reading of 'this was never WarpOS')."
+  },
+  "_planning/README.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE store README describing present wiring. L1 names the system by the legacy brand. L57 cites scripts/warpos/manifest/walk-skip.js, ABSENT at head (it is under scripts/mc/manifest/). L58 cites the legacy-named compat shim as the enforcer (canonical mc-ship-coverage.js). L19 names a B-admitted file by its real filename, which is not a fix unless that file is renamed.",
+   "liveLines": [
+    1,
+    57,
+    58
+   ]
+  },
+  "_planning/design/WARP-cross-project-nervous-system.md": {
+   "set": "RESIDUE",
+   "sub": "fix+rename",
+   "reason": "header: 'DESIGN SPEC, NOT BUILT … for the main thread to build later'. It is forward-looking, so it is an INSTRUCTION, not a record. It proposes skills in the legacy namespace (emit/watch/staged update), a legacy HOME bus path, and a legacy-branded layer and charter name. The filename carries the legacy name. The 'verified-real gap as of 0.15.1' lines (L28-38) are B-lines inside a live spec."
+  },
+  "_planning/epics/E-DISPATCH-PERFECT-001.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "plan artifact of an ACTIVE epic (trackers/epics: Current state Active, ~92%). The goal line (L10) and background (L13) name the live system by the legacy brand. A live plan's goal is not a record.",
+   "liveLines": [
+    10,
+    13
+   ]
+  },
+  "_planning/epics/E-DISPATCH-SHAPE-001.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "plan artifact of an ACTIVE epic (~88%). L101 (the W2 ramp design, including the run-correlation env) and L122 prescribe ramp, kill-switch and correlation env names with the legacy prefix. Scripts read the MC_ names (scripts/dispatch-agent.js:835-843), and the legacy names work only through the read-both compat window expiring 2.1.0. This is an instruction, not a record.",
+   "liveLines": [
+    101,
+    122
+   ]
+  },
+  "_planning/epics/E-OPEN-SOURCE-001.md": {
+   "set": "A",
+   "sub": "specification-subject",
+   "reason": "plan of the ACTIVE open-source epic. Every legacy occurrence is the SUBJECT of the rename/evidence specification: the repo to rename (L10), the evidence tag warpos@0.1.4 kept forever (L10/L13), the name-collision finding (L13/L83), the S-OS-06 rename scope (L16/L113/L115) and the brand-history phrase (L65). Rewriting them turns the spec into mc->mc and destroys its function. Background L13 is also a record of the 2026-09-02 review. No line tells a reader to USE a legacy name.",
+   "pin": "OWED (not test-pinned; A's disposition requires a pin)"
+  },
+  "_planning/epics/E-PRODUCT-FOUNDATION-001.md": {
+   "set": "B",
+   "reason": "plan of a COMPLETED epic (trackers/epics: Completed, 100%, 2026-06-16). The legacy check and team names (L77/L87/L98) were instructions to that epic's own waves, all executed, and are now a record."
+  },
+  "_planning/epics/README.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE README of the epics dir. L7 cites the legacy-named compat shim as the MUST_NOT_SHIP enforcer; canonical is scripts/checks/mc-ship-coverage.js.",
+   "liveLines": [
+    7
+   ]
+  },
+  "_planning/plans/FINAL-PLAN.md": {
+   "set": "B",
+   "reason": "dated 2026-05-30 system-update plan whose waves executed (the department org rewrite landed). The legacy brand is the system's name at authoring, and the deferred W-Platform CLI name (L93) records what was proposed then."
+  },
+  "_planning/plans/MASTERPLAN.md": {
+   "set": "B",
+   "reason": "'CONSOLIDATED FINAL DRAFT … execution HELD', superseded by FINAL-PLAN v1.1. The L12-13 layout and edit guidance records the canonical layout as of May 2026. A superseded draft is a record."
+  },
+  "_planning/plans/PONDER-real-shape.md": {
+   "set": "B",
+   "reason": "dated analysis output. The legacy brand names the system as it was at authoring."
+  },
+  "_planning/playbooks/SUITE-DESIGN.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE playbook-suite design. It composes the legacy health skill (L33/L49), a deprecated alias expiring 2.1.0 (canonical /mc:health).",
+   "liveLines": [
+    33,
+    49
+   ]
+  },
+  "_planning/playbooks/launch-readiness-playbook.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE playbook step (L54) names the framework by the legacy brand in an operative instruction.",
+   "liveLines": [
+    54
+   ]
+  },
+  "_planning/playbooks/mode-switch-playbook.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE playbook: it tells the reader to run the legacy health skill (L24; deprecated alias expiring 2.1.0), and its use-when (L11) carries the legacy brand.",
+   "liveLines": [
+    11,
+    24
+   ]
+  },
+  "_planning/playbooks/provider-setup-playbook.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE playbook. The commands at L32/L36-38/L52/L57 run node scripts/warpos/provider-*.js, a path ABSENT at head (scripts/mc/provider-tier-check.js exists). The legacy health skill (L31/L57) is a deprecated alias, and L11/L13/L18 use the legacy brand.",
+   "liveLines": [
+    11,
+    13,
+    18,
+    31,
+    32,
+    36,
+    37,
+    38,
+    52,
+    57
+   ]
+  },
+  "_planning/principle.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "self-declared 'canonical doctrine … working doctrine' (LIVE). The title and doctrine lines use the legacy brand (L1/L10/L37/L47). L4 cites _planning/ingest/warpos-lifecycle.md, ABSENT at head. L6 cites the lifecycle plan by its real (test-pinned) filename, which resolves and is not a fix unless that file is renamed. The L113 provenance line is a B-line.",
+   "liveLines": [
+    1,
+    4,
+    10,
+    37,
+    47
+   ]
+  },
+  "_planning/reviews/dump-review-prompt.md": {
+   "set": "B",
+   "reason": "the review request exactly as sent to an external reviewer (a consult-input record)."
+  },
+  "_planning/reviews/final-review-consult.txt": {
+   "set": "B",
+   "reason": "the consult prompt exactly as sent (a record)."
+  },
+  "_planning/reviews/final-review-out.json": {
+   "set": "B",
+   "reason": "the provider's review output JSON (a record of what the reviewer returned)."
+  },
+  "_planning/sources/SOURCES.md": {
+   "set": "B",
+   "reason": "dated source-batch log including a verbatim operator quote (L36). Rewriting the quote falsifies it."
+  },
+  "_planning/warpos-lifecycle-plan.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "plan of E-LIFECYCLE-001, which is ACTIVE (trackers/epics: Active, ~94%). It carries live-shaped instructions and present-tense claims with legacy identifiers that no longer resolve at head: legacy-prefixed gate and kill-switch env names (L90/L107/L455, which scripts/ does not read under those names; only the codemod registers carry them), scripts/warpos/provider-tier-check.js (L334/L482, ABSENT), and the legacy setup script line ref plus legacy health skill (L129). The FILENAME is TEST-PINNED as a kept class-4 path by tests/regression/S-OS-06/denylist.test.js:113-114, so a rename must move that pin in the same change.",
+   "liveLines": [
+    90,
+    107,
+    129,
+    334,
+    455,
+    482
+   ]
+  },
+  "_planning/warpos-1.0-plan/GEMINI-DEEPCLEAN-AND-AGY-MIGRATION.md": {
+   "set": "B",
+   "reason": "consolidated plan labelled for the WarpOS 1.0 release (released 2026-07-23). The legacy brand is that release's name, and L35 records a dated deferral."
+  },
+  "_planning/warpos-1.0-plan/HARDENING-CHANGES.md": {
+   "set": "B",
+   "reason": "operator-facing change ledger of the 2026-07-17 hardening (a record)."
+  },
+  "_planning/warpos-1.0-plan/RATIFIED-PLAN.md": {
+   "set": "B",
+   "reason": "the 2026-07-17 ratified 1.0 kernel plan, executed through the 1.0.0 release. Its legacy identifiers (an installer function name, the legacy setup script, the legacy release chain) record the audit and plan state at ratification."
+  },
+  "_planning/warpos-1.0-plan/ed060-c-serve-runbook.md": {
+   "set": "B",
+   "reason": "the runbook is operative in genre, but its occurrences are (a) the 1.0 plan's recorded name (L4) and (b) the REAL current path of its payload inside the B-admitted 1.0-plan directory (L6/L15). Both are true and resolve at head. If that directory is ever renamed, L6/L15 become live references to fix. Whether ED-060(c) is closed was NOT established, and the disposition does not depend on it."
+  },
+  "_planning/warpos-1.0-plan/evidence/cabinet-consult-gpt56sol-ultra.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/enforcement-audit.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/execution-folds-20260718.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/hardening-20260717/alpha-eyeball-rulings.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/hardening-20260717/cabinet-sol-reharden-verdict.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/hardening-20260717/discrepancies.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/hardening-20260717/sol-reharden-prompt.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/hardening-20260717/verify-claims.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/packet-analysis.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/runtime-hygiene.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/evidence/sp-20260717-001-gauntlet-findings.md": {
+   "set": "B",
+   "reason": "dated evidence record from the 1.0 plan's hardening and execution (consult outputs, audits, probes, verified claims with the machine paths they ran against)."
+  },
+  "_planning/warpos-1.0-plan/packet-original/00-README.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/01-MASTER-PROMPT-FOR-CLAUDE.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/02-WARPOS-1.0-CHARTER.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/03-ADR-DURABLE-COMPANY-EPHEMERAL-EXECUTORS.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/04-INTEROPERABILITY-SYSTEM.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/05-INSTRUCTION-COMPILER.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/06-WORKORDER-RESULTENVELOPE-SPEC.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/07-SPRINTROOM-PERSISTENCE.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/09-PACKS-CATALOG.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/10-WEBAPP-PRODUCTION-BASELINE-PACK.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/11-FOUNDER-PANEL-PACK.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/12-OBSERVABILITY-MEMORY-LEARNING.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/13-WARPOS-1.0-CHECKLIST.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/14-FIRST-SPRINTS.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/15-VERIFICATION-GATES.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/16-TOP-LEVEL-AI-PORTABILITY.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/17-DO-NOT-BUILD.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/18-SOURCE-INDEX.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/templates/AGENTS.md.template": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/templates/CLAUDE.md.template": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/templates/GEMINI.md.template": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/templates/ResultEnvelope.schema.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  "_planning/warpos-1.0-plan/packet-original/templates/WorkOrder.schema.md": {
+   "set": "B",
+   "reason": "verbatim copy of the externally generated 2026-06-28 finish packet as RECEIVED (packet-original), superseded by RATIFIED-PLAN. Its imperative prompts and templates record the input; they are not live instructions. Nothing in scripts/ instantiates these templates (scripts/checks/authority-pollution-scan.js references packet-original only as a scan subject). Any legacy-named filename is the packet's own name."
+  },
+  ".claude/dreams/2026-05-13.md": {
+   "set": "B",
+   "reason": "dated sleep-cycle record (journal/dream). Legacy commands and brand record what the system was and did on those nights."
+  },
+  ".claude/dreams/2026-05-21.md": {
+   "set": "B",
+   "reason": "dated sleep-cycle record (journal/dream). Legacy commands and brand record what the system was and did on those nights."
+  },
+  ".claude/dreams/2026-09-12.md": {
+   "set": "B",
+   "reason": "dated sleep-cycle record (journal/dream). Legacy commands and brand record what the system was and did on those nights."
+  },
+  ".claude/dreams/journal.md": {
+   "set": "B",
+   "reason": "dated sleep-cycle record (journal/dream). Legacy commands and brand record what the system was and did on those nights."
+  },
+  ".claude/dreams/coaching.md": {
+   "set": "B",
+   "reason": "append-only dated briefings. Each was addressed to ONE next session long past, so each is now a record. DELIVERY CAVEAT (not a fix to this file): scripts/hooks/session-start.js:170 injects dreams/coaching.md into live sessions, where stale sections read as instructions with legacy commands (observed in this lane's own session context: the 2026-05-13 briefing). That is a session-start selection defect outside this population."
+  },
+  "_reports/README.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE README. L71/L73/L86 describe the present repo ('In canonical WarpOS (this repo) …') by the legacy brand.",
+   "liveLines": [
+    71,
+    73,
+    86
+   ]
+  },
+  "_reports/E-LIFECYCLE-001-capstone-validation.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/E-MC-READINESS-findings-register.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/E-MC-READINESS-track1-hardening-simulation.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/E-MC-READINESS-track2-security.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/E-MC-READINESS-track3-edge-cases.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/E-MC-READINESS-track4-release-pipeline-analysis.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/E-MC-READINESS-track6-prose-vs-enforcement.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/epics/E-CONTENT-DELIVERY-001.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sessions/2026-05-31-system-reconciliation.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sessions/2026-05-31.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sessions/2026-06-01-models-suite-and-0.13.x-releases.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sessions/2026-06-01-phase-b-guides-suite.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sessions/2026-06-02.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sessions/2026-06-10-1715.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sprints/SP-20260531-001.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_reports/sprints/SP-20260531-004.md": {
+   "set": "B",
+   "reason": "dated report (session, sprint, epic or readiness track) describing the system, identifiers and code paths as they stood when written."
+  },
+  "_archive/root-2026-07-26/DISPATCH-ERRORS.md": {
+   "set": "B",
+   "reason": "root document archived 2026-07-26; content and filename are the record's identity. DISAGREEMENT RECORDED: ENTRY-LEVEL-READING.md says two archive filenames 'rename per the clear-the-live-surface ruling', but no such ruling text was found in STOP-CONDITION.md, runtime/S-OS-06/** or the S-OS-06 requirements, so it is not applied here. By the property test an archived filename is record identity (B)."
+  },
+  "_archive/root-2026-07-26/MASTERCONSOLE-PROMPT.md": {
+   "set": "B",
+   "reason": "root document archived 2026-07-26; content and filename are the record's identity. DISAGREEMENT RECORDED: ENTRY-LEVEL-READING.md says two archive filenames 'rename per the clear-the-live-surface ruling', but no such ruling text was found in STOP-CONDITION.md, runtime/S-OS-06/** or the S-OS-06 requirements, so it is not applied here. By the property test an archived filename is record identity (B). Its GATED 'do not execute' instructions are the archived prompt's own record."
+  },
+  "_archive/root-2026-07-26/NOTAGAIN.md": {
+   "set": "B",
+   "reason": "root document archived 2026-07-26; content and filename are the record's identity. DISAGREEMENT RECORDED: ENTRY-LEVEL-READING.md says two archive filenames 'rename per the clear-the-live-surface ruling', but no such ruling text was found in STOP-CONDITION.md, runtime/S-OS-06/** or the S-OS-06 requirements, so it is not applied here. By the property test an archived filename is record identity (B)."
+  },
+  "_archive/root-2026-07-26/WARPOS-ISSUES.md": {
+   "set": "B",
+   "reason": "root document archived 2026-07-26; content and filename are the record's identity. DISAGREEMENT RECORDED: ENTRY-LEVEL-READING.md says two archive filenames 'rename per the clear-the-live-surface ruling', but no such ruling text was found in STOP-CONDITION.md, runtime/S-OS-06/** or the S-OS-06 requirements, so it is not applied here. By the property test an archived filename is record identity (B)."
+  },
+  "_archive/root-2026-07-26/WARPOS-PROMPT.md": {
+   "set": "B",
+   "reason": "root document archived 2026-07-26; content and filename are the record's identity. DISAGREEMENT RECORDED: ENTRY-LEVEL-READING.md says two archive filenames 'rename per the clear-the-live-surface ruling', but no such ruling text was found in STOP-CONDITION.md, runtime/S-OS-06/** or the S-OS-06 requirements, so it is not applied here. By the property test an archived filename is record identity (B)."
+  },
+  ".claude/agents/president/_system/policy/adr/0001-warp-promote-location.md": {
+   "set": "B",
+   "reason": "decision record: the decision was to build the legacy promote skill in DevRepo first. The filename and title record the decision's subject as named then."
+  },
+  ".claude/agents/president/_system/policy/adr/0006-sealed-capsule-consumer-contract-gate.md": {
+   "set": "B",
+   "reason": "decision record describing the installer (legacy setup script) and options as they stood at decision time."
+  },
+  ".claude/agents/president/_system/policy/adr/0009-epsilon-sprint-runtime.md": {
+   "set": "B",
+   "reason": "decision record: the legacy-prefixed gating flag (L11) describes how the runtime was gated when decided."
+  },
+  ".claude/agents/president/_system/policy/adr/0013-two-dispatch-shape-gates.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "CONTRADICTS the expectation of zero residue for decision records. The body (L32) is record, but 'Mitigations / escapes' (L81-83) and 'Reversal plan' (L87) are OPERATIVE instructions ('Set <legacy-prefix>_DISPATCH_CONTRACT_ENFORCE=report …') naming legacy-prefixed env names. Scripts read the MC_ names (e.g. scripts/dispatch-agent.js:835-843), and the legacy names are honoured only through the read-both compat window expiring 2.1.0. An instruction is not a record. Fix form (not done here): an amendment naming the current variables, leaving the historical body intact.",
+   "liveLines": [
+    81,
+    82,
+    83,
+    87
+   ]
+  },
+  ".claude/agents/president/_system/policy/adr/0034-gate-a-fresh-scaffold-all-ways-sandbox-isolation.md": {
+   "set": "B",
+   "reason": "decision record: the legacy-prefixed root and registry env seams (L33/L35/L42) describe the mechanism the decision relied on when taken."
+  },
+  ".claude/agents/president/_system/policy/adr/INDEX.md": {
+   "set": "B",
+   "reason": "the index row (L47) mirrors ADR-0001's recorded title and actual filename (a B member)."
+  },
+  ".claude/project/sprint/README.md": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE README of the sprint-tracker directory. It names the framework by the legacy brand in present-tense guidance (L1/L4/L44/L50).",
+   "liveLines": [
+    1,
+    4,
+    44,
+    50
+   ]
+  },
+  ".claude/project/sprint/active-sprints.yaml": {
+   "set": "RESIDUE",
+   "sub": "fix",
+   "reason": "LIVE sprint registry (primary: S-OS-06). L1 schema: carries the LEGACY schema id, while the schemas/sprint/active-sprints.schema.json const and the writers (scripts/sprint/add-sprint.js:36, init.js:220) use the mc/ id. Registry titles are B-lines recording sprint names as minted.",
+   "liveLines": [
+    1
+   ]
+  }
+ },
+ "sprintBody": {
+  "registryTerminalStatuses": [
+   "closed",
+   "done",
+   "retrospected",
+   "superseded"
+  ],
+  "recordSubdirs": [
+   "plan-contracts",
+   "history",
+   "releases",
+   "ralph",
+   "approvals",
+   "external-services",
+   "decisions",
+   "issues"
+  ],
+  "recordSubdirReason": "sprint-machinery RECORD: dated plan-contract snapshots, sprint history, release records, ralph loop logs, approvals, external-service decisions, the append-only routing trace and issue records. Each records something that happened, and its legacy literals (including the legacy schema ids of the time) are part of that record (B).",
+  "ruleReason": "per occurrence: (1) the checkout directory name inside an absolute machine path records where the document lived (B, whatever the sprint state); (2) a legacy schema id on a state file's schema line is live state data iff the sprint is live (the schema consts and writers use mc/), and a record iff terminal; (3) every other occurrence takes the sprint's established state.",
+  "states": {
+   "S-LC-01": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md / trackers/epics/E-LIFECYCLE-001: LANDED on branch june-9 2026-06-09/10, gauntlet-clean (registry still says planning: stale)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-LC-02": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md / trackers/epics/E-LIFECYCLE-001: LANDED on branch june-9 2026-06-09/10, gauntlet-clean (registry still says planning: stale)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-LC-03": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md / trackers/epics/E-LIFECYCLE-001: LANDED on branch june-9 2026-06-09/10, gauntlet-clean (registry still says planning: stale)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-LC-04": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md / trackers/epics/E-LIFECYCLE-001: LANDED on branch june-9 2026-06-09/10, gauntlet-clean (registry still says planning: stale)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-LC-05": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md / trackers/epics/E-LIFECYCLE-001: LANDED on branch june-9 2026-06-09/10, gauntlet-clean (registry still says planning: stale)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-PF-09a": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: SP-20260614-001 (S-PF-09a R-2) LANDED on main 2026-06-14 @70892a4b",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-VLADW1-01": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: closed at honest state 2026-08-19, not released; commit 2597d00d",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260522-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: Completed; commit 1b02d1cc retrospected",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260522-002": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit 1b02d1cc 'close(sprints): SP-20260522-001/002/003 retrospected'",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260522-003": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit 1b02d1cc 'close(sprints): SP-20260522-001/002/003 retrospected'",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260525-014": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "trackers/epics/E-MANAGER-LAYER-001: superseded by / largely delivered via E-ADR0007 (retired as planned)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260525-015": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "trackers/epics/E-MANAGER-LAYER-001: superseded by / largely delivered via E-ADR0007 (retired as planned)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260525-016": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "trackers/epics/E-MANAGER-LAYER-001: superseded by / largely delivered via E-ADR0007 (retired as planned)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260525-017": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "trackers/epics/E-MANAGER-LAYER-001: superseded by / largely delivered via E-ADR0007 (retired as planned)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260525-020": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit 6cb9a811 merge(sprint): SP-20260525-020",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260519-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "RELEASES.md exists at repo root (the sprint's deliverable); commit b89c9a7a",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260531-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit 46e72762 feat(reports) [engine-fast-close]; _reports/ exists",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260608-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: merged 06fee13 + pushed",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260610-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit 73bc2b9c E-LIFECYCLE-001 epic retrospective; _reports/sessions/2026-06-10-1715.md",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260614-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: LANDED on main 2026-06-14 @70892a4b",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260616-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit ff73a34e: W2-core landed",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260718-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit fe168b59 chore(SP-20260718-001 close)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260718-002": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: COMPLETE — MERGED (2026-07-18)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260719-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit 0750bc95 merge(SP-20260719-001)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260720-003": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "commit d78a7bf2 release(SP-20260720-003)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260721-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: 1.0 release ceremony sprint; 1.0.0 released 2026-07-23",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "SP-20260829-001": {
+    "state": "terminal",
+    "otherSet": "B",
+    "schemaSet": "B",
+    "evidence": "TRACKER.md: CLOSED NO RELEASE (registry status never advanced: ED-359 class)",
+    "reason": "sprint executed or retired: its requirement/state documents record what was planned and done under the names of the time (B); machine-path segments are location records (B)."
+   },
+   "S-OS-06": {
+    "state": "live",
+    "otherSet": "A",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "pin": "OWED (sprint specification; not test-pinned)",
+    "evidence": "active-sprints.yaml primary: S-OS-06; TRACKER.md: BRANCH STILL NOT LANDED",
+    "reason": "the CURRENT rename sprint. Its requirement and state prose has the legacy literal as the SUBJECT of the rename specification (what to rename, what stays pinned, the H-1 historical set), so rewriting it destroys the spec's function (A, specification-subject; pin OWED). Its live state files (current.yaml, progress.yaml) carry the legacy schema id on the schema line while the schema consts and writers use mc/ (RESIDUE). Machine-path segments stay B."
+   },
+   "S-VLADW1-02": {
+    "state": "live",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "trackers/sprints/S-VLADW1-02: Current state 'Designed, build queued (as of 2026-08-11)'. Note: some legacy test ids it names live in the out-of-tree vlad repo, so a rename there is coordinated, not in-tree",
+    "reason": "sprint is LIVE (queued or active): its specification is a forward INSTRUCTION, so legacy identifiers and the legacy brand naming this system are live occurrences (RESIDUE). Its state files carry the legacy schema id while the schema consts and writers use mc/ (RESIDUE). Machine-path segments stay B."
+   },
+   "S-VLADW1-06": {
+    "state": "live",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "commit 398533eb minted registry entry + PC-20260830-0089; open successor of S-VLADW1-05",
+    "reason": "sprint is LIVE (queued or active): its specification is a forward INSTRUCTION, so legacy identifiers and the legacy brand naming this system are live occurrences (RESIDUE). Its state files carry the legacy schema id while the schema consts and writers use mc/ (RESIDUE). Machine-path segments stay B."
+   },
+   "SP-20260830-001": {
+    "state": "live",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "TRACKER.md 2026-08-30: added by the runtime as the enforcer successor; open",
+    "reason": "sprint is LIVE (queued or active): its specification is a forward INSTRUCTION, so legacy identifiers and the legacy brand naming this system are live occurrences (RESIDUE). Its state files carry the legacy schema id while the schema consts and writers use mc/ (RESIDUE). Machine-path segments stay B."
+   },
+   "SP-20260725-002": {
+    "state": "live",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "trackers/sprints/SP-20260725-002: Current state Active",
+    "reason": "sprint is LIVE (queued or active): its specification is a forward INSTRUCTION, so legacy identifiers and the legacy brand naming this system are live occurrences (RESIDUE). Its state files carry the legacy schema id while the schema consts and writers use mc/ (RESIDUE). Machine-path segments stay B."
+   },
+   "SP-20260519-002": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-001": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-002": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-005": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-006": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-007": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-008": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-009": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-010": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-011": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-012": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260525-013": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260528-003": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260528-004": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260606-001": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260612-001": {
+    "state": "plan-only",
+    "otherSet": "RESIDUE",
+    "schemaSet": "RESIDUE",
+    "residueSub": "fix",
+    "evidence": "git log --grep: <=1 commit references the id at 56a16fc1; no tracker landing line found",
+    "reason": "registry non-terminal (status planning) with NO execution evidence (<=1 commit references the id; no tracker landing). The docs are an unexecuted forward specification queued in the live registry, i.e. an INSTRUCTION (RESIDUE). Alternative fix: retire the registry entry (cancel/supersede), which converts the docs to records (B). Machine-path segments stay B."
+   },
+   "SP-20260528-002": {
+    "state": "unestablished",
+    "otherSet": "CANNOT-ASSESS",
+    "schemaSet": "CANNOT-ASSESS",
+    "evidence": "trackers: 'Active/Planned — test-suite foundation + planning (shipped the enforcer + 28-class regression …)' (partially executed; terminal state not established)",
+    "reason": "state not established inside the time box"
+   }
+  }
+ },
+ "prefixRules": [
+  {
+   "id": "R-release-capsule",
+   "prefix": "framework/releases/",
+   "set": "B",
+   "reason": "release capsule (changelog, framework-manifest, release.json, upgrade-notes, checksums) is the record of what shipped under that tag. Its legacy names and commands are what that release actually said. checksumPinned is verified per file against the capsule's checksums.json."
+  },
+  {
+   "id": "R-r4-oracle-instrument",
+   "prefix": "runtime/S-OS-06/r4/oracles/",
+   "suffixRe": "\\.js$",
+   "set": "A",
+   "pin": "runtime/S-OS-06/r4/oracles/self-test.js, cross-lab-join.self-test.js",
+   "reason": "the round's oracles: the legacy slug/lab/brand-phrase literals (assembled or matched) are what they detect. Rewrite them and the oracle finds nothing."
+  },
+  {
+   "id": "R-r4-measurement-record",
+   "prefix": "runtime/S-OS-06/r4/",
+   "set": "B",
+   "section7b": true,
+   "reason": "section 7b: the round's own measurement artifacts (join member sets, oracle printouts, inventories, lane reports) carry legacy tokens AS MEASUREMENT RECORDS. They are inside the swept population and admitted as records, not excluded by path. Contribution emitted under section7b."
+  },
+  {
+   "id": "R-runtime-record",
+   "prefix": "runtime/",
+   "set": "B",
+   "reason": "per-run artifact (reports, consult prompts and outputs, gauntlet briefs, discovery corpora, scan outputs, and the one-shot generator/fixture scripts recorded with the output they produced). A dated record of that run. Spot-read for live instructions: the S-OS-03 downstream notice (dated 2026-09-03 as issued), the wave-1 sprint specs (ACs satisfied), and the credential-custody ADR draft (header: PROMOTED 2026-08-03, accepted copy in the ADR dir) are all records."
+  }
+ ],
+ "dirNames": {
+  "_planning/warpos-1.0-plan": {
+   "set": "B",
+   "reason": "names the WarpOS 1.0 release plan as it was called; that release shipped 2026-07-23."
+  },
+  "runtime/warpos-v1-discovery": {
+   "set": "B",
+   "reason": "per-run discovery corpus named for the v1-rebuild discovery of that date."
+  },
+  ".claude/commands/warp": {
+   "set": "RESIDUE",
+   "sub": "compat-seam",
+   "reason": "the deprecated alias-skill namespace directory (registered compat, expires 2.1.0). Neither property. Disposition compat or REMOVED."
+  }
+ },
+ "authored21": [
+  {
+   "n": 1,
+   "file": "TRACKER.md",
+   "line": 7,
+   "col": 6707,
+   "set": "B",
+   "reason": "tracker narrative RECORDING an event: the epic and ROADMAP had been rewritten to the current-lab token and were restored in gauntlet fix-cycle r2. The token is quoted as the falsified string; rewriting it falsifies the account. Occurrence-grain admission inside a class-1 live file."
+  },
+  {
+   "n": 2,
+   "file": "runtime/S-OS-06/gauntlet/fix-brief-r2.md",
+   "line": 33,
+   "col": 76,
+   "set": "B",
+   "reason": "executed r2 fix brief: the token is the subject of a restore instruction that was carried out. A record of the brief as issued."
+  },
+  {
+   "n": 3,
+   "file": "runtime/S-OS-06/gauntlet/fix-brief-r2.md",
+   "line": 33,
+   "col": 156,
+   "set": "B",
+   "reason": "same brief line: 'does not exist as a tag' is the brief's recorded finding (and stays true: no current-lab tag of a pre-2.0 version will be minted)."
+  },
+  {
+   "n": 4,
+   "file": "scripts/open-source/partition-loader.js",
+   "line": 73,
+   "col": 18,
+   "set": "RESIDUE",
+   "reason": "code COMMENT asserting in the present tense that the current-lab tag glob lists nothing. A comment has no function, so not A. It is a present-tense claim, not a record, so not B. It self-falsifies the moment the operator mints the 2.0.0 tag. Fix the sentence (bound it to 'before 2.0.0' or compute it). Inside a class-1 live file, so it is outside the allow-listed population as a file."
+  },
+  {
+   "n": 5,
+   "file": "scripts/open-source/partition-loader.js",
+   "line": 74,
+   "col": 96,
+   "set": "B",
+   "reason": "RECORDS a specific event: the 7021ff55 apply rewrote the legacy 0.1.4 tag to the current lab. Rewriting it falsifies the record of that commit."
+  },
+  {
+   "n": 6,
+   "file": "scripts/open-source/rename-mc.denylist.json",
+   "line": 66,
+   "col": 136,
+   "set": "A",
+   "reason": "warrant text inside the denylist register (an instrument, test-pinned by denylist.test.js). The current-lab token is the SUBJECT of the warrant (the rewrite that must not happen). Rewriting it makes the warrant contradict itself."
+  },
+  {
+   "n": 7,
+   "file": "scripts/open-source/rename-mc.denylist.json",
+   "line": 924,
+   "col": 109,
+   "set": "A",
+   "reason": "same warrant in the register's per-entry form; subject of the instrument's pin. A, pinned by denylist.test.js."
+  },
+  {
+   "n": 8,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 6,
+   "col": 90,
+   "set": "RESIDUE",
+   "reason": "header COMMENT with the same self-expiring present-tense claim as member 4 (the current-lab glob 'is empty'). The test itself computes the real tag list at L86 and does not depend on the sentence. The file is A. This occurrence is not, because the sentence goes false at the 2.0.0 mint."
+  },
+  {
+   "n": 9,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 8,
+   "col": 43,
+   "set": "B",
+   "reason": "RECORDS the 7021ff55 falsification this falsifier exists for (legacy 0.1.4 -> current lab)."
+  },
+  {
+   "n": 10,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 19,
+   "col": 31,
+   "set": "A",
+   "reason": "describes the test's own method (driven by git tag -l over the current-lab glob, fail-closed). The literal is the function's subject, test-pinned by the file itself."
+  },
+  {
+   "n": 11,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 86,
+   "col": 29,
+   "set": "A",
+   "reason": "FUNCTIONAL: gitTags() over the current-lab glob computes the real tag set the assertion compares against. Rewrite it and the falsifier queries the wrong lab."
+  },
+  {
+   "n": 12,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 87,
+   "col": 25,
+   "set": "A",
+   "reason": "explains the functional query's single-method negative (β R5); subject of the method."
+  },
+  {
+   "n": 13,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 107,
+   "col": 33,
+   "set": "A",
+   "reason": "grammar example: a git-ref ASSERTION form the falsifier must catch (subject)."
+  },
+  {
+   "n": 14,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 107,
+   "col": 47,
+   "set": "A",
+   "reason": "grammar example (subject)."
+  },
+  {
+   "n": 15,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 107,
+   "col": 65,
+   "set": "A",
+   "reason": "grammar example (subject)."
+  },
+  {
+   "n": 16,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 108,
+   "col": 7,
+   "set": "A",
+   "reason": "counter-example: a DESCRIPTION the grammar must NOT match (subject)."
+  },
+  {
+   "n": 17,
+   "file": "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js",
+   "line": 108,
+   "col": 67,
+   "set": "A",
+   "reason": "counter-example: a version-milestone phrase the grammar must NOT match (subject)."
+  },
+  {
+   "n": 18,
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 47,
+   "col": 1268,
+   "set": "B",
+   "reason": "RECORDS a verified security-review finding (four more falsified current-lab 0.14.0 tag refs)."
+  },
+  {
+   "n": 19,
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 76,
+   "col": 353,
+   "set": "B",
+   "reason": "RECORDS the finding that the current-lab 0.1.4 tag does not exist (it never will: the current lab starts at 2.0.0)."
+  },
+  {
+   "n": 20,
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 76,
+   "col": 456,
+   "set": "B",
+   "reason": "RECORDS what the codemod had rewritten the criteria to."
+  },
+  {
+   "n": 21,
+   "file": "trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md",
+   "line": 238,
+   "col": 16,
+   "set": "B",
+   "reason": "decision-table row RECORDING an adjudicated question about the string the codemod injected."
+  }
+ ],
+ "heldReferral": {
+  "file": "scripts/mc/test-upgrade-current-to-new.js",
+  "line": 1262,
+  "col": 61,
+  "provenanceKind": "rewrite",
+  "propertyAReading": "LOAD-BEARING AS THE FILE STANDS: the literal is the mocked git-tag stdout of selfTest()'s F1 positive control, and tagExists() (L120/L132) builds and compares the tag through the current-lab interpolation template. Rewriting (restoring) this literal alone makes the positive control FAIL, so the function test is met. The function it serves is itself in dispute: for a pre-2.0 version the real tag is under the legacy lab, so tagExists queries a lab no such tag lives under. NOT ADMITTED here. Property A holds only derivatively, and the live-code decision routes to α as lane G stated."
+ }
+}

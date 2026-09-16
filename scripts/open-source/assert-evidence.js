@@ -10,12 +10,12 @@
  *      and (for the signed one) still carry their gpgsig header;
  *   2. tag warpos@0.1.4 still resolves to de9ba8eb;
  *   3. every one of those objects is an ancestor of the ref under test (default: HEAD);
- *   4. optionally (--strings <file>): `git log --all -S<literal>` finds NOTHING for each rule's left
- *      side — the literals are read from a gitignored file and only their SHA-256 digests are printed,
- *      so this script and its output can be committed without republishing what was removed;
+ *   4. optionally (--strings <file>): each rule's left side is absent from EVERY history surface — diffs incl.
+ *      merges, commit/tag messages, author/committer/tagger identity, ref names (history-surface.js, step 4 below);
+ *      literals come from a gitignored file, only SHA-256 digests + the searched population are printed;
  *   5. optionally (--digests): print the digest table alone (for the committed rewrite record).
  *
- * Exit 1 on any failed assertion. Dependency-free (node + git only).
+ * Exit 0 OK · 1 any failed assertion · 2 history sweep REFUSED (population not whole) or bad usage. node + git only.
  *
  *   node scripts/open-source/assert-evidence.js [--repo <path>] [--ref <rev>] [--strings <rules>] [--digests]
  */
@@ -91,17 +91,39 @@ for (const sha of [...Object.keys(EVIDENCE), signedFull].filter(Boolean)) {
   ok(anc, `${sha.slice(0, 8)} is an ancestor of ${REF}`);
 }
 
-// 4. removed strings are gone from ALL history
+// 4. removed strings are gone from EVERY history surface, not only from diffs (S-OS-06 r4, lane D).
+//    The S-OS-03 form of this step was `git log --all -S<literal> -i` alone: blind to commit messages,
+//    author/committer identity, tag objects, ref names and merge-introduced content — the exact gap a
+//    purged literal survived in under a green sweep. history-surface.js owns the population and the
+//    surfaces; THIS step reads its result and gates the exit code on it: a hit on any surface is a
+//    failed assertion, a refusal (population not whole) is exit 2, and a run without --strings makes no
+//    history claim at all. The rule literals and their matcher (fixed string, -i) are unchanged.
+const { sweepHistory, formatPopulation, formatTallies } = require("./history-surface");
+let refused = null;
+let sweepSummary = "history sweep NOT RUN (no --strings) — this result makes no history-clean claim";
 if (RULES) {
-  const rules = readRules(RULES);
-  console.log(`history sweep: ${rules.length} literal(s) from ${path.basename(RULES)} (digests only)`);
-  for (const s of rules) {
-    let hits = "";
-    try { hits = git("log", "--all", "--format=%h", `-S${s}`, "-i"); } catch { hits = "(git error)"; }
-    const n = hits ? hits.split("\n").filter(Boolean).length : 0;
-    ok(n === 0, `sha256 ${digest(s).slice(0, 16)}… (len ${s.length}) — ${n} commit(s) touch it across --all`);
+  let rules = null;
+  try { rules = readRules(RULES); } catch (e) { refused = `rules file unreadable: ${e.message}`; }
+  if (rules) {
+    console.log(`history sweep: ${rules.length} literal(s) from ${path.basename(RULES)} (digests only)`);
+    const sweep = sweepHistory(REPO, rules);
+    if (sweep.population) for (const line of formatPopulation(sweep.population)) console.log(line);
+    if (sweep.refused) {
+      refused = sweep.refused;
+    } else {
+      for (const r of sweep.results) ok(r.clean, `sha256 ${r.digest.slice(0, 16)}… (len ${r.length}) — ${formatTallies(r)}`);
+      const p = sweep.population;
+      const dirty = sweep.results.filter((r) => !r.clean).length;
+      sweepSummary = `history sweep: ${dirty} of ${sweep.results.length} literal(s) with hits over ${p.refs.total} refs · ${p.objects.commit} commits · ${p.objects.tag} tag objects · ${p.objects.total} reachable objects (surfaces searched and NOT searched as declared above)`;
+    }
+  }
+  if (refused) {
+    console.log(`  REFUSED history sweep — ${refused}`);
+    sweepSummary = "history sweep REFUSED — no history-clean claim is made";
   }
 }
 
-console.log(failures ? `\nRESULT: FAIL (${failures} assertion(s))` : "\nRESULT: OK — evidence byte-identical to the anchor");
-process.exit(failures ? 1 : 0);
+if (refused) console.log(`\nRESULT: REFUSED — ${sweepSummary}${failures ? ` (and ${failures} failed assertion(s))` : ""}`);
+else if (failures) console.log(`\nRESULT: FAIL (${failures} assertion(s)) — ${sweepSummary}`);
+else console.log(`\nRESULT: OK — evidence byte-identical to the anchor; ${sweepSummary}`);
+process.exit(refused ? 2 : failures ? 1 : 0);

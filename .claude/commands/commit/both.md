@@ -9,6 +9,6 @@ description: "[deprecated alias → /commit:land] Commit locally then push — s
 repo's default integration branch.
 
 Run **`/commit:land`** instead — it is the canonical name. This alias forwards there and
-will be removed at `mc@1.0.0`.
+will be removed at `warpos@1.0.0`.
 
 (Matches the `/mc:sync` → `/mc:update` deprecation-alias precedent.)

@@ -693,28 +693,387 @@
         "warrant": "partition-amendment: S-OS-06 (β 9c2d6e01) — pin the warpos@0.14* tag-listing glob restored in 7740e9ab; evidence-tag reference, keeps the gate green on the owed restore"
       },
       {
-        "key": "pin|tests/quarantine.json|tests/warpos/dispatch-readiness.test.js|\"basePath\": ",
-        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O1 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+        "key": "future|.claude/commands/scan/warpos-*.md",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — converted at a7b36fd2 into the compat register surface 'alias-skills' (14 enumerated key(s) added in the same commit; no occurrence holds two); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
       },
       {
-        "key": "pin|tests/quarantine.json|tests/warpos/lib/provider-autofix.unit.test.js|\"basePath\": ",
-        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O2 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+        "key": "future|scripts/checks/warpos-*.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — converted at a7b36fd2 into the compat register surface 'check-shims' (16 enumerated key(s) added in the same commit; no occurrence holds two); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
       },
       {
-        "key": "pin|tests/quarantine.json|tests/warpos/lib/provider-rca.unit.test.js|\"basePath\": ",
-        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O3 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+        "key": "pin|scripts/hooks/lib/mc-env.js|\"warpos\"|const LEGACY_SLUG = ",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — converted at a7b36fd2 into the compat register surface 'env-helper' (1 enumerated key(s) added in the same commit; no occurrence holds two); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
       },
       {
-        "key": "pin|tests/quarantine.json|tests/warpos/product-bootstrap.unit.test.js|\"basePath\": ",
-        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O4 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+        "key": "pin|TRACKER.md|_warpos/EXAMPLES/|Last Updated: 2026-09-12 (**2026-09-12 S-OS-04 + S-OS-05 BUILT — leak gate GREEN, brand layer landed on `open-source/S-OS-04-05`:** E-OPEN-S",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — re-keyed at 978135f2: the stale anchor no longer bound its line, so the same file+matchText was re-pinned as 'pin|TRACKER.md|_warpos/EXAMPLES/|'; the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
       },
       {
-        "key": "pin|tests/quarantine.json|tests/warpos/provider-smoke.unit.test.js|\"basePath\": ",
-        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O5 — basePath occurrence, PROPERTY A (base identity) + PROPERTY B (pre-rename provenance), per-occurrence probe committed at 9d17fec7"
+        "key": "pin|ROADMAP.md|warpos@0.1.4|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
       },
       {
-        "key": "pin|tests/quarantine.json|WARPOS_SHAPE_DOOR became MC_SHAPE_DOOR|the codemod rewrote text inside",
-        "warrant": "partition-amendment: S-OS-06 r4 lane I8 (α R-73) O6 — $policy codemod-event sentence, PROPERTY B (record of a past event; rewrite = tautology), per-occurrence probe committed at 9d17fec7"
+        "key": "pin|TRACKER.md|formerly WarpOS|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@0.1.4|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 7 occurrence(s) this pin covered on 4 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@0.15.3|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@1.0.0|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 15 occurrence(s) this pin covered on 11 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@1.1.0|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 11 occurrence(s) this pin covered on 8 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|TRACKER.md|warpos@1.2.0|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 3 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS| + story 'formerly WarpOS",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS' line; CH",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS) with the",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS)' once an",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS)' once. (",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS).**` (the",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 3 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|formerly WarpOS|formerly WarpOS)` pin) — ",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the brand-history RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4) predates",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4) provably",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4=de9ba8eb;",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4^{commit}`",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4` on disk ",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 2 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4` tag name",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4`; the epi",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@0.1.4|warpos@0.1.4`=`de9ba8e",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 1 occurrence(s) this pin covered on 1 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|trackers/epics/E-OPEN-SOURCE-001-master-console-open-source.md|warpos@<semver>|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B (B2 removal-history teeth): retroactive removal record — drained at 247f9170 by the evidence-tag RULE (verified r4: all 3 occurrence(s) this pin covered on 3 bound line(s) are rule-dispositioned today); the pre-r4 history layer (partition-loader checkFreeze) judged only ADDED keys per commit, so this removal was never required to carry a record"
+      },
+      {
+        "key": "pin|CHANGELOG.md|WarpOS|First major release,",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:40 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|_planning/warpos-1.0-plan/|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:40 col 192, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|_warpos/MANIFEST.json|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:73 col 121, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|warpos/guides/registry/v1|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:86 col 198, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|scan:warpos-layer-diff|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:91 col 141, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|.claude/manifest.json#warpos.version|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:98 col 54, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|WarpOS|The hardened update",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:126 col 100, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|../WarpOS/|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:146 col 60, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|../warpos/|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:146 col 74, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|manifest.json#warpos.source|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:146 col 99, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|warpos/|- Structural rename",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:170 col 83, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|/check:warpos-*|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:172 col 69, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|scripts/warpos/release-gates.js|",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:188 col 78, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[Unreleased]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:197 col 40, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[1.2.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:198 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[1.1.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:199 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[1.0.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:200 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.17.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:201 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.16.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:202 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.14.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:203 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.13.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:204 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.13.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:205 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.12.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:206 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.12.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:207 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.11.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:208 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.11.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:209 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.10.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:210 col 36, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.9.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:211 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.8.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:212 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.8.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:213 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.4]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:214 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.3]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:215 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:216 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:217 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.4.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:218 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.2.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:219 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.2.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:220 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.2.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:221 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.4]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:222 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.2]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:223 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.1]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:224 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|CHANGELOG.md|cygaco/WarpOS/|[0.1.0]:",
+        "warrant": "partition-amendment: S-OS-06 r4 lane B B1 (β 6d4a2f18) — per-occurrence registration of CHANGELOG.md:225 col 35, formerly absolved ONLY by the changelog-historical inline boolean (rename-mc.js:679 delta / :755 ledger, partition-loader tally) with no register entry behind it"
+      },
+      {
+        "key": "pin|trackers/sprints/T3-system-inventory-and-verification-matrix.md|warpos@0.14*|",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane B B4: retire the interim d5c74318 listing-glob pin — the widened evidence-tag RULE (partition-loader EVIDENCE_TAG_RE, numeric-prefix listing glob) now owns this occurrence (verified: bound=1 covered=1 rule-dispositioned=1), so the case is closed by RULE, not by a per-file pin"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-applied-migrations.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-applied-migrations.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-capsule-resolvable.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-capsule-resolvable.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-enforcer-shippability.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-enforcer-shippability.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-install-baseline.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-install-baseline.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-layer-diff.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-layer-diff.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-manifest-honesty.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-manifest-honesty.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-migration-coverage.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-migration-coverage.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-migration-presence.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-migration-presence.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-path-resolution.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-path-resolution.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-promote-coverage.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-promote-coverage.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-roundtrip.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-roundtrip.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-ship-coverage.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-ship-coverage.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-staleness.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-staleness.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-structure-parity.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-structure-parity.js remains"
+      },
+      {
+        "key": "compat|check-shims|2.1.0|path|scripts/checks/warpos-version-quorum.js",
+        "removed": true,
+        "warrant": "S-OS-06 r4 lane J Part 2 (α r-03a / β c7a4e2b9): compat row retired with its shim — per-member consumer check found no live consumer that breaks (runtime/S-OS-06/r4/lane-j/LANE-J-REPORT.md); the mc twin scripts/checks/mc-version-quorum.js remains"
       }
     ]
   },
@@ -1542,45 +1901,246 @@
       "warrant": "the evidence-tag RULE regex source; the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE), never a live identifier"
     },
     {
-      "file": "trackers/sprints/T3-system-inventory-and-verification-matrix.md",
-      "matchText": "warpos@0.14*",
-      "warrant": "evidence-tag LISTING glob in a restored verification transcript (`git tag --list \"warpos@0.14*\"`); a tag-reference, never a live identifier — the evidence-tag RULE covers warpos@<a.b.c> but not this version-glob form (r4 broadens the rule; pinned meanwhile so the β-owed restore is gate-clean regardless of the r4 decision)"
+      "file": "CHANGELOG.md",
+      "matchText": "WarpOS",
+      "anchor": "First major release,",
+      "warrant": "CHANGELOG history: `WarpOS` inside the [1.0.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
     },
     {
-      "file": "tests/quarantine.json",
-      "matchText": "tests/warpos/dispatch-readiness.test.js",
-      "anchor": "\"basePath\": ",
-      "warrant": "S-OS-06 r4 lane I8 O1 (α R-73) basePath of the dispatch-readiness quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+      "file": "CHANGELOG.md",
+      "matchText": "_planning/warpos-1.0-plan/",
+      "warrant": "CHANGELOG history: `_planning/warpos-1.0-plan/` inside the [1.0.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
     },
     {
-      "file": "tests/quarantine.json",
-      "matchText": "tests/warpos/lib/provider-autofix.unit.test.js",
-      "anchor": "\"basePath\": ",
-      "warrant": "S-OS-06 r4 lane I8 O2 (α R-73) basePath of the provider-autofix quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+      "file": "CHANGELOG.md",
+      "matchText": "_warpos/MANIFEST.json",
+      "warrant": "CHANGELOG history: `_warpos/MANIFEST.json` inside the [0.13.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
     },
     {
-      "file": "tests/quarantine.json",
-      "matchText": "tests/warpos/lib/provider-rca.unit.test.js",
-      "anchor": "\"basePath\": ",
-      "warrant": "S-OS-06 r4 lane I8 O3 (α R-73) basePath of the provider-rca quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+      "file": "CHANGELOG.md",
+      "matchText": "warpos/guides/registry/v1",
+      "warrant": "CHANGELOG history: `warpos/guides/registry/v1` inside the [0.12.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
     },
     {
-      "file": "tests/quarantine.json",
-      "matchText": "tests/warpos/product-bootstrap.unit.test.js",
-      "anchor": "\"basePath\": ",
-      "warrant": "S-OS-06 r4 lane I8 O4 (α R-73) basePath of the product-bootstrap quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+      "file": "CHANGELOG.md",
+      "matchText": "scan:warpos-layer-diff",
+      "warrant": "CHANGELOG history: `scan:warpos-layer-diff` inside the [0.12.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
     },
     {
-      "file": "tests/quarantine.json",
-      "matchText": "tests/warpos/provider-smoke.unit.test.js",
-      "anchor": "\"basePath\": ",
-      "warrant": "S-OS-06 r4 lane I8 O5 (α R-73) basePath of the provider-smoke quarantine entry: PROPERTY A — at register base 669aadc1 the test genuinely IS at this legacy path (the rewrite equals the entry's own file, which the runner's schema refuses, and does not exist at base) so rewriting breaks the runner's base-identity check; PROPERTY B — it records the pre-rename path (β-ordered provenance); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+      "file": "CHANGELOG.md",
+      "matchText": ".claude/manifest.json#warpos.version",
+      "warrant": "CHANGELOG history: `.claude/manifest.json#warpos.version` inside the [0.11.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
     },
     {
-      "file": "tests/quarantine.json",
-      "matchText": "WARPOS_SHAPE_DOOR became MC_SHAPE_DOOR",
-      "anchor": "the codemod rewrote text inside",
-      "warrant": "S-OS-06 r4 lane I8 O6 (α R-73) the register's $policy sentence recording that the codemod once rewrote text inside a cause line: PROPERTY B only — a record of a past event; rewriting it makes the sentence a tautology and falsifies the explanation of the thing it documents (PROPERTY A n/a: not a path, no base-identity function reads it); probe runtime/S-OS-06/r4/s2i3/i8/occurrence-property-probe.json"
+      "file": "CHANGELOG.md",
+      "matchText": "WarpOS",
+      "anchor": "The hardened update",
+      "warrant": "CHANGELOG history: `WarpOS` inside the [0.8.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "../WarpOS/",
+      "warrant": "CHANGELOG history: `../WarpOS/` inside the [0.4.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "../warpos/",
+      "warrant": "CHANGELOG history: `../warpos/` inside the [0.4.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "manifest.json#warpos.source",
+      "warrant": "CHANGELOG history: `manifest.json#warpos.source` inside the [0.4.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "warpos/",
+      "anchor": "- Structural rename",
+      "warrant": "CHANGELOG history: `warpos/` inside the [0.2.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "/check:warpos-*",
+      "warrant": "CHANGELOG history: `/check:warpos-*` inside the [0.2.0] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "scripts/warpos/release-gates.js",
+      "warrant": "CHANGELOG history: `scripts/warpos/release-gates.js` inside the [0.1.1] entry for a shipped pre-2.0.0 release, naming the identifier/path as it was at that release; a verbatim release record, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[Unreleased]:",
+      "warrant": "CHANGELOG link-reference block (sits under the [0.1.0] section only because Keep-a-Changelog link references close the file): `cygaco/WarpOS/` is the GitHub repository slug inside the [Unreleased] compare link, a URL that must resolve against the published repository name — NOT a shipped-release history entry; registered per occurrence by S-OS-06 r4 B1 and FLAGGED as arguably LIVE under the raised disposition bar"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[1.2.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [1.2.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[1.1.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [1.1.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[1.0.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [1.0.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.17.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.17.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.16.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.16.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.14.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.14.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.13.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.13.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.13.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.13.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.12.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.12.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.12.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.12.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.11.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.11.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.11.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.11.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.10.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.10.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.9.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.9.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.8.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.8.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.8.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.8.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.4]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.4] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.3]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.3] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.4.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.4.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.2.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.2.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.2.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.2.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.2.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.2.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.4]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.4] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.2]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.2] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.1]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.1] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "matchText": "cygaco/WarpOS/",
+      "anchor": "[0.1.0]:",
+      "warrant": "CHANGELOG history: `cygaco/WarpOS/` is the GitHub repository slug in the link reference for the shipped [0.1.0] release page (tag of that release); a published-release record kept verbatim, not a live identifier"
     }
   ],
   "openQuestions": [
@@ -1637,22 +2197,7 @@
       "expires": "2.1.0",
       "warrant": "the one-release scripts/checks/warpos-*.js alias shims (BUILD-SPEC lane B / AC-4.1): each spawns or re-exports its mc-*.js twin; warpos-tracked-transients.js is also named by the frozen leak-gate.yml, so its 2.1.0 removal is an operator-gated workflow edit",
       "members": [
-        "scripts/checks/warpos-applied-migrations.js",
-        "scripts/checks/warpos-capsule-resolvable.js",
-        "scripts/checks/warpos-enforcer-shippability.js",
-        "scripts/checks/warpos-install-baseline.js",
-        "scripts/checks/warpos-layer-diff.js",
-        "scripts/checks/warpos-manifest-honesty.js",
-        "scripts/checks/warpos-migration-coverage.js",
-        "scripts/checks/warpos-migration-presence.js",
-        "scripts/checks/warpos-path-resolution.js",
-        "scripts/checks/warpos-promote-coverage.js",
-        "scripts/checks/warpos-roundtrip.js",
-        "scripts/checks/warpos-ship-coverage.js",
-        "scripts/checks/warpos-staleness.js",
-        "scripts/checks/warpos-structure-parity.js",
-        "scripts/checks/warpos-tracked-transients.js",
-        "scripts/checks/warpos-version-quorum.js"
+        "scripts/checks/warpos-tracked-transients.js"
       ]
     },
     {
