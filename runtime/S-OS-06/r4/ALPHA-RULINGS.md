@@ -64,7 +64,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `d7b91e46` | The relocated ledger rows QUALIFY (original records relocated, not reconstructed) under three conditions; α's "self-read would have caught it" withdrawn — A2 is the precondition for candidate 2; fix-not-quarantine endorsed; MEASURE the exposure (done: five forbidden-shape reviewer dispatches this round); the fix refuses the CLASS; re-establish max-observed on the certifying head; READ the other four discovered tests |
 | `c96f2a58` | The fixture result recorded as true-but-unmeasured → measured (narrow claim); ED-439's severity sentence (a committed amendment can be un-recorded by someone else's merge resolution); `--full-history` alone floods; the discriminator is COMPUTED, not marked |
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
-| `f5a2c81e` | The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
+| `f5a2c81e` | (residue item (2) CORRECTED by R-113: the fifth discovered test WAS quarantine entry 23; correspondence 5/5) The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
 | `b3f7d052` | WITHDRAWS `e4d8b207` (β verified the registry itself): the r2/r3 backend verdicts and the qa review are DISCHARGED; the close states the Claude-pin configuration neutrally, never as a lack; security-reviewer cross-provider run = the gate (owed); backend/qa cross-provider re-run NOT owed; C trigger and pre-committed interpretation LAPSE; first tracker entry WITHDRAWN not suspended; attribution names ε, α and β; ED-440 = the real finding, follow-on; the discovery gap has three consequences (one defect, three stores) |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
@@ -148,6 +148,35 @@ one stray store only (restored); recorded as a LOWER BOUND. ε's fixer `d-mu4pv9
 row); its envelope must show the RED against the unedited fixture, the registry field it reads, the
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
+
+## R-113 — ε e-38: lane I LANDED at 1e06b991 (verified at source by α); CORRECTION to R-110 item (4) and to `f5a2c81e` residue item (2)
+LANDED on green probe da4abae9 (lane I onto 13f10f0d, restored-and-cleaned tree): purity 0, leak-gate 0,
+cutover 0, record-trust-exit 0, privacy 0, npm test 0 — POPULATION 1260 tests / 1257 pass / 0 fail / 3 skipped
+/ 379 files; quarantine 22/22/0/0. The landed head re-verified pristine with the same six results and the
+same population. The six decorative locks are ZERO; the lane I landing precondition (R-52) is DISCHARGED.
+Two things on the way, both the system working: (1) the stale-plant fix made quarantined entry 23 PASS and
+the runner REFUSED it (quarantined-but-passing = disposition no longer true — refuse-not-skip biting the
+lane that built it); entry 23 retired, 23 → 22. (2) The probe's one red was register drift from lane I's own
+evidence files (legacy tokens); R-39 item (c) regen repeated on the lane as its own commit (pinned 334 → 340)
+rather than landing on a waived red. Amendment citation: d780206a SUPERSEDED by bcbcbf09 (re-base onto the
+landed post-lane-J partition; insertion-only, 60 lines, zero deletions; the six pins re-emitted at occurrence
+grain). The abort sentence is in the merge body in β's words.
+CORRECTION (ε e-38, accepted): R-110 item (4) and the `f5a2c81e` residue item (2) called negative-fixtures
+"the one discovered test that is NOT a quarantine entry and has never run". It WAS quarantine entry 23. All
+FIVE discovered fixture-tests corresponded to quarantine entries: FOUR were the vacuous ones (empty
+capture); the FIFTH (entry 23) had a REAL captured line and was failing only on the stale plant. The
+correspondence is therefore COMPLETE (5/5), in the opposite direction from what α, ε (e-34) and β (`f5a2c81e`,
+ruled on e-34's characterisation) assumed. RESIDUE AFTER CORRECTION: item (2) is CLOSED (entry 23 read, ran
+8/9 then 9/9, retired on measurement); item (1) stands unchanged — TWO vacuous entries (admin-surface,
+founders-checklist) have NO discovered test and need their own cause named (or "unknown") in DONE-REPORT.
+"One defect, three stores" (β) is unchanged in substance: five never-run tests, four vacuous locks, one
+stale fixture — with the fifth never-run test now known to be the stale-fixture file itself (the three
+consequences overlap on that file; say so rather than count it twice).
+NEXT per § R-71 (ε): fixture-path fix (migration.test.js) before the certifying run; head-advanced location
+read; manifest regen with the derived-110 prediction checked; the FINAL register regen shown a NO-OP; the
+certifying run on an exclusive tree, population printed and established as the max across repeated runs on
+that head; security-reviewer cross-provider gauntlet on that head; DONE-REPORT. Substrate @35e70293 merge
+still owed before the final regen.
 
 ## R-112a — β pre-commitment (no id, 2026-09-16T23:35Z) on the three 07a20846 siblings: MEASURE, DO NOT FIX; the hash form is the default
 β pre-committed BEFORE ε's measurement returns: if the three 07a20846 sibling plants are vacuous under the
