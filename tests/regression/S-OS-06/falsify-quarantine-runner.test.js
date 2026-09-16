@@ -46,6 +46,11 @@ function cleanEnv() {
 // Register-format declarations the runner requires its artifact to carry verbatim (declared = actual).
 // Imported, not copied: the fixture must not fork the runner's own declarations. (S-OS-06 r4 lane I5)
 const RUNNER_DECL = require(RUNNER);
+const FAILING_DEFAULT_ASSERTION = "dummy rot: still failing";
+const FAILING_CAUSE_LINES = ["1 !== 2", "dummy rot: still failing"];
+// (lane I6) a quarantined file that FAILS while emitting no author cause at all: a file-level exit code, no test,
+// no output. Its observed cause capture is EMPTY (the whole-file block carries exitCode and is not authored).
+const SILENT_FAILING = "process.exitCode = 1;\n";
 
 function entry(file, over) {
   const e = {
@@ -61,7 +66,9 @@ function entry(file, over) {
   // FIXTURE CONSTRUCTION ONLY (lane I5): the register format replaced the single "firstFailingAssertion"
   // with a "causeLines" multiset and requires an "observedOn" provenance stamp. The registered cause is
   // carried over unchanged as a one-line multiset; the stamp is this platform/node/pinned reporter.
-  if (e.causeLines === undefined && e.firstFailingAssertion !== undefined) e.causeLines = [e.firstFailingAssertion];
+  // (lane I6) The default is the FAILING dummy's MEASURED cause multiset under the key-indent-fixed capture
+  // (node 24.16.0, tap: the authored error value carries the assertion's own "1 !== 2" line), canonical order.
+  if (e.causeLines === undefined && e.firstFailingAssertion !== undefined) e.causeLines = e.firstFailingAssertion === FAILING_DEFAULT_ASSERTION ? FAILING_CAUSE_LINES : [e.firstFailingAssertion];
   delete e.firstFailingAssertion;
   if (e.observedOn === undefined) e.observedOn = RUNNER_DECL.currentStamp();
   return e;
@@ -184,7 +191,13 @@ test(`${FALSIFIER_ID} (e): a malformed quarantine artifact fails closed`, { time
   withRepo(files, noFields, (dir) => {
     const r = runRunner(dir);
     assert.notStrictEqual(r.status, 0, `an entry without its disposition fields left the runner green\n${r.out}`);
-    assert.match(r.out, /missing a non-empty "firstFailingAssertion"/, r.out);
+    assert.match(r.out, /missing a non-empty "causeLines"/, r.out);
+  });
+  // INVERSE (lane I6, β row 488): the same entry CARRYING its fields is not refused on that field.
+  withRepo(files, { entries: [entry("tests/ok/pass.test.js")] }, (dir) => {
+    const r = runRunner(dir);
+    assert.doesNotMatch(r.out, /missing a non-empty "causeLines"/, r.out);
+    assert.doesNotMatch(r.out, /is malformed/, r.out);
   });
 });
 
@@ -212,6 +225,16 @@ test(`${FALSIFIER_ID} (h) per-entry version EXPIRY (β): a quarantine past its t
     const r = runRunner(dir);
     assert.notStrictEqual(r.status, 0, `an expired quarantine (tree 3.0.0 >= expiry 3.0.0) stayed green\n${r.out}`);
     assert.match(r.out, /QUARANTINE VIOLATION — EXPIRED: tests\/q\/still-fails\.test\.js quarantine expired at 3\.0\.0/, r.out);
+  });
+});
+
+test(`${FALSIFIER_ID} (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes`, { timeout: RUNNER_TIMEOUT_MS + 60000 }, () => {
+  const files = { "tests/ok/pass.test.js": PASSING, "tests/q/silent.test.js": SILENT_FAILING };
+  withRepo(files, { entries: [entry("tests/q/silent.test.js")] }, (dir) => {
+    const r = runRunner(dir);
+    assert.notStrictEqual(r.status, 0, `an empty cause capture left the runner green\n${r.out}`);
+    assert.match(r.out, /QUARANTINE VIOLATION — INDETERMINATE: tests\/q\/silent\.test\.js fails, but the observed cause capture is EMPTY/, r.out);
+    assert.match(r.out, /0 still failing, 0 unexpectedly passed, 0 missing\/undiscovered, 1 unobserved/, r.out);
   });
 });
 

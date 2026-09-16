@@ -1,0 +1,19 @@
+✔ QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero (374.4509ms)
+✔ QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0 (353.4361ms)
+✔ QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero (360.578ms)
+✔ QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero (266.686ms)
+✔ QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed (587.8371ms)
+✔ QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero (367.0516ms)
+✔ QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass (214.0518ms)
+✔ QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero (376.8283ms)
+✔ QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes (352.6253ms)
+✔ QUARANTINE-RUNNER: the real tests/quarantine.json is never touched (0.4276ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3303.9355
+exit 0
