@@ -177,14 +177,13 @@
     {
       "legacy": "scripts/checks/warpos-tracked-transients.js",
       "canonical": "scripts/checks/mc-tracked-transients.js",
-      "expiry": {
-        "kind": "trigger",
-        "trigger": "operator edit of .github/workflows/leak-gate.yml line 36 (`run: node scripts/checks/warpos-tracked-transients.js`) to invoke scripts/checks/mc-tracked-transients.js",
-        "removeWhen": "in the same commit that lands that workflow edit: delete this shim, retire this entry, retire its compat|check-shims row, and repoint scripts/checks/leak-gate.js GATES (tracked-transients) + its rename-mc.js:505 exception",
-        "notBefore": null,
-        "supersedesTopLevelRemoveIn": true,
-        "warrant": "S-OS-06 r4 lane J Part 2 — α r-03a adopting β c7a4e2b9: blocked-ness is PER MEMBER; the live-consumer break is demonstrated for THIS member only (the operator-only, classifier-denied leak-gate.yml:36 invocation), so its expiry is per-entry and keyed to that named trigger, not to the top-level removeIn"
-      }
+      "filedUnder": "T-20260913-364",
+      "expiry": "operator edit of .github/workflows/leak-gate.yml line 36 to invoke the mc-* check (the per-member trigger), no later than the mc@2.1.0 check-shims compat-window removal",
+      "expiryVersion": "2.1.0",
+      "trigger": "operator edit of .github/workflows/leak-gate.yml line 36 (`run: node scripts/checks/warpos-tracked-transients.js`) to invoke scripts/checks/mc-tracked-transients.js",
+      "removeWhen": "in the same commit that lands that workflow edit: delete this shim, retire this entry, retire its compat|check-shims row, and repoint scripts/checks/leak-gate.js GATES (tracked-transients) + its rename-mc.js:505 exception",
+      "warrant": "S-OS-06 r4 lane J Part 2 — α r-03a adopting β c7a4e2b9: blocked-ness is PER MEMBER; the live-consumer break is demonstrated for THIS member only (the operator-only, classifier-denied leak-gate.yml:36 invocation), so its expiry is per-entry and keyed to that named trigger, not to the top-level removeIn",
+      "expiryVersionWarrant": "S-OS-06 r4 lane J4 (β via α r-12 item 4, row 486): the tests/quarantine.json per-entry shape filedUnder/expiry/expiryVersion is copied WITH its enforcing case. 2.1.0 is MEASURED, not chosen: this member is the sole member of the partition compatWindows surface check-shims (scripts/open-source/rename-mc.denylist.json, expires 2.1.0), which framework-purity already fails closed on at tree version >= 2.1.0 (F10). The bespoke fields kind/notBefore/supersedesTopLevelRemoveIn=true are withdrawn: that enforced clock contradicts supersedesTopLevelRemoveIn — the trigger is the removal EVENT, 2.1.0 is the enforced BACKSTOP. filedUnder names the ticket that registered that window (no ED id governs this deferral in-tree). Enforced by tests/regression/S-OS-06/alias-map.test.js: tree version (package.json) >= expiryVersion -> FAIL, mirroring scripts/checks/run-tests.js EXPIRED and falsify-quarantine-runner.test.js case (h)."
     }
   ]
 }
