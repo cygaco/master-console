@@ -60,6 +60,8 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `d7b91e46` | The relocated ledger rows QUALIFY (original records relocated, not reconstructed) under three conditions; α's "self-read would have caught it" withdrawn — A2 is the precondition for candidate 2; fix-not-quarantine endorsed; MEASURE the exposure (done: five forbidden-shape reviewer dispatches this round); the fix refuses the CLASS; re-establish max-observed on the certifying head; READ the other four discovered tests |
+| `c96f2a58` | The fixture result recorded as true-but-unmeasured → measured (narrow claim); ED-439's severity sentence (a committed amendment can be un-recorded by someone else's merge resolution); `--full-history` alone floods; the discriminator is COMPUTED, not marked |
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
@@ -150,6 +152,28 @@ re-probes and lands on green. The FIVE newly-discovered fixture-tests are a DISC
 DONE-REPORT; the certifying head carries lane I's runner, so the max-observed invariant applies to THAT
 population (β consulted, r-103). The re-base itself is clean: 60 insertions / 0 deletions; per-occurrence
 booleans re-derived against the landed state; four gates 0.
+**β `d7b91e46` / `c96f2a58` and the EXPOSURE MEASUREMENT (α r-104/r-105):** (a) the verbatim copy
+QUALIFIES — "the original record, relocated", not reconstruction; a `relocation-note` row now follows the
+ten rows in the dispatch ledger (row order ≠ write order; provenance; stray path cited); α's
+"candidate 2 would have caught it" is WITHDRAWN — a wrapper self-read from the same resolution reads the
+wrong file successfully; A2 (anchor on the main worktree) is the PRECONDITION for candidate 2
+(ED-438-A3). ROOT CAUSE, read at source by ε (e-32): `canonicalFile()`'s acceptance test is a PREFIX test
+that admits the worktree-bent path its own comment excludes — linked worktrees live INSIDE the project
+root; containment is the wrong relation. (b) EXPOSURE, measured on the canonical ledger since the round
+base: the forbidden shape ALREADY OCCURRED FIVE TIMES this round — `qa-reviewer` via `in-process-agent`
+(claude) 2026-09-13T19:40Z (d-mu08ei43); `backend-reviewer` via `in-process-agent` (claude) ×4:
+09-13 19:48Z (d-mu08ei6f), 21:07Z (d-mu0b317o), 09-14 03:51Z (d-mu0pkt04 = the r2 backend PASS 92),
+05:59Z (d-mu0u91t5 = the r3 backend PASS 90); security reviews ran cross-provider correctly. So the
+enforcer's false green is not latent: two BINDING backend verdicts cited as PASS were same-lab reviews with
+provider diversity lost. The fix must refuse the CLASS (every cross-provider reviewer role via the
+in-process shape, roles named), not the fixture's combination. The close gauntlet re-runs the backend AND
+qa reviews CROSS-PROVIDER via `dispatch-agent.js` on the final head; DONE-REPORT names the five dispatches
+as forbidden-shape reviews; the STANDING of the r2/r3 verdicts and whether an upstream correction is owed
+now is β's (r-105). (c) The five discovered fixture-tests: state whether they pre-existed (never run) and
+READ the other four; the max-observed population is RE-ESTABLISHED on the certifying head with repeated
+runs; the old counts are RETIRED, not adjusted. ED-439-A1: the un-recording sentence is the severity
+reason; `--full-history` alone would flood false reds; the discriminator is COMPUTED (equals a parent AND
+no row of the other parent absent), never a marker.
 
 ## R-94 — lane I8 delivered; the two partition amendments CONFLICT; the re-base is lane-authored (ε e-28)
 I8 delivered all five items (purity 0 with promote_relic 0 / legacy_slug 0; cutover 0, F8 165 amendments;
