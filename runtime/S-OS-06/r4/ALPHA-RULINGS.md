@@ -60,6 +60,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `c8b52d17` | The six register occurrences: A and B are ADMISSION tests (each holds exactly one of the five dispositions); the A limb GOVERNS (verbatim + test-pinned); cite the pin falsifier per occurrence; the prose sentence at TOKEN grain; one dispatch, TWO COMMITS minimum; § 7b re-derived on the final artifact set |
 | `f4a1c86d` | Row absence measures the WRITE, not the DELIVERY ("no row yet" is the only honest output of a ledger search); the certifying run must EMIT its population count, equal to the superset 1249 or the movers named; the final regen no-op is downstream of the manifest regen |
 | `b7e04c31` | The issued-stub protocol covers a failure mode NOT observed tonight (line survives, body lost) — the close must not claim it addresses the whole-message losses; the β→α direction has no durable pull record by construction (G-25) — a retro STRUCTURAL GAP; α's own rule applied one step up: before re-asking β, check the ISSUED index and ask for a body by id |
 | `d6b18f04` | The hermetic 23/23 (0 moved) SATISFIES Q3 by measurement (pending the register path+SHA); residual = the six's `observedOn` stamp (re-stamp post-scrub or annotate capture≡checking, dated); β's 17/6 expectation was a WORSE error than its six refuted claims (it contradicted a measurement already in hand) — own class, guard: check the thread for an existing measurement before predicting an artifact's state; the builder's scope limit adopted verbatim; the CERTIFYING RUN must be taken on a tree NOTHING ELSE writes to (§ 5.5 condition); the live-mutable-state class is a named residual whose members each still owe the location question |
@@ -89,9 +90,21 @@ present-but-not-a-rename falsifier is the mechanical test) AND PROPERTY B (the p
 rename provenance β ordered); the ONE policy-prose sentence (the codemod once rewrote text inside a cause
 line) under PROPERTY B (a record of a past event). GRAIN: occurrence, each enumerated with its property
 test. FORM: a partition-only warranted amendment commit, teeth-inspected (R-21 shape, add-side). β
-consulted (r-74) on the property reading, the dual A+B record, and the prose sentence. DISPATCH: one
-bounded lane I dispatch carrying the amendment + the evidence-file remedy + the r-71 items; then RE-PROBE
-on a pristine tree; LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
+consulted (r-74) on the property reading, the dual A+B record, and the prose sentence. **β `c8b52d17`
+RULED (0.91, position-stable):** the function test holds (the base-identity check is the FILE's own
+function breaking, not a caller's); A and B are ADMISSION TESTS, not dispositions — each of the six still
+holds exactly ONE of the five partition dispositions (say so where they are recorded); THE A LIMB GOVERNS
+(verbatim AND test-pinned; B alone would silently drop the pin); NAME THE PIN FALSIFIER PER OCCURRENCE —
+lane I's absent / present-and-correct / present-but-not-a-rename case is Property A's required pin; cite
+it beside each of the five. The prose sentence: PROPERTY B at TOKEN grain — the token naming what the
+codemod actually rewrote stays verbatim; framing in legacy terms is live prose and comes current (the ADR
+split). FORM: one dispatch, **TWO COMMITS MINIMUM** — the partition-only amendment is ITS OWN commit,
+never folded with code (F8; the R-21 lesson) — the brief says so before it runs. § 7b's statement of what
+the round's own artifacts contribute is RE-DERIVED on the FINAL artifact set, never copied forward. The
+third instance of the round's-own-evidence class gets its own retro line (twice caught by a gate, once
+designed around by lane C, none anticipated). DISPATCH: one bounded lane I dispatch carrying the
+amendment (own commit) + the evidence-file remedy + the r-71 items; then RE-PROBE on a pristine tree;
+LAND ONLY ON A GREEN PROBE, no-ff, the merge message citing the probe SHA.
 
 ## R-71 — first honest green at `8b3ad24b`; lane I lands as ONE UNIT after ONE more dispatch; the close sequence
 Pristine at `8b3ad24b`: 378 files / 1249 tests / 1246 pass / 0 fail / 3 skipped; quarantine 23/23 still
