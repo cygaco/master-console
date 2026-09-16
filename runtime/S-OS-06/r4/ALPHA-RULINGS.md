@@ -60,6 +60,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b2c94e18` | (relay row) The vacuity count: HIGH for the six committed entries as pre-committed; MEDIUM re-based; the two-runner design clears ambient as the cause; the (f) causal story needs ONE settled version (mechanism, tree, population); COUNT-LOCK refuse-not-skip with a CONJUNCTION falsifier |
 | `c5e91b73` | α's derived-gap delta slip (65 → 35 is −30, not −35) caught on one subtraction — the emitted arithmetic audited itself on first reading |
 | `a2f74e09` | Lane J condition (b) is a NAMED RESIDUAL (closable by a throwaway plant); the moving test count blocks certification until the four movers are named; the scrub premise is β's sixth refuted claim — declare the eleven-name floor; the J4 regression is recorded as landed-and-caught |
+| `e4d8b207` | The five forbidden-shape reviews STAND AS OBSERVATIONS and are VOID AS DISCHARGE; TRACKER corrected now (append-only); fix-cycle exits noted not unwound; the re-run's interpretation pre-committed; Class B with a disclosure section and a C TRIGGER (re-run cannot complete before the land → operator's call); the role set is a property read from the registry, not a list; the exposure count is a lower bound |
 | `d7b91e46` | The relocated ledger rows QUALIFY (original records relocated, not reconstructed) under three conditions; α's "self-read would have caught it" withdrawn — A2 is the precondition for candidate 2; fix-not-quarantine endorsed; MEASURE the exposure (done: five forbidden-shape reviewer dispatches this round); the fix refuses the CLASS; re-establish max-observed on the certifying head; READ the other four discovered tests |
 | `c96f2a58` | The fixture result recorded as true-but-unmeasured → measured (narrow claim); ED-439's severity sentence (a committed amendment can be un-recorded by someone else's merge resolution); `--full-history` alone floods; the discriminator is COMPUTED, not marked |
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
@@ -121,6 +122,30 @@ From one data point → a confounded data point → adopted-but-unexercised → 
 driven by its proponent (α) checking its own claim, three times against a mechanism α had reason to want
 validated. Everything else got stronger under examination. A record where the favoured mechanism is the
 least-credited one is the shape that makes the rest of the report believable. Carry it as its own line.
+
+## R-107 — the forbidden-shape reviews: OBSERVATIONS, not DISCHARGE — β `e4d8b207` (row 519)
+(Re-applied: the first write of this section was overwritten in the root working tree by ε's merge
+0b9750da of the substrate branch — a tracked file edited in the root while a merge touched it; the ID MAP
+row survived because it was applied after the merge. Recorded as one more instance of the shared-root
+hazard R-44 exists for; α's rulings-file edits now go to the worktree copy first.)
+The five in-process reviewer dispatches this round (qa `d-mu08ei43`; backend `d-mu08ei6f`, `d-mu0b317o`,
+`d-mu0pkt04` = r2 PASS 92, `d-mu0u91t5` = r3 PASS 90) STAND AS OBSERVATIONS (real work) and are VOID AS
+DISCHARGE of the backend/qa gauntlet gate: the contract requires a DIFFERENT failure-mode set, not that a
+review occurred (existence vs fitness). DONE-REPORT: "backend reviewed same-lab, score 92 / 90, GATE
+UNDISCHARGED, cross-provider re-run pending" — never "backend PASS". TRACKER.md CORRECTED NOW (append-only
+Change Log entry 2026-09-17; validate 20/20). The r2/r3 fix-cycle exits are NOTED, not unwound.
+PRE-COMMITTED interpretation of the close-step-(e) cross-provider re-run: a new finding = direct measured
+evidence of the shared-failure-mode cost; no new finding = one observation, NOT a demonstration that
+diversity was unnecessary. Class B with a HARD DISCLOSURE (its own section of DONE-REPORT: five contract
+violations, two binding gate verdicts). **C TRIGGER: if the cross-provider re-run cannot complete before
+the land, landing with an undischarged gate is the OPERATOR's decision, never a default.** THE FIX: α's
+five-role list WITHDRAWN (CLAUDE.md also names redteam and consult); the enforcer reads the ROLE
+REGISTRY's own cross-provider declaration — any such role dispatched in-process is refused; roles derived,
+never listed. EXPOSURE re-run over the full canonical ledger (incl. the ten restored rows): exactly five;
+one stray store only (restored); recorded as a LOWER BOUND. ε's fixer `d-mu4pv99v` completed ok (canonical
+row); its envelope must show the RED against the unedited fixture, the registry field it reads, the
+derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
+entries (one defect, two sides); the partial correspondence kept partial.
 
 ## R-106 — the ROOT-tree suite red (ε e-33) is `reasoned-consult-honesty`'s vocabulary, not the ledger enforcer; fixed
 From the root tree at 628d13f0: 1253 tests, 1 fail — `reasoned-consult-honesty.test.js`'s live-corpus case:
