@@ -25,6 +25,8 @@ const { spawnSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..", "..", "..");
 const RENAME_MC = require(path.join(ROOT, "scripts", "open-source", "rename-mc.js"));
+// The partition is consumed ONLY through its one routed loader (single-loader guard, partition-single-loader.test.js).
+const { loadPartition } = require(path.join(ROOT, "scripts", "open-source", "partition-loader.js"));
 const MAP_REL = "scripts/open-source/mc-alias-map.json";
 const LEGACY = "warp" + "os";
 
@@ -130,7 +132,7 @@ test("alias map: every deferred check-script member carries filedUnder/expiry/ex
 });
 
 test("alias map: a deferred member's expiryVersion does not outlive the partition compat window that registers it", () => {
-  const partition = JSON.parse(read("scripts/open-source/rename-mc.denylist.json"));
+  const partition = loadPartition({ forceReload: true });
   const windows = Array.isArray(partition.compatWindows) ? partition.compatWindows : [];
   for (const e of map.checkScripts) {
     const w = windows.find((x) => Array.isArray(x.members) && x.members.includes(e.legacy));
