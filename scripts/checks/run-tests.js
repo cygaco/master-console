@@ -273,10 +273,23 @@ function decodeInspectLiteral(v) {
 /**
  * Parse one YAML diagnostic block starting at lines[start] (the `---` line, indent `ind`).
  * Returns { end, error: string|null, authored: boolean }.
+ *
+ * KEY INDENT IS A PROPERTY, NOT A LITERAL (S-OS-06 r4 lane I6): a reporter may put the block's keys AT the
+ * marker's indent (node 24: `  ---` then `  error: |-`) or DEEPER (`  ---` then `    error: |-`). Both are one
+ * variance. The block's key indent is the indent of its first key-shaped line at >= ind, and the whole block is
+ * read at that indent. A block scalar's content indent is the indent of its first content line, when deeper.
  */
 function parseDiagnosticBlock(lines, start, ind) {
-  const keyInd = ind + 2;
-  const keyRe = new RegExp(`^ {${keyInd}}([A-Za-z_][\\w]*):(?: (.*))?$`);
+  let keyInd = -1;
+  for (let j = start + 1; j < lines.length; j++) {
+    if (lines[j] === `${" ".repeat(ind)}...`) break;
+    const k = /^( *)[A-Za-z_][\w]*:(?: .*)?$/.exec(lines[j]);
+    if (k && k[1].length >= ind) {
+      keyInd = k[1].length;
+      break;
+    }
+  }
+  const keyRe = keyInd < 0 ? /(?!)/ : new RegExp(`^ {${keyInd}}([A-Za-z_][\\w]*):(?: (.*))?$`);
   const keys = new Map();
   let error = null;
   let i = start + 1;
@@ -290,7 +303,8 @@ function parseDiagnosticBlock(lines, start, ind) {
     keys.set(key, inline);
     if (key !== "error") continue;
     if (/^\|[-+]?$/.test(inline)) {
-      const contentInd = " ".repeat(keyInd + 2);
+      const next = i + 1 < lines.length ? /^( *)/.exec(lines[i + 1])[1].length : 0;
+      const contentInd = " ".repeat(next > keyInd ? next : keyInd + 2);
       const body = [];
       while (i + 1 < lines.length && (lines[i + 1].startsWith(contentInd) || (lines[i + 1].trim() === "" && lines[i + 1] !== ""))) {
         body.push(lines[++i].slice(contentInd.length));
@@ -384,7 +398,8 @@ function causeMultiset(lines) {
 
 /** true iff a and b hold the same lines the same number of times (multiset equality, via canonical form). */
 function sameMultiset(a, b) {
-  return Array.isArray(a) && Array.isArray(b) && sameArray(causeMultiset(a), causeMultiset(b));
+  // an EMPTY side is never a match: "I could not look" must never render as "it matches" (S-OS-06 r4 lane I6)
+  return Array.isArray(a) && Array.isArray(b) && a.length > 0 && b.length > 0 && sameArray(causeMultiset(a), causeMultiset(b));
 }
 
 /** The multiset difference, for the violation report: lines (with multiplicity) only in a, and only in b. */
@@ -800,7 +815,12 @@ async function main() {
         const tv = treeVersion(opts.root);
         const ev = parseSemver(e.expiryVersion);
         const stampDiffers = e.observedOn.platform !== here.platform || e.observedOn.nodeMajor !== here.nodeMajor;
-        if (isVacuous(observed, { file: e.file, basePath: e.basePath, testNames: cap.testNames })) {
+        if (observed.length === 0) {
+          // INDETERMINATE (β row 490, α r-32): an EMPTY observed capture means the runner could not look. It knows
+          // nothing about whether the cause changed, so it REFUSES, independently of the vacuity rule below. It may never pass.
+          unobserved++;
+          violations.push(`INDETERMINATE: ${e.file} fails, but the observed cause capture is EMPTY — the runner could not look, which is not an observation that the cause is unchanged; refused`);
+        } else if (isVacuous(observed, { file: e.file, basePath: e.basePath, testNames: cap.testNames })) {
           violations.push(`CAUSE-LOCK: ${e.file} fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure\n${listing(observed)}`);
         } else if (!sameMultiset(observed, e.causeLines)) {
           const diff = multisetDifference(observed, e.causeLines);
