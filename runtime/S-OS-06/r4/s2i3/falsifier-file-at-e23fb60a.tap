@@ -1,0 +1,362 @@
+TAP version 13
+# Subtest: QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+not ok 1 - QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+  ---
+  duration_ms: 109.3407
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:104:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-FSmeeb\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/now-passes.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/now-passes.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/now-passes.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-FSmeeb\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/now-passes.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/now-passes.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/now-passes.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:109:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:106:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.start (node:internal/test_runner/test:1177:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+# Subtest: QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+not ok 2 - QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+  ---
+  duration_ms: 104.482
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:114:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    quarantine did not hold: runner exited 1
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-JI5s6O\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:116:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+not ok 3 - QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+  ---
+  duration_ms: 112.3218
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:125:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-YgI7xh\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+      - entries[1] (tests/q/gone.test.js) has an unknown field "firstFailingAssertion"
+      - entries[1] (tests/q/gone.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[1] (tests/q/gone.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-YgI7xh\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+      - entries[1] (tests/q/gone.test.js) has an unknown field "firstFailingAssertion"
+      - entries[1] (tests/q/gone.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[1] (tests/q/gone.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:131:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:128:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+not ok 4 - QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+  ---
+  duration_ms: 107.378
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:135:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-gBJATb\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-gBJATb\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:140:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:137:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+not ok 5 - QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+  ---
+  duration_ms: 207.2701
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:144:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-HrxOeh\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "cause"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "filedUnder"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiry"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiryVersion"
+      - entries[0] (tests/ok/pass.test.js) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)
+      - entries[0] (tests/ok/pass.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-HrxOeh\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "cause"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "filedUnder"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiry"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiryVersion"
+      - entries[0] (tests/ok/pass.test.js) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)
+      - entries[0] (tests/ok/pass.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:155:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:152:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+not ok 6 - QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+  ---
+  duration_ms: 103.3781
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:159:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-SqAG6C\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-SqAG6C\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:164:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:161:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+not ok 7 - QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+  ---
+  duration_ms: 101.215
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:168:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-zfrtYg\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-zfrtYg\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:173:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:170:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+not ok 8 - QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+  ---
+  duration_ms: 106.5506
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-s2i-capture\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:177:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-sev8QY\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-sev8QY\tests\quarantine.json is malformed:
+      - "base" must be a full 40-hex commit id (the commit every entry was verified against)
+      - "$normalizer" must equal the runner's declared normalizer (declared-versus-actual; see NORMALIZER_DECLARATION in run-tests.js)
+      - "$dropClass" must equal the runner's declared drop class (see DROP_CLASS_DECLARATION in run-tests.js)
+      - "$ceilings" must equal the runner's stated ceilings (see CEILINGS in run-tests.js)
+      - entries[0] (tests/q/still-fails.test.js) has an unknown field "firstFailingAssertion"
+      - entries[0] (tests/q/still-fails.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/q/still-fails.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:182:12
+    withRepo (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:77:12)
+    TestContext.<anonymous> (C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-s2i-capture\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:179:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+ok 9 - QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+  ---
+  duration_ms: 0.3709
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 1
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 998.2252
