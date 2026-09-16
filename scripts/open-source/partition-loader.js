@@ -24,7 +24,9 @@
  *   - findOccurrencePin(file, text)    R4: pins key on (file, matchText [, anchor]) — never
  *                                      a bare line number, so an edit above a pinned line
  *                                      cannot silently break the pin
- *   - historicalChangelogLines(text)   CHANGELOG sections < 2.0.0 are historical record
+ *   - historicalChangelogLines(text)   CHANGELOG sections < 2.0.0 (a SECTION MAP only: it is NOT a legacy-slug
+ *                                      disposition — S-OS-06 r4 B1 retired the inline boolean that absolved
+ *                                      those lines; each such occurrence is closed by its own occurrence pin)
  *   - tallyLegacySlug(...)             per-file disposition tally (pending / pinned /
  *                                      derived / suppressed-per-entry) — the NUMBERS both
  *                                      gates emit
@@ -39,8 +41,8 @@
  *                                      "no occurrence holds two" (a compat member / occurrence
  *                                      that is also a view, glob, future entry or pin)
  *   - checkStale({ trackedFiles })     F7: an entry that matches nothing is a NON-ZERO exit
- *   - checkFreeze()                    F8: post-freeze additions must be separate, warranted
- *                                      `partition-amendment:` commits
+ *   - checkFreeze()                    F8: post-freeze additions AND removals must be separate, warranted
+ *                                      `partition-amendment:` commits (a removal needs a removed:true record)
  *   - findUnroutedReaders()            Req1 guard
  *
  * Fail-closed (F3): a missing, empty, unparseable, or header-less artifact THROWS
@@ -73,11 +75,17 @@ const ALLOW_CLASSES = [3, 4];
 // (`git tag -l 'mc@*'` is empty), so a `warpos@<semver>` literal is always a real evidence tag and is
 // kept forever. This is the invariant the 7021ff55 apply violated (it rewrote warpos@0.1.4 -> mc@0.1.4).
 // An actual tag `warpos@0.1.4`, or an evidence-tag REFERENCE used to describe the rule itself
-// (the `warpos@<semver>` placeholder, the `warpos@*` glob, or this module's own regex source): all
-// are references to the prior-art evidence tag, never a live identifier — the `@`-prefixed slug form
-// is only ever a tag/version spec, so this never masks a real leak. The regex-source occurrence just
-// below is pinned as the loader's own tooling self-reference (like LEGACY_SLUG_NEEDLE).
-const EVIDENCE_TAG_RE = /warpos@(?:\d+\.\d+\.\d+|<semver>|\*|\\d)/gi;
+// (the `warpos@<semver>` placeholder, or this module's own regex source): all are references to the
+// prior-art evidence tag, never a live identifier — the `@`-prefixed slug form is only ever a tag/version
+// spec, so this never masks a real leak. The regex-source occurrence just below is pinned as the loader's
+// own tooling self-reference (like LEGACY_SLUG_NEEDLE).
+// S-OS-06 r4 lane J (β verdict id 8e5f3a02, ledger row 474; α Class B): the RULE does NOT subsume a version-LISTING
+// GLOB — neither the numeric-prefix listing glob the 43f9e007 widening absorbed (`<lab>@0.14*`) nor the bare `<lab>@*`
+// the r3 rule carried. A glob is CHECKABLE, so warranting it by its form would bury the globs that match nothing: it
+// is COMPUTED instead (computeTagGlob below — expanded against the named lab's real tag list, satisfied iff it matches
+// at least one real tag, members emitted). dispositionAt consults the computation BEFORE this RULE and never lets the
+// RULE close a glob token.
+const EVIDENCE_TAG_RE = /warpos@(?:\d+\.\d+\.\d+|<semver>|\\d)/gi;
 const BRAND_HISTORY_RE = /formerly WarpOS/gi;
 /** The rule ("evidence-tag" | "brand-history") covering the needle occurrence at `matchIndex`, or null. */
 function _ruleSpanAt(lineText, matchIndex) {
@@ -90,7 +98,178 @@ function _ruleSpanAt(lineText, matchIndex) {
   }
   return null;
 }
-const CHANGELOG_REL = "CHANGELOG.md";
+
+// ── COMPUTED version-listing glob (S-OS-06 r4 lane J; β verdict id 8e5f3a02 row 474 "Globs: NOT warranted — COMPUTED") ──
+// THE ONE IMPLEMENTATION. The codemod, both gates (tallyLegacySlug) and the r4 oracles (lane G's cross-lab join and
+// glob resolutions) all call computeTagGlob / readTagList / isTagGlobVersion exported from this module; nothing else
+// expands a tag glob.
+//
+//   A glob token `<lab>@<pattern>` is SATISFIED IFF the pattern expands to at least one REAL tag of the lab it names;
+//   the matched members are EMITTED. A glob that matches nothing is a VIOLATION, presumptively a falsified lab: a
+//   current-lab glob that matches nothing while the legacy-lab equivalent expands gets treatment RESTORE (exactly like
+//   the single-version case, STOP-CONDITION Amendment 2). A tag list that cannot be read on BOTH the local and the
+//   remote method makes every glob UNCOMPUTABLE — never satisfied (fail closed, β R5).
+//
+// Pattern grammar (a version with at least one wildcard): `*`, `x`, or numeric parts where a part may be `x`/`*` and the
+// last part may end in `*` (`0.14*`, `0.*`, `1.2.*`, `1.x`). Expansion: `*` matches any run of characters (git
+// `tag --list` semantics); an `x` part matches one numeric part; the pattern may be followed by further `.`/`-`/`+`
+// segments (a release-line prefix, the r4 oracle (i) convention). Boundary forms stay OUTSIDE the grammar: `@0.14` (no
+// wildcard), `@v0.14*`, `@foo*`, `@x.*`, `@.14*`.
+//
+// The legacy lab is read from the evidence-tag RULE's own (pinned) literal, so this module carries ONE legacy literal.
+const LEGACY_LAB = EVIDENCE_TAG_RE.source.slice(0, EVIDENCE_TAG_RE.source.indexOf("@")).toLowerCase();
+const TAG_GLOB_VERSION_STICKY = /(\*|[xX]|\d+(?:\.(?:\d+|[xX*]))*\.?\*?)(?![A-Za-z0-9_*]|[.-][A-Za-z0-9_*])/y;
+
+/** True iff `version` (the text after `<lab>@`) is a version-listing glob: the grammar above AND at least one wildcard. */
+function isTagGlobVersion(version) {
+  const v = String(version === undefined || version === null ? "" : version);
+  if (v === "*" || /^[xX]$/.test(v)) return true;
+  if (!/^\d+(?:\.(?:\d+|[xX*]))*\.?\*?$/.test(v)) return false;
+  return /[*xX]/.test(v);
+}
+
+/** The anchored RegExp a glob pattern expands through (see the grammar above). Throws on a non-glob. */
+function tagGlobToRegExp(pattern) {
+  if (!isTagGlobVersion(pattern)) throw new TypeError(`partition-loader: ${JSON.stringify(pattern)} is not a version-listing glob`);
+  const src = String(pattern)
+    .split(".")
+    .map((part) => (/^[xX]$/.test(part) ? "\\d+" : part.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")))
+    .join("\\.");
+  return new RegExp(`^${src}(?:[.+-].*)?$`);
+}
+
+function _cmpTagVersion(a, b) {
+  const pa = parseSemver(a);
+  const pb = parseSemver(b);
+  if (pa && pb) return _cmpSemver(pa, pb) || (a < b ? -1 : a > b ? 1 : 0);
+  if (pa || pb) return pa ? -1 : 1;
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/** Tag names -> { byLab: { <lab lower-case>: [versions, sorted] }, nonLab: [names outside the lab@version form] }. */
+function parseTagNames(names) {
+  const byLab = {};
+  const nonLab = [];
+  for (const n of names || []) {
+    const m = /^([A-Za-z][A-Za-z0-9_-]*)@(.+)$/.exec(String(n).trim());
+    if (!m) {
+      if (String(n).trim()) nonLab.push(String(n).trim());
+      continue;
+    }
+    const lab = m[1].toLowerCase();
+    (byLab[lab] = byLab[lab] || []).push(m[2]);
+  }
+  for (const lab of Object.keys(byLab)) byLab[lab] = [...new Set(byLab[lab])].sort(_cmpTagVersion);
+  return { byLab, nonLab };
+}
+
+/**
+ * The repository's REAL tag list, fail-closed (β R5). Method 1: local `git tag -l`. When it holds no legacy-lab tag
+ * (a tag-less worktree / shallow checkout), method 2: `git ls-remote --tags` per remote (origin first). -> { ok: true,
+ * method, names, byLab, nonLab, attempts, legacyLab } — or { ok: false, reason, attempts, legacyLab } when BOTH
+ * methods show no legacy-lab tag. Never throws for an absent list: the caller decides refuse (an oracle) or
+ * uncomputable-never-satisfied (the gates). `remoteFn(remote)` is an injectable spawn result for fixtures.
+ */
+function readTagList({ root = PARTITION_ROOT, remoteFn } = {}) {
+  const attempts = [];
+  const local = _gitRun(root, ["tag", "-l"]);
+  if (local.status === 0) {
+    const names = local.stdout.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    const parsed = parseTagNames(names);
+    const n = (parsed.byLab[LEGACY_LAB] || []).length;
+    attempts.push(`local git tag -l: ${names.length} tag(s), legacy-lab tags=${n}`);
+    if (n > 0) return { ok: true, method: "local", names, ...parsed, attempts, legacyLab: LEGACY_LAB };
+  } else {
+    attempts.push(`local git tag -l: FAILED (status ${local.status}: ${String(local.stderr || "").trim().slice(0, 120)})`);
+  }
+  const remotesRes = _gitRun(root, ["remote"]);
+  const remotes = remotesRes.status === 0 ? remotesRes.stdout.split(/\r?\n/).map((s) => s.trim()).filter(Boolean) : [];
+  remotes.sort((a, b) => (a === "origin" ? -1 : b === "origin" ? 1 : a < b ? -1 : 1));
+  for (const remote of remotes) {
+    const r = remoteFn
+      ? remoteFn(remote)
+      : spawnSync("git", ["ls-remote", "--tags", remote], { cwd: root, encoding: "utf8", timeout: 30000, maxBuffer: 64 * 1024 * 1024 });
+    if (!r || r.status !== 0) {
+      attempts.push(`git ls-remote --tags ${remote}: FAILED (${String((r && (r.stderr || (r.error && r.error.message))) || "").trim().slice(0, 120)})`);
+      continue;
+    }
+    const names = [
+      ...new Set(
+        String(r.stdout)
+          .split(/\r?\n/)
+          .map((l) => (/refs\/tags\/(\S+?)(?:\^\{\})?$/.exec(l.trim()) || [])[1])
+          .filter(Boolean)
+      ),
+    ];
+    const parsed = parseTagNames(names);
+    const n = (parsed.byLab[LEGACY_LAB] || []).length;
+    attempts.push(`git ls-remote --tags ${remote}: ${names.length} tag(s), legacy-lab tags=${n}`);
+    if (n > 0) return { ok: true, method: `remote:${remote}`, names, ...parsed, attempts, legacyLab: LEGACY_LAB };
+  }
+  if (!remotes.length) attempts.push("remote listing: no git remote configured");
+  return {
+    ok: false,
+    reason: `the legacy-lab release tags are absent locally AND by remote listing [${attempts.join("; ")}] — a tag list that cannot be read makes every version-listing glob UNCOMPUTABLE (never satisfied)`,
+    attempts,
+    legacyLab: LEGACY_LAB,
+  };
+}
+
+/**
+ * computeTagGlob({ lab, pattern, tags, currentLab, legacyLab }) -> the COMPUTED treatment of ONE glob token.
+ *   tags        readTagList() result, or a bare { byLab } / byLab map. `ok: false` -> uncomputable.
+ *   currentLab  the tree's own release-tag lab (package.json#name); when given, RESTORE is considered only for it.
+ * -> { lab, pattern, satisfied, treatment, members, reason [, restoreTo, legacyMembers] } where treatment is
+ *    "computed-satisfied" (members >= 1) | "restore" (current lab matches nothing, the legacy equivalent expands)
+ *    | "violation" (matches nothing) | "uncomputable" (no readable tag list — never satisfied).
+ * Members are VERSIONS of `lab` (lab and version stored apart — a printout never re-joins them into a new token).
+ */
+function computeTagGlob({ lab, pattern, tags, currentLab = null, legacyLab = LEGACY_LAB } = {}) {
+  const l = String(lab || "").toLowerCase();
+  const leg = String(legacyLab || "").toLowerCase();
+  const re = tagGlobToRegExp(pattern);
+  const base = { lab: l, pattern: String(pattern), members: [] };
+  if (!tags || tags.ok === false) {
+    return {
+      ...base,
+      satisfied: false,
+      treatment: "uncomputable",
+      reason: `tag list unavailable (${(tags && tags.reason) || "none supplied"}) — a glob that cannot be expanded is never satisfied`,
+    };
+  }
+  const byLab = tags.byLab || tags;
+  const expand = (lb) => (Array.isArray(byLab[lb]) ? byLab[lb] : []).filter((v) => re.test(v)).sort(_cmpTagVersion);
+  const members = expand(l);
+  if (members.length) {
+    return { ...base, members, satisfied: true, treatment: "computed-satisfied", reason: `expands to ${members.length} real tag(s) of lab ${l}` };
+  }
+  const cur = currentLab ? String(currentLab).toLowerCase() : null;
+  if (l !== leg && (cur === null || l === cur)) {
+    const legacyMembers = expand(leg);
+    if (legacyMembers.length) {
+      return {
+        ...base,
+        satisfied: false,
+        treatment: "restore",
+        restoreTo: { lab: leg, pattern: String(pattern) },
+        legacyMembers,
+        reason: `matches NO tag of lab ${l} while the legacy-lab equivalent expands to ${legacyMembers.length} real tag(s) — a falsified lab: RESTORE`,
+      };
+    }
+  }
+  return { ...base, satisfied: false, treatment: "violation", reason: `matches NO real tag of lab ${l} — a VIOLATION (presumptively a falsified lab)` };
+}
+
+/** The legacy-lab glob pattern whose token starts at the needle occurrence `matchIndex`, or null (not a glob token). */
+function _legacyGlobPatternAt(lineText, matchIndex) {
+  if (typeof lineText !== "string" || !Number.isInteger(matchIndex) || matchIndex < 0) return null;
+  const at = matchIndex + LEGACY_LAB.length;
+  if (lineText.slice(matchIndex, at).toLowerCase() !== LEGACY_LAB || lineText[at] !== "@") return null;
+  TAG_GLOB_VERSION_STICKY.lastIndex = at + 1;
+  const m = TAG_GLOB_VERSION_STICKY.exec(lineText);
+  return m && isTagGlobVersion(m[1]) ? m[1] : null;
+}
+
 const PLACEHOLDER_WARRANT = /^(todo|tbd|fixme|n\/a|na|none|null|undefined|-+|\.+|\?+|x+)$/i;
 const CODE_EXTENSIONS = new Set([".js", ".cjs", ".mjs", ".ts", ".cts", ".mts", ".ps1", ".sh", ".py"]);
 
@@ -226,8 +405,10 @@ function compatLabel(w) {
 /**
  * The FIVE-disposition view of a legacy-slug tally (β r3b re-ratification). `rewritten` occurrences no longer exist
  * in the tree, so what a gate sees is: pinned (occurrence pins + Class-3 path entries), derived (generated views),
- * compat (unexpired registered windows), historical-allow-listed (Class-4 path entries + CHANGELOG < 2.0.0 sections
- * + the Class-2 operator-gated tree) — and the un-dispositioned residue (live-unallowed, incl. expired compat).
+ * compat (unexpired registered windows), historical-allow-listed (Class-4 path entries + the Class-2 operator-gated
+ * tree) — and the un-dispositioned residue (live-unallowed, incl. expired compat). Every term is closed by a
+ * registered artifact: CHANGELOG < 2.0.0 section lines are NOT a term (S-OS-06 r4 B1 — that inline boolean absolved
+ * occurrences with no register entry behind them; each is now its own occurrence pin, counted under pinned).
  */
 function dispositionSummary(tally) {
   const byClass = (tally && tally.suppressedByClass) || {};
@@ -236,9 +417,11 @@ function dispositionSummary(tally) {
     pinned: (tally.pinnedTotal || 0) + cls(3),
     derived: tally.derivedTotal || 0,
     compat: tally.compatTotal || 0,
-    historicalAllowListed: cls(4) + cls(2) + (tally.changelogHistoricalTotal || 0),
-    historicalAllowListedBreakdown: { class4: cls(4), class2Gated: cls(2), changelogHistorical: tally.changelogHistoricalTotal || 0 },
-    pinnedBreakdown: { occurrencePins: tally.pinnedTotal || 0, class3Paths: cls(3) },
+    historicalAllowListed: cls(4) + cls(2),
+    historicalAllowListedBreakdown: { class4: cls(4), class2Gated: cls(2) },
+    pinnedBreakdown: { occurrencePins: tally.pinnedTotal || 0, class3Paths: cls(3), tagGlobComputed: tally.pinnedTagGlob || 0 },
+    tagGlobSatisfied: { ...(tally.tagGlobSatisfied || {}) },
+    tagGlobResidue: (tally.tagGlobResidue || []).slice(),
     liveUnallowed: tally.pendingTotal || 0,
     compatExpired: tally.compatExpiredTotal || 0,
     compatBySurface: { ...(tally.compatBySurface || {}) },
@@ -338,8 +521,17 @@ function loadPartition({ forceReload = false } = {}) {
   return _cache;
 }
 
-/** Pure: build the partition API from an already-parsed artifact object. */
-function buildPartition(denylist) {
+/**
+ * Build the partition API from an already-parsed artifact object. `tags` (optional) injects the tag list the COMPUTED
+ * glob treatment expands against (a readTagList() result or a bare byLab map); omitted, it is read LAZILY at
+ * PARTITION_ROOT on the first glob token dispositionAt meets (a tree with no glob token never runs git for it).
+ */
+function buildPartition(denylist, { tags } = {}) {
+  let _tagList = tags;
+  const tagList = () => {
+    if (_tagList === undefined) _tagList = readTagList({ root: PARTITION_ROOT });
+    return _tagList;
+  };
   const generatedViews = denylist.generatedViews || [];
   const withRe = (entry) => ({
     ...entry,
@@ -426,15 +618,33 @@ function buildPartition(denylist) {
     return false;
   }
 
-  /** -> { kind: "compat", window, occurrence } | { kind: "pinned", pin } | null for the needle match at matchIndex. */
+  /**
+   * The COMPUTED treatment of the legacy-lab version-listing glob token starting at this needle occurrence, or null
+   * when the occurrence is not a glob token (computeTagGlob against the partition's tag list).
+   */
+  function tagGlobAt(lineText, matchIndex) {
+    const pattern = _legacyGlobPatternAt(lineText, matchIndex);
+    return pattern === null ? null : computeTagGlob({ lab: LEGACY_LAB, pattern, tags: tagList() });
+  }
+
+  /**
+   * -> { kind: "compat", window, occurrence } | { kind: "pinned", pin } | { kind: "pinned", rule } | null for the needle
+   * match at matchIndex. A satisfied tag glob -> { kind: "pinned", rule: "tag-glob", glob } (members emitted); an
+   * unsatisfied glob is closed only by compat/pin (tagGlobAt reports its residue treatment separately).
+   */
   function dispositionAt(file, lineText, matchIndex) {
     if (typeof lineText !== "string" || !Number.isInteger(matchIndex)) {
       throw new TypeError("partition-loader: dispositionAt(file, lineText, matchIndex) — pass the LINE TEXT and the match's character index");
     }
     const p = _toPosix(file);
-    // RULE first (S-OS-06 r3): warpos@<semver> evidence tags + "formerly WarpOS" are pinned-by-rule
-    // everywhere, no per-file pin needed — self-dispositioned, never rewritten.
-    const ruleKind = _ruleSpanAt(lineText, matchIndex);
+    // COMPUTED first (S-OS-06 r4 lane J): a version-listing glob is closed ONLY by expanding to >= 1 real tag. One that
+    // matches nothing (or cannot be computed) is never closed by the form RULE below — only a registered per-occurrence
+    // warrant can close that residue, and the tally emits every such residue by name (tagGlobAt), never buried.
+    const glob = tagGlobAt(lineText, matchIndex);
+    if (glob && glob.satisfied) return { kind: "pinned", rule: "tag-glob", glob };
+    // RULE (S-OS-06 r3): warpos@<semver> evidence tags + "formerly WarpOS" are pinned-by-rule
+    // everywhere, no per-file pin needed — self-dispositioned, never rewritten. Never consulted for a glob token.
+    const ruleKind = glob ? null : _ruleSpanAt(lineText, matchIndex);
     if (ruleKind) return { kind: "pinned", rule: ruleKind };
     // compat is checked BEFORE pins (existing precedence; the loader refuses a line claimed by both).
     for (const { window, occ } of compatOccurrences) {
@@ -487,9 +697,13 @@ function buildPartition(denylist) {
       pinnedByPin: {},
       pinnedEvidenceTag: 0,
       pinnedBrandHistory: 0,
+      // S-OS-06 r4 lane J: COMPUTED version-listing globs. Satisfied ones are a pinned sub-kind with their MEMBERS
+      // emitted per (lab, pattern); a glob matching nothing is emitted by name whether a warrant closes it or not.
+      pinnedTagGlob: 0,
+      tagGlobSatisfied: {},
+      tagGlobResidue: [],
       derivedTotal: 0,
       derivedByView: {},
-      changelogHistoricalTotal: 0,
       suppressedTotal: 0,
       suppressedByEntry: {},
       suppressedByClass: {},
@@ -569,28 +783,49 @@ function buildPartition(denylist) {
       add(tally.suppressedByClass, cls.class, n);
       return;
     }
-    const hist = p === CHANGELOG_REL ? historicalChangelogLines(content) : null;
     content.split(/\r?\n/).forEach((lineText, idx) => {
       // Security fix-cycle r2 F1: one disposition per needle OCCURRENCE (dispositionAt), never one per line — a
       // compat/pin match on the line no longer credits every hit on that line.
       // compat is checked BEFORE pins; validateEntries/checkStale refuse a line claimed by both (no occurrence holds two).
+      // S-OS-06 r4 B1: NO section-based absolution — a CHANGELOG < 2.0.0 line is closed only by a registered
+      // disposition like every other line; an unregistered occurrence there is live-unallowed (RED), never a pass.
       reAll.lastIndex = 0;
       let m;
       while ((m = reAll.exec(lineText)) !== null) {
         const at = dispositionAt(p, lineText, m.index);
+        const glob = at && at.rule === "tag-glob" ? at.glob : tagGlobAt(lineText, m.index);
+        if (glob && !glob.satisfied) {
+          // the zero-matching / uncomputable glob residue: emitted by name, closed or not (never buried under a count)
+          tally.tagGlobResidue.push({
+            file: p,
+            line: idx + 1,
+            lab: glob.lab,
+            pattern: glob.pattern,
+            treatment: glob.treatment,
+            reason: glob.reason,
+            closedBy: at && at.kind === "compat" ? `compat ${compatLabel(at.window)}` : at && at.kind === "pinned" ? _pinLabel(at.pin) : null,
+          });
+        }
         if (at && at.kind === "compat") {
           addCompat(at.window, 1, idx + 1, lineText);
         } else if (at && at.kind === "pinned") {
           tally.pinnedTotal += 1;
-          if (at.rule === "evidence-tag") tally.pinnedEvidenceTag += 1;
+          if (at.rule === "tag-glob") {
+            tally.pinnedTagGlob += 1;
+            const k = `lab ${at.glob.lab} pattern ${at.glob.pattern}`;
+            const row = tally.tagGlobSatisfied[k] || (tally.tagGlobSatisfied[k] = { occurrences: 0, members: at.glob.members.slice() });
+            row.occurrences += 1;
+          } else if (at.rule === "evidence-tag") tally.pinnedEvidenceTag += 1;
           else if (at.rule === "brand-history") tally.pinnedBrandHistory += 1;
           else add(tally.pinnedByPin, _pinLabel(at.pin), 1);
-        } else if (hist && hist.has(idx + 1)) {
-          tally.changelogHistoricalTotal += 1;
         } else {
           tally.pendingTotal += 1;
           add(tally.pendingByFile, p, 1);
-          if (!tally.pendingSamples[p]) tally.pendingSamples[p] = `${idx + 1}: ${lineText.trim().slice(0, 160)}`;
+          if (!tally.pendingSamples[p]) {
+            tally.pendingSamples[p] = glob
+              ? `${idx + 1}: version-listing glob ${glob.treatment.toUpperCase()} — ${glob.reason}`
+              : `${idx + 1}: ${lineText.trim().slice(0, 160)}`;
+          }
         }
       }
     });
@@ -609,11 +844,21 @@ function buildPartition(denylist) {
     ];
     if (tally.pinnedEvidenceTag) rows.push([`pinned:evidence-tag (warpos@<semver> — kept forever, by RULE)`, tally.pinnedEvidenceTag]);
     if (tally.pinnedBrandHistory) rows.push([`pinned:brand-history ("formerly WarpOS" — by RULE)`, tally.pinnedBrandHistory]);
-    if (tally.changelogHistoricalTotal) rows.push([`changelog-historical ${CHANGELOG_REL} (< 2.0.0 sections)`, tally.changelogHistoricalTotal]);
+    if (tally.pinnedTagGlob) rows.push([`pinned:tag-glob (version-listing glob COMPUTED against the real tag list — satisfied iff >= 1 member, members below)`, tally.pinnedTagGlob]);
     if (rows.length === 0) lines.push(`${indent}  (none)`);
     for (const [k, v] of rows) lines.push(`${indent}  ${String(v).padStart(7)}  ${k}`);
+    for (const [k, row] of Object.entries(tally.tagGlobSatisfied || {}).sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+      lines.push(`${indent}    tag-glob ${k}: ${row.occurrences} occurrence(s) -> ${row.members.length} member(s): ${row.members.join(" ")}`);
+    }
+    const residue = tally.tagGlobResidue || [];
     lines.push(
-      `${indent}totals: suppressed=${tally.suppressedTotal} pinned=${tally.pinnedTotal} derived=${tally.derivedTotal} changelog-historical=${tally.changelogHistoricalTotal} live-unallowed=${tally.pendingTotal}`
+      `${indent}  tag-glob residue (matches NO real tag or uncomputable — a violation unless a registered warrant closes it): ${residue.length}${residue.length ? "" : " (none)"}`
+    );
+    for (const r of residue) {
+      lines.push(`${indent}    ${r.file}:${r.line} lab ${r.lab} pattern ${r.pattern} -> ${r.treatment.toUpperCase()}${r.closedBy ? ` · closed by ${r.closedBy}` : " · UNCLOSED (live-unallowed)"}`);
+    }
+    lines.push(
+      `${indent}totals: suppressed=${tally.suppressedTotal} pinned=${tally.pinnedTotal} derived=${tally.derivedTotal} live-unallowed=${tally.pendingTotal}`
     );
     const d = dispositionSummary(tally);
     lines.push(
@@ -966,6 +1211,10 @@ function buildPartition(denylist) {
       const f = dl && dl.$freeze;
       return new Set(((f && f.amendments) || []).map((a) => a && a.key).filter((k) => typeof k === "string"));
     };
+    const removalKeysOf = (dl) => {
+      const f = dl && dl.$freeze;
+      return new Set(((f && f.amendments) || []).filter((a) => a && a.removed === true).map((a) => a.key).filter((k) => typeof k === "string"));
+    };
     for (const a of freeze.amendments || []) {
       if (!a || typeof a.key !== "string" || !a.key) {
         problems.push({ id: "F8", key: "$freeze.amendments", message: "an amendment record has no key" });
@@ -975,6 +1224,7 @@ function buildPartition(denylist) {
     }
     const baseSet = new Set(baseline || []);
     const amendSet = amendmentKeysOf(denylist);
+    const removalSet = removalKeysOf(denylist);
     const nowKeys = new Set(entryKeys(denylist));
     // β R4 — the freeze is key-set EQUALITY, not "no additions": an ADDITION and a REMOVAL both need a
     // warranted amendment. An unamended removal could silently retire a pin/entry that still guards a live leak.
@@ -989,8 +1239,8 @@ function buildPartition(denylist) {
       }
     }
 
-    // git layer: every post-freeze commit that ADDS an entry must be a separate,
-    // partition-only, marked amendment; the baseline itself is immutable after freeze.
+    // git layer: every post-freeze commit that ADDS or REMOVES an entry key must be a separate,
+    // partition-only, marked amendment with a record per key; the baseline itself is immutable after freeze.
     const inside = _gitRun(root, ["rev-parse", "--is-inside-work-tree"]);
     if (inside.status !== 0 || inside.stdout.trim() !== "true") {
       throw new PartitionLoadError(`partition-loader: F8 needs git history but ${root} is not a git work tree — failing CLOSED`);
@@ -1014,6 +1264,12 @@ function buildPartition(denylist) {
     const commits = log.stdout.split(/\r?\n/).filter(Boolean);
     let freezeCommit = null;
     let frozenBaseline = null;
+    // The swept history population, emitted beside the result (a zero over no inspected commits is not a clean zero).
+    let historyInspected = 0;
+    let historyAdding = 0;
+    let historyRemoving = 0;
+    let historyKeysAdded = 0;
+    let historyKeysRemoved = 0;
     for (const c of commits) {
       let at;
       try {
@@ -1041,9 +1297,26 @@ function buildPartition(denylist) {
       } catch {
         parent = null;
       }
+      historyInspected += 1;
       const before = new Set(parent ? entryKeys(parent) : []);
-      const added = entryKeys(at).filter((k) => !before.has(k));
-      if (added.length === 0) continue;
+      const nowAt = entryKeys(at);
+      const nowAtSet = new Set(nowAt);
+      const added = nowAt.filter((k) => !before.has(k));
+      // S-OS-06 r4 B2: the REMOVED set (parent minus this commit) gets the same history teeth as additions. Before r4
+      // this loop continued whenever nothing was ADDED, so a removal-amendment could ride a live-code commit unseen.
+      const removed = [...before].filter((k) => !nowAtSet.has(k)).sort();
+      if (added.length === 0 && removed.length === 0) continue;
+      if (added.length) {
+        historyAdding += 1;
+        historyKeysAdded += added.length;
+      }
+      if (removed.length) {
+        historyRemoving += 1;
+        historyKeysRemoved += removed.length;
+      }
+      const change = [added.length ? `adds [${added.join(", ")}]` : null, removed.length ? `removes [${removed.join(", ")}]` : null]
+        .filter(Boolean)
+        .join(" and ");
       // First-parent diff (F2): identical to the single-parent set for a normal commit; for a merge it is everything the
       // merge introduced relative to its first parent (diff-tree prints nothing for a merge). Fails CLOSED on a git error.
       const diff = _gitRun(root, ["diff", "--name-only", `${c}^`, c]);
@@ -1058,18 +1331,35 @@ function buildPartition(denylist) {
         problems.push({
           id: "F8",
           key: short,
-          message: `commit ${short} adds allow-list entr${added.length === 1 ? "y" : "ies"} [${added.join(", ")}] inside a commit that also changes ${foreign.slice(0, 5).join(", ")} — a post-freeze addition must be its OWN warranted amendment commit, never folded into a gate-fixing commit`,
+          message: `commit ${short} ${change} inside a commit that also changes ${foreign.slice(0, 5).join(", ")} — a post-freeze addition or removal must be its OWN warranted amendment commit, never folded into a gate-fixing commit`,
         });
       }
       if (!message.includes(AMENDMENT_MARKER)) {
-        problems.push({ id: "F8", key: short, message: `commit ${short} adds [${added.join(", ")}] without the '${AMENDMENT_MARKER}' marker in its message` });
+        problems.push({ id: "F8", key: short, message: `commit ${short} ${change} without the '${AMENDMENT_MARKER}' marker in its message` });
       }
       for (const k of added) {
         if (!amendedHere.has(k)) problems.push({ id: "F8", key: k, message: `commit ${short} adds '${k}' without an amendment record in $freeze.amendments` });
       }
+      // A removal is warranted only by an explicit REMOVAL record ({key, removed: true, warrant}) — an entry's own ADDITION
+      // record does not warrant retiring it. The record may sit at the removing commit or on the current artifact
+      // (a later, still-registered removal record; the β R4 precedent of 8f1bfd87), but it must exist somewhere.
+      const removalRecordsHere = removalKeysOf(at);
+      for (const k of removed) {
+        if (!removalRecordsHere.has(k) && !removalSet.has(k)) {
+          problems.push({
+            id: "F8",
+            key: k,
+            message: `commit ${short} removes '${k}' without a removal amendment record ({key, removed: true, warrant}) in $freeze.amendments — neither at that commit nor on the current artifact`,
+          });
+        }
+      }
     }
     if (!freezeCommit) notes.push("F8: the freeze is not committed yet — the working-tree baseline is authoritative until it is");
-    else notes.push(`F8: frozen at ${freezeCommit.slice(0, 12)}; ${amendSet.size} amendment(s) on record`);
+    else {
+      notes.push(
+        `F8: frozen at ${freezeCommit.slice(0, 12)}; ${amendSet.size} amendment(s) on record; history swept: ${historyInspected} post-freeze partition commit(s) — ${historyAdding} adding ${historyKeysAdded} key(s), ${historyRemoving} removing ${historyKeysRemoved} key(s), every one judged for marker + partition-only + amendment record`
+      );
+    }
     return { problems, notes };
   }
 
@@ -1079,6 +1369,10 @@ function buildPartition(denylist) {
     findOccurrencePin,
     findCompatOccurrence,
     dispositionAt,
+    /** S-OS-06 r4 lane J: the COMPUTED treatment of the legacy-lab glob token at a needle occurrence (null if none). */
+    tagGlobAt,
+    /** The tag list this partition's glob computation expands against (lazily read; readTagList shape). */
+    tagList,
     compatWindows,
     isCompatMember: (file) => compatMemberByPath.has(_toPosix(file)),
     isGeneratedView,
@@ -1155,6 +1449,13 @@ module.exports = {
   AMENDMENT_MARKER,
   VALID_CLASSES,
   ALLOW_CLASSES,
+  // S-OS-06 r4 lane J — the ONE computed version-listing-glob implementation (lane G's join + glob resolutions call these)
+  LEGACY_LAB,
+  isTagGlobVersion,
+  tagGlobToRegExp,
+  parseTagNames,
+  readTagList,
+  computeTagGlob,
 };
 
 if (require.main === module) {

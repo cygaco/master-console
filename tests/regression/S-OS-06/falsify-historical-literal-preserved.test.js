@@ -147,9 +147,9 @@ test(`${FALSIFIER_ID} real-tree invariant: every warpos@<semver> and "formerly W
       continue;
     }
     if (!tagRe.test(text) && !brandRe.test(text)) continue;
-    const changelogHist = rel === "CHANGELOG.md" ? partition.historicalChangelogLines(text) : null;
+    // S-OS-06 r4 B1: CHANGELOG < 2.0.0 lines are NOT skipped — each occurrence there must carry its own registered
+    // disposition (rule or occurrence pin), exactly like every other live line.
     text.split(/\r?\n/).forEach((line, i) => {
-      if (changelogHist && changelogHist.has(i + 1)) return;
       for (const re of [tagRe, brandRe]) {
         re.lastIndex = 0;
         let m;
