@@ -26,7 +26,7 @@
  *   - TAP YAML diagnostic blocks: the block, its keys and its escaping are the reporter's; the
  *     `error` VALUE is the author's assertion message, captured when node unwraps it from an
  *     author-thrown error (see AUTHOR_ERROR_FAILURE_TYPES).
- * Every captured line is then normalized (NORMALIZER, a declared six-step order) and the
+ * Every captured line is then normalized (NORMALIZER, a declared seven-step order) and the
  * drop class (DROP_CLASS, stated as shapes) is removed. The result is the entry's UNORDERED MULTISET
  * of cause lines (duplicates kept; β verdict 2d7f5b83, ledger row 479, correcting the ordered-set
  * rule of row 473 §2). The register must DECLARE exactly this normalizer, drop class and ceiling set
@@ -46,6 +46,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const util = require("util");
 const { spawn, spawnSync } = require("child_process");
 
 const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
@@ -162,7 +163,8 @@ const NORMALIZER_DECLARATION = [
   "4 timings: every (N ms) timing, (Nms) or (N.Nms), is deleted, repeated until none remains.",
   "5 whitespace: every run of whitespace becomes one space, then the line is trimmed.",
   "6 markers: a leading reporter marker token (ℹ or #, followed by a space or the end of the line) is stripped, repeated until none remains.",
-  "7 after the six steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an UNORDERED MULTISET of lines (duplicates kept). Its canonical form is the lines sorted in ascending UTF-16 code-unit order (JavaScript's default sort, locale-independent). Stored and observed are compared in canonical form by exact equality of every element and of the length, never containment, never a hash. A stored causeLines not already in canonical form is refused.",
+  "7 platform error codes (β a5c3e761 Q2): the class is a PLATFORM-DEPENDENT NUMERIC ERROR CODE in a captured cause line, meaning every rendering of an errno property with an integer value: the key errno, bare or inside one matching pair of ' or \" quotes, not preceded by a word character or $, then a colon, at most one space, and a decimal integer with an optional leading minus, not followed by a digit or a dot. When the RUNNING runtime's own system error map (util.getSystemErrorMap, the libuv name table of the platform the capture ran on) names that integer, the integer is replaced by <NAME>, the platform-independent symbolic code (on win32, errno: -4058, becomes errno: <ENOENT>,); the key and everything around it are kept. Two different codes keep two different names, so the transform removes platform variance without merging different failures. An integer the running map does not name is left unchanged, so its variance fails the lock loudly instead of being masked.",
+  "8 after the seven steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an UNORDERED MULTISET of lines (duplicates kept). Its canonical form is the lines sorted in ascending UTF-16 code-unit order (JavaScript's default sort, locale-independent). Stored and observed are compared in canonical form by exact equality of every element and of the length, never containment, never a hash. A stored causeLines not already in canonical form is refused.",
 ];
 
 /** The drop class, stated as SHAPES (never as specific frames). Applied to normalized lines. */
@@ -278,7 +280,22 @@ function normalizerContext(root, tmpdir) {
   return { root: fwd(root), tmp: tmp && tmp !== "/" ? tmp : "" };
 }
 
-/** Apply the declared normalizer (NORMALIZER_DECLARATION steps 1-6) to ONE line. */
+/**
+ * Step 7's class: an errno property rendered with an integer value (bare, 'quoted' or "quoted" key). Group 1 is the
+ * key as rendered, group 2 the separator, group 3 the integer. A property over the class, never a list of numbers.
+ */
+const PLATFORM_ERRNO_RE = /(?<![\w$])(errno|'errno'|"errno"):( ?)(-?\d+)(?![\d.])/g;
+
+/** Step 7: replace an errno integer the RUNNING runtime's system error map names with <NAME>; leave any other unchanged. */
+function symbolizePlatformErrno(t) {
+  const map = util.getSystemErrorMap();
+  return t.replace(PLATFORM_ERRNO_RE, (whole, key, sep, num) => {
+    const hit = map.get(Number(num));
+    return hit && typeof hit[0] === "string" && hit[0] ? `${key}:${sep}<${hit[0]}>` : whole;
+  });
+}
+
+/** Apply the declared normalizer (NORMALIZER_DECLARATION steps 1-7) to ONE line. */
 function normalizeLine(s, ctx) {
   let t = String(s);
   // 1 unescape (single left-to-right scan)
@@ -303,6 +320,8 @@ function normalizeLine(s, ctx) {
     prev = t;
     t = t.replace(/^(?:ℹ|#)(?: |$)/, "");
   }
+  // 7 platform error codes -> their symbolic name under the running runtime's own map
+  t = symbolizePlatformErrno(t);
   return t;
 }
 

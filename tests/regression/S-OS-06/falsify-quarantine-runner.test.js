@@ -323,6 +323,36 @@ test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09, a5c3e761): an EMPTY child
   assert.deepStrictEqual(got, parentHas, `the runtime refilled a set other than the declared floor: got [${got}], declared-and-present [${parentHas}]`);
 });
 
+// (β a5c3e761 Q2) step 7 of the normalizer: a platform-dependent numeric error code becomes its symbolic name under the
+// RUNNING runtime's own map. Every plant draws its integers from that map, so the case runs (never skips) on any platform.
+test(`${FALSIFIER_ID} (o) ERRNO CLASS (β a5c3e761): a numeric errno becomes its symbolic name, distinct codes stay distinct, an unnamed integer is left unchanged`, () => {
+  const util = require("util");
+  const ctx = RUNNER_DECL.normalizerContext(REAL_ROOT);
+  const map = util.getSystemErrorMap();
+  const numFor = (name) => [...map].find(([, v]) => v[0] === name)?.[0];
+  const enoent = numFor("ENOENT");
+  const eacces = numFor("EACCES");
+  assert.ok(Number.isInteger(enoent) && Number.isInteger(eacces), "the running runtime's system error map names neither ENOENT nor EACCES");
+  // the property, in each rendering of the class
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`errno: ${enoent},`, ctx), "errno: <ENOENT>,");
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`[Error: x] { errno: ${enoent}, code: 'ENOENT' }`, ctx), "[Error: x] { errno: <ENOENT>, code: 'ENOENT' }");
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`{"errno":${enoent},"code":"ENOENT"}`, ctx), `{"errno":<ENOENT>,"code":"ENOENT"}`);
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`'errno': ${eacces}`, ctx), "'errno': <EACCES>");
+  // discrimination: two failures differing only in the code still differ
+  assert.notStrictEqual(RUNNER_DECL.normalizeLine(`errno: ${enoent},`, ctx), RUNNER_DECL.normalizeLine(`errno: ${eacces},`, ctx));
+  // the output is a fixed point (a stored line is re-emittable under the declared contract)
+  assert.ok(RUNNER_DECL.isFixedPoint("errno: <ENOENT>,", ctx), "the symbolized line is not a fixed point");
+  // outside the class, or unnamed by the running map: unchanged (fail-closed, never masked)
+  let unnamed = -1;
+  while (map.has(unnamed)) unnamed--;
+  for (const line of [`errno: ${unnamed},`, `myerrno: ${enoent},`, `$errno: ${enoent}`, `errno: ${enoent}.5`, `errno: ${enoent}0000000000`, `exitCode: ${enoent},`]) {
+    if (line === `errno: ${enoent}0000000000` && map.has(Number(`${enoent}0000000000`))) continue;
+    assert.strictEqual(RUNNER_DECL.normalizeLine(line, ctx), line, `a line outside the class (or unnamed by the running map) was changed: ${line}`);
+  }
+  // declared = actual: the step is in the declaration the register must carry
+  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION.some((d) => d.startsWith("7 platform error codes")), "step 7 is not declared");
+});
+
 test(`${FALSIFIER_ID}: the real tests/quarantine.json is never touched`, () => {
   const realAfter = fs.existsSync(REAL_QUARANTINE) ? fs.readFileSync(REAL_QUARANTINE) : null;
   assert.ok(realBefore === null ? realAfter === null : realAfter !== null && realBefore.equals(realAfter), "the real quarantine artifact changed during the falsifier");
