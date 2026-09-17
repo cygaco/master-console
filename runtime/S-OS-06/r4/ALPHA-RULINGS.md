@@ -150,6 +150,29 @@ row); its envelope must show the RED against the unedited fixture, the registry 
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
 
+## R-119 — ε e-41: the one red at 61632076 was α's enforcer TEST, environment-shaped by construction; fixed test-side; closes 1–4 of the close checklist accepted
+ε left the red alone and measured its attribution (green at 4ddca52b, red at 61632076, four generated
+files between — no path from them to a ledger resolution) and labelled its guess a guess. Correct conduct.
+CAUSE, measured by α: the artifact-mode case planted HEAD's 8-char prefix as "a real git object"; at
+61632076 that prefix is ALL DIGITS, and an all-digit 8-char token is deliberately not id-shaped to the
+enforcer (row numbers, dates — L117/L125), so it was neither counted nor resolved → "git-object 0" vs the
+expected 1. ~2.3% of commits ((10/16)^8) have an all-digit prefix: the plant was environment-shaped by
+construction — the round's own class (a subject that depends on where/when the test runs), in the lead's
+own enforcer. The enforcer's classification is CORRECT and unchanged. FIX (801f1e21 on the substrate
+branch): the "real object" is a fixture blob written by `git hash-object -w` from fixed content (prefix
+asserted to contain a letter; existence asserted); the ALL-DIGIT ceiling is DEMONSTRATED in the same case
+and PRINTED by the enforcer beside the GIT-OBJECT ceiling. RED leg = the observed red at 61632076 with the
+old plant; GREEN leg = 25/25 on the fix. Not quarantined.
+ACCEPTED from e-41: close checklist item 4 DISCHARGED (final register regen a NO-OP on a pristine tree at
+61632076 — measured, zero files changed) — with the caveat that TRACKER.md has since gained lines via the
+substrate fast-forward, so the no-op must be re-shown on the tree that will be certified; the manifests
+generated on a CLEAN tree as load-bearing, not hygiene (root-run builder refused: 26 unclassified untracked
+paths; root-run manifests carried an untracked mined-data file a clean checkout lacks — the
+clean-checkout-manifest-honesty class; ε corrected its own first cause before asserting); the SECOND gate
+proven working-tree-dependent after the occurrence register — two measured instances for β's exclusive-tree
+condition. STILL WRONG in e-41 (written before the fast-forward): "the cross-provider backend and qa re-run
+whose standing is with β" — settled by R-111 (`b3f7d052`): NOT owed. Remove from the close sequence.
+
 ## R-117 — β `a5c3e761` (row 522): the exit gate WINS the skip/refuse collision; (n) REFUSES on an undeclared platform; scrub the errno CLASS by a named transform (symbolic form); §5.5 is MEASURED RED; every local result is stamped win32
 Q1: Option C COMPLETED, not amended — on linux the subject (a refilled floor) is PRESENT; the case skipped
 because its DECLARED VALUE was win32-only (declaration too narrow), so Option C does not reach it and the
