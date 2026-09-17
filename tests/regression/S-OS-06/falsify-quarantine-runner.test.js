@@ -298,11 +298,24 @@ test(`${FALSIFIER_ID} (m) NO LOCK (β b2c94e18, the CONJUNCTION): an entry whose
   assert.strictEqual(plant.unobserved, true, "an entry with no lock is counted as unobserved");
 });
 
-// (lane I8, β a2f74e09) the win32 OBSERVED FLOOR is a declared observation of the runtime, so it is re-measured here:
-// a child spawned with an EMPTY env must receive only declared floor names, and every floor name the parent has.
-test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09): an EMPTY child env on win32 is refilled with exactly the declared floor`, { skip: process.platform === RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform ? false : `the floor is declared as a ${RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform} observation only` }, () => {
-  const floor = RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.names.map((n) => n.toUpperCase());
-  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION[0].includes(`OBSERVED FLOOR (${RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform})`), "the floor is not declared in the normalizer's element E");
+// (lane I8, β a2f74e09; per-platform by β a5c3e761 Q1) the OBSERVED FLOOR is a declared observation of the runtime, so it
+// is re-measured here FOR THE PLATFORM THIS RUNS ON: a child spawned with an EMPTY env must receive only declared floor
+// names, and every floor name the parent has. On a platform with NO declared floor this case REFUSES (fails); it never
+// skips, because a skipped falsifier reads green at the exit gate while guarding nothing.
+test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09, a5c3e761): an EMPTY child env is refilled with exactly the floor declared for THIS platform, and an undeclared platform REFUSES`, () => {
+  // The refusal rule itself, planted on every platform (so it is proven where the floor IS declared too): an
+  // undeclared platform and an inherited-property name both refuse. (The malformed-entry refusal is not planted here:
+  // the declaration object is frozen.)
+  for (const p of ["mc-no-such-platform", "__proto__", "constructor", "toString"]) {
+    const v = RUNNER_DECL.observedFloorFor(p);
+    assert.strictEqual(v.floor, undefined, `an undeclared platform "${p}" must not yield a floor`);
+    assert.match(String(v.refused), /^OBSERVED FLOOR REFUSED: no floor is declared for platform/, `an undeclared platform "${p}" must REFUSE`);
+  }
+  const verdict = RUNNER_DECL.observedFloorFor(process.platform);
+  assert.ok(verdict.floor, `${verdict.refused} (running on ${process.platform}/node${process.versions.node})`);
+  const declared = verdict.floor;
+  const floor = declared.names.map((n) => n.toUpperCase());
+  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION[0].includes(`${declared.platform} (node ${declared.nodeMajor}): a child spawned with an EMPTY environment`), "the floor for this platform is not declared in the normalizer's element E");
   const r = spawnSync(process.execPath, ["-e", "process.stdout.write(JSON.stringify(Object.keys(process.env)))"], { env: {}, encoding: "utf8", windowsHide: true });
   assert.strictEqual(r.status, 0, `empty-env child did not run: ${r.error && r.error.message} ${r.stderr}`);
   const got = JSON.parse(r.stdout).map((k) => k.toUpperCase()).sort();
