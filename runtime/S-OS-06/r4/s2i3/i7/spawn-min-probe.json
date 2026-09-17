@@ -1,0 +1,224 @@
+{
+ "platform": "win32",
+ "node": "v24.16.0",
+ "parentKeys": [
+  "3DVPATH",
+  "AI_AGENT",
+  "ALLUSERSPROFILE",
+  "APPDATA",
+  "CLAUDECODE",
+  "CLAUDE_CODE_AGENT",
+  "CLAUDE_CODE_CHILD_SESSION",
+  "CLAUDE_CODE_ENTRYPOINT",
+  "CLAUDE_CODE_EXECPATH",
+  "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS",
+  "CLAUDE_CODE_MESSAGING_SOCKET",
+  "CLAUDE_CODE_MESSAGING_TOKEN",
+  "CLAUDE_CODE_SESSION_ATTENDED",
+  "CLAUDE_CODE_SESSION_ID",
+  "CLAUDE_EFFORT",
+  "CLAUDE_PID",
+  "CLAUDE_PROJECT_DIR",
+  "COMMONPROGRAMFILES",
+  "COMPUTERNAME",
+  "COMSPEC",
+  "COREPACK_ENABLE_AUTO_PIN",
+  "CommonProgramFiles(x86)",
+  "CommonProgramW6432",
+  "DriverData",
+  "EFC_3132_1592913036",
+  "EFC_3132_4126798990",
+  "EXEPATH",
+  "GIT_EDITOR",
+  "HOME",
+  "HOMEDRIVE",
+  "HOMEPATH",
+  "JOBTRON_ANTHROPIC_API_KEY",
+  "JOBTRON_BRIGHTDATA_API_KEY",
+  "LOCALAPPDATA",
+  "LOGONSERVER",
+  "MCO_RESOLVER",
+  "MC_ACTOR_KIND",
+  "MC_BOUND_ROLE",
+  "MC_DISPATCH_BACKGROUND",
+  "MSYSTEM",
+  "NUMBER_OF_PROCESSORS",
+  "NoDefaultCurrentDirectoryInExePath",
+  "OS",
+  "OneDrive",
+  "OneDriveConsumer",
+  "PATH",
+  "PATHEXT",
+  "PLINK_PROTOCOL",
+  "PROCESSOR_ARCHITECTURE",
+  "PROCESSOR_IDENTIFIER",
+  "PROCESSOR_LEVEL",
+  "PROCESSOR_REVISION",
+  "PROGRAMFILES",
+  "PROMPT",
+  "PSModulePath",
+  "PUBLIC",
+  "PWD",
+  "PYTHONUTF8",
+  "ProgramData",
+  "ProgramFiles(x86)",
+  "ProgramW6432",
+  "SESSIONNAME",
+  "SHELL",
+  "SHLVL",
+  "SYSTEMDRIVE",
+  "SYSTEMROOT",
+  "TEMP",
+  "TERM",
+  "TMP",
+  "USERDOMAIN",
+  "USERDOMAIN_ROAMINGPROFILE",
+  "USERNAME",
+  "USERPROFILE",
+  "VLAD_PROFILE_SITES_AUTHORIZATION",
+  "VLAD_PROFILE_SITES_TOKEN",
+  "VLAD_PROFILE_TOKEN",
+  "VLAD_PROFILE_TOKEN_VLAD_AI_PROJECTS",
+  "WARPOS_ACTOR_KIND",
+  "WARPOS_BOUND_ROLE",
+  "WINDIR",
+  "_"
+ ],
+ "probes": [
+  {
+   "set": "EMPTY",
+   "passedKeys": [],
+   "nodeE": {
+    "status": 0,
+    "stdout": "{\"keys\":[\"HOMEDRIVE\",\"HOMEPATH\",\"LOGONSERVER\",\"PATH\",\"SYSTEMDRIVE\",\"SYSTEMROOT\",\"TEMP\",\"USERDOMAIN\",\"USERNAME\",\"USERPROFILE\",\"WINDIR\"],\"tmp\":\"C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp\",\"home\":\"C:\\\\Users\\\\Vlad\",\"rnd\":\"b474a938\"}",
+    "stderr": ""
+   },
+   "nodeTest": {
+    "status": 0,
+    "lines": [
+     "# TMP=C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp",
+     "# HOME=C:\\\\Users\\\\Vlad",
+     "# KEYS=HOMEDRIVE,HOMEPATH,LOGONSERVER,NODE_TEST_CONTEXT,NODE_TEST_WORKER_ID,PATH,SYSTEMDRIVE,SYSTEMROOT,TEMP,USERDOMAIN,USERNAME,USERPROFILE,WINDIR",
+     "# pass 1",
+     "# fail 0"
+    ],
+    "stderr": ""
+   },
+   "git": {
+    "status": 0,
+    "stdout": "git version 2.54.0.windows.1"
+   },
+   "gitGlobalConfig": {
+    "status": 0,
+    "count": 4,
+    "stderr": ""
+   }
+  },
+  {
+   "set": "SYSTEMROOT_ONLY",
+   "passedKeys": [
+    "SYSTEMROOT"
+   ],
+   "nodeE": {
+    "status": 0,
+    "stdout": "{\"keys\":[\"HOMEDRIVE\",\"HOMEPATH\",\"LOGONSERVER\",\"PATH\",\"SYSTEMDRIVE\",\"SYSTEMROOT\",\"TEMP\",\"USERDOMAIN\",\"USERNAME\",\"USERPROFILE\",\"WINDIR\"],\"tmp\":\"C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp\",\"home\":\"C:\\\\Users\\\\Vlad\",\"rnd\":\"c47317cf\"}",
+    "stderr": ""
+   },
+   "nodeTest": {
+    "status": 0,
+    "lines": [
+     "# TMP=C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp",
+     "# HOME=C:\\\\Users\\\\Vlad",
+     "# KEYS=HOMEDRIVE,HOMEPATH,LOGONSERVER,NODE_TEST_CONTEXT,NODE_TEST_WORKER_ID,PATH,SYSTEMDRIVE,SYSTEMROOT,TEMP,USERDOMAIN,USERNAME,USERPROFILE,WINDIR",
+     "# pass 1",
+     "# fail 0"
+    ],
+    "stderr": ""
+   },
+   "git": {
+    "status": 0,
+    "stdout": "git version 2.54.0.windows.1"
+   },
+   "gitGlobalConfig": {
+    "status": 0,
+    "count": 4,
+    "stderr": ""
+   }
+  },
+  {
+   "set": "PATH_ONLY",
+   "passedKeys": [
+    "PATH"
+   ],
+   "nodeE": {
+    "status": 0,
+    "stdout": "{\"keys\":[\"HOMEDRIVE\",\"HOMEPATH\",\"LOGONSERVER\",\"PATH\",\"SYSTEMDRIVE\",\"SYSTEMROOT\",\"TEMP\",\"USERDOMAIN\",\"USERNAME\",\"USERPROFILE\",\"WINDIR\"],\"tmp\":\"C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp\",\"home\":\"C:\\\\Users\\\\Vlad\",\"rnd\":\"a6d9989d\"}",
+    "stderr": ""
+   },
+   "nodeTest": {
+    "status": 0,
+    "lines": [
+     "# TMP=C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp",
+     "# HOME=C:\\\\Users\\\\Vlad",
+     "# KEYS=HOMEDRIVE,HOMEPATH,LOGONSERVER,NODE_TEST_CONTEXT,NODE_TEST_WORKER_ID,PATH,SYSTEMDRIVE,SYSTEMROOT,TEMP,USERDOMAIN,USERNAME,USERPROFILE,WINDIR",
+     "# pass 1",
+     "# fail 0"
+    ],
+    "stderr": ""
+   },
+   "git": {
+    "status": 0,
+    "stdout": "git version 2.54.0.windows.1"
+   },
+   "gitGlobalConfig": {
+    "status": 0,
+    "count": 4,
+    "stderr": ""
+   }
+  },
+  {
+   "set": "CANDIDATE",
+   "passedKeys": [
+    "APPDATA",
+    "COMSPEC",
+    "HOME",
+    "HOMEDRIVE",
+    "HOMEPATH",
+    "LOCALAPPDATA",
+    "PATH",
+    "PATHEXT",
+    "SYSTEMDRIVE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+   ],
+   "nodeE": {
+    "status": 0,
+    "stdout": "{\"keys\":[\"APPDATA\",\"COMSPEC\",\"HOME\",\"HOMEDRIVE\",\"HOMEPATH\",\"LOCALAPPDATA\",\"LOGONSERVER\",\"PATH\",\"PATHEXT\",\"SYSTEMDRIVE\",\"SYSTEMROOT\",\"TEMP\",\"TMP\",\"USERDOMAIN\",\"USERNAME\",\"USERPROFILE\",\"WINDIR\"],\"tmp\":\"C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp\",\"home\":\"C:\\\\Users\\\\Vlad\",\"rnd\":\"622683d7\"}",
+    "stderr": ""
+   },
+   "nodeTest": {
+    "status": 0,
+    "lines": [
+     "# TMP=C:\\\\Users\\\\Vlad\\\\AppData\\\\Local\\\\Temp",
+     "# HOME=C:\\\\Users\\\\Vlad",
+     "# KEYS=APPDATA,COMSPEC,HOME,HOMEDRIVE,HOMEPATH,LOCALAPPDATA,LOGONSERVER,NODE_TEST_CONTEXT,NODE_TEST_WORKER_ID,PATH,PATHEXT,SYSTEMDRIVE,SYSTEMROOT,TEMP,TMP,USERDOMAIN,USERNAME,USERPROFILE,WINDIR",
+     "# pass 1",
+     "# fail 0"
+    ],
+    "stderr": ""
+   },
+   "git": {
+    "status": 0,
+    "stdout": "git version 2.54.0.windows.1"
+   },
+   "gitGlobalConfig": {
+    "status": 0,
+    "count": 4,
+    "stderr": ""
+   }
+  }
+ ]
+}

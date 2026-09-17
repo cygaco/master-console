@@ -1,0 +1,115 @@
+TAP version 13
+# Subtest: QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+ok 1 - QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+  ---
+  duration_ms: 461.2624
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+ok 2 - QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+  ---
+  duration_ms: 487.051
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+ok 3 - QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+  ---
+  duration_ms: 479.5383
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+ok 4 - QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+  ---
+  duration_ms: 340.0835
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+not ok 5 - QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+  ---
+  duration_ms: 442.0147
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\i6m\\M_oldE\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:185:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-gJpY3x\tests\quarantine.json is malformed:
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "cause"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "filedUnder"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiry"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiryVersion"
+      - entries[0] (tests/ok/pass.test.js) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)
+      - entries[0] (tests/ok/pass.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: FAIL — quarantine artifact C:\Users\Vlad\AppData\Local\Temp\sos06-quarantine-gJpY3x\tests\quarantine.json is malformed:
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "cause"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "filedUnder"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiry"
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "expiryVersion"
+      - entries[0] (tests/ok/pass.test.js) needs an integer "failCount" >= 1 (the failing-test count this entry absolves)
+      - entries[0] (tests/ok/pass.test.js) needs an "observedOn" stamp { platform, nodeMajor, reporter } (an unstamped entry is refused)
+      - entries[0] (tests/ok/pass.test.js) is missing a non-empty "causeLines" array (the multiset of cause lines, in canonical order)
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldE\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:196:12
+    withRepo (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldE\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+    TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\i6m\M_oldE\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:193:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+ok 6 - QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+  ---
+  duration_ms: 491.1245
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+ok 7 - QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+  ---
+  duration_ms: 259.6166
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+ok 8 - QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+  ---
+  duration_ms: 470.7337
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+ok 9 - QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+  ---
+  duration_ms: 465.7787
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+ok 10 - QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+  ---
+  duration_ms: 505.715
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+ok 11 - QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+  ---
+  duration_ms: 0.4757
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4457.6786
+exit 1

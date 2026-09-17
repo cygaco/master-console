@@ -1,0 +1,446 @@
+{
+  "passes": 6,
+  "measuredOn": {
+    "platform": "win32",
+    "node": "v24.16.0",
+    "reporter": "tap"
+  },
+  "method": "stability.js: each of the 23 quarantined files run alone, sequentially, via run-tests.js runNodeTest (pinned tap) + captureCauseLines, 6 passes",
+  "report": [
+    {
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "seqIdenticalAllPasses": false,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": false,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 1,
+      "distinctSequences": 3,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/mc/lib/provider-autofix.unit.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/mc/lib/provider-rca.unit.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/mc/product-bootstrap.unit.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/S-LC-07/spend-ledger.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": false,
+      "rawMultisetIdenticalAllPasses": false,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "tests/regression/SP-20260627-001/negative-fixtures.test.js",
+      "seqIdenticalAllPasses": true,
+      "multisetIdenticalAllPasses": true,
+      "rawIdenticalAllPasses": true,
+      "rawMultisetIdenticalAllPasses": true,
+      "passesEqualToRegister": 6,
+      "distinctSequences": 1,
+      "statuses": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "dispatchReadinessOrderings": [
+    {
+      "passes": [
+        1
+      ],
+      "tail": [
+        "ok FIX5: .cjs ref in invocation context → caught",
+        "ok FIX5: bash scripts/setup/install.sh in invocation context → caught",
+        "FAIL — 1 of 79 cases failed:",
+        "- KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+        "ok FIX5: .mjs ref in fenced code block → caught",
+        "ok FIX5: scripts/ ref inside fenced code block → caught even without node prefix"
+      ]
+    },
+    {
+      "passes": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "tail": [
+        "ok FIX5: .cjs ref in invocation context → caught",
+        "ok FIX5: bash scripts/setup/install.sh in invocation context → caught",
+        "ok FIX5: .mjs ref in fenced code block → caught",
+        "ok FIX5: scripts/ ref inside fenced code block → caught even without node prefix",
+        "FAIL — 1 of 79 cases failed:",
+        "- KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33"
+      ]
+    },
+    {
+      "passes": [
+        6
+      ],
+      "tail": [
+        "ok FIX5: .cjs ref in invocation context → caught",
+        "ok FIX5: bash scripts/setup/install.sh in invocation context → caught",
+        "ok FIX5: .mjs ref in fenced code block → caught",
+        "FAIL — 1 of 79 cases failed:",
+        "- KNOWN_DANGLING_REFS is empty by default (no pre-populated allowlist): length=33",
+        "ok FIX5: scripts/ ref inside fenced code block → caught even without node prefix"
+      ]
+    }
+  ]
+}

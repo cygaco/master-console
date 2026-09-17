@@ -1,0 +1,72 @@
+TAP version 13
+# Subtest: a1
+ok 1 - a1
+  ---
+  duration_ms: 0.5368
+  type: 'test'
+  ...
+# Subtest: a2
+ok 2 - a2
+  ---
+  duration_ms: 0.0991
+  type: 'test'
+  ...
+# Subtest: a3
+ok 3 - a3
+  ---
+  duration_ms: 0.0662
+  type: 'test'
+  ...
+# Subtest: a4
+ok 4 - a4
+  ---
+  duration_ms: 0.0629
+  type: 'test'
+  ...
+# Subtest: a5
+ok 5 - a5
+  ---
+  duration_ms: 0.0703
+  type: 'test'
+  ...
+# node:fs:1013
+#   binding.rename(
+#           ^
+# Error: ENOENT: no such file or directory, rename 'C:\\nonexistent-src-xyz' -> 'C:\\nonexistent-dst-xyz'
+#     at Object.renameSync (node:fs:1013:11)
+#     at Object.<anonymous> (C:\\Users\\Vlad\\AppData\\Local\\Temp\\tmp.QIGaJKeM12\\t\\b.test.js:2:44)
+#     at Module._compile (node:internal/modules/cjs/loader:1854:14)
+#     at Object..js (node:internal/modules/cjs/loader:1985:10)
+#     at Module.load (node:internal/modules/cjs/loader:1577:32)
+#     at Module._load (node:internal/modules/cjs/loader:1379:12)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+#     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+#     at node:internal/main/run_main_module:33:47 {
+#   errno: -4058,
+#   code: 'ENOENT',
+#   syscall: 'rename',
+#   path: 'C:\\\\nonexistent-src-xyz',
+#   dest: 'C:\\\\nonexistent-dst-xyz'
+# }
+# Node.js v24.16.0
+# Subtest: t\\b.test.js
+not ok 2 - t\\b.test.js
+  ---
+  duration_ms: 71.1573
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\tmp.QIGaJKeM12\\t\\b.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 115.0222

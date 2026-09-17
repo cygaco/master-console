@@ -1,0 +1,20 @@
+[neuter-preload] N2 applied to in-memory copy of C:\Users\Vlad\Desktop\Claude\Projects\WarpOS\.claude\worktrees\S-OS-06-contract-fix\scripts\dispatch\dispatch-contract.js
+SP-20260627-001-negative-fixtures fixture-test: 7/9 passed, 2 FAILED
+  - AC-2.1 api-when-CLI: cross-provider reviewer via 'api' shape is REFUSED: expected the enforcer to FAIL the planted violation, but it PASSED ({"ok":true,"violations":[],"contract":{"role":"security-reviewer","class":"cross_provider_reviewer","allowed_shapes":["subprocess-cross-provider"],"forbidden_shapes":["in-process-agent","api"],"tool_id":["codex","agy"],"cwd_policy":"canonic) — FALSE-GREEN
+  - AC-2.4 forbidden_shape: cross-provider reviewer (security-reviewer) via in-process-agent is REFUSED as a FORBIDDEN shape (kills diversity): expected the enforcer to FAIL the planted violation, but it PASSED ({"violations":[]}) — FALSE-GREEN
+✖ tests\regression\SP-20260627-001\negative-fixtures.test.js (94.2724ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 98.4145
+
+✖ failing tests:
+
+test at tests\regression\SP-20260627-001\negative-fixtures.test.js:1:1
+✖ tests\regression\SP-20260627-001\negative-fixtures.test.js (94.2724ms)
+  'test failed'
+[neuter-preload] N2 NOT APPLIED — enforcer never loaded in this process

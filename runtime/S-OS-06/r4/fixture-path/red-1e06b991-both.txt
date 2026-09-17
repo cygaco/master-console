@@ -1,0 +1,307 @@
+{
+  "label": "red-1e06b991",
+  "head": "e01ca6b6",
+  "node": "v24.16.0",
+  "hold": {
+    "holderCwd": "runtime/S-OS-06/fixture-product",
+    "exit": 1,
+    "counters": {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "errnoLines": [
+      "# Error: EPERM: operation not permitted, rename 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product.tmp-45644' -> 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product'",
+      "#   code: 'EPERM',"
+    ]
+  },
+  "concurrent": [
+    {
+      "exit": 1,
+      "counters": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": [
+        "# Error: ENOENT: no such file or directory, open 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product\\\\.warpos\\\\transactions\\\\active.lock'",
+        "#   code: 'ENOENT',"
+      ]
+    },
+    {
+      "exit": 1,
+      "counters": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": [
+        "# Error: EPERM: operation not permitted, rename 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product.tmp-620' -> 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product'",
+        "#   code: 'EPERM',"
+      ]
+    },
+    {
+      "exit": 1,
+      "counters": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": [
+        "# Error: EPERM: operation not permitted, rename 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product.tmp-55964' -> 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product'",
+        "#   code: 'EPERM',"
+      ]
+    },
+    {
+      "exit": 0,
+      "counters": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": []
+    }
+  ]
+}
+
+===== HOLD: full TAP output =====
+TAP version 13
+# node:fs:1013
+#   binding.rename(
+#           ^
+# Error: EPERM: operation not permitted, rename 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product.tmp-45644' -> 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product'
+#     at Object.renameSync (node:fs:1013:11)
+#     at materializeFixture (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:251:6)
+#     at Object.<anonymous> (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:257:14)
+#     at Module._compile (node:internal/modules/cjs/loader:1854:14)
+#     at Object..js (node:internal/modules/cjs/loader:1985:10)
+#     at Module.load (node:internal/modules/cjs/loader:1577:32)
+#     at Module._load (node:internal/modules/cjs/loader:1379:12)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+#     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+#     at node:internal/main/run_main_module:33:47 {
+#   errno: -4048,
+#   code: 'EPERM',
+#   syscall: 'rename',
+#   path: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product.tmp-45644',
+#   dest: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product'
+# }
+# Node.js v24.16.0
+# Subtest: tests\\regression\\S-OS-06\\migration.test.js
+not ok 1 - tests\\regression\\S-OS-06\\migration.test.js
+  ---
+  duration_ms: 49.7638
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.1149
+
+===== CONCURRENT #1: full TAP output =====
+TAP version 13
+# node:fs:441
+#     return binding.readFileUtf8(path, stringToFlags(options.flag));
+#                    ^
+# Error: ENOENT: no such file or directory, open 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product\\.warpos\\transactions\\active.lock'
+#     at Object.readFileSync (node:fs:441:20)
+#     at readText (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:63:36)
+#     at materializeFixture (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:253:73)
+#     at Object.<anonymous> (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:257:14)
+#     at Module._compile (node:internal/modules/cjs/loader:1854:14)
+#     at Object..js (node:internal/modules/cjs/loader:1985:10)
+#     at Module.load (node:internal/modules/cjs/loader:1577:32)
+#     at Module._load (node:internal/modules/cjs/loader:1379:12)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+#     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) {
+#   errno: -4058,
+#   code: 'ENOENT',
+#   syscall: 'open',
+#   path: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product\\\\.warpos\\\\transactions\\\\active.lock'
+# }
+# Node.js v24.16.0
+# Subtest: tests\\regression\\S-OS-06\\migration.test.js
+not ok 1 - tests\\regression\\S-OS-06\\migration.test.js
+  ---
+  duration_ms: 65.6399
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 71.1112
+
+===== CONCURRENT #2: full TAP output =====
+TAP version 13
+# node:fs:1013
+#   binding.rename(
+#           ^
+# Error: EPERM: operation not permitted, rename 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product.tmp-620' -> 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product'
+#     at Object.renameSync (node:fs:1013:11)
+#     at materializeFixture (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:251:6)
+#     at Object.<anonymous> (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:257:14)
+#     at Module._compile (node:internal/modules/cjs/loader:1854:14)
+#     at Object..js (node:internal/modules/cjs/loader:1985:10)
+#     at Module.load (node:internal/modules/cjs/loader:1577:32)
+#     at Module._load (node:internal/modules/cjs/loader:1379:12)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+#     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+#     at node:internal/main/run_main_module:33:47 {
+#   errno: -4048,
+#   code: 'EPERM',
+#   syscall: 'rename',
+#   path: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product.tmp-620',
+#   dest: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product'
+# }
+# Node.js v24.16.0
+# Subtest: tests\\regression\\S-OS-06\\migration.test.js
+not ok 1 - tests\\regression\\S-OS-06\\migration.test.js
+  ---
+  duration_ms: 61.8391
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 66.1946
+
+===== CONCURRENT #3: full TAP output =====
+TAP version 13
+# node:fs:1013
+#   binding.rename(
+#           ^
+# Error: EPERM: operation not permitted, rename 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product.tmp-55964' -> 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\runtime\\S-OS-06\\fixture-product'
+#     at Object.renameSync (node:fs:1013:11)
+#     at materializeFixture (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:251:6)
+#     at Object.<anonymous> (C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:257:14)
+#     at Module._compile (node:internal/modules/cjs/loader:1854:14)
+#     at Object..js (node:internal/modules/cjs/loader:1985:10)
+#     at Module.load (node:internal/modules/cjs/loader:1577:32)
+#     at Module._load (node:internal/modules/cjs/loader:1379:12)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+#     at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+#     at node:internal/main/run_main_module:33:47 {
+#   errno: -4048,
+#   code: 'EPERM',
+#   syscall: 'rename',
+#   path: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product.tmp-55964',
+#   dest: 'C:\\\\Users\\\\Vlad\\\\Desktop\\\\Claude\\\\Projects\\\\WarpOS\\\\.claude\\\\worktrees\\\\S-OS-06-fixture-path\\\\runtime\\\\S-OS-06\\\\fixture-product'
+# }
+# Node.js v24.16.0
+# Subtest: tests\\regression\\S-OS-06\\migration.test.js
+not ok 1 - tests\\regression\\S-OS-06\\migration.test.js
+  ---
+  duration_ms: 60.5342
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\Desktop\\Claude\\Projects\\WarpOS\\.claude\\worktrees\\S-OS-06-fixture-path\\tests\\regression\\S-OS-06\\migration.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 64.9063
+
+===== CONCURRENT #4: full TAP output =====
+TAP version 13
+# [mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+# [mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+# [mc] DEPRECATION: C:\\Users\\Vlad\\.warpos\\portfolio.json is in use because C:\\Users\\Vlad\\.mc\\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\\Users\\Vlad\\.mc\\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+# Subtest: migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+ok 1 - migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+  ---
+  duration_ms: 691.689
+  type: 'test'
+  ...
+# G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+# Subtest: migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+ok 2 - migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+  ---
+  duration_ms: 282.6987
+  type: 'test'
+  ...
+# G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+# Subtest: migration (4): an interrupted skill move resumes; plan() is read-only
+ok 3 - migration (4): an interrupted skill move resumes; plan() is read-only
+  ---
+  duration_ms: 435.6621
+  type: 'test'
+  ...
+# Subtest: migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+ok 4 - migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+  ---
+  duration_ms: 149.0737
+  type: 'test'
+  ...
+# Subtest: migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+ok 5 - migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+  ---
+  duration_ms: 47.1886
+  type: 'test'
+  ...
+# CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1690.6374

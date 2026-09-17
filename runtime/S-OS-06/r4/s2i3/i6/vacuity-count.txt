@@ -1,0 +1,94 @@
+ 1 tests/mc/dispatch-readiness.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (92) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (92) vacuous false lock MATCH moved-under-parser-fix false
+ 2 tests/mc/lib/provider-autofix.unit.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (8) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (8) vacuous false lock MATCH moved-under-parser-fix false
+ 3 tests/mc/lib/provider-rca.unit.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (8) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (8) vacuous false lock MATCH moved-under-parser-fix false
+ 4 tests/mc/product-bootstrap.unit.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (8) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (8) vacuous false lock MATCH moved-under-parser-fix false
+ 5 tests/mc/provider-smoke.unit.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (8) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (8) vacuous false lock MATCH moved-under-parser-fix false
+ 6 tests/regression/S-LC-06/coverage-gate-caller.test.js
+   COMMITTED exit 1 observed EMPTY (registered sentinel: true) lock MATCH  <== EMPTY READ AS AGREEMENT
+   PREFIX    observed non-empty (2) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (2) vacuous false lock MATCH moved-under-parser-fix false
+ 7 tests/regression/S-LC-06/mode-profile.test.js
+   COMMITTED exit 1 observed EMPTY (registered sentinel: true) lock MATCH  <== EMPTY READ AS AGREEMENT
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+ 8 tests/regression/S-LC-07/spend-ledger.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (35) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (35) vacuous false lock MATCH moved-under-parser-fix false
+ 9 tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (31) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (31) vacuous false lock MATCH moved-under-parser-fix false
+10 tests/regression/S-PF-03/admin-surface.test.js
+   COMMITTED exit 1 observed EMPTY (registered sentinel: true) lock MATCH  <== EMPTY READ AS AGREEMENT
+   PREFIX    observed non-empty (9) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (9) vacuous false lock MATCH moved-under-parser-fix false
+11 tests/regression/S-PF-04/founders-checklist.test.js
+   COMMITTED exit 1 observed EMPTY (registered sentinel: true) lock MATCH  <== EMPTY READ AS AGREEMENT
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+12 tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+13 tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (15) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (15) vacuous false lock MATCH moved-under-parser-fix false
+14 tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (51) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (51) vacuous false lock MATCH moved-under-parser-fix false
+15 tests/regression/SP-20260611-001/review-fallback-shape.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (27) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (27) vacuous false lock MATCH moved-under-parser-fix false
+16 tests/regression/SP-20260611-001/sprint-id-correlation.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+17 tests/regression/SP-20260611-001/window-clamp.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+18 tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js
+   COMMITTED exit 1 observed EMPTY (registered sentinel: true) lock MATCH  <== EMPTY READ AS AGREEMENT
+   PREFIX    observed non-empty (32) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (32) vacuous false lock MATCH moved-under-parser-fix false
+19 tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js
+   COMMITTED exit 1 observed EMPTY (registered sentinel: true) lock MATCH  <== EMPTY READ AS AGREEMENT
+   PREFIX    observed non-empty (8) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (8) vacuous false lock MATCH moved-under-parser-fix false
+20 tests/regression/SP-20260611-002/wrapper-mode-binding.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+21 tests/regression/SP-20260615-001/registry-seed-resolves.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (7) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (7) vacuous false lock MATCH moved-under-parser-fix false
+22 tests/regression/SP-20260616-001/wrapper-door.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (16) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (16) vacuous false lock MATCH moved-under-parser-fix false
+23 tests/regression/SP-20260627-001/negative-fixtures.test.js
+   COMMITTED exit 1 observed non-empty (registered sentinel: false) lock MATCH
+   PREFIX    observed non-empty (2) vacuous false lock MATCH
+   FIXED     exit 1 observed non-empty (2) vacuous false lock MATCH moved-under-parser-fix false
+SUMMARY {"entries":23,"committed":{"observedEmpty":6,"registeredEmptySentinel":6,"emptyReadAsAgreement":6,"lockMatches":23},"prefix":{"observedEmpty":0,"vacuous":0,"lockMatches":23},"fixed":{"observedEmpty":0,"vacuous":0,"lockMatches":23},"movedUnderParserFix":0,"node":"v24.16.0","platform":"win32"}
+exit 0

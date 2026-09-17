@@ -1,0 +1,19 @@
+[mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+[mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+[mc] DEPRECATION: C:\Users\Vlad\.warpos\portfolio.json is in use because C:\Users\Vlad\.mc\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\Users\Vlad\.mc\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+✔ migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected (645.6428ms)
+ℹ G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+✔ migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op (299.0596ms)
+ℹ G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+✔ migration (4): an interrupted skill move resumes; plan() is read-only (429.7967ms)
+✔ migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back) (121.6131ms)
+✔ migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only) (47.6713ms)
+ℹ CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1612.1263

@@ -1,0 +1,141 @@
+TAP version 13
+# Subtest: QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+ok 1 - QUARANTINE-RUNNER (a): a quarantined test that PASSES makes the runner exit non-zero
+  ---
+  duration_ms: 468.761
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+ok 2 - QUARANTINE-RUNNER (b): a genuinely failing quarantined test is subtracted and the runner exits 0
+  ---
+  duration_ms: 504.5245
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+ok 3 - QUARANTINE-RUNNER (c): a quarantined file that is listed but MISSING makes the runner exit non-zero
+  ---
+  duration_ms: 472.7397
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+ok 4 - QUARANTINE-RUNNER (d) control: the same failing test NOT quarantined makes the runner exit non-zero
+  ---
+  duration_ms: 347.2244
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+ok 5 - QUARANTINE-RUNNER (e): a malformed quarantine artifact fails closed
+  ---
+  duration_ms: 836.5585
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+ok 6 - QUARANTINE-RUNNER (f) CAUSE-LOCK (β): a quarantined file failing with a DIFFERENT assertion than registered -> non-zero
+  ---
+  duration_ms: 482.7624
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+ok 7 - QUARANTINE-RUNNER (g) EMPTY-SUBJECT floor (β): discovery below $floor is a FAILURE, not a pass
+  ---
+  duration_ms: 234.1915
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+ok 8 - QUARANTINE-RUNNER (h) per-entry version EXPIRY (β): a quarantine past its tree-version expiry -> non-zero
+  ---
+  duration_ms: 464.7562
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+not ok 9 - QUARANTINE-RUNNER (i) INDETERMINATE (β row 490): an EMPTY observed cause capture REFUSES, it never passes
+  ---
+  duration_ms: 455.5012
+  type: 'test'
+  location: 'C:\\Users\\Vlad\\AppData\\Local\\Temp\\i6m\\M_indet\\tests\\regression\\S-OS-06\\falsify-quarantine-runner.test.js:233:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base dc5041db8b711a564fda63ed1c242e49ba7dc1fe
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.3453
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 45.8503
+    run-tests: QUARANTINE VIOLATION — CAUSE-LOCK: tests/q/silent.test.js fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure
+          (none)
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base
+    
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    run-tests: discovered 2 test file(s) (floor 1); reporter pinned to tap; register base dc5041db8b711a564fda63ed1c242e49ba7dc1fe
+    run-tests: primary batch 1/1 — node --test --test-reporter=tap 1 file(s)
+    TAP version 13
+    # Subtest: dummy passes
+    ok 1 - dummy passes
+      ---
+      duration_ms: 0.3453
+      type: 'test'
+      ...
+    1..1
+    # tests 1
+    # suites 0
+    # pass 1
+    # fail 0
+    # cancelled 0
+    # skipped 0
+    # todo 0
+    # duration_ms 45.8503
+    run-tests: QUARANTINE VIOLATION — CAUSE-LOCK: tests/q/silent.test.js fails, but the observed cause lines are vacuous (empty, or derivable from the file path and test names) — nothing distinguishes this failure
+          (none)
+    run-tests: FAIL — primary: 1 file(s) in 1 batch(es), exit 0 (tests 1, pass 1, fail 0, cancelled 0, skipped 0, todo 0) · quarantine: 1 entry, 0 still failing, 0 unexpectedly passed, 0 missing/undiscovered, 0 unobserved, 0 not verified at base
+    
+    
+  operator: 'match'
+  stack: |-
+    C:\Users\Vlad\AppData\Local\Temp\i6m\M_indet\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:238:12
+    withRepo (C:\Users\Vlad\AppData\Local\Temp\i6m\M_indet\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:118:12)
+    TestContext.<anonymous> (C:\Users\Vlad\AppData\Local\Temp\i6m\M_indet\tests\regression\S-OS-06\falsify-quarantine-runner.test.js:235:3)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1306:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+    Test.postRun (node:internal/test_runner/test:1447:19)
+    Test.run (node:internal/test_runner/test:1372:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
+  ...
+# Subtest: QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+ok 10 - QUARANTINE-RUNNER (j) VACUITY (β row 473 §3): a non-empty observed capture derivable from the test names REFUSES, even when it equals the register
+  ---
+  duration_ms: 425.3985
+  type: 'test'
+  ...
+# Subtest: QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+ok 11 - QUARANTINE-RUNNER: the real tests/quarantine.json is never touched
+  ---
+  duration_ms: 0.4087
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4746.9727
+exit 1

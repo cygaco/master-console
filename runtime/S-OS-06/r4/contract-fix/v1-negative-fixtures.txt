@@ -1,0 +1,17 @@
+SP-20260627-001-negative-fixtures fixture-test: 8/9 passed, 1 FAILED
+  - AC-2.4 forbidden_shape: cross-provider reviewer (qa-reviewer) via in-process-agent is REFUSED (kills diversity): expected the enforcer to FAIL the planted violation, but it PASSED ({"ok":true,"violations":[],"contract":{"role":"qa-reviewer","class":"claude_pinned_reviewer","allowed_shapes":["in-process-agent"],"forbidden_shapes":["api"],"tool_id":"agent-tool","cwd_policy":"canonical","file_scope":"read-only","env_allo) — FALSE-GREEN
+✖ tests\regression\SP-20260627-001\negative-fixtures.test.js (86.1692ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 90.5958
+
+✖ failing tests:
+
+test at tests\regression\SP-20260627-001\negative-fixtures.test.js:1:1
+✖ tests\regression\SP-20260627-001\negative-fixtures.test.js (86.1692ms)
+  'test failed'

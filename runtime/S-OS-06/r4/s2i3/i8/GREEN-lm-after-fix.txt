@@ -1,0 +1,6 @@
+# GREEN: same cases after the fix (refuse, never skip). exit=0
+✔ QUARANTINE-RUNNER (l) COUNT-LOCK REFUSES (β a94f0d26): an unobservable failing-test count never renders as agreement (1.2051ms)
+✔ QUARANTINE-RUNNER (m) NO LOCK (β b2c94e18, the CONJUNCTION): an entry whose EVERY layer is unobservable refuses loudly as having no lock at all (0.1235ms)
+ℹ tests 2
+ℹ pass 2
+ℹ fail 0
