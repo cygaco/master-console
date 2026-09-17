@@ -312,7 +312,20 @@ test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09, a5c3e761): an EMPTY child
     assert.match(String(v.refused), /^OBSERVED FLOOR REFUSED: no floor is declared for platform/, `an undeclared platform "${p}" must REFUSE`);
   }
   const verdict = RUNNER_DECL.observedFloorFor(process.platform);
-  assert.ok(verdict.floor, `${verdict.refused} (running on ${process.platform}/node${process.versions.node})`);
+  if (!verdict.floor) {
+    // REFUSE, but leave the measurement behind: the refusal text carries what an EMPTY-env child actually received on
+    // this platform, so the floor can be DECLARED from an observation (never guessed). It is evidence, not a declaration.
+    const probe = spawnSync(process.execPath, ["-e", "process.stdout.write(JSON.stringify(Object.keys(process.env)))"], { env: {}, encoding: "utf8", windowsHide: true });
+    let seen = `probe did not run (status ${probe.status}, ${probe.error && probe.error.message})`;
+    if (probe.status === 0) {
+      try {
+        seen = JSON.stringify(JSON.parse(probe.stdout).sort());
+      } catch (e) {
+        seen = `probe output unparseable: ${JSON.stringify(String(probe.stdout).slice(0, 200))}`;
+      }
+    }
+    assert.fail(`${verdict.refused} (running on ${process.platform}/node${process.versions.node}, libuv ${process.versions.uv}). UNDECLARED MEASUREMENT for the record: an EMPTY-env child received ${seen}.`);
+  }
   const declared = verdict.floor;
   const floor = declared.names.map((n) => n.toUpperCase());
   assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION[0].includes(`${declared.platform} (node ${declared.nodeMajor}): a child spawned with an EMPTY environment`), "the floor for this platform is not declared in the normalizer's element E");
