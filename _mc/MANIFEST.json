@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T20:06:41.050Z",
+  "generatedAt": "2026-09-17T00:10:11.927Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -114,8 +114,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "0fca8da31a82ae91f5d97b9f6c03f9a82a10d3c97e20fb0f78c6b19ef5f817fe",
-      "installedSha": "0fca8da31a82ae91f5d97b9f6c03f9a82a10d3c97e20fb0f78c6b19ef5f817fe"
+      "sha256": "1a04674d8298ac929be7d326a6aae8d53564d3e77de6415a1a9b201d61227b1d",
+      "installedSha": "1a04674d8298ac929be7d326a6aae8d53564d3e77de6415a1a9b201d61227b1d"
     },
     "PROJECT.md": {
       "owner": "framework",
@@ -150,8 +150,8 @@
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "770d5de0a73b4aa2899b9d97e867c83d729e4178d0d826833c4f31b28eeda6e7",
-      "installedSha": "770d5de0a73b4aa2899b9d97e867c83d729e4178d0d826833c4f31b28eeda6e7"
+      "sha256": "c84e385a12c77c6571cf52ce4f6f4e6139348362e8278867d677fb12d81543f6",
+      "installedSha": "c84e385a12c77c6571cf52ce4f6f4e6139348362e8278867d677fb12d81543f6"
     },
     "SECURITY.md": {
       "owner": "project",
@@ -4810,6 +4810,13 @@
       "owner": "runtime",
       "managed": false
     },
+    "tests/quarantine.json": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "937dbc105709faa3934a8aee5015197cef13aa62e6416adfcd2a43bde805ca7c",
+      "installedSha": "937dbc105709faa3934a8aee5015197cef13aa62e6416adfcd2a43bde805ca7c"
+    },
     "tests/regression/SP-20260627-001/enforce-correctness.test.js": {
       "owner": "framework",
       "managed": true,
@@ -4821,8 +4828,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "4e7d6e88d103844bb94fd0331cf680e4e6825c25c8d1472c8e15c507b221bd6b",
-      "installedSha": "4e7d6e88d103844bb94fd0331cf680e4e6825c25c8d1472c8e15c507b221bd6b"
+      "sha256": "e51278f0cf3cecf69330c6e7e84654d6000a7ebdfc34f8109db4537ef07851fe",
+      "installedSha": "e51278f0cf3cecf69330c6e7e84654d6000a7ebdfc34f8109db4537ef07851fe"
     },
     "tests/regression/SP-20260627-001/w3-lane-policy.test.js": {
       "owner": "framework",
@@ -5087,8 +5094,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "b92030334f2e691d455fe2c8183d8791c3146907be0f894be40f88dd3dc7d5da",
-      "installedSha": "b92030334f2e691d455fe2c8183d8791c3146907be0f894be40f88dd3dc7d5da"
+      "sha256": "703c9b9ae42548f27f7f19cd315417e4c92305f0d2b30fbadc21e8ad057ef07b",
+      "installedSha": "703c9b9ae42548f27f7f19cd315417e4c92305f0d2b30fbadc21e8ad057ef07b"
     },
     "tests/regression/SP-20260615-001/roadmap-board-readonly.test.js": {
       "owner": "framework",
@@ -5101,8 +5108,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "440ba07c4c2bad4980e3200c276f38df7112ac8633911b27a100ee9ecc1a3748",
-      "installedSha": "440ba07c4c2bad4980e3200c276f38df7112ac8633911b27a100ee9ecc1a3748"
+      "sha256": "b4625804929e3116f5ff4734727e3f12c285c09fde58489aa75149b1fcfe5d0a",
+      "installedSha": "b4625804929e3116f5ff4734727e3f12c285c09fde58489aa75149b1fcfe5d0a"
     },
     "tests/regression/SP-20260615-001/roadmap-opener-delegates.test.js": {
       "owner": "framework",
@@ -5570,15 +5577,22 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "798a57f2688d0eebc6fe564efedb4ce69d0782c17da409c5e397a4183c6af583",
-      "installedSha": "798a57f2688d0eebc6fe564efedb4ce69d0782c17da409c5e397a4183c6af583"
+      "sha256": "585093354fff532d0e41e2e560d3ac1bab67b665b8fb60e0105ba40010975ada",
+      "installedSha": "585093354fff532d0e41e2e560d3ac1bab67b665b8fb60e0105ba40010975ada"
+    },
+    "tests/regression/S-OS-06/beta-ledger-refs.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "e419cbc543442daa32ff9e6be834c81d026d529fbcaaf382175af66f19c54eca",
+      "installedSha": "e419cbc543442daa32ff9e6be834c81d026d529fbcaaf382175af66f19c54eca"
     },
     "tests/regression/S-OS-06/codemod.test.js": {
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "6baeeefa391180084b3c83730a6d526bf17f59f73cf022f942aa0f84b0635295",
-      "installedSha": "6baeeefa391180084b3c83730a6d526bf17f59f73cf022f942aa0f84b0635295"
+      "sha256": "1357068f9e24f849362c2e5199819865e8033276a4ff3fa7165ca7bb3315f729",
+      "installedSha": "1357068f9e24f849362c2e5199819865e8033276a4ff3fa7165ca7bb3315f729"
     },
     "tests/regression/S-OS-06/denylist.test.js": {
       "owner": "framework",
@@ -5608,12 +5622,19 @@
       "sha256": "de242c595c4c3febf732989da7a40af474f2f2c03ba13958b8705bad3309552d",
       "installedSha": "de242c595c4c3febf732989da7a40af474f2f2c03ba13958b8705bad3309552d"
     },
+    "tests/regression/S-OS-06/falsify-changelog-historical-unregistered.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "1c77b7253ed1106d09ab35ff0da55af16570204ada511426feb155650ce9ea95",
+      "installedSha": "1c77b7253ed1106d09ab35ff0da55af16570204ada511426feb155650ce9ea95"
+    },
     "tests/regression/S-OS-06/falsify-codemod-rewrites-class3-literal.test.js": {
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "169185d55dbbc28fe5743269283fc95c6058bd80e412eecee2c4c20392a824b8",
-      "installedSha": "169185d55dbbc28fe5743269283fc95c6058bd80e412eecee2c4c20392a824b8"
+      "sha256": "2e5d518b24b7ae7a0fc80854168fa49202d968f29486ba4383e53d367d2b0916",
+      "installedSha": "2e5d518b24b7ae7a0fc80854168fa49202d968f29486ba4383e53d367d2b0916"
     },
     "tests/regression/S-OS-06/falsify-codemod-touches-generated-view.test.js": {
       "owner": "framework",
@@ -5629,12 +5650,33 @@
       "sha256": "065b7756aed9980416f09cff3f757189ef214252e833436e0a760e332d6ac34f",
       "installedSha": "065b7756aed9980416f09cff3f757189ef214252e833436e0a760e332d6ac34f"
     },
+    "tests/regression/S-OS-06/falsify-computed-tag-glob.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "7206345030ef0fa12112214a7426f2fbf4c62cf7fe83ecbb02e636a2844b20b9",
+      "installedSha": "7206345030ef0fa12112214a7426f2fbf4c62cf7fe83ecbb02e636a2844b20b9"
+    },
     "tests/regression/S-OS-06/falsify-doc-ref-legacy-rename.test.js": {
       "owner": "framework",
       "managed": true,
       "source": null,
       "sha256": "1896d043089d6eff81405a1ad3325fd8b3dafff1bde4f831ced4cbb62a3efd00",
       "installedSha": "1896d043089d6eff81405a1ad3325fd8b3dafff1bde4f831ced4cbb62a3efd00"
+    },
+    "tests/regression/S-OS-06/falsify-freeze-merge-commit.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "d24ea0604c2a555f104936acea1405cfcf12df68bb8b7c24468e70f03dbcb5a8",
+      "installedSha": "d24ea0604c2a555f104936acea1405cfcf12df68bb8b7c24468e70f03dbcb5a8"
+    },
+    "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "895fc1eea9496c4bcf03f772e168e5cf00a3863adaaef541d49b9a382ffe56eb",
+      "installedSha": "895fc1eea9496c4bcf03f772e168e5cf00a3863adaaef541d49b9a382ffe56eb"
     },
     "tests/regression/S-OS-06/falsify-live-warpos-off-allowlist.test.js": {
       "owner": "framework",
@@ -5643,12 +5685,33 @@
       "sha256": "88bc8a561c312b5fa5d37553e0034fa24b068ee20a8c7fabf3d7ed5c64151322",
       "installedSha": "88bc8a561c312b5fa5d37553e0034fa24b068ee20a8c7fabf3d7ed5c64151322"
     },
+    "tests/regression/S-OS-06/falsify-occurrence-scoped-disposition.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "5556b691328bcb865710e386d153e262323667ee66558ab54d869bef8b94d90d",
+      "installedSha": "5556b691328bcb865710e386d153e262323667ee66558ab54d869bef8b94d90d"
+    },
     "tests/regression/S-OS-06/falsify-postfreeze-silent-addition.test.js": {
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "4de5c033011c2e49b6dd0e43eeda9f34219a536c1b2d7c73ad5c9265803ba371",
-      "installedSha": "4de5c033011c2e49b6dd0e43eeda9f34219a536c1b2d7c73ad5c9265803ba371"
+      "sha256": "734c4a5f0dab4c89a32dedb084af17b4caf0d489c76b4c738182493ded7f4339",
+      "installedSha": "734c4a5f0dab4c89a32dedb084af17b4caf0d489c76b4c738182493ded7f4339"
+    },
+    "tests/regression/S-OS-06/falsify-quarantine-runner.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "852298acdd5e1a1318e0b5e5285a06ef2e7313edbd02761f33996db204d83259",
+      "installedSha": "852298acdd5e1a1318e0b5e5285a06ef2e7313edbd02761f33996db204d83259"
+    },
+    "tests/regression/S-OS-06/falsify-raw-env-case-insensitive.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "b79792b219b5a67c77fbf40d47e69e24414760e05233bd524695d121778da074",
+      "installedSha": "b79792b219b5a67c77fbf40d47e69e24414760e05233bd524695d121778da074"
     },
     "tests/regression/S-OS-06/falsify-refused-rename.test.js": {
       "owner": "framework",
@@ -5692,6 +5755,13 @@
       "sha256": "93f47f5cebd983ab139f850750db4fa06ca2707189d3d58f8d8879d2ba67a3b4",
       "installedSha": "93f47f5cebd983ab139f850750db4fa06ca2707189d3d58f8d8879d2ba67a3b4"
     },
+    "tests/regression/S-OS-06/history-proof-message-surface.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "3a1a448aaad2fdd4c244b4d7b8633795bd45a7c6139d539c0811f65e3695c014",
+      "installedSha": "3a1a448aaad2fdd4c244b4d7b8633795bd45a7c6139d539c0811f65e3695c014"
+    },
     "tests/regression/S-OS-06/home-read-both.test.js": {
       "owner": "framework",
       "managed": true,
@@ -5710,15 +5780,15 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "f63fca515ef61cb047109b47ef539671b30d79ca7c15436698f448726c18242c",
-      "installedSha": "f63fca515ef61cb047109b47ef539671b30d79ca7c15436698f448726c18242c"
+      "sha256": "33e7ad49fe431f10ad467abe04566985ac95752e8221208bb2c4970ebbffc546",
+      "installedSha": "33e7ad49fe431f10ad467abe04566985ac95752e8221208bb2c4970ebbffc546"
     },
     "tests/regression/S-OS-06/occurrence-ledger.test.js": {
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "c1b691c105e0a342f77f851cde5f915131af2e848f8645c70d66a0745b13441d",
-      "installedSha": "c1b691c105e0a342f77f851cde5f915131af2e848f8645c70d66a0745b13441d"
+      "sha256": "e97bf2ee3b84ca1831048e7414f030dd1b77607be9209f461d7ece1a177a16c3",
+      "installedSha": "e97bf2ee3b84ca1831048e7414f030dd1b77607be9209f461d7ece1a177a16c3"
     },
     "tests/regression/S-OS-06/partition-single-loader.test.js": {
       "owner": "framework",
@@ -5745,8 +5815,15 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "8f164ed0e15ab843dba3a6db5c700efea4bb137cdade1fa87b514e17b2b1c06b",
-      "installedSha": "8f164ed0e15ab843dba3a6db5c700efea4bb137cdade1fa87b514e17b2b1c06b"
+      "sha256": "3f15710e2548da5a7fe06665e51813cd59563f7c3d1e8f0c388b7d3887fe1ded",
+      "installedSha": "3f15710e2548da5a7fe06665e51813cd59563f7c3d1e8f0c388b7d3887fe1ded"
+    },
+    "tests/regression/S-OS-06/record-trust-exit-runs.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "8d8073d0b1a328a136decec950e35d381e9c363a55bad41b5d69a2db23528c4b",
+      "installedSha": "8d8073d0b1a328a136decec950e35d381e9c363a55bad41b5d69a2db23528c4b"
     },
     "tests/regression/S-OS-06/record-trust-exit.test.js": {
       "owner": "framework",
@@ -5759,8 +5836,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "f3b907d4c7984a4bff0da3d7750cbb3c60cea10a2a6c8a40cbb3b0fe2c74c5a8",
-      "installedSha": "f3b907d4c7984a4bff0da3d7750cbb3c60cea10a2a6c8a40cbb3b0fe2c74c5a8"
+      "sha256": "f6d4c665e623b78e61a3cfd7b19a22d91a79f9d9ee37e3e3546cfe205f57b061",
+      "installedSha": "f6d4c665e623b78e61a3cfd7b19a22d91a79f9d9ee37e3e3546cfe205f57b061"
     },
     "tests/regression/S-OS-06/split-brain.test.js": {
       "owner": "framework",
@@ -8216,22 +8293,29 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/assert-evidence.js",
-      "sha256": "433e31b3d566d00e7fabaf74b71d26cfca4681cab56153824f2ee381e283bdce",
-      "installedSha": "433e31b3d566d00e7fabaf74b71d26cfca4681cab56153824f2ee381e283bdce"
+      "sha256": "3a5fc782da268cdc1d76e7b21198d40a5bb5c19ec3eb0a41d116284e97c49544",
+      "installedSha": "3a5fc782da268cdc1d76e7b21198d40a5bb5c19ec3eb0a41d116284e97c49544"
+    },
+    "scripts/open-source/history-surface.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/open-source/history-surface.js",
+      "sha256": "27057ef049b0e1b809b918c1694bd2f52065dae371ce94e3640c1da31d9e3d10",
+      "installedSha": "27057ef049b0e1b809b918c1694bd2f52065dae371ce94e3640c1da31d9e3d10"
     },
     "scripts/open-source/mc-alias-map.json": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/mc-alias-map.json",
-      "sha256": "d8bde9fc3709318065bead7588306e7f6e5a6598284474d869ed441c1a1c964d",
-      "installedSha": "d8bde9fc3709318065bead7588306e7f6e5a6598284474d869ed441c1a1c964d"
+      "sha256": "768e58d4a4d7c4c8294e46cb05f600aa58919ad5b9e8118ef8689db36d7d31b0",
+      "installedSha": "768e58d4a4d7c4c8294e46cb05f600aa58919ad5b9e8118ef8689db36d7d31b0"
     },
     "scripts/open-source/partition-loader.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/partition-loader.js",
-      "sha256": "5cb922edda245686f23f94dfc25481570423d4ea4d622cc4a263583d38ddd26a",
-      "installedSha": "5cb922edda245686f23f94dfc25481570423d4ea4d622cc4a263583d38ddd26a"
+      "sha256": "8a13da2ba8a61df7d03fa0dd954b5c25d279b842241d2c7ea3aff2579aca2c7a",
+      "installedSha": "8a13da2ba8a61df7d03fa0dd954b5c25d279b842241d2c7ea3aff2579aca2c7a"
     },
     "scripts/open-source/portfolio-coverage.js": {
       "owner": "framework",
@@ -8251,22 +8335,22 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.denylist.json",
-      "sha256": "41d782fda7f9d8fee802d101fe05bf03300e0b9ebb5f42027cab05c5c15e2dfa",
-      "installedSha": "41d782fda7f9d8fee802d101fe05bf03300e0b9ebb5f42027cab05c5c15e2dfa"
+      "sha256": "2ba54cac7ea85d03f331013b7ce30fb639298f7603b83eb65f3b34bb85c555b7",
+      "installedSha": "2ba54cac7ea85d03f331013b7ce30fb639298f7603b83eb65f3b34bb85c555b7"
     },
     "scripts/open-source/rename-mc.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.js",
-      "sha256": "b17ccda0e20df54cd9d2a8bd0dab22894977fa6f4250e6a31cbeb447fb938cf0",
-      "installedSha": "b17ccda0e20df54cd9d2a8bd0dab22894977fa6f4250e6a31cbeb447fb938cf0"
+      "sha256": "83a4dda5a7a7456b512071df976d2ecbbd59f3f7957979b7e62a6fcdfe268a81",
+      "installedSha": "83a4dda5a7a7456b512071df976d2ecbbd59f3f7957979b7e62a6fcdfe268a81"
     },
     "scripts/open-source/rename-mc.occurrences.json": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.occurrences.json",
-      "sha256": "6c3560e3aa3a302784bd06fe83efeca3e3708207e5160177e8e294c644bcd804",
-      "installedSha": "6c3560e3aa3a302784bd06fe83efeca3e3708207e5160177e8e294c644bcd804"
+      "sha256": "c89b3525ec1f0ddc7e90c67bc38111fc0788ebde677532e234d1a4852f3a9aeb",
+      "installedSha": "c89b3525ec1f0ddc7e90c67bc38111fc0788ebde677532e234d1a4852f3a9aeb"
     },
     "scripts/open-source/split-brain.js": {
       "owner": "framework",
@@ -11376,6 +11460,20 @@
       "sha256": "23e923b2b37f81f73ec07223333a4a8992b6e6495eeb7088eed001b5e6074849",
       "installedSha": "23e923b2b37f81f73ec07223333a4a8992b6e6495eeb7088eed001b5e6074849"
     },
+    "scripts/checks/beta-ledger-refs.baseline.json": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/beta-ledger-refs.baseline.json",
+      "sha256": "d46c9fcadd52712b3b598d0ae2c84a8ecdd22dd7e17612808e3f2b4658f0fd1b",
+      "installedSha": "d46c9fcadd52712b3b598d0ae2c84a8ecdd22dd7e17612808e3f2b4658f0fd1b"
+    },
+    "scripts/checks/beta-ledger-refs.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/beta-ledger-refs.js",
+      "sha256": "042fdd46bd5ce4e41cd38f664113d4a01aa02cce37dd5cd0b037aa22edb82d98",
+      "installedSha": "042fdd46bd5ce4e41cd38f664113d4a01aa02cce37dd5cd0b037aa22edb82d98"
+    },
     "scripts/checks/beta-verdict-citation-receipt.js": {
       "owner": "framework",
       "managed": true,
@@ -11800,8 +11898,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/framework-purity.js",
-      "sha256": "e93bc6189d7014ce8c88cff0a825ce0ece294d82e1a1eac77cdcfb9ea932e6eb",
-      "installedSha": "e93bc6189d7014ce8c88cff0a825ce0ece294d82e1a1eac77cdcfb9ea932e6eb"
+      "sha256": "9f2d344ffc4e1a9f02ef7b7f44af1587e374e339d48548e3be09a4e0d916bf70",
+      "installedSha": "9f2d344ffc4e1a9f02ef7b7f44af1587e374e339d48548e3be09a4e0d916bf70"
     },
     "scripts/checks/framework-purity.test.js": {
       "owner": "framework",
@@ -12458,8 +12556,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/reasoned-consult-honesty.js",
-      "sha256": "7f5826a62e8b07b14c0fcaaf21bf0cdfc5d278dd41f77a1596dc58cf74db77b6",
-      "installedSha": "7f5826a62e8b07b14c0fcaaf21bf0cdfc5d278dd41f77a1596dc58cf74db77b6"
+      "sha256": "83c54b1dfc082ea5d32f469b96446ebe9fec898df1b2a130b30fb46b0f2c0ec5",
+      "installedSha": "83c54b1dfc082ea5d32f469b96446ebe9fec898df1b2a130b30fb46b0f2c0ec5"
     },
     "scripts/checks/reasoned-consult-honesty.test.js": {
       "owner": "framework",
@@ -12523,6 +12621,13 @@
       "source": "scripts/checks/role-parity.test.js",
       "sha256": "269317ec049425476cc46f330e25513b1602017dc41938797878d1ef7da318ff",
       "installedSha": "269317ec049425476cc46f330e25513b1602017dc41938797878d1ef7da318ff"
+    },
+    "scripts/checks/run-tests.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": "scripts/checks/run-tests.js",
+      "sha256": "a0cf43328113e56df39635255580f8017b6d65b4aabf075fd2c4b96e51057998",
+      "installedSha": "a0cf43328113e56df39635255580f8017b6d65b4aabf075fd2c4b96e51057998"
     },
     "scripts/checks/scaffold-coverage-scan.js": {
       "owner": "framework",
@@ -12762,117 +12867,12 @@
       "sha256": "3a1e6721cc01e489e9de161c544a104ac083522c751272ce13697d825e8cddd8",
       "installedSha": "3a1e6721cc01e489e9de161c544a104ac083522c751272ce13697d825e8cddd8"
     },
-    "scripts/checks/warpos-applied-migrations.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-applied-migrations.js",
-      "sha256": "d85b7c75849f01eca1591f0eb5c823098e9573a20e0c27b1524b169121d07ef7",
-      "installedSha": "d85b7c75849f01eca1591f0eb5c823098e9573a20e0c27b1524b169121d07ef7"
-    },
-    "scripts/checks/warpos-capsule-resolvable.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-capsule-resolvable.js",
-      "sha256": "2f3e18c9bfa9a89e86038903efeac7370647af1fb44e46dad0f5d74b5055b9fa",
-      "installedSha": "2f3e18c9bfa9a89e86038903efeac7370647af1fb44e46dad0f5d74b5055b9fa"
-    },
-    "scripts/checks/warpos-enforcer-shippability.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-enforcer-shippability.js",
-      "sha256": "812de73f792fac690b620d57c3c79f06d8649ccad7afdf2a464a077a1fe08829",
-      "installedSha": "812de73f792fac690b620d57c3c79f06d8649ccad7afdf2a464a077a1fe08829"
-    },
-    "scripts/checks/warpos-install-baseline.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-install-baseline.js",
-      "sha256": "453a6dc315a4224f06af4beb80bb3e236792c5808a730d3e94d8c91a948d1bdc",
-      "installedSha": "453a6dc315a4224f06af4beb80bb3e236792c5808a730d3e94d8c91a948d1bdc"
-    },
-    "scripts/checks/warpos-layer-diff.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-layer-diff.js",
-      "sha256": "6182e9a946d22cee9eeb6a63184e5dd80e0096e73b3385b6964ce106a7bf33ee",
-      "installedSha": "6182e9a946d22cee9eeb6a63184e5dd80e0096e73b3385b6964ce106a7bf33ee"
-    },
-    "scripts/checks/warpos-manifest-honesty.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-manifest-honesty.js",
-      "sha256": "669fec07269f5ad88c7bc69aba2984720b37e28bbdedfc48fddfa81e3b2de830",
-      "installedSha": "669fec07269f5ad88c7bc69aba2984720b37e28bbdedfc48fddfa81e3b2de830"
-    },
-    "scripts/checks/warpos-migration-coverage.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-migration-coverage.js",
-      "sha256": "7cc6262382df61e94f5ef2435f7630a1924ce71871d93d23614dafdf8ffa9405",
-      "installedSha": "7cc6262382df61e94f5ef2435f7630a1924ce71871d93d23614dafdf8ffa9405"
-    },
-    "scripts/checks/warpos-migration-presence.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-migration-presence.js",
-      "sha256": "cac218752275532211e1a76eb3e739d6d76c2f620cb18e70245ca9e0cc7f8567",
-      "installedSha": "cac218752275532211e1a76eb3e739d6d76c2f620cb18e70245ca9e0cc7f8567"
-    },
-    "scripts/checks/warpos-path-resolution.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-path-resolution.js",
-      "sha256": "3db86f26f4c0ab6c56c402362fe74d54eb69c53305b2a49e5658ddcf692b6a3d",
-      "installedSha": "3db86f26f4c0ab6c56c402362fe74d54eb69c53305b2a49e5658ddcf692b6a3d"
-    },
-    "scripts/checks/warpos-promote-coverage.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-promote-coverage.js",
-      "sha256": "1f130a2233092d583841b349ea9ce0fa073c8974fba991a7f3a91849dec64391",
-      "installedSha": "1f130a2233092d583841b349ea9ce0fa073c8974fba991a7f3a91849dec64391"
-    },
-    "scripts/checks/warpos-roundtrip.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-roundtrip.js",
-      "sha256": "f0159bc47f45e3c64ae2b1dc6ee3f42e651a7e2ca6620f2da98b8f22cc9b0c3a",
-      "installedSha": "f0159bc47f45e3c64ae2b1dc6ee3f42e651a7e2ca6620f2da98b8f22cc9b0c3a"
-    },
-    "scripts/checks/warpos-ship-coverage.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-ship-coverage.js",
-      "sha256": "9e08074354f26e36fc8fb0a5d69be804f32bfdc42eecaea2714ba1c8c2f18af0",
-      "installedSha": "9e08074354f26e36fc8fb0a5d69be804f32bfdc42eecaea2714ba1c8c2f18af0"
-    },
-    "scripts/checks/warpos-staleness.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-staleness.js",
-      "sha256": "7c630a9d14aea3a11b778f092bcf817853135300a587790d60b01c381138724d",
-      "installedSha": "7c630a9d14aea3a11b778f092bcf817853135300a587790d60b01c381138724d"
-    },
-    "scripts/checks/warpos-structure-parity.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-structure-parity.js",
-      "sha256": "bf8e47215743f11084a80c564a6dfe162622e13fa2bbafe58529cf948cf93c68",
-      "installedSha": "bf8e47215743f11084a80c564a6dfe162622e13fa2bbafe58529cf948cf93c68"
-    },
     "scripts/checks/warpos-tracked-transients.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/warpos-tracked-transients.js",
       "sha256": "de2dc3ba42c4348e92a39f4c946405b89522005e645a268c136dbae69eed9c7d",
       "installedSha": "de2dc3ba42c4348e92a39f4c946405b89522005e645a268c136dbae69eed9c7d"
-    },
-    "scripts/checks/warpos-version-quorum.js": {
-      "owner": "framework",
-      "managed": true,
-      "source": "scripts/checks/warpos-version-quorum.js",
-      "sha256": "e06963cabc7b831a3c38036532aa4ee11dd515ac00f39b726aa51b492cf7d8d5",
-      "installedSha": "e06963cabc7b831a3c38036532aa4ee11dd515ac00f39b726aa51b492cf7d8d5"
     },
     "scripts/checks/lib/fixture-harness.js": {
       "owner": "framework",
@@ -12934,15 +12934,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "daeed519e310933e1c39c749620a1a95df54b41106108c8501383284b95c02eb",
-      "installedSha": "daeed519e310933e1c39c749620a1a95df54b41106108c8501383284b95c02eb"
+      "sha256": "cdff5bbb246d81f26591c0a420ee749abee456fc564d1388c2459b6966ceb9e3",
+      "installedSha": "cdff5bbb246d81f26591c0a420ee749abee456fc564d1388c2459b6966ceb9e3"
     },
     "scripts/check/privacy.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.test.js",
-      "sha256": "7d0b3a24fecd5870b1a63da78d8e1c46292688f567c7b9cfe270f35c03ecffa4",
-      "installedSha": "7d0b3a24fecd5870b1a63da78d8e1c46292688f567c7b9cfe270f35c03ecffa4"
+      "sha256": "7421c133de26ffba98a9c1cd7a05692be45b92a365a8563c5ed04e12b54347bf",
+      "installedSha": "7421c133de26ffba98a9c1cd7a05692be45b92a365a8563c5ed04e12b54347bf"
     },
     "scripts/check/roadmap-trace.js": {
       "owner": "framework",
@@ -13606,8 +13606,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "69612a78e3164f8e980d304dd6d91c562f313358efd59869e3c3ce25f00ab0e2",
-      "installedSha": "69612a78e3164f8e980d304dd6d91c562f313358efd59869e3c3ce25f00ab0e2"
+      "sha256": "7ca693a131ee7b7c96f68c8dab2178f60e683fdfd04efb882b1c6e1c88f210e7",
+      "installedSha": "7ca693a131ee7b7c96f68c8dab2178f60e683fdfd04efb882b1c6e1c88f210e7"
     },
     "framework/admin-panel-registry.json": {
       "owner": "framework",
@@ -15216,10 +15216,6 @@
       "source": null,
       "sha256": "c193b1d18c82762a436167cd35370a3f905176b748f49943423d4bc51c08607a",
       "installedSha": "c193b1d18c82762a436167cd35370a3f905176b748f49943423d4bc51c08607a"
-    },
-    ".claude/.last-checkpoint": {
-      "owner": "runtime",
-      "managed": false
     },
     ".claude/framework-installed.json": {
       "owner": "generated",
@@ -20554,6 +20550,10 @@
       "owner": "runtime",
       "managed": false
     },
+    ".claude/project/sprint/plan-contracts/PC-20260913-0090.report.md": {
+      "owner": "runtime",
+      "managed": false
+    },
     ".claude/project/sprint/plan-contracts/PC-20260913-0090.yaml": {
       "owner": "runtime",
       "managed": false
@@ -21370,10 +21370,6 @@
       "owner": "runtime",
       "managed": false
     },
-    ".claude/project/events/tools.jsonl": {
-      "owner": "runtime",
-      "managed": false
-    },
     ".claude/project/etc/eval-packs/.gitkeep": {
       "owner": "runtime",
       "managed": false
@@ -21789,6 +21785,12 @@
       "_note": "Operator's dream journal — written by /sleep:* skills + manual edits. Project-owned; never overwritten."
     },
     ".claude/dreams/2026-09-12.md": {
+      "owner": "project",
+      "managed": false,
+      "class": "guide",
+      "_note": "Operator's dream journal — written by /sleep:* skills + manual edits. Project-owned; never overwritten."
+    },
+    ".claude/dreams/2026-09-13.md": {
       "owner": "project",
       "managed": false,
       "class": "guide",
@@ -22275,8 +22277,8 @@
       "managed": true,
       "source": ".claude/commands/scan/full.md",
       "kind": "md",
-      "sha256": "e3f4779fa4d949fb9aa303618f3c601b2c25bd06127b193f55087c550694037f",
-      "installedSha": "e3f4779fa4d949fb9aa303618f3c601b2c25bd06127b193f55087c550694037f"
+      "sha256": "75b17e9d8dfb36a74b8a7c0b30d6211594ca919d8c1248f682cc56bb7c27c8ca",
+      "installedSha": "75b17e9d8dfb36a74b8a7c0b30d6211594ca919d8c1248f682cc56bb7c27c8ca"
     },
     ".claude/commands/scan/greek-office-parity.md": {
       "owner": "framework",
@@ -23211,8 +23213,8 @@
       "managed": true,
       "source": ".claude/commands/mc/sync.md",
       "kind": "md",
-      "sha256": "875c45fde0653d2cae273b2e161ff8c45e68495eb9cfc653f8c9db361ee76ec5",
-      "installedSha": "875c45fde0653d2cae273b2e161ff8c45e68495eb9cfc653f8c9db361ee76ec5"
+      "sha256": "00eff21c82d5a3dc9cc1230233703765227feafc5947033db72d422c3684f1b3",
+      "installedSha": "00eff21c82d5a3dc9cc1230233703765227feafc5947033db72d422c3684f1b3"
     },
     ".claude/commands/mc/tour.md": {
       "owner": "framework",
@@ -23779,8 +23781,8 @@
       "managed": true,
       "source": ".claude/commands/commit/both.md",
       "kind": "md",
-      "sha256": "3619b6dde1157bf2b7bc141b0e2ffbfbfe4a038693d3d25053993f8d2ad6f4b9",
-      "installedSha": "3619b6dde1157bf2b7bc141b0e2ffbfbfe4a038693d3d25053993f8d2ad6f4b9"
+      "sha256": "c5cda333087e1d79835a99a46e7cd32a6bffea5e9385c79f70653f69ca5080d0",
+      "installedSha": "c5cda333087e1d79835a99a46e7cd32a6bffea5e9385c79f70653f69ca5080d0"
     },
     ".claude/commands/commit/land.md": {
       "owner": "framework",
@@ -23819,32 +23821,32 @@
       "managed": true,
       "source": ".claude/commands/check/all.md",
       "kind": "md",
-      "sha256": "5e5de43596095ab48112faba0821ea35d5b8680dc8f3f01c81bbadf6482d1592",
-      "installedSha": "5e5de43596095ab48112faba0821ea35d5b8680dc8f3f01c81bbadf6482d1592"
+      "sha256": "ab6ee73c67fc136b29a6c0ff07fb6c90ba73678e852e383b716cd310917c384b",
+      "installedSha": "ab6ee73c67fc136b29a6c0ff07fb6c90ba73678e852e383b716cd310917c384b"
     },
     ".claude/commands/check/framework-purity.md": {
       "owner": "framework",
       "managed": true,
       "source": ".claude/commands/check/framework-purity.md",
       "kind": "md",
-      "sha256": "e4a0abb9bf7ab0904dcf50de8f76bd996a02286fbd9e5d3bafa958c9e1b05c1b",
-      "installedSha": "e4a0abb9bf7ab0904dcf50de8f76bd996a02286fbd9e5d3bafa958c9e1b05c1b"
+      "sha256": "a66b3ee8ae4defa09e316f28acf3ddba3c4ec133d620577a72a1c7917cf8a074",
+      "installedSha": "a66b3ee8ae4defa09e316f28acf3ddba3c4ec133d620577a72a1c7917cf8a074"
     },
     ".claude/commands/check/framework-views-fresh.md": {
       "owner": "framework",
       "managed": true,
       "source": ".claude/commands/check/framework-views-fresh.md",
       "kind": "md",
-      "sha256": "b6631094add75ca062f2c310bf332aa452ea95fa98e3d1f2ee199708e2cdf12a",
-      "installedSha": "b6631094add75ca062f2c310bf332aa452ea95fa98e3d1f2ee199708e2cdf12a"
+      "sha256": "b1eb51e2b301c3832cc0ca3c8077362e4907597433e00d9e8591b3ec7f902330",
+      "installedSha": "b1eb51e2b301c3832cc0ca3c8077362e4907597433e00d9e8591b3ec7f902330"
     },
     ".claude/commands/check/install.md": {
       "owner": "framework",
       "managed": true,
       "source": ".claude/commands/check/install.md",
       "kind": "md",
-      "sha256": "5300481af57def3d65765d3c6a90b46a498645d595e18b23ac901fbcd5fd4e26",
-      "installedSha": "5300481af57def3d65765d3c6a90b46a498645d595e18b23ac901fbcd5fd4e26"
+      "sha256": "1189c1827db4b334da908083b7ac899f7d59038a3c1bf7212dc16e4aabc50237",
+      "installedSha": "1189c1827db4b334da908083b7ac899f7d59038a3c1bf7212dc16e4aabc50237"
     },
     ".claude/commands/bootstrap/lastmile.md": {
       "owner": "framework",
@@ -23955,8 +23957,8 @@
       "managed": true,
       "source": ".claude/agents/_system/guides/agent-dispatch-guide.md",
       "kind": "md",
-      "sha256": "c91bcaa2cd65f1ee2f3d508bee24b9d7230c1eeba5f98a81a16927063d7c0839",
-      "installedSha": "c91bcaa2cd65f1ee2f3d508bee24b9d7230c1eeba5f98a81a16927063d7c0839"
+      "sha256": "f195b84a6425287ec21b167ed0f11025edbe4a6c4b666e2acc7a495b295fc0bb",
+      "installedSha": "f195b84a6425287ec21b167ed0f11025edbe4a6c4b666e2acc7a495b295fc0bb"
     },
     ".claude/agents/_system/guides/gauntlet-contract.md": {
       "owner": "framework",
@@ -24681,16 +24683,16 @@
       "managed": true,
       "source": ".claude/agents/president/_system/beta/judgement-model-recommendations.md",
       "kind": "md",
-      "sha256": "475c93b313e633fa77201a387b411cf9734ba12a8599870439a66ad8fec20b27",
-      "installedSha": "475c93b313e633fa77201a387b411cf9734ba12a8599870439a66ad8fec20b27"
+      "sha256": "c514d2fecab5b9086d59fb6644de8d1587c2d5f698934bdfd28209f94c129cf3",
+      "installedSha": "c514d2fecab5b9086d59fb6644de8d1587c2d5f698934bdfd28209f94c129cf3"
     },
     ".claude/agents/president/_system/beta/judgement-model.md": {
       "owner": "framework",
       "managed": true,
       "source": ".claude/agents/president/_system/beta/judgement-model.md",
       "kind": "md",
-      "sha256": "32c92a5752be5e91be0eef3eddeaecd89d94df36c32ba3717a6a7a39c80cc3af",
-      "installedSha": "32c92a5752be5e91be0eef3eddeaecd89d94df36c32ba3717a6a7a39c80cc3af"
+      "sha256": "290d493297e78af1869eecd11d78a1710913cbee9d6f78e80d3e5b3145741356",
+      "installedSha": "290d493297e78af1869eecd11d78a1710913cbee9d6f78e80d3e5b3145741356"
     },
     ".claude/agents/president/_system/adhoc/protocol.md": {
       "owner": "framework",
