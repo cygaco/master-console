@@ -1,0 +1,308 @@
+{
+  "label": "green-fix",
+  "head": "eb2f010a",
+  "node": "v24.16.0",
+  "hold": {
+    "holderCwd": "runtime/S-OS-06/fixture-product",
+    "exit": 0,
+    "counters": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "errnoLines": []
+  },
+  "concurrent": [
+    {
+      "exit": 0,
+      "counters": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": []
+    },
+    {
+      "exit": 0,
+      "counters": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": []
+    },
+    {
+      "exit": 0,
+      "counters": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": []
+    },
+    {
+      "exit": 0,
+      "counters": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errnoLines": []
+    }
+  ]
+}
+
+===== HOLD: full TAP output =====
+TAP version 13
+# [mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+# [mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+# [mc] DEPRECATION: C:\\Users\\Vlad\\.warpos\\portfolio.json is in use because C:\\Users\\Vlad\\.mc\\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\\Users\\Vlad\\.mc\\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+# Subtest: migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+ok 1 - migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+  ---
+  duration_ms: 669.4651
+  type: 'test'
+  ...
+# G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+# Subtest: migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+ok 2 - migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+  ---
+  duration_ms: 295.4089
+  type: 'test'
+  ...
+# G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+# Subtest: migration (4): an interrupted skill move resumes; plan() is read-only
+ok 3 - migration (4): an interrupted skill move resumes; plan() is read-only
+  ---
+  duration_ms: 424.854
+  type: 'test'
+  ...
+# Subtest: migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+ok 4 - migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+  ---
+  duration_ms: 143.1861
+  type: 'test'
+  ...
+# Subtest: migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+ok 5 - migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+  ---
+  duration_ms: 47.4793
+  type: 'test'
+  ...
+# CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1649.891
+
+===== CONCURRENT #1: full TAP output =====
+TAP version 13
+# [mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+# [mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+# [mc] DEPRECATION: C:\\Users\\Vlad\\.warpos\\portfolio.json is in use because C:\\Users\\Vlad\\.mc\\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\\Users\\Vlad\\.mc\\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+# Subtest: migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+ok 1 - migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+  ---
+  duration_ms: 1034.61
+  type: 'test'
+  ...
+# G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+# Subtest: migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+ok 2 - migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+  ---
+  duration_ms: 428.2395
+  type: 'test'
+  ...
+# G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+# Subtest: migration (4): an interrupted skill move resumes; plan() is read-only
+ok 3 - migration (4): an interrupted skill move resumes; plan() is read-only
+  ---
+  duration_ms: 561.1548
+  type: 'test'
+  ...
+# Subtest: migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+ok 4 - migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+  ---
+  duration_ms: 238.9607
+  type: 'test'
+  ...
+# Subtest: migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+ok 5 - migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+  ---
+  duration_ms: 61.3867
+  type: 'test'
+  ...
+# CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2425.2515
+
+===== CONCURRENT #2: full TAP output =====
+TAP version 13
+# [mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+# [mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+# [mc] DEPRECATION: C:\\Users\\Vlad\\.warpos\\portfolio.json is in use because C:\\Users\\Vlad\\.mc\\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\\Users\\Vlad\\.mc\\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+# Subtest: migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+ok 1 - migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+  ---
+  duration_ms: 1034.537
+  type: 'test'
+  ...
+# G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+# Subtest: migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+ok 2 - migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+  ---
+  duration_ms: 434.0773
+  type: 'test'
+  ...
+# G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+# Subtest: migration (4): an interrupted skill move resumes; plan() is read-only
+ok 3 - migration (4): an interrupted skill move resumes; plan() is read-only
+  ---
+  duration_ms: 556.7407
+  type: 'test'
+  ...
+# Subtest: migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+ok 4 - migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+  ---
+  duration_ms: 238.6432
+  type: 'test'
+  ...
+# Subtest: migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+ok 5 - migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+  ---
+  duration_ms: 61.6055
+  type: 'test'
+  ...
+# CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2425.2153
+
+===== CONCURRENT #3: full TAP output =====
+TAP version 13
+# [mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+# [mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+# [mc] DEPRECATION: C:\\Users\\Vlad\\.warpos\\portfolio.json is in use because C:\\Users\\Vlad\\.mc\\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\\Users\\Vlad\\.mc\\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+# Subtest: migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+ok 1 - migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+  ---
+  duration_ms: 1035.4379
+  type: 'test'
+  ...
+# G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+# Subtest: migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+ok 2 - migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+  ---
+  duration_ms: 433.219
+  type: 'test'
+  ...
+# G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+# Subtest: migration (4): an interrupted skill move resumes; plan() is read-only
+ok 3 - migration (4): an interrupted skill move resumes; plan() is read-only
+  ---
+  duration_ms: 555.7939
+  type: 'test'
+  ...
+# Subtest: migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+ok 4 - migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+  ---
+  duration_ms: 238.4678
+  type: 'test'
+  ...
+# Subtest: migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+ok 5 - migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+  ---
+  duration_ms: 62.2389
+  type: 'test'
+  ...
+# CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2423.347
+
+===== CONCURRENT #4: full TAP output =====
+TAP version 13
+# [mc] DEPRECATION: WARPOS_DISPATCH_BACKGROUND is set but MC_DISPATCH_BACKGROUND is not — using WARPOS_DISPATCH_BACKGROUND for now. Rename it to MC_DISPATCH_BACKGROUND; legacy WARPOS_* names stop being read in mc@2.1.0. (One warning per process.)
+# [mc] ENV DIVERGENCE: MC_SMOKE_MODE and WARPOS_SMOKE_MODE are both set and DIFFER — using MC_SMOKE_MODE (canonical precedence). Unset WARPOS_SMOKE_MODE or make it match. (values not printed)
+# [mc] DEPRECATION: C:\\Users\\Vlad\\.warpos\\portfolio.json is in use because C:\\Users\\Vlad\\.mc\\portfolio.json does not exist — reading/writing it in place (never moved). Rename it to C:\\Users\\Vlad\\.mc\\portfolio.json; legacy locations stop being read in mc@2.1.0. (One warning per process.)
+# Subtest: migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+ok 1 - migration (1): real update ordering — layout + settings + skills migrate, the product boots, locks are respected
+  ---
+  duration_ms: 1037.1258
+  type: 'test'
+  ...
+# G5 overlay: files=230 moved=3 deduped=206 backedUp=2 keptLegacy=1 env=4 skillsMoved=1 aliasesKept=2 skillsKept=1 bootProblemsBefore=6 bootProblemsAfter=0 secondRun=noop
+# Subtest: migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+ok 2 - migration (3): bare root — everything moves, the stale lock is NOT promoted, second run is a no-op
+  ---
+  duration_ms: 430.7818
+  type: 'test'
+  ...
+# G5 bare: skillsMoved=4 staleLockPromoted=false secondRun=noop
+# Subtest: migration (4): an interrupted skill move resumes; plan() is read-only
+ok 3 - migration (4): an interrupted skill move resumes; plan() is read-only
+  ---
+  duration_ms: 556.0769
+  type: 'test'
+  ...
+# Subtest: migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+ok 4 - migration (5): an unparseable settings file halts the chain before 003 (update.js rolls back)
+  ---
+  duration_ms: 240.1022
+  type: 'test'
+  ...
+# Subtest: migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+ok 5 - migration (6): every portfolio-registry product upgrades via this migration OR is recorded not-live (ceiling: fixture only)
+  ---
+  duration_ms: 61.6156
+  type: 'test'
+  ...
+# CEILING: only the fixture product is exercised. portfolio products=8 migrates=1[1.2.0] at-target=0 recorded-not-live=7[0.8.2,0.9.0,0.10.0,0.10.0,0.10.0,0.13.1,0.13.1] record=runtime/S-OS-06/portfolio-coverage.json (gitignored)
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2420.3251

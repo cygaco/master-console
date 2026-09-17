@@ -13,9 +13,11 @@
  * asserts that, re-derives every disposition independently, and fails a zero-product registry as vacuous. With no
  * portfolio registry on the machine (CI), test 6 is an explicit SKIP with its reason — never a zero-product pass.
  *
- * FIXTURE: fixtureSeed() below is the ONE source of the fake 1.2.0 product shell. Every run re-materializes it at
- * runtime/S-OS-06/fixture-product/ (the evidence copy; runtime/ is never committed) and composes TEMP roots from that
- * copy plus the real _mc/BASELINE placed where 1.2.0 shipped it (_<legacy>/BASELINE/). The real tree is never migrated.
+ * FIXTURE: fixtureSeed() below is the ONE source of the fake 1.2.0 product shell. Every run materializes it in its OWN
+ * process-unique directory under runtime/S-OS-06/fixture-product/ (runtime/ is never committed; the run removes its own
+ * copy when the file's tests finish) and composes TEMP roots from that copy plus the real _mc/BASELINE placed where
+ * 1.2.0 shipped it (_<legacy>/BASELINE/). The real tree is never migrated. No run ever renames onto, or removes, a path
+ * another run can hold: a fixed shared destination raced under parallel suite batches (Windows EPERM at load).
  *   (1) real update ordering — the 2.0.0 files are already copied and the update holds .mc/transactions/active.lock:
  *       layout + settings + skills migrate, the product BOOTS (and did not before), the update's lock is untouched,
  *       the stale legacy lock is never moved/deleted, a product-modified legacy skill is never clobbered
@@ -47,8 +49,8 @@ const portfolioCoverage = require(path.join(ROOT, "scripts", "open-source", "por
 const LEG = H.SLUG; // the legacy slug
 const UP = LEG.toUpperCase();
 const NS = "warp"; // the legacy skill namespace
-const FIXTURE_REL = "runtime/S-OS-06/fixture-product";
-const FIXTURE_DIR = path.join(ROOT, ...FIXTURE_REL.split("/"));
+const FIXTURE_REL = "runtime/S-OS-06/fixture-product"; // the fixture HOME; each run gets its own subdirectory
+const FIXTURE_HOME = path.join(ROOT, ...FIXTURE_REL.split("/"));
 const RECORD_REL = "runtime/S-OS-06/portfolio-coverage.json";
 const MIGRATION_IDS = ["001-warpos-to-mc-layout", "002-warpos-to-mc-settings", "003-warpos-to-mc-skills"];
 const UPDATE_TX = "2026-09-13T00-00-00-000Z-warp-update-pantry-pilot";
@@ -241,20 +243,23 @@ function rmrf(p) {
   }
 }
 
-/** Re-materialize the evidence copy from the seed and prove it is exactly the seed. */
+/**
+ * Materialize the fixture from the seed into a PROCESS-UNIQUE directory (fs.mkdtemp: atomic, never shared) and prove
+ * it is exactly the seed. Nothing is renamed onto a shared name and no shared path is removed.
+ */
 function materializeFixture() {
   const seed = fixtureSeed();
-  const tmp = `${FIXTURE_DIR}.tmp-${process.pid}`;
-  rmrf(tmp);
-  for (const [rel, content] of Object.entries(seed)) write(tmp, rel, content);
-  rmrf(FIXTURE_DIR);
-  fs.renameSync(tmp, FIXTURE_DIR);
-  assert.deepStrictEqual(walk(FIXTURE_DIR), Object.keys(seed).sort(), `${FIXTURE_REL} is exactly the seed (no stray files)`);
-  for (const [rel, content] of Object.entries(seed)) assert.strictEqual(readText(FIXTURE_DIR, rel), content, `${FIXTURE_REL}/${rel} == seed`);
-  return seed;
+  fs.mkdirSync(FIXTURE_HOME, { recursive: true });
+  const dir = fs.mkdtempSync(path.join(FIXTURE_HOME, `run-${process.pid}-`));
+  const rel = `${FIXTURE_REL}/${path.basename(dir)}`;
+  for (const [f, content] of Object.entries(seed)) write(dir, f, content);
+  assert.deepStrictEqual(walk(dir), Object.keys(seed).sort(), `${rel} is exactly the seed (no stray files)`);
+  for (const [f, content] of Object.entries(seed)) assert.strictEqual(readText(dir, f), content, `${rel}/${f} == seed`);
+  return { seed, dir };
 }
 
-const SEED = materializeFixture();
+const { seed: SEED, dir: FIXTURE_DIR } = materializeFixture();
+test.after(() => rmrf(FIXTURE_DIR)); // this run's own copy only
 
 /** A TEMP product root: the fixture shell + the real _mc/BASELINE where 1.2.0 shipped it (+ the 2.0.0 copy when overlay). */
 function compose({ overlay }) {

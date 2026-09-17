@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: a1
+ok 1 - a1
+  ---
+  duration_ms: 0.5972
+  type: 'test'
+  ...
+# Subtest: a2
+ok 2 - a2
+  ---
+  duration_ms: 0.099
+  type: 'test'
+  ...
+# Subtest: a3
+ok 3 - a3
+  ---
+  duration_ms: 0.0783
+  type: 'test'
+  ...
+# Subtest: a4
+ok 4 - a4
+  ---
+  duration_ms: 0.0637
+  type: 'test'
+  ...
+# Subtest: a5
+ok 5 - a5
+  ---
+  duration_ms: 0.0691
+  type: 'test'
+  ...
+# Subtest: b1
+ok 6 - b1
+  ---
+  duration_ms: 0.5985
+  type: 'test'
+  ...
+# Subtest: b2
+ok 7 - b2
+  ---
+  duration_ms: 0.1212
+  type: 'test'
+  ...
+# Subtest: b3
+ok 8 - b3
+  ---
+  duration_ms: 0.1234
+  type: 'test'
+  ...
+# Subtest: b4
+ok 9 - b4
+  ---
+  duration_ms: 0.0748
+  type: 'test'
+  ...
+# Subtest: b5
+ok 10 - b5
+  ---
+  duration_ms: 0.0819
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 108.7647
