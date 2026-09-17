@@ -54,7 +54,22 @@ Standalone at the fix: `node --test tests/regression/S-OS-06/migration.test.js` 
 
 ## 4. CONTROL, not the proof: three in-suite runs at `52e4e7e4`
 
-PENDING. See the section appended below.
+This is a CONTROL, not the proof; the proof is §3. Script: `control.sh`. Captures: `control-run{1,2,3}.txt` and `control-summary.txt`.
+
+| run | runner exit | discovered | primary files | **population (`tests`)** | pass | fail | skipped | quarantine |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 0 | 401 | 379 | **1260** | 1257 | 0 | 3 | 22/22 still failing |
+| 2 | 0 | 401 | 379 | **1260** | 1257 | 0 | 3 | 22/22 still failing |
+| 3 | 0 | 401 | 379 | **1260** | 1257 | 0 | 3 | 22/22 still failing |
+
+- The population is stable at **1260** across all three runs, and the discovery count is stable at 401.
+- 1260 is this head's population. The 1245/1249 figures came from an earlier head, `8b3ad24b`.
+- Three greens are consistent with the fix, but on their own they don't prove it (about 30% odds under the untouched bug).
+
+**Verify (each its own command, real exit code, at the fix):**
+- `node --test tests/regression/S-OS-06/migration.test.js`: **exit 0** (tests 5 / pass 5 / fail 0; `verify-migration.txt`)
+- `node scripts/checks/framework-purity.js`: **exit 0** (`verify-purity.txt`)
+- `node scripts/checks/cutover-completeness.js`: **exit 0** (`verify-cutover.txt`)
 
 ## 5. Second task: the last unit of 1245 vs 1249
 
@@ -75,7 +90,7 @@ The runner adds nothing of its own. It passes through node's own `# tests N` sum
 
 So 1249 − 5 + 1 = **1245**, which accounts for the unit.
 
-**Discriminator: (a) COUNTING artifact.** A load-death is tallied as one file-level test instead of its five cases. The file is discovered and run every time. The control runs print `run-tests: discovered <N> test file(s)`, and the counts below show whether N is stable. Nothing in this measurement points to (b).
+**Discriminator: (a) COUNTING artifact.** A load-death is tallied as one file-level test instead of its five cases. The file is discovered and run every time. In the control runs, discovery was 401/401/401 and the population 1260/1260/1260. Nothing measured points to (b).
 
 **Ceiling:** the original 1245-run capture was not found on disk (grep of the worktree and the canonical `runtime/S-OS-06`), so the mechanism is measured on the real file standalone plus a same-mechanism synthetic batch. It was not re-measured on that historical run.
 
