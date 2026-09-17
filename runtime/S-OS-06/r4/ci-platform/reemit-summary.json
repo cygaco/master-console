@@ -1,0 +1,254 @@
+{
+  "env": {
+    "platform": "win32",
+    "node": "24.16.0",
+    "reporter": "tap"
+  },
+  "at": "2026-09-17T00:24:36.676Z",
+  "elapsedMs": 8398,
+  "entries": 22,
+  "entriesChanged": 1,
+  "headerFieldsTotal": 12,
+  "headerFieldsChanged": [
+    "$normalizer"
+  ],
+  "serializationDrift": {
+    "atChar": 10521,
+    "rawBytes": 56289,
+    "canonicalBytes": 56290,
+    "raw": "im for that entry.\",\n  \"base\":\"669aadc1ab7dc03d74f5b95cb613a",
+    "canonical": "im for that entry.\",\n  \"base\": \"669aadc1ab7dc03d74f5b95cb613"
+  },
+  "refusals": [],
+  "wrote": true,
+  "rows": [
+    {
+      "file": "tests/mc/dispatch-readiness.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 92,
+      "observedLines": 92,
+      "changed": false
+    },
+    {
+      "file": "tests/mc/lib/provider-autofix.unit.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 8,
+      "observedLines": 8,
+      "changed": false
+    },
+    {
+      "file": "tests/mc/lib/provider-rca.unit.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 8,
+      "observedLines": 8,
+      "changed": false
+    },
+    {
+      "file": "tests/mc/product-bootstrap.unit.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 8,
+      "observedLines": 8,
+      "changed": false
+    },
+    {
+      "file": "tests/mc/provider-smoke.unit.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 8,
+      "observedLines": 8,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/S-LC-06/coverage-gate-caller.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 2,
+      "observedLines": 2,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/S-LC-06/mode-profile.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/S-LC-07/spend-ledger.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 35,
+      "observedLines": 35,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/S-PF-01/scaffold-coverage-telemetry.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 31,
+      "observedLines": 31,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/S-PF-03/admin-surface.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 9,
+      "observedLines": 9,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/S-PF-04/founders-checklist.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260518-007/docs-and-skill-bodies.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": true,
+      "diff": {
+        "onlyA": [
+          "errno: <ENOENT>,"
+        ],
+        "onlyB": [
+          "errno: -4058,"
+        ]
+      }
+    },
+    {
+      "file": "tests/regression/SP-20260518-008/hooks-and-diagnostics.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 15,
+      "observedLines": 15,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/epsilon-spawn-grace.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 51,
+      "observedLines": 51,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/review-fallback-shape.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 27,
+      "observedLines": 27,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/sprint-id-correlation.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-001/window-clamp.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-live-cli.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 32,
+      "observedLines": 32,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/coverage-gate-scan-source.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 8,
+      "observedLines": 8,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260611-002/wrapper-mode-binding.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260615-001/registry-seed-resolves.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 7,
+      "observedLines": 7,
+      "changed": false
+    },
+    {
+      "file": "tests/regression/SP-20260616-001/wrapper-door.test.js",
+      "exit": 1,
+      "truncated": false,
+      "failCountObserved": 1,
+      "failCountRegistered": 1,
+      "storedLines": 16,
+      "observedLines": 16,
+      "changed": false
+    }
+  ]
+}

@@ -26,7 +26,7 @@
  *   - TAP YAML diagnostic blocks: the block, its keys and its escaping are the reporter's; the
  *     `error` VALUE is the author's assertion message, captured when node unwraps it from an
  *     author-thrown error (see AUTHOR_ERROR_FAILURE_TYPES).
- * Every captured line is then normalized (NORMALIZER, a declared six-step order) and the
+ * Every captured line is then normalized (NORMALIZER, a declared seven-step order) and the
  * drop class (DROP_CLASS, stated as shapes) is removed. The result is the entry's UNORDERED MULTISET
  * of cause lines (duplicates kept; β verdict 2d7f5b83, ledger row 479, correcting the ordered-set
  * rule of row 473 §2). The register must DECLARE exactly this normalizer, drop class and ceiling set
@@ -46,6 +46,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const util = require("util");
 const { spawn, spawnSync } = require("child_process");
 
 const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
@@ -100,22 +101,61 @@ const CHILD_ENV_ALLOWLIST = Object.freeze({
 });
 
 /**
- * The win32 OBSERVED FLOOR (β a2f74e09, lane I8). Relying on the runtime to refill these names is an undocumented
- * implementation detail that can move at the next major, so it is DECLARED here: source named, platform stamped,
- * evidence cited. It is generated into the normalizer's element E, and falsifier case (n) re-measures it on win32, so a
- * runtime that refills a different set trips a test instead of silently changing every child's environment.
+ * The OBSERVED FLOOR, PER PLATFORM (β a2f74e09 lane I8; made per-platform by β a5c3e761 Q1). Relying on the runtime to
+ * refill names into an EMPTY child environment is an undocumented implementation detail that can move at the next
+ * major, so each floor is DECLARED as an observation: source named, platform and Node major stamped, evidence cited.
+ * Every entry is generated into the normalizer's element E, and falsifier case (n) re-measures the floor declared FOR
+ * THE PLATFORM IT RUNS ON. A platform with NO entry here has no declared floor, and case (n) REFUSES there: it never
+ * skips (a skipped falsifier guards nothing, and "skipped by declared platform scope" is absolution by inline
+ * assertion). That rule needs no declared platform set: the absence of an entry is itself the refusal.
+ *
+ * linux: OWED. CI run 35164425083 (linux/node22) printed no observation (case (n) skipped before measuring), and no
+ * value is declared from reasoning about what libuv "probably" refills. Case (n) refuses on linux until an entry
+ * carrying a real linux observation is added here.
  */
 const CHILD_ENV_OBSERVED_FLOOR = Object.freeze({
-  platform: "win32",
-  names: CHILD_ENV_ALLOWLIST.win32,
-  source: "libuv's win32 spawn (src/win/process.c: the required variables make_program_env copies from the parent into a child env block that lacks them; identified by the name set matching the measurement)",
-  observedOn: "win32 / node 24.16.0 / libuv 1.52.1, 2026-09-16",
-  evidence: "runtime/S-OS-06/r4/s2i3/i7/spawn-min-probe.json",
+  win32: Object.freeze({
+    platform: "win32",
+    nodeMajor: 24,
+    names: CHILD_ENV_ALLOWLIST.win32,
+    source: "libuv's win32 spawn (src/win/process.c: the required variables make_program_env copies from the parent into a child env block that lacks them; identified by the name set matching the measurement)",
+    observedOn: "win32 / node 24.16.0 / libuv 1.52.1, 2026-09-16",
+    evidence: "runtime/S-OS-06/r4/s2i3/i7/spawn-min-probe.json",
+  }),
 });
+
+/**
+ * The declared observed floor for `platform`, or a REFUSAL. Fail-closed by construction: the only non-refusal is an
+ * OWN entry whose platform stamp matches its key and whose Node major, names, source, observedOn and evidence are all
+ * present. Returns { floor } or { refused: <message> }.
+ */
+function observedFloorFor(platform) {
+  const p = String(platform);
+  const e = Object.prototype.hasOwnProperty.call(CHILD_ENV_OBSERVED_FLOOR, p) ? CHILD_ENV_OBSERVED_FLOOR[p] : null;
+  if (!e) return { refused: `OBSERVED FLOOR REFUSED: no floor is declared for platform "${p}". An undeclared floor is never a skip: measure a child spawned with an EMPTY environment on ${p} and declare that observation in CHILD_ENV_OBSERVED_FLOOR.` };
+  const bad = [];
+  if (e.platform !== p) bad.push(`platform stamp "${e.platform}" does not match its key "${p}"`);
+  if (!Number.isInteger(e.nodeMajor) || e.nodeMajor < 1) bad.push("nodeMajor is not a positive integer");
+  if (!Array.isArray(e.names) || e.names.length === 0 || e.names.some((n) => typeof n !== "string" || !n)) bad.push("names is not a non-empty array of non-empty strings");
+  for (const k of ["source", "observedOn", "evidence"]) if (typeof e[k] !== "string" || !e[k].trim()) bad.push(`${k} is missing`);
+  if (bad.length) return { refused: `OBSERVED FLOOR REFUSED: the floor declared for platform "${p}" is malformed (${bad.join("; ")}).` };
+  return { floor: e };
+}
+
+/** Element E's rendering of every declared floor, in sorted platform-key order so the declaration is deterministic. */
+function renderObservedFloors() {
+  const parts = Object.keys(CHILD_ENV_OBSERVED_FLOOR)
+    .sort()
+    .map((k) => {
+      const e = CHILD_ENV_OBSERVED_FLOOR[k];
+      return `${e.platform} (node ${e.nodeMajor}): a child spawned with an EMPTY environment still receives exactly these ${e.names.length} names (${e.names.join(", ")}), refilled by the runtime, not by this runner. Source: ${e.source}. Observed on ${e.observedOn} (${e.evidence}).`;
+    });
+  return `OBSERVED FLOOR, per platform: ${parts.join(" ")} A platform with no declared floor has none, and falsifier case (n) refuses there, never skips.`;
+}
 
 /** The declared normalizer. The register's `$normalizer` must equal this array, element for element. */
 const NORMALIZER_DECLARATION = [
-  `E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: ${CHILD_ENV_ALLOWLIST.win32.join(", ")}. Other platforms: ${CHILD_ENV_ALLOWLIST.other.join(", ")}. OBSERVED FLOOR (${CHILD_ENV_OBSERVED_FLOOR.platform}): a child spawned with an EMPTY environment still receives exactly these ${CHILD_ENV_OBSERVED_FLOOR.names.length} names (${CHILD_ENV_OBSERVED_FLOOR.names.join(", ")}), refilled by the runtime, not by this runner. Source: ${CHILD_ENV_OBSERVED_FLOOR.source}. Observed on ${CHILD_ENV_OBSERVED_FLOOR.observedOn} (${CHILD_ENV_OBSERVED_FLOOR.evidence}). This is an implementation detail declared as an observation, not a contract. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.`,
+  `E environment (hermetic, β row 486): every captured line comes from a child spawned with ONLY these variables from the runner's environment, names matched without regard to case; all others are scrubbed. win32: ${CHILD_ENV_ALLOWLIST.win32.join(", ")}. Other platforms: ${CHILD_ENV_ALLOWLIST.other.join(", ")}. ${renderObservedFloors()} Each floor is an implementation detail declared as an observation, not a contract. node --test adds its own NODE_TEST_CONTEXT and NODE_TEST_WORKER_ID to each test file's process.`,
   "0 input: every captured line enters in TAP comment rendering. A YAML error value is decoded from its YAML scalar and re-rendered with node's own TAP comment escape before step 1, so both regimes share one normalizer.",
   "1 unescape: a single left-to-right scan decoding \\\\ to \\ and \\# to #; every other backslash pair is left as its two characters.",
   "2 separators: every run of one or more backslashes becomes one /. It runs AFTER unescape (ordering trap: in the other order an escaped pair becomes //).",
@@ -123,7 +163,8 @@ const NORMALIZER_DECLARATION = [
   "4 timings: every (N ms) timing, (Nms) or (N.Nms), is deleted, repeated until none remains.",
   "5 whitespace: every run of whitespace becomes one space, then the line is trimmed.",
   "6 markers: a leading reporter marker token (ℹ or #, followed by a space or the end of the line) is stripped, repeated until none remains.",
-  "7 after the six steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an UNORDERED MULTISET of lines (duplicates kept). Its canonical form is the lines sorted in ascending UTF-16 code-unit order (JavaScript's default sort, locale-independent). Stored and observed are compared in canonical form by exact equality of every element and of the length, never containment, never a hash. A stored causeLines not already in canonical form is refused.",
+  "7 platform error codes (β a5c3e761 Q2): the class is a PLATFORM-DEPENDENT NUMERIC ERROR CODE in a captured cause line, meaning every rendering of an errno property with an integer value: the key errno, bare or inside one matching pair of ' or \" quotes, not preceded by a word character or $, then a colon, at most one space, and a decimal integer with an optional leading minus, not followed by a digit or a dot. When the RUNNING runtime's own system error map (util.getSystemErrorMap, the libuv name table of the platform the capture ran on) names that integer, the integer is replaced by <NAME>, the platform-independent symbolic code (on win32, errno: -4058, becomes errno: <ENOENT>,); the key and everything around it are kept. Two different codes keep two different names, so the transform removes platform variance without merging different failures. An integer the running map does not name is left unchanged, so its variance fails the lock loudly instead of being masked.",
+  "8 after the seven steps: a line that normalizes to the empty string is dropped, then the drop class removes whole lines. The result is an UNORDERED MULTISET of lines (duplicates kept). Its canonical form is the lines sorted in ascending UTF-16 code-unit order (JavaScript's default sort, locale-independent). Stored and observed are compared in canonical form by exact equality of every element and of the length, never containment, never a hash. A stored causeLines not already in canonical form is refused.",
 ];
 
 /** The drop class, stated as SHAPES (never as specific frames). Applied to normalized lines. */
@@ -239,7 +280,22 @@ function normalizerContext(root, tmpdir) {
   return { root: fwd(root), tmp: tmp && tmp !== "/" ? tmp : "" };
 }
 
-/** Apply the declared normalizer (NORMALIZER_DECLARATION steps 1-6) to ONE line. */
+/**
+ * Step 7's class: an errno property rendered with an integer value (bare, 'quoted' or "quoted" key). Group 1 is the
+ * key as rendered, group 2 the separator, group 3 the integer. A property over the class, never a list of numbers.
+ */
+const PLATFORM_ERRNO_RE = /(?<![\w$])(errno|'errno'|"errno"):( ?)(-?\d+)(?![\d.])/g;
+
+/** Step 7: replace an errno integer the RUNNING runtime's system error map names with <NAME>; leave any other unchanged. */
+function symbolizePlatformErrno(t) {
+  const map = util.getSystemErrorMap();
+  return t.replace(PLATFORM_ERRNO_RE, (whole, key, sep, num) => {
+    const hit = map.get(Number(num));
+    return hit && typeof hit[0] === "string" && hit[0] ? `${key}:${sep}<${hit[0]}>` : whole;
+  });
+}
+
+/** Apply the declared normalizer (NORMALIZER_DECLARATION steps 1-7) to ONE line. */
 function normalizeLine(s, ctx) {
   let t = String(s);
   // 1 unescape (single left-to-right scan)
@@ -264,6 +320,8 @@ function normalizeLine(s, ctx) {
     prev = t;
     t = t.replace(/^(?:ℹ|#)(?: |$)/, "");
   }
+  // 7 platform error codes -> their symbolic name under the running runtime's own map
+  t = symbolizePlatformErrno(t);
   return t;
 }
 
@@ -939,6 +997,7 @@ module.exports = {
   NORMALIZER_DECLARATION,
   CHILD_ENV_ALLOWLIST,
   CHILD_ENV_OBSERVED_FLOOR,
+  observedFloorFor,
   childEnv,
   DROP_CLASS_DECLARATION,
   CEILINGS,

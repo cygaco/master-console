@@ -298,16 +298,72 @@ test(`${FALSIFIER_ID} (m) NO LOCK (β b2c94e18, the CONJUNCTION): an entry whose
   assert.strictEqual(plant.unobserved, true, "an entry with no lock is counted as unobserved");
 });
 
-// (lane I8, β a2f74e09) the win32 OBSERVED FLOOR is a declared observation of the runtime, so it is re-measured here:
-// a child spawned with an EMPTY env must receive only declared floor names, and every floor name the parent has.
-test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09): an EMPTY child env on win32 is refilled with exactly the declared floor`, { skip: process.platform === RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform ? false : `the floor is declared as a ${RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform} observation only` }, () => {
-  const floor = RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.names.map((n) => n.toUpperCase());
-  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION[0].includes(`OBSERVED FLOOR (${RUNNER_DECL.CHILD_ENV_OBSERVED_FLOOR.platform})`), "the floor is not declared in the normalizer's element E");
+// (lane I8, β a2f74e09; per-platform by β a5c3e761 Q1) the OBSERVED FLOOR is a declared observation of the runtime, so it
+// is re-measured here FOR THE PLATFORM THIS RUNS ON: a child spawned with an EMPTY env must receive only declared floor
+// names, and every floor name the parent has. On a platform with NO declared floor this case REFUSES (fails); it never
+// skips, because a skipped falsifier reads green at the exit gate while guarding nothing.
+test(`${FALSIFIER_ID} (n) OBSERVED FLOOR (β a2f74e09, a5c3e761): an EMPTY child env is refilled with exactly the floor declared for THIS platform, and an undeclared platform REFUSES`, () => {
+  // The refusal rule itself, planted on every platform (so it is proven where the floor IS declared too): an
+  // undeclared platform and an inherited-property name both refuse. (The malformed-entry refusal is not planted here:
+  // the declaration object is frozen.)
+  for (const p of ["mc-no-such-platform", "__proto__", "constructor", "toString"]) {
+    const v = RUNNER_DECL.observedFloorFor(p);
+    assert.strictEqual(v.floor, undefined, `an undeclared platform "${p}" must not yield a floor`);
+    assert.match(String(v.refused), /^OBSERVED FLOOR REFUSED: no floor is declared for platform/, `an undeclared platform "${p}" must REFUSE`);
+  }
+  const verdict = RUNNER_DECL.observedFloorFor(process.platform);
+  if (!verdict.floor) {
+    // REFUSE, but leave the measurement behind: the refusal text carries what an EMPTY-env child actually received on
+    // this platform, so the floor can be DECLARED from an observation (never guessed). It is evidence, not a declaration.
+    const probe = spawnSync(process.execPath, ["-e", "process.stdout.write(JSON.stringify(Object.keys(process.env)))"], { env: {}, encoding: "utf8", windowsHide: true });
+    let seen = `probe did not run (status ${probe.status}, ${probe.error && probe.error.message})`;
+    if (probe.status === 0) {
+      try {
+        seen = JSON.stringify(JSON.parse(probe.stdout).sort());
+      } catch (e) {
+        seen = `probe output unparseable: ${JSON.stringify(String(probe.stdout).slice(0, 200))}`;
+      }
+    }
+    assert.fail(`${verdict.refused} (running on ${process.platform}/node${process.versions.node}, libuv ${process.versions.uv}). UNDECLARED MEASUREMENT for the record: an EMPTY-env child received ${seen}.`);
+  }
+  const declared = verdict.floor;
+  const floor = declared.names.map((n) => n.toUpperCase());
+  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION[0].includes(`${declared.platform} (node ${declared.nodeMajor}): a child spawned with an EMPTY environment`), "the floor for this platform is not declared in the normalizer's element E");
   const r = spawnSync(process.execPath, ["-e", "process.stdout.write(JSON.stringify(Object.keys(process.env)))"], { env: {}, encoding: "utf8", windowsHide: true });
   assert.strictEqual(r.status, 0, `empty-env child did not run: ${r.error && r.error.message} ${r.stderr}`);
   const got = JSON.parse(r.stdout).map((k) => k.toUpperCase()).sort();
   const parentHas = floor.filter((n) => Object.keys(process.env).some((k) => k.toUpperCase() === n)).sort();
   assert.deepStrictEqual(got, parentHas, `the runtime refilled a set other than the declared floor: got [${got}], declared-and-present [${parentHas}]`);
+});
+
+// (β a5c3e761 Q2) step 7 of the normalizer: a platform-dependent numeric error code becomes its symbolic name under the
+// RUNNING runtime's own map. Every plant draws its integers from that map, so the case runs (never skips) on any platform.
+test(`${FALSIFIER_ID} (o) ERRNO CLASS (β a5c3e761): a numeric errno becomes its symbolic name, distinct codes stay distinct, an unnamed integer is left unchanged`, () => {
+  const util = require("util");
+  const ctx = RUNNER_DECL.normalizerContext(REAL_ROOT);
+  const map = util.getSystemErrorMap();
+  const numFor = (name) => [...map].find(([, v]) => v[0] === name)?.[0];
+  const enoent = numFor("ENOENT");
+  const eacces = numFor("EACCES");
+  assert.ok(Number.isInteger(enoent) && Number.isInteger(eacces), "the running runtime's system error map names neither ENOENT nor EACCES");
+  // the property, in each rendering of the class
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`errno: ${enoent},`, ctx), "errno: <ENOENT>,");
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`[Error: x] { errno: ${enoent}, code: 'ENOENT' }`, ctx), "[Error: x] { errno: <ENOENT>, code: 'ENOENT' }");
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`{"errno":${enoent},"code":"ENOENT"}`, ctx), `{"errno":<ENOENT>,"code":"ENOENT"}`);
+  assert.strictEqual(RUNNER_DECL.normalizeLine(`'errno': ${eacces}`, ctx), "'errno': <EACCES>");
+  // discrimination: two failures differing only in the code still differ
+  assert.notStrictEqual(RUNNER_DECL.normalizeLine(`errno: ${enoent},`, ctx), RUNNER_DECL.normalizeLine(`errno: ${eacces},`, ctx));
+  // the output is a fixed point (a stored line is re-emittable under the declared contract)
+  assert.ok(RUNNER_DECL.isFixedPoint("errno: <ENOENT>,", ctx), "the symbolized line is not a fixed point");
+  // outside the class, or unnamed by the running map: unchanged (fail-closed, never masked)
+  let unnamed = -1;
+  while (map.has(unnamed)) unnamed--;
+  for (const line of [`errno: ${unnamed},`, `myerrno: ${enoent},`, `$errno: ${enoent}`, `errno: ${enoent}.5`, `errno: ${enoent}0000000000`, `exitCode: ${enoent},`]) {
+    if (line === `errno: ${enoent}0000000000` && map.has(Number(`${enoent}0000000000`))) continue;
+    assert.strictEqual(RUNNER_DECL.normalizeLine(line, ctx), line, `a line outside the class (or unnamed by the running map) was changed: ${line}`);
+  }
+  // declared = actual: the step is in the declaration the register must carry
+  assert.ok(RUNNER_DECL.NORMALIZER_DECLARATION.some((d) => d.startsWith("7 platform error codes")), "step 7 is not declared");
 });
 
 test(`${FALSIFIER_ID}: the real tests/quarantine.json is never touched`, () => {
