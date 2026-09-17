@@ -149,6 +149,34 @@ row); its envelope must show the RED against the unedited fixture, the registry 
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
 
+## R-115 / R-116 — the OPERATOR PUSHED 1e06b991; CI leak-gate run 35164425083 (linux/node22) FAILED at the test step — three platform-shaped findings; §5.5 NOT met; CI lane assigned; β consulted on a ruling collision
+The operator ran `git push origin open-source/S-OS-06` (cf11478c → 1e06b991) at 2026-09-16T23:56Z. First CI
+run on a current head this round: FAILURE. run-tests on ubuntu: primary 379 files, 1260 tests (== the local
+probe population), 1255 pass, 3 fail, 2 skipped; quarantine 22 entries, 21 still failing, ONE CAUSE-LOCK
+violation. The delta is platform-shaped (win32/node24 locally vs linux/node22 on CI), not population-shaped.
+None of it is the operator-gated leak-gate.yml L36 line. Log + README: `runtime/S-OS-06/r4/ci/`.
+(1) CAUSE-LOCK: `SP-20260518-007/docs-and-skill-bodies.test.js` registered `errno: -4058` (win32) vs observed
+`errno: -2` (linux); the runner printed the pre-committed interpretation itself ("a FINDING ABOUT THE
+NORMALIZER, not a violation to wave through"). RULED: the hermetic scrub's declared normalizer gains the
+platform-bound errno token (+ siblings found by grep of the register's cause lines); re-observe, re-emit the
+multiset. Not a per-platform lock, not a wave-through, not a quarantine of the runner's output. (β Q2.)
+(2) record-trust-exit item [1] REFUSED: falsify-quarantine-runner (n) OBSERVED FLOOR (L303) SKIPS off-win32
+(Option C shape, `c4a06f28`) while the exit gate says a skipped falsifier reads green while guarding
+nothing — two β rules colliding on linux. CONSULTED as r-116 Q1; α's lean, stated first: the exit gate is
+right and the SKIP is the defect — a platform is not an absent subject; measure and DECLARE the linux floor
+beside the win32 one and let (n) assert the declared floor for the platform it runs on (runs everywhere,
+skips nowhere). ε: measure the linux floor now; no code change on (2) until β rules.
+(3) `S-LC-10/provider-tier-check.test.js` "CLI --enforce: unknown-self-attested NEVER trips the gate": the
+CLI exits non-zero on linux only. Hypothesis to falsify: an environment-derived "T2 funded" input (present
+on the dev box, absent on CI) resolves tier_short. Measure-first: print the CLI's JSON envelope on linux (or
+with the dev-box env stripped) before any fix; the test must control that input.
+STANDING (r-116 Q3): §5.5 CI green is a SEPARATE gate, satisfied only by a green run on the FINAL pushed
+head (the operator pushes again after the final head exists); the certifying run stays on the exclusive
+local tree; the two are not substitutes. LANE: the CI lane (brief-s2e-linux) — one bounded dispatch per
+finding, measure-first, commit-first, report-to-file, RED-on-linux evidence captured (CI log or an ubuntu
+run), GREEN on both platforms. Sequence: CI-lane fixes → substrate merge → final regen (no-op proof) →
+oracles + security cross-provider gauntlet → DONE-REPORT → operator push → CI green on that head.
+
 ## R-114 — ε e-39: the head-advanced location read is ANSWERED (test-side, not product); the mechanism read is authorized as ONE bounded read; the fixture-path proof pair accepted
 LOCATION (verified at source by α): the intermittent case is `scripts/dispatch/falsifiers/
 head-advanced-after-check.falsifier.test.js` L16 (G4.2, delegates to validation-to-merge-race); the gate is
