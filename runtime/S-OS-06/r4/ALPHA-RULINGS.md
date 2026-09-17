@@ -66,6 +66,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
 | `f5a2c81e` | (residue item (2) CORRECTED by R-113: the fifth discovered test WAS quarantine entry 23; correspondence 5/5) The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
 | `b3f7d052` | WITHDRAWS `e4d8b207` (β verified the registry itself): the r2/r3 backend verdicts and the qa review are DISCHARGED; the close states the Claude-pin configuration neutrally, never as a lack; security-reviewer cross-provider run = the gate (owed); backend/qa cross-provider re-run NOT owed; C trigger and pre-committed interpretation LAPSE; first tracker entry WITHDRAWN not suspended; attribution names ε, α and β; ED-440 = the real finding, follow-on; the discovery gap has three consequences (one defect, three stores) |
+| `a5c3e761` | Skip/refuse collision: the exit gate wins (Option C completed — a platform is not an absent subject); (n) refuses on an undeclared platform; errno CLASS scrubbed by a named transform (symbolic form); §5.5 MEASURED RED; every local green certifies win32 only — platform stamp on every result |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
 | `d4b26a71` | The missing I8 dispatch row is the instance; the class is a verifier that cannot see an absent record (fifth "green over the wrong population" tonight); close condition = a hand reconciliation table of lanes-with-commits vs dispatch records naming any lane without one; a reconstructed record only from real evidence, else absent + the finding filed (ED-438) |
@@ -148,6 +149,29 @@ one stray store only (restored); recorded as a LOWER BOUND. ε's fixer `d-mu4pv9
 row); its envelope must show the RED against the unedited fixture, the registry field it reads, the
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
+
+## R-117 — β `a5c3e761` (row 522): the exit gate WINS the skip/refuse collision; (n) REFUSES on an undeclared platform; scrub the errno CLASS by a named transform (symbolic form); §5.5 is MEASURED RED; every local result is stamped win32
+Q1: Option C COMPLETED, not amended — on linux the subject (a refilled floor) is PRESENT; the case skipped
+because its DECLARED VALUE was win32-only (declaration too narrow), so Option C does not reach it and the
+exit gate's refusal was RIGHT. "Skipped by declared platform scope" is REFUSED (a falsifier neutered by
+narrowing its own scope = absolution by inline assertion, row 470). `a2f74e09`'s platform stamp implied a
+per-platform table; the defect is that one platform was measured. RULED: (n) asserts the declared floor FOR
+THE PLATFORM IT RUNS ON; the linux floor is MEASURED and DECLARED beside win32 (source + platform + Node
+major); on a platform with NO declared floor (n) REFUSES — never skips (refuse-on-unobservable, fail-closed
+by construction, no declared platform set needed).
+Q2: normalizer fix CONFIRMED; "siblings found by grep" WITHDRAWN as an enumeration (β: the seventh tonight,
+in the remedy). RULED: the CLASS "platform-dependent numeric error code in a captured cause line" is scrubbed
+by a NAMED transform in the normalizer's own declaration. Verified at source by α: the register's cause
+lines carry BOTH `code: 'ENOENT'` (symbolic) and `errno: <n>` (numeric) for every entry that has an errno
+line, so the transform normalizes the errno line to the symbolic code already present — discrimination
+preserved (two failures differing only in code still differ), platform variance removed. Then the register
+is re-observed on win32 and re-emitted; the linux observation is the CI run.
+Q3: CONFIRMED — two gates, neither extends the other (row 463); §5.5 is MEASURED RED at 1e06b991 (better
+evidence than the earlier absence); only an operator push of the FINAL head can satisfy it. THE OBSERVATION
+THAT QUALIFIES EVERYTHING: every local green this round was measured on ONE platform (win32/node24) and
+the certifying set has two; the local certifying zero certifies WIN32 — DONE-REPORT and every local result
+line carry the platform stamp; the CI result carries linux/node22; nothing local reads platform-general.
+Not a new blocker; a wording constraint on every measurement so far.
 
 ## R-115 / R-116 — the OPERATOR PUSHED 1e06b991; CI leak-gate run 35164425083 (linux/node22) FAILED at the test step — three platform-shaped findings; §5.5 NOT met; CI lane assigned; β consulted on a ruling collision
 The operator ran `git push origin open-source/S-OS-06` (cf11478c → 1e06b991) at 2026-09-16T23:56Z. First CI
