@@ -35,29 +35,37 @@ fix test. It is **not** "gauntlet green" and is not reported as such.
 | `oracles/cross-lab-join.self-test.js` | **exit 0** |
 | `npm test` | **exit 0** — see "The red that was not" |
 
-## The red that was not — a wrong diagnosis, corrected
+## The red that was not — a wrong diagnosis, retracted; two real causes, both closed
 
-An earlier revision of this report said `npm test` exits 1 on a pre-existing quarantined failure
-(`wrapper-mode-binding`). **That was wrong on every count, and it is retracted rather than softened.**
+**The suite is green: `run-tests` PASS, primary exit 0 — 1,282 tests, 1,279 pass, 0 fail, 3 skipped;
+quarantine 22 entries, 22 still failing, 0 unexpectedly passing.**
 
-What actually happened: the runner SUBTRACTS the quarantine set from the primary run, so a quarantined
-file can never be the primary failure. The conductor took the first assertion text in a 359 KB log and
-assumed it was the primary one. The real primary failure was
-`scripts/checks/reasoned-consult-honesty.test.js` — an unpinned structural finding against the **live**
-review-decision ledger, which was being appended to by another party at the moment the suite ran. The
-suite caught the ledger mid-write.
+An earlier revision of this report said the suite failed on a pre-existing quarantined test
+(`wrapper-mode-binding`). **That was wrong on every count and is retracted, not softened.** The runner
+SUBTRACTS the quarantine set from the primary run, so a quarantined file can never BE the primary
+failure. The conductor took the first assertion text in a 359 KB log and assumed it was the primary
+one. The three-way proof offered for it — quarantined, pre-existing, reproducible at the session-start
+head — was about a different test that was never the failure in question.
 
-**`npm test` now exits 0** (1,282 tests; quarantine nominal at 22 entries, 22 still failing, 0
-unexpectedly passing). The specific test passes 3 runs out of 3.
+The red had **two real causes, sequentially, and both are closed:**
 
-It would not have blocked CI in any case, and that is worth stating because it was raised as a land
-blocker: that ledger is gitignored, and the test opens with an explicit skip when the corpus is absent
-(`if (!fs.existsSync(ledgerPath)) return; // fresh clone / CI: gitignored ledger absent`). So CI never
-reads it. The failure was local-only and transient, not pre-existing and not structural.
+1. **A mistyped row in the review-decision ledger.** A correction row was written with a record type
+   that claims to carry a decision while carrying none, and the honesty enforcer correctly refused it.
+   Authored by the lead, found by the lead, and fixed by the lead at source. **Machine-local, and CI
+   was never affected:** that ledger is gitignored, and the test opens with an explicit skip when the
+   corpus is absent (`if (!fs.existsSync(ledgerPath)) return; // fresh clone / CI: gitignored ledger
+   absent`). CI never reads it.
+2. **A stale occurrence register after the last substrate merge**, which would have failed the
+   record-trust exit gate's "must not change the committed ledger" assertion — and that one *would*
+   have failed in CI. The register was re-emitted and committed before the final manifest regen, in
+   that order, so the manifest is built over the final state of every hash-tracked input.
 
-Lesson kept rather than buried: a single grep into a large log is not a diagnosis. The first three
-claims made about this red — quarantined, pre-existing, reproducible at the session-start head — were
-each individually checkable and each wrong.
+Verified after both, rather than assumed: the exit gate now runs **exit 0, 5/5 items PASS, and leaves
+the committed register byte-identical** (same sha before and after), and a full unpiped suite run
+leaves the working tree clean.
+
+Lesson kept rather than buried: a single grep into a large log is not a diagnosis. Each of the first
+three claims was individually checkable, and each was wrong.
 
 ## Security findings — in the reviewers' terms
 
