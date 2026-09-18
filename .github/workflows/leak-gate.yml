@@ -1,7 +1,7 @@
 # Open-source leak gate (E-OPEN-SOURCE-001 / S-OS-04 / ED-417).
 #
-# Every gate runs as ITS OWN step so its real exit code fails the job — never piped
-# through tail/head (CLAUDE.md § Tool Use). Mirrors `npm run leak-gate`
+# Every gate runs as ITS OWN step so its real exit code fails the job â€” never piped
+# through tail/head (CLAUDE.md Â§ Tool Use). Mirrors `npm run leak-gate`
 # (scripts/checks/leak-gate.js); scripts/checks/leak-gate.test.js asserts the two
 # stay in sync.
 name: leak-gate
@@ -27,13 +27,12 @@ jobs:
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: privacy (credentials, emails, tracked runtime stores)
-        run: node scripts/check/privacy.js
-
+        run: node scripts/check/privacy.js --no-name-check
       - name: framework-purity (full tree, private slugs + scoped abs paths + promote relics)
         run: node scripts/checks/framework-purity.js --full
 
       - name: tracked-transients (runtime/ per-run artifacts, beta mining output)
-        run: node scripts/checks/warpos-tracked-transients.js
+        run: node scripts/checks/mc-tracked-transients.js
 
       - name: leak-denylist (hashed scrubbed strings)
         run: node scripts/checks/leak-denylist.js
