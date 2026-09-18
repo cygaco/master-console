@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "7e23f7a80690bad5df9dfe78de532aab11d3f5b3",
-  "installedAt": "2026-09-18T21:32:05.925Z",
+  "installedCommit": "8f0a13d5134e9dbb3f3e03ac73a2d50ecd159116",
+  "installedAt": "2026-09-18T21:41:05.903Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -11854,8 +11854,8 @@
       "dest": "scripts/check/privacy.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
-      "currentHashAtInstall": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
+      "installedHash": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833",
+      "currentHashAtInstall": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833",
       "introducedIn": "0.0.0"
     },
     {
@@ -11864,8 +11864,8 @@
       "dest": "scripts/check/privacy.test.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5",
-      "currentHashAtInstall": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5",
+      "installedHash": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20",
+      "currentHashAtInstall": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20",
       "introducedIn": "0.0.0"
     },
     {

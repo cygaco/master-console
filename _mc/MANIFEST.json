@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T21:32:06.448Z",
+  "generatedAt": "2026-09-18T21:41:06.445Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -12948,15 +12948,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
-      "installedSha": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd"
+      "sha256": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833",
+      "installedSha": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833"
     },
     "scripts/check/privacy.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.test.js",
-      "sha256": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5",
-      "installedSha": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5"
+      "sha256": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20",
+      "installedSha": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20"
     },
     "scripts/check/roadmap-trace.js": {
       "owner": "framework",
