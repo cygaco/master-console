@@ -66,6 +66,7 @@ it is issued; the SendMessage is a notification, not the record.
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
 | `f5a2c81e` | (residue item (2) CORRECTED by R-113: the fifth discovered test WAS quarantine entry 23; correspondence 5/5) The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
 | `b3f7d052` | WITHDRAWS `e4d8b207` (β verified the registry itself): the r2/r3 backend verdicts and the qa review are DISCHARGED; the close states the Claude-pin configuration neutrally, never as a lack; security-reviewer cross-provider run = the gate (owed); backend/qa cross-provider re-run NOT owed; C trigger and pre-committed interpretation LAPSE; first tracker entry WITHDRAWN not suspended; attribution names ε, α and β; ED-440 = the real finding, follow-on; the discovery gap has three consequences (one defect, three stores) |
+| `c2e58f40` | β SHUTDOWN ADDENDUM on the § 5.1 path-name fork (2026-09-17T03:40Z): the fork has ONE admissible branch — the § 5.1 AMENDMENT is FORBIDDEN by `9a1e5f60` (no new permanent escape class this round; live-consumer breaks go to the compat register with a per-entry expiry, never a warrant); HONESTY condition: a named residual is NOT § 5.1 satisfied — the close reports "zero violations except one named occurrence, with its trigger and the population searched", never "zero"; no β re-consult needed on this fork |
 | `a5c3e761` | Skip/refuse collision: the exit gate wins (Option C completed — a platform is not an absent subject); (n) refuses on an undeclared platform; errno CLASS scrubbed by a named transform (symbolic form); §5.5 MEASURED RED; every local green certifies win32 only — platform stamp on every result |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
 | `f6c38b02` | ED-438 ordered: the reverse check from commits to records is the ENFORCER (launch-path-agnostic); the wrapper change is defence in depth and cannot catch a wrapper bypass; "how was I8 launched" is design input; I9's stub-first commit recorded as correct conduct |
@@ -149,6 +150,53 @@ one stray store only (restored); recorded as a LOWER BOUND. ε's fixer `d-mu4pv9
 row); its envelope must show the RED against the unedited fixture, the registry field it reads, the
 derived roles, and GREEN. ε e-34: the five discovered fixture-tests named; four are four of the six vacuous
 entries (one defect, two sides); the partial correspondence kept partial.
+
+## OPERATOR DIRECTIVES — session 2026-09-18 (binding on ε, β and α this session)
+Issued in-session by the operator at resume (`/session:resume --turbo /mode:sprint`), verbatim intent:
+1. **This is the FINAL session for the rebrand + cleanup.** "This has taken 2 weeks, which is incredibly, way too
+   long." Every remaining decision is taken on the LEAN branch: a named, honestly-reported residual beats an
+   in-round instrument build; a measured zero beats a re-proof of a zero. Nothing new is opened in r4.
+2. **"Think lean and fast."** No further rounds. No new lanes. The close sequence in R-111/R-117 runs ONCE.
+3. **OpenAI / ChatGPT / GPT providers are BANNED this session** (accounts out of tokens). Every role that
+   the registry routes to `openai` falls back to **Claude** for this session — the operator's own words:
+   "fall back to Claude." For the security gate this means: gemini/antigravity pass + the Claude
+   binding lane (`security_claude_hunter`, ADR-0022) — NO GPT jailbreak pass; the DONE-REPORT names the
+   substitution and cites this directive. A `provider=openai` dispatch record this session is a violation.
+4. The operator wants ONE clear list of what is left before the repository can be shared — α owns that
+   list (delivered in chat, and as `runtime/S-OS-06/r4/WHATS-LEFT.md`); ε reports against it.
+
+## R-120 — ε e-43: the provider-tier-check envelope — CAPTURE authorized as INSTRUMENTATION
+The test throws on a non-zero child exit without capturing stdout/stderr, so the envelope R-115 requires
+cannot exist for the linux-only exit. AUTHORIZED: one test-side commit that prints the child's stdout +
+stderr (bounded, e.g. last 60 lines each) on the throw path. It changes NO assertion and NO product code;
+it is instrumentation, not a fix. No fix is made before the envelope is read from a linux run. There is
+no local linux environment (WSL not installed, no docker — measured 2026-09-18), so the envelope arrives
+only from CI on the operator's next push: this is carried as a **named residual keyed to that push** in
+the DONE-REPORT, alongside the linux floor value (R-117, case (n) prints the measurement). Both close on
+the same CI run; if that run is RED for either, the fix is one bounded commit + one more push — not a round.
+
+## R-121 — ε e-47: STOP-CONDITION § 8 amended ON THE EVIDENCE (β consulted this session — see ID MAP for the row)
+Gap 1's premise is FALSE at this head: the oracle-(i) GREEN control exists at `73b36112` (cross-lab join
+self-test, full triple, non-vacuous — §8 REPORT `26e0eded`). Gap 1 is CLOSED with that commit cited.
+Gap 2 (Amendment 1 computed class; Amendment 2 ordering) CANNOT be closed by adding cases: neither
+instrument carries a disposition field and the probe at `e2277623` proved identical decided fields. Gap 2
+is recorded as a **named measured residual** — "requires an instrument change; the computed class and the
+cross-lab join each need a case with its own RED and its own control" — with an enforcement-debt entry;
+the instrument is NOT built in-round (operator directive 1). The builder's eighth refusal-with-evidence was
+correct conduct and is credited in the DONE-REPORT. ε applies the § 8 amendment as ONE commit, citing this
+ruling and β's row; if β's verdict (pending at write time) adds a condition, ε applies that condition in the
+same commit and this ruling is amended by an addendum — it is not reopened.
+
+## R-122 — ε e-48: § 5.1 path-name grain — the NAMED MEASURED RESIDUAL is the only admissible branch (β `c2e58f40`)
+At `43af93e9`: content grain oracle two = 0 violations / 25571 occurrences / 4598 files; path-name grain
+legacy_slug_path 0; dispositions pinned 5 / derived 0 / compat 15 / historical 70 / live-unallowed 0. The
+deferred member's own filename is COMPAT (check-shims, expires 2.1.0) and β `f1a93c68` holds that compat
+does not discharge a live surface. β `c2e58f40` closes the fork: the § 5.1 AMENDMENT is FORBIDDEN
+(`9a1e5f60` — no new permanent escape class this round); the residual is the branch. HONESTY CONDITION
+(verbatim intent of the row): the close reports **"zero violations except one named occurrence, with its
+trigger (the operator's `leak-gate.yml` L36 edit) and the population searched"**, never "zero"; a named
+residual is NOT § 5.1 satisfied and the DONE-REPORT says so in those words. ε's e-10 "no amendment needed"
+was content-grain only — ε RETRACTS it in the close record. No β re-consult on this fork (the row says so).
 
 ## R-119 — ε e-41: the one red at 61632076 was α's enforcer TEST, environment-shaped by construction; fixed test-side; closes 1–4 of the close checklist accepted
 ε left the red alone and measured its attribution (green at 4ddca52b, red at 61632076, four generated
