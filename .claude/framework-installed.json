@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "2ab13775865c443123b0e6ce06ca32a404f38650",
-  "installedAt": "2026-09-18T22:46:35.201Z",
+  "installedCommit": "a1fd3053fd0eec75829cb68f3bd935cb7f67d06d",
+  "installedAt": "2026-09-18T23:16:16.222Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
