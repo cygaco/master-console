@@ -30,6 +30,31 @@ const cfgLib = require(path.join(ROOT, "scripts", "mc", "lib", "provider-tier-co
 
 let pass = 0;
 let fail = 0;
+
+// R-120 (S-OS-06 r4) — INSTRUMENTATION, not a fix. The live-CLI cases shell out via
+// execFileSync, which THROWS on a non-zero child exit; the thrown error carries the
+// child's own output on `e.stdout` / `e.stderr` (both populated under this file's
+// default options — measured on win32/node24), but this harness discarded them and
+// printed only the bare "Command failed" stack. A failure that reproduces off-win32
+// therefore arrived with NO envelope, so the one R-115 requires could not exist for
+// the linux-only exit. Print both streams, bounded to the last 60 lines each, on the
+// throw path. No assertion and no product code changes — this only widens what an
+// already-failing case REPORTS; a passing run is byte-identical.
+const ENVELOPE_LINES = 60;
+function envelope(e) {
+  const stream = (label, raw) => {
+    if (raw === undefined || raw === null) return "";
+    const txt = Buffer.isBuffer(raw) ? raw.toString("utf8") : String(raw);
+    if (!txt.trim()) return `      [child ${label}: empty]\n`;
+    const lines = txt.replace(/\s+$/, "").split(/\r?\n/);
+    const tail = lines.slice(-ENVELOPE_LINES);
+    const elided = lines.length > tail.length ? ` — last ${tail.length} of ${lines.length} lines` : "";
+    return `      [child ${label}${elided}]\n` + tail.map((l) => `      | ${l}`).join("\n") + "\n";
+  };
+  const status = typeof e.status === "number" ? `      [child exit status: ${e.status}]\n` : "";
+  return status + stream("stdout", e.stdout) + stream("stderr", e.stderr);
+}
+
 function ok(name, fn) {
   try {
     fn();
@@ -37,7 +62,8 @@ function ok(name, fn) {
     console.log(`  ok  ${name}`);
   } catch (e) {
     fail++;
-    console.log(`FAIL  ${name}\n      ${e.stack || e.message}`);
+    const env = envelope(e); // empty for a plain assertion failure (no child involved)
+    console.log(`FAIL  ${name}\n      ${e.stack || e.message}${env ? "\n" + env : ""}`);
   }
 }
 
