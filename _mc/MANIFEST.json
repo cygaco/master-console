@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T22:10:54.927Z",
+  "generatedAt": "2026-09-18T22:46:35.832Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -150,8 +150,8 @@
       "managed": true,
       "source": null,
       "_note": "Root document — source path same as destination (canonical-side).",
-      "sha256": "4d3e8af8f30c1bbee361c82e56875ce23f56507393c6a508d8d6a910e9e45d5e",
-      "installedSha": "4d3e8af8f30c1bbee361c82e56875ce23f56507393c6a508d8d6a910e9e45d5e"
+      "sha256": "86ff3424bd67900c453e1484f4b18fc8b96957756cedb7f22226f639c2b492b9",
+      "installedSha": "86ff3424bd67900c453e1484f4b18fc8b96957756cedb7f22226f639c2b492b9"
     },
     "SECURITY.md": {
       "owner": "project",
@@ -8363,8 +8363,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.occurrences.json",
-      "sha256": "13ab5785cd50556d7907b2d22ead769edb7a2dd05d14fb6a782eeb060eae4cd3",
-      "installedSha": "13ab5785cd50556d7907b2d22ead769edb7a2dd05d14fb6a782eeb060eae4cd3"
+      "sha256": "ef8fec0515ab293a7be3425f0fde6dba31c287b711fa5b493cde94dbfeede2b7",
+      "installedSha": "ef8fec0515ab293a7be3425f0fde6dba31c287b711fa5b493cde94dbfeede2b7"
     },
     "scripts/open-source/split-brain.js": {
       "owner": "framework",
@@ -12059,8 +12059,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/leak-gate.js",
-      "sha256": "718c4084a279394a18a7678baa330af1fdcff600d0475a38b778d2294840ddb1",
-      "installedSha": "718c4084a279394a18a7678baa330af1fdcff600d0475a38b778d2294840ddb1"
+      "sha256": "a134c1a018f189ae99fab713b2b9c5ac77b9929730ecd375f7f7eeec90e40e9b",
+      "installedSha": "a134c1a018f189ae99fab713b2b9c5ac77b9929730ecd375f7f7eeec90e40e9b"
     },
     "scripts/checks/leak-gate.test.js": {
       "owner": "framework",
@@ -12948,15 +12948,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "1f0163cd55cf660bd5af81d4b516e2a008f45ae2f4dec409de9016335c296290",
-      "installedSha": "1f0163cd55cf660bd5af81d4b516e2a008f45ae2f4dec409de9016335c296290"
+      "sha256": "2f3476ac7e4607d90f000dd1b0306dbcdf431904c6084e564c8c8c3cf835e55d",
+      "installedSha": "2f3476ac7e4607d90f000dd1b0306dbcdf431904c6084e564c8c8c3cf835e55d"
     },
     "scripts/check/privacy.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.test.js",
-      "sha256": "5b50a35eb26089651b5091a87f2685d8f0bb999f16d38ba36a967e303c6bc702",
-      "installedSha": "5b50a35eb26089651b5091a87f2685d8f0bb999f16d38ba36a967e303c6bc702"
+      "sha256": "643e7f9123c47cbcbbc7e68b29a2a0b7bd4e7c614ba231cc2bdb7eca6bf47fac",
+      "installedSha": "643e7f9123c47cbcbbc7e68b29a2a0b7bd4e7c614ba231cc2bdb7eca6bf47fac"
     },
     "scripts/check/roadmap-trace.js": {
       "owner": "framework",
