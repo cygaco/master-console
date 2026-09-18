@@ -34,6 +34,21 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
+// S-OS-06 (β `4f81c60d`): the legacy lab is a DETECTOR TERM — this scanner must recognise a legacy
+// release tag (`<legacy>@0.1.0`) so it does not report it as personal data. It is a still-valid use,
+// not a retired brand occurrence, so it is neither removed (that would make the gate false-flag the
+// tags) nor warranted (a warrant excuses a violation; this is not one). It is DERIVED.
+//
+// Source is `partition-loader#LEGACY_LAB`, which reads the evidence-tag RULE's own pinned literal —
+// the same technique partition-loader.js:119 uses so that module carries ONE legacy literal. That rule
+// is permanent ("kept forever, never rewritten"), so the detector never expires.
+//
+// NOT derived from `hooks/lib/mc-env#LEGACY_SLUG`: that one is dispositioned `compat` with
+// `REMOVED_IN = "mc@2.1.0"`. Deriving from it would import that expiry transitively, and at 2.1.0 this
+// scanner would silently stop matching the very tags the epic preserved and start reporting them as
+// PII. An expiry on a permanent need is a scheduled defect.
+const { LEGACY_LAB } = require("../open-source/partition-loader.js");
+
 const PATTERNS = [
   {
     id: "credential-sk",
@@ -95,16 +110,24 @@ function loadAllowlist() {
   }
 }
 
+// The release-tag / compare-range predicate, built from the DERIVED legacy lab plus the current lab.
+// Anchored at BOTH ends and matched positionally on the lab prefix: the version must be the WHOLE
+// remainder, never "contains a version somewhere", or real addresses with version-shaped domains would
+// be allowlisted as non-personal. `mc` is the current brand and is not a legacy occurrence.
+const RELEASE_TAG_RE = new RegExp(
+  `^(?:${LEGACY_LAB.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}|mc)@v?\\d+(?:\\.\\d+)*(?:\\.\\.\\.[A-Za-z0-9._/-]+)?$`,
+);
+
 // true ⇒ this email is a documented placeholder / bot address, not personal data.
 function isAllowlistedEmail(email, allow) {
   const e = email.toLowerCase();
   if (allow.emails.has(e)) return true;
-  // `warpos@1.2.3` / `mc@1.2.3...main` is a release tag or a GitHub compare
+  // `<legacy-lab>@1.2.3` / `mc@1.2.3...main` is a release tag or a GitHub compare
   // range, not an address: matched POSITIONALLY on the lab prefix + a bare
   // version, never a loose "contains N.N.N somewhere" — an IP-literal domain
   // (`user@10.0.0.1`) or a version-shaped subdomain (`hacker@1.2.3.com`,
   // `victim@1.2.3.evil.co.uk`) is genuinely personal data and must NOT match.
-  if (/^(?:warpos|mc)@v?\d+(?:\.\d+)*(?:\.\.\.[A-Za-z0-9._\/-]+)?$/.test(e)) return true;
+  if (RELEASE_TAG_RE.test(e)) return true;
   const at = e.lastIndexOf("@");
   if (at === -1) return false;
   const domain = e.slice(at + 1);
