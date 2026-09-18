@@ -2,9 +2,10 @@
 
 ## Summary
 
-The rebrand is done and the safety gates pass. Nine real security defects were found and fixed this
-round, including three ways the leak scanner could report "all clear" without actually checking
-anything. Two known gaps are left on purpose and written down below — neither leaks anything today.
+The rebrand is done and the safety gates pass — including the full test suite, which is green. Eleven
+real security defects were found and fixed this round, among them five ways the leak scanner could
+report "all clear" without actually checking anything. The known gaps left on purpose are written down
+below; none of them leaks anything today.
 
 One thing is left for you, and it is one script: `runtime/S-OS-06/r4/operator-finish.ps1`. It makes
 the two workflow edits, pushes, and waits for CI. Nothing else needs a decision.
@@ -32,18 +33,31 @@ fix test. It is **not** "gauntlet green" and is not reported as such.
 | oracle (iii) category delta | **delta 0, uncomputable 0** over 348 categorized / 2,338 Class-1 files |
 | `oracles/self-test.js` | **exit 0** |
 | `oracles/cross-lab-join.self-test.js` | **exit 0** |
-| `npm test` | **exit 1** — see "The one red" |
+| `npm test` | **exit 0** — see "The red that was not" |
 
-## The one red, diagnosed rather than waved through
+## The red that was not — a wrong diagnosis, corrected
 
-`npm test` exits 1 on a single primary failure out of 1,282: `wrapper-mode-binding.test.js`
-("dispatch-agent report-only should proceed", a registry-derive ENOENT in a temp fixture).
+An earlier revision of this report said `npm test` exits 1 on a pre-existing quarantined failure
+(`wrapper-mode-binding`). **That was wrong on every count, and it is retracted rather than softened.**
 
-It is **pre-existing and not introduced by this round**, proven three ways: it is a committed
-quarantine entry whose recorded cause line matches the observed failure text; the quarantine file
-was last touched by earlier r4 work, not by this session; and the test fails identically at
-`43af93e9`, the head this session started from. Quarantine behaviour is otherwise nominal
-(22 entries, 22 still failing, 0 unexpectedly passing).
+What actually happened: the runner SUBTRACTS the quarantine set from the primary run, so a quarantined
+file can never be the primary failure. The conductor took the first assertion text in a 359 KB log and
+assumed it was the primary one. The real primary failure was
+`scripts/checks/reasoned-consult-honesty.test.js` — an unpinned structural finding against the **live**
+review-decision ledger, which was being appended to by another party at the moment the suite ran. The
+suite caught the ledger mid-write.
+
+**`npm test` now exits 0** (1,282 tests; quarantine nominal at 22 entries, 22 still failing, 0
+unexpectedly passing). The specific test passes 3 runs out of 3.
+
+It would not have blocked CI in any case, and that is worth stating because it was raised as a land
+blocker: that ledger is gitignored, and the test opens with an explicit skip when the corpus is absent
+(`if (!fs.existsSync(ledgerPath)) return; // fresh clone / CI: gitignored ledger absent`). So CI never
+reads it. The failure was local-only and transient, not pre-existing and not structural.
+
+Lesson kept rather than buried: a single grep into a large log is not a diagnosis. The first three
+claims made about this red — quarantined, pre-existing, reproducible at the session-start head — were
+each individually checkable and each wrong.
 
 ## Security findings — in the reviewers' terms
 
@@ -75,9 +89,15 @@ scratch repo; scoped to that git version only).
   declared arguments are canonical again and the flag is applied at invocation, so parity holds both
   before and after the operator's workflow edit. The test was **not** weakened.
 
+**Round 4 — the final re-check over exactly the r7 diff, both lanes. THIS IS THE GATE.**
+Cross-provider lane: **PASS, 0 findings.** Binding Claude lane: **PASS**, with three non-blocking
+observations recorded below in its own words. Both lanes passing over the fix diff, with no unfixed
+finding meeting the fix test, is what "the gate passes" means here.
+
 Also caught by running the gate rather than assuming: the substrate merge introduced **one live
 legacy-lab occurrence in `ROADMAP.md`**, and framework-purity was RED on it. Fixed by rephrasing, with
-no new pin and no partition amendment.
+no new pin and no partition amendment. A later substrate merge was re-checked the same way and was
+clean — the check was kept, not assumed, precisely because the first one was not.
 
 ## Named leftovers — measured, not fixed
 
@@ -101,7 +121,20 @@ None of these leaks anything today. Each is recorded so it is a decision later, 
    measurement, so it is a residual. Compensating fact: pin keys already include the match text, so
    the reviewer's cited mechanism is not the exposure; the exposure is the class/write-protection
    fields on globs, future entries and views.
-5. **Carried, each with its reason:** a tag named like a JavaScript object property crashes the tag
+5. **From the final re-check, in the binding reviewer's own words** — it returned PASS, so these are
+   observations, not blockers, and the operator decides them at the land:
+   - *"extraArgs is an UNASSERTED delta: the workflow-parity enforcer no longer covers the command the
+     runner actually spawns, and the two now genuinely differ (the CI step exits 2)."* True, and it is
+     the direct cost of the chosen fix shape: moving the opt-out flag to invocation time is what keeps
+     the parity assertion passing, but the assertion now compares the declared arguments rather than
+     the spawned command. Compensating fact: the operator script makes both workflow edits in one
+     commit before it pushes, so CI never runs the un-flagged form.
+   - *"Explicit --files mode still reports success having examined nothing: exit 0 with 0 of N listed
+     files read."* The floor deliberately does not apply to an explicit file list, so that path keeps
+     the shape the round otherwise closed.
+   - *"The accepted unreadable tolerance is silent: up to 20 tracked files can go unscanned with no
+     line in the output saying so."*
+6. **Carried, each with its reason:** a tag named like a JavaScript object property crashes the tag
    parser (verified); a disposition total omits one sub-count; multiline environment reads escape a
    line-bounded refusal; an unreadable tracked file is dropped silently; evidence tags are absolved by
    form rather than against the real tag list; plus the binding lane's remaining MEDIUM/LOW items —
