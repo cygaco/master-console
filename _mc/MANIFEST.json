@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T21:41:06.445Z",
+  "generatedAt": "2026-09-18T22:10:54.927Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -12059,8 +12059,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/leak-gate.js",
-      "sha256": "8da5c2a1558e2e8cbc2043ad5e5cb4b6a88141c3c241b02a29a58e7e4c064b85",
-      "installedSha": "8da5c2a1558e2e8cbc2043ad5e5cb4b6a88141c3c241b02a29a58e7e4c064b85"
+      "sha256": "718c4084a279394a18a7678baa330af1fdcff600d0475a38b778d2294840ddb1",
+      "installedSha": "718c4084a279394a18a7678baa330af1fdcff600d0475a38b778d2294840ddb1"
     },
     "scripts/checks/leak-gate.test.js": {
       "owner": "framework",
@@ -12948,15 +12948,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833",
-      "installedSha": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833"
+      "sha256": "1f0163cd55cf660bd5af81d4b516e2a008f45ae2f4dec409de9016335c296290",
+      "installedSha": "1f0163cd55cf660bd5af81d4b516e2a008f45ae2f4dec409de9016335c296290"
     },
     "scripts/check/privacy.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.test.js",
-      "sha256": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20",
-      "installedSha": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20"
+      "sha256": "5b50a35eb26089651b5091a87f2685d8f0bb999f16d38ba36a967e303c6bc702",
+      "installedSha": "5b50a35eb26089651b5091a87f2685d8f0bb999f16d38ba36a967e303c6bc702"
     },
     "scripts/check/roadmap-trace.js": {
       "owner": "framework",

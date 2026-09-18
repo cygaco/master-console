@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "8f0a13d5134e9dbb3f3e03ac73a2d50ecd159116",
-  "installedAt": "2026-09-18T21:41:05.903Z",
+  "installedCommit": "c4e7246fd86bc9c5d82b54c7c4d0a37f570d4b49",
+  "installedAt": "2026-09-18T22:10:54.357Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -7864,8 +7864,8 @@
       "dest": "scripts/checks/leak-gate.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "8da5c2a1558e2e8cbc2043ad5e5cb4b6a88141c3c241b02a29a58e7e4c064b85",
-      "currentHashAtInstall": "8da5c2a1558e2e8cbc2043ad5e5cb4b6a88141c3c241b02a29a58e7e4c064b85",
+      "installedHash": "718c4084a279394a18a7678baa330af1fdcff600d0475a38b778d2294840ddb1",
+      "currentHashAtInstall": "718c4084a279394a18a7678baa330af1fdcff600d0475a38b778d2294840ddb1",
       "introducedIn": "0.0.0"
     },
     {
@@ -11854,8 +11854,8 @@
       "dest": "scripts/check/privacy.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833",
-      "currentHashAtInstall": "4bd868f3de1ab5cbdd7f35d5e8c3c0ff77e66acd0935e87a9445835be18b3833",
+      "installedHash": "1f0163cd55cf660bd5af81d4b516e2a008f45ae2f4dec409de9016335c296290",
+      "currentHashAtInstall": "1f0163cd55cf660bd5af81d4b516e2a008f45ae2f4dec409de9016335c296290",
       "introducedIn": "0.0.0"
     },
     {
@@ -11864,8 +11864,8 @@
       "dest": "scripts/check/privacy.test.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20",
-      "currentHashAtInstall": "9808898116141874e6d5af8ec758750b184a3c9d9191f2356bfde237c63d1e20",
+      "installedHash": "5b50a35eb26089651b5091a87f2685d8f0bb999f16d38ba36a967e303c6bc702",
+      "currentHashAtInstall": "5b50a35eb26089651b5091a87f2685d8f0bb999f16d38ba36a967e303c6bc702",
       "introducedIn": "0.0.0"
     },
     {
