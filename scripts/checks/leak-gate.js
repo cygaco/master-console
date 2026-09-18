@@ -29,8 +29,14 @@ const { spawnSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 
+// H2B (r7): `args` must stay CANONICAL — exactly the command the CI workflow's own step runs
+// (leak-gate.test.js asserts `wf.includes("node " + g.args.join(" "))` as a substring check).
+// `--no-name-check` is a LOCAL/CI invocation detail (known-names.json is gitignored, so it's
+// always INACTIVE outside a dev checkout) — it belongs on `extraArgs`, appended only when this
+// runner actually spawns the gate, never on `args`, or the parity assertion demands the workflow
+// carry a flag that a classifier-blocked (.github/) operator step has not (yet) been given.
 const GATES = [
-  { name: "privacy", args: ["scripts/check/privacy.js", "--no-name-check"] },
+  { name: "privacy", args: ["scripts/check/privacy.js"], extraArgs: ["--no-name-check"] },
   { name: "framework-purity", args: ["scripts/checks/framework-purity.js", "--full"] },
   { name: "tracked-transients", args: ["scripts/checks/warpos-tracked-transients.js"] },
   { name: "leak-denylist", args: ["scripts/checks/leak-denylist.js"] },
@@ -40,8 +46,9 @@ const GATES = [
 function runGates(gates, { cwd = ROOT, quiet = false } = {}) {
   const results = [];
   for (const g of gates) {
-    if (!quiet) process.stdout.write(`\n=== leak-gate: ${g.name} — node ${g.args.join(" ")}\n`);
-    const r = spawnSync(process.execPath, g.args, {
+    const spawnArgs = g.args.concat(g.extraArgs || []);
+    if (!quiet) process.stdout.write(`\n=== leak-gate: ${g.name} — node ${spawnArgs.join(" ")}\n`);
+    const r = spawnSync(process.execPath, spawnArgs, {
       cwd,
       stdio: quiet ? "pipe" : "inherit",
       encoding: "utf8",
