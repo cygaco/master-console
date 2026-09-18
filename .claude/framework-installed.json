@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "a1fd3053fd0eec75829cb68f3bd935cb7f67d06d",
-  "installedAt": "2026-09-18T23:16:16.222Z",
+  "installedCommit": "31f9fd047e276f566291ae8c154b56a74d5e834a",
+  "installedAt": "2026-09-18T23:56:31.138Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -7864,8 +7864,8 @@
       "dest": "scripts/checks/leak-gate.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "a134c1a018f189ae99fab713b2b9c5ac77b9929730ecd375f7f7eeec90e40e9b",
-      "currentHashAtInstall": "a134c1a018f189ae99fab713b2b9c5ac77b9929730ecd375f7f7eeec90e40e9b",
+      "installedHash": "f502328b3742e9605ad5b8b005b4a57aff7417d103b314681fff6e3f17added3",
+      "currentHashAtInstall": "f502328b3742e9605ad5b8b005b4a57aff7417d103b314681fff6e3f17added3",
       "introducedIn": "0.0.0"
     },
     {
@@ -8704,8 +8704,8 @@
       "dest": "scripts/checks/run-tests.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "fc5f3aa7c5685c6d7d7f340b101f59ce57c4babd0aa9a7da797f6db308929656",
-      "currentHashAtInstall": "fc5f3aa7c5685c6d7d7f340b101f59ce57c4babd0aa9a7da797f6db308929656",
+      "installedHash": "80094a4d81836c82f0ed0e8aa4ac46fb8c62d41cb2e1608bb659788fbea81dfe",
+      "currentHashAtInstall": "80094a4d81836c82f0ed0e8aa4ac46fb8c62d41cb2e1608bb659788fbea81dfe",
       "introducedIn": "0.0.0"
     },
     {

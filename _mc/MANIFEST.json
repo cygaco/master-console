@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T23:16:16.800Z",
+  "generatedAt": "2026-09-18T23:56:31.418Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -4814,8 +4814,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "5da66c0ad63d15864a6c45941addb36deb0bede04312e9ae584b926fc914d8bb",
-      "installedSha": "5da66c0ad63d15864a6c45941addb36deb0bede04312e9ae584b926fc914d8bb"
+      "sha256": "46baf0496f8e84d0c67346365f0681b7b110965a04437f05ec94286684b3fd45",
+      "installedSha": "46baf0496f8e84d0c67346365f0681b7b110965a04437f05ec94286684b3fd45"
     },
     "tests/regression/SP-20260627-001/enforce-correctness.test.js": {
       "owner": "framework",
@@ -5871,8 +5871,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "ce2a2818c9436b392a5f69aa786f14f3e91f50cedfe52667558b34777d837208",
-      "installedSha": "ce2a2818c9436b392a5f69aa786f14f3e91f50cedfe52667558b34777d837208"
+      "sha256": "39e831c0af753f93ff3ce72a658090fff2fdd25c07bb599c6e45afa78630966e",
+      "installedSha": "39e831c0af753f93ff3ce72a658090fff2fdd25c07bb599c6e45afa78630966e"
     },
     "tests/regression/S-LC-09/design-10-build-2.test.js": {
       "owner": "framework",
@@ -8363,8 +8363,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.occurrences.json",
-      "sha256": "078b83d4117d61a73284ed1f7712ac86d5001f20c3b85ae5ebefb13426192d39",
-      "installedSha": "078b83d4117d61a73284ed1f7712ac86d5001f20c3b85ae5ebefb13426192d39"
+      "sha256": "c52185273b4279364d7c6c6f594e57b814d5101e748d8c6666469b887c7de8a4",
+      "installedSha": "c52185273b4279364d7c6c6f594e57b814d5101e748d8c6666469b887c7de8a4"
     },
     "scripts/open-source/split-brain.js": {
       "owner": "framework",
@@ -12059,8 +12059,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/leak-gate.js",
-      "sha256": "a134c1a018f189ae99fab713b2b9c5ac77b9929730ecd375f7f7eeec90e40e9b",
-      "installedSha": "a134c1a018f189ae99fab713b2b9c5ac77b9929730ecd375f7f7eeec90e40e9b"
+      "sha256": "f502328b3742e9605ad5b8b005b4a57aff7417d103b314681fff6e3f17added3",
+      "installedSha": "f502328b3742e9605ad5b8b005b4a57aff7417d103b314681fff6e3f17added3"
     },
     "scripts/checks/leak-gate.test.js": {
       "owner": "framework",
@@ -12640,8 +12640,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/run-tests.js",
-      "sha256": "fc5f3aa7c5685c6d7d7f340b101f59ce57c4babd0aa9a7da797f6db308929656",
-      "installedSha": "fc5f3aa7c5685c6d7d7f340b101f59ce57c4babd0aa9a7da797f6db308929656"
+      "sha256": "80094a4d81836c82f0ed0e8aa4ac46fb8c62d41cb2e1608bb659788fbea81dfe",
+      "installedSha": "80094a4d81836c82f0ed0e8aa4ac46fb8c62d41cb2e1608bb659788fbea81dfe"
     },
     "scripts/checks/scaffold-coverage-scan.js": {
       "owner": "framework",
@@ -15228,8 +15228,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "c193b1d18c82762a436167cd35370a3f905176b748f49943423d4bc51c08607a",
-      "installedSha": "c193b1d18c82762a436167cd35370a3f905176b748f49943423d4bc51c08607a"
+      "sha256": "e7320110fe6b3eca34dc88b1a10e72629aed4955feddbe7acbbf9488978f4b96",
+      "installedSha": "e7320110fe6b3eca34dc88b1a10e72629aed4955feddbe7acbbf9488978f4b96"
     },
     ".claude/framework-installed.json": {
       "owner": "generated",
