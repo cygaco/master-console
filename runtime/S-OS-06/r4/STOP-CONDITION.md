@@ -296,16 +296,72 @@ paperwork and by how much.
 files. Every certifying figure is measured on **the tree that actually lands**, and the head is named beside
 it. A zero measured across a tree that changed under it is a zero about a different tree.
 
-## 8. OWED BEFORE THE CERTIFYING RUN (β verdict id `8e5f3a02`, self-test reading)
+## 8. AMENDED ON THE EVIDENCE — gap 1 CLOSED, gap 2 a named measured residual (α R-121)
 
-β read the oracle self-test at source and named two gaps. Both are owed before any citable run:
+**Provenance of this amendment, stated plainly.** It rests on α's ruling R-121 ALONE. R-121 directs ε to cite
+"this ruling and β's row", but **no β row for § 8 exists**: canonical `paths.betaEvents` held 523 rows at the
+time of writing, the newest `a5c3e761` dated 2026-09-17T10:30Z, with **no row dated 2026-09-18** and no reply
+to ε's direct query. ε will not cite a row id it has not read, so none is cited here and no β consult on § 8
+is implied. Per R-121, if β later rules and adds a condition, this section is **amended by an addendum — not
+reopened**. The evidence below was verified by ε at source, independently of any ruling.
 
-1. **Oracle (i) has no GREEN control.** Oracles (ii) and (iii) each demonstrate a clean control beside their
-   RED; (i) demonstrates detection and refusal only and **has never been shown capable of printing zero**. An
-   oracle that has only ever printed non-zero is unproven in the same way one that has only ever printed zero
-   is. Demonstrate (i) green on a fixture, or its eventual zero means nothing.
-2. **No case covers the newly computed class or the cross-lab join.** Both are owed with Amendment 1 and
-   Amendment 2, each with its RED and its control.
+β read the oracle self-test at source and named two gaps, both originally owed before any citable run
+(β verdict id `8e5f3a02`). The ORIGINAL statement is retained verbatim, because an amendment that deletes
+what it amends hides its own effect:
+
+> 1. **Oracle (i) has no GREEN control.** Oracles (ii) and (iii) each demonstrate a clean control beside their
+>    RED; (i) demonstrates detection and refusal only and **has never been shown capable of printing zero**. An
+>    oracle that has only ever printed non-zero is unproven in the same way one that has only ever printed zero
+>    is. Demonstrate (i) green on a fixture, or its eventual zero means nothing.
+> 2. **No case covers the newly computed class or the cross-lab join.** Both are owed with Amendment 1 and
+>    Amendment 2, each with its RED and its control.
+
+### GAP 1 — CLOSED. The premise was FALSE at the sprint head.
+
+Oracle (i) **already has** a GREEN control with the full three-part triple, added as case **T1** in
+`runtime/S-OS-06/r4/oracles/cross-lab-join.self-test.js` at commit **`73b36112`**: green on the unmutated
+fixture *with the scanned population printed beside the zero* → RED on a planted nonexistent-tag claim →
+revert → green re-observed. The case carries its own non-vacuity assertion ("the control must contain a real
+G token, or its zero is vacuous") and asserts `exit 0 — oracle (i) CAN print zero`, which is exactly the
+capability gap 1 said had never been demonstrated.
+
+**§ 8.1 was stale text, not an open gap.** ε verified this at source rather than inheriting it: the commit was
+opened and the T1 case read directly. Reported at `26e0eded` (the § 8 REPORT).
+
+### GAP 2 — NOT closable by adding cases. Named measured residual + `ED-442`.
+
+Gap 2 cannot be discharged as written, because **neither amended class exists in any instrument** — there is
+nothing for a case to assert against. Proven by probe (`section8/section8-gap-proof.probe.js`, exit 0,
+committed at `e2277623`):
+
+- **Amendment 1 (the computed class).** `oracle-i-tag-claims.js` sets `candidate: !exists` and carries no
+  disposition field, so the self-reference token and the beyond-tree token have **identical decided fields**.
+  No RED/GREEN pair can tell the class apart. The only discharge path is a per-occurrence **warrant** — the
+  very mechanism Amendment 1 exists to replace ("never by registration"). A case here could only test a
+  warrant, and a warrant is the thing the amendment abolishes.
+- **Amendment 2 (the ordering).** The ordering has **no instrument**. Seeding an ordering violation (a codemod
+  falsification in a class-4 historical file) turns **no instrument RED**; worse, it makes the certifying
+  oracle (i) print a **clean zero** (`violations=0 code=0`, warrant bound=1) while the join independently
+  reports `members=1`. Nothing intersects warrants with join members. That is a **fail-open on precisely the
+  hazard Amendment 2 was written against**, and it means the ordering is procedural only.
+
+Per operator directive 1 (final session; a named honest residual beats an in-round instrument build), the
+instrument is **NOT built in-round**. Gap 2 is carried as a named measured residual with its population and
+measured consequence stated, and logged as **`ED-442`** (high, open) with candidate enforcers named.
+
+**Consequence for the stop condition, stated plainly:** § 8 is **NOT fully discharged**. Gap 1 is closed; gap 2
+is a residual, and a residual is not satisfaction. The DONE-REPORT reports § 8 in these terms — never as
+"§ 8 closed".
+
+**Credit.** The builder's refusal-with-evidence (the eighth of the round) was correct conduct: it refused to
+close the gap by adding cases, and produced the proof that no case *could* be written.
+
+### CLOSE CHECKLIST delta
+
+Item 5 ("§ 8's two gaps: oracle (i) demonstrated GREEN on a fixture; cases covering the computed class and the
+cross-lab join, each with its RED and its control — `8e5f3a02`") is AMENDED: the oracle (i) GREEN half is
+**satisfied** at `73b36112`; the two-cases half is **replaced** by the named residual + `ED-442`. Item 5 no
+longer blocks a citable certifying run, and the DONE-REPORT states that it was amended rather than met.
 
 ## 7. Fence (β 9a1e5f60, narrow and non-negotiable)
 
