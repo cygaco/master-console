@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "4ddca52b9157873e50130324a084d3a5b648ab0d",
-  "installedAt": "2026-09-17T00:10:31.360Z",
+  "installedCommit": "950d22c9b29f0dcc461b8e28606beb0efc86e2d5",
+  "installedAt": "2026-09-18T19:41:28.362Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -7004,8 +7004,8 @@
       "dest": "scripts/checks/beta-ledger-refs.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "042fdd46bd5ce4e41cd38f664113d4a01aa02cce37dd5cd0b037aa22edb82d98",
-      "currentHashAtInstall": "042fdd46bd5ce4e41cd38f664113d4a01aa02cce37dd5cd0b037aa22edb82d98",
+      "installedHash": "964eff2d21e37a602f3e667b1e87b58284d4eda1bdf038c942c57be8bba7abe5",
+      "currentHashAtInstall": "964eff2d21e37a602f3e667b1e87b58284d4eda1bdf038c942c57be8bba7abe5",
       "introducedIn": "0.0.0"
     },
     {
@@ -8704,8 +8704,8 @@
       "dest": "scripts/checks/run-tests.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "a0cf43328113e56df39635255580f8017b6d65b4aabf075fd2c4b96e51057998",
-      "currentHashAtInstall": "a0cf43328113e56df39635255580f8017b6d65b4aabf075fd2c4b96e51057998",
+      "installedHash": "fc5f3aa7c5685c6d7d7f340b101f59ce57c4babd0aa9a7da797f6db308929656",
+      "currentHashAtInstall": "fc5f3aa7c5685c6d7d7f340b101f59ce57c4babd0aa9a7da797f6db308929656",
       "introducedIn": "0.0.0"
     },
     {
