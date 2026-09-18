@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "c4e0da67349baf710d95c7c379fdc558a23dcbeb",
-  "installedAt": "2026-09-18T21:14:58.854Z",
+  "installedCommit": "7e23f7a80690bad5df9dfe78de532aab11d3f5b3",
+  "installedAt": "2026-09-18T21:32:05.925Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -11854,8 +11854,8 @@
       "dest": "scripts/check/privacy.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
-      "currentHashAtInstall": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
+      "installedHash": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
+      "currentHashAtInstall": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
       "introducedIn": "0.0.0"
     },
     {

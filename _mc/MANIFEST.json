@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T21:14:59.342Z",
+  "generatedAt": "2026-09-18T21:32:06.448Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -8363,8 +8363,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/rename-mc.occurrences.json",
-      "sha256": "9a9149f61194b93c3c00f35946530ab877f5c2b9b75ff1d5a7c2d7507526ad54",
-      "installedSha": "9a9149f61194b93c3c00f35946530ab877f5c2b9b75ff1d5a7c2d7507526ad54"
+      "sha256": "13ab5785cd50556d7907b2d22ead769edb7a2dd05d14fb6a782eeb060eae4cd3",
+      "installedSha": "13ab5785cd50556d7907b2d22ead769edb7a2dd05d14fb6a782eeb060eae4cd3"
     },
     "scripts/open-source/split-brain.js": {
       "owner": "framework",
@@ -12948,8 +12948,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
-      "installedSha": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1"
+      "sha256": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
+      "installedSha": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd"
     },
     "scripts/check/privacy.test.js": {
       "owner": "framework",

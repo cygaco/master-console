@@ -14339,7 +14339,7 @@
         "src": "scripts/check/privacy.js",
         "dest": "scripts/check/privacy.js",
         "kind": "check_runner_tool",
-        "sha256": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
+        "sha256": "b3ff13e9fc3826689e9f64afae54faad1c1435840b717599914e4409bcd1a2bd",
         "owner": "framework",
         "mergeStrategy": "replace_if_unmodified",
         "introducedIn": "0.0.0",
