@@ -1234,7 +1234,7 @@ function buildPartition(denylist, { tags } = {}) {
       }
     }
     for (const k of baseSet) {
-      if (!nowKeys.has(k) && !amendSet.has(k)) {
+      if (!nowKeys.has(k) && !removalSet.has(k)) {
         problems.push({ id: "F8", key: k, message: `post-freeze silent removal '${k}' — a frozen baseline entry is gone with no warranted amendment record (a removal must be amended too)` });
       }
     }
