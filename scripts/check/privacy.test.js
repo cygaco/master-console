@@ -173,6 +173,17 @@ test("allowlist branch: a DOTLESS `emailDomainSuffixes` entry must NOT allowlist
   assert.strictEqual(isAllowlistedEmail("x@host.local", mkAllow({ emailDomainSuffixes: [".local"] })), true);
 });
 
+test("H1 fail-open regression (r6): an allowlisted first match must not suppress a later real address on the SAME line", () => {
+  const f = tmpFile(`contact: git@github.com and also ${PERSONAL_EMAIL} here\n`);
+  const r = run(["--files", f]);
+  assert.strictEqual(r.code, 1, r.out);
+  assert.match(r.out, /MED/);
+  const findings = scanFile(f, { knownNames: [], allow: loadAllowlist() });
+  const emailFindings = findings.filter((x) => x.pattern === "email");
+  assert.strictEqual(emailFindings.length, 1, JSON.stringify(findings));
+  assert.strictEqual(emailFindings[0].match, PERSONAL_EMAIL);
+});
+
 test("the SHIPPED allowlist file carries no empty and no dotless suffix", () => {
   const shipped = JSON.parse(fs.readFileSync(path.join(__dirname, "privacy.allowlist.json"), "utf8"));
   const sufs = shipped.emailDomainSuffixes || [];

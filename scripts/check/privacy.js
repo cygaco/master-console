@@ -195,16 +195,30 @@ function scanFile(file, ctx) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     for (const p of PATTERNS) {
-      const m = line.match(p.re);
-      if (!m) continue;
-      if (p.id === "email" && isAllowlistedEmail(m[0], allow)) continue;
-      findings.push({
-        file,
-        line: i + 1,
-        pattern: p.id,
-        severity: p.severity,
-        match: m[0].slice(0, 80),
-      });
+      // H1 (r6): scan EVERY match on the line, not just the first — a bare `line.match(p.re)`
+      // without the /g flag returns only the first hit, and (for the email pattern) an
+      // allowlisted first match used to `continue` the WHOLE line, silently skipping any
+      // real address that followed it on the same line. A fresh /g-flagged RegExp per
+      // pattern keeps lastIndex from leaking across lines/files.
+      const globalRe = new RegExp(
+        p.re.source,
+        p.re.flags.includes("g") ? p.re.flags : p.re.flags + "g",
+      );
+      let m;
+      while ((m = globalRe.exec(line)) !== null) {
+        if (p.id === "email" && isAllowlistedEmail(m[0], allow)) {
+          if (m.index === globalRe.lastIndex) globalRe.lastIndex++;
+          continue;
+        }
+        findings.push({
+          file,
+          line: i + 1,
+          pattern: p.id,
+          severity: p.severity,
+          match: m[0].slice(0, 80),
+        });
+        if (m.index === globalRe.lastIndex) globalRe.lastIndex++;
+      }
     }
     for (const name of knownNames) {
       if (line.includes(name)) {
