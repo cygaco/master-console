@@ -202,6 +202,34 @@ r4 closes when ALL of the following hold on the FINAL head:
 A finding genuinely outside every property is a **named, measured residual** recorded with the population
 that was searched — never a cycle extension.
 
+### 5.1 CLOSED — the path-name grain fork: the named residual is the ONLY admissible branch (β `c2e58f40`, α R-122)
+
+The fork was whether to AMEND item 1 above so it admits the one retained occurrence, or to report that
+occurrence as a named measured residual. β `c2e58f40` (2026-09-17T03:40Z, shutdown addendum) closes it:
+the **amendment is FORBIDDEN** by the fence `9a1e5f60` — no new permanent escape class this round; a
+live-consumer break goes to the compat register with a per-entry expiry, never a warrant. **The residual is
+the branch.** No β re-consult is owed on this fork (the row says so).
+
+**HONESTY CONDITION — binding on the DONE-REPORT, verbatim.** A named residual is **NOT** item 1 satisfied,
+and the close says so in those words. The close reports:
+
+> zero violations except one named occurrence, with its trigger and the population searched
+
+and **never** reports a bare "zero". The trigger is named as the operator's `leak-gate.yml` L36 edit, and the
+population searched is printed beside the figure.
+
+**Measured basis** (at `43af93e9`, the head at which the fork was adjudicated): content grain, oracle two —
+0 violations / 25,571 occurrences / 4,598 files; path-name grain `legacy_slug_path` 0; dispositions pinned 5 /
+derived 0 / compat 15 / historical 70 / live-unallowed 0. The deferred member's own filename is **compat**
+(check-shims, expiring 2.1.0), and β `f1a93c68` holds that compat does **not** discharge a live surface —
+which is exactly why the occurrence is retained and named rather than dispositioned away. Per section 7b the
+certifying run re-measures on the head that actually lands and names that head beside every figure; this
+paragraph records the basis of the ruling, not the certifying figures.
+
+**RETRACTION — ε e-10.** ε's earlier "no amendment needed" was reached on the **content grain only** and did
+not address the path-name grain the fork turns on. ε **retracts e-10** in this close record. The zero it
+relied on was correct for the population it searched and was reported as covering more than it did.
+
 ## 6. OPEN, and the certifying run may not be cited until it is ruled
 
 **The forthcoming-release-tag class is UNRESOLVED.** Stage 1 measured 514 oracle (i) candidates, of which 243
