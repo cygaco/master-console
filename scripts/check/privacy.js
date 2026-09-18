@@ -132,7 +132,16 @@ function isAllowlistedEmail(email, allow) {
   if (at === -1) return false;
   const domain = e.slice(at + 1);
   if (allow.emailDomains.has(domain)) return true;
-  return allow.emailDomainSuffixes.some((suf) => domain.endsWith(suf));
+  // A suffix entry must be a REAL label-boundary suffix. Guarded at the MATCH site, not only at load,
+  // so the property holds however the allow object was built (the loader is not the only caller).
+  // Two fail-OPEN shapes are rejected, both measured: "" matches every domain (`endsWith("")` is always
+  // true, so one stray entry allowlists the whole world), and a dotless entry like "com" matches an
+  // entire TLD. Both would silently turn real personal data into "not personal data" in a fail-closed gate.
+  return allow.emailDomainSuffixes.some((suf) => {
+    const s = String(suf);
+    if (s.length < 2 || !s.startsWith(".")) return false;
+    return domain.endsWith(s);
+  });
 }
 
 function trackedFiles() {

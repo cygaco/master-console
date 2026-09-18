@@ -124,3 +124,61 @@ test("live tree: the tracked repository passes the default gate (exit 0)", () =>
   const r = run([]);
   assert.strictEqual(r.code, 0, r.out.split("\n").slice(0, 30).join("\n"));
 });
+
+// S-OS-06 (β `4f81c60d` scope limit): the tag-predicate proof runs with an EMPTY allowlist, which is the
+// strongest form for that predicate precisely BECAUSE it neutralises `emails` / `emailDomains` /
+// `emailDomainSuffixes`. Measured consequence: those three branches had NO coverage anywhere in this file —
+// its only construction of them was the empty object. All three return TRUE (= "not personal data"), so an
+// error in any of them fails OPEN in a fail-closed PII gate. privacy.allowlist.json's own `_comment` names
+// THIS file as its enforcer, so the claim was aspirational until now. Live exposure when written: NONE —
+// the shipped allowlist's six suffixes are all dot-prefixed and none is empty. These are regression guards
+// on a latent footgun, not a repair of a live leak.
+const mkAllow = (o) => Object.assign({ emails: new Set(), emailDomains: new Set(), emailDomainSuffixes: [] }, o);
+
+test("allowlist branch: an exact `emails` entry matches, a near-miss does not", () => {
+  const allow = mkAllow({ emails: new Set(["git@github.com"]) });
+  assert.strictEqual(isAllowlistedEmail("git@github.com", allow), true);
+  assert.strictEqual(isAllowlistedEmail("git@github.com.evil.example", allow), false);
+});
+
+test("allowlist branch: `emailDomains` matches the WHOLE domain, never a subdomain of it", () => {
+  const allow = mkAllow({ emailDomains: new Set(["example.com"]) });
+  assert.strictEqual(isAllowlistedEmail("a@example.com", allow), true);
+  // split so this literal is not itself a live match — `evil-example.com` is NOT an allowlisted
+  // domain, so an inline literal here would (correctly) be flagged by this file's own live-tree test
+  const nearMiss = ["a", "evil-example." + "com"].join("@");
+  assert.strictEqual(isAllowlistedEmail(nearMiss, allow), false);
+});
+
+test("allowlist branch: an EMPTY `emailDomainSuffixes` entry must NOT allowlist every address", () => {
+  // `"anything".endsWith("")` is always true, so a stray "" entry silently allowlists the whole world.
+  const allow = mkAllow({ emailDomainSuffixes: [""] });
+  const victim = ["victim", "totally-real." + "com"].join("@"); // split so the literal is not itself a live match
+  assert.strictEqual(
+    isAllowlistedEmail(victim, allow),
+    false,
+    "an empty suffix entry allowlisted a real address — every email would be treated as non-personal",
+  );
+});
+
+test("allowlist branch: a DOTLESS `emailDomainSuffixes` entry must NOT allowlist a whole TLD", () => {
+  const allow = mkAllow({ emailDomainSuffixes: ["com"] });
+  const victim = ["victim", "evil." + "com"].join("@"); // split so the literal is not itself a live match
+  assert.strictEqual(
+    isAllowlistedEmail(victim, allow),
+    false,
+    "a dotless suffix allowlisted an unrelated .com address — a suffix must be anchored at a label boundary",
+  );
+  // the legitimate, dot-prefixed form still works
+  assert.strictEqual(isAllowlistedEmail("x@host.local", mkAllow({ emailDomainSuffixes: [".local"] })), true);
+});
+
+test("the SHIPPED allowlist file carries no empty and no dotless suffix", () => {
+  const shipped = JSON.parse(fs.readFileSync(path.join(__dirname, "privacy.allowlist.json"), "utf8"));
+  const sufs = shipped.emailDomainSuffixes || [];
+  assert.ok(sufs.length > 0, "the shipped allowlist should carry suffixes; an empty list makes this vacuous");
+  for (const s of sufs) {
+    assert.notStrictEqual(String(s), "", "an empty suffix entry allowlists every address");
+    assert.ok(String(s).startsWith("."), `suffix ${JSON.stringify(s)} must start with "." or it matches a whole TLD`);
+  }
+});
