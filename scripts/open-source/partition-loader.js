@@ -188,7 +188,7 @@ function readTagList({ root = PARTITION_ROOT, remoteFn } = {}) {
   for (const remote of remotes) {
     const r = remoteFn
       ? remoteFn(remote)
-      : spawnSync("git", ["ls-remote", "--tags", remote], { cwd: root, encoding: "utf8", timeout: 30000, maxBuffer: 64 * 1024 * 1024 });
+      : spawnSync("git", ["ls-remote", "--tags", "--", remote], { cwd: root, encoding: "utf8", timeout: 30000, maxBuffer: 64 * 1024 * 1024 });
     if (!r || r.status !== 0) {
       attempts.push(`git ls-remote --tags ${remote}: FAILED (${String((r && (r.stderr || (r.error && r.error.message))) || "").trim().slice(0, 120)})`);
       continue;
@@ -1234,7 +1234,7 @@ function buildPartition(denylist, { tags } = {}) {
       }
     }
     for (const k of baseSet) {
-      if (!nowKeys.has(k) && !amendSet.has(k)) {
+      if (!nowKeys.has(k) && !removalSet.has(k)) {
         problems.push({ id: "F8", key: k, message: `post-freeze silent removal '${k}' — a frozen baseline entry is gone with no warranted amendment record (a removal must be amended too)` });
       }
     }

@@ -53,7 +53,7 @@ test("--advisory keeps the pre-S-OS-04 behaviour: a MED-only file exits 0", () =
   assert.strictEqual(run(["--files", f, "--advisory"]).code, 0);
 });
 
-test("known-answer: a release tag / compare range (name@1.2.3...main) is not an email finding", () => {
+test("known-answer: a release tag / compare range is not an email finding", () => {
   const allow = loadAllowlist();
   assert.strictEqual(isAllowlistedEmail("warpos@1.2.0", allow), true);
   assert.strictEqual(isAllowlistedEmail("warpos@1.2.0...main", allow), true);
@@ -96,6 +96,21 @@ test("allowlist semantics: exact, domain, suffix — and a real-looking address 
   assert.ok(isAllowlistedEmail("bot@users.noreply.github.com", allow));
   assert.ok(isAllowlistedEmail("founder@admin-preview.local", allow));
   assert.strictEqual(isAllowlistedEmail(PERSONAL_EMAIL, allow), false);
+});
+
+test("H2 fail-open regression (r5): version-tag allowlist is POSITIONAL, not a bare 'contains N.N.N' match", () => {
+  const allow = loadAllowlist();
+  // Legitimate release tags / compare ranges — must stay allowlisted.
+  assert.strictEqual(isAllowlistedEmail("warpos@1.2.0...main", allow), true);
+  assert.strictEqual(isAllowlistedEmail("mc@2.0.0", allow), true);
+  assert.strictEqual(isAllowlistedEmail("warpos@0.14.0", allow), true);
+  // IP-literal / version-shaped-domain bypasses — must be FLAGGED, not allowlisted.
+  const hackerAddr = ["hacker", "1.2.3." + "com"].join("@"); // split so this literal isn't itself a live match elsewhere
+  assert.strictEqual(isAllowlistedEmail(hackerAddr, allow), false);
+  assert.strictEqual(isAllowlistedEmail("user@10.0.0.1", allow), false);
+  const victimAddr = ["victim", "1.2.3.evil.co." + "uk"].join("@"); // split so this literal isn't itself a live match elsewhere
+  assert.strictEqual(isAllowlistedEmail(victimAddr, allow), false);
+  assert.strictEqual(isAllowlistedEmail(PERSONAL_EMAIL, allow), false); // real gmail-shaped address
 });
 
 test("a missing allowlist fails CLOSED (every email becomes a finding)", () => {

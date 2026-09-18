@@ -99,9 +99,12 @@ function loadAllowlist() {
 function isAllowlistedEmail(email, allow) {
   const e = email.toLowerCase();
   if (allow.emails.has(e)) return true;
-  // `name@1.2.3` / `name@1.2.3...main` is a release tag or a GitHub compare
-  // range (e.g. warpos@1.2.0), not an address: the "domain" is a bare version.
-  if (/@\d+\.\d+\.\d+/.test(e)) return true;
+  // `warpos@1.2.3` / `mc@1.2.3...main` is a release tag or a GitHub compare
+  // range, not an address: matched POSITIONALLY on the lab prefix + a bare
+  // version, never a loose "contains N.N.N somewhere" — an IP-literal domain
+  // (`user@10.0.0.1`) or a version-shaped subdomain (`hacker@1.2.3.com`,
+  // `victim@1.2.3.evil.co.uk`) is genuinely personal data and must NOT match.
+  if (/^(?:warpos|mc)@v?\d+(?:\.\d+)*(?:\.\.\.[A-Za-z0-9._\/-]+)?$/.test(e)) return true;
   const at = e.lastIndexOf("@");
   if (at === -1) return false;
   const domain = e.slice(at + 1);
