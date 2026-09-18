@@ -20,11 +20,14 @@
  *   node scripts/check/privacy.js --json           JSON output
  *   node scripts/check/privacy.js --strict         exit 1 on ANY finding (LOW included)
  *   node scripts/check/privacy.js --advisory       pre-S-OS-04 behaviour: exit 1 only on HIGH
+ *   node scripts/check/privacy.js --no-name-check  known-names.json absent is expected (it's
+ *                                                   gitignored); proceed instead of refusing
  *
  * Exit:
  *   0 — no failing findings for the chosen mode
  *   1 — default: any HIGH or MED · --strict: any finding · --advisory: any HIGH
- *   2 — usage error
+ *   2 — usage error, unreadable/truncated tree, or an INACTIVE known-name check without
+ *       --no-name-check
  *
  * Enforcer of its own contract: scripts/check/privacy.test.js (planted email +
  * credential fixtures must exit 1; allowlisted placeholder must not; the live
@@ -168,13 +171,18 @@ function trackedFiles() {
 // truncated listing, near-empty/corrupt checkout) does.
 const MIN_TRACKED_FILES_FLOOR = 1000;
 
+// H3 (r6): resolved from the REPO ROOT (not cwd) — a cwd-relative path silently resolves to
+// nothing whenever this script is invoked from anywhere but the repo root. Returns a status
+// object (not a bare array) so main() can tell "no names configured because none matched" apart
+// from "the known-name pattern never ran" and refuse accordingly.
 function loadKnownNames() {
-  const f = path.join(".claude", "project", "memory", "known-names.json");
-  if (!fs.existsSync(f)) return [];
+  const f = path.join(__dirname, "..", "..", ".claude", "project", "memory", "known-names.json");
+  if (!fs.existsSync(f)) return { names: [], active: false, path: f };
   try {
-    return JSON.parse(fs.readFileSync(f, "utf8")).names || [];
+    const names = JSON.parse(fs.readFileSync(f, "utf8")).names || [];
+    return { names, active: true, path: f };
   } catch {
-    return [];
+    return { names: [], active: false, path: f };
   }
 }
 
@@ -301,7 +309,23 @@ function main() {
     runtimeRoots.some((r) => f.startsWith(r + "/") || f === r),
   );
 
-  const ctx = { knownNames: loadKnownNames(), allow: loadAllowlist() };
+  // H3 (r6): the known-name pattern is INACTIVE by construction in CI — its store is
+  // gitignored (.gitignore, `.claude/project/memory/`). A vacuous pattern that fires no
+  // findings must not silently masquerade as "checked and clean"; refuse unless the caller
+  // explicitly opts in with --no-name-check (leak-gate.js does, for exactly this reason).
+  const noNameCheck = args.includes("--no-name-check");
+  const knownNamesResult = loadKnownNames();
+  if (!knownNamesResult.active) {
+    const inactiveMsg = `known-names: INACTIVE (${knownNamesResult.path} absent)\n`;
+    process.stderr.write(inactiveMsg);
+    if (!noNameCheck) {
+      process.stderr.write(
+        "privacy: known-name pattern is INACTIVE — pass --no-name-check to proceed anyway, or provide the file\n",
+      );
+      process.exit(2);
+    }
+  }
+  const ctx = { knownNames: knownNamesResult.names, allow: loadAllowlist() };
   let allFindings = [];
   for (const f of files) {
     if (!fs.existsSync(f)) continue;
