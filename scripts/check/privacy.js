@@ -20,11 +20,14 @@
  *   node scripts/check/privacy.js --json           JSON output
  *   node scripts/check/privacy.js --strict         exit 1 on ANY finding (LOW included)
  *   node scripts/check/privacy.js --advisory       pre-S-OS-04 behaviour: exit 1 only on HIGH
+ *   node scripts/check/privacy.js --no-name-check  known-names.json absent is expected (it's
+ *                                                   gitignored); proceed instead of refusing
  *
  * Exit:
  *   0 — no failing findings for the chosen mode
  *   1 — default: any HIGH or MED · --strict: any finding · --advisory: any HIGH
- *   2 — usage error
+ *   2 — usage error, unreadable/truncated tree, or an INACTIVE known-name check without
+ *       --no-name-check
  *
  * Enforcer of its own contract: scripts/check/privacy.test.js (planted email +
  * credential fixtures must exit 1; allowlisted placeholder must not; the live
@@ -144,6 +147,9 @@ function isAllowlistedEmail(email, allow) {
   });
 }
 
+// H2 (r6): returns null on a git-listing failure (never []) — a caller must be able to tell
+// "git couldn't be asked" apart from "git said zero files", or a failure silently reads as a
+// clean, fully-scanned tree. See main()'s refusal on null / below-floor counts.
 function trackedFiles() {
   try {
     return execSync("git ls-files", {
@@ -154,17 +160,29 @@ function trackedFiles() {
       .map((s) => s.trim())
       .filter(Boolean);
   } catch {
-    return [];
+    return null;
   }
 }
 
+// H2 (r6): a committed minimum-file floor, independent of the git-listing-failure check above.
+// Measured: `node scripts/check/privacy.js` at 7a68bd48 (S-OS-06 r6 base) reports
+// "scanned 4610 file(s)" post-filter. Picked well below that so ordinary variance (files added
+// or removed over time) never trips it — only a scan that sees implausibly few files (wrong cwd,
+// truncated listing, near-empty/corrupt checkout) does.
+const MIN_TRACKED_FILES_FLOOR = 1000;
+
+// H3 (r6): resolved from the REPO ROOT (not cwd) — a cwd-relative path silently resolves to
+// nothing whenever this script is invoked from anywhere but the repo root. Returns a status
+// object (not a bare array) so main() can tell "no names configured because none matched" apart
+// from "the known-name pattern never ran" and refuse accordingly.
 function loadKnownNames() {
-  const f = path.join(".claude", "project", "memory", "known-names.json");
-  if (!fs.existsSync(f)) return [];
+  const f = path.join(__dirname, "..", "..", ".claude", "project", "memory", "known-names.json");
+  if (!fs.existsSync(f)) return { names: [], active: false, path: f };
   try {
-    return JSON.parse(fs.readFileSync(f, "utf8")).names || [];
+    const names = JSON.parse(fs.readFileSync(f, "utf8")).names || [];
+    return { names, active: true, path: f };
   } catch {
-    return [];
+    return { names: [], active: false, path: f };
   }
 }
 
@@ -195,16 +213,30 @@ function scanFile(file, ctx) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     for (const p of PATTERNS) {
-      const m = line.match(p.re);
-      if (!m) continue;
-      if (p.id === "email" && isAllowlistedEmail(m[0], allow)) continue;
-      findings.push({
-        file,
-        line: i + 1,
-        pattern: p.id,
-        severity: p.severity,
-        match: m[0].slice(0, 80),
-      });
+      // H1 (r6): scan EVERY match on the line, not just the first — a bare `line.match(p.re)`
+      // without the /g flag returns only the first hit, and (for the email pattern) an
+      // allowlisted first match used to `continue` the WHOLE line, silently skipping any
+      // real address that followed it on the same line. A fresh /g-flagged RegExp per
+      // pattern keeps lastIndex from leaking across lines/files.
+      const globalRe = new RegExp(
+        p.re.source,
+        p.re.flags.includes("g") ? p.re.flags : p.re.flags + "g",
+      );
+      let m;
+      while ((m = globalRe.exec(line)) !== null) {
+        if (p.id === "email" && isAllowlistedEmail(m[0], allow)) {
+          if (m.index === globalRe.lastIndex) globalRe.lastIndex++;
+          continue;
+        }
+        findings.push({
+          file,
+          line: i + 1,
+          pattern: p.id,
+          severity: p.severity,
+          match: m[0].slice(0, 80),
+        });
+        if (m.index === globalRe.lastIndex) globalRe.lastIndex++;
+      }
     }
     for (const name of knownNames) {
       if (line.includes(name)) {
@@ -247,7 +279,14 @@ function main() {
   if (explicit) {
     files = explicit;
   } else {
-    files = trackedFiles().filter((f) => {
+    const tracked = trackedFiles();
+    if (tracked === null) {
+      process.stderr.write(
+        "privacy: git file listing failed — refusing to read green on an unreadable tree\n",
+      );
+      process.exit(2);
+    }
+    files = tracked.filter((f) => {
       if (SKIP_FILES.includes(f)) return false;
       const top = f.split("/")[0];
       if (SKIP_DIRS.has(top)) return false;
@@ -256,6 +295,12 @@ function main() {
         return false;
       return true;
     });
+    if (files.length < MIN_TRACKED_FILES_FLOOR) {
+      process.stderr.write(
+        `privacy: only ${files.length} file(s) after filtering (below the floor of ${MIN_TRACKED_FILES_FLOOR}) — refusing to read green on a tree that looks unreadable or truncated\n`,
+      );
+      process.exit(2);
+    }
   }
 
   // Runtime tracked check
@@ -264,7 +309,23 @@ function main() {
     runtimeRoots.some((r) => f.startsWith(r + "/") || f === r),
   );
 
-  const ctx = { knownNames: loadKnownNames(), allow: loadAllowlist() };
+  // H3 (r6): the known-name pattern is INACTIVE by construction in CI — its store is
+  // gitignored (.gitignore, `.claude/project/memory/`). A vacuous pattern that fires no
+  // findings must not silently masquerade as "checked and clean"; refuse unless the caller
+  // explicitly opts in with --no-name-check (leak-gate.js does, for exactly this reason).
+  const noNameCheck = args.includes("--no-name-check");
+  const knownNamesResult = loadKnownNames();
+  if (!knownNamesResult.active) {
+    const inactiveMsg = `known-names: INACTIVE (${knownNamesResult.path} absent)\n`;
+    process.stderr.write(inactiveMsg);
+    if (!noNameCheck) {
+      process.stderr.write(
+        "privacy: known-name pattern is INACTIVE — pass --no-name-check to proceed anyway, or provide the file\n",
+      );
+      process.exit(2);
+    }
+  }
+  const ctx = { knownNames: knownNamesResult.names, allow: loadAllowlist() };
   let allFindings = [];
   for (const f of files) {
     if (!fs.existsSync(f)) continue;

@@ -25,8 +25,17 @@ function tmpFile(content) {
   fs.writeFileSync(f, content);
   return f;
 }
+// H3 (r6): known-names.json is gitignored, so it is ALWAYS absent in this checkout — every
+// existing test here targets a DIFFERENT pattern (email/credential/homedir) and must not be
+// drowned out by the (correct, by-design) known-name INACTIVE refusal. `run()` therefore always
+// passes --no-name-check, matching what leak-gate.js does for the same reason. The two dedicated
+// H3 tests below bypass run() and call spawnSync directly so they can assert the true bare/flagged
+// behaviour precisely.
 function run(args) {
-  const r = spawnSync(process.execPath, [SCRIPT, ...args], { cwd: ROOT, encoding: "utf8" });
+  const r = spawnSync(process.execPath, [SCRIPT, ...args, "--no-name-check"], {
+    cwd: ROOT,
+    encoding: "utf8",
+  });
   return { code: r.status, out: r.stdout + r.stderr };
 }
 
@@ -171,6 +180,53 @@ test("allowlist branch: a DOTLESS `emailDomainSuffixes` entry must NOT allowlist
   );
   // the legitimate, dot-prefixed form still works
   assert.strictEqual(isAllowlistedEmail("x@host.local", mkAllow({ emailDomainSuffixes: [".local"] })), true);
+});
+
+test("H3 fail-open regression (r6): an absent known-names.json refuses (exit 2) WITHOUT --no-name-check", () => {
+  const r = spawnSync(process.execPath, [SCRIPT, "--files", SCRIPT], { cwd: ROOT, encoding: "utf8" });
+  const out = r.stdout + r.stderr;
+  assert.strictEqual(r.status, 2, out);
+  assert.match(out, /known-names: INACTIVE/);
+  assert.doesNotMatch(out, /result: OK/);
+});
+
+test("H3 fail-open regression (r6): --no-name-check proceeds and still runs the other patterns", () => {
+  const f = tmpFile("nothing interesting here\n");
+  const r = spawnSync(
+    process.execPath,
+    [SCRIPT, "--files", f, "--no-name-check"],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  const out = r.stdout + r.stderr;
+  assert.match(out, /known-names: INACTIVE/); // still printed loudly
+  assert.strictEqual(r.status, 0, out); // but does not block — the clean file has 0 findings
+});
+
+test("H2 fail-open regression (r6): a git-listing failure must refuse (exit 2), never report a vacuous OK", () => {
+  const noGitDir = fs.mkdtempSync(path.join(os.tmpdir(), "privacy-nogit-"));
+  const r = spawnSync(process.execPath, [SCRIPT], { cwd: noGitDir, encoding: "utf8" });
+  assert.strictEqual(r.status, 2, r.stdout + r.stderr);
+  assert.match(r.stdout + r.stderr, /refusing to read green/);
+  assert.doesNotMatch(r.stdout, /result: OK/);
+});
+
+test("H2 fail-open regression (r6): the live tree clears the committed minimum-file floor", () => {
+  const r = run([]);
+  assert.strictEqual(r.code, 0, r.out.split("\n").slice(0, 10).join("\n"));
+  const m = r.out.match(/# scanned (\d+) file\(s\)/);
+  assert.ok(m, r.out);
+  assert.ok(Number(m[1]) >= 1000, `expected >= 1000 tracked files after filtering, saw ${m[1]}`);
+});
+
+test("H1 fail-open regression (r6): an allowlisted first match must not suppress a later real address on the SAME line", () => {
+  const f = tmpFile(`contact: git@github.com and also ${PERSONAL_EMAIL} here\n`);
+  const r = run(["--files", f]);
+  assert.strictEqual(r.code, 1, r.out);
+  assert.match(r.out, /MED/);
+  const findings = scanFile(f, { knownNames: [], allow: loadAllowlist() });
+  const emailFindings = findings.filter((x) => x.pattern === "email");
+  assert.strictEqual(emailFindings.length, 1, JSON.stringify(findings));
+  assert.strictEqual(emailFindings[0].match, PERSONAL_EMAIL);
 });
 
 test("the SHIPPED allowlist file carries no empty and no dotless suffix", () => {
