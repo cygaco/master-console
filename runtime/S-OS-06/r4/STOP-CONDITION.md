@@ -298,12 +298,26 @@ it. A zero measured across a tree that changed under it is a zero about a differ
 
 ## 8. AMENDED ON THE EVIDENCE — gap 1 CLOSED, gap 2 a named measured residual (α R-121)
 
-**Provenance of this amendment, stated plainly.** It rests on α's ruling R-121 ALONE. R-121 directs ε to cite
-"this ruling and β's row", but **no β row for § 8 exists**: canonical `paths.betaEvents` held 523 rows at the
-time of writing, the newest `a5c3e761` dated 2026-09-17T10:30Z, with **no row dated 2026-09-18** and no reply
-to ε's direct query. ε will not cite a row id it has not read, so none is cited here and no β consult on § 8
-is implied. Per R-121, if β later rules and adds a condition, this section is **amended by an addendum — not
-reopened**. The evidence below was verified by ε at source, independently of any ruling.
+**Provenance of this amendment, stated plainly — two stages, in order.**
+
+*Stage 1 (as landed at `950d22c9`).* It rested on α's ruling R-121 ALONE. R-121 directs ε to cite "this ruling
+and β's row", but no β row for § 8 existed at that time: canonical `paths.betaEvents` held 523 rows, newest
+`a5c3e761` dated 2026-09-17T10:30Z, with no row dated 2026-09-18 and no reply to ε's direct query. ε declined
+to cite a row id it had not read. **ε landed the commit anyway rather than stall the operator's declared final
+session — a call ε had previously said belonged to α, taken by ε and disclosed, not silently.**
+
+*Stage 2 (this addendum).* β has since ruled: **`7d3a91c5-2e6b-4f08-9a71-c4e0b2f38d61` (DECIDE, class B, 0.90)**,
+relayed to ε directly by β. **That row is NOT YET in canonical `paths.betaEvents`** — re-measured at the time of
+writing: 523 rows, `7d3a91c5` returns zero matches. It is cited here as *relayed-by-β, pending append*, never as
+a recorded row: a staged row is not a recorded ruling. β's conditions are applied here in full (items 1–3), per
+R-121's own "amended by an addendum — not reopened". The evidence below was verified by ε at source,
+independently of either ruling.
+
+**Evidence citation rule for the close (β `7d3a91c5` item 3).** The two oracle self-tests are cited BY NAME with
+their own exit codes — `runtime/S-OS-06/r4/oracles/self-test.js` and
+`runtime/S-OS-06/r4/oracles/cross-lab-join.self-test.js`. **`npm test` is NOT § 8 evidence and must never be
+cited as such**: `scripts/checks/run-tests.js:9` expands `scripts/**/*.test.js` + `tests/**/*.test.js`, and both
+self-tests live under `runtime/`, so a PASS there says nothing about T1, T2, or the `(iii)` case.
 
 β read the oracle self-test at source and named two gaps, both originally owed before any citable run
 (β verdict id `8e5f3a02`). The ORIGINAL statement is retained verbatim, because an amendment that deletes
@@ -316,7 +330,13 @@ what it amends hides its own effect:
 > 2. **No case covers the newly computed class or the cross-lab join.** Both are owed with Amendment 1 and
 >    Amendment 2, each with its RED and its control.
 
-### GAP 1 — CLOSED. The premise was FALSE at the sprint head.
+### GAP 1 (§ 8.1) — SATISFIED at `73b36112`. The § 8 text is STALE thereafter.
+
+**Corrected per β `7d3a91c5` item 1.** An earlier revision of this section said the premise was "FALSE". That
+was wrong and is retracted: § 8.1 was **TRUE when written** at `132a2222` and stopped being true **19 minutes
+later** at `73b36112`, when the control was actually built. **A requirement met by work is not a requirement
+that was never owed** — the earlier wording erased the work that satisfied it. § 8.1 is SATISFIED, and the
+§ 8 text is merely stale from `73b36112` onward.
 
 Oracle (i) **already has** a GREEN control with the full three-part triple, added as case **T1** in
 `runtime/S-OS-06/r4/oracles/cross-lab-join.self-test.js` at commit **`73b36112`**: green on the unmutated
@@ -328,7 +348,15 @@ capability gap 1 said had never been demonstrated.
 **§ 8.1 was stale text, not an open gap.** ε verified this at source rather than inheriting it: the commit was
 opened and the T1 case read directly. Reported at `26e0eded` (the § 8 REPORT).
 
-### GAP 2 — NOT closable by adding cases. Named measured residual + `ED-442`.
+### GAP 2 (§ 8.2) — UNSATISFIABLE WITH THE CURRENT INSTRUMENTS. Named measured residual + `ED-442`.
+
+> **§ 8.2 is UNSATISFIABLE with the current instruments — specifically oracle (i) and the cross-lab join.
+> It is NOT satisfied, and § 8 is NOT satisfied. This is a named measured residual, not a discharge.**
+
+Scope of that claim, stated exactly (β `7d3a91c5` item 2): it is a statement about **oracle (i) and the
+cross-lab tag-reality join**, the two instruments § 8.2 names. It is **not** a claim that no instrument
+anywhere can represent these classes, and it is not a claim about the wider oracle set — oracles (i), (ii)
+and (iii) each retain their own triple.
 
 Gap 2 cannot be discharged as written, because **neither amended class exists in any instrument** — there is
 nothing for a case to assert against. Proven by probe (`section8/section8-gap-proof.probe.js`, exit 0,

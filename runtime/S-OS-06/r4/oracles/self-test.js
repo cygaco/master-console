@@ -55,7 +55,16 @@ test("fixture sanity: the odd-case literal is outside the rewriter's four case f
   assert.equal(oddCheck, "odd-case");
 });
 
-test("(iii) RED: an odd-case mix on a registered compat line enters the occurrence-grain delta; the codemod's own delta misses it", () => {
+// S-OS-06 r4 (β 7d3a91c5 item 4): the sub-assertion on the CODEMOD's own delta was STALE, not a live
+// regression. It asserted codemodDelta.delta === 0 on the premise that the codemod skips a compat line
+// WHOLE. Lane B's `43f9e007` (B3 "compat-line occurrence grain") DELETED that skip — the diff removes the
+// `&& !partition.findCompatOccurrence(relPath, lineText)` predicate and replaces it with the comment
+// "compat lines are NOT skipped whole". So the codemod now detects the occurrence too and the delta reads 1.
+// Determined by MEASUREMENT (the commit diff), not inferred from commit order, per the ruling.
+// The claim is CORRECTED rather than deleted: pinning it at 1 keeps the teeth — re-introducing the
+// whole-line skip would drive it back to 0 and fail this case again. The oracle's own behaviour
+// (occurrence-grain delta 1, onCompatLine, exit code 1) is unchanged and still asserted below.
+test("(iii) RED: an odd-case mix on a registered compat line enters the occurrence-grain delta; the codemod's own delta AGREES post-B3", () => {
   H.withFixture(
     {
       extraFiles: { "src/home.js": `const LEGACY = ".${S}"; // legacy ${ODD} home\nmodule.exports = { LEGACY };\n` },
@@ -67,7 +76,12 @@ test("(iii) RED: an odd-case mix on a registered compat line enters the occurren
       assert.equal(tot, 1, `oracle delta must be 1: ${JSON.stringify(r.cats)}`);
       assert.equal(r.deltaRows[0].onCompatLine, true);
       assert.equal(r.compatLine.delta, 1);
-      assert.equal(r.codemodDelta.delta, 0, "the codemod's whole-line compat skip must still read 0 — the gap this oracle measures");
+      assert.equal(
+        r.codemodDelta.delta,
+        1,
+        "post-B3 (43f9e007) the codemod no longer skips a compat line whole, so its own delta must AGREE at 1; " +
+          "a 0 here means the whole-line findCompatOccurrence skip has been re-introduced",
+      );
       assert.equal(O3.format(r).code, 1);
     }
   );
