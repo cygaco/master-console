@@ -110,6 +110,54 @@ test("Population reconciliation: every EXCLUDED field is emitted with its id-sha
   assert.match(out, /\banswer=0\b/);
 });
 
+// ── H3 (r5 fix brief): the all-digit-8 skip was a value-SHAPE escape ("looks like a date"),
+// not a field-name/context one — a crafted all-digit reference in a genuine cross-ref field
+// was silently never checked. Fixed at the main-scan site (below) and the population-
+// reconciliation counter (below); the artifact-mode site keeps its skip — see the r5 fix
+// commit message for the evidence (a blanket removal there regresses on real committed
+// dates in runtime/S-OS-06/r4/ALPHA-RULINGS.md and is pinned by the ALL-DIGIT CEILING test
+// above, "ARTIFACT MODE: ...").
+
+test("H3 (r5): a fabricated ALL-DIGIT 8-char id in a cross-ref field must still be checked — no value-shape 'looks like a date' escape", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, precedent: "row 999 (99999999)" },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, /UNRESOLVED row 2 precedent: 99999999/);
+});
+
+test("H3 (r5): population reconciliation counts an all-digit 8-char token inside an EXCLUDED field too (no undercount by digit-shape)", () => {
+  const { rc, out } = run([
+    { msg_id: A },
+    { msg_id: B, epsilon_consult_msg_id: "99999999", commit: "0defcd64" },
+  ]);
+  assert.equal(rc, 0, out); // the field is still excluded by name — this does not gate
+  assert.match(out, /\bepsilon_consult_msg_id=1\b/);
+});
+
+// ── H4 (r5 fix brief): stub fulfilment must ALLOWLIST the valid forms (verdict / withdrawn),
+// not deny-list only "issued-stub" — a row with a dummy or missing record_kind must not
+// silently fulfil a stub.
+
+test("H4 (r5): a stub is NOT fulfilled by a same-id row with a MISSING record_kind", () => {
+  const { rc, out } = run([
+    { msg_id: GHOST, record_kind: "issued-stub", authoritative: false, issued_to: "epsilon", boundary: "r4" },
+    { msg_id: GHOST, summary: "some unrelated row that happens to share the id" },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, new RegExp(`UNFULFILLED-STUB row 1: ${GHOST}`));
+});
+
+test("H4 (r5): a stub is NOT fulfilled by a same-id row with a dummy (non-verdict, non-withdrawn) record_kind", () => {
+  const { rc, out } = run([
+    { msg_id: GHOST, record_kind: "issued-stub", authoritative: false, issued_to: "epsilon", boundary: "r4" },
+    { msg_id: GHOST, record_kind: "draft-note" },
+  ]);
+  assert.equal(rc, 1, out);
+  assert.match(out, new RegExp(`UNFULFILLED-STUB row 1: ${GHOST}`));
+});
+
 test("Prefix ceiling is printed; slug-style own ids do not collide on prefix", () => {
   const { rc, out } = run([
     { msg_id: "evt-s-sp-20260512-001-beta-001" },
@@ -233,14 +281,12 @@ test("ARTIFACT MODE: an id cited in a presence-claim artifact that is neither a 
   const ledger = path.join(dir, "events.jsonl");
   fs.writeFileSync(ledger, JSON.stringify({ msg_id: A }) + "\n");
   // The "real git object" is DETERMINISTIC: a blob written from fixed content (hash-object -w), never
-  // HEAD. HEAD's 8-char prefix is all digits for ~2.3% of commits ((10/16)^8), and an all-digit token is
-  // deliberately NOT id-shaped to the enforcer (row numbers, dates), so a HEAD-based plant went RED at
-  // 61632076 (S-OS-06 r4, epsilon e-41) for a reason that had nothing to do with the enforcer — an
-  // environment-shaped plant, the round's own class. The fixed blob's prefix carries a letter by assertion.
+  // HEAD. The fixed blob's prefix carries a letter by assertion (a coincidentally all-digit blob prefix
+  // would make the next GREEN assertion ambiguous with the DATE/non-date cases below).
   const repo = path.resolve(__dirname, "../../..");
   const headSha = spawnSync("git", ["-C", repo, "hash-object", "-w", "--stdin"], { input: "beta-ledger-refs artifact-mode fixture object v1\n", encoding: "utf8" }).stdout.trim().slice(0, 8);
   assert.match(headSha, /^[0-9a-f]{8}$/, "needs a git repo to write a fixture object");
-  assert.match(headSha, /[a-f]/, `fixture object prefix ${headSha} must not be all digits (an all-digit token is outside the instrument by design)`);
+  assert.match(headSha, /[a-f]/, `fixture object prefix ${headSha} should carry a letter, for an unambiguous fixture`);
   const catFile = spawnSync("git", ["-C", repo, "cat-file", "-e", headSha], { encoding: "utf8" });
   assert.equal(catFile.status, 0, "the fixture object must exist in the object database");
   const art = path.join(dir, "RULINGS.md");
@@ -251,13 +297,31 @@ test("ARTIFACT MODE: an id cited in a presence-claim artifact that is neither a 
   let r = runArt();
   assert.equal(r.rc, 0, r.out);
   assert.match(r.out, /ledger-row 1, git-object 1, declared-unlogged 0, UNKNOWN 0/);
-  // CEILING, demonstrated: an ALL-DIGIT 8-char token (a real object prefix or not) is NOT id-shaped and is
-  // outside the instrument — it must be neither counted nor RED, and the printed ceiling must say so.
-  write(`Ruled per β \`${A.slice(0, 8)}\`, landed at 61632076.\n`);
+  // DATE CEILING (S-OS-06 r5): a genuinely calendar-date-shaped 8-digit token (YYYYMMDD, a
+  // plausible date) is NOT id-shaped and is outside the instrument — neither counted nor RED.
+  // Verified NOT to coincidentally name a real object (`git cat-file -e 20260916^{object}` fails).
+  write(`Ruled per β \`${A.slice(0, 8)}\`, on 20260916.\n`);
   r = runArt();
   assert.equal(r.rc, 0, r.out);
   assert.match(r.out, /1 id-shaped tokens → ledger-row 1, git-object 0, declared-unlogged 0, UNKNOWN 0/);
-  assert.match(r.out, /ALL-DIGIT CEILING/);
+  assert.match(r.out, /DATE CEILING/);
+  // H3 (S-OS-06 r5): a NON-date-shaped all-digit token (61632076: month "20" is not a real
+  // month) is no longer waved through by shape alone — it is checked normally, exactly like
+  // any other candidate. It happens to be a real commit prefix in this repo's history
+  // (S-OS-06 r4, epsilon e-41), so it resolves as a git object: the class closes via correct
+  // resolution, not via a blind skip.
+  write(`Ruled per β \`${A.slice(0, 8)}\`, landed at 61632076.\n`);
+  r = runArt();
+  assert.equal(r.rc, 0, r.out);
+  assert.match(r.out, /2 id-shaped tokens → ledger-row 1, git-object 1, declared-unlogged 0, UNKNOWN 0/);
+  // H3 RED (S-OS-06 r5): a FABRICATED non-date-shaped all-digit token that resolves to neither a
+  // ledger row nor a git object is now caught — this is the exact vacuous bypass the r5 finding
+  // closed (previously ANY all-digit 8-char token, including this one, was silently waved
+  // through). Verified NOT to coincidentally name a real object.
+  write(`Ruled per β \`${A.slice(0, 8)}\`, allegedly logged as 99999999.\n`);
+  r = runArt();
+  assert.equal(r.rc, 1, r.out);
+  assert.match(r.out, /UNKNOWN-IN-ARTIFACT .*: 99999999/);
   // RED: a cited id with no row and no object (the row-495 class at the moment β read it)
   write(`Ruled per β \`${GHOST.slice(0, 8)}\` (row 495).\n`);
   r = runArt();

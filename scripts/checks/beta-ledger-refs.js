@@ -59,6 +59,26 @@ const ID_RE = /\b([0-9a-f]{8})(?:-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 // Tokens that look like short ids but are commit SHAs / row refs are excluded by context:
 // we only scan the cross-ref fields above, never free-text answer fields.
 
+// H3 (S-OS-06 r5 fix brief): the previous skip was "any 8 digits" — every genuine calendar
+// date (session/precedent/mirror_of literally carry bare YYYYMMDD dates throughout the real
+// ledger) AND every fabricated all-digit id lookalike (the real bypass: a crafted `99999999`
+// reference was never checked). A blanket removal of the skip was MEASURED against the live
+// ledger and produced 52 false UNRESOLVED findings, all genuine dates — not viable. The fix is
+// value-VALIDITY, not value-shape: only an 8-digit token that actually parses as a plausible
+// YYYYMMDD calendar date is treated as a date; a non-date-shaped all-digit token (e.g.
+// `99999999`, month 99) is checked like any other candidate id. Re-measured clean (0 false
+// positives) against the live ledger after this change.
+function isDateLikeToken(s) {
+  if (!/^\d{8}$/.test(s)) return false;
+  const y = Number(s.slice(0, 4));
+  const mo = Number(s.slice(4, 6));
+  const d = Number(s.slice(6, 8));
+  if (y < 2000 || y > 2099) return false;
+  if (mo < 1 || mo > 12) return false;
+  if (d < 1 || d > 31) return false;
+  return true;
+}
+
 function resolveLedgerPath(argv) {
   const i = argv.indexOf("--file");
   if (i >= 0 && argv[i + 1]) return path.resolve(argv[i + 1]);
@@ -114,15 +134,16 @@ function main() {
   // emitted with the count of id-shaped tokens it held, so an over-matching exclusion is
   // auditable instead of invisible. Every printed GREEN ships what it did not scan.
   const fieldsExcluded = {};
-  const countIdTokens = (v) => { ID_RE.lastIndex = 0; let c = 0, m; while ((m = ID_RE.exec(v))) if (!/^\d{8}$/.test(m[1])) c++; return c; };
+  const countIdTokens = (v) => { ID_RE.lastIndex = 0; let c = 0, m; while ((m = ID_RE.exec(v))) if (!isDateLikeToken(m[1])) c++; return c; };
   const scan = (n, f, v, sink, unloggedSet) => {
     let m;
     ID_RE.lastIndex = 0;
     while ((m = ID_RE.exec(v))) {
       const full = m[0].toLowerCase();
       const short = m[1].toLowerCase();
-      // Skip pure-numeric 8-digit tokens (dates like 20260916) — not ids.
-      if (/^\d{8}$/.test(short)) continue;
+      // Skip a token only when it is VALIDLY date-shaped (H3, S-OS-06 r5) — a non-date-shaped
+      // all-digit token (e.g. 99999999) is checked like any other candidate id.
+      if (isDateLikeToken(short)) continue;
       refsChecked++;
       if (own.has(full) || own.has(short)) continue;
       if (unloggedSet.has(full) || unloggedSet.has(short)) { declaredUnlogged.push({ row: n, field: f, id: m[0] }); continue; }
@@ -178,7 +199,10 @@ function main() {
   // is itself a defect (it could be read as a ruling); (2) a WITHDRAWAL path closed by
   // registration: a later row with the same id and record_kind "withdrawn" resolves the stub.
   const stubs = rows.filter(({ o }) => o.record_kind === "issued-stub" && typeof o.msg_id === "string");
-  const fulfilledIds = new Set(rows.filter(({ o }) => (o.record_kind !== "issued-stub") && typeof o.msg_id === "string").map(({ o }) => o.msg_id.toLowerCase()));
+  // H4 (S-OS-06 r5): ALLOWLIST the valid fulfilling forms — a row with a dummy or missing
+  // record_kind must never "fulfil" a stub. Deny-listing only "issued-stub" let ANY other
+  // record_kind (including none) fulfil, which is a fail-open on the stub-fulfilment check.
+  const fulfilledIds = new Set(rows.filter(({ o }) => ["verdict", "withdrawn"].includes(o.record_kind) && typeof o.msg_id === "string").map(({ o }) => o.msg_id.toLowerCase()));
   const unfulfilledStubs = stubs.filter(({ o }) => !fulfilledIds.has(o.msg_id.toLowerCase())).map(({ n, o }) => ({ row: n, id: o.msg_id, party: o.issued_to || "", boundary: o.boundary || "" }));
   const malformedStubs = stubs.filter(({ o }) => o.authoritative !== false || "decision" in o || "answer" in o).map(({ n, o }) => ({ row: n, id: o.msg_id, why: o.authoritative !== false ? "missing authoritative:false" : "carries decision/answer (readable as a ruling)" }));
   // ARTIFACT MODE (β verdict c1d47a92, the targeted widening): `--artifact <file>` (repeatable) scans a
@@ -205,7 +229,7 @@ function main() {
       ID_RE.lastIndex = 0;
       while ((m = ID_RE.exec(text))) {
         const full = m[0].toLowerCase(), short = m[1].toLowerCase();
-        if (/^\d{8}$/.test(short) || seen.has(short)) continue;
+        if (isDateLikeToken(short) || seen.has(short)) continue;
         seen.add(short);
         a.tokens++;
         if (own.has(full) || own.has(short)) a.ledger.push(m[0]);
@@ -230,7 +254,7 @@ function main() {
     for (const p of parseErrors) console.log(`  PARSE-ERROR row ${p.row}: ${p.error}`);
     for (const s of unfulfilledStubs) console.log(`  UNFULFILLED-STUB row ${s.row}: ${s.id} issued to ${s.party || "?"} re ${s.boundary || "?"} — no verdict (or withdrawn) row carries this id`);
     for (const s of malformedStubs) console.log(`  MALFORMED-STUB row ${s.row}: ${s.id} — ${s.why}; a stub must be authoritative:false and carry no judgment`);
-    if (artifacts.length) console.log(`  artifact-mode bucket order: ledger-row → declared-unlogged → git-object → UNKNOWN. GIT-OBJECT CEILING: an 8-hex token that is not a ledger row is resolved against the object database (git cat-file -e), so a prefix that coincidentally names a real object is absolved (≈1 in 50,000 per token in this repo; grows with repo size and token count). ALL-DIGIT CEILING: an 8-char token that is all digits (a row number, a date, or a commit prefix that happens to be digits-only, ~2.3% of commits) is NOT id-shaped and is outside this instrument — neither counted nor RED. ABSENCE DISCRIMINATOR: a missing LEDGER is absent BY DESIGN (gitignored; the falsifier's live case SKIPS visibly) — a missing ARTIFACT is absent UNEXPECTEDLY (committed; RED).`);
+    if (artifacts.length) console.log(`  artifact-mode bucket order: ledger-row → declared-unlogged → git-object → UNKNOWN. GIT-OBJECT CEILING: an 8-hex token that is not a ledger row is resolved against the object database (git cat-file -e), so a prefix that coincidentally names a real object is absolved (≈1 in 50,000 per token in this repo; grows with repo size and token count). DATE CEILING (S-OS-06 r5): an 8-digit token is excluded only when it parses as a PLAUSIBLE calendar date (YYYYMMDD, year 2000-2099, valid month/day) — a row number or a commit prefix that merely happens to be digits-only is NOT waved through by shape alone; it is checked like any other token (against ledger rows, then the object database). ABSENCE DISCRIMINATOR: a missing LEDGER is absent BY DESIGN (gitignored; the falsifier's live case SKIPS visibly) — a missing ARTIFACT is absent UNEXPECTEDLY (committed; RED).`);
     for (const a of artifacts) {
       if (!a.exists) { console.log(`  ARTIFACT-MISSING ${a.file} — a presence-claim artifact is committed; its absence is a defect, not a skip`); continue; }
       console.log(`  artifact ${path.relative(repoRoot, a.file)}: ${a.tokens} id-shaped tokens → ledger-row ${a.ledger.length}, git-object ${a.gitObject.length}, declared-unlogged ${a.declaredUnlogged.length}, UNKNOWN ${a.unknown.length}`);
