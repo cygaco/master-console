@@ -173,6 +173,22 @@ test("allowlist branch: a DOTLESS `emailDomainSuffixes` entry must NOT allowlist
   assert.strictEqual(isAllowlistedEmail("x@host.local", mkAllow({ emailDomainSuffixes: [".local"] })), true);
 });
 
+test("H2 fail-open regression (r6): a git-listing failure must refuse (exit 2), never report a vacuous OK", () => {
+  const noGitDir = fs.mkdtempSync(path.join(os.tmpdir(), "privacy-nogit-"));
+  const r = spawnSync(process.execPath, [SCRIPT], { cwd: noGitDir, encoding: "utf8" });
+  assert.strictEqual(r.status, 2, r.stdout + r.stderr);
+  assert.match(r.stdout + r.stderr, /refusing to read green/);
+  assert.doesNotMatch(r.stdout, /result: OK/);
+});
+
+test("H2 fail-open regression (r6): the live tree clears the committed minimum-file floor", () => {
+  const r = run([]);
+  assert.strictEqual(r.code, 0, r.out.split("\n").slice(0, 10).join("\n"));
+  const m = r.out.match(/# scanned (\d+) file\(s\)/);
+  assert.ok(m, r.out);
+  assert.ok(Number(m[1]) >= 1000, `expected >= 1000 tracked files after filtering, saw ${m[1]}`);
+});
+
 test("H1 fail-open regression (r6): an allowlisted first match must not suppress a later real address on the SAME line", () => {
   const f = tmpFile(`contact: git@github.com and also ${PERSONAL_EMAIL} here\n`);
   const r = run(["--files", f]);

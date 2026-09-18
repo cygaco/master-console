@@ -144,6 +144,9 @@ function isAllowlistedEmail(email, allow) {
   });
 }
 
+// H2 (r6): returns null on a git-listing failure (never []) — a caller must be able to tell
+// "git couldn't be asked" apart from "git said zero files", or a failure silently reads as a
+// clean, fully-scanned tree. See main()'s refusal on null / below-floor counts.
 function trackedFiles() {
   try {
     return execSync("git ls-files", {
@@ -154,9 +157,16 @@ function trackedFiles() {
       .map((s) => s.trim())
       .filter(Boolean);
   } catch {
-    return [];
+    return null;
   }
 }
+
+// H2 (r6): a committed minimum-file floor, independent of the git-listing-failure check above.
+// Measured: `node scripts/check/privacy.js` at 7a68bd48 (S-OS-06 r6 base) reports
+// "scanned 4610 file(s)" post-filter. Picked well below that so ordinary variance (files added
+// or removed over time) never trips it — only a scan that sees implausibly few files (wrong cwd,
+// truncated listing, near-empty/corrupt checkout) does.
+const MIN_TRACKED_FILES_FLOOR = 1000;
 
 function loadKnownNames() {
   const f = path.join(".claude", "project", "memory", "known-names.json");
@@ -261,7 +271,14 @@ function main() {
   if (explicit) {
     files = explicit;
   } else {
-    files = trackedFiles().filter((f) => {
+    const tracked = trackedFiles();
+    if (tracked === null) {
+      process.stderr.write(
+        "privacy: git file listing failed — refusing to read green on an unreadable tree\n",
+      );
+      process.exit(2);
+    }
+    files = tracked.filter((f) => {
       if (SKIP_FILES.includes(f)) return false;
       const top = f.split("/")[0];
       if (SKIP_DIRS.has(top)) return false;
@@ -270,6 +287,12 @@ function main() {
         return false;
       return true;
     });
+    if (files.length < MIN_TRACKED_FILES_FLOOR) {
+      process.stderr.write(
+        `privacy: only ${files.length} file(s) after filtering (below the floor of ${MIN_TRACKED_FILES_FLOOR}) — refusing to read green on a tree that looks unreadable or truncated\n`,
+      );
+      process.exit(2);
+    }
   }
 
   // Runtime tracked check
