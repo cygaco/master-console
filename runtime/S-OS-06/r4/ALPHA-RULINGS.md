@@ -66,6 +66,8 @@ it is issued; the SendMessage is a notification, not the record.
 | `b5d84f13` | The F8 history-simplification limit: α's "dangerous half" was backwards (a neither-parent merge IS listed); the real hole is a merge taking one side wholesale — MEASURED by α with β's fixture (the other side's amendment vanishes from the sweep); not a blocker for I9; ED-439 HIGH; both F8 mechanisms named distinctly; ε's byte-identical disclosure = correct conduct |
 | `f5a2c81e` | (residue item (2) CORRECTED by R-113: the fifth discovered test WAS quarantine entry 23; correspondence 5/5) The discovery/vacuity consolidation is real (one gap, two symptoms in two stores — its own close line); the HIGH on the six decorative locks DOES NOT MOVE; the residue is accounted individually (two vacuous entries with a different cause; one discovered never-run non-quarantine test to be READ); an enforcer fix that is itself an enumeration goes back |
 | `b3f7d052` | WITHDRAWS `e4d8b207` (β verified the registry itself): the r2/r3 backend verdicts and the qa review are DISCHARGED; the close states the Claude-pin configuration neutrally, never as a lack; security-reviewer cross-provider run = the gate (owed); backend/qa cross-provider re-run NOT owed; C trigger and pre-committed interpretation LAPSE; first tracker entry WITHDRAWN not suspended; attribution names ε, α and β; ED-440 = the real finding, follow-on; the discovery gap has three consequences (one defect, three stores) |
+| `7d3a91c5` | §8 amendment (2026-09-18): gap 1 SATISFIED at `73b36112` (text stale thereafter — never "premise false"); gap 2 admissible as a named measured residual, reported as UNSATISFIABLE with the current instruments, never as §8 satisfied; the RED `(iii)` self-test case must have its cause MEASURED before a certifying run is cited, and the corrected case must keep a RED leg that can fail; the oracle self-tests are not in `npm test` — cite them by name |
+| `4f81c60d` | the legacy-lab literal in the privacy scanner's release-tag predicate is a DETECTOR TERM → disposition `derived` (no new class; removal / pin+warrant / compat+expiry all wrong); done at `7e23f7a8` |
 | `c2e58f40` | β SHUTDOWN ADDENDUM on the § 5.1 path-name fork (2026-09-17T03:40Z): the fork has ONE admissible branch — the § 5.1 AMENDMENT is FORBIDDEN by `9a1e5f60` (no new permanent escape class this round; live-consumer breaks go to the compat register with a per-entry expiry, never a warrant); HONESTY condition: a named residual is NOT § 5.1 satisfied — the close reports "zero violations except one named occurrence, with its trigger and the population searched", never "zero"; no β re-consult needed on this fork |
 | `a5c3e761` | Skip/refuse collision: the exit gate wins (Option C completed — a platform is not an absent subject); (n) refuses on an undeclared platform; errno CLASS scrubbed by a named transform (symbolic form); §5.5 MEASURED RED; every local green certifies win32 only — platform stamp on every result |
 | `a8e5c740` | The I9 re-base form endorsed with three conditions (re-author ≠ port — each of the six resolved against the landed partition; `before − 15 + 6 = after` printed; ε's abort sentence verbatim) and one question (F8's history simplification omits a merge whose partition equals one parent — named as an F8 LIMIT; β rules on debt); the two-commits condition paid off on a hazard it was not aimed at |
@@ -164,6 +166,77 @@ Issued in-session by the operator at resume (`/session:resume --turbo /mode:spri
    substitution and cites this directive. A `provider=openai` dispatch record this session is a violation.
 4. The operator wants ONE clear list of what is left before the repository can be shared — α owns that
    list (delivered in chat, and as `runtime/S-OS-06/r4/WHATS-LEFT.md`); ε reports against it.
+
+## R-124 — THE CLOSE RULE (2026-09-18 ~22:10Z): α answers every open item with ONE rule so ε is never blocked on α again this session
+α was unreachable for ~2.5 h: teammate messages batch until the lead's turn yields, and α's turn was occupied
+(ED-071 class). Every item ε routed to α is answered here. From this ruling on, ε applies the RULE below
+itself and reports; it does not wait for a per-item α ruling.
+
+**(1) β rows.** `7d3a91c5` (§8) and `4f81c60d` (privacy detector term → `derived`) were appended by α, late, at
+rows 524–525; `beta-ledger-refs` GREEN after the append. Both are in the ID MAP below by id. The ledger is
+gitignored by design (β: do NOT "fix" that by tracking it — privacy regression); the close states each β
+ruling by SUBSTANCE, never by an id alone.
+
+**(2) AUTHORITY — `950d22c9` (ε landed the §8 amendment on R-121 alone).** Ruled on its own facts, outcome
+set aside: ε routed the β-row question to α, α did not answer for ~50 min, ε decided it. That was a decision
+ε had itself said was not ε's. It was NOT a launder — the absence of a β row is disclosed in the committed §8
+text, no id was invented, nothing was pushed, and the commit was docs-only and reversible. α RATIFIES the
+commit's content (R-121 had pre-authorized it; β `7d3a91c5` then found (a)+(b) admissible and its wording
+conditions landed as the addendum `c4e0da67`). The shortcut is not licensed by the good outcome; it is
+replaced by an explicit authority so it is never a shortcut again: **LEAD-SILENCE RULE — if α is silent
+> 30 min on a question whose action is unpushed, reversible, and touches no product code, ε MAY take the
+lean branch with the absence disclosed in the artifact itself.** Anything pushed, irreversible, or touching
+a gate's code still waits. The DONE-REPORT carries this as its own item (β: do not fuse it with the outcome).
+
+**(3) THE FIX-OR-RESIDUAL RULE (binding on every open and future gauntlet finding this session).**
+A finding is FIXED in-round iff ALL of: (a) ε reproduced it at source; (b) it has LIVE exposure on this tree
+today OR it sits in a gate that keeps running after `mc@2.0.0` (`scripts/check/privacy.js`,
+`framework-purity`, `leak-denylist`, `mc-tracked-transients`, `readme-drift`, `run-tests.js`); (c) the fix is
+bounded (one site or one class sweep, a RED-then-GREEN test, no schema/key change to the frozen partition).
+Everything else — latent with measured population 0, codemod-internal (the codemod's job ends at this
+release), or needing a partition key/schema change after the certifying measurement — is a NAMED MEASURED
+RESIDUAL: file:line, the measured population, the reviewer's own words for the defect, one ED entry (grouped
+is fine), and a route to verify from committed code. Applied by α to what ε reported:
+- Claude binding lane (verdict delivered to α, relayed as R-123): H `privacy.js` first-match-only, H zero-file
+  vacuous OK on git failure (α re-measured OPEN at 14:51 local), H known-names silently inactive, M unanchored
+  version predicate → **FIX** (R-123 stands; M6 already closed by `5eeb1518` + `8f0a13d5` if the probe agrees).
+- Round-2 gemini HIGH, freeze-key excludes `class`/`writeProtected` on globs/future/views (ε's corrected
+  mechanism) → **RESIDUAL**: the fix changes 26 freeze keys after the certifying measurement; compensating
+  fact stated in the close: any such flip is a visible diff to a committed, reviewed artifact.
+- Round-2 `parseTagNames` prototype-name DoS (tag named `constructor@…`), the `pinnedTagGlob` LOW, M2–M5, the
+  binding lane's M4 (evidence-tag by FORM, 4 tokens match no tag), M5 (unreadable dropped, 0/4598), LOW 7–12
+  → **RESIDUAL**.
+- "multiline env reads" / "prefix truncation" (ε's g3/g4 re-review HIGHs — α has not read them): ε applies
+  the rule; if either is in a post-2.0.0 gate AND bounded, FIX in the same fixer dispatch as R-123.
+**STOP RULE (operator directive 1–2):** there is NO third gemini round. After the single fixer dispatch,
+ONE targeted re-review by the Claude binding lane over exactly the fix diff (its hand-back routes to α — α
+relays it; ε also asks the lane to WRITE its verdict JSON to `runtime/S-OS-06/r4/gauntlet/` so the record
+does not depend on a hand-back). PASS on that targeted re-review + zero unfixed findings that meet (a)(b)(c)
+= the gate, reported as exactly that — never as "gauntlet green". The land is OPERATOR-RUN
+(`runtime/S-OS-06/r4/operator-finish.ps1`), so the operator reads the residual list before anything reaches
+`main`; that is the human gate and the close says so.
+
+**(3a) ADDENDUM to the STOP RULE (β guard, recorded in the correction row for `7d3a91c5`/`4f81c60d`):** a
+Claude re-review does NOT discharge the security-reviewer gate — the registry pins that role to antigravity,
+the genuinely cross-provider lane. So the targeted re-review is TWO lanes over exactly the fix diff: the
+gemini privacy slice (the fix diff is small — it fits the argv ceiling in one dispatch) AND the Claude binding
+lane. Both PASS = the gate. A new finding INSIDE the fix diff gets the fix-or-residual rule and at most ONE
+more fix → re-review iteration; after that it is a named residual and the operator decides at the land. The
+close never records the Claude lane alone as discharging the security gate.
+
+**(4) §5 item 1 — oracle (i) = 698.** ε's framing ADOPTED verbatim: item 1 is NOT SATISFIED; oracles (ii)
+and (iii) GREEN with populations printed (ii: 0 / 25,571 / 4,598; iii: delta 0, uncomputable 0); oracle (i)
+is a stage-1 measurement instrument with no warrant register, reports 698, decomposition printed, traced to
+ED-442 / §8 gap 2. Never "the oracles are green", never a bare zero. No register is built in-round.
+
+**(5) Evidence durability.** Gauntlet outputs stay untracked (tracking them churns the register after the
+certifying measurement — β endorsed). The DONE-REPORT carries each finding in the reviewer's own words with
+file:line + the verification route from committed code, and states the machine-local limit once. Do not
+quote verdict text that contains a legacy-lab literal — paraphrase that token.
+
+**(6) After the fixer + targeted re-review:** triple regen LAST on the exclusive tree → re-run oracles (ii)
+(iii) + `npm test` once (the fixes moved the head; one run, population printed, win32/node24) → DONE-REPORT
+(`runtime/S-OS-06/r4/DONE-REPORT.md`, tracked) → tell α. α hands the operator the ONE command.
 
 ## R-120 — ε e-43: the provider-tier-check envelope — CAPTURE authorized as INSTRUMENTATION
 The test throws on a non-zero child exit without capturing stdout/stderr, so the envelope R-115 requires
