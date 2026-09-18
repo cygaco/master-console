@@ -64,7 +64,13 @@ test("fixture sanity: the odd-case literal is outside the rewriter's four case f
 // The claim is CORRECTED rather than deleted: pinning it at 1 keeps the teeth — re-introducing the
 // whole-line skip would drive it back to 0 and fail this case again. The oracle's own behaviour
 // (occurrence-grain delta 1, onCompatLine, exit code 1) is unchanged and still asserted below.
-test("(iii) RED: an odd-case mix on a registered compat line enters the occurrence-grain delta; the codemod's own delta AGREES post-B3", () => {
+//
+// β 7d3a91c5 item 4 (b) — THE RED LEG IS LOAD-BEARING, PROVEN BY FALSIFICATION, not asserted.
+// Removing the planted ODD literal from this fixture makes THIS case FAIL (suite exit 1, "✖ (iii) RED"),
+// while the unmutated suite exits 0. So the case still depends on the plant and is not a case rewritten
+// to match observed output — the failure mode β names. The title states the property that HOLDS after
+// `43f9e007`, not the obsolete premise that the codemod misses the occurrence.
+test("(iii) RED: an odd-case mix on a registered compat line enters the occurrence-grain delta; post-B3 the codemod DETECTS it too", () => {
   H.withFixture(
     {
       extraFiles: { "src/home.js": `const LEGACY = ".${S}"; // legacy ${ODD} home\nmodule.exports = { LEGACY };\n` },
