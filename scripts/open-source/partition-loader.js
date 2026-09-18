@@ -188,7 +188,7 @@ function readTagList({ root = PARTITION_ROOT, remoteFn } = {}) {
   for (const remote of remotes) {
     const r = remoteFn
       ? remoteFn(remote)
-      : spawnSync("git", ["ls-remote", "--tags", remote], { cwd: root, encoding: "utf8", timeout: 30000, maxBuffer: 64 * 1024 * 1024 });
+      : spawnSync("git", ["ls-remote", "--tags", "--", remote], { cwd: root, encoding: "utf8", timeout: 30000, maxBuffer: 64 * 1024 * 1024 });
     if (!r || r.status !== 0) {
       attempts.push(`git ls-remote --tags ${remote}: FAILED (${String((r && (r.stderr || (r.error && r.error.message))) || "").trim().slice(0, 120)})`);
       continue;
