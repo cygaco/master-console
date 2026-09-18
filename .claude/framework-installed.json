@@ -1,8 +1,8 @@
 {
   "$schema": "mc/framework-installed/v2",
   "installedVersion": "2.0.0",
-  "installedCommit": "950d22c9b29f0dcc461b8e28606beb0efc86e2d5",
-  "installedAt": "2026-09-18T19:41:28.362Z",
+  "installedCommit": "5acf33fcdb071d7c9f20c918e6738a163fd91f1d",
+  "installedAt": "2026-09-18T20:53:40.109Z",
   "source": "self",
   "target": ".",
   "pathRegistryVersion": "v5",
@@ -7004,8 +7004,8 @@
       "dest": "scripts/checks/beta-ledger-refs.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "964eff2d21e37a602f3e667b1e87b58284d4eda1bdf038c942c57be8bba7abe5",
-      "currentHashAtInstall": "964eff2d21e37a602f3e667b1e87b58284d4eda1bdf038c942c57be8bba7abe5",
+      "installedHash": "eacc93d9541a484474c15a0374f3efa4dc4eb254909b2521546e71f05b39c7b2",
+      "currentHashAtInstall": "eacc93d9541a484474c15a0374f3efa4dc4eb254909b2521546e71f05b39c7b2",
       "introducedIn": "0.0.0"
     },
     {
@@ -11854,8 +11854,8 @@
       "dest": "scripts/check/privacy.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "cdff5bbb246d81f26591c0a420ee749abee456fc564d1388c2459b6966ceb9e3",
-      "currentHashAtInstall": "cdff5bbb246d81f26591c0a420ee749abee456fc564d1388c2459b6966ceb9e3",
+      "installedHash": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
+      "currentHashAtInstall": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
       "introducedIn": "0.0.0"
     },
     {
@@ -11864,8 +11864,8 @@
       "dest": "scripts/check/privacy.test.js",
       "owner": "framework",
       "mergeStrategy": "replace_if_unmodified",
-      "installedHash": "7421c133de26ffba98a9c1cd7a05692be45b92a365a8563c5ed04e12b54347bf",
-      "currentHashAtInstall": "7421c133de26ffba98a9c1cd7a05692be45b92a365a8563c5ed04e12b54347bf",
+      "installedHash": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5",
+      "currentHashAtInstall": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5",
       "introducedIn": "0.0.0"
     },
     {

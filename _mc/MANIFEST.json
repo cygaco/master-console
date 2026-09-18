@@ -2,7 +2,7 @@
   "$schema": "mc/manifest/v1",
   "version": 1,
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T19:41:30.989Z",
+  "generatedAt": "2026-09-18T20:53:40.702Z",
   "generatedBy": "scripts/mc/manifest/build.js",
   "mcVersion": "2.0.0",
   "migrations": [],
@@ -5584,8 +5584,8 @@
       "owner": "framework",
       "managed": true,
       "source": null,
-      "sha256": "077e40aa84edee33a3ca6ffaca08ac358fe7a10b15de4991153229140dbb22d1",
-      "installedSha": "077e40aa84edee33a3ca6ffaca08ac358fe7a10b15de4991153229140dbb22d1"
+      "sha256": "dbb14209ff89c9757bd65dcbe73432c3dcf5118a56dcb692dd245940df33c21e",
+      "installedSha": "dbb14209ff89c9757bd65dcbe73432c3dcf5118a56dcb692dd245940df33c21e"
     },
     "tests/regression/S-OS-06/codemod.test.js": {
       "owner": "framework",
@@ -5671,6 +5671,13 @@
       "sha256": "d24ea0604c2a555f104936acea1405cfcf12df68bb8b7c24468e70f03dbcb5a8",
       "installedSha": "d24ea0604c2a555f104936acea1405cfcf12df68bb8b7c24468e70f03dbcb5a8"
     },
+    "tests/regression/S-OS-06/falsify-h1-lsremote-injection.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "c73be079252bbe1109d1fc346d5a86ffd25403bfa4c9ef5bff05e7ccc398b789",
+      "installedSha": "c73be079252bbe1109d1fc346d5a86ffd25403bfa4c9ef5bff05e7ccc398b789"
+    },
     "tests/regression/S-OS-06/falsify-historical-literal-preserved.test.js": {
       "owner": "framework",
       "managed": true,
@@ -5684,6 +5691,13 @@
       "source": null,
       "sha256": "88bc8a561c312b5fa5d37553e0034fa24b068ee20a8c7fabf3d7ed5c64151322",
       "installedSha": "88bc8a561c312b5fa5d37553e0034fa24b068ee20a8c7fabf3d7ed5c64151322"
+    },
+    "tests/regression/S-OS-06/falsify-m1-removal-amendset.test.js": {
+      "owner": "framework",
+      "managed": true,
+      "source": null,
+      "sha256": "b096fed23f8580fc0e27049d5dd84d76adc695499a2f61ae5f9e9fa2565e1f76",
+      "installedSha": "b096fed23f8580fc0e27049d5dd84d76adc695499a2f61ae5f9e9fa2565e1f76"
     },
     "tests/regression/S-OS-06/falsify-occurrence-scoped-disposition.test.js": {
       "owner": "framework",
@@ -8314,8 +8328,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/open-source/partition-loader.js",
-      "sha256": "8a13da2ba8a61df7d03fa0dd954b5c25d279b842241d2c7ea3aff2579aca2c7a",
-      "installedSha": "8a13da2ba8a61df7d03fa0dd954b5c25d279b842241d2c7ea3aff2579aca2c7a"
+      "sha256": "b45a599adc4c9e47bc39ebd7e33e4ce386b9c5b7ee6e73e9a256ca6fd642545b",
+      "installedSha": "b45a599adc4c9e47bc39ebd7e33e4ce386b9c5b7ee6e73e9a256ca6fd642545b"
     },
     "scripts/open-source/portfolio-coverage.js": {
       "owner": "framework",
@@ -11471,8 +11485,8 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/checks/beta-ledger-refs.js",
-      "sha256": "964eff2d21e37a602f3e667b1e87b58284d4eda1bdf038c942c57be8bba7abe5",
-      "installedSha": "964eff2d21e37a602f3e667b1e87b58284d4eda1bdf038c942c57be8bba7abe5"
+      "sha256": "eacc93d9541a484474c15a0374f3efa4dc4eb254909b2521546e71f05b39c7b2",
+      "installedSha": "eacc93d9541a484474c15a0374f3efa4dc4eb254909b2521546e71f05b39c7b2"
     },
     "scripts/checks/beta-verdict-citation-receipt.js": {
       "owner": "framework",
@@ -12934,15 +12948,15 @@
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.js",
-      "sha256": "cdff5bbb246d81f26591c0a420ee749abee456fc564d1388c2459b6966ceb9e3",
-      "installedSha": "cdff5bbb246d81f26591c0a420ee749abee456fc564d1388c2459b6966ceb9e3"
+      "sha256": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1",
+      "installedSha": "9ac59b5476c14d755b78d570eb1b78457d0d93ff8d8d75c7a6eb7ef969af5ad1"
     },
     "scripts/check/privacy.test.js": {
       "owner": "framework",
       "managed": true,
       "source": "scripts/check/privacy.test.js",
-      "sha256": "7421c133de26ffba98a9c1cd7a05692be45b92a365a8563c5ed04e12b54347bf",
-      "installedSha": "7421c133de26ffba98a9c1cd7a05692be45b92a365a8563c5ed04e12b54347bf"
+      "sha256": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5",
+      "installedSha": "047128e377ac6dbad1ac39234d9d2a0d0cb777f2dd5fb504bb6088ce639496b5"
     },
     "scripts/check/roadmap-trace.js": {
       "owner": "framework",
