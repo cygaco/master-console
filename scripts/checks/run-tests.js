@@ -109,9 +109,10 @@ const CHILD_ENV_ALLOWLIST = Object.freeze({
  * skips (a skipped falsifier guards nothing, and "skipped by declared platform scope" is absolution by inline
  * assertion). That rule needs no declared platform set: the absence of an entry is itself the refusal.
  *
- * linux: OWED. CI run 35164425083 (linux/node22) printed no observation (case (n) skipped before measuring), and no
- * value is declared from reasoning about what libuv "probably" refills. Case (n) refuses on linux until an entry
- * carrying a real linux observation is added here.
+ * linux: MEASURED. CI run 35405496802 (linux/node22.23.2, libuv 1.51.0) printed the observation from case (n)'s own
+ * refusal: an EMPTY-env child on linux received []. A measured empty floor is a legitimate observation (linux's
+ * spawn simply refills nothing into an empty child env block, unlike win32's libuv refill), not an absent one —
+ * it is declared below the same as any other platform's floor.
  */
 const CHILD_ENV_OBSERVED_FLOOR = Object.freeze({
   win32: Object.freeze({
@@ -121,6 +122,14 @@ const CHILD_ENV_OBSERVED_FLOOR = Object.freeze({
     source: "libuv's win32 spawn (src/win/process.c: the required variables make_program_env copies from the parent into a child env block that lacks them; identified by the name set matching the measurement)",
     observedOn: "win32 / node 24.16.0 / libuv 1.52.1, 2026-09-16",
     evidence: "runtime/S-OS-06/r4/s2i3/i7/spawn-min-probe.json",
+  }),
+  linux: Object.freeze({
+    platform: "linux",
+    nodeMajor: 22,
+    names: [],
+    source: "linux's spawn refills nothing into an empty child env block (observed: no names appeared; unlike win32's libuv refill, there is no name set to identify against a source file, so none is claimed)",
+    observedOn: "linux / node 22.23.2 / libuv 1.51.0, 2026-09-18",
+    evidence: "CI run 35405496802, runtime/S-OS-06/r4/ci/run-35405496802-failed.log",
   }),
 });
 
@@ -136,7 +145,10 @@ function observedFloorFor(platform) {
   const bad = [];
   if (e.platform !== p) bad.push(`platform stamp "${e.platform}" does not match its key "${p}"`);
   if (!Number.isInteger(e.nodeMajor) || e.nodeMajor < 1) bad.push("nodeMajor is not a positive integer");
-  if (!Array.isArray(e.names) || e.names.length === 0 || e.names.some((n) => typeof n !== "string" || !n)) bad.push("names is not a non-empty array of non-empty strings");
+  // A measured-EMPTY floor (names: []) is a legitimate observation, not malformed — an ABSENT entry (caught above,
+  // before this validator runs) is the only thing that refuses. Every element that IS present must still be a
+  // non-empty string.
+  if (!Array.isArray(e.names) || e.names.some((n) => typeof n !== "string" || !n)) bad.push("names is not an array of non-empty strings");
   for (const k of ["source", "observedOn", "evidence"]) if (typeof e[k] !== "string" || !e[k].trim()) bad.push(`${k} is missing`);
   if (bad.length) return { refused: `OBSERVED FLOOR REFUSED: the floor declared for platform "${p}" is malformed (${bad.join("; ")}).` };
   return { floor: e };
@@ -148,7 +160,11 @@ function renderObservedFloors() {
     .sort()
     .map((k) => {
       const e = CHILD_ENV_OBSERVED_FLOOR[k];
-      return `${e.platform} (node ${e.nodeMajor}): a child spawned with an EMPTY environment still receives exactly these ${e.names.length} names (${e.names.join(", ")}), refilled by the runtime, not by this runner. Source: ${e.source}. Observed on ${e.observedOn} (${e.evidence}).`;
+      const refill =
+        e.names.length === 0
+          ? "an EMPTY environment stays empty — the runtime refills nothing into it"
+          : `an EMPTY environment still receives exactly these ${e.names.length} names (${e.names.join(", ")}), refilled by the runtime, not by this runner`;
+      return `${e.platform} (node ${e.nodeMajor}): a child spawned with ${refill}. Source: ${e.source}. Observed on ${e.observedOn} (${e.evidence}).`;
     });
   return `OBSERVED FLOOR, per platform: ${parts.join(" ")} A platform with no declared floor has none, and falsifier case (n) refuses there, never skips.`;
 }

@@ -78,6 +78,63 @@ function rowFor(report, provider) {
   return report.providers.find((r) => r.provider === provider);
 }
 
+// S-OS-06 r4 cause-2 fix — the live-CLI --enforce case below evaluates ALL
+// KNOWN_PROVIDERS (claude/openai/antigravity), not just the one the test cares
+// about (provider-tier-check.js has no --providers CLI flag to restrict this).
+// A bare `{ ...process.env }` inherit lets the child's REAL openai/antigravity
+// detection (real `codex`/`agy` CLI + real ~/.codex or ~/.gemini auth, OR a real
+// ambient OPENAI_API_KEY/CODEX_API_KEY) leak in: a dev box that already has those
+// CLIs installed+authenticated (this project's own dispatch tooling) resolves
+// them tier_met and the case passes; a clean CI runner with neither resolves
+// them tier_short and the OVERALL verdict_summary flips to "tier_short", which
+// trips `--enforce` exit 2 — flipping the case's pass/fail on host state that has
+// nothing to do with what the case is actually about (claude's row). This pins
+// openai/antigravity to a deterministic, fixture-only "oauth-funded" (tier_met)
+// reading via a fake HOME + PATH, so the ONLY verdict genuinely under test is
+// claude's unknown-self-attested one, on every host.
+function deterministicProviderEnv() {
+  const envDir = fs.mkdtempSync(path.join(os.tmpdir(), "slc10-detenv-"));
+  const binDir = path.join(envDir, "bin");
+  const homeDir = path.join(envDir, "home");
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.mkdirSync(path.join(homeDir, ".codex"), { recursive: true });
+  fs.mkdirSync(path.join(homeDir, ".gemini"), { recursive: true });
+
+  // Stub `codex`/`agy` CLIs — cliInstalled() only needs `<cli> --version` to exit 0.
+  const posixStub = "#!/bin/sh\necho stub-cli-fixture\nexit 0\n";
+  const cmdStub = "@echo off\r\necho stub-cli-fixture\r\nexit /b 0\r\n";
+  for (const name of ["codex", "agy"]) {
+    const posixPath = path.join(binDir, name);
+    fs.writeFileSync(posixPath, posixStub);
+    fs.chmodSync(posixPath, 0o755);
+    fs.writeFileSync(path.join(binDir, `${name}.cmd`), cmdStub);
+  }
+
+  // FIXTURE (not real) OAuth session material — a value-free placeholder token,
+  // never a real secret — so detectAuthTier resolves both providers to a funded
+  // "oauth" tier without ever touching the host's real ~/.codex or ~/.gemini.
+  fs.writeFileSync(path.join(homeDir, ".codex", "auth.json"), JSON.stringify({ refresh_token: "fixture-value" }));
+  fs.writeFileSync(
+    path.join(homeDir, ".gemini", "oauth_creds.json"),
+    JSON.stringify({ refresh_token: "fixture-value" }),
+  );
+
+  const env = { ...process.env };
+  // Belt-and-suspenders: even though the fixture auth.json short-circuits the
+  // env-var fallback path, strip any ambient provider key so none of this
+  // case's outcome can ever trace back to an unrelated key on the host.
+  delete env.OPENAI_API_KEY;
+  delete env.CODEX_API_KEY;
+  delete env.GEMINI_API_KEY;
+  const priorPath = env.PATH || env.Path || "";
+  env.PATH = binDir + path.delimiter + priorPath;
+  if (env.Path !== undefined) env.Path = env.PATH; // win32 env keys are case-insensitive but distinct
+  env.HOME = homeDir;
+  env.USERPROFILE = homeDir;
+  env.ANTHROPIC_API_KEY = "fixture-value";
+  return env;
+}
+
 // ── T1 classification ────────────────────────────────────────
 ok("T1: CLI+auth absent → effective none, selected t1 → tier_short", () => {
   const r = runReport({
@@ -320,7 +377,7 @@ ok("CLI --enforce: unknown-self-attested NEVER trips the gate (fail-open exit 0)
   const out = execFileSync("node", [ENGINE, "--json", "--enforce", "--config-path", cp], {
     cwd: ROOT,
     encoding: "utf8",
-    env: { ...process.env, ANTHROPIC_API_KEY: "fixture-value" },
+    env: deterministicProviderEnv(),
   });
   const r = JSON.parse(out);
   const claude = r.providers.find((p) => p.provider === "claude");
