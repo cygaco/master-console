@@ -38,7 +38,7 @@ const ROOT = path.resolve(__dirname, "..", "..");
 const GATES = [
   { name: "privacy", args: ["scripts/check/privacy.js"], extraArgs: ["--no-name-check"] },
   { name: "framework-purity", args: ["scripts/checks/framework-purity.js", "--full"] },
-  { name: "tracked-transients", args: ["scripts/checks/warpos-tracked-transients.js"] },
+  { name: "tracked-transients", args: ["scripts/checks/mc-tracked-transients.js"] },
   { name: "leak-denylist", args: ["scripts/checks/leak-denylist.js"] },
   { name: "readme-drift", args: ["scripts/checks/readme-drift.js"] },
 ];
