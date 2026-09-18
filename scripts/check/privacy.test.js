@@ -229,6 +229,66 @@ test("H1 fail-open regression (r6): an allowlisted first match must not suppress
   assert.strictEqual(emailFindings[0].match, PERSONAL_EMAIL);
 });
 
+// H1B (r7): `git ls-files` succeeding does not mean the listed paths are readable from cwd. A
+// scratch repo where files are committed (so `git ls-files` lists them) and then removed from
+// disk WITHOUT `git rm` reproduces exactly that: the listing is intact, the working tree is not.
+function gitQuiet(args, cwd) {
+  const r = spawnSync("git", args, { cwd, encoding: "utf8" });
+  if (r.status !== 0) {
+    throw new Error(`git ${args.join(" ")} failed (${r.status}): ${r.stderr}`);
+  }
+  return r;
+}
+
+function makeScratchRepo(total, deleteCount) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "privacy-scratch-"));
+  gitQuiet(["init", "-q"], dir);
+  gitQuiet(["config", "user.email", "test@test.invalid"], dir);
+  gitQuiet(["config", "user.name", "privacy-test"], dir);
+  for (let i = 0; i < total; i++) {
+    fs.writeFileSync(path.join(dir, `f${i}.txt`), `filler line ${i}\n`);
+  }
+  gitQuiet(["add", "-A"], dir);
+  gitQuiet(["commit", "-q", "-m", "seed"], dir);
+  for (let i = 0; i < deleteCount; i++) {
+    fs.unlinkSync(path.join(dir, `f${i}.txt`));
+  }
+  return dir;
+}
+
+test("H1B fail-open regression (r7): a fully listed-but-unreadable tree must refuse (exit 2), never a vacuous OK", () => {
+  // 1005 tracked files, ALL removed from disk after commit: `git ls-files` still lists 1005
+  // (clearing the old files.length-based floor of 1000) but zero are actually readable.
+  const dir = makeScratchRepo(1005, 1005);
+  const r = spawnSync(process.execPath, [SCRIPT, "--no-name-check"], { cwd: dir, encoding: "utf8" });
+  const out = r.stdout + r.stderr;
+  assert.strictEqual(r.status, 2, out);
+  assert.match(out, /refusing to read green on a tree it could not read/);
+  assert.doesNotMatch(out, /result: OK/);
+});
+
+test("H1B fail-open regression (r7): partial unreadable beyond tolerance, still above the floor, must also refuse (exit 2)", () => {
+  // 1100 tracked, 50 removed: 1050 actually read (clears the 1000 floor on its own) but 50
+  // unreadable exceeds the small tolerance — must still refuse rather than read green.
+  const dir = makeScratchRepo(1100, 50);
+  const r = spawnSync(process.execPath, [SCRIPT, "--no-name-check"], { cwd: dir, encoding: "utf8" });
+  const out = r.stdout + r.stderr;
+  assert.strictEqual(r.status, 2, out);
+  assert.match(out, /exceeding the tolerance/);
+  assert.doesNotMatch(out, /result: OK/);
+});
+
+test("H1B: a small number of listed-but-missing files within tolerance does not false-positive (exit 0)", () => {
+  // 1050 tracked, 5 removed: ordinary variance, well within tolerance — must still read green.
+  const dir = makeScratchRepo(1050, 5);
+  const r = spawnSync(process.execPath, [SCRIPT, "--no-name-check"], { cwd: dir, encoding: "utf8" });
+  const out = r.stdout + r.stderr;
+  assert.strictEqual(r.status, 0, out);
+  const m = out.match(/# scanned (\d+) file\(s\)/);
+  assert.ok(m, out);
+  assert.strictEqual(Number(m[1]), 1045, out);
+});
+
 test("the SHIPPED allowlist file carries no empty and no dotless suffix", () => {
   const shipped = JSON.parse(fs.readFileSync(path.join(__dirname, "privacy.allowlist.json"), "utf8"));
   const sufs = shipped.emailDomainSuffixes || [];

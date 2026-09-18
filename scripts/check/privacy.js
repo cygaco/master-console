@@ -171,6 +171,13 @@ function trackedFiles() {
 // truncated listing, near-empty/corrupt checkout) does.
 const MIN_TRACKED_FILES_FLOOR = 1000;
 
+// H1B (r7): `git ls-files` succeeding is not the same as the LISTED paths being readable from
+// cwd. A small number of listed-but-missing files is ordinary variance (a rename/delete racing
+// the scan); anything past this is the signature of a systematically unreadable or wrong-cwd
+// tree — the exact shape the r6 floor was supposed to catch but didn't, because it floored the
+// LISTING (`files.length`) instead of what was actually read.
+const UNREADABLE_TOLERANCE = 20;
+
 // H3 (r6): resolved from the REPO ROOT (not cwd) — a cwd-relative path silently resolves to
 // nothing whenever this script is invoked from anywhere but the repo root. Returns a status
 // object (not a bare array) so main() can tell "no names configured because none matched" apart
@@ -202,13 +209,18 @@ function loadRuntimeRoots() {
 function scanFile(file, ctx) {
   const knownNames = (ctx && ctx.knownNames) || [];
   const allow = (ctx && ctx.allow) || loadAllowlist();
+  // H1B (r7): an optional shared counter so callers can tell "how many of the files we were
+  // asked to scan did we actually READ" apart from "how many were merely listed" — see main().
+  const stats = ctx && ctx.stats;
   const findings = [];
   let text;
   try {
     text = fs.readFileSync(file, "utf8");
   } catch {
+    if (stats) stats.unreadable++;
     return findings;
   }
+  if (stats) stats.read++;
   const lines = text.split("\n");
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -295,12 +307,11 @@ function main() {
         return false;
       return true;
     });
-    if (files.length < MIN_TRACKED_FILES_FLOOR) {
-      process.stderr.write(
-        `privacy: only ${files.length} file(s) after filtering (below the floor of ${MIN_TRACKED_FILES_FLOOR}) — refusing to read green on a tree that looks unreadable or truncated\n`,
-      );
-      process.exit(2);
-    }
+    // H1B (r7): the floor used to gate `files.length` — the LISTING — here. That measures
+    // "git ls-files worked", not "we could read what it listed": a listed-but-unreadable tree
+    // (wrong cwd, files gone missing from disk while still in the index, etc.) sailed through
+    // this check with the full listed count and then read nothing. The real floor/tolerance
+    // check now runs AFTER the scan loop below, against what was actually read.
   }
 
   // Runtime tracked check
@@ -325,11 +336,34 @@ function main() {
       process.exit(2);
     }
   }
-  const ctx = { knownNames: knownNamesResult.names, allow: loadAllowlist() };
+  // H1B (r7): `stats` counts what was actually READ, independent of `files.length` (the listing).
+  const stats = { read: 0, unreadable: 0 };
+  const ctx = { knownNames: knownNamesResult.names, allow: loadAllowlist(), stats };
   let allFindings = [];
   for (const f of files) {
-    if (!fs.existsSync(f)) continue;
+    if (!fs.existsSync(f)) {
+      stats.unreadable++;
+      continue;
+    }
     allFindings = allFindings.concat(scanFile(f, ctx));
+  }
+
+  // H1B (r7): the real floor/tolerance check — on files actually READ, not merely listed.
+  // Skipped for `--files`/explicit mode: a deliberate single- or few-file scan must not trip a
+  // floor sized for the whole tracked tree (unchanged historical behaviour for that mode).
+  if (!explicit) {
+    if (stats.read < MIN_TRACKED_FILES_FLOOR) {
+      process.stderr.write(
+        `privacy: only ${stats.read} file(s) actually read (below the floor of ${MIN_TRACKED_FILES_FLOOR}; ${files.length} were listed, ${stats.unreadable} unreadable) — refusing to read green on a tree it could not read\n`,
+      );
+      process.exit(2);
+    }
+    if (stats.unreadable > UNREADABLE_TOLERANCE) {
+      process.stderr.write(
+        `privacy: listed ${files.length} file(s) but only read ${stats.read} (${stats.unreadable} unreadable, exceeding the tolerance of ${UNREADABLE_TOLERANCE}) — refusing to read green on a tree it could not read\n`,
+      );
+      process.exit(2);
+    }
   }
 
   for (const f of runtimeTracked) {
@@ -349,7 +383,7 @@ function main() {
     process.stdout.write(JSON.stringify(allFindings, null, 2) + "\n");
   } else {
     process.stdout.write(
-      `# scanned ${files.length} file(s); ${allFindings.length} finding(s) (${high.length} HIGH, ${med.length} MED); mode=${mode}\n`,
+      `# scanned ${stats.read} file(s); ${allFindings.length} finding(s) (${high.length} HIGH, ${med.length} MED); mode=${mode}\n`,
     );
     // Failing findings first; LOW (report-only unless --strict) after.
     const ordered = allFindings
