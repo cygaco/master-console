@@ -216,6 +216,14 @@ does not depend on a hand-back). PASS on that targeted re-review + zero unfixed 
 (`runtime/S-OS-06/r4/operator-finish.ps1`), so the operator reads the residual list before anything reaches
 `main`; that is the human gate and the close says so.
 
+**(3a) ADDENDUM to the STOP RULE (β guard, recorded in the correction row for `7d3a91c5`/`4f81c60d`):** a
+Claude re-review does NOT discharge the security-reviewer gate — the registry pins that role to antigravity,
+the genuinely cross-provider lane. So the targeted re-review is TWO lanes over exactly the fix diff: the
+gemini privacy slice (the fix diff is small — it fits the argv ceiling in one dispatch) AND the Claude binding
+lane. Both PASS = the gate. A new finding INSIDE the fix diff gets the fix-or-residual rule and at most ONE
+more fix → re-review iteration; after that it is a named residual and the operator decides at the land. The
+close never records the Claude lane alone as discharging the security gate.
+
 **(4) §5 item 1 — oracle (i) = 698.** ε's framing ADOPTED verbatim: item 1 is NOT SATISFIED; oracles (ii)
 and (iii) GREEN with populations printed (ii: 0 / 25,571 / 4,598; iii: delta 0, uncomputable 0); oracle (i)
 is a stage-1 measurement instrument with no warrant register, reports 698, decomposition printed, traced to
