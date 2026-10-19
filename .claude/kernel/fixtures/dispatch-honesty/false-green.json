@@ -1,0 +1,18 @@
+{
+  "id": "dispatch-honesty-false-green",
+  "gate": "dispatch-honesty",
+  "input": {
+    "result_envelope": {
+      "status": "passed",
+      "files_changed": [],
+      "commits": [],
+      "tests_run": [],
+      "evidence_paths": []
+    }
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "a ResultEnvelope claiming status:passed with zero files_changed, zero commits, zero tests_run, and zero evidence_paths is invalid ('claims passed without evidence' / 'claims changed files but lists none' / 'claims tests passed with no command output/evidence'). This is the false-green class -- ok:true with no real work."
+  },
+  "kernel_scope": "IN"
+}

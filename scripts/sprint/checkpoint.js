@@ -1,0 +1,161 @@
+#!/usr/bin/env node
+
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const SPRINT = require("./paths");
+const { ensureDir, readYamlMaybe, writeYaml, nowIso } = require("./fs");
+
+function parseArgs(argv) {
+  const out = {};
+  for (let i = 2; i < argv.length; i++) {
+    const a = argv[i];
+    if (!a.startsWith("--")) continue;
+    const k = a.slice(2);
+    const v = argv[i + 1];
+    if (v === undefined || v.startsWith("--")) {
+      out[k] = true;
+    } else {
+      out[k] = v;
+      i++;
+    }
+  }
+  return out;
+}
+
+function splitList(s) {
+  if (!s || s === true) return [];
+  return String(s)
+    .split(";")
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+function normalizeExisting(raw) {
+  if (!raw || typeof raw !== "object") return {};
+  return {
+    ...raw,
+    current_phase: typeof raw.current_phase === "string" ? raw.current_phase : "idle",
+    current_command: typeof raw.current_command === "string" ? raw.current_command : "none",
+    current_ticket: raw.current_ticket != null ? raw.current_ticket : null,
+    current_task: raw.current_task != null ? raw.current_task : null,
+    current_loop: typeof raw.current_loop === "number" ? raw.current_loop : null,
+    status: typeof raw.status === "string" ? raw.status : "running",
+    last_completed_step: typeof raw.last_completed_step === "string" ? raw.last_completed_step : "",
+    next_action: typeof raw.next_action === "string" ? raw.next_action : "",
+    active_files: Array.isArray(raw.active_files) ? raw.active_files : [],
+    modified_files: Array.isArray(raw.modified_files) ? raw.modified_files : [],
+    checks_last_run: raw.checks_last_run != null ? raw.checks_last_run : null,
+    checks_passing: Array.isArray(raw.checks_passing) ? raw.checks_passing : [],
+    checks_failing: Array.isArray(raw.checks_failing) ? raw.checks_failing : [],
+    blockers: Array.isArray(raw.blockers) ? raw.blockers : [],
+    approvals_needed: Array.isArray(raw.approvals_needed) ? raw.approvals_needed : [],
+    external_services_needed: Array.isArray(raw.external_services_needed) ? raw.external_services_needed : [],
+    issues_opened: Array.isArray(raw.issues_opened) ? raw.issues_opened : [],
+    tickets_updated: Array.isArray(raw.tickets_updated) ? raw.tickets_updated : [],
+    ralph_checkpoint: raw.ralph_checkpoint != null ? raw.ralph_checkpoint : null,
+    resume_command: typeof raw.resume_command === "string" ? raw.resume_command : "",
+    resume_notes: typeof raw.resume_notes === "string" ? raw.resume_notes : "",
+    safe_to_continue: typeof raw.safe_to_continue === "boolean" ? raw.safe_to_continue : true,
+    stop_reason: raw.stop_reason != null ? raw.stop_reason : null,
+  };
+}
+
+function frozenCheckpointPath(sprintId) {
+  const dir = SPRINT.checkpoints;
+  ensureDir(dir);
+  let max = 0;
+  try {
+    const re = new RegExp(`^${sprintId}-(\\d{4})\\.yaml$`);
+    for (const f of fs.readdirSync(dir)) {
+      const m = re.exec(f);
+      if (m) {
+        const n = parseInt(m[1], 10);
+        if (n > max) max = n;
+      }
+    }
+  } catch {}
+  const n = String(max + 1).padStart(4, "0");
+  return path.join(dir, `${sprintId}-${n}.yaml`);
+}
+
+function main() {
+  const sa = SPRINT.parseSprintArg(process.argv);
+  if (sa.error) return 1;
+  const a = parseArgs(process.argv);
+  if (!a.sprint) {
+    process.stderr.write("required: --sprint <id>\n");
+    return 2;
+  }
+  const existing = normalizeExisting(readYamlMaybe(SPRINT.progress) || {});
+  const next = {
+    schema: "mc/sprint/sprint-progress/v1",
+    sprint: a.sprint,
+    updated_at: nowIso(),
+    current_phase: a.phase || existing.current_phase || "idle",
+    current_command: a.command || existing.current_command || "none",
+    current_ticket: a.ticket || existing.current_ticket || null,
+    current_task: a.task || existing.current_task || null,
+    current_loop:
+      a.loop !== undefined
+        ? parseInt(a.loop, 10)
+        : (existing.current_loop ?? null),
+    status: a.status || existing.status || "running",
+    last_completed_step:
+      a["last-completed-step"] || existing.last_completed_step || "",
+    next_action: a["next-action"] || existing.next_action || "",
+    active_files: splitList(a["active-files"]).length
+      ? splitList(a["active-files"])
+      : existing.active_files || [],
+    modified_files: splitList(a["modified-files"]).length
+      ? splitList(a["modified-files"])
+      : existing.modified_files || [],
+    checks_last_run: a["checks-last-run"] || existing.checks_last_run || null,
+    checks_passing: splitList(a["checks-passing"]).length
+      ? splitList(a["checks-passing"])
+      : existing.checks_passing || [],
+    checks_failing: splitList(a["checks-failing"]).length
+      ? splitList(a["checks-failing"])
+      : existing.checks_failing || [],
+    blockers: splitList(a.blockers).length
+      ? splitList(a.blockers)
+      : existing.blockers || [],
+    approvals_needed: splitList(a.approvals).length
+      ? splitList(a.approvals)
+      : existing.approvals_needed || [],
+    external_services_needed: splitList(a.esd).length
+      ? splitList(a.esd)
+      : existing.external_services_needed || [],
+    issues_opened: splitList(a["issues-opened"]).length
+      ? splitList(a["issues-opened"])
+      : existing.issues_opened || [],
+    tickets_updated: splitList(a["tickets-updated"]).length
+      ? splitList(a["tickets-updated"])
+      : existing.tickets_updated || [],
+    ralph_checkpoint:
+      a["ralph-checkpoint"] || existing.ralph_checkpoint || null,
+    resume_command: a["resume-command"] || existing.resume_command || "",
+    resume_notes: a["resume-notes"] || existing.resume_notes || "",
+    safe_to_continue:
+      a["safe-to-continue"] === "false"
+        ? false
+        : a["safe-to-continue"] === "true"
+          ? true
+          : (existing.safe_to_continue ?? true),
+    stop_reason: a["stop-reason"] || existing.stop_reason || null,
+  };
+  writeYaml(SPRINT.progress, next);
+  const frozen = frozenCheckpointPath(a.sprint);
+  writeYaml(frozen, next);
+  process.stdout.write(
+    `checkpoint: ${SPRINT.progress}\nfrozen:    ${frozen}\n`,
+  );
+  return 0;
+}
+
+if (require.main === module) {
+  process.exit(main());
+}
+
+module.exports = { main, normalizeExisting };

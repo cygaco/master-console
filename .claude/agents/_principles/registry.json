@@ -1,0 +1,245 @@
+{
+  "$schema": "mc/manager-principles/v0.1",
+  "_doc": "Machine-readable manager-principles ownership + inheritance. The single source of truth for /scan:manager-principles. Principles are identified by STABLE SLUGS, never ordinals — referring to a principle as 'DoP #7' breaks silently when the list reorders (refactor-hygiene bug class). Model: shared base -> Director -> Lead -> specialist; 'rooted_in' = where a principle is owned, inheritance propagates it down.",
+  "version": "v0.1",
+  "base": {
+    "carrier": "manager-principles-base",
+    "doc": ".claude/agents/_principles/base.md",
+    "principles": [
+      "clarity-is-king",
+      "map-user-journey",
+      "evidence-over-invention",
+      "claims-boundary"
+    ]
+  },
+  "agents": {
+    "director-of-product": {
+      "spec": ".claude/agents/product/director-of-product.md",
+      "inherits_from": "manager-principles-base",
+      "owned_principles": [
+        "lean-product-development",
+        "lifecycle-aware-judgment",
+        "build-over-buy",
+        "audience-is-king",
+        "focus",
+        "pivot"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary"
+      ]
+    },
+    "product-lead": {
+      "spec": ".claude/agents/product/product-lead.md",
+      "inherits_from": "director-of-product",
+      "owned_principles": [
+        "ftue-nux",
+        "cold-vs-warm-start"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary",
+        "lean-product-development",
+        "lifecycle-aware-judgment",
+        "build-over-buy",
+        "audience-is-king",
+        "focus",
+        "pivot"
+      ]
+    },
+    "design-lead": {
+      "spec": ".claude/agents/product/design-lead.md",
+      "inherits_from": "product-lead",
+      "owned_principles": [
+        "build-for-audience-incl-limitations",
+        "kiss",
+        "clear-iconography"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary",
+        "lean-product-development",
+        "lifecycle-aware-judgment",
+        "build-over-buy",
+        "audience-is-king",
+        "focus",
+        "pivot",
+        "ftue-nux",
+        "cold-vs-warm-start"
+      ]
+    },
+    "research-lead": {
+      "spec": ".claude/agents/growth/research-lead.md",
+      "inherits_from": "director-of-product",
+      "owned_principles": [
+        "no-invented-data",
+        "confidence-scored",
+        "no-pii"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary",
+        "lean-product-development",
+        "lifecycle-aware-judgment",
+        "build-over-buy",
+        "audience-is-king",
+        "focus",
+        "pivot"
+      ]
+    },
+    "quality-lead": {
+      "spec": ".claude/agents/product/quality-lead.md",
+      "inherits_from": "manager-principles-base",
+      "owned_principles": [
+        "product-priority-over-severity",
+        "golden-first",
+        "size-testing-scope-depth",
+        "gate-ordered-phases",
+        "test-real-world",
+        "acceptance-subjective"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary"
+      ]
+    },
+    "director-of-growth": {
+      "spec": ".claude/agents/growth/director-of-growth.md",
+      "inherits_from": "manager-principles-base",
+      "owned_principles": [
+        "copy-over-creative",
+        "message-first"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary"
+      ]
+    },
+    "marketing-lead": {
+      "spec": ".claude/agents/growth/marketing-lead.md",
+      "inherits_from": "director-of-marketing",
+      "owned_principles": [
+        "eq-scoring",
+        "fast-feedback-loop",
+        "ltv-cac"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary",
+        "copy-over-creative",
+        "message-first"
+      ]
+    },
+    "copy-lead": {
+      "spec": ".claude/agents/growth/copy-lead.md",
+      "inherits_from": "director-of-marketing",
+      "owned_principles": [
+        "persuade-by-argument",
+        "hook-first",
+        "chief-coherence"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary",
+        "copy-over-creative",
+        "message-first"
+      ]
+    },
+    "conversion-lead": {
+      "spec": ".claude/agents/growth/conversion-lead.md",
+      "inherits_from": "director-of-marketing",
+      "owned_principles": [
+        "conversion-hierarchy"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary",
+        "copy-over-creative",
+        "message-first"
+      ]
+    },
+    "director-of-engineering": {
+      "spec": ".claude/agents/engineering/director-of-engineering.md",
+      "inherits_from": "manager-principles-base",
+      "owned_principles": [
+        "contract-first-construction",
+        "enforcer-over-checklist",
+        "fe-be-separation-of-concerns",
+        "own-the-integration-seam",
+        "refactor-hygiene",
+        "build-disposable-spec-durable"
+      ],
+      "inherited_principles": [
+        "clarity-is-king",
+        "map-user-journey",
+        "evidence-over-invention",
+        "claims-boundary"
+      ]
+    }
+  },
+  "principles": {
+    "clarity-is-king": { "name": "Clarity is King", "rooted_in": "manager-principles-base", "summary": "Clear beats clever / witty; message-first." },
+    "map-user-journey": { "name": "Map the User Journey", "rooted_in": "manager-principles-base", "summary": "Evaluate every decision in the entry->goal->next-step flow, not in isolation; the worst bugs live in the seams between features." },
+    "evidence-over-invention": { "name": "Evidence over Invention", "rooted_in": "manager-principles-base", "summary": "Ground every call in the real project + real data; if the evidence isn't there, say what you'd need rather than inventing it. Source-attributed, confidence-scored, no fabricated audience psychographics." },
+    "claims-boundary": { "name": "Claims Boundary / Source-Grounded Claims", "rooted_in": "manager-principles-base", "summary": "Marketing owns the market promise (message_brief); Product owns the product-verifiable claim (offer_brief); they must not blur, and security/compliance review stays independent. Crosses Product/Marketing/Research/Compliance — a shared base principle." },
+
+    "lean-product-development": { "name": "Lean Product Development", "rooted_in": "director-of-product" },
+    "lifecycle-aware-judgment": { "name": "Lifecycle-Aware Judgment", "rooted_in": "director-of-product" },
+    "build-over-buy": { "name": "Build over Buy", "rooted_in": "director-of-product" },
+    "audience-is-king": { "name": "Audience is King", "rooted_in": "director-of-product", "note": "Rooted on the Director (strategy); the Research/Insight Lead INHERITS it and applies its deepest/emotional-layers form. Inheritance, not a move — it stays the Director's owned principle so it does not duplicate-own." },
+    "focus": { "name": "Focus", "rooted_in": "director-of-product" },
+    "pivot": { "name": "Don't Be Afraid to Pivot", "rooted_in": "director-of-product" },
+    "ftue-nux": { "name": "First-Time Experience is Sacred (FTUE/NUX)", "rooted_in": "product-lead", "note": "Execution-tier principle, rooted on the Product Lead (its natural home)." },
+    "cold-vs-warm-start": { "name": "Cold Start vs Warm Start", "rooted_in": "product-lead", "note": "Execution-tier principle, rooted on the Product Lead." },
+
+    "product-priority-over-severity": { "name": "Product Priority over Severity", "rooted_in": "quality-lead", "note": "QA's natural home." },
+    "golden-first": { "name": "Golden First (by path and by user)", "rooted_in": "quality-lead" },
+    "size-testing-scope-depth": { "name": "Size Testing by Scope × Depth, Deliberately", "rooted_in": "quality-lead" },
+    "gate-ordered-phases": { "name": "Gate in Ordered Phases; a Blocker Stops the Line", "rooted_in": "quality-lead" },
+    "test-real-world": { "name": "Test the Real World, Not the Happy Demo", "rooted_in": "quality-lead" },
+    "acceptance-subjective": { "name": "Acceptance Is Subjective Too", "rooted_in": "quality-lead" },
+
+    "build-for-audience-incl-limitations": { "name": "Build for the Audience, Including Their Limitations", "rooted_in": "design-lead", "note": "Craft-tier (Product Designer): the design expression of the inherited audience-is-king — design for the cohort's concrete limitations (elderly -> bigger/simpler; low tech-literacy -> no jargon), not just an idealized user." },
+    "kiss": { "name": "KISS (Keep It Simple)", "rooted_in": "design-lead", "note": "Craft-tier (Product Designer): the layout/interaction expression of the inherited clarity-is-king — the simplest interface that does the job; subtract before adding." },
+    "clear-iconography": { "name": "Clear Iconography & Visual Language", "rooted_in": "design-lead", "note": "Craft-tier (Product Designer): every icon/label/state reads unambiguously to the target audience; consistent visual language (pairs with the design-quality gauntlet's component-usage + visual-hierarchy checks)." },
+
+    "no-invented-data": { "name": "No Invented Data", "rooted_in": "research-lead", "note": "Research-craft-tier: the sharpening of the inherited evidence-over-invention at the audience-research altitude — never fabricate psychographics/quotes/metrics; synthetic extrapolations are labelled synthetic:true, never presented as observed." },
+    "confidence-scored": { "name": "Confidence-Scored", "rooted_in": "research-lead", "note": "Research-craft-tier: every claim + dossier carries a 0-1 confidence; low confidence is a first-class result, never rounded up (audience_dossier.confidence)." },
+    "no-pii": { "name": "No PII (segment-level only)", "rooted_in": "research-lead", "note": "Research-craft-tier: dossiers are segment-level with no personally-identifiable info (pii_free:true) — the line between audience research and surveillance." },
+
+    "copy-over-creative": { "name": "Copy over Creative", "rooted_in": "director-of-growth", "note": "Marketing domain: copy is the foundation, creative carries it; the deliverable is a winning MESSAGE (transmutable across formats), not a winning ad; a plain ad that carries a strong message beats a polished one that does not." },
+    "message-first": { "name": "Message-First", "rooted_in": "director-of-growth", "note": "Marketing domain: everything derives from one winning message built on contrast + 5-layer depth (thought->emotion->belief->identity->consciousness). The message_brief is the spine; the market_promise stays inside the claims-boundary. The Marketing application of inherited clarity-is-king — NOT a second clarity slug." },
+    "eq-scoring": { "name": "EQ Scoring -> SCALE/TEST/SKIP", "rooted_in": "marketing-lead", "note": "Growth execution-tier: EQ = Product x Ads x Funnel x LTV (1-10 each + justification); 9-10 SCALE, 5-7 TEST, <5 SKIP. Skeptical/decisive; missing live data => downgrade, never certify SCALE; unverifiable => ASSUMPTION." },
+    "fast-feedback-loop": { "name": "Fast Feedback Loop", "rooted_in": "marketing-lead", "note": "Growth execution-tier: the tightest feedback loop wins; assume nothing, only data is real; fan out the WINNER (not guesses) via growth:iterate / karpathy:run." },
+    "ltv-cac": { "name": "LTV:CAC >= 3", "rooted_in": "marketing-lead", "note": "Growth execution-tier: judge Ads + Funnel + back-end LTV; target >=3:1 (high-ticket 7-10:1); margin math shown not asserted; the funnel is a force multiplier on every creative." },
+    "persuade-by-argument": { "name": "Persuade by Argument", "rooted_in": "copy-lead", "note": "Copy execution-tier: persuade by the strength of the argument, not the words; lead to one North-Star belief; introduce + prove a unique mechanism; marketing = belief-change work (install/remove beliefs first); verbs layered later in editing." },
+    "hook-first": { "name": "Hook First", "rooted_in": "copy-lead", "note": "Copy execution-tier: the hook carries most of the result (gut-punch first line / scroll-stopper test), grounded in real voice-of-customer; reuse the framework, not the literal copy." },
+    "chief-coherence": { "name": "Editor-in-Chief Coherence", "rooted_in": "copy-lead", "note": "Copy execution-tier: owns the editor-in-chief pass — copy vs avatar/proof/beliefs/levels-of-consciousness/objections + the review discipline (read-aloud flow, grade <=8, <=6 'I believe that…' beliefs, no decorative images, correct caps). Fails => not done. The named gate behind scripts/checks/chief-coherence-enforcer.js." },
+    "conversion-hierarchy": { "name": "Conversion Hierarchy", "rooted_in": "conversion-lead", "note": "Web craft-tier: one job + one obvious CTA; hook->proof->CTA flow; mobile-first; every element installs a belief / removes an objection; respects the ad->lander->offer journey. Defers formal token/accessibility/handoff approval to the design-quality gauntlet. The conversion-specific application of inherited clarity-is-king — NOT a second clarity slug." },
+
+    "contract-first-construction": { "name": "Contract-First Construction", "rooted_in": "director-of-engineering", "summary": "What gets built derives from a contract (the build_spec, highest precedence, realizing the design_brief), not from vibes; contracts declare precedence so per-domain gauntlets can't deadlock. A build_spec naming a component with no ui/ source is a contract defect, not a license to hand-roll." },
+    "enforcer-over-checklist": { "name": "Enforcer over Checklist", "rooted_in": "director-of-engineering", "summary": "Every engineering rule names what makes a violation self-detecting (hook/scan/test/gate that exits non-zero); enforcers must REJECT not lint and fail closed (runner-error -> non-zero, malformed -> fail-closed). The engineering application of CLAUDE.md Policy & Enforcement Hygiene." },
+    "fe-be-separation-of-concerns": { "name": "Frontend/Backend Separation of Concerns", "rooted_in": "director-of-engineering", "summary": "FE builds the user-facing surface (components/design adherence/a11y/responsive); BE builds the truth behind it (APIs/data/auth/validation/integration). Split by concern; do NOT 2x every concern — shared builder discipline lives once in the build-core. Start with FE+BE; add Foundation/Integration only on proven shared-file pain." },
+    "own-the-integration-seam": { "name": "Own the Integration Seam", "rooted_in": "director-of-engineering", "summary": "The FE/BE seam (generated types, shared lib files, env, data contracts) is where the worst bugs live — map-user-journey applied to code. Name the seam owner before the build (the Gamma integration phase). Producer defines the shape; consumer adapts." },
+    "refactor-hygiene": { "name": "Refactor & Rename Hygiene", "rooted_in": "director-of-engineering", "summary": "A shared-identifier change or file delete is a whole-codebase event: grep the OLD literal / basename everywhere before completing it (the file you forget is the bug class). A lib-only fix doesn't protect callers that bypass the lib — pair every transport fix with a write-time guard + a contract rule. The engineering rooting of CLAUDE.md Refactor & Rename Hygiene." },
+    "build-disposable-spec-durable": { "name": "Build Disposable, Spec Durable", "rooted_in": "director-of-engineering", "summary": "Code is the cheap regenerable output; the spec/contract/enforcer is the durable asset (the Dark Factory model). Favor sharpening the build_spec/check over polishing code a regen replaces. Build over buy for anything core; the bar to add a dependency is high and a hallucinated dep is a supply-chain risk the gauntlet rejects." }
+  }
+}

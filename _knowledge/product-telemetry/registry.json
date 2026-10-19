@@ -1,0 +1,35 @@
+{
+  "$schema": "mc/product-telemetry-knowledge/v0.1",
+  "version": "v0.1",
+  "guides": [
+    {
+      "guide": "PMF_EVENT_VOCABULARY",
+      "path": "_knowledge/product-telemetry/PMF_EVENT_VOCABULARY.md",
+      "tier": "core",
+      "rule_prefix": "TEL-EVT",
+      "anchor": "none",
+      "trains": ["product-lead", "qa-reviewer", "backend-reviewer"],
+      "maps_to": ["event-vocabulary", "activation", "pmf-learning"]
+    },
+    {
+      "guide": "ACTIVATION_AND_CHAIN_INTEGRITY",
+      "path": "_knowledge/product-telemetry/ACTIVATION_AND_CHAIN_INTEGRITY.md",
+      "tier": "core",
+      "rule_prefix": "TEL-CHAIN",
+      "anchor": "none",
+      "trains": ["product-lead", "qa-reviewer", "backend-reviewer"],
+      "maps_to": ["event-chain", "sink-integrity", "review"]
+    }
+  ],
+  "coverage": {
+    "axes": {
+      "event-vocabulary": ["PMF_EVENT_VOCABULARY"],
+      "activation": ["PMF_EVENT_VOCABULARY", "ACTIVATION_AND_CHAIN_INTEGRITY"],
+      "pmf-learning": ["PMF_EVENT_VOCABULARY"],
+      "event-chain": ["ACTIVATION_AND_CHAIN_INTEGRITY"],
+      "sink-integrity": ["ACTIVATION_AND_CHAIN_INTEGRITY"],
+      "review": ["ACTIVATION_AND_CHAIN_INTEGRITY"]
+    },
+    "complete": true
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/contracts/decision_record/v0.1",
+  "title": "MC Product-Studio Contract — Decision Record (v0.1)",
+  "description": "The oneshot stand-in for α/β judgment: a decision emitted by an ENFORCER without a human present, embedded in artifact metadata and read by the arbitration-needed resolver. Shape-compatible with betaEvents (shares decision/owner/rationale/confidence) but a DISTINCT schema/file — NOT the betaEvents file (preserves the oneshot clean-room invariant — enforcers must not import the α/β machinery to emit a record). Not a chain artifact (precedence: null).",
+  "version": "v0.1",
+  "precedence_note": "decision_record is not part of the derivation chain; precedence is null and it is excluded from the chain's distinct-precedence check.",
+  "contract": {
+    "owner_domain": "enforcer_emitted",
+    "consumers": ["arbitration_resolver"],
+    "precedence": null
+  },
+  "type": "object",
+  "required": ["type", "id", "decision", "owner", "rationale", "precedence_basis", "confidence", "arbitration_needed"],
+  "properties": {
+    "type": { "const": "decision_record" },
+    "id": { "type": "string", "minLength": 1 },
+    "decision": { "type": "string", "minLength": 1, "description": "What was decided (field name shared with betaEvents for shape-compatibility)." },
+    "owner": { "type": "string", "minLength": 1, "description": "Which enforcer/domain made the call (shared with betaEvents)." },
+    "rationale": { "type": "string", "minLength": 1, "description": "Why (shared with betaEvents)." },
+    "precedence_basis": { "type": "string", "minLength": 1, "description": "Which contract precedence resolved the conflict (the oneshot-specific field betaEvents lacks)." },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Shared with betaEvents." },
+    "arbitration_needed": { "type": "boolean", "description": "TRUE = fail-closed: contracts conflicted or confidence was low; a human/β must arbitrate (the oneshot stand-in for α/β escalation)." }
+  },
+  "additionalProperties": true
+}

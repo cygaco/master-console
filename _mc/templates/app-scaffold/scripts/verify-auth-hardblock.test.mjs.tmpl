@@ -1,0 +1,196 @@
+// verify-auth-hardblock.test.mjs — planted-violation test proving the hard-block
+// verifier is NOT a no-op that always greens.
+//
+// Runs the verifier's pure static-check core against BOTH file fixtures:
+//   present/ -> definition VALID (green)
+//   absent/  -> REJECTED (red)   <-- the teeth: if this ever passes, the gate is broken
+// plus inline near-miss cases (wrong table, AFTER timing, missing FOR EACH ROW,
+// RETURN OLD, comment-only mention) that a grep-based check would false-green.
+//
+// Works both in a materialized app (verifier is verify-auth-hardblock.mjs) and in
+// the .tmpl template repo (verifier is verify-auth-hardblock.mjs.tmpl — copied to a
+// temp .mjs so Node can import it). Set HARDBLOCK_SCRIPTS_DIR to point at the
+// scripts/ dir when this test file itself is run from a copied location.
+
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+function scriptsDir() {
+  const env = process.env.HARDBLOCK_SCRIPTS_DIR;
+  if (env && fs.existsSync(env)) return env;
+  return path.dirname(fileURLToPath(import.meta.url));
+}
+
+async function loadVerifier(dir) {
+  const asMjs = path.join(dir, "verify-auth-hardblock.mjs");
+  const asTmpl = path.join(dir, "verify-auth-hardblock.mjs.tmpl");
+  let src;
+  if (fs.existsSync(asMjs)) {
+    src = asMjs;
+  } else if (fs.existsSync(asTmpl)) {
+    // Node imports by extension; copy the template to a temp .mjs so it loads.
+    src = path.join(os.tmpdir(), `verify-auth-hardblock.${process.pid}.mjs`);
+    fs.copyFileSync(asTmpl, src);
+  } else {
+    throw new Error(`verifier not found next to test in ${dir}`);
+  }
+  return import(pathToFileURL(src).href);
+}
+
+const dir = scriptsDir();
+const fixtures = path.join(dir, "__fixtures__", "auth-hardblock");
+
+test("present fixture => definition VALID (green)", async () => {
+  const { staticCheckMigration } = await loadVerifier(dir);
+  const sql = fs.readFileSync(path.join(fixtures, "present", "0001_password_hardblock.sql"), "utf8");
+  const res = staticCheckMigration(sql);
+  assert.equal(res.valid, true, `expected valid; got ${res.reason}`);
+});
+
+test("absent fixture => REJECTED (red) — the gate has teeth", async () => {
+  const { staticCheckMigration } = await loadVerifier(dir);
+  const sql = fs.readFileSync(path.join(fixtures, "absent", "0001_password_hardblock.sql"), "utf8");
+  const res = staticCheckMigration(sql);
+  assert.equal(res.valid, false, "absent hard-block MUST be rejected — else the verifier is a no-op");
+});
+
+test("the SHIPPED migration is itself valid", async () => {
+  const { staticCheckMigration, resolveMigrationPath } = await loadVerifier(dir);
+  const migPath = resolveMigrationPath(dir, null);
+  assert.ok(migPath, "shipped migration file should be resolvable");
+  const res = staticCheckMigration(fs.readFileSync(migPath, "utf8"));
+  assert.equal(res.valid, true, `shipped migration must be valid; got ${res.reason}`);
+});
+
+// ---- near-miss cases: each is a subtle break a grep would false-green --------
+
+const FN = `CREATE OR REPLACE FUNCTION public.hardblock_password()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN NEW.encrypted_password := NULL; RETURN NEW; END; $$;`;
+
+const nearMisses = {
+  "wrong table (public.profiles, not auth.users)": `${FN}
+DROP TRIGGER IF EXISTS t ON public.profiles;
+CREATE TRIGGER t BEFORE INSERT OR UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.hardblock_password();`,
+
+  "AFTER timing (cannot mutate NEW)": `${FN}
+CREATE TRIGGER t AFTER INSERT OR UPDATE ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.hardblock_password();`,
+
+  "missing FOR EACH ROW (statement-level)": `${FN}
+CREATE TRIGGER t BEFORE INSERT OR UPDATE ON auth.users
+  EXECUTE FUNCTION public.hardblock_password();`,
+
+  "function RETURN OLD (discards the null-out)": `CREATE OR REPLACE FUNCTION public.hardblock_password()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN NEW.encrypted_password := NULL; RETURN OLD; END; $$;
+CREATE TRIGGER t BEFORE INSERT OR UPDATE ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.hardblock_password();`,
+
+  "only INSERT (UPDATE path left open)": `${FN}
+CREATE TRIGGER t BEFORE INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.hardblock_password();`,
+
+  "comment-only mention of encrypted_password": `-- we should null NEW.encrypted_password on auth.users BEFORE INSERT OR UPDATE
+CREATE TABLE IF NOT EXISTS public.notes (id uuid PRIMARY KEY);`,
+
+  "trigger references an undefined function": `CREATE TRIGGER t BEFORE INSERT OR UPDATE ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.does_not_exist();`,
+
+  "empty migration": ``,
+};
+
+for (const [label, sql] of Object.entries(nearMisses)) {
+  test(`near-miss REJECTED: ${label}`, async () => {
+    const { staticCheckMigration } = await loadVerifier(dir);
+    const res = staticCheckMigration(sql);
+    assert.equal(res.valid, false, `near-miss "${label}" must be rejected`);
+  });
+}
+
+// ── LIVE-path installed-proof teeth (assertShippedHardblock — the TERMINAL endgame) ──
+// The check
+// is whole-definition EQUALITY (normalizeDef == the shipped definition), NOT token
+// parsing — token/keyword checks are a denylist against a grammar.
+// These prove
+// every spoof (incl. a WHEN-clause + conditional body) goes RED without a live DB,
+// AND that benign RENDERING variance of the real definition still passes (equality is
+// normalized, not brittle). A valid candidate carries the exact shipped trigdef + fndef.
+const VALID_TRIGDEF =
+  "CREATE TRIGGER hardblock_password_trigger BEFORE INSERT OR UPDATE ON auth.users FOR EACH ROW EXECUTE FUNCTION public.hardblock_password()";
+const VALID_FNDEF =
+  "CREATE OR REPLACE FUNCTION public.hardblock_password() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO '' AS $function$ BEGIN NEW.encrypted_password := NULL; RETURN NEW; END; $function$";
+
+function candidate(overrides = {}) {
+  return { name: "hardblock_password_trigger", enabled: "O", trigdef: VALID_TRIGDEF, fndef: VALID_FNDEF, ...overrides };
+}
+
+test("endgame: the exact shipped hard-block => ok:true", async () => {
+  const { assertShippedHardblock } = await loadVerifier(dir);
+  assert.equal(assertShippedHardblock([candidate()]).ok, true);
+});
+
+test("endgame: benign rendering variance still passes (not brittle)", async () => {
+  const { assertShippedHardblock } = await loadVerifier(dir);
+  // whitespace/newlines, mixed case, EXECUTE PROCEDURE (old spelling), $$ vs $function$,
+  // search_path = vs TO, and an inline comment — all canonicalize to the shipped shape.
+  const variant = candidate({
+    trigdef:
+      "create   TRIGGER hardblock_password_trigger\n BEFORE insert OR update ON auth.users\n FOR EACH ROW EXECUTE PROCEDURE public.hardblock_password()",
+    fndef:
+      "CREATE OR REPLACE FUNCTION public.hardblock_password()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path = ''\nAS $$\n  BEGIN\n    NEW.encrypted_password := NULL;  -- strip it on the way in\n    RETURN NEW;\n  END;\n$$",
+  });
+  assert.equal(assertShippedHardblock([variant]).ok, true, "normalized equality must accept benign rendering variance");
+});
+
+const spoofs = {
+  "substitute trigger (wrong name), shipped ABSENT": [candidate({ name: "some_audit_trigger" })],
+  "DISABLED trigger (tgenabled=D)": [candidate({ enabled: "D" })],
+  "replica-only trigger (tgenabled=R)": [candidate({ enabled: "R" })],
+  "schema-spoofed executed function (evil.hardblock_password)": [
+    candidate({ trigdef: VALID_TRIGDEF.replace("public.hardblock_password", "evil.hardblock_password") }),
+  ],
+  "INSERT-only binding (UPDATE path unblocked)": [
+    candidate({
+      trigdef:
+        "CREATE TRIGGER hardblock_password_trigger BEFORE INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.hardblock_password()",
+    }),
+  ],
+  "WHEN-clause spoof (binding-regex bypass)": [
+    candidate({
+      trigdef:
+        "CREATE TRIGGER hardblock_password_trigger BEFORE INSERT OR UPDATE ON auth.users FOR EACH ROW WHEN (new.encrypted_password IS NOT NULL) EXECUTE FUNCTION public.hardblock_password()",
+    }),
+  ],
+  "conditional/probe-aware body (token-check bypass)": [
+    candidate({
+      fndef:
+        "CREATE OR REPLACE FUNCTION public.hardblock_password() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO '' AS $function$ BEGIN IF NEW.encrypted_password IS NOT NULL THEN NEW.encrypted_password := NULL; END IF; RETURN NEW; END; $function$",
+    }),
+  ],
+  "attribute drift (SECURITY DEFINER dropped)": [candidate({ fndef: VALID_FNDEF.replace(" SECURITY DEFINER", "") })],
+  "comment-only body (nulling line only in a comment)": [
+    candidate({
+      fndef:
+        "CREATE OR REPLACE FUNCTION public.hardblock_password() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO '' AS $function$ BEGIN -- NEW.encrypted_password := NULL;\n RETURN NEW; END; $function$",
+    }),
+  ],
+  "no triggers at all": [],
+};
+
+for (const [label, candidates] of Object.entries(spoofs)) {
+  test(`endgame REJECTED: ${label}`, async () => {
+    const { assertShippedHardblock } = await loadVerifier(dir);
+    assert.equal(assertShippedHardblock(candidates).ok, false, `"${label}" must be rejected (false-green)`);
+  });
+}
+
+test("endgame: shipped present alongside a decoy => still ok:true (found by name)", async () => {
+  const { assertShippedHardblock } = await loadVerifier(dir);
+  assert.equal(assertShippedHardblock([candidate({ name: "decoy" }), candidate()]).ok, true);
+});

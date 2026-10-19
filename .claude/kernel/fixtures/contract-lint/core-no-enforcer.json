@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-core-no-enforcer",
+  "gate": "contract-lint",
+  "input_file": "core-no-enforcer.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 1,
+    "reason": "CORE-1 is correctly tagged core_id + waivable:false and correctly uses Core: non-waivable (not waived) but names zero Enforcer: refs -- a POLICY fail (core-unenforced), distinct from core-waived and from any structural case."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js) -- a CORE block carrying ONLY `Core: non-waivable` with no named enforcer is aspirational; the contract requires >=1 `Enforcer:` ref alongside `Core: non-waivable` for every core_id-tagged, non-waived block."
+}

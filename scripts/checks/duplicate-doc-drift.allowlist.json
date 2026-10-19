@@ -1,0 +1,30 @@
+{
+  "_comment": "duplicate-doc-drift allowlist. The SANCTIONED-DUPLICATE set: framework-owned docs that legitimately ship at the same basename across multiple paths and whose content is EXPECTED to differ (so a content-drift finding on them would be a false positive). Enforced by scripts/checks/duplicate-doc-drift.js. The enforcer already scopes to non-skill / non-template / non-fixture / non-release-capsule .md docs, so an entry here is only for a real shipped duplicate that drifts BY DESIGN (per-pod role docs, mode protocols, per-directory READMEs). Each rule matches a basename plus a set of directory globs; a duplicate GROUP is suppressed only if EVERY shipped path in it matches one of the rule's dir-globs (a member outside the sanctioned dirs is NOT exempted). A rule that matches no group is surfaced as a stale-allowlist note. Keep SMALL.",
+  "pairs": [
+    {
+      "basename": "builder.md",
+      "dirGlobs": [".claude/agents/engineering/*/"],
+      "reason": "Per-pod build-chain role doc — frontend/backend/security each ship their own builder.md by design (pod-specialized prompts). Must NOT fail as drift."
+    },
+    {
+      "basename": "fixer.md",
+      "dirGlobs": [".claude/agents/engineering/*/"],
+      "reason": "Per-pod build-chain role doc — frontend/backend/security each ship their own fixer.md by design. Must NOT fail as drift."
+    },
+    {
+      "basename": "reviewer.md",
+      "dirGlobs": [".claude/agents/engineering/*/"],
+      "reason": "Per-pod build-chain role doc — frontend/backend/security each ship their own reviewer.md by design. Must NOT fail as drift."
+    },
+    {
+      "basename": "protocol.md",
+      "dirGlobs": [".claude/agents/president/_system/*/"],
+      "reason": "Mode protocol doc — adhoc and oneshot each ship their own protocol.md by design (different team shapes). Must NOT fail as drift."
+    },
+    {
+      "basename": "README.md",
+      "dirGlobs": ["patterns/", "_guides/", "_knowledge/*/", "scripts/dispatch/benchmark-pack/"],
+      "reason": "Per-directory README — each library/knowledge-domain/tooling directory ships its own README describing THAT directory (NOT one canonical doc duplicated); identical content would be the bug, not drift."
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+// Readiness grouping + ordering — the UI groups and orders; it does NOT preserve the
+// raw producer order.
+//
+//   1. "Do this first" = open + owner-action, lead-time items first (longest lead-time
+//      / longest real-world pole at the top), then the rest.
+//   2. "Blocked"       = status blocked.
+//   3. "In the sprint" = open + (sprint-work | waiver) — "we're handling these".
+//   4. "Done"          = status done, collapsed by default.
+//
+// 0-item groups are omitted by the caller. Pure + deterministic — no clock, no I/O.
+
+import type {
+  ReadinessGroup,
+  ReadinessPhase,
+  ReadinessReport,
+  ReadinessSummary,
+  ReadinessView,
+  ReadinessViewItem,
+} from "./types";
+
+// Strip the report to the brand-clean view subset (drops schema, product_id, source).
+export function toReadinessView(report: ReadinessReport): ReadinessView {
+  return {
+    composite: report.composite,
+    summary: report.summary,
+    items: report.items.map((it) => ({
+      id: it.id,
+      label: it.label,
+      dim: it.dim,
+      status: it.status,
+      owner_class: it.owner_class,
+      lead_time: it.lead_time,
+      blocker: it.blocker,
+      deep_link: it.deep_link,
+    })),
+  };
+}
+
+// Stable sort: lead-time items first (days desc — longest pole on top), then the rest in
+// their original relative order. JS Array.sort is stable on modern runtimes (V8/Node 12+).
+function orderDoFirst(items: ReadinessViewItem[]): ReadinessViewItem[] {
+  return [...items].sort((a, b) => {
+    const aLead = a.lead_time ? a.lead_time.days : -1;
+    const bLead = b.lead_time ? b.lead_time.days : -1;
+    return bLead - aLead;
+  });
+}
+
+// The id of the single longest-lead-time open owner-action item ("Start now"), or null.
+export function longestLeadOpenItemId(view: ReadinessView): string | null {
+  let best: ReadinessViewItem | null = null;
+  for (const it of view.items) {
+    if (it.status !== "open" || it.owner_class !== "owner-action") continue;
+    if (!it.lead_time) continue;
+    if (!best || !best.lead_time || it.lead_time.days > best.lead_time.days) {
+      best = it;
+    }
+  }
+  return best ? best.id : null;
+}
+
+export function readinessPhase(summary: ReadinessSummary): ReadinessPhase {
+  if (summary.completed === 0) return "cold";
+  if (summary.open === 0 && summary.blocked === 0) return "all-done";
+  return "warm";
+}
+
+// Group + order the view items. Returns ONLY non-empty groups, in display order.
+export function groupReadinessItems(view: ReadinessView): ReadinessGroup[] {
+  const doFirst: ReadinessViewItem[] = [];
+  const blocked: ReadinessViewItem[] = [];
+  const inSprint: ReadinessViewItem[] = [];
+  const done: ReadinessViewItem[] = [];
+
+  for (const it of view.items) {
+    if (it.status === "done") {
+      done.push(it);
+    } else if (it.status === "blocked") {
+      blocked.push(it);
+    } else if (it.owner_class === "owner-action") {
+      doFirst.push(it);
+    } else {
+      inSprint.push(it);
+    }
+  }
+
+  const groups: ReadinessGroup[] = [
+    {
+      key: "do-first",
+      heading: "Do this first",
+      items: orderDoFirst(doFirst),
+      collapsedByDefault: false,
+    },
+    { key: "blocked", heading: "Blocked", items: blocked, collapsedByDefault: false },
+    {
+      key: "in-sprint",
+      heading: "In the sprint",
+      items: inSprint,
+      collapsedByDefault: false,
+    },
+    {
+      key: "done",
+      heading: `Done (${done.length})`,
+      items: done,
+      collapsedByDefault: true,
+    },
+  ];
+
+  return groups.filter((g) => g.items.length > 0);
+}

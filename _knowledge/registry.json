@@ -1,0 +1,119 @@
+{
+  "schema": "mc/knowledge/registry/v1",
+  "domains": [
+    {
+      "domain": "admin-tooling",
+      "kind": "library",
+      "producer": "product-lead",
+      "consumers": [
+        "backend-builder",
+        "product-lead",
+        "qa-reviewer",
+        "security-reviewer"
+      ],
+      "index": "_knowledge/admin-tooling/registry.json",
+      "overview": "_knowledge/admin-tooling/README.md",
+      "artifact_count": 2
+    },
+    {
+      "domain": "audience",
+      "kind": "store",
+      "producer": "research-lead",
+      "consumers": [
+        "conversion-lead",
+        "copy-lead",
+        "director-of-growth"
+      ],
+      "contract": "_knowledge/audience/README.md",
+      "schema_ref": "schemas/contracts/audience_dossier.schema.json"
+    },
+    {
+      "domain": "compliance",
+      "kind": "library",
+      "producer": "quality-lead",
+      "consumers": [
+        "qa-reviewer"
+      ],
+      "index": "_knowledge/compliance/registry.json",
+      "overview": "_knowledge/compliance/README.md",
+      "artifact_count": 8
+    },
+    {
+      "domain": "copy",
+      "kind": "store",
+      "producer": "copy-lead",
+      "consumers": [
+        "conversion-lead",
+        "director-of-growth"
+      ],
+      "contract": "_knowledge/copy/README.md",
+      "schema_ref": null
+    },
+    {
+      "domain": "design",
+      "kind": "library",
+      "producer": "design-lead",
+      "consumers": [
+        "conversion-lead",
+        "design-lead",
+        "design-quality",
+        "visual-review"
+      ],
+      "index": "_knowledge/design/registry.json",
+      "overview": "_knowledge/design/README.md",
+      "artifact_count": 20
+    },
+    {
+      "domain": "growth-mechanics",
+      "kind": "library",
+      "producer": "marketing-lead",
+      "consumers": [
+        "marketing-lead",
+        "product-lead",
+        "qa-reviewer"
+      ],
+      "index": "_knowledge/growth-mechanics/registry.json",
+      "overview": "_knowledge/growth-mechanics/README.md",
+      "artifact_count": 3
+    },
+    {
+      "domain": "product-telemetry",
+      "kind": "library",
+      "producer": "product-lead",
+      "consumers": [
+        "backend-reviewer",
+        "product-lead",
+        "qa-reviewer"
+      ],
+      "index": "_knowledge/product-telemetry/registry.json",
+      "overview": "_knowledge/product-telemetry/README.md",
+      "artifact_count": 2
+    },
+    {
+      "domain": "security",
+      "kind": "library",
+      "producer": "security-lead",
+      "consumers": [
+        "security-builder",
+        "security-fixer",
+        "security-reviewer"
+      ],
+      "index": "_knowledge/security/registry.json",
+      "overview": "_knowledge/security/README.md",
+      "artifact_count": 9
+    },
+    {
+      "domain": "tech-stack-selection",
+      "kind": "library",
+      "producer": "product-lead",
+      "consumers": [
+        "backend-builder",
+        "backend-reviewer",
+        "product-lead"
+      ],
+      "index": "_knowledge/tech-stack-selection/registry.json",
+      "overview": "_knowledge/tech-stack-selection/README.md",
+      "artifact_count": 3
+    }
+  ]
+}

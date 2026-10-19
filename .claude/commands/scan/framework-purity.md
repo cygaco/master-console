@@ -1,0 +1,38 @@
+---
+description: Refuse product-content leaks in canonical — full-tree, fail-closed scan for private product slugs, maintainer abs paths in executables, and promote-relic reintroduction.
+---
+
+# /scan:framework-purity
+
+The canonical-side last line of defense against leaking product-specific content into the public framework repo. It is **full-tree and fail-closed by default**: every git-tracked file is scanned and any hard finding exits 1. It is one of the five gates `/scan:leak-gate` runs.
+
+```bash
+node scripts/checks/framework-purity.js            # default = --full: every git-tracked file (the leak gate)
+node scripts/checks/framework-purity.js --staged   # staged tree only — the commit gate
+node scripts/checks/framework-purity.js --diff     # staged + unstaged change-set
+node scripts/checks/framework-purity.js --json     # programmatic consumption
+```
+
+Hard detectors (each one fails the gate):
+
+| Detector | What it catches |
+|---|---|
+| `client_slug` | Any of the private product slugs in `CLIENT_SLUGS` (defined once, in the script) in tracked file content. The only exemptions are planning/history **records** (`trackers/`, `_planning/epics/`, `ROADMAP.md`, `RELEASES.md`, release changelogs, the dream journal, historical sprint/decision/learning records) and the derived `_mc/MANIFEST.json`. |
+| `abs_path` | Maintainer-home absolute paths — Windows home forms, `/home/<u>/Desktop/`, `/Users/<u>/Desktop/` — **scoped to executable/config files** (`.js .mjs .cjs .ps1 .sh .cmd .bat .json`) under `scripts/` and `.claude/`. Docs, logs and markdown are deliberately out of scope: an old path in prose is fine; in a script it is a portability bug and a leak. |
+| `promote_relic` | Reintroduction of any purged promote-suite path or token (see `PROMOTE_RELIC_FILES` / `PROMOTE_RELIC_REGEX` in the script). |
+
+Report-only advisories (never affect the exit code):
+
+| Advisory | Why it is not a gate |
+|---|---|
+| `root_leak` | `_requirements/` or `_docs/` at canonical root. The canonical repo dogfoods its own product canon there; relocating it is a scope decision, so this is reported (visible). |
+| `domain_vocab` | Terms from an instance-local term file (`framework-purity.domain-vocab.local.json` in the gitignored project memory folder; none ship). Surfaced for cleanup, not a gate; skipped when the file is absent. |
+
+Modes:
+- `--full` (default) — `git ls-files`: tracked + staged files. Gitignored local state can never false-RED the gate; a leak that is `git add`ed is caught before the commit.
+- `--staged` — `git diff --cached` only. What the pre-commit guard (`scripts/hooks/framework-purity-guard.js`) runs.
+- `--diff` — staged + unstaged change-set.
+
+Exit codes: `0` clean · `1` violations · `2` git/CLI error (fail-closed — an unreadable tree never reads green).
+
+Enforcers of this skill's own contract: `scripts/checks/framework-purity.test.js` (detector units), `scripts/checks/framework-purity-gate.test.js` (planted-leak RED proof on a throwaway repo), `scripts/checks/test-framework-purity-staged.js` (staged-scope tests).

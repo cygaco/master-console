@@ -1,0 +1,15 @@
+{
+  "id": "tracker-tracker-drift",
+  "gate": "tracker",
+  "input": {
+    "tracker_claim": "done",
+    "disk_evidence": "absent",
+    "git_evidence": "absent"
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "the tracker asserts a status ('done') with no corroborating disk or git evidence -- tracker/disk/git mismatch. This kernel fixture proves the RULE (a claim without evidence is invalid), not the live /scan:full wiring."
+  },
+  "kernel_scope": "IN",
+  "note": "Tracker-fidelity class: a tracker status counts only with disk or git evidence."
+}

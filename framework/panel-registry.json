@@ -1,0 +1,29 @@
+{
+  "$schema": "mc/panel-registry/v1",
+  "panels": {
+    "readiness": {
+      "name": "readiness",
+      "opener": "/cockpit:readiness",
+      "description": "Cross-product launch-readiness board — composite % per registered product",
+      "run_context": "cli"
+    },
+    "models": {
+      "name": "models",
+      "opener": "/models:router",
+      "description": "Model router — the Dispatch Console GUI (role -> provider -> model -> effort)",
+      "run_context": "cli"
+    },
+    "admin": {
+      "name": "admin",
+      "opener": "node scripts/admin/preview.js",
+      "description": "A product's in-app founder admin panel (run-in-product; never MC itself)",
+      "run_context": "in_app"
+    },
+    "roadmap": {
+      "name": "roadmap",
+      "opener": "node scripts/panel/roadmap-gui.js",
+      "description": "Roadmap 'what's next' visual panel (browser GUI) — active sprints, prioritized roadmap, epics, per-sprint ticket breakdown; interactive, read-only (--text for the terminal board)",
+      "run_context": "cli"
+    }
+  }
+}

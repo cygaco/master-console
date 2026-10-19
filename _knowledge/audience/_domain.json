@@ -1,0 +1,9 @@
+{
+  "domain": "audience",
+  "kind": "store",
+  "producer": "research-lead",
+  "consumers": ["conversion-lead", "copy-lead", "director-of-growth"],
+  "schema_ref": "schemas/contracts/audience_dossier.schema.json",
+  "contract": "_knowledge/audience/README.md",
+  "note": "Per-product audience dossiers — segment-level, source-attributed, confidence-scored, NO PII. Produced by research-lead at runtime (feeds the message_brief spine); empty scaffolding in canonical. Store domain: consumers draw from it at runtime, not via prompt-baked marker blocks."
+}

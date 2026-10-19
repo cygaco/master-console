@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "> git push origin main\nThat is the command that was quoted back.",
+  "expect": ["CMD-OUTSIDE-RUN"]
+}

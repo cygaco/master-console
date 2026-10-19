@@ -1,0 +1,9 @@
+{
+  "domain": "compliance",
+  "kind": "library",
+  "producer": "quality-lead",
+  "consumers": ["qa-reviewer"],
+  "index": "_knowledge/compliance/registry.json",
+  "overview": "_knowledge/compliance/README.md",
+  "note": "Launch-compliance knowledge library — agent-grounding training references for the qa-reviewer's integrity/compliance scope (privacy & data law, consumer-protection & subscription-cancellation law, app-store & platform policy, IP & trademark, data-rights operations, incident readiness & breach flags, minors & age assurance, AI-product compliance). Consumed via the `<!-- knowledge:compliance role:qa-reviewer -->` marker block in the qa-reviewer spec; wired by /knowledge:integrate, enforced by /knowledge:coverage. Each ref closes with a §6 agent-applicable RULES section; many compliance items need human/legal judgment and are written as FLAGs (reviewer surfaces for human confirmation, never a hard automated PASS) — and the reviewer never concludes no-notification-required for a breach (BRCH-07). Not legal advice. Mirrors the design/security library shape."
+}

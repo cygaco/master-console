@@ -1,0 +1,18 @@
+{
+  "id": "retention-archive-not-delete",
+  "gate": "retention",
+  "bound_core": "CORE-4",
+  "input": {
+    "sink_class": "operational",
+    "kind": "lines",
+    "cap": 20000,
+    "actual_lines": 20417,
+    "attempted_disposition": "archive"
+  },
+  "expect": {
+    "outcome": "PASS",
+    "reason": "an over-cap sink is moved into the archive tier (scripts/hooks/lib/archive.js, .claude/runtime/archive/ + index.jsonl + a restore-drill test) under a unique, collision-proof name -- raw history is preserved, never deleted."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative companion (documented, not a separate fixture file): attempted_disposition:'delete' MUST evaluate to BLOCK under the same CORE-4 rule -- see conformance-matrix.js's retention gate evaluator, which refuses any disposition other than 'archive'. Retention CLASSES + caps cited live from rotate.js#CAP_CLASSES (verified at build time)."
+}

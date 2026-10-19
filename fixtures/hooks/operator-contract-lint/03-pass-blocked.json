@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "\u26d4 BLOCKED\nWhat: the migration cannot run.\nWhy: the database is locked by another process.\nWho: ops can clear the lock.",
+  "expect": []
+}

@@ -1,0 +1,15 @@
+{
+  "id": "dispatch-review-cross-provider-review-invariant",
+  "gate": "dispatch-review",
+  "input": {
+    "builder_provider": "openai",
+    "reviewer_provider": "openai",
+    "same_role_self_review": false
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "the reviewer must be a different provider family from the builder it is reviewing (cross-provider review invariant) -- a same-provider reviewer pass is refused regardless of role identity, to prevent a single provider's blind spots reviewing its own work."
+  },
+  "kernel_scope": "IN",
+  "note": "Part of MC's dispatch model spread by provider and department (ADR-0016)."
+}

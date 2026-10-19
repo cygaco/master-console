@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-missing-ed",
+  "gate": "contract-lint",
+  "input_file": "missing-ed.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "the cited ED-999999 does not exist in .claude/project/memory/enforcement-debt.jsonl. Structural/fail-closed (a reference-integrity failure), distinct from a well-formed policy violation."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js); excluded from conformance-matrix.js and manifest.json's kernel-conformance count."
+}

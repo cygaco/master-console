@@ -1,0 +1,425 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import {
+  KeyRound,
+  Loader2,
+  Mail,
+  ShieldAlert,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+
+// Passwordless sign-in surface. Sign-up-first: the same OTP flow
+// serves both new and returning users; the "Log in" toggle flips ONLY the copy.
+// There is deliberately NO password field and NO signInWithPassword anywhere —
+// the only credentials are an emailed one-time code and Google OAuth.
+
+const CODE_LENGTH = 6;
+const RESEND_COOLDOWN_SECONDS = 30;
+
+type Step = "email" | "code";
+type Mode = "signup" | "login";
+
+// Where the magic-link / OAuth callback lands. Derived from the live origin at
+// call time — never hardcoded — so the same build works on localhost, previews,
+// and prod without an env rewrite.
+function callbackUrl(): string {
+  return `${window.location.origin}/auth/callback?next=/account`;
+}
+
+// Human-readable copy for the `?error=` codes the callback route can bounce back
+// with (auth_unavailable, exchange_failed) plus a sensible default.
+function messageForCallbackError(code: string | null): string | null {
+  if (!code) return null;
+  if (code === "auth_unavailable") {
+    return "Sign-in is not available right now. Please try again later.";
+  }
+  if (code === "exchange_failed") {
+    return "That sign-in link has expired or was already used. Request a new code.";
+  }
+  return "We couldn't complete sign-in. Please try again.";
+}
+
+export default function AuthPage() {
+  // The browser client is null when the seam is unconfigured. Memoize so we read
+  // the env once; every method call below is guarded by `client` being non-null.
+  const client = React.useMemo(() => createSupabaseBrowserClient(), []);
+  const configured = isSupabaseConfigured() && client !== null;
+
+  if (!configured) {
+    return <AuthUnconfigured />;
+  }
+
+  return <AuthForm />;
+}
+
+// Calm, non-crashing state for when NEXT_PUBLIC_SUPABASE_URL / anon key are unset.
+// This is the branch that keeps `next build` and a keys-unset runtime green.
+function AuthUnconfigured() {
+  return (
+    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-6 p-6">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShieldAlert className="size-5 text-muted-foreground" aria-hidden />
+            <span>Auth is not configured</span>
+          </CardTitle>
+          <CardDescription>
+            Sign-in is turned off because the Supabase environment is not set.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <p>
+            To enable passwordless sign-in, set{" "}
+            <code className="rounded bg-muted px-1 py-0.5">
+              NEXT_PUBLIC_SUPABASE_URL
+            </code>{" "}
+            and{" "}
+            <code className="rounded bg-muted px-1 py-0.5">
+              NEXT_PUBLIC_SUPABASE_ANON_KEY
+            </code>{" "}
+            in your environment, then restart the app.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button asChild variant="outline">
+            <Link href="/admin/guides/DEV_SETUP_GUIDE">Open the setup runbook</Link>
+          </Button>
+        </CardFooter>
+      </Card>
+    </main>
+  );
+}
+
+function AuthForm() {
+  // Non-null here: AuthPage only renders AuthForm when `configured` is true, but
+  // we re-derive and guard defensively so no method is ever called on null.
+  const client = React.useMemo(() => createSupabaseBrowserClient(), []);
+
+  const [mode, setMode] = React.useState<Mode>("signup");
+  const [step, setStep] = React.useState<Step>("email");
+  const [email, setEmail] = React.useState("");
+  const [code, setCode] = React.useState("");
+  const [pending, setPending] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(() =>
+    messageForCallbackError(
+      typeof window === "undefined"
+        ? null
+        : new URLSearchParams(window.location.search).get("error"),
+    ),
+  );
+  const [notice, setNotice] = React.useState<string | null>(null);
+  const [cooldown, setCooldown] = React.useState(0);
+
+  const codeInputRef = React.useRef<HTMLInputElement>(null);
+  // Guards the auto-submit so a single 6-digit entry verifies exactly once.
+  const submittedTokenRef = React.useRef<string | null>(null);
+
+  const isSignup = mode === "signup";
+
+  // Focus the code entry as soon as we advance to the code step.
+  React.useEffect(() => {
+    if (step === "code") {
+      codeInputRef.current?.focus();
+    }
+  }, [step]);
+
+  // Resend cooldown ticker.
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = window.setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [cooldown]);
+
+  async function sendCode(targetEmail: string) {
+    if (!client) return;
+    setPending(true);
+    setError(null);
+    setNotice(null);
+    const { error: sendError } = await client.auth.signInWithOtp({
+      email: targetEmail,
+      options: { emailRedirectTo: callbackUrl() },
+    });
+    setPending(false);
+    if (sendError) {
+      setError(sendError.message);
+      return;
+    }
+    submittedTokenRef.current = null;
+    setCode("");
+    setStep("code");
+    setNotice(`We sent a ${CODE_LENGTH}-digit code to ${targetEmail}.`);
+    setCooldown(RESEND_COOLDOWN_SECONDS);
+  }
+
+  async function handleEmailSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmed = email.trim();
+    if (!trimmed || pending) return;
+    await sendCode(trimmed);
+  }
+
+  const verifyCode = React.useCallback(
+    async (token: string) => {
+      if (!client) return;
+      if (submittedTokenRef.current === token) return;
+      submittedTokenRef.current = token;
+      setPending(true);
+      setError(null);
+      const { error: verifyError } = await client.auth.verifyOtp({
+        email: email.trim(),
+        token,
+        type: "email",
+      });
+      if (verifyError) {
+        setPending(false);
+        setError(verifyError.message);
+        submittedTokenRef.current = null;
+        setCode("");
+        codeInputRef.current?.focus();
+        return;
+      }
+      // Full navigation so the freshly-set session cookies are picked up.
+      window.location.assign("/account");
+    },
+    [client, email],
+  );
+
+  function handleCodeChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const digits = event.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH);
+    setCode(digits);
+    if (error) setError(null);
+    if (digits.length === CODE_LENGTH) {
+      void verifyCode(digits);
+    }
+  }
+
+  async function handleGoogle() {
+    if (!client || pending) return;
+    setPending(true);
+    setError(null);
+    const { error: oauthError } = await client.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: callbackUrl() },
+    });
+    // On success the browser is redirected away; only reach here on error.
+    if (oauthError) {
+      setPending(false);
+      setError(oauthError.message);
+    }
+  }
+
+  function handleEditEmail() {
+    setStep("email");
+    setCode("");
+    setError(null);
+    setNotice(null);
+    submittedTokenRef.current = null;
+  }
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-6 p-6">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>
+            {isSignup ? "Create your account" : "Log in"}
+          </CardTitle>
+          <CardDescription>
+            {step === "email"
+              ? "Enter your email and we'll send you a one-time code — no password needed."
+              : `Enter the ${CODE_LENGTH}-digit code we sent to ${email.trim()}.`}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-5">
+          {/* Errors and notices announced to assistive tech. */}
+          <div aria-live="polite" className="empty:hidden">
+            {error ? (
+              <p
+                role="alert"
+                className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              >
+                {error}
+              </p>
+            ) : notice ? (
+              <p className="rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                {notice}
+              </p>
+            ) : null}
+          </div>
+
+          {step === "email" ? (
+            <form onSubmit={handleEmailSubmit} className="space-y-4" noValidate>
+              <div className="space-y-2">
+                <Label htmlFor="auth-email">Email</Label>
+                <Input
+                  id="auth-email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoFocus
+                  required
+                  placeholder="you@example.com"
+                  value={email}
+                  disabled={pending}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={pending || email.trim().length === 0}>
+                {pending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <Mail className="size-4" aria-hidden />
+                )}
+                Email me a code
+              </Button>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="auth-code">Verification code</Label>
+                <CodeInput
+                  ref={codeInputRef}
+                  id="auth-code"
+                  value={code}
+                  disabled={pending}
+                  onChange={handleCodeChange}
+                />
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <Button
+                  type="button"
+                  variant="link"
+                  className="h-auto p-0"
+                  onClick={handleEditEmail}
+                  disabled={pending}
+                >
+                  Use a different email
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="h-auto p-0"
+                  onClick={() => void sendCode(email.trim())}
+                  disabled={pending || cooldown > 0}
+                >
+                  {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                </Button>
+              </div>
+              {pending ? (
+                <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                  Verifying…
+                </p>
+              ) : null}
+            </div>
+          )}
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center" aria-hidden>
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => void handleGoogle()}
+            disabled={pending}
+          >
+            <KeyRound className="size-4" aria-hidden />
+            Continue with Google
+          </Button>
+        </CardContent>
+
+        <CardFooter className="justify-center">
+          <p className="text-sm text-muted-foreground">
+            {isSignup ? "Already have an account? " : "Need an account? "}
+            <Button
+              type="button"
+              variant="link"
+              className="h-auto p-0"
+              onClick={() => setMode(isSignup ? "login" : "signup")}
+            >
+              {isSignup ? "Log in" : "Create one"}
+            </Button>
+          </p>
+        </CardFooter>
+      </Card>
+    </main>
+  );
+}
+
+// Segmented 6-box one-time-code entry backed by a SINGLE logical input. The real
+// <Input> is transparent and overlays the boxes, so OS/browser autofill of an
+// SMS/email one-time-code (autoComplete="one-time-code") flows into one field and
+// auto-submits at the 6th digit — while the boxes give the familiar visual.
+interface CodeInputProps {
+  id: string;
+  value: string;
+  disabled?: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const CodeInput = React.forwardRef<HTMLInputElement, CodeInputProps>(
+  ({ id, value, disabled, onChange }, ref) => {
+    const boxes = Array.from({ length: CODE_LENGTH }, (_, i) => i);
+    const activeIndex = value.length;
+    return (
+      <div className="relative">
+        <Input
+          ref={ref}
+          id={id}
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          pattern="\d*"
+          maxLength={CODE_LENGTH}
+          value={value}
+          disabled={disabled}
+          onChange={onChange}
+          aria-label={`${CODE_LENGTH}-digit verification code`}
+          className="absolute inset-0 z-10 h-12 w-full text-center tracking-[1em] text-transparent caret-transparent opacity-0"
+        />
+        <div className="flex justify-between gap-2" aria-hidden>
+          {boxes.map((i) => {
+            const filled = i < value.length;
+            const isActive = !disabled && i === activeIndex;
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "flex h-12 flex-1 items-center justify-center rounded-md border bg-background text-lg font-medium",
+                  isActive && "border-ring ring-2 ring-ring",
+                  disabled && "opacity-50",
+                )}
+              >
+                {filled ? value[i] : ""}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  },
+);
+CodeInput.displayName = "CodeInput";

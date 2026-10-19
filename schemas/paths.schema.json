@@ -1,0 +1,706 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/paths/v5",
+  "title": "MC paths.json",
+  "type": "object",
+  "required": [
+    "$schema",
+    "version"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "mc/paths/v5"
+    },
+    "version": {
+      "type": "integer",
+      "const": 5
+    },
+    "events": {
+      "type": "string",
+      "const": ".claude/project/events",
+      "description": "dir (runtime) — paths.events"
+    },
+    "decisions": {
+      "type": "string",
+      "const": ".claude/project/decisions",
+      "description": "dir (runtime) — paths.decisions"
+    },
+    "memory": {
+      "type": "string",
+      "const": ".claude/project/memory",
+      "description": "dir (runtime) — paths.memory"
+    },
+    "maps": {
+      "type": "string",
+      "const": ".claude/project/maps",
+      "description": "dir (generated) — paths.maps"
+    },
+    "reference": {
+      "type": "string",
+      "const": ".claude/project/reference",
+      "description": "dir (framework) — paths.reference"
+    },
+    "runtime": {
+      "type": "string",
+      "const": ".claude/runtime",
+      "description": "dir (runtime) — paths.runtime"
+    },
+    "logs": {
+      "type": "string",
+      "const": ".claude/runtime/logs",
+      "description": "dir (runtime) — paths.logs"
+    },
+    "handoffs": {
+      "type": "string",
+      "const": ".claude/runtime/handoffs",
+      "description": "dir (runtime) — paths.handoffs"
+    },
+    "handoffLatest": {
+      "type": "string",
+      "const": ".claude/runtime/handoff.md",
+      "description": "md (runtime) — paths.handoffLatest"
+    },
+    "plans": {
+      "type": "string",
+      "const": ".claude/runtime/plans",
+      "description": "dir (runtime) — paths.plans"
+    },
+    "agents": {
+      "type": "string",
+      "const": ".claude/agents",
+      "description": "dir (framework) — paths.agents"
+    },
+    "agentSystem": {
+      "type": "string",
+      "const": ".claude/agents/president/_system",
+      "description": "dir (framework) — paths.agentSystem"
+    },
+    "betaSystem": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/beta",
+      "description": "dir (framework) — paths.betaSystem"
+    },
+    "policy": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy",
+      "description": "dir (project) — paths.policy"
+    },
+    "decisionPolicy": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/decision-policy.md",
+      "description": "md (project) — paths.decisionPolicy"
+    },
+    "currentStage": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/current-stage.md",
+      "description": "md (project) — paths.currentStage"
+    },
+    "operatorContract": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/operator-contract.md",
+      "description": "md (framework) — paths.operatorContract"
+    },
+    "adrIndex": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/adr/INDEX.md",
+      "description": "md (project) — paths.adrIndex"
+    },
+    "commands": {
+      "type": "string",
+      "const": ".claude/commands",
+      "description": "dir (framework) — paths.commands"
+    },
+    "kernel": {
+      "type": "string",
+      "const": ".claude/kernel",
+      "description": "dir (framework) — paths.kernel"
+    },
+    "content": {
+      "type": "string",
+      "const": ".claude/content",
+      "description": "dir (runtime) — paths.content"
+    },
+    "dreams": {
+      "type": "string",
+      "const": ".claude/dreams",
+      "description": "dir (runtime) — paths.dreams"
+    },
+    "favorites": {
+      "type": "string",
+      "const": ".claude/content/favorites",
+      "description": "dir (runtime) — paths.favorites"
+    },
+    "hooks": {
+      "type": "string",
+      "const": "scripts/hooks",
+      "description": "dir (framework) — paths.hooks"
+    },
+    "hookLib": {
+      "type": "string",
+      "const": "scripts/hooks/lib",
+      "description": "dir (framework) — paths.hookLib"
+    },
+    "scriptsAdmin": {
+      "type": "string",
+      "const": "scripts/admin",
+      "description": "dir (framework) — paths.scriptsAdmin"
+    },
+    "adminPanelRegistry": {
+      "type": "string",
+      "const": "framework/admin-panel-registry.json",
+      "description": "json (framework) — paths.adminPanelRegistry"
+    },
+    "scriptsPanel": {
+      "type": "string",
+      "const": "scripts/panel",
+      "description": "dir (framework) — paths.scriptsPanel"
+    },
+    "panelRegistry": {
+      "type": "string",
+      "const": "framework/panel-registry.json",
+      "description": "json (framework) — paths.panelRegistry"
+    },
+    "patterns": {
+      "type": "string",
+      "const": "patterns",
+      "description": "dir (framework) — paths.patterns"
+    },
+    "requirements": {
+      "type": "string",
+      "const": "_requirements",
+      "description": "dir (project) — paths.requirements"
+    },
+    "requirementsRoot": {
+      "type": "string",
+      "const": "_requirements",
+      "description": "dir (project) — paths.requirementsRoot"
+    },
+    "specsRoot": {
+      "type": "string",
+      "const": "_requirements/04-features",
+      "description": "dir (project) — paths.specsRoot"
+    },
+    "research": {
+      "type": "string",
+      "const": "_docs/research",
+      "description": "dir (project) — paths.research"
+    },
+    "karpathyRuns": {
+      "type": "string",
+      "const": "_docs/karpathy-auto-research",
+      "description": "dir (runtime) — paths.karpathyRuns"
+    },
+    "architectureRoot": {
+      "type": "string",
+      "const": "_requirements/03-architecture",
+      "description": "dir (framework) — paths.architectureRoot"
+    },
+    "designSystemRoot": {
+      "type": "string",
+      "const": "_requirements/01-design-system",
+      "description": "dir (framework) — paths.designSystemRoot"
+    },
+    "auditsRoot": {
+      "type": "string",
+      "const": "_requirements/_audits",
+      "description": "dir (framework) — paths.auditsRoot"
+    },
+    "integrationsRoot": {
+      "type": "string",
+      "const": "_requirements/09-integrations",
+      "description": "dir (project) — paths.integrationsRoot"
+    },
+    "docsRoot": {
+      "type": "string",
+      "const": "_docs",
+      "description": "dir (project) — paths.docsRoot"
+    },
+    "frameworkRoot": {
+      "type": "string",
+      "const": "framework",
+      "description": "dir (framework) — paths.frameworkRoot"
+    },
+    "appScaffoldTemplates": {
+      "type": "string",
+      "const": "_mc/templates/app-scaffold",
+      "description": "dir (framework) — paths.appScaffoldTemplates"
+    },
+    "manifest": {
+      "type": "string",
+      "const": ".claude/manifest.json",
+      "description": "json (project) — paths.manifest"
+    },
+    "settings": {
+      "type": "string",
+      "const": ".claude/settings.json",
+      "description": "json (project) — paths.settings"
+    },
+    "store": {
+      "type": "string",
+      "const": ".claude/agents/store.json",
+      "description": "json (runtime) — paths.store"
+    },
+    "oneshotStore": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/oneshot/store.json",
+      "description": "json (runtime) — paths.oneshotStore"
+    },
+    "oneshotSystem": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/oneshot",
+      "description": "dir (framework) — paths.oneshotSystem"
+    },
+    "oneshotRetros": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/oneshot/retros",
+      "description": "dir (runtime) — paths.oneshotRetros"
+    },
+    "eventsFile": {
+      "type": "string",
+      "const": ".claude/project/events/events.jsonl",
+      "description": "jsonl (runtime) — paths.eventsFile"
+    },
+    "toolsFile": {
+      "type": "string",
+      "const": ".claude/project/events/tools.jsonl",
+      "description": "jsonl (runtime) — paths.toolsFile"
+    },
+    "skillUsageFile": {
+      "type": "string",
+      "const": ".claude/project/events/skill-usage.jsonl",
+      "description": "jsonl (runtime) — paths.skillUsageFile"
+    },
+    "requirementsFile": {
+      "type": "string",
+      "const": ".claude/project/events/requirements.jsonl",
+      "description": "jsonl (runtime) — paths.requirementsFile"
+    },
+    "requirementsStagedFile": {
+      "type": "string",
+      "const": ".claude/project/events/requirements-staged.jsonl",
+      "description": "jsonl (runtime) — paths.requirementsStagedFile"
+    },
+    "decisionLedger": {
+      "type": "string",
+      "const": ".claude/project/decisions/decision-ledger.jsonl",
+      "description": "jsonl (runtime) — paths.decisionLedger"
+    },
+    "providerTrace": {
+      "type": "string",
+      "const": ".claude/project/decisions/provider-trace.jsonl",
+      "description": "jsonl (runtime) — paths.providerTrace"
+    },
+    "learningsFile": {
+      "type": "string",
+      "const": ".claude/project/memory/learnings.jsonl",
+      "description": "jsonl (runtime) — paths.learningsFile"
+    },
+    "tracesFile": {
+      "type": "string",
+      "const": ".claude/project/memory/traces.jsonl",
+      "description": "jsonl (runtime) — paths.tracesFile"
+    },
+    "systemsFile": {
+      "type": "string",
+      "const": ".claude/project/memory/systems.jsonl",
+      "description": "jsonl (runtime) — paths.systemsFile"
+    },
+    "recurringIssuesFile": {
+      "type": "string",
+      "const": ".claude/project/memory/recurring-issues.jsonl",
+      "description": "jsonl (runtime) — paths.recurringIssuesFile"
+    },
+    "enforcementDebt": {
+      "type": "string",
+      "const": ".claude/project/memory/enforcement-debt.jsonl",
+      "description": "jsonl (runtime) — paths.enforcementDebt"
+    },
+    "betaHonestyWaivers": {
+      "type": "string",
+      "const": ".claude/project/memory/beta-honesty-waivers.jsonl",
+      "description": "jsonl (runtime) — paths.betaHonestyWaivers"
+    },
+    "reportsDir": {
+      "type": "string",
+      "const": "_reports",
+      "description": "dir (runtime) — paths.reportsDir"
+    },
+    "roadmap": {
+      "type": "string",
+      "const": "ROADMAP.md",
+      "description": "md (project) — paths.roadmap"
+    },
+    "releases": {
+      "type": "string",
+      "const": "RELEASES.md",
+      "description": "md (project) — paths.releases"
+    },
+    "specGraph": {
+      "type": "string",
+      "const": ".claude/project/maps/SPEC_GRAPH.json",
+      "description": "json (generated) — paths.specGraph"
+    },
+    "requireGraph": {
+      "type": "string",
+      "const": ".claude/project/maps/require-graph.json",
+      "description": "json (generated) — paths.requireGraph"
+    },
+    "judgmentModel": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/beta/judgement-model.md",
+      "description": "md (framework) — paths.judgmentModel"
+    },
+    "judgmentRecommendations": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/beta/judgement-model-recommendations.md",
+      "description": "md (runtime) — paths.judgmentRecommendations"
+    },
+    "betaSourceData": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/beta/mined/beta-source-data.md",
+      "description": "md (runtime) — paths.betaSourceData"
+    },
+    "betaEvents": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/beta/events.jsonl",
+      "description": "jsonl (runtime) — paths.betaEvents"
+    },
+    "lexicon": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/lexicon.md",
+      "description": "md (framework) — paths.lexicon"
+    },
+    "pathsLib": {
+      "type": "string",
+      "const": "scripts/hooks/lib/paths.js",
+      "description": "js (framework) — paths.pathsLib"
+    },
+    "loggerLib": {
+      "type": "string",
+      "const": "scripts/hooks/lib/logger.js",
+      "description": "js (framework) — paths.loggerLib"
+    },
+    "agentDispatchGuide": {
+      "type": "string",
+      "const": ".claude/agents/_system/guides/agent-dispatch-guide.md",
+      "description": "md (framework) — paths.agentDispatchGuide"
+    },
+    "modeMarker": {
+      "type": "string",
+      "const": ".claude/runtime/mode.json",
+      "description": "json (runtime) — paths.modeMarker"
+    },
+    "dispatchLocks": {
+      "type": "string",
+      "const": ".claude/runtime/dispatch-locks",
+      "description": "dir (runtime) — paths.dispatchLocks"
+    },
+    "dispatchDeathsFile": {
+      "type": "string",
+      "const": ".claude/runtime/dispatch-deaths.jsonl",
+      "description": "jsonl (runtime) — paths.dispatchDeathsFile"
+    },
+    "dispatchCompletionsFile": {
+      "type": "string",
+      "const": ".claude/runtime/dispatch-completions.jsonl",
+      "description": "jsonl (runtime) — paths.dispatchCompletionsFile"
+    },
+    "providerTmp": {
+      "type": "string",
+      "const": ".claude/runtime/.provider-tmp",
+      "description": "dir (runtime) — paths.providerTmp"
+    },
+    "providerTierConfig": {
+      "type": "string",
+      "const": ".claude/runtime/provider-tier-config.json",
+      "description": "json (runtime) — paths.providerTierConfig"
+    },
+    "providerFallbackPolicy": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/provider-fallback.json",
+      "description": "json (framework) — paths.providerFallbackPolicy"
+    },
+    "sprintRoot": {
+      "type": "string",
+      "const": ".claude/project/sprint",
+      "description": "dir (runtime) — paths.sprintRoot"
+    },
+    "sprintCurrent": {
+      "type": "string",
+      "const": ".claude/project/sprint/current-sprint.yaml",
+      "description": "yaml (runtime) — paths.sprintCurrent"
+    },
+    "sprintProgress": {
+      "type": "string",
+      "const": ".claude/project/sprint/sprint-progress.yaml",
+      "description": "yaml (runtime) — paths.sprintProgress"
+    },
+    "sprintActiveRegistry": {
+      "type": "string",
+      "const": ".claude/project/sprint/active-sprints.yaml",
+      "description": "yaml (runtime) — paths.sprintActiveRegistry"
+    },
+    "sprintSprints": {
+      "type": "string",
+      "const": ".claude/project/sprint/sprints",
+      "description": "dir (runtime) — paths.sprintSprints"
+    },
+    "sprintHistory": {
+      "type": "string",
+      "const": ".claude/project/sprint/history",
+      "description": "dir (runtime) — paths.sprintHistory"
+    },
+    "sprintPlanContracts": {
+      "type": "string",
+      "const": ".claude/project/sprint/plan-contracts",
+      "description": "dir (runtime) — paths.sprintPlanContracts"
+    },
+    "sprintTickets": {
+      "type": "string",
+      "const": ".claude/project/sprint/tickets",
+      "description": "dir (runtime) — paths.sprintTickets"
+    },
+    "sprintIssues": {
+      "type": "string",
+      "const": ".claude/project/sprint/issues",
+      "description": "dir (runtime) — paths.sprintIssues"
+    },
+    "sprintIssuesLedger": {
+      "type": "string",
+      "const": "issues.md",
+      "description": "md (project) — paths.sprintIssuesLedger"
+    },
+    "sprintExternalServices": {
+      "type": "string",
+      "const": ".claude/project/sprint/external-services",
+      "description": "dir (runtime) — paths.sprintExternalServices"
+    },
+    "sprintReleases": {
+      "type": "string",
+      "const": ".claude/project/sprint/releases",
+      "description": "dir (runtime) — paths.sprintReleases"
+    },
+    "sprintRegressionCorpus": {
+      "type": "string",
+      "const": "tests/regression",
+      "description": "dir (project) — paths.sprintRegressionCorpus"
+    },
+    "sprintFullAutonomy": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/sprint-full-autonomy.json",
+      "description": "json (framework) — paths.sprintFullAutonomy"
+    },
+    "sprintFullReports": {
+      "type": "string",
+      "const": ".claude/project/sprint/full-reports",
+      "description": "dir (runtime) — paths.sprintFullReports"
+    },
+    "sprintApprovals": {
+      "type": "string",
+      "const": ".claude/project/sprint/approvals",
+      "description": "dir (runtime) — paths.sprintApprovals"
+    },
+    "sprintDecisions": {
+      "type": "string",
+      "const": ".claude/project/sprint/decisions",
+      "description": "dir (runtime) — paths.sprintDecisions"
+    },
+    "sprintRalph": {
+      "type": "string",
+      "const": ".claude/project/sprint/ralph",
+      "description": "dir (runtime) — paths.sprintRalph"
+    },
+    "sprintCheckpoints": {
+      "type": "string",
+      "const": ".claude/project/sprint/checkpoints",
+      "description": "dir (runtime) — paths.sprintCheckpoints"
+    },
+    "sprintRequirements": {
+      "type": "string",
+      "const": ".claude/project/sprint/requirements",
+      "description": "dir (runtime) — paths.sprintRequirements"
+    },
+    "sprintTemplates": {
+      "type": "string",
+      "const": "_mc/templates/sprint",
+      "description": "dir (framework) — paths.sprintTemplates"
+    },
+    "sprintSchemas": {
+      "type": "string",
+      "const": "schemas/sprint",
+      "description": "dir (framework) — paths.sprintSchemas"
+    },
+    "sprintReference": {
+      "type": "string",
+      "const": ".claude/project/reference/sprint-workflow.md",
+      "description": "md (framework) — paths.sprintReference"
+    },
+    "sprintRouting": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/sprint-routing.json",
+      "description": "json (framework) — paths.sprintRouting"
+    },
+    "orgRoleRegistry": {
+      "type": "string",
+      "const": ".claude/agents/_org/role-registry.json",
+      "description": "json (framework) — paths.orgRoleRegistry"
+    },
+    "sprintHookPoints": {
+      "type": "string",
+      "const": ".claude/agents/_org/sprint-hook-points.json",
+      "description": "json (framework) — paths.sprintHookPoints"
+    },
+    "goldenPaths": {
+      "type": "string",
+      "const": "_planning/golden-paths.json",
+      "description": "json (project) — paths.goldenPaths"
+    },
+    "modeLifecycleHooks": {
+      "type": "string",
+      "const": ".claude/agents/_org/mode-lifecycle-hooks.json",
+      "description": "json (framework) — paths.modeLifecycleHooks"
+    },
+    "skillHookPoints": {
+      "type": "string",
+      "const": ".claude/agents/_org/skill-hook-points.json",
+      "description": "json (framework) — paths.skillHookPoints"
+    },
+    "briefs": {
+      "type": "string",
+      "const": "_docs/briefs",
+      "description": "dir (project) — paths.briefs"
+    },
+    "briefsCurrent": {
+      "type": "string",
+      "const": "_docs/briefs",
+      "description": "dir (runtime) — paths.briefsCurrent"
+    },
+    "clones": {
+      "type": "string",
+      "const": "_docs/clones",
+      "description": "dir (project) — paths.clones"
+    },
+    "clonesCurrent": {
+      "type": "string",
+      "const": "_docs/clones",
+      "description": "dir (runtime) — paths.clonesCurrent"
+    },
+    "imports": {
+      "type": "string",
+      "const": "_docs/imports",
+      "description": "dir (project) — paths.imports"
+    },
+    "importsCurrent": {
+      "type": "string",
+      "const": "_docs/imports",
+      "description": "dir (runtime) — paths.importsCurrent"
+    },
+    "portfolioCommands": {
+      "type": "string",
+      "const": ".claude/commands/portfolio",
+      "description": "dir (framework) — paths.portfolioCommands"
+    },
+    "portfolioScripts": {
+      "type": "string",
+      "const": "scripts/portfolio",
+      "description": "dir (framework) — paths.portfolioScripts"
+    },
+    "portfolioTemplates": {
+      "type": "string",
+      "const": "_mc/templates/portfolio",
+      "description": "dir (framework) — paths.portfolioTemplates"
+    },
+    "skillCatalog": {
+      "type": "string",
+      "const": ".claude/runtime/skill-catalog.json",
+      "description": "json (generated) — paths.skillCatalog"
+    },
+    "providerSmokeSkill": {
+      "type": "string",
+      "const": "scripts/mc/provider-smoke.js",
+      "description": "js (framework) — paths.providerSmokeSkill"
+    },
+    "providerFailureModes": {
+      "type": "string",
+      "const": ".claude/agents/president/_system/policy/provider-failure-modes.json",
+      "description": "json (framework) — paths.providerFailureModes"
+    },
+    "providerRcaLib": {
+      "type": "string",
+      "const": "scripts/mc/lib/provider-rca.js",
+      "description": "js (framework) — paths.providerRcaLib"
+    },
+    "providerAutofixLib": {
+      "type": "string",
+      "const": "scripts/mc/lib/provider-autofix.js",
+      "description": "js (framework) — paths.providerAutofixLib"
+    },
+    "reasoningFrameworks": {
+      "type": "string",
+      "const": ".claude/project/reference/reasoning-frameworks.md",
+      "description": "md (framework) — paths.reasoningFrameworks"
+    },
+    "portfolioHome": {
+      "type": "string",
+      "const": ".claude/portfolio",
+      "description": "dir (project) — paths.portfolioHome"
+    },
+    "briefsRoot": {
+      "type": "string",
+      "const": "_docs/briefs",
+      "description": "dir (project) — paths.briefsRoot"
+    },
+    "clonesRoot": {
+      "type": "string",
+      "const": "_docs/clones",
+      "description": "dir (project) — paths.clonesRoot"
+    },
+    "testInstallMatrix": {
+      "type": "string",
+      "const": "scripts/mc/test-install-matrix.js",
+      "description": "file (framework) — paths.testInstallMatrix"
+    },
+    "contractsSchemas": {
+      "type": "string",
+      "const": "schemas/contracts",
+      "description": "dir (framework) — paths.contractsSchemas"
+    },
+    "contractsValidator": {
+      "type": "string",
+      "const": "scripts/contracts/validate-artifact.js",
+      "description": "file (framework) — paths.contractsValidator"
+    },
+    "contractsValidatorTest": {
+      "type": "string",
+      "const": "scripts/contracts/test-validate-artifact.js",
+      "description": "file (framework) — paths.contractsValidatorTest"
+    },
+    "contractsFixtures": {
+      "type": "string",
+      "const": "scripts/contracts/fixtures",
+      "description": "dir (framework) — paths.contractsFixtures"
+    },
+    "contractsSpec": {
+      "type": "string",
+      "const": "_requirements/10-contracts/ARTIFACT-CONTRACTS.md",
+      "description": "file (framework) — paths.contractsSpec"
+    },
+    "etcEvalPacks": {
+      "type": "string",
+      "const": ".claude/project/etc/eval-packs",
+      "description": "dir (project) — paths.etcEvalPacks"
+    },
+    "etcDecisions": {
+      "type": "string",
+      "const": "runtime/etc/decisions",
+      "description": "dir (runtime) — paths.etcDecisions"
+    },
+    "etcConsults": {
+      "type": "string",
+      "const": "runtime/etc/consults",
+      "description": "dir (runtime) — paths.etcConsults"
+    }
+  }
+}

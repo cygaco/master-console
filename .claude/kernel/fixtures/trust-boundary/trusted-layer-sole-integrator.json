@@ -1,0 +1,17 @@
+{
+  "id": "trust-boundary-trusted-layer-sole-integrator",
+  "gate": "trust-boundary",
+  "bound_core": "CORE-2",
+  "input": {
+    "actor_kind": "untrusted_provider_session",
+    "attempted_action": "integrate_to_main",
+    "actor_is_trusted_layer": false
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "capability grants, protected mutation, verification, and integration-to-main are SOLELY owned by the provider-independent trusted layer; an untrusted provider session attempting integration-to-main directly is refused by definition."
+  },
+  "kernel_scope": "IN",
+  "report_only": false,
+  "note": "LIVE fixture. Scoped to the artifact-verification + integration-to-main SLICE of CORE-2's four named powers ONLY -- capability grants and protected mutation are NOT covered (stays adjacent, not closed; see top-level-runtime-contract.md §1 P1.2, the honest-promise block). conformance-matrix.js's evaluateCore2Live() additionally requires the real scripts/dispatch/trusted-controller.js adapter module to exist on disk, load without throwing, and export integrate() -- a report_only:false flip with no live module behind it fails closed (never a label-only flip). The live MECHANISM is: trusted-controller.js (Seam A/B, the sole integration principal, re-derives over real git + a fresh pinned-checker-bundle run, never adopts a ResultEnvelope's self-asserted verdict) + scripts/hooks/protected-ref-transaction.js (Seam E, the sole-route git reference-transaction hook, probe-confirmed to fire on every write surface -- commit/update-ref/merge/push/fast-forward -- to refs/heads/main and to ABORT an un-fenced write, NOT bypassed by --no-verify). Honest ceiling (named, DROPPED, adversarial containment, explicitly OUT of scope): core.hooksPath redirect, hook deletion, a direct .git/refs/** filesystem write, a hostile process forging the fence."
+}

@@ -1,0 +1,127 @@
+import fs from "node:fs";
+import path from "node:path";
+import { notFound } from "next/navigation";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  founderEmailAllowlist,
+  resolveAdminActor,
+} from "@/lib/admin/config";
+
+// In-app guide viewer (render target for the readiness deep-link CTA).
+// Read-only. Founder-gated (same gate as the rest of /admin). Path-traversal-hardened:
+// the [ref] is validated against an allowlist derived from the SAME source the producer
+// uses (the guide registry's referenceable basenames) BEFORE any disk read.
+
+type GuidePageProps = {
+  params: { ref: string } | Promise<{ ref: string }>;
+};
+
+// The directory the guides ship into (co-located static content, _content convention).
+function guidesContentDir(): string {
+  return path.join(process.cwd(), "src", "app", "admin", "guides", "_content");
+}
+
+// Allowlist of referenceable guide basenames — derived from _guides/registry.json,
+// the SAME source scripts/scaffold/readiness-report.js#loadGuideFiles reads. We strip
+// path separators exactly as the producer does (.split(/[\\/]/).pop()).
+function allowlistedGuideBasenames(): Set<string> {
+  const abs = path.join(process.cwd(), "_guides", "registry.json");
+  const set = new Set<string>();
+  try {
+    const reg = JSON.parse(fs.readFileSync(abs, "utf8")) as {
+      guides?: Array<{ file?: string; path?: string }>;
+    };
+    for (const g of reg.guides || []) {
+      const f = g.file || g.path;
+      if (f) {
+        const base = String(f).split(/[\\/]/).pop();
+        if (base) set.add(base.replace(/\.md$/i, ""));
+      }
+    }
+  } catch {
+    /* registry missing/unreadable → empty allowlist → every ref 404s (fail-closed) */
+  }
+  return set;
+}
+
+// Resolve a requested ref to a SAFE basename, or null. REJECTS any traversal-shaped ref
+// OUTRIGHT (path separator or "..") BEFORE the allowlist — even when the basename tail is
+// allowlisted — so BOTH ../../etc/passwd AND ../../DEV_SETUP_GUIDE.md 404 (no surprising
+// strip-then-allow). Then requires membership in the registry allowlist. Returns null →
+// caller 404s, NO disk read of the target ever happens for a non-allowlisted ref.
+function resolveGuideRef(rawRef: string): string | null {
+  if (!rawRef) return null;
+  // Reject traversal-SHAPED refs outright, before any stripping or allowlist check.
+  if (/[\\/]/.test(rawRef) || rawRef.includes("..")) return null;
+  // No separators remain — strip only a trailing .md the caller may have appended.
+  const base = String(rawRef).replace(/\.md$/i, "");
+  // Defense in depth: reject hidden / empty leftovers.
+  if (!base || base === "." || base === "..") return null;
+  const allow = allowlistedGuideBasenames();
+  return allow.has(base) ? base : null;
+}
+
+export default async function GuideViewerPage({ params }: GuidePageProps) {
+  // GATE (default-deny, first action) — same gate as admin/page.tsx.
+  const actor = await resolveAdminActor();
+  if (!actor.allowed) {
+    const allowedCount = founderEmailAllowlist().length;
+    return (
+      <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-4 p-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="size-5" aria-hidden />
+              Admin access restricted
+            </CardTitle>
+            <CardDescription>
+              This route is locked to the founder email allowlist. Current actor
+              source: {actor.source}. Allowlisted founders: {allowedCount}.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </main>
+    );
+  }
+
+  const resolved = params ? await params : { ref: "" };
+  const safeBase = resolveGuideRef(resolved.ref);
+  // Non-allowlisted / traversal ref → 404 with NO disk read of the target.
+  if (!safeBase) notFound();
+
+  const filePath = path.join(guidesContentDir(), `${safeBase}.md`);
+  let content = "";
+  try {
+    content = fs.readFileSync(filePath, "utf8");
+  } catch {
+    notFound();
+  }
+
+  // Read-only render. Plain-text/preformatted (no markdown dependency, no dangerouslySet
+  // HTML) — the source markdown is escaped by React's text rendering, so no injection.
+  return (
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-6">
+      <header className="flex items-center justify-between gap-3 border-b pb-5">
+        <h1 className="text-2xl font-semibold">{safeBase.replace(/_/g, " ")}</h1>
+        <Button asChild variant="outline" size="sm">
+          <a href="/admin/readiness" aria-label="Back to launch readiness">
+            <ArrowLeft className="size-4" aria-hidden />
+            Back
+          </a>
+        </Button>
+      </header>
+      <article>
+        <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-foreground">
+          {content}
+        </pre>
+      </article>
+    </main>
+  );
+}

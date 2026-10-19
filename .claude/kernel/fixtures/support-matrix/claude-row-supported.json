@@ -1,0 +1,12 @@
+{
+  "id": "support-matrix-claude-row-supported",
+  "gate": "support-matrix",
+  "bound_matrix_cell": "claude",
+  "input": { "helm": "claude" },
+  "expect": {
+    "outcome": "PASS",
+    "reason": "support-matrix.json rows.claude.status is 'supported' with required:true, proven:true, and a live evidence_ref -- the helm row resolves PASS."
+  },
+  "kernel_scope": "IN",
+  "note": "Positive coverage for the claude row of the provider x capability x helm-level matrix (seed granularity: one representative fixture per helm row; no per-capability-cell fixtures)."
+}

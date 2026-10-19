@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-duplicate-block-id",
+  "gate": "contract-lint",
+  "input_file": "duplicate-block-id.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "Two '#### P3.1 -- ...' headings declare the SAME block id -- an ambiguous/contradictory contract. A duplicate policy-block id must fail closed (structural, exit 2), never read clean just because each individual block is otherwise well-formed."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js) -- a RE-SEEN id: two blocks (or two register rows, see duplicate-register-row.md) sharing one id must not read clean just because each is individually well-formed."
+}

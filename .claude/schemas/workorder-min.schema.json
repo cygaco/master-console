@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mc.local/schemas/workorder-min.schema.json",
+  "title": "WorkOrder (minimum schema)",
+  "description": "The minimum shape a WorkOrder must satisfy before role-resolver.deriveBinding treats a dispatch as validated_workorder_or_cli_binding. Same-session artifact — trust anchor is the per-session HMAC (attest-signing.js) over workorder_digest, NOT this schema file at runtime; scripts/dispatch/workorder-schema.js#validate is a hand-rolled, dependency-free validator that implements this shape (kept in sync by hand — see the header comment there).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "correlation_id",
+    "role",
+    "provider",
+    "model",
+    "base_commit",
+    "result_tree_hash",
+    "allowed_capabilities",
+    "allowed_paths",
+    "retry_lineage",
+    "evidence_refs",
+    "terminal_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "WorkOrder schema version this record was authored against."
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Correlates this WorkOrder to its dispatch/ledger records."
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The EFFECTIVE (resolved) role of the dispatched worker."
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The EFFECTIVE provider (e.g. claude, openai, antigravity)."
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The EFFECTIVE model identifier."
+    },
+    "base_commit": {
+      "type": "string",
+      "minLength": 1,
+      "description": "IMMUTABLE base commit SHA the worker branched from. Never mutated post-issue; freshness is re-asserted at merge time, never rewritten here."
+    },
+    "result_tree_hash": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The result-tree hash the worker's output is bound to."
+    },
+    "allowed_capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "The capability allowlist granted to this dispatch."
+    },
+    "allowed_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "The path allowlist (file/dir scope) granted to this dispatch."
+    },
+    "retry_lineage": {
+      "type": "array",
+      "description": "Ordered lineage of prior attempts for this correlation_id (empty on a first attempt)."
+    },
+    "evidence_refs": {
+      "type": "array",
+      "description": "References to evidence artifacts produced/consumed by this WorkOrder (empty is valid)."
+    },
+    "terminal_state": {
+      "type": "string",
+      "enum": ["success", "partial", "blocked", "failed", "cancelled"],
+      "description": "EXACTLY these 5 states. Not a failure-reason — see failure_reason for the CLASS taxonomy."
+    },
+    "failure_reason": {
+      "type": "string",
+      "enum": [
+        "timeout",
+        "quota_exhausted",
+        "provider_unavailable",
+        "model_unavailable",
+        "auth_missing",
+        "worktree_base_stale"
+      ],
+      "description": "A CLASS taxonomy, not a state — describes WHY a non-success terminal_state was reached. Required when terminal_state !== 'success'; must be absent when terminal_state === 'success'. model_unavailable covers a requested model that cannot be served, including a harness spawn given a model it does not accept."
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "terminal_state": { "const": "success" } },
+        "required": ["terminal_state"]
+      },
+      "then": { "not": { "required": ["failure_reason"] } }
+    },
+    {
+      "if": {
+        "properties": {
+          "terminal_state": { "enum": ["partial", "blocked", "failed", "cancelled"] }
+        },
+        "required": ["terminal_state"]
+      },
+      "then": { "required": ["failure_reason"] }
+    }
+  ]
+}

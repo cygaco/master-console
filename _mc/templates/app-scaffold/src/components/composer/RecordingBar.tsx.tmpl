@@ -1,0 +1,162 @@
+"use client";
+
+import * as React from "react";
+import { Loader2, Pause, Send, Square, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+/**
+ * RecordingBar — the recording/transcribing/failed control cluster (§3 in
+ * _knowledge/design/INPUT_COMPOSER_PATTERN.md). Shown IN PLACE OF the idle
+ * controls while voice input is in flight — the parent keeps the idle row
+ * (and its one persistent textarea) mounted-but-hidden, so this is a visible
+ * swap of the control cluster, not an unmount of the field (P-1/G-8).
+ */
+
+const CIRCLE = "size-11 shrink-0 rounded-full p-0";
+
+export interface RecordingBarProps {
+  status: "recording" | "transcribing" | "failed";
+  errorMessage?: string;
+  /** Only the flag-ON (MediaRecorder) backend can pause; hide the control for
+   *  Web Speech, where pause() is a no-op, rather than ship a dead button. */
+  canPause?: boolean;
+  onDiscard: () => void;
+  onPause: () => void;
+  onStop: () => void;
+  onSend: () => void;
+  onRetry: () => void;
+  onTypeInstead: () => void;
+}
+
+function Waveform() {
+  const bars = [0, 1, 2, 3, 4, 5];
+  return (
+    <div
+      className="flex h-6 flex-1 items-center justify-center gap-1"
+      role="img"
+      aria-label="Recording audio level"
+    >
+      {bars.map((i) => (
+        <span
+          key={i}
+          className="w-1 rounded-full bg-primary motion-safe:animate-pulse motion-reduce:opacity-70"
+          style={{
+            height: `${8 + (i % 3) * 6}px`,
+            animationDelay: `${i * 120}ms`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function RecordingBar({
+  status,
+  errorMessage,
+  canPause = false,
+  onDiscard,
+  onPause,
+  onStop,
+  onSend,
+  onRetry,
+  onTypeInstead,
+}: RecordingBarProps) {
+  const isTranscribing = status === "transcribing";
+  const isFailed = status === "failed";
+
+  if (isFailed) {
+    return (
+      <div className="flex flex-col gap-3 p-3">
+        <p className="text-sm text-destructive" role="alert">
+          {errorMessage ?? "Something went wrong recording your voice message."}
+        </p>
+        <div className="flex items-center justify-end gap-2">
+          <Button type="button" variant="ghost" data-testid="recording-type-instead" onClick={onTypeInstead}>
+            Type instead
+          </Button>
+          <Button type="button" variant="default" data-testid="recording-retry" onClick={onRetry}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2 p-2">
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Discard recording"
+          data-testid="recording-discard"
+          onClick={onDiscard}
+          className={CIRCLE}
+        >
+          <X className="size-5" aria-hidden="true" />
+        </Button>
+
+        {isTranscribing ? (
+          <div className="flex flex-1 items-center justify-center gap-2 text-sm text-muted-foreground" role="status">
+            <Loader2 className="size-4 motion-safe:animate-spin" aria-hidden="true" />
+            <span>Transcribing…</span>
+          </div>
+        ) : (
+          <Waveform />
+        )}
+
+        {canPause && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Pause recording"
+            data-testid="recording-pause"
+            disabled={isTranscribing}
+            onClick={onPause}
+            className={CIRCLE}
+          >
+            <Pause className="size-5" aria-hidden="true" />
+          </Button>
+        )}
+
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          aria-label="Stop recording"
+          data-testid="recording-stop"
+          disabled={isTranscribing}
+          onClick={onStop}
+          className={CIRCLE}
+        >
+          <Square className="size-4" aria-hidden="true" />
+        </Button>
+
+        <Button
+          type="button"
+          variant="default"
+          size="icon"
+          aria-label="Send recording"
+          data-testid="recording-send"
+          disabled={isTranscribing}
+          onClick={onSend}
+          className={CIRCLE}
+        >
+          <Send className="size-5" aria-hidden="true" />
+        </Button>
+      </div>
+
+      {/* P-6: point-of-use disclosure — renders ONLY here (recording /
+          transcribing), never in the idle bar. */}
+      <p
+        data-testid="voice-privacy-disclosure"
+        className={cn("px-1 text-xs text-muted-foreground")}
+      >
+        Your voice is processed to generate a text transcript.
+      </p>
+    </div>
+  );
+}

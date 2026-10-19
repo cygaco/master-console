@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/contracts/message_brief/v0.1",
+  "title": "MC Product-Studio Contract — Message Brief (v0.1) — THE SPINE",
+  "description": "The winning message. THE central/spine artifact: every downstream artifact derives from a message_brief via derived_from_message_brief. Marketing owns the market promise here.",
+  "version": "v0.1",
+  "precedence_note": "v0.1 ranks are revisable (global integer rank).",
+  "contract": {
+    "owner_domain": "marketing",
+    "consumers": ["offer_brief", "conversion_brief", "design_brief", "build_spec", "converting_artifact"],
+    "precedence": 50,
+    "is_spine": true
+  },
+  "type": "object",
+  "required": ["type", "id", "audience_ref", "core_message", "proof_points", "market_promise"],
+  "properties": {
+    "type": { "const": "message_brief" },
+    "id": { "type": "string", "minLength": 1 },
+    "audience_ref": { "type": "string", "minLength": 1, "description": "id of the audience_dossier this message is built for." },
+    "core_message": { "type": "string", "minLength": 1, "description": "The single winning message (clarity > cleverness)." },
+    "proof_points": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "market_promise": { "type": "string", "minLength": 1, "description": "The market promise Marketing owns (vs the product-verifiable claim Product owns in offer_brief)." }
+  },
+  "additionalProperties": true
+}

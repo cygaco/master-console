@@ -1,0 +1,29 @@
+{
+  "name": "mc",
+  "version": "2.1.0",
+  "description": "Autonomous AI operating system for software engineering — registry-driven hooks, transactional updates, honest release gates, generic promotion.",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cygaco/master-console.git"
+  },
+  "homepage": "https://github.com/cygaco/master-console#readme",
+  "bugs": {
+    "url": "https://github.com/cygaco/master-console/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node scripts/checks/run-tests.js",
+    "check:license": "node --test scripts/checks/license-match.test.js",
+    "leak-gate": "node scripts/checks/leak-gate.js",
+    "paths:build": "node scripts/paths/build.js",
+    "trackers:validate": "node scripts/trackers/validate.js"
+  },
+  "files": [
+    "LICENSE",
+    "README.md"
+  ],
+  "private": false
+}

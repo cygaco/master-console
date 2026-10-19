@@ -1,0 +1,35 @@
+{
+  "$schema": "mc/admin-tooling-knowledge/v0.1",
+  "version": "v0.1",
+  "guides": [
+    {
+      "guide": "PRE_PMF_ADMIN_SURFACE",
+      "path": "_knowledge/admin-tooling/PRE_PMF_ADMIN_SURFACE.md",
+      "tier": "core",
+      "rule_prefix": "ADMIN-SCOPE",
+      "anchor": "none",
+      "trains": ["product-lead", "backend-builder", "security-reviewer", "qa-reviewer"],
+      "maps_to": ["admin-scope", "founder-support", "pre-pmf"]
+    },
+    {
+      "guide": "ADMIN_SECURITY_AND_AUDIT",
+      "path": "_knowledge/admin-tooling/ADMIN_SECURITY_AND_AUDIT.md",
+      "tier": "core",
+      "rule_prefix": "ADMIN-SEC",
+      "anchor": "none",
+      "trains": ["product-lead", "backend-builder", "security-reviewer", "qa-reviewer"],
+      "maps_to": ["admin-authz", "audit", "destructive-actions"]
+    }
+  ],
+  "coverage": {
+    "axes": {
+      "admin-scope": ["PRE_PMF_ADMIN_SURFACE"],
+      "founder-support": ["PRE_PMF_ADMIN_SURFACE"],
+      "pre-pmf": ["PRE_PMF_ADMIN_SURFACE"],
+      "admin-authz": ["ADMIN_SECURITY_AND_AUDIT"],
+      "audit": ["ADMIN_SECURITY_AND_AUDIT"],
+      "destructive-actions": ["ADMIN_SECURITY_AND_AUDIT"]
+    },
+    "complete": true
+  }
+}

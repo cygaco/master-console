@@ -1,0 +1,121 @@
+#!/usr/bin/env node
+// check-auth-seam.mjs — FE<->BE seam guard for the passwordless-auth subtree.
+//
+// The sign-in UI (src/app/auth/page.tsx) + account page consume the Supabase client
+// seam (src/lib/supabase/{config,client,server}). This guard statically asserts that
+// EVERY symbol the UI imports from `@/lib/supabase/*` is actually EXPORTED by the
+// corresponding module — catching the classic multi-builder drift where the frontend
+// imports a name the backend never exported (a green-looking build that fails at
+// runtime, or a red typecheck the scaffold can't run until installed).
+//
+// Materialization-agnostic: resolves either the shipped `.ts`/`.tsx` files (in a real
+// product) or the pre-materialization `.tmpl` templates (in the framework repo). Pure
+// static parse — no deps, no network, no DB. Exits non-zero (fail-closed) on any
+// unresolved import or a missing seam module.
+//
+// Usage: node scripts/check-auth-seam.mjs   (run from the app root)
+
+import fs from "node:fs";
+import path from "node:path";
+
+const ROOT = process.env.AUTH_SEAM_ROOT || process.cwd();
+const SRC = path.join(ROOT, "src");
+
+function resolveFile(...candidates) {
+  for (const c of candidates) {
+    const abs = path.join(SRC, c);
+    if (fs.existsSync(abs)) return abs;
+    if (fs.existsSync(abs + ".tmpl")) return abs + ".tmpl";
+  }
+  return null;
+}
+
+function read(file) {
+  return file ? fs.readFileSync(file, "utf8") : "";
+}
+
+// Exports of a lib module: `export function X`, `export async function X`,
+// `export const X`, `export type X`, `export interface X`, `export { X, Y }`.
+function exportsOf(src) {
+  const names = new Set();
+  const re =
+    /export\s+(?:async\s+)?(?:function|const|let|var|type|interface|class)\s+([A-Za-z0-9_]+)/g;
+  let m;
+  while ((m = re.exec(src))) names.add(m[1]);
+  const reBrace = /export\s*\{([^}]*)\}/g;
+  while ((m = reBrace.exec(src))) {
+    for (const part of m[1].split(",")) {
+      const name = part.trim().split(/\s+as\s+/).pop()?.trim();
+      if (name) names.add(name);
+    }
+  }
+  return names;
+}
+
+// Imports a consumer file pulls from `@/lib/supabase/<mod>`.
+function supabaseImports(src) {
+  const out = []; // { mod, names[] }
+  const re = /import\s+(?:type\s+)?\{([^}]*)\}\s+from\s+["']@\/lib\/supabase\/([A-Za-z0-9_]+)["']/g;
+  let m;
+  while ((m = re.exec(src))) {
+    const names = m[1]
+      .split(",")
+      .map((s) => s.trim().split(/\s+as\s+/)[0].trim())
+      .filter(Boolean);
+    out.push({ mod: m[2], names });
+  }
+  return out;
+}
+
+const libDir = "lib/supabase";
+const seamMods = {
+  config: resolveFile(`${libDir}/config.ts`),
+  client: resolveFile(`${libDir}/client.ts`),
+  server: resolveFile(`${libDir}/server.ts`),
+};
+
+const errors = [];
+for (const [name, file] of Object.entries(seamMods)) {
+  if (!file) errors.push(`seam module missing: src/${libDir}/${name}.ts`);
+}
+
+const consumers = [
+  resolveFile("app/auth/page.tsx"),
+  resolveFile("app/account/page.tsx"),
+].filter(Boolean);
+
+if (consumers.length === 0) {
+  errors.push("no auth consumers found (src/app/auth/page.tsx, src/app/account/page.tsx)");
+}
+
+const exportCache = {};
+for (const [mod, file] of Object.entries(seamMods)) {
+  exportCache[mod] = file ? exportsOf(read(file)) : new Set();
+}
+
+for (const consumer of consumers) {
+  const rel = path.relative(ROOT, consumer);
+  for (const imp of supabaseImports(read(consumer))) {
+    const exp = exportCache[imp.mod];
+    if (!exp) {
+      errors.push(`${rel}: imports from unknown seam module "@/lib/supabase/${imp.mod}"`);
+      continue;
+    }
+    for (const sym of imp.names) {
+      if (!exp.has(sym)) {
+        errors.push(
+          `${rel}: imports { ${sym} } from @/lib/supabase/${imp.mod} but that module does not export it`,
+        );
+      }
+    }
+  }
+}
+
+if (errors.length) {
+  console.error("[check-auth-seam] FAIL — FE<->BE seam broken:");
+  for (const e of errors) console.error("  - " + e);
+  process.exit(1);
+}
+console.log(
+  `[check-auth-seam] OK — auth UI imports resolve against the Supabase seam (${consumers.length} consumer(s), ${Object.values(exportCache).reduce((n, s) => n + s.size, 0)} exported symbols).`,
+);

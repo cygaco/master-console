@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-core-waived-by-ed",
+  "gate": "contract-lint",
+  "input_file": "core-waived-by-ed.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 1,
+    "reason": "a CORE-tagged block (core_id + waivable:false) carries a Deferred: ED trailer instead of Core: non-waivable -- the ED hatch is refused for CORE invariants. This is a well-formed-document POLICY violation, not a structural/reference-integrity failure -- exit 1, distinct from the exit-2 structural cases."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js); excluded from conformance-matrix.js and manifest.json's kernel-conformance count. The cited ED id is present in the test ledger so this fixture isolates the core-waiver violation specifically."
+}

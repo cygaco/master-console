@@ -1,0 +1,39 @@
+# ANTIGRAVITY.md — Antigravity / Gemini executor entrypoint (thin shim, one source of truth)
+
+> Thin per-executor entrypoint for the **Antigravity `agy` CLI** (the Gemini-family lab, the sunset-
+> `gemini`-CLI migration target). The shared entering-agent rules are the block below (single-sourced
+> from `.claude/project/reference/entry-preamble.md`, hash-parity-checked); this file adds ONLY what is
+> different under `agy`. (ADR-0036.)
+
+<!-- MC:ENTERING-AGENT-PREAMBLE:BEGIN v1 -->
+**What this repo is.** MC is a framework for running an autonomous AI software company. Work is delivered by mode-selected *faces* of a single operator persona, plus departmental agents (Product, Engineering, Growth). Identity, the autonomy ceilings, and the full operating doctrine live in `CLAUDE.md` — this preamble asserts none of them; it points you there.
+
+**Read order — once, then act.**
+1. `DUMP.md` (repo root, local) — the session handoff: next action, in-flight state, verbatim payloads. Read once, then execute.
+2. `TRACKER.md` (repo root, created by `/trackers:init`) — the ENFORCED source of truth. It OUTRANKS `DUMP.md`, this preamble, and your own assumptions. Validate with `node scripts/trackers/validate.js` (must exit 0) before AND after meaningful work; on any disagreement, the tracker wins.
+3. `CLAUDE.md` (repo root) — the operating doctrine: autonomy, dispatch, and policy/enforcement + refactor/rename hygiene. Its RULES apply to every executor; the harness-specific mechanics may not.
+
+**Dispatch is CLI-first.** Agent dispatch runs through the CLI wrappers — `node scripts/dispatch-claude.js <role> <prompt-file> -w` for build-chain Claude roles, `node scripts/dispatch-agent.js <role> <prompt-file>` for cross-provider reviewers. CLI is mandatory; a provider API is used ONLY where there is no CLI equivalent. Cross-provider review diversity is required, and a binding FAIL cannot be overridden.
+
+**Guards, gates, and output destinations.** The repo's guarantees are enforced: the `refs/heads/main` reference-transaction fence (every write to main goes through the broker), `/scan:full`, and the release gates. Every policy names an enforcer or logs the debt. Write per-run output under `runtime/`, never a manifest-tracked project dir. Orchestrators hold envelopes, not content — heavy work goes to a subprocess that writes its full output to a file and returns a short envelope. Regenerate both manifests after editing any hash-tracked file.
+
+**For identity, authority, and the complete rules, read `CLAUDE.md`.**
+<!-- MC:ENTERING-AGENT-PREAMBLE:END -->
+
+## What is DIFFERENT under Antigravity (`agy`)
+
+**1. Honest state — agy is unproven until a verified served-model proof exists.** This is the load-bearing fact. The `agy` lane is the Gemini-family security-hunter / research route; it counts as live only with a verified *served-model* proof (the logs echo the request-side model, which is not an attestation). Doctrine: **never claim a lane is live from transport success** — a completed spawn is not a served-model. The panel-3lab `agy` lane resolves **BLOCKED-ON-OPERATOR** until one real `fallback:false` ledger record with account-config served-model proof exists; until then the security panel degrades to the 2-family floor (GPT + Claude) rather than silently passing. Do not mark agy live, do not attest an agy verdict, and do not let a green transport read as a green lane.
+
+**2. Invocation — prompt on the `-p` argv value, not stdin.**
+```
+agy --model <DISPLAY-NAME> --print-timeout <dur> -p '<prompt>'
+```
+`--model` takes a **display name**, not a slug (the dispatch boundary maps slug→display). The prompt rides the `-p` argv VALUE — `agy` has no stdin `-` positional (unlike `codex`); it is injection-checked + native-exe-only by the safe-spawn `agy` ARG_POLICY carve-out (ADR-0023). `{reasoning}` is empty for `agy` — our dispatch passes no effort flag, leaving `agy`'s default. Note `agy` exposes `--effort (low|medium|high)` in `agy --help`, but it is **model-gated and NOT usable on our agy lanes**: the Gemini 3.1 Pro family (`gemini-3.1-pro-high`, the model both agy lanes use) **rejects** it — `agy --model "Gemini 3.1 Pro (High)" --effort high` exits 1 `--effort is not supported for model` (effort is baked into the model NAME). This matches the `model_policy` (antigravity `effort:null`, thinking always-on). Do not wire `--effort` into the agy dispatch; re-open only if an agy model accepts `--effort` (re-probe on a version bump). NEVER run `agy models` headless — it hangs (>10 min, zero output).
+
+A cross-provider review **inlines its content into the `-p` value** (like the GPT lanes, which inline on stdin) — so a review runs **TOOLLESS**: no file-read, no permission wall (see §4). But the assembled `-p` command line is bounded ~**32KB** (the Windows CreateProcess ceiling, safe-spawn `CMDLINE_MAX = 32000`): a prompt/diff over ~32KB is **BLOCKED on `-p`, never truncated-and-sent**. So a small review works today; a big diff cannot ride `-p` whole (chunk or summarize it), and file-read is not an available alternative (§4).
+
+**3. Auth — self-auth via the shared keyring, with periodic interactive re-login.** `agy` self-authenticates through `~/.gemini` (the Antigravity keyring); it does not take an API key on the command line. A subprocess spawn uses the **cached** keyring — no per-spawn login — **but the keyring EXPIRES** and must then be refreshed by a periodic **interactive** `agy -i "<prompt>"` (or bare `agy`) session that completes the Antigravity OAuth browser flow. Once the keyring is refreshed, a subprocess spawn authenticates cleanly (`auth_fallback:false`, a real response is served). Always confirm a **real** serve (not the eval-mode fallback) via the auth-fallback detector, NEVER from log text. Role routing derives to `antigravity`/`agy`. The residual gaps are: keyring expiry (periodic re-login, above) + the headless file-read tool-permission wall (§4) + the served-model proof gap (`agy` logs no generation-side served-model id) — not authentication itself.
+
+**4. Headless tool permissions — model EXISTS, headless enforcement UNVERIFIED.** `agy` (**1.1.5**) HAS a per-tool permission model: a `settings.json` `{ "permissions": { "allow": [], "deny": [], "ask": [] } }` block with `action(target)` rules (`read_file`/`write_file`/`read_url`/`command`/`unsandboxed`/`mcp`), plus the `--dangerously-skip-permissions` flag (**NEVER use** — auto-approves everything). A headless task that needs a tool (e.g. reading a file via its shell) hits a "command permission auto-denied" wall, and `agy`'s own error points at `permissions.allow` in `settings.json`. **BUT whether adding a scoped allow-rule actually ENFORCES headless is UNVERIFIED** — do NOT rely on it, and do NOT add a `permissions` block speculatively, until it is empirically tested. This does NOT affect cross-provider **review**: the dispatch `-p` PRINT path inlines the review content and invokes no agentic tools (§2), so a toolless review needs no permission and works. `agy` READING files headlessly (needed only for a big diff that exceeds the ~32KB `-p` bound) would require the allow-rule **and** an enforcement probe — an OPTIONAL operator-machine security-posture decision, out of scope until requested (recommendation when opened: a pure file-reader floor — allow reads, deny writes/destructive; NEVER `--dangerously-skip-permissions`).
+
+**5. Same executor-mechanics as the other non-Claude CLIs.** As with Codex: no MC hooks fire (the guards are your manual responsibility), you have no in-process Agent tool (dispatch via the CLI routes only), builders dispatch FOREGROUND (the reap), and cross-provider review stays real (a binding FAIL cannot be overridden). See `CODEX.md` §§3–6 for the detail — the mechanics are identical; only the invocation + the served-model honesty above differ.

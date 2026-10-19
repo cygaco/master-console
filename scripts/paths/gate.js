@@ -1,0 +1,538 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const path = require("path");
+const { spawnSync } = require("child_process");
+
+const ROOT = path.resolve(__dirname, "..", "..");
+const REGISTRY_FILE = path.join(ROOT, "framework", "paths.registry.json");
+const argv = process.argv.slice(2);
+const FLAGS = {
+  json: argv.includes("--json"),
+  strict: argv.includes("--strict"),
+  check: (() => {
+    const i = argv.indexOf("--check");
+    if (i === -1) return null;
+    return argv[i + 1] || null;
+  })(),
+};
+
+function readRegistry() {
+  const raw = fs.readFileSync(REGISTRY_FILE, "utf8");
+  return JSON.parse(raw);
+}
+
+function checkRegistrySchema() {
+  const findings = [];
+  let registry;
+  try {
+    registry = readRegistry();
+  } catch (e) {
+    return [
+      {
+        severity: "error",
+        area: "registry",
+        message: `cannot read registry: ${e.message}`,
+      },
+    ];
+  }
+  if (registry.$schema !== "mc/paths-registry/v1") {
+    findings.push({
+      severity: "error",
+      area: "registry",
+      message: `registry $schema must be "mc/paths-registry/v1", got ${JSON.stringify(registry.$schema)}`,
+    });
+  }
+  if (typeof registry.version !== "number") {
+    findings.push({
+      severity: "error",
+      area: "registry",
+      message: `registry.version must be a number, got ${typeof registry.version}`,
+    });
+  }
+  if (!registry.paths || typeof registry.paths !== "object") {
+    findings.push({
+      severity: "error",
+      area: "registry",
+      message: `registry.paths must be an object`,
+    });
+    return findings;
+  }
+  const ids = new Set();
+  for (const [key, entry] of Object.entries(registry.paths)) {
+    if (typeof entry.path !== "string") {
+      findings.push({
+        severity: "error",
+        area: "registry",
+        message: `paths.${key}: path must be a string`,
+      });
+    }
+    if (!entry.kind) {
+      findings.push({
+        severity: "error",
+        area: "registry",
+        message: `paths.${key}: missing kind`,
+      });
+    }
+    if (!entry.owner) {
+      findings.push({
+        severity: "error",
+        area: "registry",
+        message: `paths.${key}: missing owner`,
+      });
+    }
+    if (!entry.introducedIn) {
+      findings.push({
+        severity: "error",
+        area: "registry",
+        message: `paths.${key}: missing introducedIn`,
+      });
+    }
+    if (ids.has(key)) {
+      findings.push({
+        severity: "error",
+        area: "registry",
+        message: `paths.${key}: duplicate key`,
+      });
+    }
+    ids.add(key);
+  }
+  return findings;
+}
+
+const REFERENCE_DOC = "_requirements/03-architecture/PATH_KEYS.md";
+
+function checkArtifactsCurrent() {
+  const result = spawnSync(
+    process.execPath,
+    [path.join(ROOT, "scripts", "paths", "build.js"), "--check"],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  if (result.status === 0) return [];
+  const stderr = (result.stderr || "").trim();
+  const stdout = (result.stdout || "").trim();
+  const staleRels = stdout
+    .split(/\r?\n/)
+    .map((l) => /^\s*STALE\s+(\S+)\s*$/.exec(l))
+    .filter(Boolean)
+    .map((m) => m[1]);
+  if (
+    result.status === 1 &&
+    staleRels.length === 1 &&
+    staleRels[0] === REFERENCE_DOC &&
+    !fs.existsSync(path.join(ROOT, REFERENCE_DOC))
+  ) {
+    return [
+      {
+        severity: "warn",
+        area: "artifacts",
+        message: `the path-keys reference doc (${REFERENCE_DOC}) is not built yet. Run: node scripts/paths/build.js`,
+      },
+    ];
+  }
+  return [
+    {
+      severity: "error",
+      area: "artifacts",
+      message:
+        "generated path artifacts are stale. Run: node scripts/paths/build.js" +
+        (stderr
+          ? `\n  stderr: ${stderr.split("\n").slice(0, 4).join(" | ")}`
+          : "") +
+        (stdout
+          ? `\n  stdout: ${stdout.split("\n").slice(-6).join(" | ")}`
+          : ""),
+    },
+  ];
+}
+
+function checkPathLint() {
+  const args = [path.join(ROOT, "scripts", "path-lint.js"), "--json"];
+  if (FLAGS.strict) args.push("--strict");
+  const result = spawnSync(process.execPath, args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 8 * 1024 * 1024,
+  });
+  let report = null;
+  try {
+    report = JSON.parse(result.stdout || "{}");
+  } catch {
+    return [
+      {
+        severity: "error",
+        area: "path-lint",
+        message: `path-lint.js returned non-JSON output (exit ${result.status})`,
+      },
+    ];
+  }
+  const findings = [];
+  for (const f of report.critical || []) {
+    findings.push({
+      severity: "error",
+      area: "path-lint",
+      file: f.file,
+      line: f.line,
+      message: `${f.match} → ${f.suggestion} (${f.why})`,
+    });
+  }
+  if (FLAGS.strict) {
+    for (const w of report.warnings || []) {
+      findings.push({
+        severity: "warn-strict",
+        area: "path-lint",
+        file: w.file,
+        line: w.line,
+        message: `${w.match} → use PATHS.${w.key}`,
+      });
+    }
+  }
+  return findings;
+}
+
+const ALLOW_MARKER_RE =
+  /(?:<!--\s*path-literal-allowed:(?:(?!-->).)*-->|\/\/\s*path-literal-allowed:[^\n]*)/;
+
+function walk(dir, accept) {
+  const acc = [];
+  const SKIP = new Set([
+    "node_modules",
+    ".git",
+    ".next",
+    "out",
+    "build",
+    "coverage",
+    ".worktrees",
+    "worktrees",
+  ]);
+  (function rec(d) {
+    let entries;
+    try {
+      entries = fs.readdirSync(d, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const e of entries) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) {
+        if (SKIP.has(e.name)) continue;
+        rec(full);
+      } else if (accept(full)) {
+        acc.push(full);
+      }
+    }
+  })(dir);
+  return acc;
+}
+
+const LOCAL_SKIPS_REL = ".claude/project/memory/path-lint.local.json";
+
+function readLocalSkips() {
+  let raw;
+  try {
+    raw = fs.readFileSync(path.join(ROOT, LOCAL_SKIPS_REL), "utf8").replace(/^\uFEFF/, "");
+  } catch (e) {
+    if (e && e.code === "ENOENT") return { skipSubstrings: [] };
+    return { error: `instance-local skip file ${LOCAL_SKIPS_REL} unreadable` };
+  }
+  let cfg = null;
+  try {
+    cfg = JSON.parse(raw);
+  } catch {
+    cfg = null;
+  }
+  if (!cfg || !Array.isArray(cfg.skipSubstrings) || cfg.skipSubstrings.some((x) => typeof x !== "string" || !x)) {
+    return { error: `instance-local skip file ${LOCAL_SKIPS_REL} malformed (expected { "skipSubstrings": ["…"] })` };
+  }
+  return { skipSubstrings: cfg.skipSubstrings };
+}
+
+function checkDeprecatedAliases() {
+  let registry;
+  try {
+    registry = readRegistry();
+  } catch {
+    return [];
+  }
+  if (!registry || !registry.paths) return [];
+  const deprecated = [];
+  for (const [key, entry] of Object.entries(registry.paths)) {
+    for (const a of entry.deprecatedAliases || []) {
+      deprecated.push({ alias: a, key });
+    }
+    if (entry.removedIn) {
+      deprecated.push({
+        alias: entry.path,
+        key: `${key} (removedIn ${entry.removedIn})`,
+      });
+    }
+  }
+  if (deprecated.length === 0) return [];
+  const SKIP_SUBSTRINGS = [
+    "scripts/paths/gate.js",
+    "scripts/path-lint.js",
+    "scripts/hooks/path-guard.js",
+    "framework/paths.registry.json",
+    "scripts/path-lint.rules.generated.json",
+    "schemas/paths.schema.json",
+    "_requirements/03-architecture/PATH_KEYS.md",
+    ".claude/runtime/",
+    ".claude/project/events/",
+    ".claude/project/memory/",
+    ".claude/project/maps/",
+    ".claude/agents/.system/dispatch-backups/",
+    ".claude/agents/president/_system/oneshot/retros/",
+    "_requirements/_audits/",
+    "_docs/",
+    "BACKLOG.md",
+    "CHANGELOG.md",
+    "CHANGELOG-test-system.md",
+    "backups/",
+    ".mc/transactions/",
+    ".mc/",
+    "scripts/mc/codemod-docs-to-requirements.js",
+    "framework/releases/",
+    "runtime/canonical-skeleton/",
+    "ROADMAP.md",
+    ".claude/.session-checkpoint.json",
+    ".claude/.last-checkpoint",
+    ".claude/.session-prompts.log",
+    "runtime/epsilon-prompts/",
+  ];
+  const local = readLocalSkips();
+  if (local.error) {
+    return [{ severity: "error", area: "deprecated-alias", message: local.error }];
+  }
+  const skips = SKIP_SUBSTRINGS.concat(local.skipSubstrings);
+  const accept = (f) => {
+    const rel = path.relative(ROOT, f).replace(/\\/g, "/");
+    if (rel.startsWith("runtime/") || skips.some((s) => rel.includes(s))) return false;
+    return /\.(md|js|json)$/.test(f);
+  };
+  const findings = [];
+  const files = walk(ROOT, accept);
+  for (const file of files) {
+    let body;
+    try {
+      body = fs.readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    const lines = body.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      for (const { alias, key } of deprecated) {
+        if (!line.includes(alias)) continue;
+        const aliasIdx = line.indexOf(alias);
+        const before = aliasIdx > 0 ? line[aliasIdx - 1] : "";
+        if (before && /[a-zA-Z0-9_./]/.test(before)) continue;
+        if (ALLOW_MARKER_RE.test(line)) continue;
+        const ctxStart = Math.max(0, i - 1);
+        const ctxEnd = Math.min(lines.length, i + 2);
+        const ctx = lines.slice(ctxStart, ctxEnd).join("\n");
+        if (ALLOW_MARKER_RE.test(ctx)) continue;
+        findings.push({
+          severity: "error",
+          area: "deprecated-alias",
+          file: path.relative(ROOT, file).replace(/\\/g, "/"),
+          line: i + 1,
+          message: `deprecated alias ${JSON.stringify(alias)} (replaced by paths.${key}) — add path-literal-allowed marker if intentional`,
+        });
+      }
+    }
+  }
+  return findings;
+}
+
+function checkDocsTokens() {
+  let registry;
+  try {
+    registry = readRegistry();
+  } catch {
+    return [];
+  }
+  if (!registry || !registry.paths) return [];
+  const validKeys = new Set(
+    Object.entries(registry.paths)
+      .filter(([, e]) => !e.removedIn)
+      .map(([k]) => k),
+  );
+
+  const SKIP_SUBSTRINGS = [
+    ".claude/runtime/",
+    ".claude/project/events/",
+    ".claude/project/memory/",
+    ".claude/project/maps/",
+    ".claude/agents/.system/dispatch-backups/",
+    ".claude/agents/president/_system/oneshot/retros/",
+    "node_modules/",
+    ".git/",
+    ".next/",
+    "framework/paths.registry.json",
+    "scripts/paths/gate.js",
+    "_requirements/03-architecture/PATH_KEYS.md",
+    "scripts/path-lint.js",
+    "scripts/hooks/lib/paths.js",
+    "scripts/hooks/lib/paths.generated.js",
+    "schemas/paths.schema.json",
+    "scripts/path-lint.rules.generated.json",
+    "scripts/paths/build.js",
+    "_requirements/_audits/",
+    "_docs/",
+    "BACKLOG.md",
+    "CHANGELOG.md",
+    "CHANGELOG-test-system.md",
+    ".claude/runtime/plans/",
+    ".mc/",
+    "runtime/epsilon-prompts/",
+  ];
+  const accept = (f) => {
+    const rel = path.relative(ROOT, f).replace(/\\/g, "/");
+    if (rel.startsWith("runtime/") || SKIP_SUBSTRINGS.some((s) => rel.includes(s))) return false;
+    return /\.md$/.test(f);
+  };
+
+  const TOKEN_RE = /(?<![A-Za-z0-9_./])paths\.([a-zA-Z][a-zA-Z0-9]*)/g;
+
+  const findings = [];
+  const files = walk(ROOT, accept);
+  const FALSE_POSITIVES = new Set([
+    "json",
+    "js",
+    "registry",
+    "generated",
+    "X",
+    "schema",
+    "specs",
+    "Y",
+  ]);
+  for (const file of files) {
+    let body;
+    try {
+      body = fs.readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    const lines = body.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      let m;
+      TOKEN_RE.lastIndex = 0;
+      while ((m = TOKEN_RE.exec(line)) !== null) {
+        const key = m[1];
+        if (FALSE_POSITIVES.has(key)) continue;
+        if (validKeys.has(key)) continue;
+        if (
+          /\b(example|legacy|deprecated|removed|placeholder|template)\b/i.test(
+            line,
+          )
+        ) {
+          continue;
+        }
+        findings.push({
+          severity: "error",
+          area: "docs-tokens",
+          file: path.relative(ROOT, file).replace(/\\/g, "/"),
+          line: i + 1,
+          message: `paths.${key} token not in registry — add the key or fix the typo`,
+        });
+      }
+    }
+  }
+  return findings;
+}
+
+const CHECKS = [
+  { name: "registry", run: checkRegistrySchema },
+  { name: "artifacts", run: checkArtifactsCurrent },
+  { name: "path-lint", run: checkPathLint },
+  { name: "deprecated", run: checkDeprecatedAliases },
+  { name: "docs-tokens", run: checkDocsTokens },
+];
+
+function main() {
+  const selected = FLAGS.check
+    ? CHECKS.filter((c) => c.name === FLAGS.check)
+    : CHECKS;
+  if (selected.length === 0) {
+    console.error(`unknown --check name: ${FLAGS.check}`);
+    console.error(`available: ${CHECKS.map((c) => c.name).join(", ")}`);
+    process.exit(1);
+  }
+
+  const allFindings = [];
+  for (const c of selected) {
+    let f;
+    try {
+      f = c.run() || [];
+    } catch (e) {
+      f = [
+        {
+          severity: "error",
+          area: c.name,
+          message: `gate check ${c.name} threw: ${e.message}`,
+        },
+      ];
+    }
+    for (const item of f) item.check = c.name;
+    allFindings.push(...f);
+  }
+
+  const errors = allFindings.filter((f) => f.severity === "error");
+  const warnStrict = allFindings.filter((f) => f.severity === "warn-strict");
+  const warns = allFindings.filter((f) => f.severity === "warn");
+  const failed = errors.length > 0 || (FLAGS.strict && warnStrict.length > 0);
+
+  if (FLAGS.json) {
+    console.log(
+      JSON.stringify(
+        {
+          ok: !failed,
+          checks: selected.map((c) => c.name),
+          counts: { errors: errors.length, warnStrict: warnStrict.length, warn: warns.length },
+          findings: allFindings,
+        },
+        null,
+        2,
+      ),
+    );
+  } else {
+    console.log(`\nscripts/paths/gate.js — ${selected.length} check(s)`);
+    for (const c of selected) {
+      const f = allFindings.filter((x) => x.check === c.name);
+      const errs = f.filter((x) => x.severity === "error").length;
+      const ws = f.filter((x) => x.severity === "warn-strict").length;
+      const wn = f.filter((x) => x.severity === "warn").length;
+      const status =
+        errs === 0 && (!FLAGS.strict || ws === 0)
+          ? wn === 0
+            ? "ok   "
+            : "warn "
+          : "FAIL ";
+      console.log(
+        `  ${status} ${c.name.padEnd(14)} (errors=${errs}, warn-strict=${ws}${wn ? `, warn=${wn}` : ""})`,
+      );
+    }
+    if (warns.length > 0) {
+      console.log("\n  warnings (not a failure):");
+      for (const f of warns) console.log(`    [${f.area}]  ${f.message}`);
+    }
+    if (failed) {
+      console.log("\n  details:");
+      for (const f of allFindings) {
+        if (
+          f.severity === "error" ||
+          (FLAGS.strict && f.severity === "warn-strict")
+        ) {
+          const loc = f.file ? ` ${f.file}${f.line ? `:${f.line}` : ""}` : "";
+          console.log(`    [${f.area}]${loc}  ${f.message}`);
+        }
+      }
+    }
+    console.log("");
+  }
+
+  process.exit(failed ? 1 : 0);
+}
+
+main();

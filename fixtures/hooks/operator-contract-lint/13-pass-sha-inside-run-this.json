@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "▶️ RUN THIS\n```bash\ngit show a1b2c3d4\n```\nThis shows the commit. Tell me what you see.",
+  "expect": []
+}

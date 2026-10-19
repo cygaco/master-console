@@ -1,0 +1,299 @@
+import type { ReactNode } from "react";
+import {
+  Activity,
+  Flag,
+  LayoutList,
+  Search,
+  ShieldCheck,
+  ToggleLeft,
+  TicketCheck,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  founderEmailAllowlist,
+  resolveAdminActor,
+} from "@/lib/admin/config";
+import { listAdminProjectSections } from "@/lib/admin/project-sections";
+import {
+  listAdminEventFeed,
+  listAdminFeatureFlags,
+  searchAdminUsers,
+} from "@/lib/admin/store";
+import {
+  setEntitlementAction,
+  setFeatureFlagAction,
+  toggleAccountStateAction,
+} from "./actions";
+
+type AdminSearchParams = {
+  q?: string | string[];
+};
+
+type AdminPageProps = {
+  searchParams?: AdminSearchParams | Promise<AdminSearchParams>;
+};
+
+function firstParam(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? value[0] || "" : value || "";
+}
+
+function StatusPill({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex rounded-md border px-2 py-1 text-xs font-medium">
+      {children}
+    </span>
+  );
+}
+
+export default async function AdminPage({ searchParams }: AdminPageProps) {
+  const actor = await resolveAdminActor();
+  if (!actor.allowed) {
+    const allowedCount = founderEmailAllowlist().length;
+    return (
+      <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-4 p-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="size-5" aria-hidden />
+              Admin access restricted
+            </CardTitle>
+            <CardDescription>
+              This route is locked to the founder email allowlist. Current
+              actor source: {actor.source}. Allowlisted founders: {allowedCount}.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </main>
+    );
+  }
+
+  const params = searchParams ? await searchParams : {};
+  const query = firstParam(params.q).trim();
+  const users = searchAdminUsers(query);
+  const flags = listAdminFeatureFlags();
+  const events = listAdminEventFeed();
+  const sections = listAdminProjectSections();
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-6">
+      <header className="flex flex-col gap-2 border-b pb-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm text-muted-foreground">Founder admin</p>
+            <h1 className="text-2xl font-semibold">{{SLUG}}</h1>
+          </div>
+          <StatusPill>{actor.email}</StatusPill>
+        </div>
+      </header>
+
+      <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="size-5" aria-hidden />
+              Users
+            </CardTitle>
+            <CardDescription>
+              Search users, change account state, and grant or revoke one
+              entitlement at a time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <form className="grid gap-2 sm:grid-cols-[1fr_auto]" action="/admin">
+              <div className="space-y-2">
+                <Label htmlFor="admin-user-search">Search</Label>
+                <Input
+                  id="admin-user-search"
+                  name="q"
+                  defaultValue={query}
+                  placeholder="email, name, state, entitlement"
+                />
+              </div>
+              <Button className="self-end" type="submit">
+                Search
+              </Button>
+            </form>
+
+            <div className="space-y-4">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="grid gap-4 rounded-md border p-4 lg:grid-cols-[1.5fr_1fr_1fr]"
+                >
+                  <div className="space-y-1">
+                    <div className="font-medium">{user.name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {user.email}
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <StatusPill>{user.state}</StatusPill>
+                      {user.entitlements.map((entitlement) => (
+                        <StatusPill key={entitlement}>{entitlement}</StatusPill>
+                      ))}
+                    </div>
+                  </div>
+
+                  <form action={toggleAccountStateAction} className="space-y-2">
+                    <input type="hidden" name="userId" value={user.id} />
+                    <input
+                      type="hidden"
+                      name="state"
+                      value={user.state === "active" ? "suspended" : "active"}
+                    />
+                    <Label>Account state</Label>
+                    <Button
+                      className="w-full"
+                      type="submit"
+                      variant={user.state === "active" ? "outline" : "default"}
+                    >
+                      <ToggleLeft className="size-4" aria-hidden />
+                      {user.state === "active" ? "Suspend" : "Activate"}
+                    </Button>
+                  </form>
+
+                  <div className="grid gap-2">
+                    <div className="text-sm font-medium">Beta access</div>
+                    <form
+                      action={setEntitlementAction}
+                      className="grid gap-2 sm:grid-cols-2"
+                    >
+                      <input type="hidden" name="userId" value={user.id} />
+                      <input type="hidden" name="enabled" value="true" />
+                      <input type="hidden" name="entitlement" value="beta" />
+                      <Button type="submit" variant="secondary">
+                        <TicketCheck className="size-4" aria-hidden />
+                        Grant
+                      </Button>
+                    </form>
+                    <form
+                      action={setEntitlementAction}
+                      className="grid gap-2 sm:grid-cols-2"
+                    >
+                      <input type="hidden" name="userId" value={user.id} />
+                      <input type="hidden" name="enabled" value="false" />
+                      <input type="hidden" name="entitlement" value="beta" />
+                      <Button type="submit" variant="outline">
+                        Revoke
+                      </Button>
+                    </form>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Flag className="size-5" aria-hidden />
+                Feature flags
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {flags.map((flag) => (
+                <form
+                  key={flag.key}
+                  action={setFeatureFlagAction}
+                  className="flex items-center justify-between gap-3 rounded-md border p-3"
+                >
+                  <input type="hidden" name="key" value={flag.key} />
+                  <input
+                    type="hidden"
+                    name="enabled"
+                    value={flag.enabled ? "false" : "true"}
+                  />
+                  <div>
+                    <div className="font-medium">{flag.label}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {flag.enabled ? "Enabled" : "Disabled"}
+                    </div>
+                  </div>
+                  <Button type="submit" variant="outline">
+                    {flag.enabled ? "Disable" : "Enable"}
+                  </Button>
+                </form>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="size-5" aria-hidden />
+                Event feed
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {events.map((event) => (
+                <div
+                  key={event.id}
+                  className="grid gap-1 rounded-md border p-3 text-sm"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-medium">{event.summary}</span>
+                    <StatusPill>{event.status}</StatusPill>
+                  </div>
+                  <div className="text-muted-foreground">
+                    {event.event} / {event.stage}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LayoutList className="size-5" aria-hidden />
+              Project sections
+            </CardTitle>
+            <CardDescription>
+              Generated from the product canon and declared stack; keep this to
+              core-loop entities and basic moderation.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            {sections.map((section) => (
+              <div key={section.id} className="rounded-md border p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="font-medium">{section.title}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {section.entity}
+                    </div>
+                  </div>
+                  <StatusPill>{section.operations.join(", ")}</StatusPill>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {section.rows.map((row) => (
+                    <div
+                      key={row.id}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <span>{row.label}</span>
+                      <StatusPill>{row.state}</StatusPill>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </section>
+    </main>
+  );
+}

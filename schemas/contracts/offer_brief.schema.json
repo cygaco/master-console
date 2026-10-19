@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/contracts/offer_brief/v0.1",
+  "title": "MC Product-Studio Contract — Offer Brief (v0.1)",
+  "description": "The product-verifiable claim Product owns (claims boundary: distinct from Marketing's market_promise in the message_brief). Derives from the message_brief.",
+  "version": "v0.1",
+  "precedence_note": "v0.1 ranks are revisable (global integer rank).",
+  "contract": {
+    "owner_domain": "product",
+    "consumers": ["conversion_brief", "build_spec"],
+    "precedence": 60
+  },
+  "type": "object",
+  "required": ["type", "id", "derived_from_message_brief", "product_verifiable_claim", "offer_terms"],
+  "properties": {
+    "type": { "const": "offer_brief" },
+    "id": { "type": "string", "minLength": 1 },
+    "derived_from_message_brief": { "type": "string", "minLength": 1, "description": "id of the source message_brief (spine reference)." },
+    "product_verifiable_claim": { "type": "string", "minLength": 1, "description": "What the product can actually, verifiably do (constrains the market promise on factual claims)." },
+    "offer_terms": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/skill-dispatch/bench-result/v1",
+  "title": "Skill-dispatch benchset / bench-result (SCAFFOLD — no real measurements shipped yet)",
+  "description": "The MEASURED side that a measurement runner (not shipped in this pack) would consume and produce. The task-set (task-set.schema.json) is the INPUT (tasks + thresholds); this carries the per-task A/B token MEASUREMENTS (the orchestrator-side inline vs envelope token counts) plus the two-axis verdict the harness computes. A skill earns `execution: subprocess` (subprocess_verified:true) ONLY when BOTH axes pass; otherwise it stays inline. For the FIXTURE path the measurements are SYNTHETIC and the judge is STUBBED (no real replay, no spend).",
+  "type": "object",
+  "required": ["schema", "skill", "thresholds", "measurements"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "mc/skill-dispatch/bench-result/v1" },
+    "skill": {
+      "type": "string",
+      "description": "The skill under measurement. Must be a `subprocess` candidate in the registry under test, and runnable, before finalization is meaningful."
+    },
+    "subprocess_verified_prereq": {
+      "type": "boolean",
+      "description": "Asserts a ping smoke test proved the skill RUNS headless before this benchset was authored.",
+      "default": false
+    },
+    "thresholds": {
+      "type": "object",
+      "description": "The fail-closed bars BOTH axes must clear (mirrors task-set.schema.json#thresholds).",
+      "required": ["min_tokens_saved", "min_pct_saved", "quality_tolerance"],
+      "additionalProperties": false,
+      "properties": {
+        "min_tokens_saved": { "type": "integer", "minimum": 0, "description": "Axis 1: minimum MEAN net orchestrator tokens saved per task. Light skills (envelope ≈ inline) fall below and STAY INLINE." },
+        "min_pct_saved": { "type": "number", "minimum": 0, "maximum": 1, "description": "Axis 1: minimum fraction of total inline orchestrator cost saved." },
+        "quality_tolerance": { "type": "number", "minimum": 0, "maximum": 1, "description": "Axis 2: how far BELOW inline quality the subprocess result may fall and still pass (0 = must be >= inline)." }
+      }
+    },
+    "dispatch_overhead": {
+      "type": "object",
+      "description": "Optional override of the subprocess-arm orchestrator overhead model. Defaults are grounded in oneshot-token-guide.md's orchestrator-tokens-per-activity table, conservative (high) end. Envelope-read tokens are NOT here — they are the per-task measured envelope_tokens.",
+      "additionalProperties": false,
+      "properties": {
+        "background_notification": { "type": "integer", "minimum": 0, "description": "Background-task notification cost (~300–800; default 800, conservative high)." },
+        "completion_record_check": { "type": "integer", "minimum": 0, "description": "Ledger completion-record read (~200, conservative)." },
+        "source": { "type": "string" }
+      }
+    },
+    "judge": {
+      "type": "object",
+      "description": "Axis 2 quality grader metadata — independent + CROSS-PROVIDER (no self-grading). For the FIXTURE path the judge is STUBBED via SKILLS_BENCH_JUDGE_OVERRIDE; a future real run dispatches a different-provider reviewer on anonymized arms (the diff-model-review pattern). The judge is for the SUBJECTIVE delta / high-risk routing / calibration — NOT the sole oracle.",
+      "additionalProperties": true,
+      "properties": {
+        "provider": { "type": "string", "description": "A provider DIFFERENT from the skill's executor." },
+        "anonymized": { "type": "boolean", "description": "Arms presented WITHOUT inline/subprocess labels (blind A/B)." },
+        "rubric": { "type": "string" },
+        "verdict": { "type": "string", "enum": ["subprocess>=inline", "subprocess<inline"], "description": "The independent judge's ruling. The harness READS this; it never self-grades." },
+        "score": { "type": "number", "description": "Optional signed quality delta (subprocess − inline, normalized). Pass when score >= -quality_tolerance." }
+      }
+    },
+    "context_needed": {
+      "type": "string",
+      "description": "Optional: if the subprocess arm only matched inline once specific context was fed into the dispatch prompt, record WHAT context it needs (stamped into the registry so the dispatcher supplies it)."
+    },
+    "measurements": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Per-task A/B MEASUREMENTS. A single run is insufficient — several tasks average out retries/summarization/review churn. inline_orchestrator_tokens = tokens the full skill output costs Alpha's context inline; envelope_tokens = tokens the ≤8-line subprocess envelope costs Alpha. net per task = inline − (envelope + dispatch_overhead).",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "inline_orchestrator_tokens", "envelope_tokens"],
+        "additionalProperties": true,
+        "properties": {
+          "task_id": { "type": "string", "description": "Stable id, matches the task-set task_id." },
+          "inline_orchestrator_tokens": { "type": "integer", "minimum": 0, "description": "Orchestrator-side tokens the INLINE arm cost (full output into Alpha's context)." },
+          "envelope_tokens": { "type": "integer", "minimum": 0, "description": "Orchestrator-side tokens the SUBPROCESS arm's ≤8-line envelope cost." },
+          "inline_artifact_digest": { "type": "string", "description": "Optional digest of the inline run's artifact (proof the arm actually produced output)." },
+          "subprocess_artifact_digest": { "type": "string", "description": "Optional digest of the subprocess run's artifact." },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

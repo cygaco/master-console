@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "Status update for the team.\nWe landed a1b2c3d4, closes ED-999441 and R-999124.",
+  "expect": ["RAW-IDENTIFIER", "RAW-IDENTIFIER", "RAW-IDENTIFIER"]
+}

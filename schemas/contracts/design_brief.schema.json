@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/contracts/design_brief/v0.1",
+  "title": "MC Product-Studio Contract — Design Brief (v0.1)",
+  "description": "The design intent (visual hierarchy, tokens, mobile/responsive) approved by the design-quality gauntlet. Derives from the message_brief.",
+  "version": "v0.1",
+  "precedence_note": "v0.1 ranks are revisable (global integer rank).",
+  "contract": {
+    "owner_domain": "design_quality",
+    "consumers": ["build_spec", "converting_artifact"],
+    "precedence": 30
+  },
+  "type": "object",
+  "required": ["type", "id", "derived_from_message_brief", "visual_hierarchy", "mobile_requirements"],
+  "properties": {
+    "type": { "const": "design_brief" },
+    "id": { "type": "string", "minLength": 1 },
+    "derived_from_message_brief": { "type": "string", "minLength": 1, "description": "id of the source message_brief (spine reference)." },
+    "visual_hierarchy": { "type": "string", "minLength": 1, "description": "The intended hierarchy (clarity-first)." },
+    "tokens_ref": { "type": "string", "description": "Optional pointer to the design-token set." },
+    "mobile_requirements": { "type": "string", "minLength": 1, "description": "Mobile/responsive requirements (mobile is not an afterthought)." }
+  },
+  "additionalProperties": true
+}

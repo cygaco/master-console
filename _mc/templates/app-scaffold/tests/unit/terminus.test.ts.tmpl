@@ -1,0 +1,84 @@
+import { describe, it, expect, vi } from "vitest";
+// Relative import (not the `@/` alias): these unit tests run standalone via
+// `vitest run` with no vite/vitest config in the scaffold to resolve
+// tsconfig path aliases, so this one seam uses a plain relative path.
+import { commit, type ComposerState } from "../../src/lib/composer/terminus";
+
+/**
+ * The enforcer for the "two save paths drift apart" bug class (§3 in
+ * _knowledge/design/INPUT_COMPOSER_PATTERN.md): drive typed-send,
+ * voice-then-send, and transcript-edit-send through the SAME pure
+ * `commit` function and assert a mock save is called EXACTLY ONCE per
+ * commit.
+ */
+
+function runCommit(save: (text: string) => void, state: ComposerState, text: string) {
+  const result = commit(state, { type: "send", text });
+  if (result.shouldSave) save(result.text);
+  return result;
+}
+
+describe("terminus.commit — single-terminus seam", () => {
+  it("typed send: idle -> send commits exactly once", () => {
+    const save = vi.fn();
+    const result = runCommit(save, "idle", "hello world");
+
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save).toHaveBeenCalledWith("hello world");
+    expect(result.shouldSave).toBe(true);
+  });
+
+  it("voice-then-send: recording -> send commits exactly once (skips transcript display upstream, still routes text through commit)", () => {
+    const save = vi.fn();
+    const result = runCommit(save, "recording", "voice memo text");
+
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save).toHaveBeenCalledWith("voice memo text");
+    expect(result.shouldSave).toBe(true);
+  });
+
+  it("transcript-edit-send: review -> send (after the user edits the landed transcript) commits exactly once", () => {
+    const save = vi.fn();
+    const result = runCommit(save, "review", "edited transcript");
+
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save).toHaveBeenCalledWith("edited transcript");
+    expect(result.shouldSave).toBe(true);
+  });
+
+  it("trims whitespace before deciding shouldSave", () => {
+    const save = vi.fn();
+    const result = runCommit(save, "idle", "   ");
+
+    expect(save).not.toHaveBeenCalled();
+    expect(result.shouldSave).toBe(false);
+    expect(result.text).toBe("");
+  });
+
+  it("does not commit while transcribing (an in-flight transcription is not final yet)", () => {
+    const save = vi.fn();
+    const result = runCommit(save, "transcribing", "partial text");
+
+    expect(save).not.toHaveBeenCalled();
+    expect(result.shouldSave).toBe(false);
+  });
+
+  it("a cancel action never saves", () => {
+    const save = vi.fn();
+    const result = commit("idle", { type: "cancel" });
+    if (result.shouldSave) save(result.text);
+
+    expect(save).not.toHaveBeenCalled();
+    expect(result.shouldSave).toBe(false);
+  });
+
+  it("never double-saves a single commit even if called with the same action twice inadvertently — each call is independently exactly-once", () => {
+    const save = vi.fn();
+    runCommit(save, "idle", "one message");
+    expect(save).toHaveBeenCalledTimes(1);
+
+    // A second, DISTINCT commit (e.g. the next message) is its own exactly-once call.
+    runCommit(save, "idle", "another message");
+    expect(save).toHaveBeenCalledTimes(2);
+  });
+});

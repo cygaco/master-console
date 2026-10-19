@@ -1,0 +1,118 @@
+{
+  "$schema": "mc/evals/resonance-conversion/v0.1",
+  "id": "resonance-conversion-quality",
+  "_doc": "The resonance/conversion-quality eval rubric (Marketing domain). MC checks correctness but NOT message clarity, proof strength, audience specificity, visual hierarchy, objection handling, or conversion hypothesis — without these it ships valid artifacts that still feel generic. This rubric makes those six dimensions REAL: each carries explicit PASS / FAIL criteria, a weight, and where possible a mechanical check. It is a JUDGMENT eval (most dimensions require a judging agent — Director of Marketing / Copy Lead / Web-Conversion-Designer / Research-Insight Lead reading the artifact against its briefs); the mechanical sub-checks are the fail-closed floor, not the whole bar. Owned by Marketing; consumed by the growth: pack (advertorial · landing-page · ad-images · iterate). v0.1 REVISABLE.",
+  "version": "v0.1",
+  "owner_domain": "marketing",
+  "applies_to": ["message_brief", "conversion_brief", "advertorial", "landing_page", "ad_creative", "converting_artifact"],
+  "scoring": {
+    "scale": "0-4 per dimension (0 absent · 1 token · 2 weak · 3 solid · 4 excellent)",
+    "pass_threshold_per_dimension": 3,
+    "overall_rule": "An artifact PASSES only if EVERY required dimension scores >= 3 AND no dimension hard-fails its mechanical floor. A weighted average alone does NOT pass — a single generic-feeling dimension (e.g. score 1 on proof strength) fails the artifact even if the weighted mean is high. This is the anti-'valid-but-generic' rule: no compensating away a hollow dimension.",
+    "fail_closed": "Missing brief inputs (no audience_dossier / message_brief) => the eval CANNOT score => result = ARBITRATION-NEEDED (not PASS). An eval that can't see its grounding must never read green (false-green bug class)."
+  },
+  "judges": {
+    "message-clarity": "copy-lead",
+    "proof-strength": "copy-lead",
+    "audience-specificity": "research-lead",
+    "visual-hierarchy": "conversion-lead",
+    "objection-handling": "copy-lead",
+    "conversion-hypothesis": "marketing-lead",
+    "_arbiter": "director-of-growth",
+    "_note": "Per-dimension judge applies its owned principle. The Director of Marketing arbitrates a split or an ARBITRATION-NEEDED; β only on cross-domain conflict / ship gate."
+  },
+  "dimensions": [
+    {
+      "dimension": "message-clarity",
+      "weight": 3,
+      "required": true,
+      "principle_root": "clarity-is-king",
+      "criteria": "The single core message is unmistakable in one read; clear beats clever. A cold reader can state what is being offered and to whom after the hook alone.",
+      "pass": "Core message stated plainly up front; one idea per block; reads at ~5th-8th grade; the hero/hook carries the message_brief.core_message verbatim or unmistakably.",
+      "fail": "Buried lede; cleverness over clarity; reader can't restate the offer after the hook; hero doesn't carry the core message; jargon a cold reader wouldn't know.",
+      "mechanical": true,
+      "checks": [
+        { "kind": "must_reference", "value": "message_brief.core_message", "why": "the artifact must carry the spine's core message, not a drifted one" },
+        { "kind": "readability_grade_max", "value": 8, "why": "greased-slide / clarity floor" },
+        { "kind": "must_not_contain", "value": ["lorem ipsum", "TODO", "TBD", "{{", "[INSERT"], "why": "placeholder copy is an automatic fail" }
+      ]
+    },
+    {
+      "dimension": "proof-strength",
+      "weight": 3,
+      "required": true,
+      "principle_root": "evidence-over-invention",
+      "criteria": "Every claim is backed by real, source-attributed proof; the argument (not power-words) carries the persuasion. No invented data.",
+      "pass": "message_brief.proof_points are concrete + source-grounded; each major claim has proof adjacent; synthetic claims labelled; argument-led (unique mechanism proven different+better).",
+      "fail": "Hype/power-word stuffing standing in for proof; claims with no source; invented statistics/quotes; proof_points empty or vague ('trusted by thousands' with no ref).",
+      "mechanical": true,
+      "checks": [
+        { "kind": "min_count", "target": "proof_points", "value": 1, "why": "at least one real proof point required" },
+        { "kind": "no_unsourced_metric", "value": true, "why": "a numeric/statistical claim with no source ref hard-fails (no-invented-data)" },
+        { "kind": "powerword_density_max", "value": "low", "why": "ALL-CAPS runs + '!' density + 'discover the secret' class phrasing flags hype-over-argument" }
+      ]
+    },
+    {
+      "dimension": "audience-specificity",
+      "weight": 3,
+      "required": true,
+      "principle_root": "audience-is-king",
+      "criteria": "Speaks to ONE named segment and its deepest emotional needs — never 'everyone'. Grounded in the audience_dossier.",
+      "pass": "Targets a named audience_dossier.segment; reflects its emotional_needs (not just functional jobs); language matches the segment's voice-of-customer.",
+      "fail": "Generic 'anyone who…'; no named segment; functional-only (ignores the emotional layer); language that could front any product in the category.",
+      "mechanical": true,
+      "checks": [
+        { "kind": "must_reference", "value": "audience_dossier.id", "why": "must be built for a real, named dossier" },
+        { "kind": "must_not_contain", "value": ["everyone", "anyone who", "all users", "people who want"], "why": "the 'everyone' anti-pattern (Audience-is-King)" },
+        { "kind": "audience_confidence_min", "value": 0.5, "why": "a dossier below 0.5 confidence is too thin to claim specificity; surface as ARBITRATION-NEEDED" }
+      ]
+    },
+    {
+      "dimension": "visual-hierarchy",
+      "weight": 2,
+      "required_for": ["landing_page", "ad_creative", "converting_artifact"],
+      "principle_root": "conversion-hierarchy",
+      "criteria": "The eye flows hook -> proof -> single CTA; one obvious next action; holds on mobile. (N/A for copy-only artifacts.)",
+      "pass": "One primary CTA, unmissable + repeated at decision points; hero above the fold carries the message on mobile; every element installs a belief / removes an objection; tap targets + load OK.",
+      "fail": "Competing CTAs; buried value prop; hero that doesn't carry the message; desktop-only hierarchy that breaks on mobile; decorative elements that don't move toward conversion.",
+      "mechanical": true,
+      "checks": [
+        { "kind": "single_primary_cta", "value": true, "why": "competing CTAs are a conversion leak" },
+        { "kind": "uses_component_library", "value": true, "why": "raw vibe-coded elements fail scan:scaffold-coverage + the design-quality gauntlet" },
+        { "kind": "mobile_first_checked", "value": true, "why": "mobile is the real surface" }
+      ],
+      "defers_to": "design-quality-gauntlet for formal tokens/accessibility/handoff approval"
+    },
+    {
+      "dimension": "objection-handling",
+      "weight": 2,
+      "required": true,
+      "principle_root": "chief-coherence",
+      "criteria": "The prospect's real objections + limiting beliefs are surfaced and answered; necessary beliefs installed before the ask.",
+      "pass": "conversion_brief.objections_handled are real (sourced from the audience) and each is addressed in the artifact; limiting beliefs removed / empowering beliefs installed before the CTA; <=6 necessary beliefs, each 'I believe that…'.",
+      "fail": "Objections ignored or strawmanned; CTA before beliefs are installed ('the prior problem'); objections list empty; >6 beliefs or beliefs not in the required form.",
+      "mechanical": true,
+      "checks": [
+        { "kind": "min_count", "target": "objections_handled", "value": 1, "why": "at least one real objection addressed" },
+        { "kind": "belief_count_max", "value": 6, "why": "the <=6 necessary-beliefs rule" },
+        { "kind": "belief_form_regex", "value": "^I believe that", "why": "each necessary belief in the required 'I believe that…' form" }
+      ]
+    },
+    {
+      "dimension": "conversion-hypothesis",
+      "weight": 2,
+      "required": true,
+      "principle_root": "ltv-cac",
+      "criteria": "A falsifiable conversion hypothesis exists, ties to the message, and (for iterate/scale) is backed by real metric data — not opinion.",
+      "pass": "conversion_brief.conversion_hypothesis is explicit + testable (who does what, expected lift, against what); derives from the message_brief; for an iterate/scale decision, real metric data is attached.",
+      "fail": "No hypothesis, or an untestable one ('this will convert better'); hypothesis untethered to the message; scaling proposed on opinion with no metric data attached.",
+      "mechanical": true,
+      "checks": [
+        { "kind": "must_reference", "value": "conversion_brief.conversion_hypothesis", "why": "a converting artifact must state its hypothesis" },
+        { "kind": "derived_from_message_brief", "value": true, "why": "the hypothesis must trace to the spine" },
+        { "kind": "metric_data_required_for_scale", "value": true, "why": "no opinion-driven scaling (growth:iterate gate)" }
+      ]
+    }
+  ],
+  "enforcer_note": "This rubric is the DATA; its runnable enforcer is the resonance-conversion-quality eval. The eval REJECTS (not lints) an artifact that hard-fails any mechanical floor or scores <3 on any required dimension, and emits a decision_record (schemas/contracts/decision_record.schema.json). The mechanical sub-checks share machinery with the chiefing/no-invented-data enforcer; the judgment dimensions dispatch the per-dimension judge agent. Fail-closed: a runner error or missing brief => non-zero / ARBITRATION-NEEDED, never green (cross-provider-qa false-green guard)."
+}

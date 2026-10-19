@@ -1,0 +1,96 @@
+{
+  "$schema": "mc/provider-failure-modes/v1",
+  "version": 1,
+  "comment": "Failure-mode catalog consumed by scripts/mc/provider-smoke.js and scripts/mc/lib/provider-rca.js. Each entry maps a provider-health status to a root_cause + safe_to_autofix + fix_recipe + remediation + fallback_allowed signal. Defaults: only `trusted_directory_required` is safe_to_autofix=true; `auth_source_mismatch` is fallback_allowed=false (mirrors provider-fallback.json#do_not_fall_back).",
+  "known_providers": ["claude", "openai", "antigravity"],
+  "severity_buckets": {
+    "yellow": ["cli_missing", "auth_source_mismatch", "stale_cli_registry"],
+    "comment": "Severity matches scripts/mc/provider-smoke.js#iconFor. 'ok' is green; the three statuses above are yellow (non-blocking unless --exit-on-yellow); everything else is red."
+  },
+  "entries": {
+    "cli_missing": {
+      "status": "cli_missing",
+      "root_cause": "Provider CLI binary not found on PATH or not installed.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Install the provider CLI. claude: `npm i -g @anthropic-ai/claude-code`. openai: `npm i -g @openai/codex`. antigravity: install the standalone Antigravity `agy` CLI (not npm). Then re-run.",
+      "fallback_allowed": true
+    },
+    "auth_missing": {
+      "status": "auth_missing",
+      "root_cause": "Provider CLI is installed but session/login is missing or expired.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Authenticate the CLI interactively. claude: `claude /login`. openai: `codex login`. antigravity: sign in to Antigravity (`agy`) so its ~/.gemini keyring carries a session. This is a DAY-ZERO step on every fresh install / new machine, and a MC/CLI update can reset it — without it the gauntlet silently falls back off the Gemini lab and loses adversarial-corpus diversity. Never auto-fix — interactive auth requires the operator.",
+      "fallback_allowed": true
+    },
+    "auth_source_mismatch": {
+      "status": "auth_source_mismatch",
+      "root_cause": "Both an API key env var AND a CLI OAuth session are set — the provider has an ambiguous credential source, so a stale/quota-limited key can win over a working plan session and fail the gauntlet even though the CLI works interactively.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Choose ONE credential source. openai: unset OPENAI_API_KEY or `codex logout` to prefer the plan session, or keep the metered key deliberately. Mirrors provider-fallback.json#do_not_fall_back to surface the ambiguity rather than silently picking.",
+      "fallback_allowed": false
+    },
+    "model_not_found": {
+      "status": "model_not_found",
+      "root_cause": "Requested model id is not in the CLI's bundled registry — usually stale CLI version.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Upgrade the provider CLI: `npm i -g @<vendor>/<cli>@latest`. Then re-run.",
+      "fallback_allowed": true
+    },
+    "stale_cli_registry": {
+      "status": "stale_cli_registry",
+      "root_cause": "Provider CLI registry is older than the configured target models.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Upgrade the provider CLI to refresh its bundled model registry: `npm i -g @<vendor>/<cli>@latest`.",
+      "fallback_allowed": true
+    },
+    "trusted_directory_required": {
+      "status": "trusted_directory_required",
+      "root_cause": "LEGACY (SUNSET gemini CLI) — retained as a catalog placeholder. No live provider emits this status; the supported agy lane has no workspace-trust gate.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "No action — this failure mode belonged to the removed individual gemini CLI.",
+      "fallback_allowed": true
+    },
+    "provider_timeout": {
+      "status": "provider_timeout",
+      "root_cause": "Probe wall-clock budget exceeded before provider responded.",
+      "safe_to_autofix": true,
+      "fix_recipe": {
+        "kind": "retry_with_same_timeout",
+        "max_retries": 1,
+        "note": "Network/CLI transient. One retry with the same timeout is cheap and catches most flap-class failures."
+      },
+      "remediation": "Auto-retry attempted. If still red after retry, check network and provider status.",
+      "fallback_allowed": true
+    },
+    "quota_exhausted": {
+      "status": "quota_exhausted",
+      "root_cause": "Provider rate limit or hard quota hit.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Wait for the quota window to reset, upgrade tier, or rely on the configured provider-fallback policy. Auto-fixing quota is not possible without billing changes.",
+      "fallback_allowed": true
+    },
+    "free_tier_limit_zero": {
+      "status": "free_tier_limit_zero",
+      "root_cause": "Provider account has a free-tier daily limit of zero (account misconfiguration or expired trial).",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Switch the account to a paid tier, or configure the provider-fallback policy to route around this provider for non-critical roles.",
+      "fallback_allowed": true
+    },
+    "unknown_error": {
+      "status": "unknown_error",
+      "root_cause": "Unclassified provider error — likely a new failure mode not yet catalogued.",
+      "safe_to_autofix": false,
+      "fix_recipe": null,
+      "remediation": "Inspect the smoke event in events.jsonl for full stderr (truncated 400 chars in CLI output). Consider adding a new catalog entry if this recurs.",
+      "fallback_allowed": true
+    }
+  }
+}

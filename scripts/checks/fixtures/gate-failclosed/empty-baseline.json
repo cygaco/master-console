@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "sprint": "SP-99999999-001",
+  "purpose": "Fixture baseline: deliberately does not contain fresh-hook.js's site, so scanning new-entrant-root/ must surface exactly one new, untriaged entrant.",
+  "detector_sha": "fixture",
+  "root_scanned": "scripts/checks/fixtures/gate-failclosed/new-entrant-root",
+  "files_scanned": 0,
+  "files_unreadable": [],
+  "site_count": 0,
+  "site_ids": []
+}

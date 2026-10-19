@@ -1,0 +1,18 @@
+/**
+ * autosize.ts — PURE height-clamp math for the auto-grow textarea (P-2 in
+ * _knowledge/design/INPUT_COMPOSER_PATTERN.md). No React, no DOM. The
+ * `useAutosize` hook wraps this with the actual `scrollHeight` read + style
+ * write.
+ */
+
+/**
+ * clampHeight — clamp a measured `scrollHeight` to `[min, max]`.
+ * Returns `min` when `scrollHeight` is below it, `max` when above it,
+ * otherwise `scrollHeight` unchanged.
+ */
+export function clampHeight(scrollHeight: number, min: number, max: number): number {
+  if (min > max) {
+    throw new Error(`clampHeight: min (${min}) must be <= max (${max})`);
+  }
+  return Math.min(Math.max(scrollHeight, min), max);
+}

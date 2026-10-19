@@ -1,0 +1,9 @@
+{
+  "domain": "security",
+  "kind": "library",
+  "producer": "security-lead",
+  "consumers": ["security-builder", "security-fixer", "security-reviewer"],
+  "index": "_knowledge/security/registry.json",
+  "overview": "_knowledge/security/README.md",
+  "note": "Application-security hardening knowledge library — agent-grounding training references for the Security pod (the 'how not to get hacked' surface: authz/RLS + tenant isolation, secrets/config, rate-limiting/abuse, prompt-injection/LLM, input-validation/injection, web headers/CSRF/CORS + supply-chain). Consumed via the `<!-- knowledge:security role:<role> -->` marker blocks each consumer spec carries; wired by /knowledge:integrate, enforced by /knowledge:coverage. Each ref closes with a §6 agent-applicable RULES section (PASS/FAIL assertions in the security reviewer's own finding vocabulary). Mirrors the design library shape."
+}

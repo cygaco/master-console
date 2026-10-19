@@ -1,0 +1,20 @@
+{
+  "$schema": "mc/admin-panel-registry/v1",
+  "panels": {
+    "admin": {
+      "route": "/admin",
+      "opener": "node scripts/admin/preview.js",
+      "description": "Founder admin home"
+    },
+    "readiness": {
+      "route": "/admin/readiness",
+      "opener": "node scripts/admin/preview.js --route /admin/readiness",
+      "description": "Launch-readiness sub-route"
+    },
+    "guides": {
+      "route": "/admin/guides",
+      "opener": "node scripts/admin/preview.js --route /admin/guides",
+      "description": "Founder guides sub-route"
+    }
+  }
+}

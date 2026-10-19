@@ -1,0 +1,22 @@
+{
+  "schema": "mc/record-trust-gate/v1",
+  "sprint": "SP-99999999-001",
+  "_note": "SYNTHETIC, shipped fixture manifest for falsifier-liveness.test.js (and a record-trust-gate smoke). NOT a real sprint. One surface + one present falsifier fixture so the presence check passes; the liveness test injects runFile/runBuilt, so no file here is spawned there. Shipped checks resolve their manifest from args/current-sprint; their tests use this fixture.",
+  "trust_anchor_forbidden_for_cross_session": ["hmac", "per-session-signature", "attest-signing", "sessionSecret"],
+  "surfaces": [
+    {
+      "id": "sample-surface",
+      "reader": "scripts/checks/fixtures/record-trust/sample-reader.js",
+      "action_gated": "sample-record -> sample-action",
+      "scope": "same-session",
+      "new_surface": false,
+      "choke_point": "scripts/checks/fixtures/record-trust/sample-reader.js#isSample",
+      "structural_guard": "scripts/checks/fixtures/record-trust/sample-guard.js",
+      "trust_anchor": "writer-stamped identity (provider/shape/role)",
+      "falsifier_fixtures": [
+        "scripts/checks/fixtures/record-trust/sample-falsifier.js",
+        "scripts/checks/fixtures/record-trust/sample-falsifier-2.js"
+      ]
+    }
+  ]
+}

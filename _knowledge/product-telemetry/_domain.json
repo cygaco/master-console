@@ -1,0 +1,9 @@
+{
+  "domain": "product-telemetry",
+  "kind": "library",
+  "producer": "product-lead",
+  "consumers": ["product-lead", "qa-reviewer", "backend-reviewer"],
+  "index": "_knowledge/product-telemetry/registry.json",
+  "overview": "_knowledge/product-telemetry/README.md",
+  "note": "Product telemetry knowledge library: PMF event vocabulary, activation definition, and telemetry chain integrity. Grounds Product Lead specs and QA/backend review of product instrumentation."
+}

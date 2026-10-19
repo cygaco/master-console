@@ -1,0 +1,66 @@
+{
+  "$schema": "mc/org-map/v0.1",
+  "_doc": "Machine-readable product-studio org. β referee, α orchestrator; cross-domain gauntlets. `routing` maps each artifact `contract.owner_domain` to the org domain + owning role. Enforced by /scan:domain-routing (validates against schemas/contracts/*.schema.json). v0.1 REVISABLE.",
+  "version": "v0.1",
+  "role_registry": "_org/role-registry.json",
+  "_role_registry_note": "ADR-0007 keystone: per-role identity·model-map·dispatch-authority·enforcer·disposition live in role-registry.json. ADR-0010: the REPORTING-LINE STRUCTURE collapsed into the registry — the registry's `home`/`sub_home` + `dispatchable_by` are now the SINGLE structural source, verified against the on-disk spec tree by scan:role-parity (the independent, non-vacuous witness). The LIVE structural consumers (role-parity, org-roles.domainRoles/buildChainDoerRoles) now derive from the registry, NOT from `domains{}` below. `domains{}` is RETAINED as a non-authoritative legacy view ONLY because `routing`/`gauntlets` still reference its (stale, pre-rename) role names; its per-role roster (leads/specialists/builders + `agent`) is SUPERSEDED dead weight. Do NOT re-add a structural consumer that reads `domains{}` rosters.",
+  "orchestrator": { "role": "alpha", "agent": "alpha" },
+  "referee": {
+    "role": "beta",
+    "agent": "beta",
+    "scope": "Cross-domain conflict, risk, final ship gate. Enters intra-domain ONLY for ship-gate or cross-domain conflicts — NOT every intra-domain disagreement (not an intra-domain appeal court)."
+  },
+  "_domains_superseded": "ADR-0010: SUPERSEDED as the reporting-line structural source — role-registry.json (home/sub_home/dispatchable_by) is now the single structural source, witnessed against the on-disk spec tree by scan:role-parity. The per-role rosters below (leads/specialists/builders + their `role`/`agent`) carry STALE pre-rename names (director-of-marketing→director-of-growth, product-designer→design-lead, research-insight-lead→research-lead, etc.) and omit most live roles; NO live structural consumer reads them any more. Retained ONLY so `routing`/`gauntlets` (which still name these stale roles) keep resolving. Treat as read-only legacy; do not extend.",
+  "domains": {
+    "product": {
+      "director": { "role": "director-of-product-management", "agent": "director-of-product" },
+      "leads": [
+        { "role": "product-lead", "agent": "product-lead", "owns": "requirement authoring (build_spec/PRD via /sprint:design, verified by req-reviewer); per-product backlog ranking + within-sprint sequencing", "specialists": [ { "role": "product-designer", "agent": "design-lead" } ] },
+        { "role": "qa-lead", "agent": "quality-lead", "alias": "director-of-qa", "owns": "product-driven QA; QA/fix-priority under product-priority-over-severity; directs the QA failure-mode scanner", "note": "ADR-0007: renamed director-of-qa → quality-lead (spec product/quality-lead.md). Reports to Director of Product Mgmt." },
+        { "role": "research-insight-lead", "agent": "research-lead","owns": "deep audience layer + audience-mining pipeline; audience_dossier" }
+      ],
+      "reports_to": "alpha"
+    },
+    "marketing": {
+      "director": { "role": "director-of-marketing", "agent": "director-of-growth" },
+      "leads": [
+        { "role": "growth-lead", "agent": "marketing-lead","owns": "media-buying; EQ scoring; SCALE/TEST/SKIP" },
+        { "role": "copy-lead", "agent": "copy-lead", "owns": "argument-led voice; owns the 'Chief' coherence review" }
+      ],
+      "specialists": [ { "role": "web-conversion-designer", "agent": "conversion-lead","owns": "landing pages that convert" } ],
+      "reports_to": "alpha"
+    },
+    "engineering": {
+      "director": { "role": "director-of-engineering", "agent": "director-of-engineering" },
+      "builders": [
+        { "role": "frontend-builder", "agent": "frontend-builder" },
+        { "role": "backend-builder", "agent": "backend-builder" }
+      ],
+      "reports_to": "alpha"
+    }
+  },
+  "gauntlets": {
+    "code-qc": { "domain": "engineering", "members": ["frontend-reviewer", "backend-reviewer", "qa-reviewer", "security-reviewer", "fixer"], "note": "ADR-0007 cutover roster (was reviewer·compliance·qa·redteam·fixer). The generic `reviewer` SPLIT into per-pod frontend-reviewer + backend-reviewer (code-quality only); qa+compliance+req-reviewer ABSORBED into ONE qa-reviewer (traceability+integrity+functional scopes); redteam → ONE security-reviewer (the 2nd-GPT pass is INTERNAL to that role, not a separate member). fixer = remediation (runs after review, not a parallel reviewer). org-roles.reviewGauntletRoles('engineering') filters remediation; gauntletReviewRoles()/expectedGauntletRoles(pods) are the DERIVED rosters gamma.md/delta.md/the delta-* launchers consume — NO hardcoded --roles literal. Pod reviewers are gated to the pods that actually built (expectedGauntletRoles) so a FE-only build doesn't expect a backend-reviewer record." },
+    "design-quality": {
+      "domain": "cross-domain",
+      "is_named_design_authority": true,
+      "members": ["design-quality"],
+      "approves": ["design-tokens", "component-usage", "visual-hierarchy", "mobile-responsive", "accessibility", "design-handoff"],
+      "note": "The named design authority across app-design (Product) and web-design (Marketing) — a gauntlet, not a person. A component library alone is not an owner."
+    }
+  },
+  "claims_boundary": {
+    "market_promise": { "owner": "marketing", "artifact": "message_brief" },
+    "product_verifiable_claim": { "owner": "product", "artifact": "offer_brief" },
+    "note": "Marketing owns the market promise; Product owns the product-verifiable claim; they must not blur. Security/compliance review stays independent of Product/Marketing pressure (its own gauntlet lane). Rooted as the shared `claims-boundary` base principle."
+  },
+  "routing": {
+    "_doc": "Each artifact `contract.owner_domain` -> the org domain + owning role. /scan:domain-routing asserts every owner_domain present in schemas/contracts/ has an entry here, and every entry's domain is defined above (or 'cross-domain').",
+    "research_insight": { "domain": "product", "owner_role": "research-insight-lead" },
+    "marketing": { "domain": "marketing", "owner_role": "director-of-marketing" },
+    "product": { "domain": "product", "owner_role": "product-lead" },
+    "design_quality": { "domain": "cross-domain", "owner_role": "design-quality-gauntlet" },
+    "engineering": { "domain": "engineering", "owner_role": "director-of-engineering" },
+    "enforcer_emitted": { "domain": "cross-domain", "owner_role": "enforcer", "note": "decision_record — emitted by any domain's enforcer in oneshot, no human present" }
+  }
+}

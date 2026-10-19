@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "node scripts/x.js\nThis runs the script directly.",
+  "expect": ["CMD-OUTSIDE-RUN"]
+}

@@ -1,0 +1,267 @@
+{
+  "$schema": "mc/dispatch-contract/v0.1",
+  "version": "v0.1",
+  "_doc": "THE DISPATCH-SHAPE KEYSTONE. The dispatch analogue of role-registry.json: role-registry owns role IDENTITY (name·home·tier·kind·provider·model·build_chain·claude_pinned); THIS file owns the dispatch SHAPE policy — for each role/skill, the allowed dispatch shapes, the allowed tool ID, the cwd/file-scope/env/secret policy, timeout, budget, output policy, required fixtures+reviewers, and coverage obligations. Every dispatcher (dispatch-claude.js · dispatch-agent.js · future dispatch-skill.js / dispatch-api.js), the coverage gate, and the drift scanners READ FROM HERE so 'best dispatch shape per unit' is enforceable infrastructure, not doctrine. A role's CLASS is DERIVED from its role-registry attributes via `class_derivation` (single source of identity — no duplicated role list), then merged: defaults <- class <- role_overrides. The three dispatch failures map directly to contract violations: (i) skipped-gauntlet => a binding_verdict reviewer with no completion record (coverage gate); (ii) API-when-CLI => the `api` shape used by a role whose allowed_shapes lacks it; (iii) in-process-when-subprocess => the `in-process-agent` shape used by a role that forbids it (build-chain). Reader+validator: scripts/dispatch/dispatch-contract.js. Enforcer: scripts/dispatch/dispatch-contract.test.js (planted-violation) + scan:dispatch-contract (report-only first, then blocking).",
+  "related": {
+    "identity_keystone": ".claude/agents/_org/role-registry.json",
+    "reader": "scripts/dispatch/dispatch-contract.js",
+    "safety_kernel": "scripts/dispatch/safe-spawn.js",
+    "auth_resolver": "scripts/dispatch/auth-resolver.js"
+  },
+
+  "shapes": {
+    "_doc": "The dispatch-shape menu. context_cost = the load on Alpha's context. `forbidden_for` names structural prohibitions the validator enforces.",
+    "inline": {
+      "mechanism": "alpha-in-context",
+      "context_cost": "full",
+      "right_when": "light work, OR work that needs the LIVE conversation (e.g. session:end handoff)",
+      "tool_id": null
+    },
+    "in-process-agent": {
+      "mechanism": "Agent(subagent_type)",
+      "context_cost": "high",
+      "right_when": "small Claude returns that genuinely need orchestrator context (manager/lead/director consults, β); claude-pinned visual review (MCP/Playwright)",
+      "tool_id": "agent-tool",
+      "forbidden_for": ["build_chain"],
+      "_note": "BLOCKED for build-chain AND for cross-provider reviewers (running a Claude clone silently kills provider diversity)."
+    },
+    "subprocess-claude": {
+      "mechanism": "scripts/dispatch-claude.js (bounded, reap-safe)",
+      "context_cost": "low",
+      "right_when": "build-chain Claude roles; heavy Claude skills",
+      "tool_id": "claude"
+    },
+    "subprocess-cross-provider": {
+      "mechanism": "scripts/dispatch-agent.js -> codex/agy",
+      "context_cost": "low",
+      "right_when": "independent review/security (model diversity; the no-verdict-on-own-work invariant)",
+      "tool_id": ["codex", "agy"]
+    },
+    "api": {
+      "mechanism": "scripts/dispatch-api.js / curl (FUTURE wrapper)",
+      "context_cost": "low",
+      "right_when": "ONLY a provider capability with NO CLI (deep-research, GPT-Pro/API-only models)",
+      "tool_id": "api",
+      "availability_is_not_authorization": true,
+      "_note": "API availability NEVER implies API dispatch. CLI is mandatory for agent dispatch."
+    }
+  },
+
+  "defaults": {
+    "_doc": "Applied to every role unless its class or override changes them.",
+    "allowed_shapes": ["subprocess-claude"],
+    "forbidden_shapes": [],
+    "tool_id": "claude",
+    "cwd_policy": "canonical",
+    "file_scope": "read-only",
+    "env_allowlist": ["PATH", "HOME", "USERPROFILE", "CLAUDE_PROJECT_DIR", "ComSpec", "PATHEXT", "SystemRoot"],
+    "secret_policy": "none",
+    "timeout_ms": 900000,
+    "budget": { "tokens": 200000, "usd": 5.0 },
+    "output_policy": "envelope",
+    "required_fixtures": [],
+    "required_reviewers": [],
+    "coverage": { "binding_verdict": false, "completion_record_required": true, "cross_provider_required": false }
+  },
+
+  "class_derivation": {
+    "_doc": "Ordered rules over role-registry attributes. The reader takes the FIRST match. `when` keys are ANDed; a missing key is a wildcard. This keeps the role list single-sourced in role-registry.json — adding a role there auto-classifies it here.",
+    "rules": [
+      { "when": { "tier": "face", "provider": "openai" }, "class": "cross_provider_consult_lead" },
+      { "when": { "tier": "face" }, "class": "face" },
+      { "when": { "build_chain": true }, "class": "build_chain_worker" },
+      { "when": { "kind": "reviewer", "claude_pinned": true }, "class": "claude_pinned_reviewer" },
+      { "when": { "kind": "reviewer", "provider": "openai" }, "class": "cross_provider_reviewer" },
+      { "when": { "kind": "reviewer", "provider": "antigravity" }, "class": "cross_provider_reviewer" },
+      { "when": { "kind": "reviewer", "provider": "claude" }, "class": "claude_pinned_reviewer" },
+      { "when": { "tier": "director", "provider": "openai" }, "class": "cross_provider_consult_lead" },
+      { "when": { "tier": "director" }, "class": "manager" },
+      { "when": { "tier": "lead", "provider": "openai" }, "class": "cross_provider_consult_lead" },
+      { "when": { "tier": "lead", "provider": "antigravity" }, "class": "cross_provider_consult_lead" },
+      { "when": { "tier": "lead" }, "class": "manager" },
+      { "when": { "kind": "tool", "provider": "claude" }, "class": "tool_claude" },
+      { "when": { "kind": "tool", "provider": "openai" }, "class": "tool_cross_provider" },
+      { "when": { "kind": "tool", "provider": "antigravity" }, "class": "tool_cross_provider" }
+    ],
+    "fallback_class": "manager"
+  },
+
+  "role_classes": {
+    "face": {
+      "_doc": "alpha/beta/gamma/delta/epsilon — one identity, run as the harness session.",
+      "allowed_shapes": ["inline"],
+      "forbidden_shapes": ["api"],
+      "tool_id": null,
+      "cwd_policy": "canonical",
+      "file_scope": "read-write",
+      "secret_policy": "none",
+      "output_policy": "inline",
+      "coverage": { "binding_verdict": false, "completion_record_required": false, "cross_provider_required": false }
+    },
+    "build_chain_worker": {
+      "_doc": "frontend/backend/security builders+fixers, stub-scaffold — edit a repo, MUST be isolated.",
+      "allowed_shapes": ["subprocess-claude"],
+      "forbidden_shapes": ["in-process-agent", "api"],
+      "tool_id": "claude",
+      "cwd_policy": "worktree-required",
+      "file_scope": "worktree-only",
+      "env_allowlist": ["PATH", "HOME", "USERPROFILE", "CLAUDE_PROJECT_DIR", "ComSpec", "PATHEXT", "SystemRoot"],
+      "secret_policy": "none",
+      "timeout_ms": 1200000,
+      "budget": { "tokens": 300000, "usd": 4.0 },
+      "output_policy": "envelope+drain",
+      "required_fixtures": ["scripts/dispatch/dispatch-claude.test.js"],
+      "coverage": { "binding_verdict": false, "completion_record_required": true, "cross_provider_required": false }
+    },
+    "cross_provider_reviewer": {
+      "_doc": "frontend/backend reviewers, qa-reviewer (openai), security-reviewer (antigravity/agy — the Gemini lab; the individual gemini CLI is sunset) — independent verdict on a different model family. The security panel's Claude HUNTER lane is the sanctioned in-process-agent exception (sanctioned_lanes.security_claude_hunter; ADR-0016).",
+      "allowed_shapes": ["subprocess-cross-provider"],
+      "forbidden_shapes": ["in-process-agent", "api"],
+      "tool_id": ["codex", "agy"],
+      "cwd_policy": "canonical",
+      "file_scope": "read-only",
+      "env_allowlist": ["PATH", "HOME", "USERPROFILE", "GIT_CONFIG_COUNT", "GIT_CONFIG_KEY_0", "GIT_CONFIG_VALUE_0", "ComSpec", "PATHEXT", "SystemRoot"],
+      "secret_policy": "inject-from-auth-resolver",
+      "timeout_ms": 900000,
+      "budget": { "tokens": 200000, "usd": 5.0 },
+      "output_policy": "envelope+drain+redact",
+      "coverage": { "binding_verdict": true, "completion_record_required": true, "cross_provider_required": true }
+    },
+    "claude_pinned_reviewer": {
+      "_doc": "design-quality, visual-review, test-runner — judgment is VISUAL (Playwright-MCP), so Claude-pinned; independence is the BINDING VERDICT, not provider diversity (a sanctioned carve-out).",
+      "allowed_shapes": ["in-process-agent"],
+      "forbidden_shapes": ["api"],
+      "tool_id": "agent-tool",
+      "cwd_policy": "canonical",
+      "file_scope": "read-only",
+      "secret_policy": "none",
+      "output_policy": "envelope",
+      "coverage": { "binding_verdict": true, "completion_record_required": true, "cross_provider_required": false, "claude_pinned": true, "record_via": "record-inprocess" }
+    },
+    "cross_provider_consult_lead": {
+      "_doc": "cross-provider lead/director — the GPT product-leadership chain (design-lead, product-lead, director-of-product, director-of-growth): routes via subprocess-cross-provider like a reviewer; advises and authors but does not emit a binding verdict. The class encodes dispatch SHAPE, not org seniority (seniority lives in role-registry `tier`) — a GPT director and a GPT lead share this identical shape, so they REUSE this class rather than minting a director variant (the contract's anti-exception principle). Provider diversity preserved for the lead/director's authoring work. Mirrors cross_provider_reviewer shape with binding_verdict:false.",
+      "allowed_shapes": ["subprocess-cross-provider"],
+      "forbidden_shapes": ["in-process-agent", "api"],
+      "tool_id": ["codex", "agy"],
+      "cwd_policy": "canonical",
+      "file_scope": "read-only",
+      "env_allowlist": ["PATH", "HOME", "USERPROFILE", "GIT_CONFIG_COUNT", "GIT_CONFIG_KEY_0", "GIT_CONFIG_VALUE_0", "ComSpec", "PATHEXT", "SystemRoot"],
+      "secret_policy": "inject-from-auth-resolver",
+      "timeout_ms": 900000,
+      "budget": { "tokens": 200000, "usd": 5.0 },
+      "output_policy": "envelope+drain+redact",
+      "coverage": { "binding_verdict": false, "completion_record_required": true, "cross_provider_required": true }
+    },
+    "manager": {
+      "_doc": "directors + leads (incl. quality-lead) — small Claude returns that need orchestrator context; dispatched via the Agent tool, recorded via record-inprocess.",
+      "allowed_shapes": ["in-process-agent"],
+      "forbidden_shapes": ["api"],
+      "tool_id": "agent-tool",
+      "cwd_policy": "canonical",
+      "file_scope": "read-only",
+      "secret_policy": "none",
+      "output_policy": "envelope",
+      "coverage": { "binding_verdict": false, "completion_record_required": true, "cross_provider_required": false, "record_via": "record-inprocess" }
+    },
+    "tool_claude": {
+      "_doc": "stub-scaffold — claude build-chain infra tool.",
+      "allowed_shapes": ["subprocess-claude"],
+      "forbidden_shapes": ["in-process-agent", "api"],
+      "tool_id": "claude",
+      "cwd_policy": "worktree-required",
+      "file_scope": "worktree-only",
+      "secret_policy": "none",
+      "timeout_ms": 600000,
+      "budget": { "tokens": 100000, "usd": 1.0 },
+      "output_policy": "envelope+drain",
+      "coverage": { "binding_verdict": false, "completion_record_required": true, "cross_provider_required": false }
+    },
+    "tool_cross_provider": {
+      "_doc": "learner — cross-cycle meta-review on a different family (sees the Claude builder/reviewer shared blind spots).",
+      "allowed_shapes": ["subprocess-cross-provider"],
+      "forbidden_shapes": ["in-process-agent", "api"],
+      "tool_id": ["codex", "agy"],
+      "cwd_policy": "canonical",
+      "file_scope": "read-only",
+      "env_allowlist": ["PATH", "HOME", "USERPROFILE", "ComSpec", "PATHEXT", "SystemRoot"],
+      "secret_policy": "inject-from-auth-resolver",
+      "timeout_ms": 900000,
+      "budget": { "tokens": 200000, "usd": 5.0 },
+      "output_policy": "envelope+drain+redact",
+      "coverage": { "binding_verdict": false, "completion_record_required": true, "cross_provider_required": false }
+    }
+  },
+
+  "role_overrides": {
+    "_doc": "Per-role exceptions merged LAST (defaults <- class <- override). Empty by design — exceptions are a smell; prefer fixing the class derivation. Documented carve-outs only.",
+    "epsilon": { "allowed_shapes": ["inline"], "_note": "ε is the sprint conductor: runs inline as the session; its own shape is inline. The in-process roster (`in-process-agent`: managers/leads/design-quality/visual-review) is summonable directly by the ε CONDUCTOR in ANY spawn context — top-level (α wearing the ε face) OR a teammate-spawned ε — via the harness Agent tool, each spawn supplying a `scopeContract` (the scope-contract-guard is the real gate). A Claude subagent HAS the Agent tool iff its spec lists it, and ε's does. The spawn-hand stays with the conductor — a summoned roster member must NOT dispatch the build chain or cascade further, guaranteed STRUCTURALLY by scripts/checks/consult-roster-no-dispatch.js (a NON-EXEMPT consult role's spec carries no Bash/Agent (the one exemption, quality-lead, retains Agent), so it can't dispatch by construction; the dispatch-route-guard in-process build-chain block is a narrow backstop). A node SCRIPT still cannot call Agent (the ε runtime returns `requires-orchestrator` to hand that spawn to the ε-agent); ε also drives the CLI-routable roster (subprocess-claude builders via dispatch-claude.js, subprocess-cross-provider reviewers via dispatch-agent.js)." }
+  },
+
+  "mode_profiles": {
+    "_doc": "Per-mode dispatch permission profiles. A mode profile NARROWS which dispatch shapes a role-CLASS (`class_shapes`) or a specific role (`role_shapes`) may use WHILE IN THAT MODE. SECURITY INVARIANT (load-bearing): the class_derivation + role-registry constraint is the HARD CEILING — a mode profile can ONLY REMOVE a shape, NEVER ADD one the class/role does not already allow. A role gated to `subprocess-claude` MUST NOT resolve to `subprocess-cross-provider` just because a mode 'grants' it. Every shape a profile lists for a class/role MUST be a SUBSET of that class/role's own `allowed_shapes`; `dispatch-contract.js validate` FAILS a profile that widens past the class (the planted-widen test asserts this). Omitting a class/role = the class default applies (no narrowing). REPORT-ONLY ramp — additive; no dispatch is blocked on a mode profile yet (the runtime narrowing in validateDispatch is defense-in-depth, gated on an explicit `mode`).",
+    "adhoc": {
+      "_doc": "α+β+γ. Build-chain is Gamma-only; teammates β/γ only (team-guard). Builders → subprocess-claude; reviewers → cross-provider; managers/leads/visual → in-process. Each is the class default (identity narrowing — a valid subset).",
+      "class_shapes": {
+        "build_chain_worker": ["subprocess-claude"],
+        "cross_provider_reviewer": ["subprocess-cross-provider"],
+        "claude_pinned_reviewer": ["in-process-agent"],
+        "manager": ["in-process-agent"]
+      }
+    },
+    "sprint": {
+      "_doc": "ε conducts the full lifecycle; REAL dispatch on both route classes (CLI builders + cross-provider reviewers) + the in-process roster (managers/leads/visual-review).",
+      "class_shapes": {
+        "build_chain_worker": ["subprocess-claude"],
+        "cross_provider_reviewer": ["subprocess-cross-provider"],
+        "claude_pinned_reviewer": ["in-process-agent"],
+        "manager": ["in-process-agent"]
+      },
+      "alpha_only_shapes": [],
+      "_alpha_only_note": "NO shape is α-only. The `in-process-agent` shape (managers/leads/design-quality/visual-review) is summonable by the ε CONDUCTOR in ANY spawn context — top-level (α wearing the ε face) OR a teammate-spawned ε — via the harness Agent tool, each spawn supplying a `scopeContract` (a Claude subagent has the Agent tool iff its spec lists it; ε's does). The array stays, empty, so a shape can be made α-only by adding it. The real gate on a roster spawn is the scope-contract-guard (scopeContract required, fail-closed); the spawn-hand stays with the conductor — a summoned roster consult MUST NOT dispatch the build chain or cascade (guaranteed STRUCTURALLY by scripts/checks/consult-roster-no-dispatch.js — a NON-EXEMPT consult role's spec carries no Bash/Agent (the one exemption, quality-lead, retains Agent); the dispatch-route-guard in-process build-chain block is a narrow backstop; ε remains the sole builder-dispatcher). CARVE-OUT: a non-Claude orchestrator (Codex) has NO harness Agent tool, because it is not a Claude-harness agent, so it uses CLI routes only. This annotation does NOT narrow class_shapes."
+    },
+    "oneshot": {
+      "_doc": "δ standalone skeleton build. Build-chain via subprocess-claude (isolated worktree); no cross-provider reviewers required for a skeleton run.",
+      "class_shapes": {
+        "build_chain_worker": ["subprocess-claude"]
+      }
+    },
+    "solo": {
+      "_doc": "Alpha builds directly, agents-when-helpful — flexible but still INSIDE every class ceiling. No extra narrowing beyond the class defaults.",
+      "class_shapes": {}
+    }
+  },
+
+  "sanctioned_lanes": {
+    "_doc": "A sanctioned lane is a NAMED, NARROWLY-SCOPED dispatch that is INTENTIONALLY off the class default shape — registered HERE (registry-as-SoT) rather than suppressed by a wrapper-local `!blocking` conditional. The dispatch-contract reader's `sanctionedLane({role, shape, lane})` returns sanctioned:true ONLY when ALL of: (a) the lane name is registered here, (b) the role's DERIVED class is in the lane's applies_to_classes, AND (c) the proposed shape equals the lane's shape. A sanctioned lane is ADDITIVE and REGISTER-ONLY: it changes NO validateDispatch exit path and grants NO new shape to validateDispatch — it is a separate consult the wrapper makes so the informational note prints in BOTH report-only and blocking (ENFORCE) modes and the sanctioned lane NEVER exits 1. A genuinely-mismatched NON-sanctioned shape under blocking still refuses exactly as before. NO wildcard (a wildcard lane would sanction more than it names) — each lane enumerates its exact classes + the one shape it sanctions.",
+    "review_fallback": {
+      "_doc": "The --review-fallback lane (dispatch-claude.js): a cross-provider REVIEW role is routed through subprocess-claude (a Claude clone) INTENTIONALLY when its normal provider (openai/gemini) is quota-dead. Honest visible debt — the completion record still stamps fallback:true + provider:claude + quota_fallback_from so coverage-gate sees the cross-provider debt; this lane only stops the ENFORCE flip from BRICKING the fallback exactly when it is most needed. READ-ONLY review roles only — build-chain roles are refused this lane upstream (dispatch-claude.js guard).",
+      "flag": "--review-fallback",
+      "shape": "subprocess-claude",
+      "applies_to_classes": ["cross_provider_reviewer", "cross_provider_consult_lead"],
+      "completion_record": { "fallback": true, "provider": "claude", "requires": ["quota_fallback_from"] }
+    },
+    "security_claude_hunter": {
+      "_doc": "ADR-0016: the security 3-lab panel's Claude HUNTER lane (security-reviewer.third_pass, claude-opus-4-8@max) + its fable-5 planner/judge are the ONE legal Claude shape for a cross_provider_reviewer — in-process-agent, summoned by ε via the harness Agent tool with a scopeContract, evidenced by a record-inprocess completion (the same ok:true record gauntlet-verify reads). NOT a fallback (that is review_fallback) — a DELIBERATE cross-lab hunter. A node script cannot summon it (requires-orchestrator); dispatch-review.js fires the agy + gpt CLI passes and hands the Claude lane to ε. Registered here so the informational note prints and the lane never exits 1; the class default still forbids in-process-agent for every non-sanctioned reviewer dispatch.",
+      "flag": "--security-claude-hunter",
+      "shape": "in-process-agent",
+      "applies_to_classes": ["cross_provider_reviewer"],
+      "completion_record": { "provider": "claude", "requires": ["record_via_inprocess"] }
+    }
+  },
+
+  "skills": {
+    "_doc": "SEEDED for skill-execution-routing — NOT yet earned. A skill is `inline` until it PASSES both: runs headless AND pays + good. `subprocess` entries below are CANDIDATES (classified by weight) carrying subprocess_verified:false until a real smoke run stamps them. The reader treats an unverified `subprocess` skill as `inline` (fail-closed: never trust an unverified subprocess classification).",
+    "classification": "seeded-candidates",
+    "candidates": {
+      "scan:full": { "weight": "heavy", "execution": "subprocess", "subprocess_verified": false },
+      "research:deep": { "weight": "heavy", "execution": "subprocess", "subprocess_verified": false, "security_track": true },
+      "qa:audit": { "weight": "heavy", "execution": "subprocess", "subprocess_verified": false },
+      "redteam:full": { "weight": "heavy", "execution": "subprocess", "subprocess_verified": false },
+      "sleep:deep": { "weight": "heavy", "execution": "subprocess", "subprocess_verified": false },
+      "learn:deep": { "weight": "heavy", "execution": "subprocess", "subprocess_verified": false },
+      "session:end": { "weight": "mixed", "execution": "inline-required", "subprocess_verified": false, "_note": "learn/mine/sleep/TRACKER-reconcile are subprocess-able; the handoff needs the LIVE conversation -> inline-required. Split, don't route wholesale." },
+      "session:handoff": { "weight": "mixed", "execution": "inline-required", "subprocess_verified": false },
+      "session:dump": { "weight": "mixed", "execution": "inline-required", "subprocess_verified": false }
+    }
+  }
+}

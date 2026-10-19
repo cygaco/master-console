@@ -1,0 +1,17 @@
+import type { NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
+
+// Thin middleware: all session-refresh logic lives in updateSession so this file
+// stays a one-liner. No-ops when the Supabase seam is unconfigured.
+export async function middleware(request: NextRequest) {
+  return updateSession(request);
+}
+
+export const config = {
+  matcher: [
+    // Run on everything EXCEPT static assets and image files. Critically, the
+    // auth routes (/auth and /auth/callback) are NOT excluded — the PKCE
+    // callback must run through middleware to persist the refreshed session.
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
+};

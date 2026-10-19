@@ -1,0 +1,51 @@
+{
+  "schema": "mc/dispatch/panel-lane-manifest/v1",
+  "_doc": "The machine-readable lane contract for the security 3-lab panel. Declares the binding `panel-3lab` profile and the degraded `panel-2family` floor, and per-lane the {provider, tool_id, shape} identity. This file is a CONTRACT VIEW, NOT a source of truth: lane identity DERIVES from passesOf('security-reviewer') (role-registry keystone) + providerToolId() (dispatch-agent) + support-matrix.json status. validatePanelManifest() (scripts/dispatch/panel-lanes.js) fail-CLOSES on ANY drift between this view and those three sources — so a hand-edit that diverges the manifest is a loud RED, never a silent false-green. Consumed by the panelStatus reducer + the attestation + the CLI-only panel-runner tooth in dispatch-review.js.",
+  "_single_source": "Lab identity = passesOf('security-reviewer') primary/second_pass/third_pass (antigravity/openai/claude) mapped to tool-id via providerToolId(); lane STATUS = support-matrix.json rows. No 4th source. Adding/renaming a lab is a role-registry edit; this manifest is validated against it.",
+  "profiles": {
+    "panel-3lab": {
+      "binding": true,
+      "required": ["gpt", "claude", "agy"],
+      "optional": [],
+      "min_families": 2,
+      "_note": "The BINDING panel exit. Every required lane must be alive + clean + attested on its contracted provider, with >=2 distinct provider families OBSERVED (not manifest-labelled). A down required lane (e.g. agy) resolves BLOCKED-ON-OPERATOR — never a silent pass."
+    },
+    "panel-2family": {
+      "binding": false,
+      "required": ["gpt", "claude"],
+      "optional": ["agy"],
+      "min_families": 2,
+      "_note": "The DEGRADED interim floor while agy liveness is operator-owned. Buildable work runs here (2-family: GPT + Claude). Passing panel-2family does NOT satisfy the binding panel-3lab exit."
+    }
+  },
+  "lanes": {
+    "gpt": {
+      "provider": "openai",
+      "tool_id": "codex",
+      "shape": "subprocess-cross-provider",
+      "pass_key": "second_pass",
+      "model": "gpt-5.6-sol",
+      "_role": "GPT jailbreak lab — CLI subprocess (dispatch-agent.js). An in-process-agent resolution is a contract violation (silent Claude clone)."
+    },
+    "claude": {
+      "provider": "claude",
+      "tool_id": "claude",
+      "shape": "in-process-agent",
+      "pass_key": "third_pass",
+      "model": "claude-opus-4-8",
+      "sanctioned_in_process": true,
+      "sanctioned_lane_id": "security_claude_hunter",
+      "_role": "The ONE legal in-process Claude lane — the ADR-0016 hunter (third_pass opus@max), summoned by e via the Agent tool + record-inprocess. Positive-identity-scoped: lane 'claude' AND provider 'claude'. A gpt/agy lane can NEVER assert this exemption."
+    },
+    "agy": {
+      "provider": "antigravity",
+      "tool_id": "agy",
+      "shape": "subprocess-cross-provider",
+      "pass_key": "primary",
+      "model": "gemini-3.1-pro-high",
+      "fallback": "openai",
+      "sunset_ref": "ADR-0031",
+      "_role": "Gemini lab via Antigravity (the individual gemini CLI is sunset) — CLI subprocess. CONTRACTED; liveness is read from support-matrix agy-antigravity.status, and a zero-record agy lane resolves BLOCKED, never a pass."
+    }
+  }
+}

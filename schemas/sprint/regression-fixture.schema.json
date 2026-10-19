@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/sprint/regression-fixture/v1",
+  "title": "MC Sprint v0.1 — Regression Fixture",
+  "description": "Per-sprint fixture record under paths.sprintRegressionCorpus/<SP-id>/<RF-id>.yaml. Captures the executable contract that the sprint's originally-reported failure is closed and would still be detected if it regressed.",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "sprint_id",
+    "origin",
+    "bug_classes_closed",
+    "cited_tests",
+    "reproduction_kind",
+    "created_at",
+    "updated_at",
+    "fixture_path"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "mc/sprint/regression-fixture/v1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^RF-[0-9]{8}-[0-9]{3}$",
+      "description": "Sprint-scoped fixture id following the project's other sprint ids (SP/PC/T/I/ESD/AP/RL)."
+    },
+    "sprint_id": {
+      "type": "string",
+      "pattern": "^(SP-[0-9]{8}-[0-9]{3,4}|S-[A-Z0-9]+-[0-9]{2,3})$"
+    },
+    "origin": {
+      "type": "object",
+      "required": ["kind", "ref"],
+      "additionalProperties": false,
+      "description": "Pointer to what surfaced the failure this fixture closes.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["bug_id", "ticket_id", "user_report", "internal_observation"]
+        },
+        "ref": {
+          "type": "string",
+          "description": "Free-text reference. For bug_id: I-id; for ticket_id: T-id; for user_report: ts + short summary; for internal_observation: source + ts."
+        }
+      }
+    },
+    "bug_classes_closed": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Named bug classes the fixture claims to close. Match plan_contract.goal_verification.bug_classes_closed."
+    },
+    "cited_tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "test_name"],
+        "additionalProperties": false,
+        "properties": {
+          "file": { "type": "string" },
+          "test_name": { "type": "string" }
+        }
+      },
+      "minItems": 1,
+      "description": "One or more cited tests. The release ship-gate runs each."
+    },
+    "reproduction_kind": {
+      "type": "string",
+      "enum": ["executable", "not_applicable"]
+    },
+    "justification": {
+      "type": "string",
+      "description": "REQUIRED when reproduction_kind=not_applicable. Non-empty string."
+    },
+    "fixture_path": {
+      "type": ["string", "null"],
+      "description": "Self-reference: the path to this YAML record under paths.sprintRegressionCorpus/<sprint_id>/. Useful when the record is loaded out of context."
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" }
+  }
+}

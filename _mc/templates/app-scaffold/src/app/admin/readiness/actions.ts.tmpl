@@ -1,0 +1,96 @@
+"use server";
+
+import path from "node:path";
+import { revalidatePath } from "next/cache";
+import { resolveAdminActor } from "@/lib/admin/config";
+import { patchChecklistItem } from "@/lib/readiness/writeback";
+
+// Result the client can surface — we never throw-and-swallow. A denied gate, an
+// un-toggleable item, or a missing id all come back as { ok: false } with a
+// reason the panel can render.
+export type ToggleReadinessResult =
+  | { ok: true; id: string; checked: boolean }
+  | { ok: false; error: string };
+
+// FOUNDERS_CHECKLIST.md is the source of truth (no server-persisted check state).
+// It lives at the product repo root; resolve it from cwd the same way the
+// producer (scripts/scaffold/readiness-report.js) reads it.
+function checklistPath(): string {
+  return path.join(process.cwd(), "FOUNDERS_CHECKLIST.md");
+}
+
+function formValue(formData: FormData, name: string): string {
+  const value = formData.get(name);
+  return typeof value === "string" ? value.trim() : "";
+}
+
+// Derive an item's owner_class SERVER-SIDE from the readiness producer (the source
+// of truth). The authorization decision must NOT depend on client form input — a
+// client cannot relabel a sprint-work/waiver gate as "owner-action" to force a
+// phantom patch. Mirrors the page's loadReport() require pattern (CJS dev-tooling
+// module at the product repo root; resolved at request time, server-only).
+// Fail-closed: any producer/lookup failure returns null → the toggle is rejected.
+function resolveOwnerClass(id: string): string | null {
+  try {
+    const p = require("node:path") as typeof import("node:path");
+    const producerPath = p.join(
+      process.cwd(),
+      "scripts",
+      "scaffold",
+      "readiness-report.js",
+    );
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { buildReadinessReport } = require(producerPath);
+    const report = buildReadinessReport(process.cwd(), {
+      generated_at: new Date().toISOString(),
+    }) as { items?: Array<{ id: string; owner_class: string }> };
+    const found = (report.items || []).find((it) => it.id === id);
+    return found ? found.owner_class : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function toggleReadinessItemAction(
+  formData: FormData,
+): Promise<ToggleReadinessResult> {
+  // GATE: same founder check as the admin route — allowlist is the first gate,
+  // default-deny. (resolveAdminActor + !actor.allowed; the prod dev-email
+  // fallback fails closed inside resolveAdminActor.)
+  const actor = await resolveAdminActor();
+  if (!actor.allowed) {
+    return { ok: false, error: "Admin access denied: founder not allowlisted" };
+  }
+
+  const id = formValue(formData, "id");
+  if (!id) {
+    return { ok: false, error: "Missing readiness item id" };
+  }
+
+  // Only owner-action items map to a toggleable FOUNDERS_CHECKLIST.md line.
+  // SECURITY: owner_class is derived SERVER-SIDE (resolveOwnerClass) from the
+  // producer, never trusted from client form input. waiver / sprint-work gates are
+  // injected (no .md backing) and are not founder-toggleable — reject rather than
+  // attempt a phantom patch; an unknown id (absent from producer output) is rejected.
+  const ownerClass = resolveOwnerClass(id);
+  if (ownerClass === null) {
+    return { ok: false, error: "Readiness item not found" };
+  }
+  if (ownerClass !== "owner-action") {
+    return {
+      ok: false,
+      error: `Item is not founder-toggleable (owner_class=${ownerClass})`,
+    };
+  }
+
+  const nextChecked = formValue(formData, "nextChecked") === "true";
+
+  const result = patchChecklistItem(checklistPath(), id, nextChecked);
+  if (!result.ok) {
+    // missing-id / read / write failures surface, never silently no-op.
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/admin/readiness");
+  return { ok: true, id: result.id, checked: result.checked };
+}

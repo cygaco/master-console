@@ -1,0 +1,18 @@
+{
+  "id": "role-binding-unbound-dispatch-fails-closed",
+  "gate": "role-binding",
+  "bound_core": "CORE-1",
+  "input": {
+    "actor_kind": "dispatched_worker",
+    "role_hint": null,
+    "explicit_user_instruction": null,
+    "validated_workorder_or_cli_binding": null,
+    "explicit_top_level_helm_binding": null
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "no binding resolved through the precedence order (explicit_user -> validated_workorder_or_cli -> explicit_top_level_helm); a dispatched worker MUST fail closed (worker_default_when_unbound: FAIL_CLOSED), never default to alex-alpha."
+  },
+  "kernel_scope": "IN",
+  "note": "Evaluated against role-binding.json by conformance-matrix.js's role-binding gate."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "mc/fence-falsifier-suite/v1",
+  "_note": "The Seam-E protected-ref fence STANDING falsifier suite (ADR-0035). Consumed by scripts/checks/falsifier-liveness.js --manifest, wired as a release-gate (release-gates.js gate `fence_falsifier_liveness`). This manifest IS the expected-set: falsifier-liveness runs EACH file per-file (>=1 test, skipped===0, fail===0) and BLOCKS on any file that is missing, skipped, or red — so the suite can never pass graceful-empty (a deleted/renamed fence falsifier fails liveness, not silently drops). Non-record-trust schema, so the record-trust-gate --built step is not applicable (falsifier-liveness skips it by schema).",
+  "surfaces": [
+    {
+      "name": "seam-e-protected-ref-fence",
+      "_note": "The full fence set the 5-part arming battery exercises: brokered-write LANDS + un-brokered REFUSED (broker-acceptance), the reftxn refusal falsifiers (noop-content, not-installed, stdin-fail-closed), un-brokered merge bypass, fence-token forged/stale/injected, precommit-bypass harmless, and the worktree-cwd fail-closed guard.",
+      "falsifier_fixtures": [
+        "scripts/dispatch/falsifiers/broker-acceptance.falsifier.test.js",
+        "scripts/dispatch/falsifiers/fence-token-forged-stale-injected.falsifier.test.js",
+        "scripts/dispatch/falsifiers/fence-worktree-missing-script-failclosed.falsifier.test.js",
+        "scripts/dispatch/falsifiers/precommit-bypass-harmless.falsifier.test.js",
+        "scripts/dispatch/falsifiers/reftxn-hook-noop-content.falsifier.test.js",
+        "scripts/dispatch/falsifiers/reftxn-hook-not-installed.falsifier.test.js",
+        "scripts/dispatch/falsifiers/reftxn-stdin-fail-closed.falsifier.test.js",
+        "scripts/dispatch/falsifiers/unbrokered-merge-bypass.falsifier.test.js"
+      ],
+      "positive_companions": [
+        "scripts/dispatch/falsifiers/fence-worktree-resolution-land.positive.test.js"
+      ]
+    }
+  ]
+}

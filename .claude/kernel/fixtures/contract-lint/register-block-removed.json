@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-register-block-removed",
+  "gate": "contract-lint",
+  "input_file": "register-block-removed.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "the '### Policy-block register' table enumerates P3.1 ('§3 Missing block'), but no '#### P3.1 -- ...' heading exists anywhere in the document -- the block was silently removed while its register row survived. A registered block-id with no corresponding parsed block must fail closed (structural, exit 2), never read clean just because every block the parser DID find is individually well-formed."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js), NOT a kernel conformance-matrix fixture -- contract-lint's inputs are contract-shaped .md documents, not {input,expect} JSON. This descriptor documents the paired .md fixture's expected result; contract-lint.test.js reads register-block-removed.md directly. P1.1 and P2.1 are both well-formed, individually-valid blocks (this is not a malformed-heading/malformed-trailer case) -- the ONLY violation this fixture exercises is register completeness: the appendix table's own enumeration disagrees with what the document actually contains."
+}

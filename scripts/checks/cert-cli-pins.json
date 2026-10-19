@@ -1,0 +1,9 @@
+{
+  "$schema": "mc/cert-cli-pins/v1",
+  "_doc": "certification-gate CLI version PINS (ADR-0016). The dispatch CLIs are standalone binaries (NOT npm) whose bundled model registries rot — a version drift can silently change which models are servable. cert-attest.js captures the LIVE CLI behavior per probe (the effective-model artifact is the real drift witness); this file records the verified baseline. ENFORCEMENT DEBT: a live-version-vs-pin drift check is not yet wired (candidate: cert-attest.js records the live `--version` into each artifact + a check compares).",
+  "pins": {
+    "codex": { "version": "0.144.1", "provider": "openai", "path_family": "AppData/Local/Programs/OpenAI/Codex/bin", "models_verified": ["gpt-5.6-sol"], "note": "gpt-5.6 family; sol attestation via cert-attest.js." },
+    "agy": { "version": "1.1.2", "provider": "antigravity", "path_family": "AppData/Local/agy/bin", "binary": "agy.EXE (native PE32+, not .cmd shim)", "models_verified": ["gemini-3.1-pro-high"], "note": "invocation: agy --model <id> --print-timeout <bound> -p '<prompt>' (prompt-as-arg, no stdin; `agy models` HANGS — never script it). Model id is the kebab display name, NOT gemini-3.1-pro-preview. All Gemini routes through agy." },
+    "claude": { "version": "2.1.211", "provider": "claude", "models_verified": ["claude-opus-5 (CLI serve, --effort max)"], "note": "Claude-5 family (fable-5/sonnet-5) + opus-4-8. CLI serve: `claude -p --output-format json --model claude-opus-5 --effort max` → exit 0, envelope modelUsage.canonicalModel=claude-opus-5 / provider firstParty / contextWindow 1000000 (no 400, no fallback). opus-4-8 stays served. In-process (Agent-tool) pins hold at opus-4-8." }
+  }
+}

@@ -1,0 +1,242 @@
+# Master Console
+
+**Master Console.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
+
+**Version:** 2.1.0
+**Skills:** 235 slash commands
+**Hooks:** 78 automated hooks
+**License:** [AGPL-3.0](LICENSE)
+
+## Who it is for
+
+Master Console is for developers and small teams who already use [Claude Code](https://claude.com/claude-code) and want it to run like a disciplined engineering organisation instead of a single chat: planned work, independent review, enforced policies and memory that survives between sessions. You install it into your own project; it adds agents, slash commands and hooks to that project's `.claude/` directory.
+
+## What it does
+
+- **Plans and builds** — an architect, builders working in isolated git worktrees, and a sprint lifecycle (plan → design → build → gauntlet → release → retro).
+- **Reviews** — independent reviewers, a QA reviewer and a security panel check every build, optionally on a different AI lab than the one that wrote the code.
+- **Enforces** — every policy names an enforcer; `/scan:full` runs the whole suite.
+- **Remembers** — an events log, scored learnings and reasoning traces, stored in your project.
+
+## Maturity and platform limits
+
+- **Windows-first.** The installer is PowerShell (`install.ps1`); the hooks and scripts are Node.js. Other platforms are untested; a Node-based installer (`scripts/mc-setup.js`) exists but is not verified outside Windows.
+- **Prerequisites:** Claude Code, **Node.js 20 or newer** (`package.json` declares `engines.node >= 20`), Git, and PowerShell for `install.ps1`. Provider CLIs (OpenAI Codex, Antigravity) are optional; a missing CLI degrades to the fallback declared for that role.
+- **Maturity:** version 2.1.0, actively developed, single maintainer. Expect rough edges; deprecated aliases from the pre-2.0.0 names are removed in 2.2.0.
+
+## Five-minute path
+
+```powershell
+# 1. Clone the engine next to your project
+git clone https://github.com/cygaco/master-console.git
+
+# 2. Install it into your project (add -DryRun first to see the plan without writing)
+cd master-console
+.\install.ps1 -Target <your-project-dir>
+
+# 3. Open Claude Code in <your-project-dir> and check the install
+#    /mc:health      green / yellow / red per system, with plain-English fixes
+
+# 4. First useful workflow: run every check and get one health report
+#    /scan:full
+```
+
+Then read [USER_GUIDE.md](USER_GUIDE.md) for the daily rhythm. Details of each step are under [Quick start](#quick-start) below.
+
+## Naming note
+
+The brand is **Master Console**; the engine in this repository was built and released under its previous name. The rebrand landed in two steps:
+
+1. **Brand layer (this README, the docs, the story)** — landed before 2.0.0.
+2. **Identifier layer** — 2.0.0. The package name is `mc`; skills live under `mc:*` (and `scan:mc-*`); environment variables are `MC_*`; the framework directory is `_mc/` and per-install state is `.mc/`; the per-install gap register is a file named MC.md (created on first use); release tags are `mc@<version>` from 2.0.0 on. The previous identifiers keep working through 2.1.x as deprecated aliases and read-fallbacks and are removed in 2.2.0 (moved from 2.1.0) — the exact policy is in [CHANGELOG.md](CHANGELOG.md). Installs at 1.2.0 upgrade through the 1.2.0-to-2.0.0 migration set shipped with the release.
+
+## What is this?
+
+You know how using Claude Code feels like talking to a smart colleague? Master Console turns that colleague into a company.
+
+Instead of one assistant you get **Alex**, one identity shown in five faces depending on the work:
+
+| Face | Symbol | What Alex is doing |
+|------|--------|--------------------|
+| Alpha | α | Running it — architect, spec creator, orchestrator, your main session |
+| Beta | β | Checking it — independent judgment on decisions, read-only, cites precedent |
+| Gamma | γ | Delivering a single feature (adhoc build) — dispatches builders and the review gauntlet |
+| Delta | δ | Delivering a full skeleton build (oneshot) — runs standalone with a state machine |
+| Epsilon | ε | Delivering a sprint — plan → design → build → gauntlet → release → retro |
+
+Under Alex sit the **departments** — Product (with Quality), Engineering and Growth — as directors, leads and specialist workers: builders and fixers that write code in isolated git worktrees, code-quality reviewers, a QA reviewer (traceability, integrity and 13 failure-mode personas), a three-lab security panel, and design/visual reviewers. Roles, models and reporting lines come from one registry file, `.claude/agents/_org/role-registry.json`. See [AGENTS.md](AGENTS.md) and [AGENT-STRUCTURE.md](AGENT-STRUCTURE.md).
+
+Around the agents:
+
+- **235 skills** — slash commands such as `/fix:fast`, `/research:deep`, `/sprint:full`, `/sleep:deep`. They live under `.claude/commands/<namespace>/<name>.md`; the count includes the deprecated aliases kept for one release under the previous skill names.
+- **78 hooks** — things that happen automatically around every prompt, edit and command: secret scanning, formatting, path guards, dispatch guards, tracker validation. Registered in `.claude/settings.json`; the scripts are under `scripts/hooks/`.
+- **Memory** — an append-only events log, scored learnings with a validation lifecycle, reasoning traces, and a sleep/dream consolidation cycle that prunes and promotes what the system learned.
+- **Enforcement** — every policy names an enforcer or logs the gap; `/scan:full` runs the whole enforcer suite; the sprint lifecycle refuses to close without real evidence.
+- **Cross-provider dispatch** — reviewers and judges can run on a different AI lab than the one that wrote the code, through each lab's own CLI.
+
+## Quick start
+
+### What you need
+
+1. **Claude Code** — the CLI from Anthropic
+2. **Node.js 20+** — the hooks and scripts are JavaScript (`package.json` declares `engines.node >= 20`)
+3. **Git** — for version control and builder isolation (builders work in worktrees)
+
+### Install
+
+Open your project in your editor, then in a fresh terminal:
+
+```
+# 1. Clone the engine next to your project
+git clone https://github.com/cygaco/master-console.git
+
+# 2. Run the installer from inside your project
+cd <your-project>
+node ../master-console/scripts/mc-setup.js .
+
+# 3. Start Claude Code in your project and finish setup
+/mc:setup     # completes any missing step: clone, install, CLAUDE.md merge, hooks
+/mc:tour      # guided introduction
+```
+
+The PowerShell installer is equivalent: `..\master-console\install.ps1 -Target <your-project>` (add `-DryRun` to see the plan without writing). Both paths copy the agents, skills, hooks, schemas and templates enumerated in `.claude/framework-manifest.json`, detect your tech stack, write `.claude/manifest.json`, compile `.claude/settings.json`, and record an install snapshot so `/mc:update` can upgrade you later.
+
+### Optional: provider CLIs
+
+The role registry spreads roles across providers. Builders, fixers and the engineering leads run on Claude; the code-quality reviewers run on a different Claude model than the builders; Beta, the Product and Growth directors and leads, the ops analyst and the cabinet consult run on OpenAI through the Codex CLI; the security reviewer's Gemini lane and the research lead run through the Antigravity `agy` CLI. Dispatch is CLI-only — the engine never calls a provider API where a CLI exists.
+
+```powershell
+# OpenAI — Beta, Product and Growth judgment, ops analyst
+npm i -g @openai/codex
+codex login
+
+# Gemini — through the Antigravity `agy` CLI (the standalone `gemini` CLI is not used)
+# Install and authenticate per the Antigravity CLI setup; see ANTIGRAVITY.md.
+```
+
+A missing CLI degrades to the fallback declared for that role in the registry. The security panel is designed to refuse rather than review with a single lab. Run `/scan:environment` after install to see what is reachable. Full per-role chart: [AGENTS.md § Dispatch Topology](AGENTS.md).
+
+### Verify
+
+```
+/mc:health    — checks every system, reports green / yellow / red with plain-English fixes
+/mc:doctor    — the full-coverage diagnostic
+```
+
+Then read **[USER_GUIDE.md](USER_GUIDE.md)** — the daily-rhythm guide: modes, the terminal setup, skill sequences, and (most important) git discipline.
+
+## Start here — five skills
+
+| Skill | What it does |
+|-------|--------------|
+| `/fix:fast` | Quick diagnosis: read the error, find the cause, fix it, verify |
+| `/fix:deep` | Deep fix: framework selection, five candidate solutions, root cause, prevention |
+| `/scan:full` | Run every check in parallel and get one unified health report |
+| `/session:handoff` | Write a rich handoff document for the next session |
+| `/commit:land` | Commit, push the branch, merge into the default branch |
+
+## Modes
+
+| Mode | Who is in the room | When |
+|------|--------------------|------|
+| `/mode:solo` | You + Alpha | Quick edits, reading, skill management — most of the day |
+| `/mode:adhoc` | Alpha + Beta + Gamma | One feature with oversight: plan, judge, build, gauntlet |
+| `/mode:oneshot` | Delta alone | Rebuild a whole codebase from its specs, feature by feature |
+| `/mode:sprint` | Epsilon conducting the org | Full lifecycle with plan contracts, tickets, release and retro |
+
+Entering a mode only sets it up; nothing builds until you give an explicit task.
+
+## Repository layout
+
+```
+.
+├── CLAUDE.md               — Alex's identity and operating doctrine (merged into your project)
+├── AGENTS.md               — agent system router; AGENT-STRUCTURE.md — the org tree
+├── install.ps1             — PowerShell installer; scripts/mc-setup.js — Node installer
+├── .claude/
+│   ├── agents/             — president/ (the five faces), engineering/, product/, growth/, _org/ (role registry)
+│   ├── commands/           — the 235 skills, one .md per slash command, grouped by namespace
+│   ├── project/reference/  — reasoning frameworks, operational loop, sprint workflow reference
+│   └── settings.json       — compiled hook wiring (78 hooks)
+├── scripts/                — hooks/, dispatch/, sprint/, paths/, checks/, mc/ (install + release engine)
+├── framework/              — paths registry source (framework/paths.registry.json)
+├── _requirements/          — spec templates: canonical brief, design system, architecture, features, ops, security, testing
+├── _mc/                    — framework zone: product templates (app scaffold, sprint, roadmap, portfolio, canonical docs)
+├── patterns/               — validated implementation patterns
+├── trackers/               — the enforced tracker system (ships templates; /trackers:init creates TRACKER.md and the epics/ and sprints/ directories; scripts/trackers/validate.js is the validator)
+└── schemas/
+```
+
+The `.claude/` directory in this repository **is** the framework; the installer copies it into your project's `.claude/`. Paths inside agent specs are written for the installed location.
+
+Project paths are never hard-coded in skills, agents or hooks; they are `paths.X` keys resolved from `framework/paths.registry.json` (the source) into `.claude/paths.json` (generated by `node scripts/paths/build.js`).
+
+## Skills by namespace
+
+Browse `.claude/commands/`. The namespaces:
+
+| Namespace | Purpose |
+|-----------|---------|
+| `fix`, `qa`, `redteam`, `ui` | Diagnose and fix; QA personas; security red-team; design-system review |
+| `scan` | Enforcers and health checks — `/scan:full` runs them all |
+| `mode`, `session`, `turbo`, `permissions` | Modes, checkpoints, handoffs, resume, speed levers |
+| `sprint`, `epic`, `trackers`, `roadmap`, `issues`, `report` | The planning and tracking lifecycle |
+| `oneshot`, `karpathy`, `etc` | Autonomous skeleton builds; closed-loop artifact optimization; skill authoring with eval packs |
+| `learn`, `sleep`, `beta`, `memory`, `reasoning` | Learning extraction, consolidation, judgment model, memory verification |
+| `research`, `discover`, `maps`, `docs` | Multi-provider research; system discovery; relationship maps |
+| `agents`, `models`, `hooks`, `skills`, `paths`, `manifest`, `enforcement`, `events` | Managing the engine itself |
+| `bootstrap`, `portfolio`, `admin`, `cockpit`, `panel`, `guides`, `knowledge`, `playbook` | Product on-ramps, multi-product operation, founder panels, guide and knowledge libraries |
+| `growth`, `content` | Message briefs, angles, landing pages, ad creative, posts |
+| `mc` | Install, update, release, health, diagnostics of the engine (the pre-2.0.0 `warp` names remain as deprecated aliases until 2.2.0) |
+| `commit`, `linters`, `fav`, `check` | Landing work; linters; favourites; deprecated `check:*` aliases for `scan:*` |
+
+## Requirements system
+
+The installer scaffolds a `_requirements/` folder skeleton — one place for every document a product needs:
+
+| Folder | What goes here |
+|--------|------|
+| `00-canonical` | Product brief, model, glossary, golden paths |
+| `01-design-system` | UX principles, colours, components |
+| `03-architecture` | Stack, data flow, security |
+| `04-features` | Feature specs (PRD, stories, inputs) |
+| `05-operations` … `10-contracts` | Operations, security review, testing, automation, integrations, contracts |
+
+The folders ship empty; author your specs from the templates in `_requirements/_standards/` (PRD, high-level and granular stories, inputs, review process). `_requirements/_audits/AUDIT_TEMPLATE.md` carries `<!-- GUIDANCE: -->` comments for a systematic review.
+
+## Your project
+
+The installer creates `.claude/manifest.json` in your project. It tells Alex what framework you use, where your source lives and what you are building. Edit `CLAUDE.md` to describe your project, edit the manifest to configure hooks and guards, author feature specs under `_requirements/` using the templates in `_requirements/_standards/`, and use `/skills:create` to add your own skills.
+
+## Public product boundary
+
+This repository is a **generated distribution** of a private upstream. It contains the blank framework only: agents, skills, hooks, scripts, schemas, templates and docs. It contains no operator, customer, session, journal, memory or private-product data.
+
+- **Where your state lives.** After install, everything your own use produces stays in *your* project: `.claude/project/events/`, `.claude/project/memory/`, `.claude/runtime/`, and `.mc/`. The installer adds these to your `.gitignore`, so they are not committed by default.
+- **Verify the boundary locally.** From the repository root:
+
+  ```
+  node ci/no-personal-content.js --root .
+  ```
+
+  The check needs a fingerprint file (`--fingerprints <file>` or the `MC_NPC_FINGERPRINTS_FILE` environment variable). The fingerprints are private by design; how they are supplied is explained in [CONTRIBUTING.md](CONTRIBUTING.md). Without one the check exits 2 rather than passing.
+
+## Contributing
+
+Issues and patches are welcome. Pull requests from forks cannot pass the personal-content check by design (it needs private fingerprints), so maintainers port accepted changes upstream and they ship in the next generated release. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Documentation
+
+- [USER_GUIDE.md](USER_GUIDE.md) — how to actually use it day to day
+- [AGENTS.md](AGENTS.md) · [AGENT-STRUCTURE.md](AGENT-STRUCTURE.md) · [CLAUDE.md](CLAUDE.md) — the agent system and doctrine
+- [CHANGELOG.md](CHANGELOG.md) — what changed, release by release
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+## Support
+
+- Run `/mc:health` first; it names the failing system and the fix.
+- Bugs and questions: [GitHub issues](https://github.com/cygaco/master-console/issues). Security reports: see [SECURITY.md](SECURITY.md) — private vulnerability reporting on the repository, no email.
+
+## License
+
+Master Console is free software under the [GNU Affero General Public License v3.0](LICENSE). The engine in this repository is fully open; a hosted **Master Console UI** may later be offered separately (open core). Contributions are accepted under the same license — see [CONTRIBUTING.md](CONTRIBUTING.md).

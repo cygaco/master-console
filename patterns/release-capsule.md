@@ -1,0 +1,32 @@
+# Pattern: Release Capsule
+
+## Purpose
+
+Ship MC changes as versioned release capsules with manifests, migrations, checksums, changelogs, and upgrade notes.
+
+## Use When
+
+- A framework change needs to update installed projects.
+- A migration, rename, or generated artifact needs deterministic handling.
+
+## Do Not Use When
+
+- The change is product-only and should never ship through MC.
+- The target is runtime data or per-session state.
+
+## Example
+
+`/mc:release <version>` builds `framework/releases/<version>/` and verifies checksums with `scripts/mc/release-build.js`.
+
+## Failure Modes
+
+- Including generated capsule snapshots inside the source manifest creates unstable manifest loops.
+- Updating files without migrations leaves removed or renamed files behind.
+
+## Validation
+
+`node scripts/mc/release-gates.js` runs path coherence, manifest, hook fixtures, update fixture, runtime leak, version consistency, and production-quality gates (production baseline, contract versioning, pattern library, path usage).
+
+## Owner
+
+MC release tooling.

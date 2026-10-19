@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/gauntlet-package/v1",
+  "title": "MC Lean Gauntlet — PackageDecision",
+  "description": "The gauntlet package selector's decision. Also the gauntlet-package-selected event payload (minus `kind`, which the logger adds). Validated by hand in scripts/sprint/gauntlet-package.js#validateDecision (no ajv dependency in this repo — consistent with scripts/checks/run-tests.js's own by-hand quarantine-artifact validation); this file is the documented contract that validator mirrors.",
+  "type": "object",
+  "required": ["schema", "sprint", "trailer", "package", "stages", "focused", "touchpoint", "security", "golden_touched", "budget", "reasons", "selector_version"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "type": "string", "const": "mc/gauntlet-package/v1" },
+    "sprint": { "type": ["string", "null"] },
+    "run_id": { "type": ["string", "null"] },
+    "base": { "type": ["string", "null"] },
+    "head": { "type": ["string", "null"] },
+    "trailer": {
+      "type": "object",
+      "required": ["change", "blast", "risks"],
+      "properties": {
+        "change": { "type": "string", "enum": ["bugfix", "update", "release"] },
+        "blast": { "type": "string", "enum": ["minor", "major"] },
+        "risks": { "type": "array", "items": { "type": "string" } },
+        "source": { "type": "string" },
+        "overridden": { "type": ["string", "null"] }
+      }
+    },
+    "package": { "type": "string", "enum": ["sanity", "combined-focused", "touchpoint", "smoke", "full"] },
+    "cross_provider": { "type": "boolean" },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["stage", "name", "kind", "stop_on_fail"],
+        "properties": {
+          "stage": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "name": { "type": "string", "enum": ["trailer", "sanity", "smoke", "security-shallow", "review", "security-deep"] },
+          "kind": { "type": "string", "enum": ["mechanical", "tests", "agents"] },
+          "stop_on_fail": { "type": "boolean" },
+          "present": { "type": "boolean" },
+          "files": {},
+          "cmds": { "type": "array", "items": { "type": "string" } },
+          "roster": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["role"],
+              "properties": {
+                "role": { "type": "string" },
+                "passes": {},
+                "scope": { "type": "string" },
+                "mode": { "type": "string" },
+                "files": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "focused": {
+      "type": "object",
+      "required": ["files", "tests", "list"],
+      "properties": {
+        "files": { "type": "integer", "minimum": 0 },
+        "tests": { "type": "integer", "minimum": 0 },
+        "list": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "touchpoint": {
+      "type": "object",
+      "required": ["files", "tests", "depth"],
+      "properties": {
+        "files": { "type": "integer", "minimum": 0 },
+        "tests": { "type": "integer", "minimum": 0 },
+        "depth": { "type": ["integer", "null"] },
+        "map_generated_at": { "type": ["string", "null"] },
+        "unresolved_hits": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "security": {
+      "type": "object",
+      "required": ["hit", "by"],
+      "properties": {
+        "hit": { "type": "boolean" },
+        "by": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "golden_touched": { "type": "boolean" },
+    "budget": {
+      "type": "object",
+      "required": ["wall_ms"],
+      "properties": {
+        "wall_ms": { "type": "number", "minimum": 0 },
+        "dispatches": { "type": ["number", "null"] }
+      }
+    },
+    "reasons": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "selector_version": { "type": "string" }
+  }
+}

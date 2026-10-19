@@ -1,0 +1,66 @@
+export const LIFECYCLE_EVENTS = [
+  "signup",
+  "onboarding_complete",
+  "activation",
+  "core_action",
+  "retention_return",
+  "checkout",
+] as const;
+
+export type LifecycleEvent = (typeof LIFECYCLE_EVENTS)[number];
+
+export const SUPPLY_CHAIN_STAGES = [
+  "intent",
+  "executed",
+  "committed",
+  "delivered",
+  "observed",
+] as const;
+
+export type TelemetryStage = (typeof SUPPLY_CHAIN_STAGES)[number];
+
+export type ActivationDefinition = {
+  predicate: string;
+  provenance: "derived-at-canon" | "founder-named-at-intake" | "revised-at-lastmile";
+  confidence: number;
+  derivedFrom: string;
+};
+
+export type CoreLoopSeed = {
+  action: string;
+  subject: string;
+  source: string;
+  confidence?: number;
+};
+
+export function deriveActivationDefinition(seed: CoreLoopSeed): ActivationDefinition {
+  const action = seed.action.trim();
+  const subject = seed.subject.trim();
+  const source = seed.source.trim();
+
+  if (!action || !subject || !source) {
+    throw new Error("activation definition requires core-loop action, subject, and source");
+  }
+
+  return {
+    predicate: `user ${action} ${subject}`,
+    provenance: "derived-at-canon",
+    confidence: seed.confidence ?? 0.65,
+    derivedFrom: source,
+  };
+}
+
+export const ACTIVATION_DEFINITION: ActivationDefinition = {
+  predicate: "user completes the scaffolded core action example",
+  provenance: "derived-at-canon",
+  confidence: 0.65,
+  derivedFrom: "framework/templates/app-scaffold/src/app/page.tsx.tmpl",
+};
+
+export type TelemetryProps = {
+  userId?: string;
+  correlationId?: string;
+  stage?: TelemetryStage;
+  activationPredicate?: string;
+  [key: string]: unknown;
+};

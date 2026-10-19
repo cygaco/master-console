@@ -1,0 +1,12 @@
+{
+  "id": "support-matrix-agy-row-down-blocks",
+  "gate": "support-matrix",
+  "bound_matrix_cell": "agy-antigravity",
+  "input": { "helm": "agy-antigravity" },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "support-matrix.json rows['agy-antigravity'].status is 'not-verified' with required:true -- a REQUIRED lane that is down or not-verified resolves BLOCKED, never a silent green pass."
+  },
+  "kernel_scope": "IN",
+  "note": "CRITICAL fixture -- the case the rule exists to catch: a lane that resolves DOWN or NOT-VERIFIED must be reflected in EVERY artifact that assumed it UP. A conformance-matrix.js that ever returns PASS for this fixture is a false green. conformance-matrix.js reads 'not-verified' exactly like 'down', so this one fixture covers both unavailable statuses."
+}

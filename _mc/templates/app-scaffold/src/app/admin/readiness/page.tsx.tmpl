@@ -1,0 +1,389 @@
+import type { ReactNode } from "react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Ban,
+  CheckCircle2,
+  Clock,
+  Flag,
+  Rocket,
+  ShieldCheck,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  founderEmailAllowlist,
+  resolveAdminActor,
+} from "@/lib/admin/config";
+import {
+  groupReadinessItems,
+  longestLeadOpenItemId,
+  readinessPhase,
+  toReadinessView,
+} from "@/lib/readiness/group";
+import type {
+  ReadinessReport,
+  ReadinessViewItem,
+} from "@/lib/readiness/types";
+import { ToggleControl } from "./ToggleControl";
+
+// The readiness producer is a machine-layer Node (CommonJS) module shipped with the
+// scaffold at the product repo root (scripts/scaffold/readiness-report.js). It runs
+// server-side ONLY; its schema id, product_id, and per-item `source` never cross into the
+// rendered DOM (toReadinessView strips them). Resolved from the project root at request
+// time so the bundler does not try to trace the dev-tooling script into the client bundle.
+function loadReport(): ReadinessReport {
+  const path = require("node:path") as typeof import("node:path");
+  const producerPath = path.join(
+    process.cwd(),
+    "scripts",
+    "scaffold",
+    "readiness-report.js",
+  );
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { buildReadinessReport } = require(producerPath);
+  return buildReadinessReport(process.cwd(), {
+    generated_at: new Date().toISOString(),
+  }) as ReadinessReport;
+}
+
+function StatusPill({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex rounded-md border px-2 py-1 text-xs font-medium">
+      {children}
+    </span>
+  );
+}
+
+function DimBadge({ dim }: { dim: string }) {
+  return (
+    <span className="inline-flex rounded-md border px-2 py-0.5 text-xs text-muted-foreground">
+      {dim}
+    </span>
+  );
+}
+
+function LeadTimeChip({
+  days,
+  note,
+  startNow,
+}: {
+  days: number;
+  note: string;
+  startNow: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-accent bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+        <Clock className="size-3.5" aria-hidden />~{days} days
+      </span>
+      <p className="text-xs text-muted-foreground">
+        {startNow ? (
+          <span className="font-semibold text-foreground">Start now — </span>
+        ) : null}
+        {note}
+      </p>
+    </div>
+  );
+}
+
+function DeepLinkCta({ item }: { item: ReadinessViewItem }) {
+  // No dead links: render the CTA ONLY when the producer resolved a real guide.
+  if (item.deep_link.kind !== "guide") return null;
+  const ref = item.deep_link.ref.replace(/\.md$/i, "");
+  return (
+    <Button
+      asChild
+      variant="outline"
+      size="sm"
+      className="w-full sm:w-fit"
+    >
+      <a
+        href={`/admin/guides/${encodeURIComponent(ref)}`}
+        aria-label={`How to do this: ${item.label}`}
+      >
+        How to do this
+        <ArrowRight className="size-4" aria-hidden />
+      </a>
+    </Button>
+  );
+}
+
+function OpenItemRow({
+  item,
+  startNow,
+}: {
+  item: ReadinessViewItem;
+  startNow: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-md border p-4">
+      <div className="flex items-start gap-3">
+        {/* Toggle control is a "use client" component wrapping the (unchanged) server
+            action: a submit-button form (works for mouse + keyboard; aria-pressed conveys
+            state) PLUS the never-swallow inline error surface for a denied/failed toggle.
+            Sends id + nextChecked; the action server-derives owner_class for authz. */}
+        <ToggleControl id={item.id} label={item.label} checked={false} />
+      </div>
+
+      <div className="flex flex-col gap-3 pl-[30px] sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <DimBadge dim={item.dim} />
+          {item.lead_time ? (
+            <LeadTimeChip
+              days={item.lead_time.days}
+              note={item.lead_time.note}
+              startNow={startNow}
+            />
+          ) : null}
+        </div>
+        <DeepLinkCta item={item} />
+      </div>
+    </div>
+  );
+}
+
+function InSprintItemRow({ item }: { item: ReadinessViewItem }) {
+  // DISPLAY-ONLY row for the "In the sprint" group (open sprint-work | waiver items).
+  // These are NOT founder-checkable — the server action rejects toggling them — so this
+  // row carries NO checkbox / toggle / form (no misleading affordance). Lighter framing
+  // ("We're handling these.") + the deep-link CTA only when the producer resolved a guide.
+  return (
+    <div className="flex flex-col gap-3 rounded-md border border-dashed p-4 opacity-90">
+      <div className="flex items-start gap-3">
+        <ShieldCheck
+          className="mt-0.5 size-[18px] shrink-0 text-muted-foreground"
+          aria-hidden
+        />
+        <span className="text-sm font-medium text-muted-foreground">
+          {item.label}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-3 pl-[30px] sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <DimBadge dim={item.dim} />
+          <p className="text-xs text-muted-foreground">
+            We&rsquo;re handling these.
+          </p>
+        </div>
+        <DeepLinkCta item={item} />
+      </div>
+    </div>
+  );
+}
+
+function DoneItemRow({ item }: { item: ReadinessViewItem }) {
+  // Only owner-action done items stay founder-uncheckable via ToggleControl. Done
+  // sprint-work/waiver items are STATUS-DISPLAY-ONLY (the server rejects toggling them) —
+  // no misleading toggle, mirroring InSprintItemRow on the open path.
+  const checkable = item.owner_class === "owner-action";
+  return (
+    <div className="flex flex-col gap-2 rounded-md border p-4 opacity-90">
+      <div className="flex items-center gap-3">
+        {checkable ? (
+          <ToggleControl id={item.id} label={item.label} checked={true} />
+        ) : (
+          <div className="flex items-center gap-3">
+            <span
+              aria-hidden
+              className="flex size-[18px] shrink-0 items-center justify-center rounded-[4px] border border-primary bg-primary text-primary-foreground"
+            >
+              <CheckCircle2 className="size-3" />
+            </span>
+            <span className="text-sm text-muted-foreground">{item.label}</span>
+          </div>
+        )}
+        <span className="inline-flex items-center gap-1 rounded-md border border-primary px-2 py-0.5 text-xs font-medium text-primary">
+          <CheckCircle2 className="size-3.5" aria-hidden />
+          Done
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function BlockedItemRow({ item }: { item: ReadinessViewItem }) {
+  return (
+    <div className="flex flex-col gap-3 rounded-md border border-destructive/50 p-4">
+      <div className="flex items-start gap-3">
+        <AlertTriangle
+          className="mt-0.5 size-[18px] shrink-0 text-destructive"
+          aria-hidden
+        />
+        <span className="text-sm font-medium">{item.label}</span>
+      </div>
+      <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+        <Ban className="mt-0.5 size-4 shrink-0" aria-hidden />
+        <span>Blocked: {item.blocker || "waiting on an external approval"}</span>
+      </div>
+      <DeepLinkCta item={item} />
+    </div>
+  );
+}
+
+export default async function ReadinessPage() {
+  // GATE (default-deny, first action) — copied from admin/page.tsx. Absent / malformed /
+  // non-allowlisted cookie → no content. The prod dev-email fallback fails closed inside
+  // resolveAdminActor (NODE_ENV==="production" → devEmail = "").
+  const actor = await resolveAdminActor();
+  if (!actor.allowed) {
+    const allowedCount = founderEmailAllowlist().length;
+    return (
+      <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-4 p-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="size-5" aria-hidden />
+              Admin access restricted
+            </CardTitle>
+            <CardDescription>
+              This route is locked to the founder email allowlist. Current actor
+              source: {actor.source}. Allowlisted founders: {allowedCount}.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </main>
+    );
+  }
+
+  const view = toReadinessView(loadReport());
+  const { summary, composite } = view;
+  const groups = groupReadinessItems(view);
+  const phase = readinessPhase(summary);
+  const longestId = longestLeadOpenItemId(view);
+
+  const summaryClauses = [
+    `${summary.completed} of ${summary.total} done`,
+    summary.open > 0 ? `${summary.open} to do` : null,
+    summary.blocked > 0 ? `${summary.blocked} blocked` : null,
+  ].filter(Boolean);
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 p-6">
+      <header className="flex flex-col gap-2 border-b pb-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm text-muted-foreground">Launch readiness</p>
+            <h1 className="text-2xl font-semibold">{{SLUG}}</h1>
+          </div>
+          <StatusPill>{actor.email}</StatusPill>
+        </div>
+      </header>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{composite}% ready</CardTitle>
+          <CardDescription>{summaryClauses.join(" · ")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div
+            role="progressbar"
+            aria-valuenow={composite}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Launch readiness progress"
+            className="h-2 w-full overflow-hidden rounded-full bg-muted"
+          >
+            <div
+              className="h-full rounded-full bg-primary"
+              style={{ width: `${composite}%` }}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {phase === "cold" ? (
+        <Card className="border-accent bg-accent/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Rocket className="size-5" aria-hidden />
+              Let&rsquo;s get you launch-ready.
+            </CardTitle>
+            <CardDescription className="flex items-start gap-2">
+              <Flag className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>
+                Nothing&rsquo;s done yet — that&rsquo;s normal. Start with the
+                items marked &ldquo;Start now&rdquo;: they take real-world time you
+                can&rsquo;t speed up (developer accounts, store reviews). Work top
+                to bottom; check things off as you go.
+              </span>
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : null}
+
+      {phase === "all-done" ? (
+        <Card className="border-primary bg-primary/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle2 className="size-5" aria-hidden />
+              You&rsquo;re launch-ready.
+            </CardTitle>
+          </CardHeader>
+        </Card>
+      ) : null}
+
+      {phase === "warm" ? (
+        // Explicit warm cue: the warm board renders measurably differently from
+        // cold — no orientation banner, Done is collapsed, AND this "what's next" line
+        // foregrounds the remaining open work.
+        <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+          <ArrowRight className="size-4 shrink-0" aria-hidden />
+          Good progress — here&rsquo;s what&rsquo;s next.
+        </p>
+      ) : null}
+
+      {groups.map((group) => {
+        if (group.key === "done") {
+          return (
+            <details key={group.key} className="rounded-md border p-2">
+              <summary className="cursor-pointer px-2 py-1 text-sm font-medium text-muted-foreground">
+                {group.heading}
+              </summary>
+              <div className="mt-3 space-y-3">
+                {group.items.map((item) => (
+                  <DoneItemRow key={item.id} item={item} />
+                ))}
+              </div>
+            </details>
+          );
+        }
+
+        return (
+          <section key={group.key} className="space-y-3">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              {group.heading}
+            </h2>
+            <div className="space-y-3">
+              {group.items.map((item) => {
+                if (group.key === "blocked") {
+                  return <BlockedItemRow key={item.id} item={item} />;
+                }
+                if (group.key === "in-sprint") {
+                  // sprint-work | waiver: status-display-only, NO toggle (the action
+                  // rejects toggling them — a toggle here would be misleading).
+                  return <InSprintItemRow key={item.id} item={item} />;
+                }
+                // "do-first" = open owner-action items — the ONLY checkable group.
+                return (
+                  <OpenItemRow
+                    key={item.id}
+                    item={item}
+                    startNow={item.id === longestId}
+                  />
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </main>
+  );
+}

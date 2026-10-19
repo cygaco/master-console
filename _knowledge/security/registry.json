@@ -1,0 +1,104 @@
+{
+  "$schema": "mc/security-knowledge/v0.1",
+  "version": "v0.1",
+  "note": "Machine-readable index of the application-security knowledge library. anchor:none for all — these are AGENT-GROUNDING training references for the Security pod (security-builder/fixer/reviewer), NOT bootstrap launch guides. Built from each ref's frontmatter; keep in sync with the 6 refs. security_review_axes below is the canonical target vocabulary the maps_to fields reference, aligned to security-reviewer's review_scope (OWASP · authn/z · injection · secrets · prompt-injection-prober). Regenerate by re-reading _knowledge/security/*.md frontmatter.",
+  "security_review_axes": ["authz", "secrets", "rate-limiting", "prompt-injection", "input-validation", "web-hardening", "supply-chain", "auth-session", "detect-respond", "mobile-client"],
+  "guides": [
+    {
+      "guide": "AUTHZ_AND_TENANT_ISOLATION",
+      "path": "_knowledge/security/AUTHZ_AND_TENANT_ISOLATION.md",
+      "tier": "core",
+      "rule_prefix": "AUTHZ",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["authz"]
+    },
+    {
+      "guide": "SECRETS_AND_CONFIG",
+      "path": "_knowledge/security/SECRETS_AND_CONFIG.md",
+      "tier": "core",
+      "rule_prefix": "SECRET",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["secrets"]
+    },
+    {
+      "guide": "RATE_LIMITING_AND_ABUSE",
+      "path": "_knowledge/security/RATE_LIMITING_AND_ABUSE.md",
+      "tier": "core",
+      "rule_prefix": "RATE",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["rate-limiting", "authz"]
+    },
+    {
+      "guide": "PROMPT_INJECTION_AND_LLM",
+      "path": "_knowledge/security/PROMPT_INJECTION_AND_LLM.md",
+      "tier": "core",
+      "rule_prefix": "PINJ",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["prompt-injection", "input-validation"]
+    },
+    {
+      "guide": "INPUT_VALIDATION_AND_INJECTION",
+      "path": "_knowledge/security/INPUT_VALIDATION_AND_INJECTION.md",
+      "tier": "core",
+      "rule_prefix": "INVAL",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["input-validation"]
+    },
+    {
+      "guide": "WEB_SECURITY_HEADERS_CSRF_CORS",
+      "path": "_knowledge/security/WEB_SECURITY_HEADERS_CSRF_CORS.md",
+      "tier": "standard",
+      "rule_prefix": "WEBSEC",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["web-hardening", "supply-chain"]
+    },
+    {
+      "guide": "AUTHENTICATION_AND_SESSION",
+      "path": "_knowledge/security/AUTHENTICATION_AND_SESSION.md",
+      "tier": "core",
+      "rule_prefix": "AUTHN",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["auth-session", "authz"]
+    },
+    {
+      "guide": "LOGGING_BACKUP_IR",
+      "path": "_knowledge/security/LOGGING_BACKUP_IR.md",
+      "tier": "core",
+      "rule_prefix": "OPS",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["detect-respond"]
+    },
+    {
+      "guide": "MOBILE_CLIENT_SECURITY",
+      "path": "_knowledge/security/MOBILE_CLIENT_SECURITY.md",
+      "tier": "standard",
+      "rule_prefix": "MOB",
+      "anchor": "none",
+      "trains": ["security-builder", "security-fixer", "security-reviewer"],
+      "maps_to": ["mobile-client"]
+    }
+  ],
+  "coverage": {
+    "security_review_axes": {
+      "authz": ["AUTHZ_AND_TENANT_ISOLATION", "RATE_LIMITING_AND_ABUSE", "AUTHENTICATION_AND_SESSION"],
+      "secrets": ["SECRETS_AND_CONFIG"],
+      "rate-limiting": ["RATE_LIMITING_AND_ABUSE"],
+      "prompt-injection": ["PROMPT_INJECTION_AND_LLM"],
+      "input-validation": ["INPUT_VALIDATION_AND_INJECTION", "PROMPT_INJECTION_AND_LLM"],
+      "web-hardening": ["WEB_SECURITY_HEADERS_CSRF_CORS"],
+      "supply-chain": ["WEB_SECURITY_HEADERS_CSRF_CORS"],
+      "auth-session": ["AUTHENTICATION_AND_SESSION"],
+      "detect-respond": ["LOGGING_BACKUP_IR"],
+      "mobile-client": ["MOBILE_CLIENT_SECURITY"]
+    },
+    "complete": true
+  }
+}

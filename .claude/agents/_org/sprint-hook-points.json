@@ -1,0 +1,58 @@
+{
+  "schema": "mc/sprint-hook-points/v0.1",
+  "_note": "Declarative agent->sprint-step attachment registry (ADR-0007). ONE row per attachment: which role fires at which lifecycle step, under what condition, advisory or blocking. `role` references .claude/agents/_org/role-registry.json by id. Adding/swapping an agent = editing a ROW, never the orchestrator (same proven pattern as _guides/registry.json). Consumed by scripts/sprint/hook-points.js (the composition->agent-set router) and the bidirectional scan:sprint-hook-coverage enforcer (forward: every matched row ran or logged debt; reverse: every dispatching role is registered, no step orphaned).",
+  "lifecycle": ["plan", "design", "build", "gauntlet", "release", "retro"],
+  "phase_map": {
+    "_note": "full.js PHASES are coarser than the lifecycle hook-points: build+gauntlet both occur inside full.js 'execute'; release maps to 'release-prep'. The runtime reconciles.",
+    "plan": "plan",
+    "design": "design",
+    "build": "execute",
+    "gauntlet": "execute",
+    "release": "release-prep",
+    "retro": "retro"
+  },
+  "condition_forms": {
+    "always": "string literal — fires every sprint",
+    "unit_type": "{ unit_type: [..] } — fires if the sprint composition includes ANY listed unit type (frontend|backend|security|ui)",
+    "risk_min": "{ risk_min: <low|medium|high|critical> } — fires if the sprint max risk class is >= the given level",
+    "domain": "{ domain: [..] } — fires if the composition includes ANY listed domain (marketing|copy)",
+    "change": "{ change: [bugfix|update|release] } — fires if the sprint's declared change-classification (the commit/ticket/plan-contract trailer, scripts/checks/change-trailer.js is the one validator) is listed",
+    "blast": "{ blast: [minor|major] } — fires if the declared blast radius is listed",
+    "risk_surface": "{ risk_surface: [security|…] } — fires if the lean-gauntlet selector's computed surface hits (gauntlet-package.js — a security_surface_globs path hit OR a `risks:` token hit) include ANY listed token",
+    "unit_type_absent": "{ unit_type_absent: true } — fires if the composition names NO unit_type at all (the 'no unit_type resolves' qa-reviewer fallback)",
+    "any": "{ any: [cond, cond, ...] } — composite OR over sub-conditions (each may itself be any of the above, incl. nested any/all)",
+    "all": "{ all: [cond, cond, ...] } — composite AND over sub-conditions",
+    "_lean_gauntlet_note": "change/blast/risk_surface only fire on a composition the lean-gauntlet package selector has ENRICHED (scripts/sprint/gauntlet-package.js assembling scripts/sprint/hook-points.js#normalizeComposition's change/blast/surfaces fields) — the roster stays exactly 'the matched registry rows'; the selector never filters plan.agents. An un-enriched composition (change/blast absent) normalizes those fields to '' and such a condition fails closed (never fires), same as an unrecognized key."
+  },
+  "modes": {
+    "block": "a matched row that does NOT run (or whose verdict FAILs) halts/blocks the step",
+    "advisory": "a matched row that does not run is a warning, not a halt (e.g. design-quality's ramp)"
+  },
+  "_report_only": "An OPTIONAL additive boolean field on a row (NOT a mode value — `mode` stays one of block|advisory so validate() passes). `report_only: true` is the explicit REPORT-ONLY contract: the row is COMPOSED into the step and RUNS, but its verdict can NEVER gate — strictly stronger than plain advisory, which only means 'a no-run is a warning'. A report_only row is always also mode:advisory (belt-and-suspenders: it cannot block even if a future edit flips its mode). The blocking flip (report_only:false + mode:block) is operator-gated. Surfaced by the resolver as agent.report_only so a consumer/test can assert REPORT-ONLY explicitly. design-quality is wired report-only.",
+  "rows": [
+    { "role": "director-of-product", "step": "plan", "condition": "always", "mode": "advisory", "order": 10, "_role": "strategy / sequencing" },
+    { "role": "product-lead", "step": "plan", "condition": "always", "mode": "advisory", "order": 20, "_role": "milestone -> sprint scope" },
+
+    { "role": "product-lead", "step": "design", "condition": "always", "mode": "block", "order": 10, "authors": "PRD (R-N), stories (H-N/S-N), acceptance criteria" },
+    { "role": "director-of-engineering", "step": "design", "condition": { "unit_type": ["frontend", "backend", "security"] }, "mode": "advisory", "order": 20, "authors": "build_spec, FE/BE split, INPUTS/TRACE, integration-seam owner" },
+    { "role": "design-lead", "step": "design", "condition": { "unit_type": ["ui", "frontend"] }, "mode": "advisory", "order": 30, "authors": "UX of stories, visual mockup + flow (the design-review judges against it)" },
+    { "role": "quality-lead", "step": "design", "condition": { "risk_min": "medium" }, "mode": "advisory", "order": 40, "authors": "qa-plan, AC verified_by coverage" },
+    { "role": "copy-lead", "step": "design", "condition": { "domain": ["marketing", "copy"] }, "mode": "advisory", "order": 50, "authors": "COPY (C-N) grounded in _knowledge/copy" },
+
+    { "role": "frontend-builder", "step": "build", "condition": { "unit_type": ["frontend", "ui"] }, "mode": "block", "order": 10 },
+    { "role": "backend-builder", "step": "build", "condition": { "unit_type": ["backend"] }, "mode": "block", "order": 20 },
+    { "role": "security-builder", "step": "build", "condition": { "unit_type": ["security"] }, "mode": "block", "order": 30, "_role": "hardening: authn/z, secrets, validation" },
+
+    { "role": "frontend-reviewer", "step": "gauntlet", "condition": { "unit_type": ["frontend", "ui"] }, "mode": "block", "order": 10, "scope": "code-quality", "package_scope": "focused" },
+    { "role": "backend-reviewer", "step": "gauntlet", "condition": { "unit_type": ["backend"] }, "mode": "block", "order": 20, "scope": "code-quality", "package_scope": "focused" },
+    { "role": "qa-reviewer", "step": "gauntlet", "condition": { "any": [ { "blast": ["major"] }, { "change": ["update", "release"] } ] }, "mode": "block", "order": 30, "scope": "functional + traceability + integrity (absorbs req-reviewer + compliance)", "package_scope": "touchpoint", "_lean_gauntlet": "Fires on the package matrix's touchpoint/full rows (blast:major OR change:update|release). The combined-focused row's 'no unit_type resolves -> qa-reviewer alone' fallback is the NEXT row (order 31), kept separate so the two never double-match (disjoint: this row needs blast:major OR change!=bugfix; the fallback needs change:bugfix AND blast:minor AND no unit_type)." },
+    { "role": "qa-reviewer", "step": "gauntlet", "condition": { "all": [ { "change": ["bugfix"] }, { "blast": ["minor"] }, { "unit_type_absent": true } ] }, "mode": "block", "order": 31, "scope": "functional + traceability + integrity (absorbs req-reviewer + compliance)", "package_scope": "focused", "_lean_gauntlet": "The combined-focused 'no unit_type resolves -> ONE reviewer, qa-reviewer' fallback — the never-empty-roster floor when a minor bugfix names no frontend/backend unit_type (so neither pod reviewer row above fires)." },
+    { "role": "security-reviewer", "step": "gauntlet", "condition": { "any": [ { "risk_surface": ["security"] }, { "change": ["release"] }, { "blast": ["major"] } ] }, "mode": "block", "order": 40, "scope": "OWASP/authz/injection/secrets; cross-provider 2nd pass", "package_scope": "focused+touchpoint", "passes_when": { "default": ["primary"], "risk_surface:security": ["primary", "second_pass", "third_pass"], "change:release": ["primary", "second_pass", "third_pass"] }, "_lean_gauntlet": "Fires on a security-surface hit, a release, or a major blast; `passes_when` (read by scripts/sprint/epsilon-runtime.js#planStep, translated to MC_REVIEW_PASSES for scripts/dispatch-review.js) keeps the 3-pass cross-provider panel for a security-surface hit or a release, and a Shallow single primary pass for the major-blast-only case ('update+major' row before a security hit widens it)." },
+    { "role": "visual-review", "step": "gauntlet", "condition": { "unit_type": ["ui", "frontend"] }, "mode": "block", "order": 50 },
+    { "role": "design-quality", "step": "gauntlet", "condition": { "unit_type": ["ui", "frontend"] }, "mode": "advisory", "report_only": true, "order": 60, "_role": "named cross-domain design authority; ramp advisory->baseline->block; emits the design manager_consult checks for", "_report_only": "REPORT-ONLY — composes into the gauntlet whenever the sprint has a frontend/ui unit, RUNS, but NEVER gates. Blocking flip (report_only:false + mode:block) is operator-gated." },
+
+    { "role": "qa-reviewer", "step": "release", "condition": "always", "mode": "block", "order": 10, "scope": "release-diff (integrity/traceability over the cut)", "_note": "release-reviewers are a model-class diff property, not a dedicated role; qa-reviewer carries the integrity lane over the release diff" },
+
+    { "role": "ops-analyst", "step": "retro", "condition": "always", "mode": "advisory", "order": 10, "_note": "All retros (advisory — eps defers self-management to alpha+beta, so non-blocking)" }
+  ]
+}

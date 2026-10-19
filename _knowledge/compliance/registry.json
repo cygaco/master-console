@@ -1,0 +1,93 @@
+{
+  "$schema": "mc/compliance-knowledge/v0.1",
+  "version": "v0.2",
+  "note": "Machine-readable index of the launch-compliance knowledge library. anchor:none for all — AGENT-GROUNDING training references for the qa-reviewer's integrity/compliance scope, NOT bootstrap launch guides. Built from each ref's frontmatter; keep in sync with the 8 refs. compliance_axes below is the canonical target vocabulary the maps_to fields reference. NOT legal advice — human/legal-judgment items are FLAGs inside the refs. Regenerate by re-reading _knowledge/compliance/*.md frontmatter.",
+  "compliance_axes": ["privacy-data", "consumer-subscriptions", "app-store-policy", "ip-trademark", "data-rights-ops", "breach-incident", "minors", "ai-compliance"],
+  "guides": [
+    {
+      "guide": "PRIVACY_AND_DATA_COMPLIANCE",
+      "path": "_knowledge/compliance/PRIVACY_AND_DATA_COMPLIANCE.md",
+      "tier": "core",
+      "rule_prefix": "PRIV",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["privacy-data"]
+    },
+    {
+      "guide": "CONSUMER_PROTECTION_AND_SUBSCRIPTIONS",
+      "path": "_knowledge/compliance/CONSUMER_PROTECTION_AND_SUBSCRIPTIONS.md",
+      "tier": "core",
+      "rule_prefix": "SUBS",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["consumer-subscriptions"]
+    },
+    {
+      "guide": "APP_STORE_AND_PLATFORM_POLICY",
+      "path": "_knowledge/compliance/APP_STORE_AND_PLATFORM_POLICY.md",
+      "tier": "core",
+      "rule_prefix": "STORE",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["app-store-policy", "privacy-data"]
+    },
+    {
+      "guide": "IP_AND_TRADEMARK",
+      "path": "_knowledge/compliance/IP_AND_TRADEMARK.md",
+      "tier": "standard",
+      "rule_prefix": "IP",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["ip-trademark"]
+    },
+    {
+      "guide": "DATA_RIGHTS_OPERATIONS",
+      "path": "_knowledge/compliance/DATA_RIGHTS_OPERATIONS.md",
+      "tier": "core",
+      "rule_prefix": "DSR",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["data-rights-ops", "privacy-data"]
+    },
+    {
+      "guide": "INCIDENT_READINESS",
+      "path": "_knowledge/compliance/INCIDENT_READINESS.md",
+      "tier": "core",
+      "rule_prefix": "BRCH",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["breach-incident"]
+    },
+    {
+      "guide": "MINORS_AND_AGE_ASSURANCE",
+      "path": "_knowledge/compliance/MINORS_AND_AGE_ASSURANCE.md",
+      "tier": "core",
+      "rule_prefix": "MINOR",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["minors", "privacy-data"]
+    },
+    {
+      "guide": "AI_PRODUCT_COMPLIANCE",
+      "path": "_knowledge/compliance/AI_PRODUCT_COMPLIANCE.md",
+      "tier": "core",
+      "rule_prefix": "AIACT",
+      "anchor": "none",
+      "trains": ["qa-reviewer"],
+      "maps_to": ["ai-compliance", "privacy-data"]
+    }
+  ],
+  "coverage": {
+    "compliance_axes": {
+      "privacy-data": ["PRIVACY_AND_DATA_COMPLIANCE", "APP_STORE_AND_PLATFORM_POLICY", "DATA_RIGHTS_OPERATIONS", "MINORS_AND_AGE_ASSURANCE", "AI_PRODUCT_COMPLIANCE"],
+      "consumer-subscriptions": ["CONSUMER_PROTECTION_AND_SUBSCRIPTIONS"],
+      "app-store-policy": ["APP_STORE_AND_PLATFORM_POLICY"],
+      "ip-trademark": ["IP_AND_TRADEMARK"],
+      "data-rights-ops": ["DATA_RIGHTS_OPERATIONS"],
+      "breach-incident": ["INCIDENT_READINESS"],
+      "minors": ["MINORS_AND_AGE_ASSURANCE"],
+      "ai-compliance": ["AI_PRODUCT_COMPLIANCE"]
+    },
+    "complete": true
+  }
+}

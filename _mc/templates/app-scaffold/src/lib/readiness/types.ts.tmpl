@@ -1,0 +1,85 @@
+// Shared readiness types — derived from the readiness producer output
+// (scripts/scaffold/readiness-report.js).
+//
+// The schema id, product_id, and per-item `source`/raw schema fields stay in the
+// machine layer and are NEVER passed to client components or rendered in the DOM
+// (brand boundary). The view consumes only the safe subset declared below.
+
+export type ReadinessStatus = "open" | "done" | "blocked";
+export type ReadinessOwnerClass = "owner-action" | "sprint-work" | "waiver";
+
+export type ReadinessLeadTime = {
+  days: number;
+  note: string;
+};
+
+export type ReadinessDeepLink =
+  | { kind: "guide"; ref: string }
+  | { kind: "none"; ref: null };
+
+// The full per-item shape the producer emits (server-side only).
+export type ReadinessItem = {
+  id: string;
+  label: string;
+  dim: string;
+  status: ReadinessStatus;
+  owner_class: ReadinessOwnerClass;
+  lead_time: ReadinessLeadTime | null;
+  blocker: string | null;
+  deep_link: ReadinessDeepLink;
+  source: string;
+};
+
+export type ReadinessSummary = {
+  total: number;
+  completed: number;
+  open: number;
+  blocked: number;
+  owner_action: number;
+  sprint_work: number;
+  waiver: number;
+};
+
+// The full producer report (server-side only — has schema/product_id).
+export type ReadinessReport = {
+  schema: string;
+  product_id: string;
+  generated_at: string | null;
+  composite: number;
+  source_refs: { checklist: string; handoff: string | null };
+  items: ReadinessItem[];
+  summary: ReadinessSummary;
+  checklist_errors?: string[];
+};
+
+// The brand-clean subset handed to the view. No schema, no product_id, no per-item
+// `source`. This is the only readiness data that may reach a client component / DOM.
+export type ReadinessViewItem = {
+  id: string;
+  label: string;
+  dim: string;
+  status: ReadinessStatus;
+  owner_class: ReadinessOwnerClass;
+  lead_time: ReadinessLeadTime | null;
+  blocker: string | null;
+  deep_link: ReadinessDeepLink;
+};
+
+export type ReadinessView = {
+  composite: number;
+  summary: ReadinessSummary;
+  items: ReadinessViewItem[];
+};
+
+// A UI group of items, after grouping + ordering.
+export type ReadinessGroupKey = "do-first" | "blocked" | "in-sprint" | "done";
+
+export type ReadinessGroup = {
+  key: ReadinessGroupKey;
+  heading: string;
+  items: ReadinessViewItem[];
+  collapsedByDefault: boolean;
+};
+
+// FTUE phase derived from the summary.
+export type ReadinessPhase = "cold" | "warm" | "all-done";

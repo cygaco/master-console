@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-malformed",
+  "gate": "contract-lint",
+  "input_file": "malformed.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "the input contains zero '#### P<n>.<m>' policy-block headings -- contract-lint cannot parse it as a contract at all. Structural/fail-closed, distinct from a well-formed policy violation."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js), NOT a kernel conformance-matrix fixture -- excluded from conformance-matrix.js's fixture walker and from manifest.json's kernel-conformance count (see manifest.json _contract_lint_selftest_note)."
+}

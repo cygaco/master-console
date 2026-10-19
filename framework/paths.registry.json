@@ -1,0 +1,1431 @@
+{
+  "$schema": "mc/paths-registry/v1",
+  "version": 5,
+  "_doc": "Path identity registry. Source of truth for project-relative paths. Consumed by scripts/paths/build.js, which derives: (1) .claude/paths.json (flat key→string used by hooks at runtime), (2) scripts/hooks/lib/paths.generated.js (fallback when paths.json missing), (3) scripts/path-lint.rules.generated.json (regex arrays for path-lint critical+warn), (4) schemas/paths.schema.json (validator), (5) _requirements/03-architecture/PATH_KEYS.md (human reference). To rename a path: edit here, run scripts/paths/build.js, commit all generated artifacts together.",
+  "_field_meaning": {
+    "path": "Project-relative path from repo root, forward slashes",
+    "kind": "dir | file | jsonl | json | yaml | md | js — drives schema validators + lint rules",
+    "owner": "framework (shipped by MC) | generated (built by tooling) | runtime (session-written state) | project (user/team-owned content)",
+    "mutable": "true if files inside are written during normal operation; affects release scrubbing + retention policy",
+    "aliases": "alternative spellings/keys still accepted at the consumer boundary (warn-on-use)",
+    "deprecatedAliases": "old keys/paths whose use is hard-blocked by path-guard",
+    "introducedIn": "MC version when this key first existed",
+    "removedIn": "MC version when this key was removed; null if still active",
+    "replaces": "previous key name if this entry was renamed",
+    "docsToken": "the token used in markdown prose (e.g. paths.eventsFile)"
+  },
+  "paths": {
+    "events": {
+      "path": ".claude/project/events",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.events"
+    },
+    "decisions": {
+      "path": ".claude/project/decisions",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.1.0",
+      "docsToken": "paths.decisions"
+    },
+    "memory": {
+      "path": ".claude/project/memory",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.memory"
+    },
+    "maps": {
+      "path": ".claude/project/maps",
+      "kind": "dir",
+      "owner": "generated",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.maps"
+    },
+    "reference": {
+      "path": ".claude/project/reference",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.reference"
+    },
+    "runtime": {
+      "path": ".claude/runtime",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.runtime"
+    },
+    "logs": {
+      "path": ".claude/runtime/logs",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.logs"
+    },
+    "handoffs": {
+      "path": ".claude/runtime/handoffs",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.handoffs"
+    },
+    "handoffLatest": {
+      "path": ".claude/runtime/handoff.md",
+      "kind": "md",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.handoffLatest"
+    },
+    "plans": {
+      "path": ".claude/runtime/plans",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.plans"
+    },
+    "agents": {
+      "path": ".claude/agents",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.agents"
+    },
+    "agentSystem": {
+      "path": ".claude/agents/president/_system",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.agentSystem"
+    },
+    "betaSystem": {
+      "path": ".claude/agents/president/_system/beta",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.betaSystem"
+    },
+    "policy": {
+      "path": ".claude/agents/president/_system/policy",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.policy"
+    },
+    "decisionPolicy": {
+      "path": ".claude/agents/president/_system/policy/decision-policy.md",
+      "kind": "md",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.decisionPolicy"
+    },
+    "currentStage": {
+      "path": ".claude/agents/president/_system/policy/current-stage.md",
+      "kind": "md",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.currentStage"
+    },
+    "operatorContract": {
+      "path": ".claude/agents/president/_system/policy/operator-contract.md",
+      "kind": "md",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.20.0",
+      "docsToken": "paths.operatorContract"
+    },
+    "adrIndex": {
+      "path": ".claude/agents/president/_system/policy/adr/INDEX.md",
+      "kind": "md",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.adrIndex"
+    },
+    "commands": {
+      "path": ".claude/commands",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.commands"
+    },
+    "kernel": {
+      "path": ".claude/kernel",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.17.0",
+      "docsToken": "paths.kernel",
+      "_note": "MC 1.0 kernel governance home: the Top-Level Runtime Contract (top-level-runtime-contract.md), its JSON companions (role-binding.json, support-matrix.json, workorder-min.schema.json), and the kernel-conformance fixtures (fixtures/). mutable:true — the matrix/fixtures grow."
+    },
+    "content": {
+      "path": ".claude/content",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.content"
+    },
+    "dreams": {
+      "path": ".claude/dreams",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.dreams"
+    },
+    "favorites": {
+      "path": ".claude/content/favorites",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.favorites"
+    },
+    "hooks": {
+      "path": "scripts/hooks",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.hooks"
+    },
+    "hookLib": {
+      "path": "scripts/hooks/lib",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.hookLib"
+    },
+    "scriptsAdmin": {
+      "path": "scripts/admin",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.19.0",
+      "docsToken": "paths.scriptsAdmin",
+      "_note": "admin:* dev-tooling suite backing scripts (preview.js keystone + seed.js)."
+    },
+    "adminPanelRegistry": {
+      "path": "framework/admin-panel-registry.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.19.0",
+      "docsToken": "paths.adminPanelRegistry",
+      "_note": "Generic admin-panel registry (panels map: route -> opener -> description). Alias-beside the /panel:* registry."
+    },
+    "scriptsPanel": {
+      "path": "scripts/panel",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.19.0",
+      "docsToken": "paths.scriptsPanel",
+      "_note": "panel:* unified panel-opener backing scripts (list.js enumerator + roadmap.js board)."
+    },
+    "panelRegistry": {
+      "path": "framework/panel-registry.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.19.0",
+      "docsToken": "paths.panelRegistry",
+      "_note": "Unified panel registry (panels map: name -> opener -> description -> run_context) consumed by the /panel:* forwarders + /panel:list enumerator + panel-registry-coverage enforcer."
+    },
+    "patterns": {
+      "path": "patterns",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.patterns"
+    },
+    "requirements": {
+      "path": "_requirements",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.requirements"
+    },
+    "requirementsRoot": {
+      "path": "_requirements",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.1.0",
+      "aliases": ["requirements"],
+      "docsToken": "paths.requirementsRoot",
+      "_note": "Renamed requirements -> _requirements for project-root visibility; alias to make 'spec home' explicit. Bare 'requirements' deprecation NOT in deprecatedAliases (matches English word too aggressively); rely on path-lint regex match patterns instead."
+    },
+    "specsRoot": {
+      "path": "_requirements/04-features",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.1.0",
+      "replaces": "manifest.projectPaths.specs (originally docs/05-features, then requirements/05-features, then requirements/04-features)",
+      "deprecatedAliases": [
+        "requirements/05-features",
+        "requirements/04-features",
+        "docs/05-features"
+      ],
+      "docsToken": "paths.specsRoot",
+      "_note": "Renamed requirements/04-features -> _requirements/04-features; earlier renumbered 05-features -> 04-features."
+    },
+    "research": {
+      "path": "_docs/research",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "deprecatedAliases": ["docs/research", "docs/99-resources/01-research"],
+      "docsToken": "paths.research"
+    },
+    "karpathyRuns": {
+      "path": "_docs/karpathy-auto-research",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "deprecatedAliases": [
+        "docs/karpathy-auto-research",
+        "docs/99-resources/02-karpathy-autoresearch"
+      ],
+      "docsToken": "paths.karpathyRuns"
+    },
+    "architectureRoot": {
+      "path": "_requirements/03-architecture",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.2.0",
+      "deprecatedAliases": [
+        "requirements/04-architecture",
+        "docs/04-architecture",
+        "requirements/03-architecture"
+      ],
+      "docsToken": "paths.architectureRoot",
+      "_note": "Introduced to replace many hardcoded references."
+    },
+    "designSystemRoot": {
+      "path": "_requirements/01-design-system",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.2.0",
+      "deprecatedAliases": [
+        "requirements/01-design-system",
+        "docs/01-design-system"
+      ],
+      "docsToken": "paths.designSystemRoot"
+    },
+    "auditsRoot": {
+      "path": "_requirements/_audits",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.2.0",
+      "deprecatedAliases": [
+        "requirements/99-audits",
+        "requirements/_audits",
+        "docs/audit-reports"
+      ],
+      "docsToken": "paths.auditsRoot"
+    },
+    "integrationsRoot": {
+      "path": "_requirements/09-integrations",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.2.0",
+      "deprecatedAliases": [
+        "docs/06-integrations",
+        "requirements/09-integrations"
+      ],
+      "docsToken": "paths.integrationsRoot"
+    },
+    "docsRoot": {
+      "path": "_docs",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.2.0",
+      "docsToken": "paths.docsRoot",
+      "_note": "Contains only carve-outs: user-communication, research, karpathy-auto-research."
+    },
+    "frameworkRoot": {
+      "path": "framework",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.2.0",
+      "docsToken": "paths.frameworkRoot",
+      "_note": "Renamed mc -> framework (JTBD: framework distribution capsules + canonical registries). Bare 'mc' is the framework brand name (used in version.json, schema URIs); deprecation handled via path-lint regex matchers, not deprecatedAliases."
+    },
+    "appScaffoldTemplates": {
+      "path": "_mc/templates/app-scaffold",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.appScaffoldTemplates",
+      "_note": "Product-studio — pinned Next.js+Tailwind v4+shadcn/ui+Radix+Lucide app scaffold materialized into products by scripts/scaffold/app.js. Enforced complete+coherent by scripts/checks/scaffold-coverage-scan.js."
+    },
+    "manifest": {
+      "path": ".claude/manifest.json",
+      "kind": "json",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.manifest"
+    },
+    "settings": {
+      "path": ".claude/settings.json",
+      "kind": "json",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.settings"
+    },
+    "store": {
+      "path": ".claude/agents/store.json",
+      "kind": "json",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.store"
+    },
+    "oneshotStore": {
+      "path": ".claude/agents/president/_system/oneshot/store.json",
+      "kind": "json",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.oneshotStore"
+    },
+    "oneshotSystem": {
+      "path": ".claude/agents/president/_system/oneshot",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.oneshotSystem"
+    },
+    "oneshotRetros": {
+      "path": ".claude/agents/president/_system/oneshot/retros",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.oneshotRetros"
+    },
+    "eventsFile": {
+      "path": ".claude/project/events/events.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.eventsFile"
+    },
+    "toolsFile": {
+      "path": ".claude/project/events/tools.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.toolsFile"
+    },
+    "skillUsageFile": {
+      "path": ".claude/project/events/skill-usage.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.1.3",
+      "docsToken": "paths.skillUsageFile"
+    },
+    "requirementsFile": {
+      "path": ".claude/project/events/requirements.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.requirementsFile"
+    },
+    "requirementsStagedFile": {
+      "path": ".claude/project/events/requirements-staged.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.requirementsStagedFile"
+    },
+    "decisionLedger": {
+      "path": ".claude/project/decisions/decision-ledger.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.1.0",
+      "docsToken": "paths.decisionLedger"
+    },
+    "providerTrace": {
+      "path": ".claude/project/decisions/provider-trace.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.1.0",
+      "docsToken": "paths.providerTrace"
+    },
+    "learningsFile": {
+      "path": ".claude/project/memory/learnings.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.learningsFile"
+    },
+    "tracesFile": {
+      "path": ".claude/project/memory/traces.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.tracesFile"
+    },
+    "systemsFile": {
+      "path": ".claude/project/memory/systems.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.systemsFile"
+    },
+    "recurringIssuesFile": {
+      "path": ".claude/project/memory/recurring-issues.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.recurringIssuesFile"
+    },
+    "enforcementDebt": {
+      "path": ".claude/project/memory/enforcement-debt.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.8.0",
+      "docsToken": "paths.enforcementDebt",
+      "_note": "Append-only ledger of policies that exist without a named enforcer. Logged via /enforcement:log; surfaced at /enforcement:list and /scan:full."
+    },
+    "betaHonestyWaivers": {
+      "path": ".claude/project/memory/beta-honesty-waivers.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.17.0",
+      "docsToken": "paths.betaHonestyWaivers",
+      "_note": "Append-only triage ledger for scan:sprint-beta-honesty findings. Each line waives ONE finding by stable fingerprint + reason + approver; the audit drops waived findings so release-build blocks only on NEW findings. Written by scripts/checks/beta-honesty-triage.js; consumed by scripts/checks/sprint-beta-honesty.js."
+    },
+    "reportsDir": {
+      "path": "_reports",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.reportsDir",
+      "_note": "Per-project report OUTPUT (sprint/milestone/session/checkpoint reports via /report); created on use like runtime/ — NOT framework content and never ships (walk-skipped in the manifest). The /report skill + framework/templates/report/ ship and seed it; emitted reports do not."
+    },
+    "roadmap": {
+      "path": "ROADMAP.md",
+      "kind": "md",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.roadmap",
+      "_note": "Repo-root sprint+phase ledger. Auto-managed by scripts/sprint/ledger.js (sprint rows) and manually edited (phase backlogs)."
+    },
+    "releases": {
+      "path": "RELEASES.md",
+      "kind": "md",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.7.2",
+      "docsToken": "paths.releases",
+      "_note": "Repo-root engineering release ledger. Auto-managed by scripts/sprint/ledger.js."
+    },
+    "specGraph": {
+      "path": ".claude/project/maps/SPEC_GRAPH.json",
+      "kind": "json",
+      "owner": "generated",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.specGraph"
+    },
+    "requireGraph": {
+      "path": ".claude/project/maps/require-graph.json",
+      "kind": "json",
+      "owner": "generated",
+      "mutable": true,
+      "introducedIn": "2.0.0",
+      "docsToken": "paths.requireGraph",
+      "_note": "Static require/paths/hook-wiring/skill-call graph over scripts/**. Generated by scripts/maps/require-graph.js (regen-maps.js pass); walked by scripts/sprint/touchpoint.js."
+    },
+    "judgmentModel": {
+      "path": ".claude/agents/president/_system/beta/judgement-model.md",
+      "kind": "md",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.judgmentModel"
+    },
+    "judgmentRecommendations": {
+      "path": ".claude/agents/president/_system/beta/judgement-model-recommendations.md",
+      "kind": "md",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.judgmentRecommendations"
+    },
+    "betaSourceData": {
+      "path": ".claude/agents/president/_system/beta/mined/beta-source-data.md",
+      "kind": "md",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.betaSourceData"
+    },
+    "betaEvents": {
+      "path": ".claude/agents/president/_system/beta/events.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.betaEvents"
+    },
+    "lexicon": {
+      "path": ".claude/agents/president/_system/lexicon.md",
+      "kind": "md",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.lexicon"
+    },
+    "pathsLib": {
+      "path": "scripts/hooks/lib/paths.js",
+      "kind": "js",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.pathsLib"
+    },
+    "loggerLib": {
+      "path": "scripts/hooks/lib/logger.js",
+      "kind": "js",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.0.0",
+      "docsToken": "paths.loggerLib"
+    },
+    "agentDispatchGuide": {
+      "path": ".claude/agents/_system/guides/agent-dispatch-guide.md",
+      "kind": "md",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.3.0",
+      "movedIn": "0.15.5",
+      "previousPath": ".claude/project/reference/agent-dispatch-guide.md",
+      "docsToken": "paths.agentDispatchGuide"
+    },
+    "modeMarker": {
+      "path": ".claude/runtime/mode.json",
+      "kind": "json",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.15.4",
+      "docsToken": "paths.modeMarker",
+      "_note": "Session-written mode marker {mode: adhoc|oneshot|sprint|solo}. Read by lib/mode.js#getMode (the resolver) + team-guard.js/session-start.js; mapped to its lifecycle contract by .claude/agents/_org/mode-lifecycle.json. Registered as a paths key so the marker path is single-sourced."
+    },
+    "dispatchLocks": {
+      "path": ".claude/runtime/dispatch-locks",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.3.0",
+      "docsToken": "paths.dispatchLocks"
+    },
+    "dispatchDeathsFile": {
+      "path": ".claude/runtime/dispatch-deaths.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.3.0",
+      "docsToken": "paths.dispatchDeathsFile"
+    },
+    "dispatchCompletionsFile": {
+      "path": ".claude/runtime/dispatch-completions.jsonl",
+      "kind": "jsonl",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.3.0",
+      "docsToken": "paths.dispatchCompletionsFile"
+    },
+    "providerTmp": {
+      "path": ".claude/runtime/.provider-tmp",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.3.0",
+      "docsToken": "paths.providerTmp"
+    },
+    "providerTierConfig": {
+      "path": ".claude/runtime/provider-tier-config.json",
+      "kind": "json",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.19.0",
+      "docsToken": "paths.providerTierConfig",
+      "_note": "Preferred-tier config: per-provider selected/attested tier + the operator-tunable T3 subscription floor (default max_5x). Same runtime home as authorization.json — gitignored, per-machine, absent => framework defaults (provider-tier-config.js#FRAMEWORK_DEFAULTS). Read read-only by provider-tier-check.js; written ONLY behind the confirm-class --write/--set-tier flag."
+    },
+    "providerFallbackPolicy": {
+      "path": ".claude/agents/president/_system/policy/provider-fallback.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.3.0",
+      "docsToken": "paths.providerFallbackPolicy"
+    },
+    "sprintRoot": {
+      "path": ".claude/project/sprint",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintRoot",
+      "_note": "Sprint Workflow v0.1 — downstream live tracker root. Created on demand by scripts/sprint/init.js. NOT seeded in the framework repo."
+    },
+    "sprintCurrent": {
+      "path": ".claude/project/sprint/current-sprint.yaml",
+      "kind": "yaml",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintCurrent"
+    },
+    "sprintProgress": {
+      "path": ".claude/project/sprint/sprint-progress.yaml",
+      "kind": "yaml",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintProgress"
+    },
+    "sprintActiveRegistry": {
+      "path": ".claude/project/sprint/active-sprints.yaml",
+      "kind": "yaml",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.5.0",
+      "docsToken": "paths.sprintActiveRegistry",
+      "_note": "Sprint Workflow v0.2 — top-level registry of every live sprint. Lifts the single-current-sprint singleton. Written by scripts/sprint/init.js on first run; updated by /sprint:plan when new sprints are created. Replaces the singleton constraint declared in v0.1's current-sprint schema."
+    },
+    "sprintSprints": {
+      "path": ".claude/project/sprint/sprints",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.5.0",
+      "docsToken": "paths.sprintSprints",
+      "_note": "Sprint Workflow v0.2 — directory containing per-sprint subdirs (sprints/<SP-id>/current.yaml + progress.yaml)."
+    },
+    "sprintHistory": {
+      "path": ".claude/project/sprint/history",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintHistory"
+    },
+    "sprintPlanContracts": {
+      "path": ".claude/project/sprint/plan-contracts",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintPlanContracts"
+    },
+    "sprintTickets": {
+      "path": ".claude/project/sprint/tickets",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintTickets"
+    },
+    "sprintIssues": {
+      "path": ".claude/project/sprint/issues",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintIssues",
+      "_note": "Structured per-issue yaml. Per-project bug inbox issues.md (paths.sprintIssuesLedger) is the human-readable companion."
+    },
+    "sprintIssuesLedger": {
+      "path": "issues.md",
+      "kind": "md",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintIssuesLedger",
+      "_note": "Human-readable per-project bug inbox at repo root. Distinct from paths.recurringIssuesFile (SYSTEM-level recurring issues in jsonl)."
+    },
+    "sprintExternalServices": {
+      "path": ".claude/project/sprint/external-services",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintExternalServices"
+    },
+    "sprintReleases": {
+      "path": ".claude/project/sprint/releases",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintReleases"
+    },
+    "sprintRegressionCorpus": {
+      "path": "tests/regression",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.9.0",
+      "docsToken": "paths.sprintRegressionCorpus"
+    },
+    "sprintFullAutonomy": {
+      "path": ".claude/agents/president/_system/policy/sprint-full-autonomy.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.8.0",
+      "docsToken": "paths.sprintFullAutonomy"
+    },
+    "sprintFullReports": {
+      "path": ".claude/project/sprint/full-reports",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.8.0",
+      "docsToken": "paths.sprintFullReports"
+    },
+    "sprintApprovals": {
+      "path": ".claude/project/sprint/approvals",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintApprovals"
+    },
+    "sprintDecisions": {
+      "path": ".claude/project/sprint/decisions",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintDecisions",
+      "_note": "Sprint-scope decisions. Distinct from paths.decisions (project-wide decision ledger dir) and paths.decisionLedger (jsonl)."
+    },
+    "sprintRalph": {
+      "path": ".claude/project/sprint/ralph",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintRalph"
+    },
+    "sprintCheckpoints": {
+      "path": ".claude/project/sprint/checkpoints",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintCheckpoints"
+    },
+    "sprintRequirements": {
+      "path": ".claude/project/sprint/requirements",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintRequirements",
+      "_note": "Sprint-scope requirement bundles (PRD/STORIES/COPY/INPUTS/TRACE/AC/QA/Release-plan). Distinct from paths.requirementsRoot (project-wide _requirements/)."
+    },
+    "sprintTemplates": {
+      "path": "_mc/templates/sprint",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintTemplates"
+    },
+    "sprintSchemas": {
+      "path": "schemas/sprint",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintSchemas"
+    },
+    "sprintReference": {
+      "path": ".claude/project/reference/sprint-workflow.md",
+      "kind": "md",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintReference"
+    },
+    "sprintRouting": {
+      "path": ".claude/agents/president/_system/policy/sprint-routing.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.4.0",
+      "docsToken": "paths.sprintRouting"
+    },
+    "orgRoleRegistry": {
+      "path": ".claude/agents/_org/role-registry.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.13.0",
+      "docsToken": "paths.orgRoleRegistry"
+    },
+    "sprintHookPoints": {
+      "path": ".claude/agents/_org/sprint-hook-points.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.13.0",
+      "docsToken": "paths.sprintHookPoints"
+    },
+    "goldenPaths": {
+      "path": "_planning/golden-paths.json",
+      "kind": "json",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "2.0.0",
+      "docsToken": "paths.goldenPaths",
+      "_note": "Golden Features glossary - a project file the product writes; absent on a fresh install. Consumed by the lean-gauntlet package selector Smoke stage (absent -> no Golden Features, the security-surface floor only). Validated by scripts/checks/golden-paths-validate.js."
+    },
+    "modeLifecycleHooks": {
+      "path": ".claude/agents/_org/mode-lifecycle-hooks.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.15.4",
+      "docsToken": "paths.modeLifecycleHooks",
+      "_note": "The VIRTUAL mode-lifecycle EVENT registry — sibling of mode-lifecycle.json (the mode→contract keystone). Declares the ~23 logged (harness_fires:false) lifecycle events; emitted via scripts/hooks/lib/lifecycle-events.js#emit to paths.eventsFile; coverage asserted by scripts/checks/mode-lifecycle-hooks-coverage.js (report-only). Single-sourced here so the registry path is referenced via paths.modeLifecycleHooks, not a literal."
+    },
+    "skillHookPoints": {
+      "path": ".claude/agents/_org/skill-hook-points.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.13.1",
+      "docsToken": "paths.skillHookPoints"
+    },
+    "briefs": {
+      "path": "_docs/briefs",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.briefs"
+    },
+    "briefsCurrent": {
+      "path": "_docs/briefs",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.briefsCurrent"
+    },
+    "clones": {
+      "path": "_docs/clones",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.clones",
+      "_note": "Clone-output root for /portfolio:clone (alias of clonesRoot; bare-name registry key kept so docs-tokens lint resolves paths.clones)."
+    },
+    "clonesCurrent": {
+      "path": "_docs/clones",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.clonesCurrent",
+      "_note": "Same directory as clones; runtime-write companion. Mirrors briefs/briefsCurrent pattern."
+    },
+    "imports": {
+      "path": "_docs/imports",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.imports",
+      "_note": "Import-questionnaire root for /portfolio:import (formerly /product:import)."
+    },
+    "importsCurrent": {
+      "path": "_docs/imports",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.importsCurrent",
+      "_note": "Same directory as imports; runtime-write companion."
+    },
+    "portfolioCommands": {
+      "path": ".claude/commands/portfolio",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.portfolioCommands",
+      "_note": "Portfolio skill suite (/portfolio:* — bootstrap, clone, import, ponder, list, register, new, adopt, sync, status, open, dispatch, alias)."
+    },
+    "portfolioScripts": {
+      "path": "scripts/portfolio",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.portfolioScripts",
+      "_note": "Portfolio skill backing scripts (bootstrap.js, clone.js, dispatch.js, adopt.js, alias.js, etc)."
+    },
+    "portfolioTemplates": {
+      "path": "_mc/templates/portfolio",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.8.3",
+      "docsToken": "paths.portfolioTemplates",
+      "_note": "Portfolio skill templates (README.md.tmpl etc)."
+    },
+    "skillCatalog": {
+      "path": ".claude/runtime/skill-catalog.json",
+      "kind": "json",
+      "owner": "generated",
+      "mutable": true,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.skillCatalog",
+      "_note": "Generated compact index of every user-invocable slash command under paths.commands. Built by scripts/generate-skill-catalog.js, auto-regenerated by scripts/hooks/skill-catalog-regen.js on Edit|Write of .claude/commands/**. Consumed by smart-context.js skill ranker."
+    },
+    "providerSmokeSkill": {
+      "path": "scripts/mc/provider-smoke.js",
+      "kind": "js",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.providerSmokeSkill",
+      "_note": "Provider smoke driver. Run direct or via postflight registerExternalCheck."
+    },
+    "providerFailureModes": {
+      "path": ".claude/agents/president/_system/policy/provider-failure-modes.json",
+      "kind": "json",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.providerFailureModes",
+      "_note": "Provider failure-mode catalog. 10 entries, 2 safe_to_autofix. Cross-validated against provider-health.js."
+    },
+    "providerRcaLib": {
+      "path": "scripts/mc/lib/provider-rca.js",
+      "kind": "js",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.providerRcaLib"
+    },
+    "providerAutofixLib": {
+      "path": "scripts/mc/lib/provider-autofix.js",
+      "kind": "js",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.providerAutofixLib"
+    },
+    "reasoningFrameworks": {
+      "path": ".claude/project/reference/reasoning-frameworks.md",
+      "kind": "md",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.5.1",
+      "docsToken": "paths.reasoningFrameworks",
+      "_note": "Classification table, framework router, fix-quality levels (0-4), meta-reasoning protocol. Referenced by CLAUDE.md ## Reasoning."
+    },
+    "portfolioHome": {
+      "path": ".claude/portfolio",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.9.0",
+      "docsToken": "paths.portfolioHome",
+      "_note": "Portfolio root directory holding the registry (paths.portfolioRegistry) and any future per-product subdirs. Owned by `project` because operator may add per-product overlays."
+    },
+    "portfolioRegistry": {
+      "path": ".claude/portfolio/registry.yaml",
+      "kind": "yaml",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.9.0",
+      "removedIn": "0.21.0",
+      "docsToken": "paths.portfolioRegistry",
+      "_note": "DEPRECATED: this project-local path was always dead — the real registry is HOME-anchored at ~/.mc/portfolio.json. The consumer (scripts/portfolio/registry.js#registryPath()) resolves via os.homedir() and does NOT use this paths key. Removed from generated output so nothing can resolve to the dead .claude/portfolio/registry.yaml."
+    },
+    "briefsRoot": {
+      "path": "_docs/briefs",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.9.0",
+      "aliases": ["briefs"],
+      "docsToken": "paths.briefsRoot",
+      "_note": "Brief-output root for /portfolio:bootstrap (formerly /product:bootstrap; alias remains until v0.10). Same directory as the pre-existing `briefs` key — kept as alias for back-compat."
+    },
+    "clonesRoot": {
+      "path": "_docs/clones",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.9.0",
+      "aliases": ["clones"],
+      "docsToken": "paths.clonesRoot",
+      "_note": "Clone-output root for /portfolio:clone (formerly /product:clone; alias remains until v0.10). Mirrors briefsRoot pattern. Aliases the existing `clones` key already used by .claude/paths.json."
+    },
+    "testInstallMatrix": {
+      "path": "scripts/mc/test-install-matrix.js",
+      "kind": "file",
+      "owner": "framework",
+      "mutable": false,
+      "introducedIn": "0.9.0",
+      "docsToken": "paths.testInstallMatrix",
+      "_note": "Install fixture test matrix runner — 5-scenario regression suite for /mc:setup + /mc:update."
+    },
+    "contractsSchemas": {
+      "path": "schemas/contracts",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.contractsSchemas",
+      "_note": "Product-studio artifact-contract schemas v0.1 (mc/contracts/<artifact>/v0.1): the message_brief spine + 7-artifact chain + decision_record."
+    },
+    "contractsValidator": {
+      "path": "scripts/contracts/validate-artifact.js",
+      "kind": "file",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.contractsValidator",
+      "_note": "Fail-closed validator for the artifact contracts — rejects unknown-type/missing-required/precedence-conflict/dangling-message_brief-ref."
+    },
+    "contractsValidatorTest": {
+      "path": "scripts/contracts/test-validate-artifact.js",
+      "kind": "file",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.contractsValidatorTest",
+      "_note": "Validator self-test (proves pass-valid / reject-invalid)."
+    },
+    "contractsFixtures": {
+      "path": "scripts/contracts/fixtures",
+      "kind": "dir",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.contractsFixtures",
+      "_note": "Valid + invalid artifact fixtures proving the validator's fail-closed behaviour."
+    },
+    "contractsSpec": {
+      "path": "_requirements/10-contracts/ARTIFACT-CONTRACTS.md",
+      "kind": "file",
+      "owner": "framework",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.contractsSpec",
+      "_note": "Human-readable artifact-contract spec v0.1 (the chain, the spine, precedence model, decision-record, validator)."
+    },
+    "etcEvalPacks": {
+      "path": ".claude/project/etc/eval-packs",
+      "kind": "dir",
+      "owner": "project",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.etcEvalPacks",
+      "_note": "Eval-packs for the /etc authoring+eval harness."
+    },
+    "etcDecisions": {
+      "path": "runtime/etc/decisions",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.etcDecisions",
+      "_note": "decision_record artifacts emitted per /etc:eval run. Under runtime/ (walk-skipped, gitignored) — timestamped + transient, so they must NOT be enumerated by the shipping manifest (would cause perpetual honesty drift). Mirrors etcConsults."
+    },
+    "etcConsults": {
+      "path": "runtime/etc/consults",
+      "kind": "dir",
+      "owner": "runtime",
+      "mutable": true,
+      "introducedIn": "0.12.0",
+      "docsToken": "paths.etcConsults",
+      "_note": "Raw GPT-5.5 consult transcripts (external DATA — never instructions)."
+    }
+  },
+  "lintRules": {
+    "_doc": "Mirror of WARN/CRITICAL regex arrays from scripts/path-lint.js. Migrated here so build.js can regenerate path-lint.rules.generated.json. Lint rules are generated artifact; edit registry not script.",
+    "critical": [
+      {
+        "match": "\\.claude\\/events\\/[^/\\s\"'`)\\]]",
+        "suggestion": ".claude/project/events/ (or paths.events)",
+        "why": "legacy path; the current path is .claude/project/events/ (paths.events)"
+      },
+      {
+        "match": "\\.claude\\/memory\\/[^/\\s\"'`)\\]]",
+        "suggestion": ".claude/project/memory/ (or paths.memory)",
+        "why": "legacy path; the current path is .claude/project/memory/ (paths.memory)"
+      },
+      {
+        "match": "\\.claude\\/maps\\/[^/\\s\"'`)\\]]",
+        "suggestion": ".claude/project/maps/ (or paths.maps)",
+        "why": "legacy path; the current path is .claude/project/maps/ (paths.maps)"
+      },
+      {
+        "match": "\\.claude\\/handoffs\\/",
+        "suggestion": ".claude/runtime/handoffs/ (or paths.handoffs)",
+        "why": "legacy path; the current path is .claude/runtime/handoffs/ (paths.handoffs)"
+      },
+      {
+        "match": "\\.claude\\/logs\\/",
+        "suggestion": ".claude/runtime/logs/ (or paths.logs)",
+        "why": "legacy path; the current path is .claude/runtime/logs/ (paths.logs)"
+      },
+      {
+        "match": "\\.claude\\/plans\\/",
+        "suggestion": ".claude/runtime/plans/ (or paths.plans)",
+        "why": "legacy path; the current path is .claude/runtime/plans/ (paths.plans)"
+      },
+      {
+        "match": "context-enhancer\\.js",
+        "suggestion": "smart-context.js",
+        "why": "legacy hook name; the current hook is smart-context.js"
+      },
+      {
+        "match": "prompt-enhancer\\.js",
+        "suggestion": "smart-context.js",
+        "why": "legacy hook name; the current hook is scripts/hooks/smart-context.js"
+      },
+      {
+        "match": "\\.claude\\/agents\\/\\.system\\/oneshot\\/store\\.json",
+        "suggestion": ".claude/agents/store.json (or paths.store)",
+        "why": "wrong path — no .system/oneshot/ dir"
+      },
+      {
+        "match": "\\bbeta-persona\\.md\\b",
+        "suggestion": "judgement-model.md (or paths.judgmentModel)",
+        "why": "legacy file name; the current file is judgement-model.md (paths.judgmentModel)"
+      },
+      {
+        "match": "\\.beta-mining-recommendations\\.md",
+        "suggestion": "judgement-model-recommendations.md",
+        "why": "legacy file name; the current file is judgement-model-recommendations.md"
+      },
+      {
+        "match": "docs\\/05-features\\/",
+        "suggestion": "requirements/04-features/ (or paths.specsRoot)",
+        "why": "legacy docs path; the current chapter is _requirements/04-features (paths.specsRoot)"
+      },
+      {
+        "match": "requirements\\/05-features\\/",
+        "suggestion": "requirements/04-features/ (or paths.specsRoot)",
+        "why": "legacy chapter number; the current chapter is 04-features"
+      },
+      {
+        "match": "requirements\\/04-architecture\\/",
+        "suggestion": "requirements/03-architecture/",
+        "why": "legacy chapter number; the current chapter is 03-architecture"
+      },
+      {
+        "match": "requirements\\/06-operations\\/",
+        "suggestion": "requirements/05-operations/",
+        "why": "legacy chapter number; the current chapter is 05-operations"
+      },
+      {
+        "match": "requirements\\/07-security\\/",
+        "suggestion": "requirements/06-security/",
+        "why": "legacy chapter number; the current chapter is 06-security"
+      },
+      {
+        "match": "requirements\\/08-testing\\/",
+        "suggestion": "requirements/07-testing/",
+        "why": "legacy chapter number; the current chapter is 07-testing"
+      },
+      {
+        "match": "requirements\\/09-automation\\/",
+        "suggestion": "requirements/08-automation/",
+        "why": "legacy chapter number; the current chapter is 08-automation"
+      },
+      {
+        "match": "requirements\\/99-audits\\/",
+        "suggestion": "requirements/_audits/",
+        "why": "legacy audits path; the current path is _requirements/_audits (paths.auditsRoot)"
+      },
+      {
+        "match": "requirements\\/03-requirement-standards\\/",
+        "suggestion": "requirements/_standards/",
+        "why": "legacy standards path; the standards live in _requirements/_standards/"
+      },
+      {
+        "match": "docs\\/00-canonical\\/",
+        "suggestion": "requirements/00-canonical/",
+        "why": "legacy docs path; the current path is _requirements/00-canonical/"
+      },
+      {
+        "match": "docs\\/01-design-system\\/",
+        "suggestion": "requirements/01-design-system/",
+        "why": "legacy docs path; the current path is _requirements/01-design-system/"
+      },
+      {
+        "match": "docs\\/02-copy-system\\/",
+        "suggestion": "requirements/02-copy-system/",
+        "why": "legacy docs path; the current path is _requirements/02-copy-system/"
+      },
+      {
+        "match": "docs\\/04-architecture\\/",
+        "suggestion": "requirements/03-architecture/",
+        "why": "legacy docs path; the current path is _requirements/03-architecture/"
+      },
+      {
+        "match": "docs\\/06-integrations\\/",
+        "suggestion": "requirements/09-integrations/",
+        "why": "legacy docs path; the current path is _requirements/09-integrations/ (paths.integrationsRoot)"
+      },
+      {
+        "match": "docs\\/audit-reports\\/",
+        "suggestion": "requirements/_audits/",
+        "why": "legacy docs path; the current path is _requirements/_audits/ (paths.auditsRoot)"
+      },
+      {
+        "match": "docs\\/99-resources\\/",
+        "suggestion": "docs/{user-communication,research,karpathy-auto-research}/",
+        "why": "flattened docs/ — three carve-outs lifted to docs/ root"
+      },
+      {
+        "match": "docs\\/03-requirement-standards\\/",
+        "suggestion": "requirements/_standards/ (or paths.requirementsRoot)",
+        "why": "docs/03-requirement-standards → requirements/_standards"
+      },
+      {
+        "match": "\\.claude\\/portfolio\\/registry\\.yaml",
+        "suggestion": "~/.mc/portfolio.json (HOME-anchored); consumer: scripts/portfolio/registry.js#registryPath()",
+        "why": "legacy project-local path; the current registry is ~/.mc/portfolio.json, anchored to the home directory and resolved by the consumer via os.homedir()"
+      }
+    ],
+    "_critical_doc": "Above are paths that resolve to NOTHING in the current layout. Lint exits 1 on any hit.",
+    "warnKeys": [
+      "eventsFile",
+      "toolsFile",
+      "requirementsFile",
+      "requirementsStagedFile",
+      "decisionLedger",
+      "providerTrace",
+      "learningsFile",
+      "tracesFile",
+      "systemsFile",
+      "recurringIssuesFile",
+      "judgmentModel",
+      "judgmentRecommendations",
+      "betaEvents",
+      "betaSourceData",
+      "lexicon",
+      "pathsLib",
+      "loggerLib",
+      "handoffLatest",
+      "store",
+      "specGraph",
+      "manifest",
+      "settings",
+      "agentDispatchGuide",
+      "dispatchLocks",
+      "dispatchDeathsFile",
+      "dispatchCompletionsFile",
+      "providerTmp",
+      "providerFallbackPolicy",
+      "sprintCurrent",
+      "sprintProgress",
+      "sprintIssuesLedger",
+      "sprintReference",
+      "sprintRouting"
+    ],
+    "_warnKeys_doc": "These keys point at single files. Hardcoded literal use should warn (paths.X is preferred). build.js generates regex arrays from the registry path values."
+  },
+  "skipSubstrings": [
+    ".claude/runtime/",
+    ".claude/project/events/",
+    ".claude/project/decisions/",
+    ".claude/project/memory/",
+    ".claude/project/maps/",
+    ".claude/project/sprint/",
+    "requirements/_audits/",
+    "docs/",
+    ".claude/paths.json",
+    "scripts/path-lint.js",
+    "scripts/hooks/path-guard.js",
+    "/check/references.md",
+    ".claude/dreams/",
+    ".claude/agents/president/_system/oneshot/retros/",
+    ".claude/agents/.system/dispatch-backups/",
+    "backups/",
+    "SYSTEMS-REFERENCE.md",
+    "ROADMAP.md",
+    "framework/paths.registry.json",
+    "scripts/path-lint.rules.generated.json",
+    "scripts/hooks/lib/paths.generated.js"
+  ],
+  "_skipSubstrings_doc": "File substrings excluded from path-lint scan. Mostly archives, runtime, the linter itself, and the generated artifacts.",
+  "skipDirs": [
+    "node_modules",
+    ".git",
+    ".next",
+    "out",
+    "build",
+    "coverage",
+    ".worktrees",
+    ".mc-backup"
+  ]
+}

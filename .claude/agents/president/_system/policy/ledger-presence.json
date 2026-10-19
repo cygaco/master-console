@@ -1,0 +1,48 @@
+{
+  "$schema": "mc/policy/ledger-presence/v1",
+  "version": 1,
+  "description": "Policy for scripts/hooks/ledger-presence-guard.js. Ships in warn mode; set enforcement.mode to block after smoke validation. An optional enforcement.soft_rollout_until keeps a declared block at warn until that date.",
+  "enforcement": {
+    "mode": "warn"
+  },
+  "watched_commands": [
+    {
+      "match": "scripts/sprint/plan.js",
+      "expected_section": "ROADMAP.md#sprints",
+      "expected_event": "ledger.write",
+      "scope": "sprint"
+    },
+    {
+      "match": "scripts/sprint/add-sprint.js",
+      "expected_section": "ROADMAP.md#sprints",
+      "expected_event": "ledger.write",
+      "scope": "sprint"
+    },
+    {
+      "match": "scripts/sprint/release.js",
+      "expected_section": "RELEASES.md#sprints",
+      "expected_event": "ledger.write",
+      "scope": "release"
+    },
+    {
+      "match": "scripts/sprint/retrospective.js",
+      "expected_section": "ROADMAP.md#sprints",
+      "expected_event": "ledger.write",
+      "scope": "sprint"
+    },
+    {
+      "match": "scripts/mc/release-canonical.js",
+      "expected_section": "RELEASES.md#versions",
+      "expected_event": "ledger.write",
+      "scope": "version"
+    }
+  ],
+  "anchor_markers": {
+    "roadmap_sprints": "<!-- ledger:sprints",
+    "releases_versions": "<!-- ledger:versions",
+    "releases_sprints": "<!-- ledger:releases"
+  },
+  "anchor_missing_severity": "loud_warn",
+  "lookback_window_ms": 60000,
+  "notes": "lookback_window_ms = how far back to scan recent events.jsonl rows when correlating a watched-command invocation to a ledger.write. 60s covers typical sprint command durations. anchor_missing_severity=loud_warn — if the target file lacks the section anchor entirely, the guard emits a stronger warn than the standard 'missing row' warn."
+}

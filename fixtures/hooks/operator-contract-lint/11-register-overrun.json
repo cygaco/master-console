@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "Status dump line 1 of the report.\nStatus dump line 2 of the report.\nStatus dump line 3 of the report.\nStatus dump line 4 of the report.\nStatus dump line 5 of the report.\nStatus dump line 6 of the report.\nStatus dump line 7 of the report.\nStatus dump line 8 of the report.\nStatus dump line 9 of the report.\nStatus dump line 10 of the report.\nStatus dump line 11 of the report.\nStatus dump line 12 of the report.\nStatus dump line 13 of the report.\nStatus dump line 14 of the report.",
+  "expect": ["REGISTER-OVERRUN"]
+}

@@ -1,0 +1,146 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+
+// Signed-in landing — the redirect target after code / OAuth sign-in. Reads the
+// session via the browser client (null when unconfigured) and shows the signed-in
+// email + a sign-out affordance. Any unconfigured / no-session state routes back
+// to /auth rather than rendering a broken authenticated view.
+
+type AccountState =
+  | { status: "loading" }
+  | { status: "unconfigured" }
+  | { status: "signed-out" }
+  | { status: "signed-in"; email: string };
+
+export default function AccountPage() {
+  const router = useRouter();
+  const client = React.useMemo(() => createSupabaseBrowserClient(), []);
+  const configured = isSupabaseConfigured() && client !== null;
+
+  const [state, setState] = React.useState<AccountState>(
+    configured ? { status: "loading" } : { status: "unconfigured" },
+  );
+  const [signingOut, setSigningOut] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!client) return;
+    let active = true;
+    void (async () => {
+      const { data } = await client.auth.getUser();
+      if (!active) return;
+      const email = data.user?.email;
+      if (email) {
+        setState({ status: "signed-in", email });
+      } else {
+        setState({ status: "signed-out" });
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [client]);
+
+  // Bounce unauthenticated visitors back to sign-in once we know there's no session.
+  React.useEffect(() => {
+    if (state.status === "signed-out") {
+      router.replace("/auth");
+    }
+  }, [state.status, router]);
+
+  async function handleSignOut() {
+    if (!client || signingOut) return;
+    setSigningOut(true);
+    await client.auth.signOut();
+    window.location.assign("/auth");
+  }
+
+  if (state.status === "unconfigured") {
+    return (
+      <AccountShell
+        title="Auth is not configured"
+        description="Sign-in is turned off because the Supabase environment is not set."
+      >
+        <CardFooter>
+          <Button asChild variant="outline">
+            <Link href="/auth">Go to sign-in</Link>
+          </Button>
+        </CardFooter>
+      </AccountShell>
+    );
+  }
+
+  if (state.status === "loading" || state.status === "signed-out") {
+    return (
+      <AccountShell
+        title="Your account"
+        description={
+          state.status === "loading"
+            ? "Checking your session…"
+            : "Redirecting to sign-in…"
+        }
+      />
+    );
+  }
+
+  return (
+    <AccountShell
+      title="Your account"
+      description="You're signed in."
+    >
+      <CardContent className="space-y-2">
+        <p className="text-sm font-medium">Signed in as</p>
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <User className="size-4" aria-hidden />
+          <span>{state.email}</span>
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Button
+          variant="outline"
+          onClick={() => void handleSignOut()}
+          disabled={signingOut}
+        >
+          <LogOut className="size-4" aria-hidden />
+          {signingOut ? "Signing out…" : "Sign out"}
+        </Button>
+      </CardFooter>
+    </AccountShell>
+  );
+}
+
+function AccountShell({
+  title,
+  description,
+  children,
+}: Readonly<{
+  title: string;
+  description: string;
+  children?: React.ReactNode;
+}>) {
+  return (
+    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-6 p-6">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        {children}
+      </Card>
+    </main>
+  );
+}

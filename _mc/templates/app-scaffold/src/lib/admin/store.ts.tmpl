@@ -1,0 +1,173 @@
+import { ADMIN_FEATURE_FLAGS, type AdminFeatureFlag } from "./config";
+import {
+  evaluateTelemetryChain,
+  type ChainRecord,
+} from "@/lib/telemetry/chain";
+import type { LifecycleEvent, TelemetryStage } from "@/lib/telemetry/events";
+import { SUPPLY_CHAIN_STAGES } from "@/lib/telemetry/events";
+
+export type AdminAccountState = "active" | "suspended";
+
+export const ADMIN_ALLOWED_ENTITLEMENTS = [
+  "beta",
+  "founder_preview",
+] as const;
+
+export type AdminEntitlement = (typeof ADMIN_ALLOWED_ENTITLEMENTS)[number];
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  name: string;
+  state: AdminAccountState;
+  entitlements: AdminEntitlement[];
+  lastSeenAt: string;
+};
+
+export type AdminAuditRecord = {
+  id: string;
+  actorEmail: string;
+  action: "account_state" | "entitlement" | "feature_flag";
+  targetId: string;
+  result: "ok" | "not_found";
+  at: string;
+};
+
+export type AdminEventFeedItem = {
+  id: string;
+  event: LifecycleEvent;
+  correlationId: string;
+  stage: TelemetryStage;
+  status: "ok" | "broken";
+  summary: string;
+  at: string;
+};
+
+const users: AdminUser[] = [
+  {
+    id: "usr_founder",
+    email: "founder@example.com",
+    name: "Founder",
+    state: "active",
+    entitlements: ["founder_preview", "beta"],
+    lastSeenAt: "2099-01-02T09:00:00.000Z",
+  },
+  {
+    id: "usr_beta",
+    email: "beta@example.com",
+    name: "Beta User",
+    state: "active",
+    entitlements: ["beta"],
+    lastSeenAt: "2099-01-01T17:30:00.000Z",
+  },
+];
+
+const featureFlags: AdminFeatureFlag[] = ADMIN_FEATURE_FLAGS.map((flag) => ({
+  ...flag,
+}));
+
+const auditRecords: AdminAuditRecord[] = [];
+
+const sampleChainRecords: ChainRecord[] = SUPPLY_CHAIN_STAGES.map((stage) => ({
+  correlationId: "{{SLUG}}-sample-core-action",
+  stage,
+  at: "2099-01-02T09:15:00.000Z",
+}));
+
+export function searchAdminUsers(query: string): AdminUser[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return users;
+  return users.filter((user) =>
+    [user.email, user.name, user.id, user.state, ...user.entitlements]
+      .join(" ")
+      .toLowerCase()
+      .includes(needle),
+  );
+}
+
+export function isAdminEntitlement(value: string): value is AdminEntitlement {
+  return ADMIN_ALLOWED_ENTITLEMENTS.includes(value as AdminEntitlement);
+}
+
+export function setAdminUserAccountState(
+  userId: string,
+  state: AdminAccountState,
+): AdminUser | null {
+  const user = users.find((candidate) => candidate.id === userId);
+  if (!user) return null;
+  user.state = state;
+  return user;
+}
+
+export function setAdminUserEntitlement(
+  userId: string,
+  entitlement: AdminEntitlement,
+  enabled: boolean,
+): AdminUser | null {
+  const user = users.find((candidate) => candidate.id === userId);
+  if (!user) return null;
+
+  const hasEntitlement = user.entitlements.includes(entitlement);
+  if (enabled && !hasEntitlement) user.entitlements.push(entitlement);
+  if (!enabled && hasEntitlement) {
+    user.entitlements = user.entitlements.filter((item) => item !== entitlement);
+  }
+  return user;
+}
+
+export function recordAdminAudit(
+  record: Omit<AdminAuditRecord, "id" | "at">,
+): AdminAuditRecord {
+  const auditRecord = {
+    ...record,
+    id: `audit-${auditRecords.length + 1}`,
+    at: new Date().toISOString(),
+  };
+  auditRecords.unshift(auditRecord);
+  return auditRecord;
+}
+
+export function listAdminAuditRecords(): AdminAuditRecord[] {
+  return auditRecords;
+}
+
+export function listAdminFeatureFlags(): AdminFeatureFlag[] {
+  return featureFlags;
+}
+
+export function setAdminFeatureFlag(
+  key: string,
+  enabled: boolean,
+): AdminFeatureFlag | null {
+  const flag = featureFlags.find((candidate) => candidate.key === key);
+  if (!flag) return null;
+  flag.enabled = enabled;
+  return flag;
+}
+
+export function listAdminEventFeed(): AdminEventFeedItem[] {
+  const chain = evaluateTelemetryChain(sampleChainRecords);
+  const items = sampleChainRecords.map((record) => ({
+    id: `${record.correlationId}-${record.stage}`,
+    event: "core_action" as LifecycleEvent,
+    correlationId: record.correlationId,
+    stage: record.stage,
+    status: "ok" as const,
+    summary: `core_action reached ${record.stage}`,
+    at: record.at || "2099-01-02T09:15:00.000Z",
+  }));
+
+  if (!chain.ok) {
+    items.unshift({
+      id: `${chain.correlationId}-broken-${chain.brokenAtStage}`,
+      event: chain.failureEvent.event,
+      correlationId: chain.correlationId,
+      stage: chain.brokenAtStage,
+      status: "broken",
+      summary: `chain broke before ${chain.brokenAtStage}`,
+      at: "2099-01-02T09:15:00.000Z",
+    });
+  }
+
+  return items;
+}

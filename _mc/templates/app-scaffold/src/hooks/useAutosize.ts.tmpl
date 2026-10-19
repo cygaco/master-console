@@ -1,0 +1,46 @@
+"use client";
+
+import * as React from "react";
+import { clampHeight } from "@/lib/composer/autosize";
+
+/** Matches the composer's call-site override (G-2): idle row is 40px tall. */
+export const AUTOSIZE_MIN = 40;
+/** ~40vh-ish cap on typical mobile viewports before the field scrolls internally (P-2). */
+export const AUTOSIZE_MAX = 160;
+
+export interface UseAutosizeOptions {
+  min?: number;
+  max?: number;
+}
+
+/**
+ * useAutosize — P-2 "auto-grow with a cap." Wires a textarea ref so its
+ * height tracks `scrollHeight`, clamped to `[min, max]` via the pure
+ * `clampHeight` (_knowledge/design/INPUT_COMPOSER_PATTERN.md P-2). Re-runs
+ * whenever `value` changes (typed input, or a transcript landing
+ * programmatically).
+ */
+export function useAutosize<T extends HTMLTextAreaElement>(
+  value: string,
+  opts?: UseAutosizeOptions,
+) {
+  const ref = React.useRef<T | null>(null);
+  const min = opts?.min ?? AUTOSIZE_MIN;
+  const max = opts?.max ?? AUTOSIZE_MAX;
+
+  const resize = React.useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    // Reset first so scrollHeight recomputes from CONTENT, not the last
+    // height we set (otherwise it can only ever grow, never shrink back).
+    el.style.height = "auto";
+    const next = clampHeight(el.scrollHeight, min, max);
+    el.style.height = `${next}px`;
+  }, [min, max]);
+
+  React.useEffect(() => {
+    resize();
+  }, [value, resize]);
+
+  return { ref, resize };
+}

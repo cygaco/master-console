@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "Line one of narrative.\nLine two of narrative.\nLine three of narrative.\nLine four of narrative.",
+  "expect": []
+}

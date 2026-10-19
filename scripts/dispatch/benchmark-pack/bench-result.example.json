@@ -1,0 +1,42 @@
+{
+  "schema": "mc/skill-dispatch/bench-result/v1",
+  "_SCAFFOLD_NOTICE": "ILLUSTRATIVE EXAMPLE ONLY. Every token count below is a SYNTHETIC placeholder showing the SHAPE a measurement runner (not shipped in this pack) would consume; it is NOT a real measurement of scan:references (or any skill). The judge verdict here is a STUB, not a real cross-provider grading. No skill is finalized from this file. See README.md.",
+  "skill": "scan:references",
+  "subprocess_verified_prereq": false,
+  "thresholds": {
+    "min_tokens_saved": 4000,
+    "min_pct_saved": 0.6,
+    "quality_tolerance": 0.05
+  },
+  "dispatch_overhead": {
+    "background_notification": 800,
+    "completion_record_check": 200,
+    "source": ".claude/agents/_system/guides/oneshot-token-guide.md (orchestrator-tokens-per-activity, conservative high end)"
+  },
+  "judge": {
+    "provider": "gpt (cross-provider; NOT the skill's claude executor)",
+    "anonymized": true,
+    "rubric": "Did the subprocess run surface the SAME broken-link / orphan / stale-edge findings as inline, with no false-negatives and no fabricated findings?",
+    "verdict": "PLACEHOLDER — not graded; a real run dispatches a different-provider reviewer on anonymized arms.",
+    "score": null
+  },
+  "measurements": [
+    {
+      "task_id": "scan-references-clean-repo",
+      "inline_orchestrator_tokens": 0,
+      "envelope_tokens": 0,
+      "notes": "PLACEHOLDER zeros — NOT measured. A real run records the orchestrator tokens the full scan:references output costs inline vs the ≤8-line envelope. Zeros here would (correctly) FAIL Axis 1 fail-closed — this file is a SHAPE, not a result."
+    },
+    {
+      "task_id": "scan-references-seeded-broken-link",
+      "inline_orchestrator_tokens": 0,
+      "envelope_tokens": 0,
+      "notes": "PLACEHOLDER zeros — NOT measured. The planted-violation task (one broken link + one orphan) proves the subprocess arm does not LOSE findings the inline arm catches (the Axis-2 quality regression risk)."
+    }
+  ],
+  "_deferred": {
+    "axis1_savings": "NOT MEASURED — no inline/subprocess token counts captured (the zeros above are placeholders that would fail Axis 1).",
+    "axis2_quality": "NOT GRADED — no cross-provider judge run (the verdict above is a placeholder string, not a ruling).",
+    "how_to_run": "This pack ships no runner. A measurement runner (not shipped in this pack) would read this file once it holds REAL counts and a REAL judge verdict, after a ping smoke test has proved the skill runs headless. See README.md."
+  }
+}

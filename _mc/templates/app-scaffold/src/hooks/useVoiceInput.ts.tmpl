@@ -1,0 +1,306 @@
+"use client";
+
+import * as React from "react";
+import { reduceDedup, initialDedupState, type DedupState } from "@/lib/composer/dedup";
+import { describeMicError } from "@/lib/composer/voice-errors";
+
+/**
+ * useVoiceInput — the voice -> transcript pipeline behind a `voiceEnabled`
+ * flag (_knowledge/design/INPUT_COMPOSER_PATTERN.md §4). Two backends:
+ *
+ * - Flag-OFF (default): browser Web Speech API (Chrome) — deduped via the
+ *   pure `reduceDedup` high-water-mark reducer (the dedup gotcha).
+ * - Flag-ON: MediaRecorder captures audio and POSTs the blob to
+ *   `transcribeUrl` — a DOCUMENTED seam (see .env.local.example). The server
+ *   transcription route itself is product-owned and is NOT implemented
+ *   here; do not hand-roll one into the shared scaffold.
+ *
+ * Guest lane: this hook has no auth concept of its own — gate `transcribeUrl`
+ * reachability with abuse controls at the route, not a 401, so signed-out
+ * users still reach voice input (§4).
+ *
+ * Teardown discipline (why the `cancelled` guards exist): a discarded or
+ * unmounted recording must NEVER POST audio or emit a transcript, and an
+ * in-flight transcription that the user discards must not resolve back into
+ * the UI. `cancelledRef` + an `AbortController` enforce both — audio only
+ * leaves the device on an explicit stop/send, never on discard/unmount.
+ */
+
+export type VoiceStatus = "idle" | "recording" | "transcribing" | "failed";
+
+export interface UseVoiceInputOptions {
+  voiceEnabled?: boolean;
+  /** Required when voiceEnabled is true — see NEXT_PUBLIC_TRANSCRIBE_URL in .env.local.example. */
+  transcribeUrl?: string;
+  onTranscript?: (text: string, opts: { final: boolean }) => void;
+  onError?: (message: string) => void;
+}
+
+export interface UseVoiceInputResult {
+  status: VoiceStatus;
+  start: () => void;
+  stop: () => void;
+  discard: () => void;
+  pause: () => void;
+  retry: () => void;
+  isSupported: boolean;
+  /** True only for the flag-ON (MediaRecorder) backend — Web Speech has no pause primitive. */
+  canPause: boolean;
+}
+
+// Minimal shape of the (non-standard, vendor-prefixed) Web Speech API —
+// deliberately loose (no `lib.dom` SpeechRecognition types ship by default).
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: any) => void) | null;
+  onerror: ((event: any) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+}
+
+function getSpeechRecognitionCtor(): (new () => SpeechRecognitionLike) | null {
+  if (typeof window === "undefined") return null;
+  const w = window as any;
+  return w.SpeechRecognition || w.webkitSpeechRecognition || null;
+}
+
+export function useVoiceInput(opts: UseVoiceInputOptions): UseVoiceInputResult {
+  const { voiceEnabled = false, transcribeUrl, onTranscript, onError } = opts;
+
+  const [status, setStatus] = React.useState<VoiceStatus>("idle");
+  const recognitionRef = React.useRef<SpeechRecognitionLike | null>(null);
+  const dedupRef = React.useRef<DedupState>(initialDedupState);
+  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
+  const chunksRef = React.useRef<Blob[]>([]);
+  const lastBlobRef = React.useRef<Blob | null>(null);
+  const streamRef = React.useRef<MediaStream | null>(null);
+  // Set the instant the user discards or the hook unmounts: any pending
+  // onstop/transcription/recognition callback checks this and becomes a no-op,
+  // so a discarded recording never POSTs audio or lands a transcript.
+  const cancelledRef = React.useRef(false);
+  const abortRef = React.useRef<AbortController | null>(null);
+
+  const isSupported = voiceEnabled
+    ? typeof window !== "undefined" && !!window.MediaRecorder && !!navigator.mediaDevices
+    : !!getSpeechRecognitionCtor();
+
+  const teardownSpeech = React.useCallback(() => {
+    const rec = recognitionRef.current;
+    if (rec) {
+      rec.onresult = null;
+      rec.onerror = null;
+      rec.onend = null;
+      try {
+        rec.abort();
+      } catch {
+        // already stopped/aborted — fine.
+      }
+    }
+    recognitionRef.current = null;
+  }, []);
+
+  const teardownMedia = React.useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (recorder) {
+      // Drop the transcription trigger BEFORE stopping tracks so a track-stop
+      // that fires `onstop` cannot POST a discarded recording.
+      recorder.ondataavailable = null;
+      recorder.onstop = null;
+    }
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    mediaRecorderRef.current = null;
+  }, []);
+
+  const clearAudio = React.useCallback(() => {
+    lastBlobRef.current = null;
+    chunksRef.current = [];
+  }, []);
+
+  const startSpeech = React.useCallback(() => {
+    const Ctor = getSpeechRecognitionCtor();
+    if (!Ctor) {
+      setStatus("failed");
+      onError?.("Speech recognition is not supported in this browser.");
+      return;
+    }
+    cancelledRef.current = false;
+    dedupRef.current = initialDedupState;
+    const rec = new Ctor();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = typeof navigator !== "undefined" ? navigator.language : "en-US";
+
+    rec.onresult = (event: any) => {
+      if (cancelledRef.current) return;
+      const results = Array.from({ length: event.results.length }, (_, i) => ({
+        transcript: event.results[i]?.[0]?.transcript ?? "",
+        isFinal: !!event.results[i]?.isFinal,
+      }));
+      const { state } = reduceDedup(dedupRef.current, {
+        resultIndex: event.resultIndex,
+        results,
+      });
+      dedupRef.current = state;
+      // Interim only — the recording UI doesn't surface live text (the field
+      // isn't rendered while `recording`); still forward it for callers that
+      // want a live preview elsewhere.
+      onTranscript?.(state.finalText, { final: false });
+    };
+    rec.onerror = () => {
+      // Detach `onend` first: Web Speech fires error THEN end, and a live
+      // `onend` would overwrite `failed` with `idle` and emit a stale final
+      // transcript. Fail once, cleanly.
+      rec.onend = null;
+      setStatus("failed");
+      onError?.("Voice recognition failed. You can retry or type instead.");
+    };
+    rec.onend = () => {
+      if (cancelledRef.current) return;
+      const text = dedupRef.current.finalText;
+      onTranscript?.(text, { final: true });
+      setStatus("idle");
+    };
+
+    recognitionRef.current = rec;
+    setStatus("recording");
+    rec.start();
+  }, [onError, onTranscript]);
+
+  const transcribeBlob = React.useCallback(
+    async (blob: Blob) => {
+      if (!transcribeUrl) {
+        setStatus("failed");
+        onError?.("No transcription endpoint configured (transcribeUrl).");
+        return;
+      }
+      cancelledRef.current = false;
+      const controller = new AbortController();
+      abortRef.current = controller;
+      setStatus("transcribing");
+      try {
+        const body = new FormData();
+        body.append("audio", blob, "recording.webm");
+        const res = await fetch(transcribeUrl, { method: "POST", body, signal: controller.signal });
+        if (cancelledRef.current) return; // discarded mid-flight — drop the result.
+        if (!res.ok) throw new Error(`transcribe failed: ${res.status}`);
+        const data = await res.json();
+        if (cancelledRef.current) return;
+        const text = typeof data?.text === "string" ? data.text : "";
+        clearAudio(); // success: the audio is consumed — do not retain it.
+        onTranscript?.(text, { final: true });
+        setStatus("idle");
+      } catch (err) {
+        // An abort from discard() is not a failure — the UI already moved on.
+        if (cancelledRef.current || (err as { name?: string })?.name === "AbortError") return;
+        // Failure: the audio blob is RETAINED (lastBlobRef) so retry() can
+        // re-POST the same blob without re-recording.
+        setStatus("failed");
+        onError?.("Transcription failed. Retry, or type instead — the audio is retained.");
+      } finally {
+        if (abortRef.current === controller) abortRef.current = null;
+      }
+    },
+    [transcribeUrl, onTranscript, onError, clearAudio],
+  );
+
+  const startMedia = React.useCallback(async () => {
+    if (!transcribeUrl) {
+      setStatus("failed");
+      onError?.("No transcription endpoint configured (transcribeUrl).");
+      return;
+    }
+    cancelledRef.current = false;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (cancelledRef.current) {
+        // Discarded/unmounted while the permission prompt was open — release
+        // the mic immediately and do not start recording.
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      streamRef.current = stream;
+      chunksRef.current = [];
+      const recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        if (cancelledRef.current) return; // discarded — never POST.
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
+        lastBlobRef.current = blob;
+        streamRef.current?.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+        mediaRecorderRef.current = null;
+        void transcribeBlob(blob);
+      };
+      mediaRecorderRef.current = recorder;
+      setStatus("recording");
+      recorder.start();
+    } catch (err) {
+      // Fail LOUDLY with an actionable message. The common product failure is a
+      // Permissions-Policy `microphone=()` block (the scaffold's secure default)
+      // — describeMicError names the `microphone=(self)` fix (§4), never a silent
+      // no-op that reads as "voice is just broken".
+      setStatus("failed");
+      onError?.(describeMicError(err));
+    }
+  }, [transcribeUrl, onError, transcribeBlob]);
+
+  const start = React.useCallback(() => {
+    if (voiceEnabled) void startMedia();
+    else startSpeech();
+  }, [voiceEnabled, startMedia, startSpeech]);
+
+  const stop = React.useCallback(() => {
+    if (voiceEnabled) {
+      mediaRecorderRef.current?.stop();
+    } else {
+      recognitionRef.current?.stop();
+    }
+  }, [voiceEnabled]);
+
+  const discard = React.useCallback(() => {
+    // Mark cancelled BEFORE teardown so any in-flight onstop / fetch / onend
+    // callback short-circuits.
+    cancelledRef.current = true;
+    abortRef.current?.abort();
+    if (voiceEnabled) {
+      teardownMedia();
+      clearAudio();
+    } else {
+      teardownSpeech();
+    }
+    setStatus("idle");
+  }, [voiceEnabled, teardownMedia, teardownSpeech, clearAudio]);
+
+  const pause = React.useCallback(() => {
+    // MediaRecorder supports native pause(); Web Speech has no pause
+    // primitive — the mic UI only exposes pause for the flag-ON backend.
+    if (voiceEnabled) mediaRecorderRef.current?.pause();
+  }, [voiceEnabled]);
+
+  const retry = React.useCallback(() => {
+    if (voiceEnabled && lastBlobRef.current) {
+      void transcribeBlob(lastBlobRef.current);
+    } else if (!voiceEnabled) {
+      startSpeech();
+    }
+  }, [voiceEnabled, transcribeBlob, startSpeech]);
+
+  React.useEffect(() => {
+    return () => {
+      // Unmount is a cancel: no callback may fire audio/transcript afterward.
+      cancelledRef.current = true;
+      abortRef.current?.abort();
+      teardownSpeech();
+      teardownMedia();
+    };
+  }, [teardownSpeech, teardownMedia]);
+
+  return { status, start, stop, discard, pause, retry, isSupported, canPause: voiceEnabled };
+}

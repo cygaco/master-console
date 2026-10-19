@@ -1,0 +1,30 @@
+import { describe, it, expect } from "vitest";
+// Relative import — see the note in terminus.test.ts.tmpl (no vitest alias config in the scaffold).
+import { clampHeight } from "../../src/lib/composer/autosize";
+
+const MIN = 40;
+const MAX = 160;
+
+// P-2 is "Auto-grow with a cap" in §2 of _knowledge/design/INPUT_COMPOSER_PATTERN.md.
+describe("clampHeight — autosize bounds (P-2)", () => {
+  it("clamps up to MIN when scrollHeight is below it", () => {
+    expect(clampHeight(20, MIN, MAX)).toBe(MIN);
+  });
+
+  it("passes through unchanged when within [MIN, MAX]", () => {
+    expect(clampHeight(80, MIN, MAX)).toBe(80);
+  });
+
+  it("clamps down to MAX when scrollHeight exceeds it", () => {
+    expect(clampHeight(400, MIN, MAX)).toBe(MAX);
+  });
+
+  it("is inclusive at the exact boundaries", () => {
+    expect(clampHeight(MIN, MIN, MAX)).toBe(MIN);
+    expect(clampHeight(MAX, MIN, MAX)).toBe(MAX);
+  });
+
+  it("throws if min > max (a caller programming error, not a runtime value to silently clamp)", () => {
+    expect(() => clampHeight(80, 200, 100)).toThrow();
+  });
+});

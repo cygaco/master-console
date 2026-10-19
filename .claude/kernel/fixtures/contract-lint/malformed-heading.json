@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-malformed-heading",
+  "gate": "contract-lint",
+  "input_file": "malformed-heading.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "the document contains two '#### P<n>.<m>' heading ATTEMPTS (P1.1, P2.1) that lack the full well-formed heading shape (the ' — ' em-dash delimiter and/or a non-empty title). A heading that opens a policy block but is not well-formed must fail CLOSED (structural, distinct from a well-formed policy violation), never be silently accepted or silently absorbed as content of an unrelated block."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js), NOT a kernel conformance-matrix fixture -- excluded from conformance-matrix.js and manifest.json's kernel-conformance count (see manifest.json _contract_lint_selftest_note)."
+}

@@ -1,0 +1,4 @@
+{
+  "_comment": "Map-file stems / /maps:<x> skills intentionally exempt from maps-coverage. key = map-file stem OR skill basename; value = reason. Manual registries + inventory snapshots are not /maps:<x> generator outputs. Enforced by scripts/checks/maps-coverage.js. Keep SMALL — prefer registering a map in /maps:all over excluding it.",
+  "exclusions": {}
+}

@@ -1,0 +1,77 @@
+/**
+ * dedup.ts — the per-session high-water-mark dedup reducer for Web Speech's
+ * cumulative `event.results` (the §4/G-9 dedup gotcha in
+ * _knowledge/design/INPUT_COMPOSER_PATTERN.md). PURE, framework-free: no
+ * React, no `SpeechRecognition` DOM types — callers adapt the browser event
+ * shape into `DedupEvent` (see `useVoiceInput`).
+ *
+ * Chrome's continuous mode re-delivers the FULL cumulative `results` list on
+ * every `onresult` event, and `event.resultIndex` can be stale — trusting it
+ * (or naively concatenating each event's results) causes word repetition.
+ * The fix does NOT trust `resultIndex` at all: it tracks its own
+ * high-water-mark (the highest result-array POSITION already finalized) and
+ * only advances text for positions past that mark. Re-delivered positions
+ * are recognized as already-emitted and skipped.
+ */
+
+export interface DedupResultItem {
+  transcript: string;
+  isFinal: boolean;
+}
+
+export interface DedupEvent {
+  /** Present for parity with the browser event shape; NOT trusted (see above). */
+  resultIndex: number;
+  results: DedupResultItem[];
+}
+
+export interface DedupState {
+  /** Highest result-array index whose FINAL transcript has already been emitted. */
+  highWaterMark: number;
+  /** Finalized transcript text emitted so far (deduped, space-joined). */
+  finalText: string;
+}
+
+export const initialDedupState: DedupState = { highWaterMark: -1, finalText: "" };
+
+export interface DedupOutput {
+  state: DedupState;
+  /** finalText plus the current (replaced-each-call, never appended) interim tail. */
+  transcript: string;
+}
+
+/**
+ * reduceDedup — fold one cumulative Web Speech event into the running
+ * per-session state. Finalized results advance the high-water mark exactly
+ * once each; a stale re-delivery of an already-finalized position is
+ * skipped. The still-interim (non-final) tail is recomputed fresh every
+ * call — it is provisional and gets REPLACED, never appended, so it never
+ * accumulates repeats on its own.
+ */
+export function reduceDedup(prev: DedupState, event: DedupEvent): DedupOutput {
+  let highWaterMark = prev.highWaterMark;
+  let finalText = prev.finalText;
+  let interim = "";
+
+  for (let i = 0; i < event.results.length; i++) {
+    const result = event.results[i];
+    if (!result) continue;
+
+    if (result.isFinal) {
+      if (i > highWaterMark) {
+        const chunk = result.transcript.trim();
+        finalText = finalText ? `${finalText} ${chunk}` : chunk;
+        highWaterMark = i;
+      }
+      // i <= highWaterMark: a stale re-delivery of an already-emitted
+      // finalized result — skip it, this is the fix for the dedup gotcha.
+    } else {
+      const chunk = result.transcript.trim();
+      interim = interim ? `${interim} ${chunk}` : chunk;
+    }
+  }
+
+  const state: DedupState = { highWaterMark, finalText };
+  const transcript = interim ? `${finalText} ${interim}`.trim() : finalText;
+  return { state, transcript };
+}

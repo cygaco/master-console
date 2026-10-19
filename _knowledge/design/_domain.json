@@ -1,0 +1,9 @@
+{
+  "domain": "design",
+  "kind": "library",
+  "producer": "design-lead",
+  "consumers": ["conversion-lead", "design-lead", "design-quality", "visual-review"],
+  "index": "_knowledge/design/registry.json",
+  "overview": "_knowledge/design/README.md",
+  "note": "Design-principles guide library — agent-grounding training references (NN/g, Laws of UX, Gestalt, Refactoring UI, WCAG 2.2, Baymard/CXL). Consumed via the `<!-- knowledge:design role:<role> -->` marker blocks each consumer spec carries; wired by /knowledge:integrate, enforced by /knowledge:coverage."
+}

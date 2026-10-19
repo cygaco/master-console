@@ -1,0 +1,14 @@
+import type { LifecycleEvent, TelemetryProps } from "./events";
+import { resolveTelemetrySink } from "./sink";
+
+export function track(event: LifecycleEvent, props: TelemetryProps = {}): void {
+  try {
+    const sink = resolveTelemetrySink();
+    const result = sink(event, props);
+    if (result && typeof result.then === "function") {
+      void result.catch(() => undefined);
+    }
+  } catch {
+    // Telemetry must never block app boot or user interaction.
+  }
+}

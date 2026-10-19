@@ -1,0 +1,44 @@
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+import { isSupabaseConfigured, supabaseAnonKey, supabaseUrl } from "./config";
+
+// Session-refresh helper invoked from middleware. Keeps the auth cookie fresh on
+// every request so RSCs read a valid session. When the seam is unconfigured this
+// is a pure no-op, so the scaffold runs with zero Supabase env.
+//
+// CRITICAL cookie discipline: we build ONE `response` up front, and setAll writes
+// refreshed cookies onto BOTH `request.cookies` (so the just-created server client
+// sees them this request) AND `response.cookies` (so the browser receives them).
+// We return THAT SAME response object — creating a fresh NextResponse after
+// setAll would drop the refreshed session. And we call getUser() (not getSession,
+// which trusts the raw cookie) with NO code between client creation and getUser().
+export async function updateSession(request: NextRequest): Promise<NextResponse> {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.next({ request });
+  }
+
+  let response = NextResponse.next({ request });
+
+  const supabase = createServerClient(supabaseUrl(), supabaseAnonKey(), {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        for (const { name, value } of cookiesToSet) {
+          request.cookies.set(name, value);
+        }
+        response = NextResponse.next({ request });
+        for (const { name, value, options } of cookiesToSet) {
+          response.cookies.set(name, value, options);
+        }
+      },
+    },
+  });
+
+  // Do NOT run code between createServerClient and getUser — it refreshes the
+  // token and, via setAll above, rewrites `response`.
+  await supabase.auth.getUser();
+
+  return response;
+}

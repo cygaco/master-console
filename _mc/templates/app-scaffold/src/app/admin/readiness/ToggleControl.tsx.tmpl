@@ -1,0 +1,89 @@
+"use client";
+
+import { useActionState } from "react";
+import { CheckCircle2 } from "lucide-react";
+import {
+  toggleReadinessItemAction,
+  type ToggleReadinessResult,
+} from "./actions";
+
+// Client wrapper around the (unchanged) server action. React 19 useActionState gives us
+// pending (for the in-flight affordance) AND the action's return value (state) WITHOUT
+// changing the action signature — the action still takes a single FormData and returns a
+// ToggleReadinessResult. The whole point of this component is the NEVER-SWALLOW error
+// surface: a denied / un-toggleable / failed toggle comes back as { ok:false, error } and
+// MUST render inline (aria-live) instead of vanishing silently.
+//
+// Scope: a failure surfaces as this inline error only. There is no optimistic flip and no
+// toast (useOptimistic + Sonner); the scaffold has no Sonner dependency.
+export function ToggleControl({
+  id,
+  label,
+  checked,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+}) {
+  const [state, formAction, pending] = useActionState<
+    ToggleReadinessResult | null,
+    FormData
+  >(async (_prev, fd) => toggleReadinessItemAction(fd), null);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <form action={formAction}>
+        <input type="hidden" name="id" value={id} />
+        <input type="hidden" name="nextChecked" value={(!checked).toString()} />
+        <button
+          type="submit"
+          aria-pressed={checked}
+          aria-busy={pending}
+          disabled={pending}
+          className="flex cursor-pointer items-start gap-3 text-left disabled:cursor-progress disabled:opacity-70"
+        >
+          {checked ? (
+            <span
+              aria-hidden
+              className="mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-[4px] border border-primary bg-primary text-primary-foreground"
+            >
+              <CheckCircle2 className="size-3" />
+            </span>
+          ) : (
+            <span
+              aria-hidden
+              className="mt-0.5 size-[18px] shrink-0 rounded-[4px] border border-input"
+            />
+          )}
+          <span
+            className={
+              checked
+                ? "text-sm text-muted-foreground"
+                : "text-sm font-medium"
+            }
+          >
+            {label}
+          </span>
+          <span className="sr-only">
+            {checked
+              ? `Mark “${label}” as not done`
+              : `Mark “${label}” as done`}
+          </span>
+        </button>
+      </form>
+
+      {/* NEVER-SWALLOW error surface: a failed or denied toggle is
+          rendered inline, not dropped. aria-live=polite + role=alert so it reaches AT. */}
+      {state && state.ok === false ? (
+        <p
+          role="alert"
+          aria-live="polite"
+          className="pl-[30px] text-xs text-destructive"
+        >
+          {state.error ||
+            "Couldn't save that. Check your connection and try again."}
+        </p>
+      ) : null}
+    </div>
+  );
+}

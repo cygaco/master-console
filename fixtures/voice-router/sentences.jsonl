@@ -1,0 +1,84 @@
+{"say":"session end fast","expect":{"skill":"session:end","flags":["--fast"],"tier":"MEDIUM"},"note":"dictated slug + global flag. MEDIUM, not HIGH: session:end lands to main (says-confirm: always) — voice never lowers the push/land ceiling"}
+{"say":"road map add the login bug","expect":{"skill":"roadmap:add","tier":"HIGH"},"note":"dictation-mangled: compound-join heals 'road map' -> 'roadmap' before slug-channel scoring"}
+{"say":"add to the road map","expect":{"skill":"roadmap:add","tier":"HIGH"},"note":"phrase channel after compound-join: says 'add to the roadmap'"}
+{"say":"what's on the docket","expect":{"skill":"roadmap:next","tier":"HIGH"},"note":"pure says phrase — no slug word in the sentence"}
+{"say":"run session recovery","expect":{"skill":"session:resume","tier":"HIGH"},"note":"says phrase, dictation-friendly wording for resume"}
+{"say":"pick up where we left off","expect":{"skill":"session:resume","tier":"HIGH"}}
+{"say":"initiate turbo mode","expect":{"skill":"session:turbo","tier":"HIGH"},"note":"fuzzy-only: the widening skill named EXPLICITLY and exactly runs directly — no confirm line. The 'turbo' word is session:turbo's OWN name, so the secondary-flag ceiling does not apply"}
+{"say":"maybe go faster, turbo-ish?","expect":{"skill":"session:turbo","tier":"MEDIUM"},"note":"fuzzy-only: a hedged / fuzzy mention of turbo asks one line first (confirm-first), never auto-invokes. Hyphen split lets 'turbo-ish' reach the 'turbo' token"}
+{"say":"turbo","expect":{"skill":"session:turbo","tier":"HIGH"},"note":"explicit one-word naming — HIGH (not an ambiguity canary like 'status': scan:turbo-spend trails far behind)"}
+{"say":"go fast this session","expect":{"skill":"session:turbo","flags":["--turbo"],"tier":"HIGH"},"note":"own says phrase; the --turbo flag it also parses is the skill's own name, so HIGH stands"}
+{"say":"I think we should probably go into turbo mode now if that is okay with you","expect":{"skill":"session:turbo","tier":"MEDIUM"},"note":"turbo buried in a long hedged sentence — confirm-first, never direct"}
+{"say":"initiate sprint mode","expect":{"skill":"mode:sprint","tier":"HIGH"},"note":"fuzzy-only on mode:sprint: explicit exact naming -> HIGH"}
+{"say":"sprint mode","expect":{"skill":"mode:sprint","tier":"HIGH"}}
+{"say":"spring mode","expect":{"skill":"mode:sprint","tier":"MEDIUM"},"note":"homophone fix spring -> sprint is a DICTATION GUESS, not the operator saying it — fuzzy-only mode:sprint caps this at MEDIUM (confirm-first), it must never auto-invoke HIGH on a word the operator didn't speak"}
+{"say":"print mode","expect":{"skill":"mode:sprint","tier":"MEDIUM"},"note":"homophone fix print -> sprint (context: followed by 'mode') is also a dictation guess -> MEDIUM, same as 'spring mode'"}
+{"say":"turbo mode","expect":{"skill":"session:turbo","tier":"HIGH"},"note":"control: 'turbo' genuinely spoken (not a homophone rewrite) -> HIGH stands, the exact-naming branch is unaffected"}
+{"say":"turbine mode","expect":{"skill":"session:turbo","tier":"MEDIUM"},"note":"homophone fix turbine -> turbo is a dictation guess on the WIDENING skill itself -> MEDIUM, never HIGH auto-invoke"}
+{"say":"turbot mode","expect":{"skill":"session:turbo","tier":"MEDIUM"},"note":"homophone fix turbot -> turbo, same dictation-guess shape as 'turbine mode' -> MEDIUM"}
+{"say":"could you maybe switch us over into sprint mode","expect":{"skill":"mode:sprint","tier":"HIGH"},"note":"exact phrase inside a polite wrapper, still within the 12-content-token HIGH ceiling"}
+{"say":"sprint mode turbo","expect":{"skill":"mode:sprint","flags":["--turbo"],"tier":"MEDIUM"},"note":"SECONDARY CONFIRM FLAG: --turbo riding on mode:sprint (not its own name) caps HIGH at MEDIUM — confirm-first (catalog.confirm_flags + applyFlagCeiling)"}
+{"say":"resume in sprint mode turbo","expect":{"skill":"mode:sprint","flags":["--turbo"],"tier":"MEDIUM"},"note":"mangled dictation of a mode switch with turbo; the widening flag forces one confirm line"}
+{"say":"switch to adhoc","expect":{"skill":"mode:adhoc","tier":"HIGH"}}
+{"say":"solo mode","expect":{"skill":"mode:solo","tier":"HIGH"}}
+{"say":"run the full sprint","expect":{"skill":"sprint:full","tier":"HIGH"},"note":"fuzzy-only on sprint:full: explicit phrase -> HIGH; 'run the full scan' below must NOT collide"}
+{"say":"spring full","expect":{"skill":"sprint:full","tier":"MEDIUM"},"note":"homophone fix spring -> sprint on sprint:full (confirm: fuzzy-only) is a dictation guess -> MEDIUM, never HIGH auto-invoke"}
+{"say":"run the spring full","expect":{"skill":"sprint:full","tier":"MEDIUM"},"note":"same homophone guess inside a short wrapper sentence -> still MEDIUM, not HIGH"}
+{"say":"run the full scan","expect":{"skill":"scan:full","tier":"HIGH"},"note":"says 'full scan' vs sprint:full's 'run the full sprint' — the scan word decides"}
+{"say":"full scan","expect":{"skill":"scan:full","tier":"HIGH"}}
+{"say":"scan everything","expect":{"skill":"scan:full","tier":"HIGH"}}
+{"say":"wrap it up","expect":{"any_of":["session:end","epic:close"],"tier":"MEDIUM","tie":true},"note":"genuinely ambiguous — session:end AND epic:close both say 'wrap up the ...'; the correct behaviour is a MEDIUM tie that lists both for a one-line pick, never a silent winner"}
+{"say":"we're done for today","expect":{"skill":"session:end","tier":"MEDIUM"},"note":"says phrase; MEDIUM because session:end is confirm-always (lands to main)"}
+{"say":"land it","expect":{"skill":"commit:land","tier":"MEDIUM"},"note":"push/merge class: confirm-always ceiling holds even at an exact 1.20 score"}
+{"say":"land the branch","expect":{"skill":"commit:land","tier":"MEDIUM"}}
+{"say":"what did we learn","expect":{"skill":"learn:deep","tier":"HIGH"}}
+{"say":"harvest learnings","expect":{"skill":"learn:deep","tier":"HIGH"}}
+{"say":"catch me up","expect":{"skill":"session:recap","tier":"HIGH"}}
+{"say":"checkpoint now","expect":{"skill":"session:checkpoint","tier":"HIGH"}}
+{"say":"write the handoff","expect":{"skill":"session:handoff","tier":"HIGH"}}
+{"say":"dump the session","expect":{"skill":"session:dump","tier":"HIGH"}}
+{"say":"read the inbox","expect":{"skill":"session:read","tier":"HIGH"}}
+{"say":"broadcast this","expect":{"skill":"session:write","tier":"HIGH"}}
+{"say":"where are the sprints","expect":{"skill":"sprint:status","tier":"HIGH"}}
+{"say":"sprint status","expect":{"skill":"sprint:status","tier":"HIGH"}}
+{"say":"spring status","expect":{"skill":"sprint:status","tier":"HIGH"},"note":"homophone fix: spring -> sprint (context: followed by 'status')"}
+{"say":"how's the epic","expect":{"skill":"epic:status","tier":"HIGH"}}
+{"say":"epic status","expect":{"skill":"epic:status","tier":"HIGH"}}
+{"say":"tail the events","expect":{"skill":"events:tail","tier":"HIGH"}}
+{"say":"just fix it","expect":{"skill":"fix:fast","tier":"HIGH"}}
+{"say":"fix deep","expect":{"skill":"fix:deep","tier":"HIGH"}}
+{"say":"red team it","expect":{"skill":"redteam:full","tier":"HIGH"},"note":"compound-join 'red team' -> 'redteam'"}
+{"say":"is the tracker green","expect":{"skill":"trackers:validate","tier":"HIGH"}}
+{"say":"quick nap","expect":{"skill":"sleep:quick","tier":"HIGH"}}
+{"say":"deep sleep","expect":{"skill":"sleep:deep","tier":"HIGH"}}
+{"say":"mc doctor","expect":{"skill":"mc:doctor","tier":"HIGH"}}
+{"say":"scan privacy","expect":{"skill":"scan:privacy","tier":"HIGH"}}
+{"say":"yes","expect":{"skill":null},"note":"approval word"}
+{"say":"looks good, go ahead","expect":{"skill":null},"note":"conversational approval, not a command"}
+{"say":"thanks, that looks right to me","expect":{"skill":null},"note":"conversational acknowledgement"}
+{"say":"/session:end --fast","expect":{"skill":null},"note":"typed slash command — the harness already has it, router must not double-suggest"}
+{"say":"Please update the ROADMAP section for the website so the stars gauge reflects the new launch milestone and also check whether the session notes from last week already captured this, then let me know what you think before we decide anything else about it","expect":{"skill":null},"note":"length guard — a long instruction that happens to mention roadmap/session must not be hijacked"}
+{"say":"I noticed the landing page hero copy still mentions the old pricing tier, please draft three alternatives and we'll pick one together tomorrow","expect":{"skill":null},"note":"NEGATIVE: long ordinary work prompt, no skill intent"}
+{"say":"The build failed last night with a timeout in the dispatch wrapper, pull the completion record and tell me what the elapsed time was","expect":{"skill":null},"note":"NEGATIVE: long diagnostic prompt — mentions build/dispatch, still no skill"}
+{"say":"Write a short summary of what the voice router does for the README, two paragraphs, plain language, no jargon","expect":{"skill":null},"note":"NEGATIVE: long authoring prompt"}
+{"say":"Here is the stack trace from the failing test, the assertion on line forty compares two dates in different time zones so it is off by one hour, can you fix the comparison","expect":{"skill":null},"note":"NEGATIVE: long debugging prompt that says 'fix' in passing — must not become /fix:*"}
+{"say":"Before we start, remind me which branch we were on yesterday and whether the operator approved the pricing change, I lost my notes","expect":{"skill":null},"note":"NEGATIVE: long context question"}
+{"say":"I was reading the retrospective from the last sprint and I think the part about how we checkpoint the session before a handoff is actually the thing that saved us, so can you explain why that worked","expect":{"skill":null},"note":"probe: suppressed via the wh-word-anywhere rule ('how', 'why' present)"}
+{"say":"Before you do anything else I want to understand whether the turbo setting we talked about last week actually changes the permission model or whether it just skips the confirmation prompts","expect":{"skill":null},"note":"probe: /session:turbo --turbo — a widening-skill confirm-first leak, not just noise; suppressed ('whether' + 'do' immediately followed by 'you')"}
+{"say":"the roadmap document says we should prioritize the login bug but the tracker still shows it as open and I am not sure which one of those two is the source of truth here","expect":{"skill":null},"note":"probe: a true negative control ('which' present)"}
+{"say":"please do not scan anything yet, I just want to know how the full scan decides which tier a finding belongs to and whether that is written down somewhere","expect":{"skill":null},"note":"probe: a tie /session:takenotes and /scan:full; suppressed via the 'do not' negation"}
+{"say":"when you end a session does it push to main automatically or does it wait for me, because I remember something about a land step that needed approval first","expect":{"skill":null},"note":"probe: a tie /commit:land and /commit:remote — a push-class skill leak; suppressed via the leading 'when' and 'does that' (aux immediately followed by the pronoun 'that')"}
+{"say":"My question is about the full scan and specifically how it decides which tier a particular finding belongs in before it writes the report","expect":{"skill":null},"note":"probe: /scan:full; suppressed via 'how'/'which' (wh-words anywhere) — 'how' sits at word 10, past any first-6-words window"}
+{"say":"There is something I never understood about the way we land a branch into main and whether the push happens before or after the merge step","expect":{"skill":null},"note":"probe: /commit:land — a push-class skill leak; suppressed via the negation vocabulary ('never') and 'whether'"}
+{"say":"Remind me about the turbo setting and whether it widens permissions for the whole session or only for one batch of actions","expect":{"skill":null},"note":"probe: /session:turbo — 'whether'/'if' in the interrogative vocabulary"}
+{"say":"I have finished the migration work and verified every module so please run the full scan across the entire repository right now","expect":{"skill":"scan:full","tier":"MEDIUM"},"note":"recall probe (15 content tokens): a genuine long IMPERATIVE command, NOT a question. The bare-auxiliary rule restricts bare auxiliaries to subject-aux INVERSION (aux immediately before a pronoun), and declarative word order ('I have') never inverts, so this row must route"}
+{"say":"we are completely done with the sprint work today so please wrap up the session and write a detailed handoff document for tomorrow","expect":{"skill":"session:end","tier":"MEDIUM"},"note":"recall probe (15 content tokens): same shape as the previous row ('we are' is declarative word order, never inverted) — must route"}
+{"say":"what time is it in Lisbon","expect":{"skill":null},"note":"short unrelated question"}
+{"say":"status","expect":{"skill":null},"note":"collision canary — ambiguous one-word prompt matches multiple *:status skills near-identically; must NEVER resolve HIGH. Keep this row forever."}
+{"say":"uninstall mc","expect":{"skill":"mc:uninstall","tier":"MEDIUM"},"note":"a no-says irreversible slug (uninstall) — catalog derives confirm>=always from the SLUG, so a 1.00 slug match is confirm-first, never 'invoke it now'"}
+{"say":"delete this skill","expect":{"skill":"skills:delete","tier":"MEDIUM"},"note":"no-says irreversible slug (delete) — slug-derived confirm=always caps at MEDIUM"}
+{"say":"permisions authorised","expect":{"skill":"permissions:authorized","tier":"MEDIUM"},"note":"permissions:authorized is permission-widening -> fuzzy-only from the SLUG (no says: needed); misspelled dictation is a fuzzy match, so confirm-first. (An EXACT naming stays HIGH by fuzzy-only, like session:turbo.)"}
+{"say":"I already ran the full scan","expect":{"skill":"scan:full","tier":"MEDIUM"},"note":"a short declarative mention must not reach HIGH"}
+{"say":"deep sleep is important for health","expect":{"skill":"sleep:deep","tier":"MEDIUM"},"note":"declarative mention in the <=12-token band caps at MEDIUM"}
+{"say":"disable turbo mode","expect":{"skill":"session:turbo","tier":"MEDIUM"},"note":"negated/disabling mention of a widening skill must not reach HIGH"}
+{"say":"run the full scan","expect":{"skill":"scan:full","tier":"HIGH"},"note":"control: a plain imperative still routes HIGH — the declarative guard has no recall cost here"}

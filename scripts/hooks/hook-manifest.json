@@ -1,0 +1,1229 @@
+{
+  "$schema": "mc/hook-manifest/v1",
+  "generatedFrom": "framework/hooks.registry.json",
+  "updatedAt": "sha256:5692605878b44946",
+  "hooks": {
+    "session-start.js": {
+      "script": "scripts/hooks/session-start.js",
+      "events": [
+        {
+          "hookEvent": "SessionStart",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/session-start.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "smart-context.js": {
+      "script": "scripts/hooks/smart-context.js",
+      "events": [
+        {
+          "hookEvent": "UserPromptSubmit",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/user-prompt.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": false
+    },
+    "prompt-logger.js": {
+      "script": "scripts/hooks/prompt-logger.js",
+      "events": [
+        {
+          "hookEvent": "UserPromptSubmit",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/user-prompt.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "skill-router.js": {
+      "script": "scripts/hooks/skill-router.js",
+      "events": [
+        {
+          "hookEvent": "UserPromptSubmit",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/skill-router/user-prompt.json",
+        "fixtures/hooks/skill-router/slash.json",
+        "fixtures/hooks/skill-router/approval-word.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "merge-guard.js": {
+      "script": "scripts/hooks/merge-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        },
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "memory-guard.js": {
+      "script": "scripts/hooks/memory-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        },
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        },
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "framework-manifest-guard.js": {
+      "script": "scripts/hooks/framework-manifest-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "framework-purity-guard.js": {
+      "script": "scripts/hooks/framework-purity-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-git-commit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "change-trailer-guard.js": {
+      "script": "scripts/hooks/change-trailer-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/change-trailer-guard/trailerless-commit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "settings-edit-guard.js": {
+      "script": "scripts/hooks/settings-edit-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "path-registry-guard.js": {
+      "script": "scripts/hooks/path-registry-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "secret-guard.js": {
+      "script": "scripts/hooks/secret-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "foundation-guard.js": {
+      "script": "scripts/hooks/foundation-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "ownership-guard.js": {
+      "script": "scripts/hooks/ownership-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "store-validator.js": {
+      "script": "scripts/hooks/store-validator.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        },
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "path-guard.js": {
+      "script": "scripts/hooks/path-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        },
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "sprint-routing-guard.js": {
+      "script": "scripts/hooks/sprint-routing-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "ledger-presence-guard.js": {
+      "script": "scripts/hooks/ledger-presence-guard.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "step-registry-guard.js": {
+      "script": "scripts/hooks/step-registry-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "extension-edit-guard.js": {
+      "script": "scripts/hooks/extension-edit-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "dependency-admission-guard.js": {
+      "script": "scripts/hooks/dependency-admission-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "self-mod-governance.js": {
+      "script": "scripts/hooks/self-mod-governance.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/edit-text.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "build-transaction-boundary.js": {
+      "script": "scripts/hooks/build-transaction-boundary.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        },
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "scope-contract-guard.js": {
+      "script": "scripts/hooks/scope-contract-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "team-guard.js": {
+      "script": "scripts/hooks/team-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "worktree-preflight.js": {
+      "script": "scripts/hooks/worktree-preflight.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/worktree-preflight/non-builder-agent.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "gate-check.js": {
+      "script": "scripts/hooks/gate-check.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "gauntlet-gate.js": {
+      "script": "scripts/hooks/gauntlet-gate.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "cycle-enforcer.js": {
+      "script": "scripts/hooks/cycle-enforcer.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "prompt-validator.js": {
+      "script": "scripts/hooks/prompt-validator.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "boss-boundary.js": {
+      "script": "scripts/hooks/boss-boundary.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Read|Grep|Glob"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/read.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "excalidraw-guard.js": {
+      "script": "scripts/hooks/excalidraw-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "mcp__claude_ai_Excalidraw__*"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/noop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "beta-gate.js": {
+      "script": "scripts/hooks/beta-gate.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "AskUserQuestion"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/noop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "session-tracker.js": {
+      "script": "scripts/hooks/session-tracker.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "response-size-guard.js": {
+      "script": "scripts/hooks/response-size-guard.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [
+        "oversized build-chain response warnings"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/response-size-guard/oversized-agent.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "edit-watcher.js": {
+      "script": "scripts/hooks/edit-watcher.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "event-contract.js": {
+      "script": "scripts/hooks/event-contract.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [
+        "orphan <prefix>:* listener/dispatcher warnings (<prefix> = mc.eventContractPrefix, default app)"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/event-contract/orphan-event.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "format.js": {
+      "script": "scripts/hooks/format.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "lint.js": {
+      "script": "scripts/hooks/lint.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "typecheck.js": {
+      "script": "scripts/hooks/typecheck.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "systems-sync.js": {
+      "script": "scripts/hooks/systems-sync.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "save-session-lint.js": {
+      "script": "scripts/hooks/save-session-lint.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "template-fillability.js": {
+      "script": "scripts/hooks/template-fillability.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "learning-validator.js": {
+      "script": "scripts/hooks/learning-validator.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "ui-lint.js": {
+      "script": "scripts/hooks/ui-lint.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "step-hardcode-suggester.js": {
+      "script": "scripts/hooks/step-hardcode-suggester.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "region-marker-guard.js": {
+      "script": "scripts/hooks/region-marker-guard.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "spec-test-staleness.js": {
+      "script": "scripts/hooks/spec-test-staleness.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "compact-saver.js": {
+      "script": "scripts/hooks/compact-saver.js",
+      "events": [
+        {
+          "hookEvent": "PostCompact",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/noop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "operator-contract-lint.js": {
+      "script": "scripts/hooks/operator-contract-lint.js",
+      "events": [
+        {
+          "hookEvent": "Stop",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [
+        "a command outside RUN THIS",
+        "a question outside DECISION NEEDED",
+        "multiple RUN THIS commands",
+        "a malformed contract header glyph"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/operator-contract-lint/06-cmd-outside-run.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "retro-presence-check.js": {
+      "script": "scripts/hooks/retro-presence-check.js",
+      "events": [
+        {
+          "hookEvent": "Stop",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [
+        "missing run retro warning/enforcement"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/retro-presence-check/stop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "tracker-start-of-work.js": {
+      "script": "scripts/hooks/tracker-start-of-work.js",
+      "events": [
+        {
+          "hookEvent": "SessionStart",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/session-start.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "tracker-completion-gate.js": {
+      "script": "scripts/hooks/tracker-completion-gate.js",
+      "events": [
+        {
+          "hookEvent": "Stop",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/stop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "handoff-live.js": {
+      "script": "scripts/hooks/handoff-live.js",
+      "events": [
+        {
+          "hookEvent": "Stop",
+          "matcher": ""
+        },
+        {
+          "hookEvent": "SessionEnd",
+          "matcher": ""
+        },
+        {
+          "hookEvent": "StopFailure",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/stop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "session-stop.js": {
+      "script": "scripts/hooks/session-stop.js",
+      "events": [
+        {
+          "hookEvent": "Stop",
+          "matcher": ""
+        },
+        {
+          "hookEvent": "SessionEnd",
+          "matcher": ""
+        },
+        {
+          "hookEvent": "StopFailure",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/stop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "dispatch-route-guard.js": {
+      "script": "scripts/hooks/dispatch-route-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [
+        "raw codex|gemini|claude prompt invocations from Bash"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "sprint-tracker-guard.js": {
+      "script": "scripts/hooks/sprint-tracker-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [
+        "malformed sprint yaml writes",
+        "edits to existing sprint-history files"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "sprint-approval-guard.js": {
+      "script": "scripts/hooks/sprint-approval-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [
+        "release deploy without approval_ref",
+        "release deploy with pending approval",
+        "ESD --status integrated with pending approval"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "requirement-format-guard.js": {
+      "script": "scripts/hooks/requirement-format-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [
+        "requirement markdown with malformed format"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "authorization-gate.js": {
+      "script": "scripts/hooks/authorization-gate.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        },
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "skill-invocation-tracker.js": {
+      "script": "scripts/hooks/skill-invocation-tracker.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "SlashCommand|Skill"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "skill-catalog-regen.js": {
+      "script": "scripts/hooks/skill-catalog-regen.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "memory-enforcement-guard.js": {
+      "script": "scripts/hooks/memory-enforcement-guard.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "lint-hook-output.js": {
+      "script": "scripts/hooks/lint-hook-output.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/pre-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "version-bump-guard.js": {
+      "script": "scripts/hooks/version-bump-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-git-commit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
+    "untrusted-content-firewall.js": {
+      "script": "scripts/hooks/untrusted-content-firewall.js",
+      "events": [
+        {
+          "hookEvent": "PostToolUse",
+          "matcher": "WebFetch|WebSearch|mcp__.*|ListMcpResourcesTool|ReadMcpResourceTool"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/post-edit.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "mode-lifecycle-guard.js": {
+      "script": "scripts/hooks/mode-lifecycle-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "SlashCommand|Skill"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/bash-safe.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    },
+    "session-end-team-teardown.js": {
+      "script": "scripts/hooks/session-end-team-teardown.js",
+      "events": [
+        {
+          "hookEvent": "SessionEnd",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/default/stop.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": false,
+      "enabled": true
+    }
+  }
+}

@@ -1,0 +1,508 @@
+#!/usr/bin/env node
+// verify-auth-hardblock.mjs — FAIL-CLOSED predeploy verifier for the auth password
+// hard-block (supabase/migrations/0001_password_hardblock.sql).
+// =============================================================================
+// This verifier is itself an ENFORCER. It is hardened against lying:
+//   - a runner error is NON-ZERO (never a silent green),
+//   - a malformed / missing migration is fail-closed,
+//   - a missing `pg` package in LIVE mode is fail-closed (NOT skip-to-green),
+//   - STATIC success is NOT reported as "installed" — only LIVE proves installed.
+//
+// EXIT-CODE CONTRACT
+//   STATIC mode (no SUPABASE_DB_URL):
+//     - definition invalid            -> exit 1  (loud reason)
+//     - definition valid, no flag     -> exit 1  (fail-closed: static is NOT proof
+//                                                 of installation)
+//     - definition valid, --allow-static-only -> exit 0 (caller explicitly accepts
+//                                                 "definition valid, not proven installed")
+//   LIVE mode (SUPABASE_DB_URL set):
+//     - trigger installed + negative test passes -> exit 0  (PROVEN=INSTALLED-LIVE)
+//     - anything else (not installed / negative test fails / pg missing / error) -> exit 1
+//
+// The static-check core is a pure, importable function (staticCheckMigration) so a
+// planted-violation test can drive it against present/absent fixtures.
+// =============================================================================
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { randomBytes } from "node:crypto";
+
+// ----------------------------------------------------------------------------
+// SQL parsing helpers (pure)
+// ----------------------------------------------------------------------------
+
+/** Strip -- line comments and block comments so a mere COMMENT mention of
+ *  "encrypted_password" can never false-green the static check. */
+export function stripSqlComments(sql) {
+  return String(sql)
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/--[^\n\r]*/g, " ");
+}
+
+function normalizeIdent(id) {
+  return String(id).replace(/"/g, "").trim().toLowerCase();
+}
+
+function finalize(checks) {
+  const valid = checks.every((c) => c.ok);
+  const failed = checks.filter((c) => !c.ok).map((c) => c.id);
+  return {
+    valid,
+    checks,
+    reason: valid ? "definition valid" : `failed checks: ${failed.join(", ")}`,
+  };
+}
+
+/**
+ * Pure static validator. Proves the migration DEFINITION correctly installs the
+ * hard-block: a BEFORE INSERT OR UPDATE, FOR EACH ROW trigger on auth.users that
+ * executes a function whose body nulls NEW.encrypted_password and RETURN NEW.
+ *
+ * A bare grep for "encrypted_password" / "BEFORE INSERT" is deliberately NOT
+ * enough: wrong table, missing FOR EACH ROW, AFTER timing, or a function that
+ * RETURN OLD (which discards the null-out) all FAIL here.
+ *
+ * @returns {{valid:boolean, checks:{id:string,ok:boolean,detail:string}[], reason:string}}
+ */
+export function staticCheckMigration(rawSql) {
+  const checks = [];
+  const add = (id, ok, detail) => checks.push({ id, ok, detail });
+
+  if (typeof rawSql !== "string" || rawSql.trim() === "") {
+    add("input", false, "migration SQL is empty or not a string");
+    return finalize(checks);
+  }
+
+  const sql = stripSqlComments(rawSql);
+  const flat = sql.replace(/\s+/g, " ");
+
+  // --- 1. Find a CREATE TRIGGER bound to auth.users -------------------------
+  const trigRe =
+    /CREATE\s+(?:OR\s+REPLACE\s+)?(?:CONSTRAINT\s+)?TRIGGER\s+([^\s]+)\s+(BEFORE|AFTER|INSTEAD\s+OF)\s+([\s\S]*?)\s+ON\s+([^\s(]+)\s+([\s\S]*?)\s+EXECUTE\s+(?:FUNCTION|PROCEDURE)\s+([^\s(;]+)/gi;
+
+  let target = null;
+  let m;
+  while ((m = trigRe.exec(flat)) !== null) {
+    const [, name, timingRaw, eventsRaw, tableRaw, middleRaw, fnRaw] = m;
+    if (normalizeIdent(tableRaw) === "auth.users") {
+      target = {
+        name,
+        timing: timingRaw.toUpperCase().replace(/\s+/g, " "),
+        events: eventsRaw.toUpperCase(),
+        middle: middleRaw.toUpperCase(),
+        fn: normalizeIdent(fnRaw),
+      };
+      break;
+    }
+  }
+
+  if (!target) {
+    add(
+      "trigger-on-auth-users",
+      false,
+      "no CREATE TRIGGER bound to auth.users found — the hard-block is never wired, encrypted_password is never nulled"
+    );
+    return finalize(checks);
+  }
+  add("trigger-on-auth-users", true, `trigger '${target.name}' on auth.users`);
+
+  add(
+    "trigger-timing-before",
+    target.timing === "BEFORE",
+    `timing=${target.timing} (must be BEFORE — AFTER/INSTEAD OF cannot mutate NEW)`
+  );
+
+  const hasInsert = /\bINSERT\b/.test(target.events);
+  const hasUpdate = /\bUPDATE\b/.test(target.events);
+  add(
+    "trigger-events-insert-update",
+    hasInsert && hasUpdate,
+    `events=[${[hasInsert ? "INSERT" : "", hasUpdate ? "UPDATE" : ""]
+      .filter(Boolean)
+      .join(",") || "none"}] (must cover BOTH INSERT and UPDATE)`
+  );
+
+  add(
+    "trigger-for-each-row",
+    /FOR\s+EACH\s+ROW/.test(target.middle),
+    "must be FOR EACH ROW (a statement-level trigger cannot mutate NEW)"
+  );
+
+  // --- 2. Find the function the trigger executes and inspect its body -------
+  const fnRe =
+    /CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\s+([^\s(]+)\s*\(([^)]*)\)([\s\S]*?)\$([a-zA-Z0-9_]*)\$([\s\S]*?)\$\4\$/gi;
+
+  const fns = [];
+  let fm;
+  while ((fm = fnRe.exec(sql)) !== null) {
+    fns.push({ name: normalizeIdent(fm[1]), body: fm[5] });
+  }
+  const fn =
+    fns.find((f) => f.name === target.fn) ||
+    fns.find((f) => f.name.split(".").pop() === target.fn.split(".").pop());
+
+  if (!fn) {
+    add(
+      "function-defined",
+      false,
+      `function '${target.fn}' referenced by the trigger is not defined via CREATE FUNCTION in this migration`
+    );
+    return finalize(checks);
+  }
+  add("function-defined", true, `function '${fn.name}' defined`);
+
+  const body = fn.body;
+
+  add(
+    "nulls-encrypted-password",
+    /NEW\.\s*ENCRYPTED_PASSWORD\s*:=\s*NULL/i.test(body),
+    "function body must set NEW.encrypted_password := NULL"
+  );
+
+  const returnsNew = /\bRETURN\s+NEW\b/i.test(body);
+  const returnsOld = /\bRETURN\s+OLD\b/i.test(body);
+  add(
+    "returns-new",
+    returnsNew && !returnsOld,
+    returnsOld
+      ? "function does RETURN OLD — this DISCARDS the null-out; must RETURN NEW"
+      : returnsNew
+      ? "RETURN NEW present"
+      : "function must RETURN NEW so the mutated row is persisted"
+  );
+
+  return finalize(checks);
+}
+
+// ----------------------------------------------------------------------------
+// Path resolution (works in a materialized app AND in the .tmpl template repo)
+// ----------------------------------------------------------------------------
+
+export function resolveMigrationPath(scriptDir, explicit) {
+  const candidates = [];
+  if (explicit) candidates.push(explicit);
+  if (process.env.HARDBLOCK_MIGRATION) candidates.push(process.env.HARDBLOCK_MIGRATION);
+  candidates.push(
+    path.join(scriptDir, "..", "supabase", "migrations", "0001_password_hardblock.sql"),
+    path.join(scriptDir, "..", "supabase", "migrations", "0001_password_hardblock.sql.tmpl")
+  );
+  for (const c of candidates) {
+    if (c && fs.existsSync(c)) return c;
+  }
+  return null;
+}
+
+// ----------------------------------------------------------------------------
+// LIVE verification (only when SUPABASE_DB_URL is set)
+// ----------------------------------------------------------------------------
+
+// The SHIPPED identity (supabase/migrations/0001_password_hardblock.sql):
+//   trigger  hardblock_password_trigger
+//   function public.hardblock_password
+//   binding  BEFORE INSERT OR UPDATE ON auth.users FOR EACH ROW
+const SHIPPED_TRIGGER = "hardblock_password_trigger";
+const SHIPPED_FN = "hardblock_password";
+const SHIPPED_FN_SCHEMA = "public";
+// pg_trigger.tgenabled: 'O' = enabled (origin/local), 'A' = always (fires even on replica).
+// 'D' = disabled, 'R' = replica-only (does NOT fire on the origin). A disabled/replica-only
+// hard-block does not protect writes — fail closed on anything but O/A.
+const TRIGGER_ENABLED_OK = new Set(["O", "A"]);
+
+/**
+ * Canonicalize a Postgres definition string for EQUALITY — NOT parsing. Strips comments,
+ * lowercases, unifies dollar-quote tags + `search_path TO/=` + `EXECUTE PROCEDURE/FUNCTION`,
+ * and collapses whitespace. Two definitions are "the same shipped shape" iff their canonical
+ * forms are equal. (Token/keyword checks are a
+ * denylist against a grammar — a probe-aware conditional body or a WHEN-clause spoof defeats
+ * tokens but CHANGES the definition string, so whole-definition equality rejects it by
+ * construction. This is an allowlist of the exact shipped shape.) Exported for unit tests.
+ */
+export function normalizeDef(s) {
+  return stripSqlComments(String(s))
+    .toLowerCase()
+    .replace(/\$[a-z0-9_]*\$/g, "$q$") // $function$ / $$ / $body$ -> uniform tag
+    .replace(/set\s+search_path\s*(?:to|=)\s*''/g, "set search_path to ''")
+    .replace(/execute\s+procedure/g, "execute function")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// The EXACT shipped definitions as Postgres renders them (pg_get_functiondef /
+// pg_get_triggerdef), canonicalized. LIVE installed-proof is whole-definition EQUALITY
+// against these — no token/keyword parsing survives.
+const NORMALIZED_SHIPPED_FNDEF = normalizeDef(
+  `CREATE OR REPLACE FUNCTION public.hardblock_password()
+   RETURNS trigger
+   LANGUAGE plpgsql
+   SECURITY DEFINER
+   SET search_path TO ''
+  AS $function$
+  BEGIN
+    NEW.encrypted_password := NULL;
+    RETURN NEW;
+  END;
+  $function$`,
+);
+const NORMALIZED_SHIPPED_TRIGDEF = normalizeDef(
+  `CREATE TRIGGER hardblock_password_trigger BEFORE INSERT OR UPDATE ON auth.users FOR EACH ROW EXECUTE FUNCTION public.hardblock_password()`,
+);
+
+// LIVE installed-proof is whole-definition
+// EQUALITY (normalizeDef == NORMALIZED_SHIPPED_*), the terminal allowlist-of-shape.
+
+/**
+ * Locate the installed trigger by the shipped NAME (unique per table). This only FINDS the
+ * candidate + gives a clear "not installed" message; the actual installed-PROOF is
+ * whole-definition equality in assertShippedHardblock. Pure + exported for unit tests.
+ */
+export function selectInstalledTarget(candidates) {
+  return (
+    (Array.isArray(candidates) ? candidates : []).find((c) => c && c.name === SHIPPED_TRIGGER) ||
+    null
+  );
+}
+
+/**
+ * The EXACT-shape installed-proof (the terminal "endgame").
+ * Closes the false-green CLASS by whole-definition EQUALITY, not parsing: any deviation from
+ * the shipped shape (schema-spoofed function, WHEN-clause, conditional/probe-aware body,
+ * altered binding, extra attributes) changes the normalized pg_get_triggerdef/functiondef and
+ * is rejected by construction. Checks, in order:
+ *   - PRESENT: a trigger named `hardblock_password_trigger` exists on auth.users;
+ *   - ENABLED: tgenabled ∈ {O,A} (tgenabled is NOT in the trigger def — a disabled trigger
+ *              renders an identical def, so it must be asserted separately);
+ *   - TRIGGER: normalizeDef(pg_get_triggerdef) EQUALS the shipped trigger definition;
+ *   - FUNCTION: normalizeDef(pg_get_functiondef) EQUALS the shipped function definition.
+ * Pure + exported → every spoof is provably RED without a live DB. Returns { ok:true, target }
+ * or { ok:false, reason }. (Behavioral INSERT/UPDATE probes in liveVerify are defense-in-depth.)
+ */
+export function assertShippedHardblock(candidates) {
+  const target = selectInstalledTarget(candidates);
+  if (!target) {
+    return {
+      ok: false,
+      reason: `the shipped hard-block trigger '${SHIPPED_TRIGGER}' is NOT installed on auth.users — no trigger with that name is present`,
+    };
+  }
+  if (!TRIGGER_ENABLED_OK.has(String(target.enabled))) {
+    return {
+      ok: false,
+      reason: `the shipped trigger '${target.name}' is not enabled (tgenabled='${target.enabled}'; must be 'O' or 'A') — a disabled or replica-only trigger does not fire, so the hard-block is NOT effective`,
+    };
+  }
+  if (normalizeDef(target.trigdef) !== NORMALIZED_SHIPPED_TRIGDEF) {
+    return {
+      ok: false,
+      reason: `installed trigger definition does not EQUAL the shipped hard-block trigger (a WHEN-clause, altered binding, or different executed function all fail here) — pg_get_triggerdef: ${target.trigdef}`,
+    };
+  }
+  if (normalizeDef(target.fndef) !== NORMALIZED_SHIPPED_FNDEF) {
+    return {
+      ok: false,
+      reason: `executed function definition does not EQUAL the shipped public.hardblock_password() (a conditional/probe-aware body, extra logic, or wrong attributes all fail here) — pg_get_functiondef mismatch`,
+    };
+  }
+  return { ok: true, target };
+}
+
+async function liveVerify(dbUrl) {
+  let pgMod;
+  try {
+    pgMod = await import("pg");
+  } catch {
+    return {
+      ok: false,
+      reason:
+        "LIVE mode requires the 'pg' package (npm i pg). Refusing to report green without an installation proof.",
+    };
+  }
+  const pg = pgMod.default ?? pgMod;
+  const client = new pg.Client({ connectionString: dbUrl });
+
+  try {
+    await client.connect();
+
+    // (1) IDENTITY — fetch every non-internal trigger on auth.users together
+    // with its FULL definition (pg_get_triggerdef) and the executed function's
+    // definition (pg_get_functiondef). We accept a trigger by identity, not by
+    // "any before-row trigger" (an unrelated before-row trigger would otherwise
+    // false-green this installed-proof).
+    const q = await client.query(
+      `SELECT t.tgname,
+              t.tgenabled               AS tgenabled,
+              p.proname                 AS fn,
+              n.nspname                 AS fn_schema,
+              pg_get_triggerdef(t.oid)  AS trigdef,
+              pg_get_functiondef(t.tgfoid) AS fndef
+         FROM pg_trigger t
+         JOIN pg_class c      ON c.oid = t.tgrelid
+         JOIN pg_namespace ns ON ns.oid = c.relnamespace
+         JOIN pg_proc p       ON p.oid = t.tgfoid
+         JOIN pg_namespace n  ON n.oid = p.pronamespace
+        WHERE ns.nspname = 'auth' AND c.relname = 'users' AND NOT t.tgisinternal`
+    );
+
+    const candidates = q.rows.map((r) => ({
+      name: r.tgname,
+      enabled: String(r.tgenabled || ""),
+      fn: String(r.fn || ""),
+      fnSchema: String(r.fn_schema || ""),
+      trigdef: r.trigdef,
+      fndef: r.fndef,
+    }));
+
+    // Installed-proof = the EXACT shipped shape via whole-definition EQUALITY
+    // (assertShippedHardblock: present + enabled + normalizeDef(trigdef/fndef) EQUALS the
+    // shipped definitions). Allowlist-of-shape, not denylist-of-badness — a WHEN-clause,
+    // schema-spoofed function, or probe-aware/conditional body all change the definition
+    // and are rejected by construction.
+    const proof = assertShippedHardblock(candidates);
+    if (!proof.ok) {
+      return { ok: false, reason: proof.reason };
+    }
+    const target = proof.target;
+
+    // (2) NEGATIVE TESTS — exercise BOTH the INSERT and the UPDATE path. All in a
+    // single transaction that ALWAYS ROLLBACKs, so we never leave a test row.
+    // RANDOMIZED sentinels per run (defense-in-depth): a probe-aware function that special-
+    // cases a fixed known value cannot pre-empt an unpredictable one. (The definition-equality
+    // check above already rejects a conditional body; the randomized probe is the belt to that
+    // braces.)
+    const insSentinel = "hb-probe-ins-" + randomBytes(9).toString("hex");
+    const updSentinel = "hb-probe-upd-" + randomBytes(9).toString("hex");
+    await client.query("BEGIN");
+    let probe = null;
+    try {
+      // (a) INSERT with a non-null password → must come back NULL.
+      const ins = await client.query(
+        "INSERT INTO auth.users (id, encrypted_password) VALUES (gen_random_uuid(), $1) RETURNING id, encrypted_password",
+        [insSentinel]
+      );
+      const testId = ins.rows[0]?.id ?? null;
+      const insertSurvived = ins.rows[0]?.encrypted_password ?? null;
+
+      // (b) UPDATE the same row SET a non-null password → must come back NULL.
+      let updateRan = false;
+      let updateSurvived = null;
+      if (testId) {
+        const upd = await client.query(
+          "UPDATE auth.users SET encrypted_password = $1 WHERE id = $2 RETURNING encrypted_password",
+          [updSentinel, testId]
+        );
+        updateRan = upd.rowCount === 1;
+        updateSurvived = upd.rows[0]?.encrypted_password ?? null;
+      }
+      probe = { testId, insertSurvived, updateRan, updateSurvived };
+    } finally {
+      await client.query("ROLLBACK");
+    }
+
+    // Fail-closed: if the probe could not be run to completion, it is NOT proof.
+    if (!probe || !probe.testId || !probe.updateRan) {
+      return {
+        ok: false,
+        reason:
+          "NEGATIVE TEST could not run to completion (insert/update probe did not execute) — refusing to report green without a live installed-proof",
+      };
+    }
+    if (probe.insertSurvived !== null) {
+      return {
+        ok: false,
+        reason:
+          "NEGATIVE TEST (INSERT) FAILED: an inserted encrypted_password survived non-null — the hard-block is not effective on INSERT",
+      };
+    }
+    if (probe.updateSurvived !== null) {
+      return {
+        ok: false,
+        reason:
+          "NEGATIVE TEST (UPDATE) FAILED: an updated encrypted_password survived non-null — the hard-block is not effective on UPDATE",
+      };
+    }
+
+    return {
+      ok: true,
+      reason: `trigger '${target.name}' → ${target.fnSchema}.${target.fn}() installed with BEFORE INSERT OR UPDATE ... FOR EACH ROW binding + INSERT and UPDATE negative tests both passed (encrypted_password nulled on both paths)`,
+    };
+  } catch (e) {
+    return { ok: false, reason: `live check error: ${e.message}` };
+  } finally {
+    try {
+      await client.end();
+    } catch {
+      /* best-effort */
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// CLI
+// ----------------------------------------------------------------------------
+
+function fail(msg) {
+  console.error(`[auth-hardblock] FAIL-CLOSED: ${msg}`);
+  process.exit(1);
+}
+
+function printChecks(res) {
+  for (const c of res.checks) {
+    console.log(`  [${c.ok ? "PASS" : "FAIL"}] ${c.id} — ${c.detail}`);
+  }
+}
+
+async function main(argv) {
+  const args = argv.slice(2);
+  const allowStaticOnly = args.includes("--allow-static-only");
+  const migIdx = args.indexOf("--migration");
+  const explicitMig = migIdx >= 0 ? args[migIdx + 1] : null;
+  const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+
+  const migPath = resolveMigrationPath(scriptDir, explicitMig);
+  if (!migPath) {
+    fail("could not locate migration file 0001_password_hardblock.sql[.tmpl]");
+  }
+
+  let sql;
+  try {
+    sql = fs.readFileSync(migPath, "utf8");
+  } catch (e) {
+    fail(`cannot read migration ${migPath}: ${e.message}`);
+  }
+
+  console.log(`[auth-hardblock] static check of ${migPath}`);
+  const res = staticCheckMigration(sql);
+  printChecks(res);
+  if (!res.valid) {
+    fail(`STATIC CHECK FAILED — definition invalid (${res.reason}). Hard-block NOT proven.`);
+  }
+
+  const dbUrl = process.env.SUPABASE_DB_URL;
+  if (!dbUrl) {
+    console.log(
+      "PROVEN=STATIC-ONLY (definition valid; NOT proven installed — run live mode against your Supabase project before deploy)"
+    );
+    if (allowStaticOnly) {
+      console.log("EXIT=0 (--allow-static-only acknowledged: you accept this is NOT an installed-proof)");
+      process.exit(0);
+    }
+    fail(
+      "static-only is NOT proof of installation. Set SUPABASE_DB_URL for a LIVE installed-proof, or pass --allow-static-only to explicitly accept static-only."
+    );
+  }
+
+  console.log("[auth-hardblock] SUPABASE_DB_URL set — running LIVE installed-proof");
+  const live = await liveVerify(dbUrl);
+  if (live.ok) {
+    console.log(`PROVEN=INSTALLED-LIVE ${live.reason}`);
+    process.exit(0);
+  }
+  fail(`LIVE VERIFY FAILED: ${live.reason}`);
+}
+
+// Run as CLI only. When imported (e.g. by the test, possibly via a temp copy),
+// import.meta.url won't equal argv[1], so main() does not fire.
+const invokedPath = process.argv[1] ? pathToFileURL(process.argv[1]).href : "";
+if (invokedPath === import.meta.url) {
+  main(process.argv).catch((e) => fail(e?.stack || String(e)));
+}

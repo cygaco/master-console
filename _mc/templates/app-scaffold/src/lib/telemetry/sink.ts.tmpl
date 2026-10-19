@@ -1,0 +1,32 @@
+import type { LifecycleEvent, TelemetryProps } from "./events";
+
+export type TelemetrySink = (
+  event: LifecycleEvent,
+  props: TelemetryProps,
+) => void | Promise<void>;
+
+export const noopTelemetrySink: TelemetrySink = () => {};
+
+declare global {
+  interface Window {
+    posthog?: {
+      capture: (
+        event: string,
+        props?: Record<string, unknown>,
+      ) => void | Promise<void>;
+    };
+  }
+}
+
+export function resolveTelemetrySink(): TelemetrySink {
+  const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  if (
+    !posthogKey ||
+    typeof window === "undefined" ||
+    typeof window.posthog?.capture !== "function"
+  ) {
+    return noopTelemetrySink;
+  }
+
+  return (event, props) => window.posthog?.capture(event, props);
+}

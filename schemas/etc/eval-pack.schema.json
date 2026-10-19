@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/etc/eval-pack/v0.1",
+  "title": "MC /etc Eval-Pack (v0.1)",
+  "description": "Structured eval-pack for the /etc authoring+eval harness. Captures procedures, a rubric with mechanical checks, and examples/counterexamples for a skill or prompt artifact. Anti-CoT: every field is structured JSON — no free-text reasoning dumps.",
+  "type": "object",
+  "required": ["id", "target", "rubric"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this eval-pack (slug-based, e.g. 'etc-author')."
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Project-relative path to the skill/prompt artifact this pack evaluates."
+    },
+    "procedures": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered list of key procedural steps the artifact should implement."
+    },
+    "rubric": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Evaluation rubric — one entry per scoring dimension.",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "weight", "criteria", "mechanical", "checks"],
+        "additionalProperties": true,
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable dimension name."
+          },
+          "weight": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Relative weight of this dimension in the final confidence score."
+          },
+          "criteria": {
+            "type": "string",
+            "description": "Human-readable description of what this dimension checks."
+          },
+          "mechanical": {
+            "type": "boolean",
+            "description": "true = runnable mechanical checks; false = requires consult judgment."
+          },
+          "checks": {
+            "type": "array",
+            "description": "Mechanical checks for this dimension (empty array allowed for judgment-only).",
+            "items": {
+              "type": "object",
+              "required": ["kind", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "must_contain_all",
+                    "must_contain_any",
+                    "must_not_contain",
+                    "regex_match",
+                    "min_count",
+                    "max_count"
+                  ],
+                  "description": "The type of mechanical check to run."
+                },
+                "value": {
+                  "description": "Check-specific value. Array of strings for contain checks, regex string for regex_match, {pattern,n} object for min_count/max_count."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "description": "Positive examples showing what a passing artifact looks like.",
+      "items": {
+        "type": "object",
+        "required": ["input", "expected_properties"],
+        "additionalProperties": true,
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Example invocation or scenario."
+          },
+          "expected_properties": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Properties the artifact output should exhibit."
+          }
+        }
+      }
+    },
+    "counterexamples": {
+      "type": "array",
+      "description": "Negative examples showing what a failing artifact looks like.",
+      "items": {
+        "type": "object",
+        "required": ["input", "must_not", "why"],
+        "additionalProperties": true,
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Failing scenario or anti-pattern description."
+          },
+          "must_not": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Properties that must NOT be present in a passing artifact."
+          },
+          "why": {
+            "type": "string",
+            "description": "Rationale for why this is a counterexample."
+          }
+        }
+      }
+    }
+  }
+}

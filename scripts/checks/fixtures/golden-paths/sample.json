@@ -1,0 +1,56 @@
+{
+  "schema": "mc/golden-paths/v1",
+  "_note": "SYNTHETIC, shipped sample glossary for golden-paths-validate.test.js. The real glossary (paths.goldenPaths) is an instance store that a fresh install populates on first use and is NOT shipped; the test validates THIS synthetic sample so it passes on a clean checkout with no instance data. Entry/smoke paths point at stable shipped files so the real-existsSync check holds.",
+  "security_surface_globs": ["scripts/**", "src/**", ".github/workflows/**"],
+  "features": [
+    {
+      "id": "f1-install-update",
+      "name": "Install / update the framework",
+      "entry": [".claude/commands/mc/setup.md"],
+      "golden_path": "A product repo installs the framework and the doctor reports green.",
+      "smoke_tests": ["scripts/checks/golden-paths-validate.test.js"],
+      "security_surface": false
+    },
+    {
+      "id": "f2-test-runner",
+      "name": "Test runner",
+      "entry": ["scripts/checks/run-tests.js"],
+      "golden_path": "The test suite runs green on a clean checkout of the repository.",
+      "smoke_tests": ["scripts/checks/run-tests.test.js"],
+      "security_surface": false
+    },
+    {
+      "id": "f3-content-gate",
+      "name": "Content gate",
+      "entry": ["scripts/checks/golden-paths-validate.js"],
+      "golden_path": "The content gate validates the glossary and exits clean.",
+      "smoke_tests": ["scripts/checks/golden-paths-validate.test.js"],
+      "security_surface": false
+    },
+    {
+      "id": "f4-security-panel",
+      "name": "Security panel",
+      "entry": ["scripts/dispatch/panel-lanes.js"],
+      "golden_path": "The security panel validates its lane manifest with no drift.",
+      "smoke_tests": ["scripts/dispatch/panel-lanes.test.js"],
+      "security_surface": false
+    },
+    {
+      "id": "f5-binding-lane",
+      "name": "Security binding lane",
+      "entry": ["scripts/checks/security-binding-lane.js"],
+      "golden_path": "The binding lane holds strict until its named debt is closed.",
+      "smoke_tests": ["scripts/checks/security-binding-lane.test.js"],
+      "security_surface": false
+    },
+    {
+      "id": "f6-deferred-coverage",
+      "name": "Deferred smoke coverage",
+      "entry": ["scripts/checks/falsifier-liveness.js"],
+      "golden_path": "A feature with deferred smoke coverage names its open debt.",
+      "smoke_tests": [],
+      "enforcement_debt": "ED-999444",
+      "security_surface": false
+    }
+  ]
+}

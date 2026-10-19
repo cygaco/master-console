@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "## Status\nHere is the current state.\n```bash\ngit push origin main\n```",
+  "expect": ["CMD-OUTSIDE-RUN"]
+}

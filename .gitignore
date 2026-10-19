@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Runtime state (per-machine, never commit)
+.claude/project/events/
+.claude/project/memory/
+.claude/runtime/
+.claude/logs/
+.claude/worktrees/
+.claude/agent-memory/
+.claude/handoffs/
+.claude/handoff.md
+.claude/.session-id
+.claude/.session-checkpoint.json
+.claude/.session-start-commit
+.claude/.last-checkpoint
+.claude/.agent-result-hashes.json
+.claude/settings.local.json
+.claude/agents/**/events.jsonl
+.mc/
+
+# Session handoff dump (regenerable)
+/DUMP.md
+
+# Secrets / keys / credentials / backups
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*.ppk
+auth.json
+.auth.json
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+*-credentials.json
+*.bak
+*.backup
+*.orig
+*~
+
+# Personal-content gate inputs (private, never commit)
+npc-identity.json
+npc-fingerprints.json
+scripts/public-repo/private/
+
+# Instance stores (runtime / project ownerClass paths that do NOT ship) -- a fresh install's own memory,
+# decisions, sprint state, mined data and work products must never be swept into its commits.
+# Enforced by scripts/checks/doc-ref-integrity.test.js (registry-driven; a new unlisted store fails it).
+.claude/project/decisions/
+.claude/project/sprint/
+.claude/content/
+.claude/dreams/
+.claude/portfolio/
+.claude/agents/**/beta/mined/
+.claude/agents/store.json
+.claude/agents/president/_system/oneshot/store.json
+.claude/agents/president/_system/oneshot/retros/
+.claude/project/maps/tools.jsonl
+.claude/project/maps/system-coherence.graph.json
+.claude/project/maps/require-graph.json
+.claude/project/maps/SPEC_GRAPH.json
+.claude/project/maps/
+_docs/briefs/
+_docs/clones/
+_docs/imports/
+_docs/karpathy-auto-research/
+_reports/
+runtime/etc/decisions/
+runtime/etc/consults/

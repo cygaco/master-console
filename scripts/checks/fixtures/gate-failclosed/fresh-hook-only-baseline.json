@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "sprint": "SP-99999999-001",
+  "purpose": "Support fixture: a baseline that DOES contain fresh-hook.js's live site, so the regression-only and clean-run CLI scenarios do not also trip the new-entrant failure mode.",
+  "detector_sha": "0000000",
+  "root_scanned": "scripts/checks/fixtures/gate-failclosed/new-entrant-root",
+  "files_scanned": 1,
+  "files_unreadable": [],
+  "site_count": 1,
+  "site_ids": [
+    "scripts/checks/fixtures/gate-failclosed/new-entrant-root/fresh-hook.js:12"
+  ]
+}

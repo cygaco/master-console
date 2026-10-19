@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "\ud83d\udccc FYI\nShould I land it now?",
+  "expect": ["QUESTION-OUTSIDE-DECISION"]
+}

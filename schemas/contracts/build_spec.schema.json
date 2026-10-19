@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/contracts/build_spec/v0.1",
+  "title": "MC Product-Studio Contract — Build Spec (v0.1)",
+  "description": "The buildable truth Engineering owns — what is actually constructed. Authored by the Product Lead via /sprint:design, verified by req-reviewer. Derives from the message_brief. Highest precedence (what's built is ground truth).",
+  "version": "v0.1",
+  "precedence_note": "v0.1 ranks are revisable (global integer rank).",
+  "contract": {
+    "owner_domain": "engineering",
+    "consumers": ["converting_artifact"],
+    "precedence": 70
+  },
+  "type": "object",
+  "required": ["type", "id", "derived_from_message_brief", "components", "acceptance_criteria"],
+  "properties": {
+    "type": { "const": "build_spec" },
+    "id": { "type": "string", "minLength": 1 },
+    "derived_from_message_brief": { "type": "string", "minLength": 1, "description": "id of the source message_brief (spine reference)." },
+    "components": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "acceptance_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

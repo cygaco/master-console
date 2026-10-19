@@ -1,0 +1,39 @@
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import {
+  isSupabaseConfigured,
+  supabaseAnonKey,
+  supabaseUrl,
+  type MaybeSupabaseClient,
+} from "./config";
+
+// Server (RSC / route handler / server action) Supabase client. Returns null
+// when the seam is unconfigured. Uses the getAll/setAll cookie adapter (the
+// get/set/remove trio is deprecated). Next 16 `cookies()` is async, so this
+// factory is async too.
+export async function createSupabaseServerClient(): Promise<MaybeSupabaseClient> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  const cookieStore = await cookies();
+
+  return createServerClient(supabaseUrl(), supabaseAnonKey(), {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          for (const { name, value, options } of cookiesToSet) {
+            cookieStore.set(name, value, options);
+          }
+        } catch {
+          // Called from a Server Component, which cannot set cookies. This is
+          // expected — the middleware session-refresh path (updateSession) owns
+          // writing refreshed cookies, so this can be safely ignored.
+        }
+      },
+    },
+  });
+}

@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "Narrative line 1.\nNarrative line 2.\nNarrative line 3.\nNarrative line 4.\nNarrative line 5.\nNarrative line 6.\nNarrative line 7.\nNarrative line 8.\nNarrative line 9.\n⚠️ DECISION NEEDED\nI recommend we proceed.\nShould we proceed?",
+  "expect": ["PREAMBLE-TOO-LONG"]
+}

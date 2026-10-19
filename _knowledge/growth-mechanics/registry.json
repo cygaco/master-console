@@ -1,0 +1,47 @@
+{
+  "$schema": "mc/growth-mechanics-knowledge/v0.1",
+  "version": "v0.1",
+  "guides": [
+    {
+      "guide": "REVIEW_PROMPT_COMPLIANCE",
+      "path": "_knowledge/growth-mechanics/REVIEW_PROMPT_COMPLIANCE.md",
+      "tier": "core",
+      "rule_prefix": "GRW-REV",
+      "anchor": "none",
+      "trains": ["marketing-lead", "product-lead", "qa-reviewer"],
+      "maps_to": ["review-prompting", "store-policy-compliance", "feedback-deflection"]
+    },
+    {
+      "guide": "REFERRAL_MECHANICS",
+      "path": "_knowledge/growth-mechanics/REFERRAL_MECHANICS.md",
+      "tier": "core",
+      "rule_prefix": "GRW-REF",
+      "anchor": "none",
+      "trains": ["marketing-lead", "product-lead"],
+      "maps_to": ["referrals", "reward-economics", "fraud-minimum"]
+    },
+    {
+      "guide": "ONBOARDING_ACTIVATION",
+      "path": "_knowledge/growth-mechanics/ONBOARDING_ACTIVATION.md",
+      "tier": "core",
+      "rule_prefix": "GRW-ONB",
+      "anchor": "none",
+      "trains": ["product-lead", "marketing-lead", "qa-reviewer"],
+      "maps_to": ["onboarding", "progressive-profiling", "activation"]
+    }
+  ],
+  "coverage": {
+    "axes": {
+      "review-prompting": ["REVIEW_PROMPT_COMPLIANCE"],
+      "store-policy-compliance": ["REVIEW_PROMPT_COMPLIANCE"],
+      "feedback-deflection": ["REVIEW_PROMPT_COMPLIANCE"],
+      "referrals": ["REFERRAL_MECHANICS"],
+      "reward-economics": ["REFERRAL_MECHANICS"],
+      "fraud-minimum": ["REFERRAL_MECHANICS"],
+      "onboarding": ["ONBOARDING_ACTIVATION"],
+      "progressive-profiling": ["ONBOARDING_ACTIVATION"],
+      "activation": ["ONBOARDING_ACTIVATION"]
+    },
+    "complete": true
+  }
+}

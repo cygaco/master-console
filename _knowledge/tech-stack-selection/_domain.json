@@ -1,0 +1,9 @@
+{
+  "domain": "tech-stack-selection",
+  "kind": "library",
+  "producer": "product-lead",
+  "consumers": ["product-lead", "backend-builder", "backend-reviewer"],
+  "index": "_knowledge/tech-stack-selection/registry.json",
+  "overview": "_knowledge/tech-stack-selection/README.md",
+  "note": "Pre-PMF stack-selection knowledge library: BaaS/provider choice, stack drift, and reversibility rules. Grounds Product Lead specs plus Backend Builder/Reviewer implementation judgment. Enforced by /knowledge:coverage markers."
+}

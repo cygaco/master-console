@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/sprint-full-autonomy/v1",
+  "title": "MC /sprint:full — Autonomy Preset Bundle",
+  "description": "Operator-editable preset bundle for /sprint:full. Three default presets (conservative/moderate/aggressive) shipped at .claude/agents/00-alex/.system/policy/sprint-full-autonomy.json. The orchestrator loads the bundle once at start. hard_ceilings[] is informational only — scripts/sprint/full.js has a hardcoded enum that is authoritative; no preset may bypass it.",
+  "type": "object",
+  "required": ["$schema", "version", "presets", "hard_ceilings"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "const": "mc/sprint-full-autonomy/v1" },
+    "version": { "type": "integer", "const": 1 },
+    "comment": { "type": "string" },
+    "presets": {
+      "type": "object",
+      "description": "Map of preset_name -> preset definition. Default presets: conservative, moderate, aggressive.",
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": { "$ref": "#/definitions/preset" }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "hard_ceilings": {
+      "type": "array",
+      "description": "Informational read-only enumeration of actions that no preset may pre-authorize. scripts/sprint/full.js hardcodes the authoritative list and refuses to start if any preset attempts to override.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "push_to_remote",
+          "paid_service_signup",
+          "production_deploy",
+          "destructive_migration",
+          "secret_to_remote"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 5
+    }
+  },
+  "definitions": {
+    "preset": {
+      "type": "object",
+      "required": [
+        "preset_name",
+        "description",
+        "pre_authorized_approval_levels",
+        "stop_condition_policy",
+        "halt_threshold_failed_tickets_pct",
+        "cost_estimate_threshold_usd"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "preset_name": {
+          "type": "string",
+          "description": "Must match the map key."
+        },
+        "description": {
+          "type": "string",
+          "description": "One-line plain-English summary."
+        },
+        "pre_authorized_approval_levels": {
+          "type": "array",
+          "description": "Approval levels (from approval.schema.json) that the orchestrator may auto-record without operator input. production_release_approval and paid_service_approval are FORBIDDEN here — the orchestrator's hardcoded enum rejects bundles that include them.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "no_approval_needed",
+              "plan_approval_required",
+              "design_approval_required",
+              "execution_approval_required",
+              "release_approval_required",
+              "human_required"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "release_approval_targets": {
+          "type": "array",
+          "description": "When pre_authorized_approval_levels includes release_approval_required, this list bounds WHICH release targets may be auto-approved. production is FORBIDDEN; only staging / internal-canary / dev are allowed.",
+          "items": {
+            "type": "string",
+            "enum": ["staging", "internal-canary", "dev"]
+          },
+          "uniqueItems": true,
+          "default": []
+        },
+        "stop_condition_policy": {
+          "type": "object",
+          "description": "Maps each execute.js stop_reason to the orchestrator's response.",
+          "required": [
+            "approval_required",
+            "human_setup_required",
+            "repeated_failure",
+            "scope_expansion",
+            "destructive_action_needed",
+            "production_deploy_needed",
+            "beta_warning",
+            "unclear_intent"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "approval_required": { "$ref": "#/definitions/stopAction" },
+            "human_setup_required": { "$ref": "#/definitions/stopAction" },
+            "repeated_failure": { "$ref": "#/definitions/stopAction" },
+            "scope_expansion": { "$ref": "#/definitions/stopAction" },
+            "destructive_action_needed": { "$ref": "#/definitions/stopAction" },
+            "production_deploy_needed": { "$ref": "#/definitions/stopAction" },
+            "beta_warning": { "$ref": "#/definitions/stopAction" },
+            "unclear_intent": { "$ref": "#/definitions/stopAction" }
+          }
+        },
+        "halt_threshold_failed_tickets_pct": {
+          "type": "number",
+          "description": "If percentage of tickets in deferred/abandoned exceeds this threshold during execute phase, halt the orchestrator. 0 disables.",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "cost_estimate_threshold_usd": {
+          "type": "number",
+          "description": "Soft halt threshold for cumulative LLM-spend estimate (coarse counter). Default 5 matches CLAUDE.md autonomy table. Operator may resume past with --cost-acknowledged (2x lift for that run only).",
+          "minimum": 0
+        },
+        "branch_protection_allow_main": {
+          "type": "boolean",
+          "description": "If true, --allow-main flag works WITHOUT requiring aggressive preset. Default false. Only aggressive should set this true.",
+          "default": false
+        },
+        "gauntlet_package": {
+          "type": "string",
+          "description": "Default gauntlet-package mode for this preset on the ε-conducted path. 'auto' best-effort resolves a lean-gauntlet PackageDecision (scripts/sprint/gauntlet-package.js) and fails open to the full registry-matched roster on any resolution error; 'full' is the explicit escape hatch (always pays today's full roster); 'differential' conducts the same as 'auto' and additionally runs the full test suite alongside the selected package, surfacing any selector_miss on stderr. Overridable per run via /sprint:full's own --gauntlet-package flag (scripts/sprint/full.js#parseArgs), which always wins over this preset default.",
+          "enum": ["auto", "full", "differential"],
+          "default": "auto"
+        }
+      }
+    },
+    "stopAction": {
+      "type": "string",
+      "enum": ["halt", "auto_continue", "defer"],
+      "description": "halt = write halt report + stop; auto_continue = silently proceed (use sparingly); defer = log + skip this ticket, continue to next."
+    }
+  }
+}

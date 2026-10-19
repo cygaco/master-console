@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-duplicate-register-row",
+  "gate": "contract-lint",
+  "input_file": "duplicate-register-row.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "The '### Policy-block register' table lists P3.1 TWICE even though only one '#### P3.1 -- ...' block exists in the document -- a duplicate register row is a structural fail (exit 2), distinct from register-drift/register-block-missing/register-gap."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture -- isolates the register-row-duplicate case specifically (only ONE real block exists so duplicate-block-id never fires; the ONLY violation exercised is the register table declaring the same id twice)."
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "sprint": "SP-99999999-001",
+  "purpose": "Support fixture: an empty registry (no rows claim repair), used alongside empty-baseline.json so the new-entrant test isolates ONLY the new-entrant failure mode.",
+  "site_unit_definition": "catch-line convention, same as gate-failclosed-registry.json.",
+  "rows": []
+}

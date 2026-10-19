@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "node is required for every hook\nMake sure every contributor installs it first.",
+  "expect": []
+}

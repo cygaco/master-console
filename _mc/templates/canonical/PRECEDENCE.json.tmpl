@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "description": "Authority hierarchy for spec files. When two docs disagree, the higher-level file wins. Specs are authoritative over code. This cascade is framework-standard; products rarely change it.",
+  "cascade": [
+    { "level": 1, "label": "CANONICAL", "pattern": "_requirements/00-canonical/*", "authority": "system-wide definitions, vocabulary, product model, golden paths" },
+    { "level": 2, "label": "ARCHITECTURE", "pattern": "_requirements/03-architecture/*", "authority": "contracts, data model, cross-cutting design" },
+    { "level": 3, "label": "DESIGN_SYSTEM", "pattern": "_requirements/01-design-system/*", "authority": "UI components, tokens, UX patterns" },
+    { "level": 4, "label": "FEATURE_SPECS", "pattern": "_requirements/04-features/*/*", "authority": "per-feature PRD/stories/acceptance" },
+    { "level": 5, "label": "CODE", "pattern": "src/**", "authority": "implementation — derives from the above; never overrides a spec" }
+  ],
+  "rules": {{precedence_rules}}
+}

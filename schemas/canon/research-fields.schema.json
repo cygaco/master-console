@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/canon/research-fields/v1",
+  "title": "Canon research-fields cap",
+  "description": "THE research cap. The canon engine may invoke research:* ONLY to fill the named fields enumerated here — never open-ended discovery. The engine builds its research query set from these field names, and validates the research response against this schema. additionalProperties:false at every level is the bound: a research backend returning fields outside this set is rejected (its extra output is discarded, not silently merged). Every filled field MUST carry a `sources[]` (citations); a field with no sources is treated as THIN (validation WARNING, never a silent pass).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["per_doc"],
+  "properties": {
+    "per_doc": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Research-fillable fields keyed by canonical doc. The engine only researches docs whose intent input is thin.",
+      "properties": {
+        "CORE_BRIEF": { "$ref": "#/$defs/fieldSet", "x-fields": ["market_category", "market_size_signal", "competitor_set", "differentiation_signals"] },
+        "USER_COHORTS": { "$ref": "#/$defs/fieldSet", "x-fields": ["cohort_evidence", "persona_signals", "pain_point_signals"] },
+        "GOLDEN_PATHS": { "$ref": "#/$defs/fieldSet", "x-fields": ["common_user_flows", "category_jtbd_signals"] },
+        "PRODUCT_MODEL": { "$ref": "#/$defs/fieldSet", "x-fields": ["standard_primitives_for_category", "pricing_model_signals"] },
+        "FAILURE_STATES": { "$ref": "#/$defs/fieldSet", "x-fields": ["known_failure_modes_for_category", "compliance_constraints"] },
+        "GLOSSARY": { "$ref": "#/$defs/fieldSet", "x-fields": ["category_terminology"] }
+      }
+    },
+    "research_cap": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Hard caps on the research phase, enforced by the engine.",
+      "properties": {
+        "max_queries": { "type": "integer", "minimum": 1, "maximum": 12, "default": 6 },
+        "backend": { "type": "string", "enum": ["simple", "deep"], "default": "simple" },
+        "thin_is_warning_not_pass": { "type": "boolean", "const": true }
+      }
+    }
+  },
+  "$defs": {
+    "fieldSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A bounded set of named research findings for one canonical doc. Only the field names listed in this doc's x-fields are permitted as keys under `findings`.",
+      "properties": {
+        "findings": {
+          "type": "object",
+          "description": "Map of named-field -> value. Keys MUST be drawn from the doc's x-fields list (the engine enforces). Each value is a short synthesized finding.",
+          "additionalProperties": { "type": "string" }
+        },
+        "sources": {
+          "type": "array",
+          "description": "Citations backing the findings. EMPTY sources => the findings are THIN => validation WARNING (never a silent pass).",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["findings", "sources"]
+    }
+  }
+}

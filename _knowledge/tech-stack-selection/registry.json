@@ -1,0 +1,46 @@
+{
+  "$schema": "mc/tech-stack-selection-knowledge/v0.1",
+  "version": "v0.1",
+  "guides": [
+    {
+      "guide": "BAAS_DECISION_MATRIX",
+      "path": "_knowledge/tech-stack-selection/BAAS_DECISION_MATRIX.md",
+      "tier": "core",
+      "rule_prefix": "STACK-BAAS",
+      "anchor": "none",
+      "trains": ["product-lead", "backend-builder", "backend-reviewer"],
+      "maps_to": ["provider-choice", "database-auth-storage"]
+    },
+    {
+      "guide": "STACK_DRIFT_AND_REVERSIBILITY",
+      "path": "_knowledge/tech-stack-selection/STACK_DRIFT_AND_REVERSIBILITY.md",
+      "tier": "core",
+      "rule_prefix": "STACK-REV",
+      "anchor": "none",
+      "trains": ["product-lead", "backend-builder", "backend-reviewer"],
+      "maps_to": ["stack-drift", "reversibility", "vendor-lock-in"]
+    },
+    {
+      "guide": "MOBILE_DEV_LOOP_ON_WINDOWS",
+      "path": "_knowledge/tech-stack-selection/MOBILE_DEV_LOOP_ON_WINDOWS.md",
+      "tier": "core",
+      "rule_prefix": "STACK-WINMOB",
+      "anchor": "none",
+      "trains": ["product-lead", "backend-builder"],
+      "maps_to": ["mobile-dev-loop", "windows-testing", "ios-on-windows"]
+    }
+  ],
+  "coverage": {
+    "axes": {
+      "provider-choice": ["BAAS_DECISION_MATRIX"],
+      "database-auth-storage": ["BAAS_DECISION_MATRIX"],
+      "stack-drift": ["STACK_DRIFT_AND_REVERSIBILITY"],
+      "reversibility": ["STACK_DRIFT_AND_REVERSIBILITY"],
+      "vendor-lock-in": ["STACK_DRIFT_AND_REVERSIBILITY"],
+      "mobile-dev-loop": ["MOBILE_DEV_LOOP_ON_WINDOWS"],
+      "windows-testing": ["MOBILE_DEV_LOOP_ON_WINDOWS"],
+      "ios-on-windows": ["MOBILE_DEV_LOOP_ON_WINDOWS"]
+    },
+    "complete": true
+  }
+}

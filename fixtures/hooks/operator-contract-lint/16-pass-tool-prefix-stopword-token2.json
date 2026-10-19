@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "git is the only source of truth here\nThe tracker only reflects what git recorded.",
+  "expect": []
+}

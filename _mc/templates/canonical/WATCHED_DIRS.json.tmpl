@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "description": "Convention-based directory watching. The Overseer and edit-watcher scan these at runtime to detect new/deleted files across categories. Framework-standard conventions; products rarely change them.",
+  "directories": [
+    { "path": "_requirements/04-features/*/", "category": "feature_specs", "convention": "Each subdir is a feature; expected files PRD.md + STORIES.md." },
+    { "path": "_requirements/00-canonical/", "category": "canonical", "convention": "System-wide canonical docs (this set)." },
+    { "path": "_requirements/03-architecture/", "category": "architecture", "convention": "Contracts + cross-cutting design." },
+    { "path": "_requirements/01-design-system/", "category": "design_system", "convention": "UI components, tokens, UX patterns." },
+    { "path": "src/", "category": "code", "convention": "Implementation; derives from specs." }
+  ]
+}

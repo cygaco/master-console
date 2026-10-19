@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "npm test runs clean\ngh pr list shows two open\ngit log --oneline shows 5 commits\nnode scripts is fine here",
+  "expect": []
+}

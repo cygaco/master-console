@@ -1,0 +1,181 @@
+import { randomBytes } from "node:crypto";
+import { existsSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+
+// ---------------------------------------------------------------------------
+// Surgical line-patch for the founders checklist (.md is the source of truth).
+//
+// WHY NOT render-from-model: the producer's parse(file) drops every non-item
+// line (human notes, ## headers, schema/declared_stack metadata, both markers)
+// and render() regenerates from constants with checks reset — render(parse(x))
+// is doubly lossy. Mutating through it would silently destroy human annotations
+// and reset every checkbox. So write-back is a NET-NEW byte-preserving patch:
+// it touches exactly one line and leaves every other byte untouched.
+//
+// Contract:
+//   patchChecklistItem(checklistPath, id, nextChecked)
+//   1. re-reads the file from disk immediately before patching (patch-on-current)
+//   2. finds the single line whose `id=<id>` marker matches `id`
+//   3. toggles that line's [ ] <-> [x] in place, preserving every other byte
+//   4. writes atomically (write tmp, renameSync over original)
+//   5a. if id not found -> NO write (no tmp left), returns { ok: false }
+//   5b. if id matches MORE THAN ONE line -> corrupt checklist; FAIL CLOSED:
+//       NO write (no tmp left), returns { ok: false } — never patch the first match
+// ---------------------------------------------------------------------------
+
+export type PatchResult =
+  | { ok: true; id: string; checked: boolean; changed: boolean }
+  | { ok: false; id: string; error: string };
+
+// A checklist item line, e.g.
+//   - [ ] id=provider.accounts dim=product source=core Create ...
+//   - [x] id=domain.dns dim=deployment source=core Confirm ...
+// We match the checkbox + the `id=` token explicitly so a label that happens to
+// contain the same substring can never be mistaken for the item id.
+const ID_TOKEN = /(^\s*-\s+\[)([ xX])(\]\s+id=)([a-z0-9_.-]+)/;
+
+function lineMatchesId(line: string, id: string): boolean {
+  const m = ID_TOKEN.exec(line);
+  return m !== null && m[4] === id;
+}
+
+type LineSegment = { content: string; eol: string };
+
+/**
+ * Split text into per-line { content, eol } segments WITHOUT normalizing line endings.
+ * Each segment carries its OWN original terminator (\r\n, \r, \n, or "" for the final line when
+ * the file has no trailing newline). The concatenation of `content + eol` over all segments
+ * equals the input byte-for-byte — that exact round-trip is what lets the patcher preserve
+ * CRLF/LF/mixed EOLs everywhere except the single glyph it toggles.
+ *
+ * Implementation: a global match for "run of non-EOL chars, optionally followed by ONE EOL".
+ * The regex is anchored to consume the whole string left-to-right with no gaps. We skip the
+ * final zero-length match the global form emits at end-of-string so we don't append a phantom
+ * empty segment after a trailing newline.
+ */
+function splitLinesPreservingEol(text: string): LineSegment[] {
+  const segments: LineSegment[] = [];
+  const re = /([^\r\n]*)(\r\n|\r|\n|$)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    // The trailing `$` alternative matches an empty string at end-of-input AFTER the last real
+    // line was already consumed; that yields content="" eol="" with index===text.length. Skip it
+    // so a "...\n"-terminated file does not gain a spurious empty segment.
+    if (m[0] === "" && m.index === text.length) break;
+    segments.push({ content: m[1], eol: m[2] === "" ? "" : m[2] });
+    // A zero-width match (only the `$` matched at a non-end position cannot happen, but guard
+    // against any zero-length advance to avoid an infinite loop).
+    if (m.index === re.lastIndex) re.lastIndex += 1;
+  }
+  if (segments.length === 0) segments.push({ content: "", eol: "" });
+  return segments;
+}
+
+/**
+ * Toggle a single checklist item's checkbox in place.
+ *
+ * @param checklistPath absolute path to FOUNDERS_CHECKLIST.md
+ * @param id            the item id (matched against the `id=` marker)
+ * @param nextChecked   desired checked state (true -> [x], false -> [ ])
+ */
+export function patchChecklistItem(
+  checklistPath: string,
+  id: string,
+  nextChecked: boolean,
+): PatchResult {
+  let raw: string;
+  try {
+    // (1) patch-on-current: read the LATEST bytes from disk, not a stale snapshot.
+    raw = readFileSync(checklistPath, "utf8");
+  } catch (e) {
+    return {
+      ok: false,
+      id,
+      error: `could not read checklist: ${(e as Error).message}`,
+    };
+  }
+
+  // Split into (content, eol) segments WITHOUT collapsing the line endings. Each segment keeps
+  // its OWN original terminator (\r\n, \r, \n, or "" for a final line with no trailing newline),
+  // so a CRLF / mixed-EOL file is reproduced byte-for-byte. A naive split(/\r?\n/) + join with a
+  // single chosen newline NORMALIZES every EOL and violates byte-preservation on mixed-EOL
+  // files — so we never do that.
+  const segments = splitLinesPreservingEol(raw);
+
+  // (2) find the single line carrying this id. Scan ALL lines (no early break) so a duplicate id
+  // is detected: two lines sharing one id= marker is a corrupt-checklist signal, not a
+  // "patch the first one" situation.
+  let targetIndex = -1;
+  let matchCount = 0;
+  for (let i = 0; i < segments.length; i += 1) {
+    if (lineMatchesId(segments[i].content, id)) {
+      if (targetIndex === -1) targetIndex = i;
+      matchCount += 1;
+    }
+  }
+
+  // (5a) id not found -> NO write, return error. Never append / render-from-model.
+  if (targetIndex === -1) {
+    return { ok: false, id, error: `checklist item not found: id=${id}` };
+  }
+
+  // (5b) FAIL CLOSED on a duplicate id. More than one line carries this id= marker, so the
+  // checklist is corrupt and there is no unambiguous line to toggle. Bail BEFORE the atomic-write
+  // block — no tmp is ever created, so the original file is byte-identical and no tmp is left —
+  // and surface an error rather than silently patching the first match.
+  if (matchCount > 1) {
+    return {
+      ok: false,
+      id,
+      error: `duplicate id: ${matchCount} lines carry id=${id} (corrupt checklist)`,
+    };
+  }
+
+  // (3) toggle ONLY the checkbox glyph on that line's CONTENT; every other byte — including
+  // every other line's EOL AND this line's own EOL — is preserved exactly.
+  const original = segments[targetIndex].content;
+  const desiredGlyph = nextChecked ? "x" : " ";
+  const patched = original.replace(
+    ID_TOKEN,
+    (_full, pre, _glyph, mid, matchedId) =>
+      `${pre}${desiredGlyph}${mid}${matchedId}`,
+  );
+
+  const changed = patched !== original;
+  if (changed) {
+    segments[targetIndex].content = patched;
+  }
+
+  // Reassemble verbatim: content + its original eol, in order. Non-target bytes are identical to
+  // the input, so a raw byte-diff shows ONLY the single toggled glyph.
+  const nextRaw = segments.map((s) => s.content + s.eol).join("");
+
+  // (4) atomic write: write a sibling tmp file, then renameSync over the original.
+  // renameSync is atomic on the same filesystem, so a reader sees either the old
+  // file or the fully-written new file, never a torn write.
+  const tmpPath = `${checklistPath}.${process.pid}.${randomBytes(6).toString("hex")}.tmp`;
+  try {
+    writeFileSync(tmpPath, nextRaw, "utf8");
+    renameSync(tmpPath, checklistPath);
+  } catch (e) {
+    // Cleanup on EVERY failure path so a failed patch never leaves an orphan tmp:
+    //   - writeFileSync error: tmp may be partially written or absent.
+    //   - renameSync error: tmp is fully written but NOT moved — it MUST be removed here.
+    // existsSync-guard + try/catch makes the removal robust on both paths (and on a partial tmp).
+    let orphanNote = "";
+    try {
+      if (existsSync(tmpPath)) unlinkSync(tmpPath);
+    } catch {
+      // The tmp removal itself failed — SURFACE the possible orphan in the error rather
+      // than swallowing it (a hidden orphan tmp is the failure mode this guards against).
+      // Still never throw out of cleanup.
+      orphanNote = ` (cleanup also failed — possible orphan tmp at ${tmpPath})`;
+    }
+    return {
+      ok: false,
+      id,
+      error: `atomic write failed: ${(e as Error).message}${orphanNote}`,
+    };
+  }
+
+  return { ok: true, id, checked: nextChecked, changed };
+}

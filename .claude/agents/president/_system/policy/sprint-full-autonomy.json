@@ -1,0 +1,80 @@
+{
+  "$schema": "mc/sprint-full-autonomy/v1",
+  "version": 1,
+  "comment": "Default autonomy presets for /sprint:full. hard_ceilings[] is informational — scripts/sprint/full.js hardcodes the authoritative enum and rejects any preset bundle that tries to include production_release_approval or paid_service_approval in pre_authorized_approval_levels[]. Operators MAY edit this file to add custom presets, but the hardcoded enum guards the floor.",
+  "presets": {
+    "conservative": {
+      "preset_name": "conservative",
+      "description": "Halt on anything non-trivial. Only auto-progresses phase boundaries when plan_quality=pass and zero gates fire. Beta ESCALATE halts. Cost gate at $5. Refuses on main.",
+      "pre_authorized_approval_levels": ["no_approval_needed"],
+      "release_approval_targets": [],
+      "stop_condition_policy": {
+        "approval_required": "halt",
+        "human_setup_required": "halt",
+        "repeated_failure": "halt",
+        "scope_expansion": "halt",
+        "destructive_action_needed": "halt",
+        "production_deploy_needed": "halt",
+        "beta_warning": "halt",
+        "unclear_intent": "halt"
+      },
+      "halt_threshold_failed_tickets_pct": 0,
+      "cost_estimate_threshold_usd": 5.0,
+      "branch_protection_allow_main": false
+    },
+    "moderate": {
+      "preset_name": "moderate",
+      "description": "Default preset. Auto-defers tickets that hit the 3-attempt rule (matches execute.js behavior). Pre-authorizes design-time approvals AND the non-production (staging) release-RECORD step only (release.js prepare — reversible, no deploy, no push). Halts on execution approval, production release, paid services, Beta-ESCALATE. Production release approval and any deploy/push remain HARD-blocked regardless of this preset (the orchestrator's hardcoded FORBIDDEN_PRE_AUTH enum + schema enum forbid production targets). Cost gate at $5. Refuses on main. Note: when the sprint's Plan Contract carries goal_verification.reproduction=executable, scripts/sprint/design.js refuses to advance until every AC in acceptance-criteria.md has a real `verified_by: <file>::<name>` linkage. A moderate-preset /sprint:full run on such a sprint will halt at Phase 2 (design) if the linkage is missing — author the fixtures (or set reproduction=not_applicable with a non-empty justification) before resuming.",
+      "pre_authorized_approval_levels": [
+        "no_approval_needed",
+        "design_approval_required",
+        "release_approval_required"
+      ],
+      "release_approval_targets": ["staging"],
+      "stop_condition_policy": {
+        "approval_required": "halt",
+        "human_setup_required": "halt",
+        "repeated_failure": "defer",
+        "scope_expansion": "halt",
+        "destructive_action_needed": "halt",
+        "production_deploy_needed": "halt",
+        "beta_warning": "halt",
+        "unclear_intent": "halt"
+      },
+      "halt_threshold_failed_tickets_pct": 50,
+      "cost_estimate_threshold_usd": 5.0,
+      "branch_protection_allow_main": false
+    },
+    "aggressive": {
+      "preset_name": "aggressive",
+      "description": "Maximum autonomy within hard ceilings. Pre-authorizes execution + staging releases. Auto-defers repeated_failure. Allows --allow-main override. Still halts on production deploy, paid services, Beta ESCALATE, destructive actions, scope expansion. Cost gate at $5.",
+      "pre_authorized_approval_levels": [
+        "no_approval_needed",
+        "design_approval_required",
+        "execution_approval_required",
+        "release_approval_required"
+      ],
+      "release_approval_targets": ["staging", "internal-canary", "dev"],
+      "stop_condition_policy": {
+        "approval_required": "auto_continue",
+        "human_setup_required": "halt",
+        "repeated_failure": "defer",
+        "scope_expansion": "halt",
+        "destructive_action_needed": "halt",
+        "production_deploy_needed": "halt",
+        "beta_warning": "halt",
+        "unclear_intent": "halt"
+      },
+      "halt_threshold_failed_tickets_pct": 75,
+      "cost_estimate_threshold_usd": 5.0,
+      "branch_protection_allow_main": true
+    }
+  },
+  "hard_ceilings": [
+    "push_to_remote",
+    "paid_service_signup",
+    "production_deploy",
+    "destructive_migration",
+    "secret_to_remote"
+  ]
+}

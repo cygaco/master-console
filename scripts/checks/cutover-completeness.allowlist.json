@@ -1,0 +1,15 @@
+{
+  "_comment": "cutover-completeness allowlist. The legit places where a deleted-old-tree path literal or a renamed-away role name MAY appear as live (non-comment, non-`was:`) content. Enforced by scripts/checks/cutover-completeness.js. Keep SMALL — comment refs and `was:` fields are auto-allowed by the gate, so an entry here is only for a FUNCTIONAL ref that is sanctioned. `files` = exact repo-relative path (forward slashes); `prefixes` = repo-relative path prefix. Each value is the REASON (required). A stale entry (matches no literal) is surfaced as a note.",
+  "files": {
+    "scripts/checks/cutover-completeness.js": "The detector itself — it MUST name every dead-tree literal + renamed-away role in its DEAD_TREE/DEAD_ROLES needle tables. Self-reference, not stale residue.",
+    "scripts/checks/cutover-completeness.allowlist.json": "This allowlist — its reason strings quote the old literals (e.g. the dispatch-agent LEGACY_TREE array) to explain WHY each exception exists. Self-reference.",
+    "scripts/hooks/lib/role-aliases.js": "The back-compat alias table itself — it MUST name the old role names (evaluator/auditor + the ADR-0007 1:1 renames) to map them to canonical. Flagging it would be self-defeating.",
+    "scripts/dispatch-agent.js": "The cutover-coexistence shim: LEGACY_TREE = ['00-alex','01-adhoc','02-oneshot','03-managers'] is named BY DESIGN so a stale duplicate spec under the old tree can't shadow the canonical new spec during the migration window. The resolver PREFERS NEW_TREE; the old names are the de-prioritization list, not a live path it depends on existing.",
+    "scripts/mc/manifest/test-bootstrap.js": "A manifest-bootstrap test that WRITES a synthetic `framework/agents/00-alex/alpha.md` source fixture (makeCanonicalSourceFixture) to exercise the codemod — deliberately-old-tree SYNTHETIC input, not a real path the tool depends on. Doesn't end in .test.js (so the auto test-exclusion misses it); allowlisted explicitly.",
+    "scripts/mc/codemod-docs-to-requirements.js": "A one-time _docs→_requirements codemod whose SKIP_PATH_SUBSTRINGS names legacy transient paths (02-oneshot/.system/retros + store.json) so it does not rewrite them. It is a substring skip-filter that never opens the path, so there is no ENOENT risk; the entries are inert, not a live dependency."
+  },
+  "prefixes": {
+    "framework/releases/": "Frozen shipped release capsules — immutable artifacts of a prior MC version; they correctly carry the tree shape that was current when they shipped. Never rewrite a frozen capsule.",
+    ".claude/agents/president/_system/policy/adr/": "The ADR-0007 decision record (and sibling ADRs) documents the cutover — it NAMES the old tree + old role names as the 'from' side of the rewrite. That is its job. (dir de-dotted .system→_system.)"
+  }
+}

@@ -1,0 +1,44 @@
+/**
+ * voice-errors.ts — PURE mapping from a getUserMedia / MediaRecorder failure
+ * to an ACTIONABLE user-facing message. No React, no DOM. Extracted so the
+ * "mic blocked by Permissions-Policy → point at the fix" behaviour is a pure,
+ * unit-testable assertion (see _knowledge/design/INPUT_COMPOSER_PATTERN.md §4).
+ *
+ * The load-bearing case: the app scaffold ships `Permissions-Policy:
+ * microphone=()` (secure-by-default). When a product enables the flag-ON voice
+ * path WITHOUT relaxing that header to `microphone=(self)`, getUserMedia
+ * rejects — and it must FAIL LOUDLY with a message that names the cause and the
+ * fix, never a silent no-op that looks like "voice just doesn't work."
+ */
+
+/** Actionable message for a mic-acquisition failure. `err` is whatever
+ *  getUserMedia rejected with (a DOMException in browsers, `unknown` to us). */
+export function describeMicError(err: unknown): string {
+  const name =
+    typeof err === "object" && err !== null && "name" in err
+      ? String((err as { name?: unknown }).name)
+      : "";
+
+  switch (name) {
+    // A Permissions-Policy block AND a user denial both surface as
+    // NotAllowedError (and some engines use SecurityError for the policy case).
+    // We can't reliably tell them apart, so the message covers BOTH and always
+    // names the Permissions-Policy fix — the failure mode products actually hit.
+    case "NotAllowedError":
+    case "SecurityError":
+      return (
+        "Microphone blocked. If you allowed the permission, your app's " +
+        "Permissions-Policy is likely disabling the mic — set `microphone=(self)` " +
+        "in next.config (see INPUT_COMPOSER_PATTERN.md §4). Otherwise, allow " +
+        "microphone access and try again."
+      );
+    case "NotFoundError":
+    case "DevicesNotFoundError":
+      return "No microphone was found. Connect a mic, or type your note instead.";
+    case "NotReadableError":
+    case "TrackStartError":
+      return "Your microphone is in use by another app. Close it and try again.";
+    default:
+      return "Microphone access was denied or unavailable. You can type instead.";
+  }
+}

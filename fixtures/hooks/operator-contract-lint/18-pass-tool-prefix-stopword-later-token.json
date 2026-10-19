@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "git push is blocked by the classifier\nThis is expected under the current policy.",
+  "expect": []
+}

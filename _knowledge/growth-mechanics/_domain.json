@@ -1,0 +1,9 @@
+{
+  "domain": "growth-mechanics",
+  "kind": "library",
+  "producer": "marketing-lead",
+  "consumers": ["marketing-lead", "product-lead", "qa-reviewer"],
+  "index": "_knowledge/growth-mechanics/registry.json",
+  "overview": "_knowledge/growth-mechanics/README.md",
+  "note": "Growth-mechanics knowledge library: store-review prompting compliance (the banned gating pattern + the decoupled-flows doctrine), referral-program economics and fraud minimums, and onboarding/progressive-profiling activation doctrine. Grounds growth-loop and onboarding build specs and their QA review."
+}

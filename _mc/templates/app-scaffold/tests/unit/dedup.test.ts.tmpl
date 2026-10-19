@@ -1,0 +1,98 @@
+import { describe, it, expect } from "vitest";
+// Relative import — see the note in terminus.test.ts.tmpl (no vitest alias config in the scaffold).
+import { reduceDedup, initialDedupState, type DedupEvent } from "../../src/lib/composer/dedup";
+
+/**
+ * Fires CONSECUTIVE CUMULATIVE Web Speech `event.results` — including a
+ * stale `resultIndex` — and asserts no word repetition (the "Dedup gotcha
+ * (Web Speech)" in §4 of _knowledge/design/INPUT_COMPOSER_PATTERN.md).
+ */
+
+describe("reduceDedup — Web Speech cumulative-results dedup", () => {
+  it("does not repeat a finalized result re-delivered with a stale resultIndex", () => {
+    let state = initialDedupState;
+
+    // Event 1: one finalized result.
+    const event1: DedupEvent = {
+      resultIndex: 0,
+      results: [{ transcript: "hello", isFinal: true }],
+    };
+    let out = reduceDedup(state, event1);
+    state = out.state;
+    expect(out.transcript).toBe("hello");
+
+    // Event 2: CUMULATIVE — re-delivers "hello" (already finalized) plus a
+    // NEW finalized "world", but resultIndex is STALE (still 0, should be 1).
+    const event2: DedupEvent = {
+      resultIndex: 0,
+      results: [
+        { transcript: "hello", isFinal: true },
+        { transcript: "world", isFinal: true },
+      ],
+    };
+    out = reduceDedup(state, event2);
+    state = out.state;
+
+    expect(out.transcript).toBe("hello world");
+    expect(out.transcript.split(" ").filter((w) => w === "hello").length).toBe(1);
+  });
+
+  it("replaces (never appends) the interim tail across consecutive events", () => {
+    let state = initialDedupState;
+
+    const event1: DedupEvent = {
+      resultIndex: 0,
+      results: [
+        { transcript: "hello", isFinal: true },
+        { transcript: "wor", isFinal: false },
+      ],
+    };
+    let out = reduceDedup(state, event1);
+    state = out.state;
+    expect(out.transcript).toBe("hello wor");
+
+    // Same interim result refined further — must REPLACE "wor", not append it.
+    const event2: DedupEvent = {
+      resultIndex: 0,
+      results: [
+        { transcript: "hello", isFinal: true },
+        { transcript: "world", isFinal: false },
+      ],
+    };
+    out = reduceDedup(state, event2);
+
+    expect(out.transcript).toBe("hello world");
+    expect(out.transcript).not.toContain("wor world");
+  });
+
+  it("handles three consecutive cumulative events with a consistently stale resultIndex", () => {
+    let state = initialDedupState;
+    const events: DedupEvent[] = [
+      { resultIndex: 0, results: [{ transcript: "one", isFinal: true }] },
+      {
+        resultIndex: 0,
+        results: [
+          { transcript: "one", isFinal: true },
+          { transcript: "two", isFinal: true },
+        ],
+      },
+      {
+        resultIndex: 0,
+        results: [
+          { transcript: "one", isFinal: true },
+          { transcript: "two", isFinal: true },
+          { transcript: "three", isFinal: true },
+        ],
+      },
+    ];
+
+    let transcript = "";
+    for (const event of events) {
+      const out = reduceDedup(state, event);
+      state = out.state;
+      transcript = out.transcript;
+    }
+
+    expect(transcript).toBe("one two three");
+  });
+});

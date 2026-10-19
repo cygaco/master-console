@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "\u26a0\ufe0f DECISION NEEDED\nI recommend we ship strict by default.\nShould we ship strict by default?",
+  "expect": []
+}

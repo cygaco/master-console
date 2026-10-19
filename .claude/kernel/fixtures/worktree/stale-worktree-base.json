@@ -1,0 +1,15 @@
+{
+  "id": "worktree-stale-worktree-base",
+  "gate": "worktree",
+  "input": {
+    "declared_base_commit": "abc1234",
+    "integration_head_commit": "def5678",
+    "base_is_ancestor_of_head": false
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "the builder's declared base commit is not an ancestor of the current integration head -- the worktree base is stale relative to a dependent build. Requires BOTH an explicit immutable base commit AND a freshness assertion against the integration head; this fixture is the freshness half."
+  },
+  "kernel_scope": "IN",
+  "note": "Stale worktree base fixture: worktree-base-stale failure classification."
+}

@@ -1,0 +1,69 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { requireFounderAdmin } from "@/lib/admin/config";
+import {
+  type AdminAccountState,
+  isAdminEntitlement,
+  recordAdminAudit,
+  setAdminFeatureFlag,
+  setAdminUserAccountState,
+  setAdminUserEntitlement,
+} from "@/lib/admin/store";
+
+function requiredValue(formData: FormData, name: string): string {
+  const value = formData.get(name);
+  if (typeof value !== "string" || !value.trim()) {
+    throw new Error(`Missing admin form field: ${name}`);
+  }
+  return value.trim();
+}
+
+export async function toggleAccountStateAction(formData: FormData) {
+  const actor = await requireFounderAdmin();
+  const userId = requiredValue(formData, "userId");
+  const state = requiredValue(formData, "state") as AdminAccountState;
+  if (state !== "active" && state !== "suspended") {
+    throw new Error(`Unsupported account state: ${state}`);
+  }
+  const updated = setAdminUserAccountState(userId, state);
+  recordAdminAudit({
+    actorEmail: actor.email,
+    action: "account_state",
+    targetId: userId,
+    result: updated ? "ok" : "not_found",
+  });
+  revalidatePath("/admin");
+}
+
+export async function setEntitlementAction(formData: FormData) {
+  const actor = await requireFounderAdmin();
+  const userId = requiredValue(formData, "userId");
+  const entitlement = requiredValue(formData, "entitlement");
+  if (!isAdminEntitlement(entitlement)) {
+    throw new Error(`Unsupported admin entitlement: ${entitlement}`);
+  }
+  const enabled = requiredValue(formData, "enabled") === "true";
+  const updated = setAdminUserEntitlement(userId, entitlement, enabled);
+  recordAdminAudit({
+    actorEmail: actor.email,
+    action: "entitlement",
+    targetId: userId,
+    result: updated ? "ok" : "not_found",
+  });
+  revalidatePath("/admin");
+}
+
+export async function setFeatureFlagAction(formData: FormData) {
+  const actor = await requireFounderAdmin();
+  const key = requiredValue(formData, "key");
+  const enabled = requiredValue(formData, "enabled") === "true";
+  const updated = setAdminFeatureFlag(key, enabled);
+  recordAdminAudit({
+    actorEmail: actor.email,
+    action: "feature_flag",
+    targetId: key,
+    result: updated ? "ok" : "not_found",
+  });
+  revalidatePath("/admin");
+}

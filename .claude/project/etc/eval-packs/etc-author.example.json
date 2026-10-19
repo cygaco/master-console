@@ -1,0 +1,85 @@
+{
+  "id": "etc-author",
+  "target": ".claude/commands/etc/author.md",
+  "procedures": [
+    "Read the skills:create reference format before authoring",
+    "Draft or refine the skill artifact in standard format (frontmatter + ## Input + ## Procedure)",
+    "Produce a sibling eval-pack JSON at paths.etcEvalPacks/<slug>.json",
+    "Optionally invoke scripts/etc/consult.js for a cross-provider critique",
+    "Verify the produced files against the standard format and schema"
+  ],
+  "rubric": [
+    {
+      "dimension": "standard-format",
+      "weight": 1.0,
+      "criteria": "Skill follows the skills:create standard format: frontmatter description, ## Input, ## Procedure with at least 3 named steps",
+      "mechanical": true,
+      "checks": [
+        {"kind": "must_contain_all", "value": ["description:", "## Input", "## Procedure", "### Step 1"]},
+        {"kind": "min_count", "value": {"pattern": "### Step", "n": 3}},
+        {"kind": "must_not_contain", "value": ["<FIXME>", "<TODO>"]},
+        {"kind": "regex_match", "value": "^---"}
+      ]
+    },
+    {
+      "dimension": "paths-reference",
+      "weight": 0.8,
+      "criteria": "Paths are referenced as paths.X keys, not as bare literals; paths.etcEvalPacks is mentioned explicitly",
+      "mechanical": true,
+      "checks": [
+        {"kind": "must_contain_all", "value": ["paths.etcEvalPacks", "paths.X"]},
+        {"kind": "max_count", "value": {"pattern": "TODO", "n": 0}}
+      ]
+    },
+    {
+      "dimension": "consult-wiring",
+      "weight": 0.8,
+      "criteria": "The --consult path is documented and wired to scripts/etc/consult.js; flagged content is discarded",
+      "mechanical": true,
+      "checks": [
+        {"kind": "must_contain_any", "value": ["--consult", "consult.js", "scripts/etc/consult"]},
+        {"kind": "must_contain_all", "value": ["flagged"]}
+      ]
+    },
+    {
+      "dimension": "eval-pack-output",
+      "weight": 0.8,
+      "criteria": "The skill documents producing an eval-pack with rubric, examples, and counterexamples",
+      "mechanical": true,
+      "checks": [
+        {"kind": "must_contain_all", "value": ["eval-pack", "rubric", "examples", "counterexamples"]},
+        {"kind": "must_contain_all", "value": ["schemas/etc/eval-pack.schema.json"]}
+      ]
+    },
+    {
+      "dimension": "judgment",
+      "weight": 0.5,
+      "criteria": "Is the skill well-organized, unambiguous, and consistent with the rest of the /etc namespace?",
+      "mechanical": false,
+      "checks": []
+    }
+  ],
+  "examples": [
+    {
+      "input": "/etc:author 'Create a skill that backs up the events log nightly'",
+      "expected_properties": [
+        "Produces a .claude/commands/<namespace>/<name>.md with frontmatter description",
+        "Produces an eval-pack JSON at paths.etcEvalPacks/<slug>.json",
+        "Paths referenced as paths.X keys throughout",
+        "No root namespace .md file created alongside a subcommand directory"
+      ]
+    }
+  ],
+  "counterexamples": [
+    {
+      "input": "A skill file that hardcodes .claude/project/etc/eval-packs instead of paths.etcEvalPacks",
+      "must_not": [
+        "creates a root .md alongside a subcommand directory",
+        "hardcodes absolute path literals where paths.X keys exist",
+        "skips eval-pack production",
+        "invents a new authoring format instead of using skills:create"
+      ],
+      "why": "Violates the paths.X rule, the no-root-md subcommand convention, and the anti-goal of NOT inventing new authoring formats"
+    }
+  ]
+}

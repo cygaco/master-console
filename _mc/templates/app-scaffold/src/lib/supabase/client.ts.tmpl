@@ -1,0 +1,18 @@
+import { createBrowserClient } from "@supabase/ssr";
+import {
+  isSupabaseConfigured,
+  supabaseAnonKey,
+  supabaseUrl,
+  type MaybeSupabaseClient,
+} from "./config";
+
+// Browser (client-component) Supabase client. Returns null when the seam is
+// unconfigured — checked BEFORE calling createBrowserClient, which THROWS on an
+// empty url/key. The `| null` union is the gate: callers branch on it rather
+// than us throwing-at-use or handing back a stub.
+export function createSupabaseBrowserClient(): MaybeSupabaseClient {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+  return createBrowserClient(supabaseUrl(), supabaseAnonKey());
+}

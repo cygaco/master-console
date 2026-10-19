@@ -1,0 +1,85 @@
+import { test, expect } from "@playwright/test";
+
+/**
+ * DOCUMENTS the deferred visual/browser lane for the input composer (§6 in
+ * _knowledge/design/INPUT_COMPOSER_PATTERN.md). There is no running app in
+ * the framework repo to point these at — this spec is the checklist a
+ * PRODUCT integrating `src/components/composer/Composer.tsx` runs against
+ * its own live pages. Every test below is `.skip` on purpose; un-skip once
+ * the composer is mounted in a real page.
+ *
+ * ⚠️ OWED DEBT — NOT a clean "skipped". These are MANDATORY adoption gates
+ * (_knowledge/design/INPUT_COMPOSER_PATTERN.md §7.1; the G-ids are that doc's
+ * §5 gotcha table): the taste gate, the by-eye IDLE check (G-1), and the elementFromPoint
+ * control check (G-7) MUST run against the running app before a product ships
+ * the composer. In particular the reference component's OWN idle taste pass is
+ * OWED (§7.2) and must be discharged (throwaway mount → screenshot → eye-check
+ * vs the ChatGPT-composer reference) BEFORE any product adopts it — shipping
+ * the taste gate as prose while the copied reference never cleared it is the
+ * value-inversion this pattern exists to prevent. Leaving these `.skip` without
+ * discharging that debt is a KNOWN GAP, not a pass.
+ */
+
+test.describe("composer — deferred visual/browser lane", () => {
+  // P-1 / G-8: the morph must be driven by a SINGLE persistent textarea
+  // (order/basis reflow), never a conditional mount/unmount — the latter
+  // drops focus/cursor mid-transition and "the morph doesn't fire." Verify
+  // by focusing the field and asserting the two-tier layout appears WITHOUT
+  // the textarea's DOM node identity changing (compare a stable attribute
+  // or the element handle across the transition).
+  test.skip("morph fires on focus: single persistent textarea reflows via order/basis, no remount", async ({ page }) => {
+    // await page.goto("/");
+    // const textarea = page.getByTestId("note-textarea");
+    // const handleBefore = await textarea.elementHandle();
+    // await textarea.focus();
+    // const handleAfter = await page.getByTestId("note-textarea").elementHandle();
+    // expect(await handleBefore?.evaluate((el) => el)).toBe(await handleAfter?.evaluate((el) => el));
+  });
+
+  // G-1: placeholder must read as vertically centered in the collapsed
+  // single-line row — this is a BY-EYE judgment (line-height/box math can
+  // pass while it still looks top-heavy). Take a screenshot of the idle bar
+  // and have a reviewer confirm centering; do not fake this with a
+  // getBoundingClientRect() assertion — that is the exact false-green §7 warns about.
+  test.skip("placeholder is vertically centered in the collapsed idle row (verify BY EYE, not box geometry)", async ({ page }) => {
+    // await page.goto("/");
+    // await expect(page.getByTestId("note-textarea")).toHaveScreenshot("composer-idle-placeholder.png");
+  });
+
+  // G-7: the fixed bottom nav (z-50) must NOT occlude any composer control
+  // (z-40) — verify per-control with elementFromPoint, not just a visual
+  // once-over.
+  test.skip("bottom nav does not occlude composer controls (elementFromPoint per control)", async ({ page }) => {
+    // await page.goto("/");
+    // for (const testid of ["capture-timestamp-toggle", "note-textarea", "record-btn", "capture-attach-toggle", "send-btn"]) {
+    //   const box = await page.getByTestId(testid).boundingBox();
+    //   const hit = await page.evaluate(([x, y]) => {
+    //     const el = document.elementFromPoint(x, y);
+    //     return el?.closest("[data-testid]")?.getAttribute("data-testid");
+    //   }, [box!.x + box!.width / 2, box!.y + box!.height / 2]);
+    //   expect(hit).toBe(testid);
+    // }
+  });
+
+  // G-9: React StrictMode double-invokes mount effects in dev — an e2e count
+  // assertion must tolerate 1 OR 2 in dev (only the pure component-level
+  // test asserts an exact 1).
+  test.skip("dev StrictMode double-render: mount-effect side effects fire 1-2 times, never 0 or 3+", async ({ page }) => {
+    // await page.goto("/");
+    // const count = await page.evaluate(() => (window as any).__composerMountCount__);
+    // expect(count).toBeGreaterThanOrEqual(1);
+    // expect(count).toBeLessThanOrEqual(2);
+  });
+
+  // §7: the no-checklist taste gate. Judged holistically against reference
+  // screenshots (e.g. the ChatGPT composer) — deliberately has NO assertion
+  // checklist here; a REJECT needs no itemized justification beyond "it
+  // looks off." Run this LAST, on the idle/resting state, before ship.
+  test.skip("taste gate: idle composer row reads as designed, not assembled (no-checklist, vibe verdict against reference screenshots)", async ({ page }) => {
+    // await page.goto("/");
+    // await expect(page.getByTestId("note-textarea")).toBeVisible();
+    // -- stop here. A human (or the design-quality/visual-review roster)
+    // squints at the rendered idle bar next to the reference and passes/fails
+    // on vibe alone. See §7 of INPUT_COMPOSER_PATTERN.md.
+  });
+});

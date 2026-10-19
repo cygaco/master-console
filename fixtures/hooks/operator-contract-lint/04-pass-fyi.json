@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "\ud83d\udccc FYI\nThe deploy finished cleanly. No action needed.",
+  "expect": []
+}

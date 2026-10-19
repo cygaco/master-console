@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "npm test\nThis runs the test suite.",
+  "expect": ["CMD-OUTSIDE-RUN"]
+}

@@ -1,0 +1,27 @@
+import * as React from "react";
+import { cn } from "@/lib/utils";
+
+// shadcn-style base Textarea. Hard-codes min-h-[96px] — this is the SHARED
+// base other consumers rely on (forms, admin notes, etc). The composer
+// overrides this AT THE CALL SITE (min-h-[40px]) per
+// _knowledge/design/INPUT_COMPOSER_PATTERN.md G-2 — never edit this default.
+export interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <textarea
+        className={cn(
+          "flex min-h-[96px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className,
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
+Textarea.displayName = "Textarea";
+
+export { Textarea };

@@ -1,0 +1,4 @@
+[
+  { "type": "message_brief", "id": "mb-1", "audience_ref": "ad-1", "core_message": "m", "proof_points": ["p"], "market_promise": "mp" },
+  { "type": "offer_brief", "id": "ob-1", "derived_from_message_brief": "mb-1", "product_verifiable_claim": "c", "offer_terms": "t", "precedence": 50 }
+]

@@ -1,0 +1,29 @@
+{
+  "_doc": "Wiring-pending allowlist for scripts/checks/mode-lifecycle-hooks-coverage.js. A declared virtual lifecycle event with NO emitter yet (no `lifecycle-events.emit(\"<event>\")` reference and no runtime `lifecycle-event` record) is reported as INFO — not a gap — IF it is listed here with a WELL-FORMED SCHEMA entry. As each emit-site lands, PRUNE its entry here; once an event has a real emitter the enforcer counts it covered and the allowlist entry is redundant. A declared event that is NEITHER emitted NOR a valid in-date allowlist entry is a real coverage GAP (report-only; --enforce makes it exit 1). Mirrors the MIGRATION_PENDING / flag-don't-fix-known-debt pattern (mode-lifecycle-registry, cutover-completeness).",
+  "_schema": "Each wiring_pending entry MUST be an object carrying { owner, review_by (or expiry, or review_by_version), reason }. owner = the role/sprint accountable for landing the emitter; review_by/expiry = an ISO YYYY-MM-DD date by which the entry must be revisited, or review_by_version = the framework version (in an install, the installed version; in the framework's own tree, version.json) at which it must be revisited — the shipped entries use the version form, so an install never trips on a calendar date, and the release gates refuse a release that reaches an unreviewed entry's version (a PAST date or a REACHED version is FLAGGED → downgraded to a gap, so a permanent silent allowlist cannot suppress an emitter-gap forever); reason = why the emitter is not wired yet. A schemaless entry (missing owner/review date or version/reason, or a bare string) is REJECTED — it is NOT honored as pending and falls through to a coverage GAP. A well-formed, in-date entry is honored as INFO (not a gap).",
+  "wiring_pending": {
+    "mode:switch:requested": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-switch preflight guard emit-site" },
+    "mode:switch:preflight": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "REAL PreToolUse mode-switch preflight guard" },
+    "mode:teardown:before": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "teardown sequence emit-site; emitters still unwired" },
+    "team:persistent:kill:before": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "teardown sequence emit-site; emitters still unwired" },
+    "team:persistent:kill:after": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "teardown sequence emit-site" },
+    "mode:state:clear:before": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "teardown sequence emit-site; emitters still unwired" },
+    "mode:init:before": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "REAL mode:init:gate guard emit-site; emitters still unwired" },
+    "mode:policy:load": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-init sequence emit-site; emitters still unwired" },
+    "team:persistent:spawn:before": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-init sequence emit-site; emitters still unwired" },
+    "team:persistent:spawn:after": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-init sequence emit-site; emitters still unwired" },
+    "team:persistent:verify": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-init sequence emit-site; emitters still unwired" },
+    "dispatch:matrix:load": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-init sequence emit-site; emitters still unwired" },
+    "sprint:binding:verify": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "binding-verify emit-site; emitters still unwired" },
+    "epic:binding:verify": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "binding-verify emit-site; emitters still unwired" },
+    "tracker:binding:verify": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "binding-verify emit-site; emitters still unwired" },
+    "planning:artifact:verify": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "binding-verify emit-site; emitters still unwired" },
+    "provider:readiness:verify": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "provider-readiness emit-site; emitters still unwired" },
+    "mode:init:after": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-init sequence emit-site; emitters still unwired" },
+    "mode:switch:after": { "owner": "mode-lifecycle-owner", "review_by_version": "2.2.0", "reason": "mode-switch sequence emit-site" },
+    "session:end:before": { "owner": "mode-lifecycle", "review_by_version": "2.2.0", "reason": "session-end teardown emit-site; emitters still unwired" },
+    "session:end:after": { "owner": "mode-lifecycle", "review_by_version": "2.2.0", "reason": "session-end teardown emit-site; emitters still unwired" },
+    "session:resume:stale-team-detect": { "owner": "mode-lifecycle", "review_by_version": "2.2.0", "reason": "session-resume reconcile emit-site" },
+    "session:resume:mode-state-reconcile": { "owner": "mode-lifecycle", "review_by_version": "2.2.0", "reason": "session-resume reconcile emit-site; emitters still unwired" }
+  }
+}

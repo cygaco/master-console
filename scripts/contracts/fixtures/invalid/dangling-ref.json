@@ -1,0 +1,4 @@
+[
+  { "type": "message_brief", "id": "mb-1", "audience_ref": "ad-1", "core_message": "m", "proof_points": ["p"], "market_promise": "mp" },
+  { "type": "converting_artifact", "id": "ca-9", "derived_from_message_brief": "mb-NOPE", "artifact_kind": "ad", "copy_ref": "copy/x.md" }
+]

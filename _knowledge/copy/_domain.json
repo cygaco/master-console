@@ -1,0 +1,9 @@
+{
+  "domain": "copy",
+  "kind": "store",
+  "producer": "copy-lead",
+  "consumers": ["conversion-lead", "director-of-growth"],
+  "schema_ref": null,
+  "contract": "_knowledge/copy/README.md",
+  "note": "Voice + high-leverage copy (the argument, hooks, necessary beliefs). Produced by copy-lead at runtime; reaches builders as a COPY.md contract (authored from this store, never invented at build time). Empty scaffolding in canonical. Store domain."
+}

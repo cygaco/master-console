@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "\u25b6\ufe0f RUN THIS\n```bash\ngit push origin main\n```\nThis pushes the branch. Tell me after it completes.",
+  "expect": []
+}

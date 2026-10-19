@@ -1,0 +1,35 @@
+{
+  "schema": "mc/skill-dispatch/benchmark-task-set/v1",
+  "_SCAFFOLD_NOTICE": "ILLUSTRATIVE EXAMPLE ONLY — no A/B measurement is included. This file shows the SHAPE of a task set; it carries NO real measurements. The skill below is NOT subprocess_verified. Do not read any number here as a result. See README.md.",
+  "skill": "scan:references",
+  "subprocess_verified_prereq": false,
+  "thresholds": {
+    "min_tokens_saved": 4000,
+    "min_pct_saved": 0.6,
+    "quality_tolerance": 0.05
+  },
+  "judge": {
+    "provider": "gpt (cross-provider; NOT the skill's claude executor)",
+    "anonymized": true,
+    "rubric": "Did the subprocess run surface the SAME broken-link / orphan / stale-edge findings as inline, with no false-negatives and no fabricated findings? Same verdict + same finding set within tolerance = pass."
+  },
+  "tasks": [
+    {
+      "task_id": "scan-references-clean-repo",
+      "input": "(default) full reference-integrity scan over the canonical repo",
+      "gold": "EXPECTATION PLACEHOLDER — the known finding set for a clean run (to be captured when this is actually measured). NOT a measurement.",
+      "notes": "Representative 'mostly clean' case — exercises the no-false-positive path."
+    },
+    {
+      "task_id": "scan-references-seeded-broken-link",
+      "input": "(sealed fixture) repo with one planted broken doc link + one orphan",
+      "gold": "EXPECTATION PLACEHOLDER — must report exactly the 1 broken link + 1 orphan, no more, no fewer. NOT a measurement.",
+      "notes": "Planted-violation case — proves the subprocess arm does not lose findings the inline arm catches (the quality regression risk)."
+    }
+  ],
+  "_deferred": {
+    "axis1_savings": "NOT MEASURED — no inline/subprocess token counts captured.",
+    "axis2_quality": "NOT GRADED — no cross-provider judge run.",
+    "how_to_run": "See README.md 'How to run a measurement'. Start with a real ping of the skill (a bounded spawn that spends), then author runs/ + results/."
+  }
+}

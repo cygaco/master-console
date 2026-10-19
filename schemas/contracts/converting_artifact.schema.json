@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/contracts/converting_artifact/v0.1",
+  "title": "MC Product-Studio Contract — Converting Artifact (v0.1)",
+  "description": "The terminal output: an ad, advertorial, or landing page (one schema, type enum). Derives from the message_brief; the thing that actually converts. Lowest precedence (downstream output, not authority).",
+  "version": "v0.1",
+  "precedence_note": "v0.1 ranks are revisable (global integer rank).",
+  "contract": {
+    "owner_domain": "marketing",
+    "consumers": [],
+    "precedence": 10
+  },
+  "type": "object",
+  "required": ["type", "id", "derived_from_message_brief", "artifact_kind", "copy_ref"],
+  "properties": {
+    "type": { "const": "converting_artifact" },
+    "id": { "type": "string", "minLength": 1 },
+    "derived_from_message_brief": { "type": "string", "minLength": 1, "description": "id of the source message_brief (spine reference)." },
+    "artifact_kind": { "type": "string", "enum": ["ad", "advertorial", "landing"] },
+    "copy_ref": { "type": "string", "minLength": 1, "description": "Pointer to the copy (content render output)." },
+    "creative_refs": { "type": "array", "items": { "type": "string" }, "description": "Pointers to generated images/video (e.g. Higgsfield assets)." }
+  },
+  "additionalProperties": true
+}

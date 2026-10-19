@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "> The deploy already finished cleanly.\nNo further action is needed.",
+  "expect": []
+}

@@ -1,0 +1,10 @@
+{
+  "id": "conformance-matrix-selftest-bad-input-shape",
+  "gate": "retention",
+  "input": "not-an-object",
+  "expect": {
+    "outcome": "BLOCK"
+  },
+  "kernel_scope": "OUT",
+  "note": "Regression fixture for conformance-matrix.js's OWN self-test corpus (conformance-matrix.test.js) -- NOT a kernel-conformance case. Excluded from the real kernel-conformance walk via EXCLUDED_GATE_DIRS ('conformance-matrix-selftest'), mirroring fixtures/contract-lint/'s exclusion for contract-lint.js. Deliberately carries a malformed 'input' (a JSON string, not an object). Were it accepted (id/gate/expect.outcome are all individually shape-valid), evaluate() would call the 'retention' evaluator with `fx.input || {}`, which fails closed to BLOCK for any disposition other than 'archive' -- silently MATCHING this fixture's expect.outcome:'BLOCK' and reading green ('bound') without ever exercising real retention-disposition evaluator logic. loadFixtures() must reject a non-object 'input' at load time (fail-closed, exit 2 at the CLI), before this fixture is ever handed to evaluate()."
+}

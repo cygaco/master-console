@@ -1,0 +1,12 @@
+{
+  "id": "support-matrix-codex-gpt-row-supported",
+  "gate": "support-matrix",
+  "bound_matrix_cell": "codex-gpt",
+  "input": { "helm": "codex-gpt" },
+  "expect": {
+    "outcome": "PASS",
+    "reason": "support-matrix.json rows['codex-gpt'].status is 'supported' with required:true, proven:true, and a live ledger evidence_ref -- the helm row resolves PASS."
+  },
+  "kernel_scope": "IN",
+  "note": "Positive coverage for the codex-gpt row of the provider x capability x helm-level support matrix (seed granularity)."
+}

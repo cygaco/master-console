@@ -1,0 +1,318 @@
+{
+  "$schema": "mc/path-lint-rules/v1",
+  "generated_by": "scripts/paths/build.js",
+  "critical": [
+    {
+      "match": "\\.claude\\/events\\/[^/\\s\"'`)\\]]",
+      "suggestion": ".claude/project/events/ (or paths.events)",
+      "why": "legacy path; the current path is .claude/project/events/ (paths.events)"
+    },
+    {
+      "match": "\\.claude\\/memory\\/[^/\\s\"'`)\\]]",
+      "suggestion": ".claude/project/memory/ (or paths.memory)",
+      "why": "legacy path; the current path is .claude/project/memory/ (paths.memory)"
+    },
+    {
+      "match": "\\.claude\\/maps\\/[^/\\s\"'`)\\]]",
+      "suggestion": ".claude/project/maps/ (or paths.maps)",
+      "why": "legacy path; the current path is .claude/project/maps/ (paths.maps)"
+    },
+    {
+      "match": "\\.claude\\/handoffs\\/",
+      "suggestion": ".claude/runtime/handoffs/ (or paths.handoffs)",
+      "why": "legacy path; the current path is .claude/runtime/handoffs/ (paths.handoffs)"
+    },
+    {
+      "match": "\\.claude\\/logs\\/",
+      "suggestion": ".claude/runtime/logs/ (or paths.logs)",
+      "why": "legacy path; the current path is .claude/runtime/logs/ (paths.logs)"
+    },
+    {
+      "match": "\\.claude\\/plans\\/",
+      "suggestion": ".claude/runtime/plans/ (or paths.plans)",
+      "why": "legacy path; the current path is .claude/runtime/plans/ (paths.plans)"
+    },
+    {
+      "match": "context-enhancer\\.js",
+      "suggestion": "smart-context.js",
+      "why": "legacy hook name; the current hook is smart-context.js"
+    },
+    {
+      "match": "prompt-enhancer\\.js",
+      "suggestion": "smart-context.js",
+      "why": "legacy hook name; the current hook is scripts/hooks/smart-context.js"
+    },
+    {
+      "match": "\\.claude\\/agents\\/\\.system\\/oneshot\\/store\\.json",
+      "suggestion": ".claude/agents/store.json (or paths.store)",
+      "why": "wrong path — no .system/oneshot/ dir"
+    },
+    {
+      "match": "\\bbeta-persona\\.md\\b",
+      "suggestion": "judgement-model.md (or paths.judgmentModel)",
+      "why": "legacy file name; the current file is judgement-model.md (paths.judgmentModel)"
+    },
+    {
+      "match": "\\.beta-mining-recommendations\\.md",
+      "suggestion": "judgement-model-recommendations.md",
+      "why": "legacy file name; the current file is judgement-model-recommendations.md"
+    },
+    {
+      "match": "docs\\/05-features\\/",
+      "suggestion": "requirements/04-features/ (or paths.specsRoot)",
+      "why": "legacy docs path; the current chapter is _requirements/04-features (paths.specsRoot)"
+    },
+    {
+      "match": "requirements\\/05-features\\/",
+      "suggestion": "requirements/04-features/ (or paths.specsRoot)",
+      "why": "legacy chapter number; the current chapter is 04-features"
+    },
+    {
+      "match": "requirements\\/04-architecture\\/",
+      "suggestion": "requirements/03-architecture/",
+      "why": "legacy chapter number; the current chapter is 03-architecture"
+    },
+    {
+      "match": "requirements\\/06-operations\\/",
+      "suggestion": "requirements/05-operations/",
+      "why": "legacy chapter number; the current chapter is 05-operations"
+    },
+    {
+      "match": "requirements\\/07-security\\/",
+      "suggestion": "requirements/06-security/",
+      "why": "legacy chapter number; the current chapter is 06-security"
+    },
+    {
+      "match": "requirements\\/08-testing\\/",
+      "suggestion": "requirements/07-testing/",
+      "why": "legacy chapter number; the current chapter is 07-testing"
+    },
+    {
+      "match": "requirements\\/09-automation\\/",
+      "suggestion": "requirements/08-automation/",
+      "why": "legacy chapter number; the current chapter is 08-automation"
+    },
+    {
+      "match": "requirements\\/99-audits\\/",
+      "suggestion": "requirements/_audits/",
+      "why": "legacy audits path; the current path is _requirements/_audits (paths.auditsRoot)"
+    },
+    {
+      "match": "requirements\\/03-requirement-standards\\/",
+      "suggestion": "requirements/_standards/",
+      "why": "legacy standards path; the standards live in _requirements/_standards/"
+    },
+    {
+      "match": "docs\\/00-canonical\\/",
+      "suggestion": "requirements/00-canonical/",
+      "why": "legacy docs path; the current path is _requirements/00-canonical/"
+    },
+    {
+      "match": "docs\\/01-design-system\\/",
+      "suggestion": "requirements/01-design-system/",
+      "why": "legacy docs path; the current path is _requirements/01-design-system/"
+    },
+    {
+      "match": "docs\\/02-copy-system\\/",
+      "suggestion": "requirements/02-copy-system/",
+      "why": "legacy docs path; the current path is _requirements/02-copy-system/"
+    },
+    {
+      "match": "docs\\/04-architecture\\/",
+      "suggestion": "requirements/03-architecture/",
+      "why": "legacy docs path; the current path is _requirements/03-architecture/"
+    },
+    {
+      "match": "docs\\/06-integrations\\/",
+      "suggestion": "requirements/09-integrations/",
+      "why": "legacy docs path; the current path is _requirements/09-integrations/ (paths.integrationsRoot)"
+    },
+    {
+      "match": "docs\\/audit-reports\\/",
+      "suggestion": "requirements/_audits/",
+      "why": "legacy docs path; the current path is _requirements/_audits/ (paths.auditsRoot)"
+    },
+    {
+      "match": "docs\\/99-resources\\/",
+      "suggestion": "docs/{user-communication,research,karpathy-auto-research}/",
+      "why": "flattened docs/ — three carve-outs lifted to docs/ root"
+    },
+    {
+      "match": "docs\\/03-requirement-standards\\/",
+      "suggestion": "requirements/_standards/ (or paths.requirementsRoot)",
+      "why": "docs/03-requirement-standards → requirements/_standards"
+    },
+    {
+      "match": "\\.claude\\/portfolio\\/registry\\.yaml",
+      "suggestion": "~/.mc/portfolio.json (HOME-anchored); consumer: scripts/portfolio/registry.js#registryPath()",
+      "why": "legacy project-local path; the current registry is ~/.mc/portfolio.json, anchored to the home directory and resolved by the consumer via os.homedir()"
+    }
+  ],
+  "warn": [
+    {
+      "match": "\\.claude/project/events/events\\.jsonl",
+      "key": "eventsFile"
+    },
+    {
+      "match": "\\.claude/project/events/tools\\.jsonl",
+      "key": "toolsFile"
+    },
+    {
+      "match": "\\.claude/project/events/requirements\\.jsonl",
+      "key": "requirementsFile"
+    },
+    {
+      "match": "\\.claude/project/events/requirements-staged\\.jsonl",
+      "key": "requirementsStagedFile"
+    },
+    {
+      "match": "\\.claude/project/decisions/decision-ledger\\.jsonl",
+      "key": "decisionLedger"
+    },
+    {
+      "match": "\\.claude/project/decisions/provider-trace\\.jsonl",
+      "key": "providerTrace"
+    },
+    {
+      "match": "\\.claude/project/memory/learnings\\.jsonl",
+      "key": "learningsFile"
+    },
+    {
+      "match": "\\.claude/project/memory/traces\\.jsonl",
+      "key": "tracesFile"
+    },
+    {
+      "match": "\\.claude/project/memory/systems\\.jsonl",
+      "key": "systemsFile"
+    },
+    {
+      "match": "\\.claude/project/memory/recurring-issues\\.jsonl",
+      "key": "recurringIssuesFile"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/beta/judgement-model\\.md",
+      "key": "judgmentModel"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/beta/judgement-model-recommendations\\.md",
+      "key": "judgmentRecommendations"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/beta/events\\.jsonl",
+      "key": "betaEvents"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/beta/mined/beta-source-data\\.md",
+      "key": "betaSourceData"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/lexicon\\.md",
+      "key": "lexicon"
+    },
+    {
+      "match": "scripts/hooks/lib/paths\\.js",
+      "key": "pathsLib"
+    },
+    {
+      "match": "scripts/hooks/lib/logger\\.js",
+      "key": "loggerLib"
+    },
+    {
+      "match": "\\.claude/runtime/handoff\\.md",
+      "key": "handoffLatest"
+    },
+    {
+      "match": "\\.claude/agents/store\\.json",
+      "key": "store"
+    },
+    {
+      "match": "\\.claude/project/maps/SPEC_GRAPH\\.json",
+      "key": "specGraph"
+    },
+    {
+      "match": "\\.claude/manifest\\.json",
+      "key": "manifest"
+    },
+    {
+      "match": "\\.claude/settings\\.json",
+      "key": "settings"
+    },
+    {
+      "match": "\\.claude/agents/_system/guides/agent-dispatch-guide\\.md",
+      "key": "agentDispatchGuide"
+    },
+    {
+      "match": "\\.claude/runtime/dispatch-locks",
+      "key": "dispatchLocks"
+    },
+    {
+      "match": "\\.claude/runtime/dispatch-deaths\\.jsonl",
+      "key": "dispatchDeathsFile"
+    },
+    {
+      "match": "\\.claude/runtime/dispatch-completions\\.jsonl",
+      "key": "dispatchCompletionsFile"
+    },
+    {
+      "match": "\\.claude/runtime/\\.provider-tmp",
+      "key": "providerTmp"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/policy/provider-fallback\\.json",
+      "key": "providerFallbackPolicy"
+    },
+    {
+      "match": "\\.claude/project/sprint/current-sprint\\.yaml",
+      "key": "sprintCurrent"
+    },
+    {
+      "match": "\\.claude/project/sprint/sprint-progress\\.yaml",
+      "key": "sprintProgress"
+    },
+    {
+      "match": "issues\\.md",
+      "key": "sprintIssuesLedger"
+    },
+    {
+      "match": "\\.claude/project/reference/sprint-workflow\\.md",
+      "key": "sprintReference"
+    },
+    {
+      "match": "\\.claude/agents/president/_system/policy/sprint-routing\\.json",
+      "key": "sprintRouting"
+    }
+  ],
+  "skipSubstrings": [
+    ".claude/runtime/",
+    ".claude/project/events/",
+    ".claude/project/decisions/",
+    ".claude/project/memory/",
+    ".claude/project/maps/",
+    ".claude/project/sprint/",
+    "requirements/_audits/",
+    "docs/",
+    ".claude/paths.json",
+    "scripts/path-lint.js",
+    "scripts/hooks/path-guard.js",
+    "/check/references.md",
+    ".claude/dreams/",
+    ".claude/agents/president/_system/oneshot/retros/",
+    ".claude/agents/.system/dispatch-backups/",
+    "backups/",
+    "SYSTEMS-REFERENCE.md",
+    "ROADMAP.md",
+    "framework/paths.registry.json",
+    "scripts/path-lint.rules.generated.json",
+    "scripts/hooks/lib/paths.generated.js"
+  ],
+  "skipDirs": [
+    "node_modules",
+    ".git",
+    ".next",
+    "out",
+    "build",
+    "coverage",
+    ".worktrees",
+    ".mc-backup"
+  ]
+}

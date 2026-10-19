@@ -1,0 +1,128 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const path = require("path");
+
+const ROOT = path.resolve(__dirname, "..", "..");
+const argv = process.argv.slice(2);
+const FLAGS = {
+  json: argv.includes("--json"),
+  strict: argv.includes("--strict"),
+};
+
+function readJsonOrNull(file) {
+  try {
+    return { ok: true, data: JSON.parse(fs.readFileSync(file, "utf8")) };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function getRegistryVersion() {
+  const reg = readJsonOrNull(path.join(ROOT, "framework", "paths.registry.json"));
+  return reg.ok && reg.data ? reg.data.version : null;
+}
+
+function validateFile(rel, expected, optional = false) {
+  const file = path.join(ROOT, rel);
+  if (!fs.existsSync(file)) {
+    if (optional) return { rel, status: "skip", reason: "file does not exist" };
+    return { rel, status: "fail", reason: "file does not exist" };
+  }
+  const result = readJsonOrNull(file);
+  if (!result.ok) {
+    return { rel, status: "fail", reason: `invalid JSON: ${result.error}` };
+  }
+  const actual = result.data && result.data.$schema;
+  if (!actual) {
+    return {
+      rel,
+      status: "fail",
+      reason: `missing $schema field (expected ${JSON.stringify(expected)})`,
+    };
+  }
+  const expectedList = Array.isArray(expected) ? expected : [expected];
+  if (!expectedList.includes(actual)) {
+    return {
+      rel,
+      status: "fail",
+      reason: `unsupported $schema ${JSON.stringify(actual)} (expected one of ${JSON.stringify(expectedList)})`,
+    };
+  }
+  return { rel, status: "ok", schema: actual };
+}
+
+function main() {
+  const registryVersion = getRegistryVersion();
+  const expectedPathsSchema = registryVersion
+    ? `mc/paths/v${registryVersion}`
+    : null;
+
+  const checks = [
+    validateFile(".claude/manifest.json", "mc/manifest/v1"),
+    expectedPathsSchema
+      ? validateFile(".claude/paths.json", expectedPathsSchema)
+      : {
+          rel: ".claude/paths.json",
+          status: "skip",
+          reason: "registry version unavailable",
+        },
+    validateFile(
+      ".claude/settings.json",
+      "https://json.schemastore.org/claude-code-settings.json",
+    ),
+    validateFile(".claude/framework-manifest.json", [
+      "mc/framework-manifest/v1",
+      "mc/framework-manifest/v2",
+    ]),
+    validateFile(
+      ".claude/framework-installed.json",
+      "mc/framework-installed/v2",
+      true,
+    ),
+  ];
+
+  const fails = checks.filter((c) => c.status === "fail");
+  const skips = checks.filter((c) => c.status === "skip");
+
+  if (FLAGS.json) {
+    console.log(
+      JSON.stringify(
+        {
+          ok: fails.length === 0,
+          counts: {
+            fail: fails.length,
+            skip: skips.length,
+            ok: checks.length - fails.length - skips.length,
+          },
+          checks,
+        },
+        null,
+        2,
+      ),
+    );
+  } else {
+    console.log(
+      `\nscripts/schemas/validate.js — ${checks.length} configs checked\n`,
+    );
+    for (const c of checks) {
+      const symbol =
+        c.status === "ok" ? "ok   " : c.status === "skip" ? "skip " : "FAIL ";
+      console.log(
+        `  ${symbol} ${c.rel.padEnd(40)} ${c.reason || c.schema || ""}`,
+      );
+    }
+    if (fails.length > 0) {
+      console.log(
+        `\n  ${fails.length} validation failure(s). Fix before /preflight:run.`,
+      );
+    } else {
+      console.log("\n  All checked configs declare a supported $schema.");
+    }
+    console.log("");
+  }
+
+  process.exit(fails.length > 0 ? 1 : 0);
+}
+
+main();

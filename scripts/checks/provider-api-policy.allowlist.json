@@ -1,0 +1,37 @@
+{
+  "_comment": "provider-api-policy allowlist. The SANCTIONED set: files that legitimately reference a raw provider API per agent-dispatch-guide §1 — either a no-CLI CAPABILITY (the deep-research pipeline, GPT-Pro/API-only models) or a file that NAMES the literals to DOCUMENT them (the policy doc, the gap-register, a defensive code-example), not to dispatch. Enforced by scripts/checks/provider-api-policy.js. Each entry is a repo-relative path (forward slashes) + a reason. A hit in an allowlisted file is suppressed; an entry that matched no hit is surfaced as a stale-allowlist note. Keep SMALL — every entry is an exception to 'CLI is mandatory for agent dispatch.'",
+  "allow": [
+    {
+      "path": "scripts/research/openai-deep-research.js",
+      "reason": "Deep-research pipeline — OpenAI Responses API (o3/o4-mini-deep-research) has NO CLI equivalent. agent-dispatch-guide §1 whitelist."
+    },
+    {
+      "path": "scripts/research/gpt-pro-consult.js",
+      "reason": "GPT-Pro consult wrapper — gpt-5.5-pro/gpt-5.4-pro are Responses-API-only (no streaming, deliberately NOT in the codex CLI catalog per scripts/dispatch/catalog.js). agent-dispatch-guide §1 GPT-Pro API-only-model exception."
+    },
+    {
+      "path": "scripts/research/gemini-deep-research.js",
+      "reason": "Deep-research pipeline — Gemini Interactions API has NO CLI equivalent. agent-dispatch-guide §1 whitelist."
+    },
+    {
+      "path": "scripts/research/deep-run.js",
+      "reason": "Consolidated deep-research runner — same no-CLI capability as openai-deep-research.js/gemini-deep-research.js (OpenAI Responses + Gemini Interactions APIs). agent-dispatch-guide §1 whitelist."
+    },
+    {
+      "path": ".claude/agents/_system/guides/agent-dispatch-guide.md",
+      "reason": "The CLI-vs-API policy doc ITSELF — it states the API whitelist (names the literals to document the rule, does not dispatch)."
+    },
+    {
+      "path": "scripts/checks/provider-api-policy.js",
+      "reason": "The enforcer ITSELF — it must spell out the signature literals (api.openai.com, new OpenAI(, responses.create, ...) it detects. Defining a detector is not a dispatch."
+    },
+    {
+      "path": "scripts/checks/provider-api-policy.test.js",
+      "reason": "The enforcer's test — it PLANTS raw-API fixture strings (new OpenAI(, api.openai.com) to prove they are caught. Test fixtures, not a dispatch."
+    },
+    {
+      "path": "scripts/checks/provider-api-policy.allowlist.json",
+      "reason": "This allowlist's own reason prose names a signature (chat.completions code-example) — documenting an exception, not a dispatch."
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "mc/npc-narrative-allowlist/v1",
+  "entries": [
+    {
+      "kind": "citation",
+      "path": "_knowledge/design/DEPTH_ELEVATION_IMAGERY.md",
+      "line_sha256": "5621f860af52548238aeb5b4c232004885db22abb08db489603c3911200d706f",
+      "count": 1,
+      "name": "Wathan & Schoger",
+      "work": "Refactoring UI (published book and site)",
+      "reason": "Public authors cited for a public work: the line names the book chapters and its public site; no private interaction, no implied endorsement."
+    },
+    {
+      "path": "_knowledge/design/CONSISTENCY_DESIGN_SYSTEMS_TOKENS.md",
+      "member": "narrative-speech",
+      "line_sha256": "d40c04ca7c13f8c1361685f78753d69f889ae2dcfbb37cfc3c21b9396a48c741",
+      "count": 1,
+      "reason": "Quote of a public usability-heuristic article; no person is involved."
+    },
+    {
+      "path": "_knowledge/design/GESTALT_GROUPING.md",
+      "member": "narrative-speech",
+      "line_sha256": "da3f9c916433a0407f0d0cd65dabdf59fdb0c7073f9a21266c095fc5bfa2a226",
+      "count": 1,
+      "reason": "Citation of a public book chapter title; no private interaction."
+    },
+    {
+      "path": ".claude/agents/_system/guides/teammate-stall-rules.md",
+      "member": "narrative-speech",
+      "line_sha256": "9a063c82da3c1c9689fc8fd18e0aeebbbea442180b3efadc7ab96a0d13fba2d3",
+      "count": 1,
+      "reason": "Rule text where operator is the product role and the quote is a rule phrase, not a person's words."
+    },
+    {
+      "path": ".claude/agents/_system/guides/teammate-stall-rules.md",
+      "member": "narrative-speech",
+      "line_sha256": "ddd9c74738e48b41e3de4386ed0eeb7e71f673dc2465e099a83506b08b3383bb",
+      "count": 1,
+      "reason": "Rule text where operator is the product role and the quote is a rule phrase, not a person's words."
+    },
+    {
+      "path": ".claude/agents/_system/guides/teammate-stall-rules.md",
+      "member": "narrative-speech",
+      "line_sha256": "91340d746517008b16365548860f20f2eb2f6daccc7a1a4225202c87d3d9ce95",
+      "count": 1,
+      "reason": "Rule text where operator is the product role and the quote is a rule phrase, not a person's words."
+    },
+    {
+      "path": ".claude/agents/_system/guides/teammate-stall-rules.md",
+      "member": "narrative-speech",
+      "line_sha256": "61286cc6b2f222c4cdbc611b847b7ef81f7df161ad6f3f3b96faffecd42f9b77",
+      "count": 1,
+      "reason": "Rule text where operator is the product role and the quote is a rule phrase, not a person's words."
+    },
+    {
+      "path": ".claude/commands/growth/product-finder.md",
+      "member": "narrative-speech",
+      "line_sha256": "7126d803baf4e2286d4690bd1dd9328407bb68e1824fa0e541918336ffe0c750",
+      "count": 1,
+      "reason": "Product scoring guidance: operator is the product user role and the quote is product advice text."
+    },
+    {
+      "path": ".claude/commands/session/end.md",
+      "member": "narrative-speech",
+      "line_sha256": "02c1e11fb18ed36b7eacf91bae154301cad0a91a5ee7fc6d773664b2adcea6f9",
+      "count": 1,
+      "reason": "Template text the skill tells the agent to say; operator is the product user role."
+    },
+    {
+      "path": ".claude/commands/session/resume.md",
+      "member": "narrative-speech",
+      "line_sha256": "b92570dba6c8d8ef6aa0f0537725b39db9bf3c67b23c7a00349955b9e860d6b8",
+      "count": 1,
+      "reason": "Quote is a section title; operator is the product user role."
+    },
+    {
+      "path": ".claude/commands/skills/create.md",
+      "member": "narrative-speech",
+      "line_sha256": "e93927f4e878d8a83c42dce9b4b41d32af003d49fe70ea0767dab81319a7166a",
+      "count": 1,
+      "reason": "Example dictated phrase for skill routing; operator is the product user role."
+    },
+    {
+      "path": ".claude/project/reference/lastmile/research-signal-2026.md",
+      "member": "narrative-speech",
+      "line_sha256": "ef16516dd1a5926b9c183dace624d0daabd516e4b026f8841a5c81ddeb0d1d8c",
+      "count": 1,
+      "reason": "Public-source quote with its publication credited; the founder is the product user role."
+    },
+    {
+      "path": ".claude/commands/scan/ac-coverage.md",
+      "member": "narrative-provenance",
+      "line_sha256": "67504487ddaa62401b0958e278348200da85acc4923195805ecf3ee8f9645452",
+      "count": 1,
+      "reason": "First line of the report-only ramp sentence; describes how the check behaves, no person."
+    },
+    {
+      "path": ".claude/commands/scan/ac-coverage.md",
+      "member": "narrative-provenance",
+      "line_sha256": "93c4f60be5145534b36da8c2afcfd99c56b149adc15225127ea4e4dc0ac6c2f7",
+      "count": 1,
+      "reason": "Middle of the report-only ramp sentence; exit code behaviour, no person."
+    },
+    {
+      "path": ".claude/commands/scan/ac-coverage.md",
+      "member": "narrative-provenance",
+      "line_sha256": "a9bf66298e3a1fffe42cfe15a7261b696bdafd2625e34cf00464d1ed231729b4",
+      "count": 1,
+      "reason": "End of the same sentence; says the sign-off flips the check and describes the enforce flag, role only."
+    }
+  ]
+}

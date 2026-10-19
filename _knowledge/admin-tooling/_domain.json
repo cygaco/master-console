@@ -1,0 +1,9 @@
+{
+  "domain": "admin-tooling",
+  "kind": "library",
+  "producer": "product-lead",
+  "consumers": ["product-lead", "backend-builder", "security-reviewer", "qa-reviewer"],
+  "index": "_knowledge/admin-tooling/registry.json",
+  "overview": "_knowledge/admin-tooling/README.md",
+  "note": "Pre-PMF admin-tooling knowledge library: founder allowlist, user/account support surface, entitlements, feature kill switches, and audit/security guardrails. Grounds Product, Backend, QA, and Security agents."
+}

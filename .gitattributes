@@ -1,0 +1,6 @@
+# Force LF for all text files on checkout, on every machine.
+#
+# Shell scripts must stay LF to run on POSIX shells, and the ship/freeze manifests raw-hash
+# working-tree bytes — a CRLF working tree (Windows git core.autocrlf=true) breaks both. Forcing
+# LF keeps every checkout byte-identical to the LF-hashed manifest.
+* text=auto eol=lf

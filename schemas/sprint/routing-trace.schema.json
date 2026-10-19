@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mc/sprint/routing-trace/v1",
+  "title": "MC Sprint — Routing Trace Row",
+  "description": "Per-artifact provenance row written by scripts/sprint/routing.js record at every sprint-artifact finalize boundary. Append-only JSONL at paths.sprintDecisions/routing-trace.jsonl. One row per (sprint_id, phase, artifact_id) finalization. Coverage and check subcommands query these rows.",
+  "type": "object",
+  "required": [
+    "schema",
+    "sprint_id",
+    "phase",
+    "artifact_id",
+    "model",
+    "recorded_at",
+    "recorded_by",
+    "evidence"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "mc/sprint/routing-trace/v1"
+    },
+    "sprint_id": {
+      "type": "string",
+      "pattern": "^(SP-[0-9]{8}-[0-9]{3,4}|S-[A-Z0-9]+-[0-9]{2,3})$",
+      "description": "Sprint the artifact belongs to. Must exist in paths.sprintActiveRegistry."
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "plan_contract_review",
+        "design",
+        "execution",
+        "qa",
+        "redteam",
+        "release",
+        "retrospective",
+        "external_service_setup",
+        "docs_sync",
+        "tracker_updates",
+        "trace_updates"
+      ],
+      "description": "Routing phase whose model_class the trace asserts was honored."
+    },
+    "artifact_id": {
+      "type": "string",
+      "description": "Stable id or path identifying the artifact (PC-..., T-..., RL-..., 'retro:<sprint-id>', 'design:<sprint-id>', etc.)."
+    },
+    "artifact_path": {
+      "type": ["string", "null"],
+      "description": "Optional repo-relative path to the artifact file when available. Free-text for non-file artifacts."
+    },
+    "model": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*:[a-zA-Z0-9._:-]+$",
+      "description": "provider:model identifier that drafted the artifact (e.g. claude:claude-opus-4-8, openai:gpt-5.5)."
+    },
+    "model_class": {
+      "type": ["string", "null"],
+      "description": "Optional name of the routing model_class for this phase at record-time (informational; coverage re-derives from policy)."
+    },
+    "diff_reviewer": {
+      "type": ["string", "null"],
+      "pattern": "^([a-z][a-z0-9_-]*:[a-zA-Z0-9._:-]+)?$",
+      "description": "provider:model identifier of the second-vendor diff reviewer, or null when diff_review was not required or fell back to single_vendor_session."
+    },
+    "evidence": {
+      "type": "string",
+      "enum": ["ok", "single_vendor_session", "mismatch_override"],
+      "description": "Honesty marker. 'ok' = normal; 'single_vendor_session' = diff_review was required but no second vendor available, decision_ledger_ref MUST be set; 'mismatch_override' = operator allowed a class mismatch (rare; decision_ledger_ref MUST be set)."
+    },
+    "decision_ledger_ref": {
+      "type": ["string", "null"],
+      "description": "Pointer into paths.decisionLedger. REQUIRED when evidence is 'single_vendor_session' or 'mismatch_override'. Free-text id, line number, or short tag."
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recorded_by": {
+      "type": "string",
+      "description": "Agent or skill that recorded the trace (alpha, beta, gamma, delta, /sprint:plan, /sprint:design, …)."
+    },
+    "ticket_id": {
+      "type": ["string", "null"],
+      "description": "Optional T-NNN reference when the artifact is a ticket-scoped phase (execution, qa, redteam)."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional free-text. Keep short; long-form belongs in decision-ledger."
+    }
+  }
+}

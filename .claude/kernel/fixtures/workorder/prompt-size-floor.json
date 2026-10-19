@@ -1,0 +1,15 @@
+{
+  "id": "workorder-prompt-size-floor",
+  "gate": "workorder",
+  "input": {
+    "role_kind": "feature-build",
+    "prompt_bytes": 480,
+    "floor_bytes": 2048
+  },
+  "expect": {
+    "outcome": "BLOCK",
+    "reason": "for feature-build WorkOrders, a generated prompt below the configured floor (2 KB) must block dispatch -- tiny stub prompts produce hollow ok:true records with zero real changes."
+  },
+  "kernel_scope": "IN",
+  "note": "Prompt-size floor as a cheap tripwire AND required-semantics validation -- belt and suspenders, not either/or. This fixture covers the floor half."
+}

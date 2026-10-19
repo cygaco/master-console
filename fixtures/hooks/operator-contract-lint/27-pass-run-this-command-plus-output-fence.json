@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "\u25b6\ufe0f RUN THIS\n```bash\nnpm test\n```\nExpected output:\n```console\n# pass 37\n# fail 0\n```",
+  "expect": []
+}

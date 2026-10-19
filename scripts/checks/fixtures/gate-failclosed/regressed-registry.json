@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "sprint": "SP-99999999-001",
+  "purpose": "Fixture registry: one row claiming a site was repaired (expected_finding: absent). Paired fixture source (regressed-site.js) still contains the permissive catch at the stated line, so gate-failclosed-enforcer.js must flag this as REGRESSED when checked against baseDir=scripts/checks/fixtures/gate-failclosed.",
+  "site_unit_definition": "catch-line convention, same as gate-failclosed-registry.json.",
+  "rows": [
+    {
+      "site_id": "regressed-site.js:11",
+      "file": "regressed-site.js",
+      "line": 11,
+      "disposition": "not-a-defect",
+      "polarity_provenance": "manual-by-read",
+      "decision_semantics_quote": "Fixture standing in for a gate whose decision was believed fixed.",
+      "instrument": "manual-by-read",
+      "sha": "fixture",
+      "expected_finding": "absent",
+      "tool_correlated": false,
+      "tool_finding_line": null
+    }
+  ]
+}

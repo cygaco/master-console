@@ -1,0 +1,43 @@
+{
+  "$schema": "mc/provider-fallback/v1",
+  "version": 1,
+  "comment": "UNENFORCED legacy scaffold. The LIVE fallback authority is now family-aware routing in scripts/hooks/lib/providers.js (suggestFallbackProvider + PROVIDER_FAMILY) — a quota/outage fallback lands in a DIFFERENT model family, never same-family. This file's per-role policies below carry legacy role keys (reviewer/compliance/qa) and legacy model ids; they are documentation only and no consumer routes off them. Individual `gemini` CLI targets point to antigravity (agy). Do not treat the ids below as authoritative.",
+  "policies": {
+    "security-reviewer": {
+      "primary": "antigravity:gemini-3.1-pro-high",
+      "fallback": "openai:gpt-5.6-sol",
+      "deep_fallback": "claude:claude-opus-4-8",
+      "second_pass": "openai:gpt-5.6-sol",
+      "rationale": "security-reviewer (was redteam) runs adversarial-corpus reasoning; the Gemini lab is the primary, served through the Antigravity `agy` CLI (the individual-tier gemini CLI is SUNSET). CROSS-FAMILY fallback: a Google-lab outage retries on the GPT lab (openai:gpt-5.6-sol), never another google endpoint; a total outage falls through runProvider's provider-level fallback. A SECOND security pass ALWAYS runs on openai:gpt-5.6-sol so security covers two model families. deep_fallback is the Claude hunter lane (claude-opus-4-8) as a last-resort known-good."
+    },
+    "reviewer": {
+      "primary": "openai:gpt-5.6-sol",
+      "fallback": "claude:claude-sonnet-4-6",
+      "rationale": "GPT-5.6 Sol xhigh is the diversity lens against Claude builders. Falling back to claude-sonnet-4-6 keeps gauntlets moving when codex is unreachable."
+    },
+    "compliance": {
+      "primary": "openai:gpt-5.6-sol",
+      "fallback": "claude:claude-sonnet-4-6"
+    },
+    "qa": {
+      "primary": "openai:gpt-5.6-luna",
+      "fallback": "claude:claude-haiku-4-5-20251001",
+      "rationale": "qa runs 13 personas — cost-balanced primary. Haiku fallback keeps per-persona cost predictable on outages."
+    },
+    "ops-analyst": {
+      "primary": "openai:gpt-6.1-sol",
+      "fallback": "claude:claude-sonnet-4-6"
+    }
+  },
+  "on_failure": [
+    "quota_exhausted",
+    "free_tier_limit_zero",
+    "model_not_found",
+    "stale_cli_registry",
+    "provider_timeout",
+    "auth_missing",
+    "trusted_directory_required"
+  ],
+  "do_not_fall_back": ["strictFailure", "auth_source_mismatch"],
+  "notes": "auth_source_mismatch deliberately does NOT auto-fall-back. The user has set both API key AND OAuth — failing closed surfaces the configuration ambiguity rather than silently using the wrong account."
+}

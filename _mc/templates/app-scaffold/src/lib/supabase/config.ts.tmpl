@@ -1,0 +1,30 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+// The Supabase auth seam is OPTIONAL. It no-ops (client factories return null)
+// until BOTH the URL and the anon/publishable key are present — so `next build`
+// and `next dev` succeed with zero Supabase env set. Mirrors the telemetry sink
+// seam (no-op-when-unset) and the admin config's defensive `(env || "").trim()`
+// house style.
+
+// BE owns the seam types. FE and route handlers import these, not the raw SDK.
+export type { SupabaseClient };
+
+// A configured-or-null client. The `| null` union is compiler-enforced: every
+// consumer must handle the unconfigured branch, which is what keeps the build
+// green when the env is unset.
+export type MaybeSupabaseClient = SupabaseClient | null;
+
+export function supabaseUrl(): string {
+  return (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+}
+
+export function supabaseAnonKey(): string {
+  return (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+}
+
+// True iff BOTH the URL and anon key are non-empty after trim. This is the ONE
+// gate every client construction must pass — createBrowserClient/createServerClient
+// THROW on empty url/key, and that throw is the real `next build` break we avoid.
+export function isSupabaseConfigured(): boolean {
+  return supabaseUrl().length > 0 && supabaseAnonKey().length > 0;
+}

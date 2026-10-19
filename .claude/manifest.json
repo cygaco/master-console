@@ -1,0 +1,117 @@
+{
+  "$schema": "mc/manifest/v1",
+  "repoRole": "canonical",
+  "project": {
+    "name": "MC",
+    "slug": "mc",
+    "description": "MC canonical — autonomous AI operating system framework (Alex Alpha + multi-provider agent dispatch).",
+    "techStack": [
+      "node"
+    ],
+    "framework": "mc"
+  },
+  "git": {
+    "mainBranch": "main"
+  },
+  "mc": {
+    "version": "2.0.0",
+    "installed": true,
+    "source": "self",
+    "features": [
+      "agents",
+      "hooks",
+      "skills",
+      "memory",
+      "maps",
+      "events",
+      "sprint",
+      "product-bootstrap",
+      "providers",
+      "transactions"
+    ],
+    "operatorContract": {
+      "enabled": true,
+      "strictness": "strict",
+      "maxLinesBeforeHeader": 5,
+      "allowIdentifiers": false,
+      "extraCommandPrefixes": []
+    }
+  },
+  "agents": {
+    "team": {
+      "name": "alex",
+      "identity": "Alex",
+      "members": {
+        "alpha": {
+          "symbol": "α",
+          "role": "orchestrator"
+        },
+        "beta": {
+          "symbol": "β",
+          "role": "judgment"
+        },
+        "gamma": {
+          "symbol": "γ",
+          "role": "adhoc builder"
+        },
+        "delta": {
+          "symbol": "δ",
+          "role": "oneshot builder"
+        }
+      }
+    },
+    "modes": [
+      "adhoc",
+      "oneshot",
+      "solo"
+    ],
+    "build": [
+      "builder",
+      "reviewer",
+      "compliance",
+      "learner",
+      "qa",
+      "redteam",
+      "fixer"
+    ]
+  },
+  "source_dirs": [],
+  "build": {
+    "features": [],
+    "phases": []
+  },
+  "providers": {
+    "claude": {
+      "cli": "claude",
+      "default_model": "sonnet",
+      "invocation": "native"
+    },
+    "openai": {
+      "cli": "codex",
+      "default_model": "gpt-6.1-sol",
+      "fallback": "claude",
+      "syntax": "codex exec --sandbox workspace-write {reasoning} -m {model} -"
+    },
+    "antigravity": {
+      "cli": "agy",
+      "default_model": "gemini-3.1-pro-high",
+      "fallback": "openai",
+      "syntax": "agy {reasoning} --model {model} --print-timeout 90s -p"
+    }
+  },
+  "_agentProviders_note": "This per-project override WINS over the role-registry keystone (getProviderForRole reads manifest.agentProviders first). Every role not listed here derives from the registry single-source (DEFAULT_AGENT_PROVIDERS). Legacy names normalize + derive via the registry.",
+  "agentProviders": {
+    "alpha": "claude",
+    "beta": "openai",
+    "gamma": "claude",
+    "delta": "claude",
+    "epsilon": "claude",
+    "qa-reviewer": "claude",
+    "frontend-reviewer": "claude",
+    "backend-reviewer": "claude"
+  },
+  "buildCommands": {},
+  "fileOwnership": {
+    "foundation": []
+  }
+}

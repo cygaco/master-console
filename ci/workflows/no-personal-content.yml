@@ -1,0 +1,49 @@
+# RESIDUAL (named): this workflow file lives in the tree under test, so a change to it can
+# weaken the check that runs. Mitigation, set in the repository settings: branch protection on main
+# (required status check + required review) and a CODEOWNERS entry covering .github/ and ci/.
+#
+# The gate that RUNS is pinned: the tree under test is checked out into ./tree and the commit
+# named by MC_NPC_GATE_PIN (a full sha, set by the generator to the parent of the generated
+# commit) into ./pin; the gate is ./pin/ci/no-personal-content.js. `SELF` (first cut only)
+# means no pin exists yet: the tree's own gate runs and a warning is printed.
+name: no-personal-content
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  MC_NPC_GATE_PIN: SELF
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tree under test
+        uses: actions/checkout@v4
+        with:
+          path: tree
+          fetch-depth: 0
+      - name: Check out the pinned gate
+        if: env.MC_NPC_GATE_PIN != 'SELF'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.MC_NPC_GATE_PIN }}
+          path: pin
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: No personal content gate
+        env:
+          MC_NPC_FINGERPRINTS: ${{ secrets.MC_NPC_FINGERPRINTS }}
+        run: |
+          if [ "$MC_NPC_GATE_PIN" = "SELF" ]; then
+            echo "::warning::MC_NPC_GATE_PIN is SELF: running the gate from the tree under test (no pinned gate yet)"
+            GATE=tree/ci/no-personal-content.js
+          else
+            GATE=pin/ci/no-personal-content.js
+          fi
+          node "$GATE" --root tree --history --json

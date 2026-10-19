@@ -1,0 +1,2 @@
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"explain in detail what happened with the CI run"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Here is the full walkthrough you asked for."}]}}

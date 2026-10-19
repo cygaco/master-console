@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "Stop",
+  "agent_type": "epsilon",
+  "last_assistant_message": "?",
+  "expect": []
+}

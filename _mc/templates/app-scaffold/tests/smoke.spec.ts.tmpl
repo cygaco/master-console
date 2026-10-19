@@ -1,0 +1,9 @@
+import { test, expect } from "@playwright/test";
+
+// Day-one smoke test: the scaffold serves and renders the starter card. This is
+// the minimal on-screen render proof the on-screen gate looks for.
+test("home renders the scaffold starter", async ({ page }) => {
+  const res = await page.goto("/");
+  expect(res?.status()).toBe(200);
+  await expect(page.getByText("{{SLUG}}")).toBeVisible();
+});

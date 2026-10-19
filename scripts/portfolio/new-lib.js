@@ -1,0 +1,447 @@
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const { spawnSync } = require("child_process");
+
+const { save, load, findBySlug, validate } = require("./registry");
+
+const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const RESERVED = new Set([
+  "list", "register", "open", "new", "adopt", "status",
+  "dispatch", "sync", "bootstrap", "clone", "ponder", "import",
+]);
+
+const TEMPLATES_DIR = path.resolve(__dirname, "../../_mc/templates/portfolio");
+const MC_ROOT = path.resolve(__dirname, "../..");
+
+function validateSlug(slug) {
+  if (!slug) return { ok: false, code: 2, error: "Usage: /portfolio:new <slug> [--from-brief <brief-slug>]" };
+  if (!SLUG_RE.test(slug))
+    return { ok: false, code: 2, error: `slug must match ^[a-z0-9][a-z0-9-]{0,63}$ (got: ${JSON.stringify(slug)})` };
+  if (RESERVED.has(slug))
+    return { ok: false, code: 2, error: `'${slug}' collides with a reserved skill name. Choose a different slug.` };
+  const existing = findBySlug(slug);
+  if (existing) return { ok: false, code: 2, error: `'${slug}' already registered at ${existing.repo_path}` };
+  return { ok: true };
+}
+
+function scaffoldProductApp({ repoRoot, slug, install = false, log = () => {} }) {
+  try {
+    const { scaffoldApp } = require("../scaffold/app");
+    return scaffoldApp({ repoRoot, slug, install, log });
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function createProductRepo(opts) {
+  const {
+    slug,
+    fromBrief = null,
+    wantGithub = false,
+    wantNoScaffold = false,
+    wantInstall = false,
+    parentDir = null,
+    log = (m) => console.log(m),
+    errorLog = (m) => console.error(m),
+  } = opts || {};
+
+  const v = validateSlug(slug);
+  if (!v.ok) return v;
+
+  const repoPath = path.resolve(parentDir || path.resolve(MC_ROOT, ".."), slug);
+
+  if (fs.existsSync(repoPath)) {
+    const allowedLeftovers = new Set([".git", ".gitignore", "README.md", ".claude"]);
+    let partialScaffold = false;
+    try {
+      const existing = fs.readdirSync(repoPath);
+      partialScaffold = existing.length > 0 && existing.every((e) => allowedLeftovers.has(e));
+    } catch { }
+    if (partialScaffold) {
+      return {
+        ok: false, code: 4,
+        error:
+          `Directory ${repoPath} exists with only partial-scaffold contents from a prior failed run. ` +
+          `Remove it (rm -rf "${repoPath}") and re-run, or use /portfolio:register to register it as-is.`,
+      };
+    }
+    return { ok: false, code: 4, error: `Directory already exists: ${repoPath}. Remove it first or use /portfolio:register.` };
+  }
+
+  log(`scaffolding ${slug} at ${repoPath}... running /mc:setup... done.`);
+  fs.mkdirSync(repoPath, { recursive: true });
+
+  const gitInit = spawnSync("git", ["init"], { cwd: repoPath, encoding: "utf8" });
+  if (gitInit.status !== 0) {
+    fs.rmSync(repoPath, { recursive: true, force: true });
+    return { ok: false, code: 4, error: `git init failed: ${gitInit.stderr}` };
+  }
+
+  _seedGitIdentity(repoPath);
+  _copyTemplates(TEMPLATES_DIR, repoPath, slug);
+
+  const gitAdd = spawnSync("git", ["add", "-A"], { cwd: repoPath, encoding: "utf8" });
+  if (gitAdd.status !== 0) return { ok: false, code: 4, error: `git add failed: ${gitAdd.stderr}` };
+  const gitCommit = spawnSync(
+    "git", ["commit", "-m", `init: scaffold ${slug} via /portfolio:new`],
+    { cwd: repoPath, encoding: "utf8" },
+  );
+  if (gitCommit.status !== 0) return { ok: false, code: 4, error: `git commit failed: ${gitCommit.stderr}` };
+
+  const install = _installMC(repoPath);
+  if (!install.ok) {
+    return { ok: false, code: 4, error: install.error };
+  }
+
+  const doc = load();
+  doc.products = doc.products || {};
+  const entry = {
+    slug,
+    repo_path: repoPath,
+    github_url: null,
+    mc_version: _readInstalledVersion(repoPath),
+    last_synced: new Date().toISOString(),
+    role: "product",
+    remote_type: null,
+    kind: null,
+  };
+  const { valid, errors } = validate(entry);
+  if (!valid) return { ok: false, code: 2, error: `registry validation failed: ${errors.join("; ")}` };
+  doc.products[slug] = entry;
+  save(doc);
+
+  if (fromBrief) {
+    const adoptScript = path.resolve(__dirname, "adopt.js");
+    const adopt = spawnSync(
+      "node", [adoptScript, fromBrief, "--target-path", repoPath, "--skip-new"],
+      { cwd: MC_ROOT, encoding: "utf8", timeout: 30_000 },
+    );
+    if (adopt.stdout) process.stdout.write(adopt.stdout);
+    if (adopt.stderr) process.stderr.write(adopt.stderr);
+    _pointToFoundingBrief(repoPath, fromBrief, log);
+  }
+
+  if (!wantNoScaffold) {
+    const res = scaffoldProductApp({ repoRoot: repoPath, slug, install: wantInstall, log: (m) => log(`  ${m}`) });
+    if (!res.ok) errorLog(`app scaffold skipped: ${res.error}`);
+  }
+
+  spawnSync("git", ["add", "-A"], { cwd: repoPath, encoding: "utf8" });
+  spawnSync(
+    "git", ["commit", "-m", "chore(scaffold): mc install" + (fromBrief ? " + brief" : "")],
+    { cwd: repoPath, encoding: "utf8" },
+  );
+
+  let githubUrl = null;
+  if (wantGithub) {
+    const ghResult = _ghRepoCreate(slug, repoPath, log, errorLog);
+    if (ghResult.url) {
+      githubUrl = ghResult.url;
+      const doc2 = load();
+      if (doc2.products[slug]) {
+        doc2.products[slug].github_url = githubUrl;
+        doc2.products[slug].remote_type = "github";
+        doc2.products[slug].last_synced = new Date().toISOString();
+        save(doc2);
+      }
+    }
+  } else {
+    _printLocalOnlyNextSteps(slug, repoPath, log);
+  }
+
+  _emit("portfolio_new", {
+    slug,
+    repo_path_offset: _pathOffset(repoPath),
+    from_brief: fromBrief || null,
+    mc_setup_status: "ok",
+    github: wantGithub,
+    gh_repo_create_surfaced: wantGithub,
+  });
+
+  return { ok: true, repoPath, githubUrl, slug };
+}
+
+function _copyTemplates(srcDir, destDir, slugVal) {
+  if (!fs.existsSync(srcDir)) return;
+  const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = path.join(srcDir, entry.name);
+    const destName = entry.name.endsWith(".tmpl") ? entry.name.slice(0, -5) : entry.name;
+    const destPath = path.join(destDir, destName);
+    if (entry.isDirectory()) {
+      fs.mkdirSync(destPath, { recursive: true });
+      _copyTemplates(srcPath, destPath, slugVal);
+    } else {
+      let content = fs.readFileSync(srcPath, "utf8");
+      content = content.replace(/\{\{SLUG\}\}/g, slugVal);
+      fs.writeFileSync(destPath, content, "utf8");
+    }
+  }
+}
+
+function _seedGitIdentity(repoPathVal) {
+  const nameRes = spawnSync("git", ["config", "user.name"], { cwd: MC_ROOT, encoding: "utf8" });
+  const emailRes = spawnSync("git", ["config", "user.email"], { cwd: MC_ROOT, encoding: "utf8" });
+  const name = (nameRes.stdout || "").trim();
+  const email = (emailRes.stdout || "").trim();
+  if (name) spawnSync("git", ["config", "user.name", name], { cwd: repoPathVal, encoding: "utf8" });
+  if (email) spawnSync("git", ["config", "user.email", email], { cwd: repoPathVal, encoding: "utf8" });
+}
+
+function _ghRepoCreate(slugVal, cwd, log = console.log, errorLog = console.error) {
+  const viewResult = spawnSync(
+    "gh", ["repo", "view", slugVal, "--json", "isPrivate,owner"],
+    { cwd, encoding: "utf8", timeout: 15_000 },
+  );
+  if (viewResult.status === 0) {
+    try {
+      const info = JSON.parse(viewResult.stdout);
+      const isPrivate = info.isPrivate;
+      const ownerLogin = info.owner && info.owner.login;
+      const whoami = spawnSync("gh", ["api", "user", "--jq", ".login"], { cwd, encoding: "utf8", timeout: 10_000 });
+      const currentUser = whoami.status === 0 ? whoami.stdout.trim() : null;
+      if (isPrivate && ownerLogin && ownerLogin === currentUser) {
+        log(`note: ${currentUser}/${slugVal} already exists on GitHub (private). Reusing it as origin remote. Pushing local commits...`);
+        spawnSync("git", ["remote", "add", "origin", `https://github.com/${currentUser}/${slugVal}.git`], { cwd, encoding: "utf8" });
+        spawnSync("git", ["push", "-u", "origin", "HEAD"], { cwd, encoding: "utf8", timeout: 30_000 });
+        return { url: `https://github.com/${currentUser}/${slugVal}` };
+      }
+      const visibility = isPrivate ? "private" : "public";
+      const owner = ownerLogin || "another user";
+      errorLog(`⚠  cannot reuse name: github.com/${owner}/${slugVal} exists and is ${visibility === "private" ? `owned by ${owner}` : "public"}. Choose a different slug or run \`gh repo delete ${owner}/${slugVal}\` first if you own it. Local repo at ${cwd} remains intact and registered.`);
+      return { url: null };
+    } catch { }
+  } else if (_isAuthError(viewResult.stderr + viewResult.stdout)) {
+    errorLog(`⚠  gh CLI not authenticated. Local repo at ${cwd} is intact and registered. Run \`gh auth login\` then \`gh repo create ${slugVal} --private --source=. --remote=origin --push\` to finish.`);
+    return { url: null };
+  }
+  log(`creating private GitHub repo: ${slugVal} (--private --source=. --remote=origin --push)...`);
+  const create = spawnSync(
+    "gh", ["repo", "create", slugVal, "--private", "--source=.", "--remote=origin", "--push"],
+    { cwd, encoding: "utf8", timeout: 60_000 },
+  );
+  if (create.status !== 0) {
+    if (_isAuthError(create.stderr + create.stdout)) {
+      errorLog(`⚠  gh CLI not authenticated. Local repo at ${cwd} is intact and registered. Run \`gh auth login\` then \`gh repo create ${slugVal} --private --source=. --remote=origin --push\` to finish.`);
+      return { url: null };
+    }
+    errorLog(`gh repo create failed: ${create.stderr || create.stdout}`);
+    return { url: null };
+  }
+  const urlMatch = (create.stdout || "").match(/https:\/\/github\.com\/[^\s]+/);
+  const url = urlMatch ? urlMatch[0] : null;
+  log(`  ✓ remote created: ${url || `https://github.com/<owner>/${slugVal}`} (private)`);
+  log(`  ✓ initial commit pushed`);
+  log(`  ✓ origin set, branch ${_defaultBranch(cwd)} tracked`);
+  log(`Next: invite collaborators with \`gh repo edit ${slugVal} --add-collaborator <username>\`.`);
+  return { url };
+}
+
+function _isAuthError(output) {
+  return /not logged in|auth|authentication|401|403|token/.test(output || "");
+}
+
+function _defaultBranch(cwd) {
+  try {
+    const r = spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd, encoding: "utf8" });
+    return (r.stdout || "main").trim();
+  } catch { return "main"; }
+}
+
+function _printLocalOnlyNextSteps(slugVal, repoPathVal, log = console.log) {
+  log(`\nLocal repo ready — MC installed, app scaffolded, committed, no remote:`);
+  log(`  ${repoPathVal}`);
+  log(`Install deps and see it on screen (the scaffold ships pinned deps, not node_modules):`);
+  log(`  cd "${repoPathVal}" && npm install && npm run dev`);
+  log(`Next — open it in its own session and work there:`);
+  log(`  /portfolio:open ${slugVal} --spawn`);
+  log(`Create a private GitHub remote when you want one (run from inside the repo):`);
+  log(`  gh repo create ${slugVal} --private --source=. --remote=origin --push`);
+  log(`Or re-run /portfolio:new with --github to do that automatically (operator-run — the agent is gated from pushing to a brand-new remote in auto mode).`);
+}
+
+function _briefRootsRel() {
+  const fallback = { briefs: "_docs/briefs", clones: "_docs/clones" };
+  try {
+    const reg = JSON.parse(fs.readFileSync(path.join(MC_ROOT, "framework", "paths.registry.json"), "utf8"));
+    const entries = reg.paths || reg;
+    const briefs = entries.briefsRoot && entries.briefsRoot.path;
+    const clones = entries.clonesRoot && entries.clonesRoot.path;
+    return { briefs: briefs || fallback.briefs, clones: clones || fallback.clones };
+  } catch { return fallback; }
+}
+
+function _pointToFoundingBrief(repoPathVal, briefSlug, log = console.log) {
+  const roots = _briefRootsRel();
+  const candidates = [
+    { rel: path.posix.join(roots.briefs, briefSlug), kind: "brief" },
+    { rel: path.posix.join(roots.clones, briefSlug), kind: "clone" },
+  ];
+  let found = null;
+  for (const c of candidates) {
+    const absDir = path.join(repoPathVal, c.rel);
+    if (!fs.existsSync(absDir)) continue;
+    let docName = null;
+    try {
+      const files = fs.readdirSync(absDir);
+      docName = files.find((f) => f === `${briefSlug}.${c.kind}.md`) || files.find((f) => f.endsWith(".md")) || null;
+    } catch { }
+    const docRel = docName ? path.posix.join(c.rel, docName) : c.rel;
+    found = { docRel, kind: c.kind };
+    break;
+  }
+  if (!found) return;
+  const projectMd = path.join(repoPathVal, "PROJECT.md");
+  const pointerLine = `> **Founding ${found.kind}:** [\`${found.docRel}\`](${found.docRel}) — the brief this product was scaffolded from.`;
+  try {
+    let body = fs.existsSync(projectMd) ? fs.readFileSync(projectMd, "utf8") : "";
+    if (!body.includes(found.docRel)) {
+      const lines = body.split("\n");
+      const h1Idx = lines.findIndex((l) => /^#\s+/.test(l));
+      if (h1Idx !== -1) {
+        lines.splice(h1Idx + 1, 0, "", pointerLine);
+        body = lines.join("\n");
+      } else {
+        body = (body ? body.replace(/\n*$/, "\n\n") : "") + pointerLine + "\n";
+      }
+      fs.writeFileSync(projectMd, body, "utf8");
+    }
+  } catch { }
+  log(`Founding ${found.kind} → ${found.docRel} (also linked from PROJECT.md)`);
+}
+
+function _readInstalledVersion(repoPathVal) {
+  try {
+    const p = path.join(repoPathVal, ".claude", "framework-installed.json");
+    if (fs.existsSync(p)) {
+      const d = JSON.parse(fs.readFileSync(p, "utf8"));
+      return d.installedVersion || null;
+    }
+  } catch { }
+  return null;
+}
+
+const _SOURCE_CONTRACT = [
+  ".claude/framework-manifest.json",
+  ".claude/paths.json",
+  "version.json",
+];
+
+const _NODE_INSTALLER = "scripts/mc-setup.js";
+const _LEGACY_NODE_INSTALLER = "scripts/warp-setup.js";
+
+function _nodeInstallerPath(root) {
+  for (const rel of [_NODE_INSTALLER, _LEGACY_NODE_INSTALLER]) {
+    const p = path.resolve(root, rel);
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+function _isValidInstallSource(root) {
+  const hasContract = _SOURCE_CONTRACT.every((f) => fs.existsSync(path.join(root, f)));
+  const hasInstaller =
+    fs.existsSync(path.join(root, "install.ps1")) ||
+    _nodeInstallerPath(root) !== null;
+  return hasContract && hasInstaller;
+}
+
+function _installSourceCandidates(startRoot) {
+  return [
+    startRoot,
+    path.resolve(startRoot, "..", "MC"),
+    path.resolve(startRoot, "..", "mc"),
+  ];
+}
+function _resolveInstallerRoot(startRoot = MC_ROOT) {
+  for (const c of _installSourceCandidates(startRoot)) {
+    if (_isValidInstallSource(c)) return c;
+  }
+  return null;
+}
+
+// (.claude/framework-installed.json) — never a silent no-op (silent-install-guard). Returns
+function _installMC(repoPath, { spawn = spawnSync, resolveRoot = _resolveInstallerRoot } = {}) {
+  const installerRoot = resolveRoot(MC_ROOT);
+  if (!installerRoot) {
+    return {
+      ok: false,
+      error:
+        `No valid MC engine source found. The running MC root ` +
+        `(${MC_ROOT}) is a consumer install — it is missing ` +
+        `.claude/framework-manifest.json, so install.ps1 refuses it as a source ` +
+        `— and no sibling canonical engine was found. Tried: ` +
+        `${_installSourceCandidates(MC_ROOT).join(", ")}. A valid source must ` +
+        `carry ${_SOURCE_CONTRACT.join(", ")} plus an installer. Clone the ` +
+        `canonical MC engine as a sibling (../MC) to enable Create.`,
+    };
+  }
+  const psInstaller = path.resolve(installerRoot, "install.ps1");
+  const nodeSetup = _nodeInstallerPath(installerRoot);
+  let res;
+  if (fs.existsSync(psInstaller)) {
+    res = spawn(
+      "powershell",
+      ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", psInstaller,
+        "-Target", repoPath, "-SkipPrompt"],
+      { cwd: installerRoot, encoding: "utf8", timeout: 120_000 },
+    );
+  } else if (nodeSetup) {
+    res = spawn(
+      "node", [nodeSetup, repoPath, "--yes", "--skip-backup"],
+      { cwd: installerRoot, encoding: "utf8", timeout: 120_000 },
+    );
+  } else {
+    return {
+      ok: false,
+      error:
+        `No MC installer found at ${installerRoot} (neither install.ps1 nor ` +
+        `${_NODE_INSTALLER}). The resolved MC source is incomplete — ` +
+        `cannot install MC into ${repoPath}.`,
+    };
+  }
+  if (res.status !== 0) {
+    return {
+      ok: false,
+      error: `MC install into ${repoPath} failed:\n${(res.stderr || res.stdout || "").trim()}`,
+    };
+  }
+  if (!fs.existsSync(path.join(repoPath, ".claude", "framework-installed.json"))) {
+    return {
+      ok: false,
+      error:
+        `MC install into ${repoPath} reported success but produced no engine ` +
+        `(.claude/framework-installed.json is missing). The created project would ` +
+        `be MC-less — refusing to continue (silent-no-op guard).`,
+    };
+  }
+  return { ok: true };
+}
+
+function _pathOffset(absPath) {
+  const os = require("os");
+  try { return path.relative(os.homedir(), absPath); } catch { return "<path>"; }
+}
+
+function _emit(type, payload) {
+  try {
+    const loggerPath = path.resolve(__dirname, "../hooks/lib/logger.js");
+    const { log } = require(loggerPath);
+    log("portfolio", { type, ...payload });
+  } catch { }
+}
+
+module.exports = {
+  createProductRepo,
+  scaffoldProductApp,
+  validateSlug,
+  _installMC,
+  _resolveInstallerRoot,
+  _isValidInstallSource,
+  SLUG_RE,
+  RESERVED,
+  MC_ROOT,
+  TEMPLATES_DIR,
+};

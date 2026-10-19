@@ -1,0 +1,12 @@
+"use strict";
+const assert = require("assert");
+delete process.env.OPENAI_FLAGSHIP_MODEL;
+delete process.env.OPENAI_MINI_MODEL;
+const providers = require("./providers");
+assert.strictEqual(providers.DEFAULT_PROVIDERS.openai.mini, "gpt-5.6-luna", "OPENAI_MINI held at gpt-5.6-luna");
+assert.strictEqual(providers.legacyAliasPin("qa", "openai"), "gpt-5.6-luna");
+assert.strictEqual(providers.legacyAliasPin("reviewer", "openai"), "gpt-5.6-sol");
+assert.strictEqual(providers.legacyAliasPin("compliance", "openai"), "gpt-5.6-sol");
+assert.strictEqual(providers.legacyAliasPin("qa", "antigravity"), null, "only the openai lane is pinned");
+assert.strictEqual(providers.legacyAliasPin("qa-reviewer", "openai"), null, "registry roles keep their own pins");
+console.log("OK   [providers-legacy-alias-pin.test] 6 passed");

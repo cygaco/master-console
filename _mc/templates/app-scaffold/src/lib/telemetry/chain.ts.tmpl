@@ -1,0 +1,56 @@
+import type { LifecycleEvent, TelemetryProps, TelemetryStage } from "./events";
+import { SUPPLY_CHAIN_STAGES } from "./events";
+
+export type ChainRecord = {
+  correlationId: string;
+  stage: TelemetryStage;
+  at?: string;
+};
+
+export type ChainEvaluation =
+  | { ok: true; correlationId: string; observedStages: TelemetryStage[] }
+  | {
+      ok: false;
+      correlationId: string;
+      observedStages: TelemetryStage[];
+      brokenAtStage: TelemetryStage;
+      failureEvent: { event: LifecycleEvent; props: TelemetryProps };
+    };
+
+export function createCorrelationId(prefix = "chain"): string {
+  const random =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2);
+  return `${prefix}-${random}`;
+}
+
+export function evaluateTelemetryChain(records: ChainRecord[]): ChainEvaluation {
+  const correlationId = records[0]?.correlationId || createCorrelationId("missing");
+  const observedStages = records
+    .filter((record) => record.correlationId === correlationId)
+    .map((record) => record.stage);
+  const observed = new Set(observedStages);
+
+  for (const stage of SUPPLY_CHAIN_STAGES) {
+    if (!observed.has(stage)) {
+      return {
+        ok: false,
+        correlationId,
+        observedStages,
+        brokenAtStage: stage,
+        failureEvent: {
+          event: "core_action",
+          props: {
+            correlationId,
+            stage,
+            telemetryFailure: "broken_chain",
+            observedStages,
+          },
+        },
+      };
+    }
+  }
+
+  return { ok: true, correlationId, observedStages };
+}

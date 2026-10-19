@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-trailer-not-terminal",
+  "gate": "contract-lint",
+  "input_file": "trailer-not-terminal.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 2,
+    "reason": "the sole policy block has exactly one well-formed trailer line (Core: non-waivable), but it is NOT the last non-empty line of the block -- more non-trailer prose follows it before the next section/thematic-break boundary. A trailer that is not terminal must never green-pass just because exactly one trailer line matched somewhere in the block."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js), NOT a kernel conformance-matrix fixture -- contract-lint's inputs are contract-shaped .md documents, not {input,expect} JSON. This descriptor documents the paired .md fixture's expected result; contract-lint.test.js reads trailer-not-terminal.md directly."
+}

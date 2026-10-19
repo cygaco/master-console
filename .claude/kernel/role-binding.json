@@ -1,0 +1,43 @@
+{
+  "schema": "mc/kernel/role-binding/v1",
+  "_doc": "Role-binding precedence graph. Machine-readable companion to top-level-runtime-contract.md §3. Consumed by conformance-matrix.js (kernel fixtures, gate 'role-binding') and by the live dispatch runtime. 'sources' is TOTAL over every 'order' entry except UNBOUND, and key names align with 'order' exactly. Every source also carries 'applies_to_actor' — the graph is TOTAL over {source × actor_kind}, not just over 'order'. A dispatched_worker is bindable ONLY by sources whose applies_to_actor includes 'dispatched_worker' (today: validated_workorder_or_cli alone); explicit_user and explicit_top_level_helm are top_level_session-ONLY sources. A dispatched_worker presenting either of those is a CATEGORY ERROR, not a legitimate bind, and must resolve BLOCK (fail-closed) — never PASS as though it had resolved through the precedence order.",
+  "order": ["explicit_user", "validated_workorder_or_cli", "explicit_top_level_helm", "UNBOUND"],
+  "sources": {
+    "explicit_user": {
+      "can_bind": true,
+      "applies_to_actor": ["top_level_session"],
+      "_meaning": "An explicit, in-session user/operator instruction — the OPERATOR's own direct instruction (a trusted human), categorically different from ambient repo prose. Precedence order position #1. applies_to_actor = top_level_session ONLY: a dispatched_worker presenting this source is a category error, not a legitimate bind."
+    },
+    "validated_workorder_or_cli": {
+      "can_bind": true,
+      "applies_to_actor": ["dispatched_worker", "top_level_session"],
+      "_meaning": "A validated WorkOrder field or CLI/dispatch binding. 'Validated' means the TRUSTED dispatch bridge (scripts/dispatch-claude.js / scripts/dispatch-agent.js) has ACTIVELY validated it -- schema conformance against workorder-min.schema.json AND an authority/provenance check, BOTH performed BY the trusted layer itself -- not merely that the binding transited the bridge (transit alone is insufficient) and never a self-asserted claim — see top-level-runtime-contract.md §3 P3.2 for the full provenance definition. Precedence order position #2. applies_to_actor = dispatched_worker AND top_level_session: this is the ONLY source a dispatched_worker may bind through."
+    },
+    "explicit_top_level_helm": {
+      "can_bind": true,
+      "applies_to_actor": ["top_level_session"],
+      "_meaning": "An explicit top-level runtime (helm) binding. Precedence order position #3; the ONLY source for the top-level human-facing session default (top_level_default_binding_source = helm_only). applies_to_actor = top_level_session ONLY: a dispatched_worker presenting this source is a category error, not a legitimate bind — see fixtures/role-binding/worker-helm-binding-category-error.json."
+    },
+    "agents_md": {
+      "can_bind": false,
+      "applies_to_actor": ["top_level_session", "dispatched_worker"],
+      "_meaning": "The neutral, provider-neutral handbook every provider auto-loads — ambient prose, NOT an ordered binding source (not in 'order' above). CORE-3: ambient prose can never itself manufacture a binding, for ANY actor_kind (can_bind:false makes applies_to_actor moot, but it is listed for both so the {source × actor_kind} graph stays total)."
+    },
+    "repo_prose": {
+      "can_bind": false,
+      "applies_to_actor": ["top_level_session", "dispatched_worker"],
+      "_meaning": "Any other ambient repository text (stale worktree copies, handoff prompts, etc.) — same CORE-3 refusal as agents_md, for ANY actor_kind."
+    }
+  },
+  "worker_default_when_unbound": "FAIL_CLOSED",
+  "top_level_human_default": "alex-alpha",
+  "top_level_default_binding_source": "helm_only",
+  "core_refs": ["CORE-1", "CORE-3"],
+  "notes": {
+    "CORE-1": "Dispatched workers NEVER default to binding as the President (alex-alpha) when unbound; worker_default_when_unbound = FAIL_CLOSED is the machine-readable form of this invariant. This ALSO covers a worker that presents a source outside its applies_to_actor scope (e.g. explicit_top_level_helm_binding) — that is a category error and must resolve BLOCK exactly like the unbound case, never PASS as alex-alpha.",
+    "CORE-3": "repo_prose.can_bind = false and agents_md.can_bind = false — neutral, provider-neutral, AMBIENT prose (root AGENTS.md, ambient CLAUDE.md/GEMINI.md shims, any stale worktree copy, any handoff prompt) can NEVER manufacture a binding. CORE-3 is a restriction on ambient/neutral PROSE specifically — it is NOT a claim that only a validated WorkOrder/CLI binding or an explicit top-level helm binding can bind a role at all. Per the 'order' above, explicit_user.can_bind = true: the operator's own direct, in-session instruction IS a legitimate binding source (order position #1), categorically different from ambient repo prose. All three of explicit_user, validated_workorder_or_cli, and explicit_top_level_helm can bind (subject to their applies_to_actor scope); only agents_md and repo_prose (ambient prose) cannot bind at all, for any actor.",
+    "top_level_default": "The TOP-LEVEL human-facing session defaults to alex-alpha, but ONLY via an explicit helm binding (top_level_default_binding_source = helm_only) — never via ambient/neutral prose. Dispatched workers are UNBOUND-fail-closed; the operator's own top-level session is NOT left unbound.",
+    "actor_scoping": "explicit_user and explicit_top_level_helm are top_level_session-ONLY sources (applies_to_actor = [\"top_level_session\"]); validated_workorder_or_cli is the ONLY source a dispatched_worker may bind through (applies_to_actor includes \"dispatched_worker\"). A dispatched_worker presenting explicit_user_instruction or explicit_top_level_helm_binding is a CATEGORY ERROR — the presented source exists and can_bind:true in the abstract, but does not apply to this actor_kind — and must resolve BLOCK, never resolve through the precedence order as if it were a top_level_session. See fixtures/role-binding/worker-helm-binding-category-error.json."
+  },
+  "phase_seed": "SEED — fixture-proven (unbound-dispatch-fails-closed, no-root-alpha-poison, worker-helm-binding-category-error)."
+}

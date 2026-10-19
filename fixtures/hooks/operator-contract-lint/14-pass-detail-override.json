@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "Here is the full walkthrough you asked for.\nFirst, I reviewed the failing CI run end to end.\nThe root cause was a stale fixture in the linux lane.\nI regenerated the fixture and reran the suite locally.\nAll three causes from the run closed cleanly.\nThe commit that landed this is a1b2c3d4 on this branch.\nI then re-ran the full manifest regen to keep the manifest check green.\nThe paths registry key resolved correctly in both outputs.\nNo other lanes were touched by this change.\nThe worktree stayed isolated throughout the fix.\nTests passed locally before I committed anything.\nThat is the complete picture end to end.",
+  "transcript_path": "fixtures/hooks/operator-contract-lint/detail-request-transcript.jsonl",
+  "expect": []
+}

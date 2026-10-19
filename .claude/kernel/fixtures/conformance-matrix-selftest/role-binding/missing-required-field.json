@@ -1,0 +1,10 @@
+{
+  "id": "conformance-matrix-selftest-missing-gate-required-field",
+  "gate": "role-binding",
+  "input": {},
+  "expect": {
+    "outcome": "BLOCK"
+  },
+  "kernel_scope": "OUT",
+  "note": "Regression fixture for conformance-matrix.js's OWN self-test corpus (conformance-matrix.test.js) -- NOT a kernel-conformance case. The input-shape check proves 'input' is a present JSON OBJECT, but not that it carries the FIELDS its own gate's evaluator reads -- input:{} here IS a valid object; were it accepted, evaluate() would call the 'role-binding' evaluator with an input missing 'actor_kind' entirely, hitting its final fallback branch ('unrecognized role-binding input shape (fail-closed)') -> BLOCK -- silently MATCHING this fixture's expect.outcome:'BLOCK' and reading green ('bound') without the evaluator ever exercising real actor_kind/attempted_binding_source branching logic. loadFixtures() validates 'input' against a per-gate REQUIRED_INPUT_FIELDS schema and rejects a fixture missing its gate's required field(s) at load time (fail-closed, exit 2 at the CLI), before this fixture is ever handed to evaluate(). Excluded from the real kernel-conformance walk via EXCLUDED_GATE_DIRS ('conformance-matrix-selftest'), mirroring retention/bad-input-shape.json's exclusion."
+}

@@ -1,0 +1,12 @@
+{
+  "id": "contract-lint-core-waived-with-correct-duplicate",
+  "gate": "contract-lint",
+  "input_file": "core-waived-with-correct-duplicate.md",
+  "expect": {
+    "outcome": "FAIL",
+    "exit_code": 1,
+    "reason": "CORE-1 is declared TWICE: once (P7.1) waived via a Deferred: ED trailer, and once (P9.1) correctly declared with Core: non-waivable. The waived instance must be caught as a policy FAIL (exit 1) even though a correct declaration of the SAME core_id exists elsewhere in the document -- CORE ids are non-waivable everywhere they appear, not just in their 'best' declaration."
+  },
+  "kernel_scope": "IN",
+  "note": "Negative fixture for contract-lint's OWN self-test (contract-lint.test.js), NOT a kernel conformance-matrix fixture -- excluded from conformance-matrix.js and manifest.json's kernel-conformance count."
+}

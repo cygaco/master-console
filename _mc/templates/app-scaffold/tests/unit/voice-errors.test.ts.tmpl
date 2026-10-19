@@ -1,0 +1,40 @@
+import { describe, it, expect } from "vitest";
+// Relative import — see the note in terminus.test.ts.tmpl (no vitest alias config in the scaffold).
+import { describeMicError } from "../../src/lib/composer/voice-errors";
+
+/**
+ * The mic-failure must FAIL LOUDLY and actionably — never a silent no-op — and
+ * the Permissions-Policy `microphone=()` case (the scaffold's secure default,
+ * INPUT_COMPOSER_PATTERN.md §4) must point the product at `microphone=(self)`.
+ */
+
+describe("describeMicError — actionable mic-failure messages", () => {
+  it("a permissions-policy / denied block points at the §4 microphone=(self) fix", () => {
+    const msg = describeMicError({ name: "NotAllowedError" });
+    expect(msg).toMatch(/Permissions-Policy/i);
+    expect(msg).toMatch(/microphone=\(self\)/);
+    expect(msg).toMatch(/§4/);
+  });
+
+  it("a SecurityError (policy block on some engines) also points at the §4 fix", () => {
+    const msg = describeMicError({ name: "SecurityError" });
+    expect(msg).toMatch(/microphone=\(self\)/);
+  });
+
+  it("no hardware yields a distinct, actionable message", () => {
+    const msg = describeMicError({ name: "NotFoundError" });
+    expect(msg).toMatch(/no microphone/i);
+    expect(msg).not.toMatch(/microphone=\(self\)/);
+  });
+
+  it("mic busy yields a distinct message", () => {
+    expect(describeMicError({ name: "NotReadableError" })).toMatch(/in use/i);
+  });
+
+  it("never returns empty (a silent no-op) for an unknown or malformed error", () => {
+    expect(describeMicError(undefined).length).toBeGreaterThan(0);
+    expect(describeMicError(null).length).toBeGreaterThan(0);
+    expect(describeMicError({}).length).toBeGreaterThan(0);
+    expect(describeMicError("weird string").length).toBeGreaterThan(0);
+  });
+});

@@ -1,0 +1,12 @@
+{
+  "_comment": "Hash-only SHIPPED denylist for scripts/checks/leak-denylist.js . Entry = { kind, words, chars, sha256, label }. The shipped file carries ONLY the innocuous RED-proof fixture; real instance entries live in the gitignored .claude/project/memory/leak-denylist.local.json and/or env MC_LEAK_DENYLIST (JSON text), same schema. Add with --add \"<phrase>\" --denylist <local file>. Enforcer: scripts/checks/leak-denylist.test.js.",
+  "entries": [
+    {
+      "kind": "phrase",
+      "words": 4,
+      "chars": 29,
+      "sha256": "7b4581577369919363250b1f1dfa95c408cbad40bbcded36775d98ab12eb2fa8",
+      "label": "fixture-red-proof"
+    }
+  ]
+}

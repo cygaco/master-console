@@ -1,0 +1,7 @@
+{
+  "hook_event_name": "Stop",
+  "last_assistant_message": "Here is the step.\n```\ndocker compose up -d\n```",
+  "expect": [
+    "CMD-OUTSIDE-RUN"
+  ]
+}

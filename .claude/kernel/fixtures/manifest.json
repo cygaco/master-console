@@ -1,0 +1,55 @@
+{
+  "schema": "mc/kernel/fixtures-manifest/v1",
+  "manifest_version": "1.0.0",
+  "_doc": "Kernel-scope conformance fixtures, proving positive coverage per CORE invariant (§7 of top-level-runtime-contract.md) and per in-kernel-scope support-matrix cell. Consumed by scripts/checks/conformance-matrix.js and counted by scripts/checks/contract-lint.js (fixture count nonzero).",
+  "count": 13,
+  "gates": {
+    "role-binding": 3,
+    "trust-boundary": 1,
+    "retention": 1,
+    "support-matrix": 3,
+    "dispatch-honesty": 1,
+    "tracker": 1,
+    "worktree": 1,
+    "workorder": 1,
+    "dispatch-review": 1
+  },
+  "core_coverage": {
+    "CORE-1": ["role-binding/unbound-dispatch-fails-closed.json", "role-binding/worker-helm-binding-category-error.json"],
+    "CORE-2": ["trust-boundary/trusted-layer-sole-integrator.json"],
+    "CORE-3": ["role-binding/no-root-alpha-poison.json"],
+    "CORE-4": ["retention/retention-archive-not-delete.json"]
+  },
+  "matrix_cell_coverage": {
+    "claude": ["support-matrix/claude-row-supported.json"],
+    "codex-gpt": ["support-matrix/codex-gpt-row-supported.json"],
+    "agy-antigravity": ["support-matrix/agy-row-down-blocks.json"]
+  },
+  "_contract_lint_selftest_note": "The 'contract-lint' directory (malformed, unresolvable-ref, missing-ed, core-waived-by-ed, trailer-not-terminal, malformed-heading, core-waived-with-correct-duplicate, register-block-removed, core-no-enforcer, duplicate-block-id, duplicate-register-row — each a .md fixture + a documenting .json descriptor) is contract-lint.js's OWN negative self-test corpus (consumed directly by contract-lint.test.js). It is DELIBERATELY EXCLUDED from the count above and from conformance-matrix.js's fixture walker: those inputs are contract-shaped documents fed to contract-lint itself, not {input,expect} kernel-conformance cases evaluated against role-binding.json/support-matrix.json. Counting or executing them as kernel-conformance fixtures would conflate contract-lint.js's self-test with conformance-matrix.js's matrix conformance.",
+  "_conformance_matrix_selftest_note": "The 'conformance-matrix-selftest' directory (retention/bad-input-shape.json + role-binding/missing-required-field.json) is conformance-matrix.js's OWN negative self-test corpus (consumed directly by conformance-matrix.test.js) -- excluded from the count above via EXCLUDED_GATE_DIRS, mirroring the contract-lint self-test exclusion. Its fixtures are DELIBERATELY shape-malformed -- bad-input-shape.json has a non-object 'input'; missing-required-field.json has a valid-but-empty 'input:{}' that passes the input-shape check but is missing its gate's own required field(s), e.g. role-binding's 'actor_kind' -- to prove loadFixtures() fails closed (exit 2) rather than silently evaluating a malformed/underspecified case and reading a coincidental green.",
+  "_trust_boundary_seed_note": "the 'trust-boundary' gate's evaluator (conformance-matrix.js GATE_EVALUATORS['trust-boundary']) only computes a BLOCK/PASS decision for the 'integrate_to_main' action -- ONE of CORE-2's four named powers (top-level-runtime-contract.md §1/§7 P7.2: capability grants, protected mutation, verification, integration-to-main). The other three powers are DEFINED by the contract but have no evaluator logic and always compute PASS against this seed. This is intentional scope, NOT a coverage gap: the CORE-2 invariant DEFINITION covers all four powers. Do not read core_coverage.CORE-2's single fixture as proof that capability-grants/protected-mutation/verification are themselves gated.",
+  "kernel_scope": {
+    "version": "1.0.0",
+    "immutable_from": "kernel-1.0.0",
+    "in": [
+      "role-binding (CORE-1, CORE-3)",
+      "trust-boundary (CORE-2, definition-level/report-only)",
+      "retention (CORE-4, archive-not-delete)",
+      "support-matrix (helm rows: claude, codex-gpt, agy-antigravity)",
+      "dispatch-honesty (false-green ResultEnvelope claims)",
+      "tracker (tracker/disk/git drift)",
+      "worktree (stale base vs integration head)",
+      "workorder (prompt-size floor)",
+      "dispatch-review (cross-provider review invariant)"
+    ],
+    "out": [
+      "product-pack gates (route to bootstrap:lastmile)",
+      "webapp production baseline gates (route to bootstrap:lastmile)",
+      "founder-panel gates (route to bootstrap:lastmile)",
+      "agy migration liveness (not verified on this install; the MIGRATION itself is not kernel-conformance-fixture work)",
+      "the full WorkOrder/ResultEnvelope v1 validator",
+      "the trusted enforcement adapter"
+    ],
+    "candidate_immutability_note": "This IN/OUT line is versioned (manifest_version) and CANDIDATE-IMMUTABLE — a candidate tree editing this manifest to narrow the IN list (so a difficult check no longer applies to it) is itself an untrusted change; contract-lint.js's self-host + conformance-matrix.js's coverage assertion are the interim guard."
+  }
+}

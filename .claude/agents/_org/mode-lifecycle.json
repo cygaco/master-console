@@ -1,0 +1,48 @@
+{
+  "$schema": "mc/mode-lifecycle/v0.1",
+  "_doc": "THE single source of truth for what each Alex MODE requires — roster, persistent-team requirement, lifecycle bindings, provider tier, dispatch profile, and teardown policy. Readers RESOLVE FROM HERE so a mode's roster is edited in ONE place: scripts/hooks/lib/mode-lifecycle.js (the shared reader), scripts/hooks/session-start.js (the persistent-team-init directive), and scripts/hooks/team-guard.js (the bootstrap-face allow-list) all derive their required-team-by-mode from this file. De-duplicates the formerly-hardcoded TEAM_MODES map (session-start) + FACE_TYPES literal (team-guard). The fail-closed drift validator scripts/checks/mode-lifecycle-registry.js earns it: the readers' fail-open FALLBACK constants must MATCH this registry or it exits non-zero. Mode resolution itself (mode.json → mode string) lives in lib/mode.js#getMode; this registry maps the resolved mode → its lifecycle contract. It does NOT build any gate from this; it only makes this the source the existing readers READ.",
+  "version": "v0.1",
+  "description": "Mode-Lifecycle Registry — mode → required-team/roster + bindings + provider-tier + dispatch-profile + teardown.",
+  "_field_meaning": {
+    "roster": "ordered role ids that make up the mode's working set (incl. the lead face). The persistent-team faces are roster minus 'alpha' (alpha is the harness session, not a spawned teammate). References .claude/agents/_org/role-registry.json by id.",
+    "requires_team": "true if the mode operates through a persistent team that must be stood up (sprint, adhoc); false if the lead runs standalone (solo, oneshot).",
+    "bindings": "which lifecycle artifacts the mode requires be present/active: sprint | epic | tracker | planning. Empty = no binding requirement.",
+    "provider_tier": "placeholder model-tier label for the mode's dispatch budget (T1 default). Not consumed as a gate.",
+    "dispatch_profile_ref": "forward-ref into .claude/agents/_org/dispatch-contract.json for the mode's dispatch profile. The concrete per-mode profile anchor is carried here as the seam.",
+    "teardown": "policy for when the mode's team/state is torn down: none | session-end | run-end | phase-boundary."
+  },
+  "modes": {
+    "solo": {
+      "roster": [],
+      "requires_team": false,
+      "bindings": [],
+      "provider_tier": "T1",
+      "dispatch_profile_ref": "dispatch-contract.json#/role_classes",
+      "teardown": { "policy": "none", "_note": "Alpha works directly — no team to tear down." }
+    },
+    "adhoc": {
+      "roster": ["alpha", "beta", "gamma"],
+      "requires_team": true,
+      "bindings": [],
+      "provider_tier": "T1",
+      "dispatch_profile_ref": "dispatch-contract.json#/role_classes",
+      "teardown": { "policy": "session-end", "_note": "α + β + γ persistent team; γ dispatches the build chain." }
+    },
+    "oneshot": {
+      "roster": ["delta"],
+      "requires_team": false,
+      "bindings": ["planning"],
+      "provider_tier": "T1",
+      "dispatch_profile_ref": "dispatch-contract.json#/role_classes",
+      "teardown": { "policy": "run-end", "_note": "δ runs standalone and dispatches the full build chain directly." }
+    },
+    "sprint": {
+      "roster": ["alpha", "epsilon", "beta"],
+      "requires_team": true,
+      "bindings": ["sprint", "epic", "tracker", "planning"],
+      "provider_tier": "T1",
+      "dispatch_profile_ref": "dispatch-contract.json#/role_classes",
+      "teardown": { "policy": "phase-boundary", "_note": "α lead + ε conductor/quality-gate + β judgment; ε runs the full lifecycle, β consulted at the 4 phase boundaries." }
+    }
+  }
+}

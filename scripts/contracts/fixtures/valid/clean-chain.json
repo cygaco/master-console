@@ -1,0 +1,9 @@
+[
+  { "type": "audience_dossier", "id": "ad-1", "segment": "time-strapped indie founders", "sources": [{ "ref": "reddit:r/SaaS launch thread", "synthetic": false }], "confidence": 0.7, "emotional_needs": ["fear of wasting the one shot", "desire to look credible"], "pii_free": true },
+  { "type": "message_brief", "id": "mb-1", "audience_ref": "ad-1", "core_message": "Launch in a weekend, not a quarter.", "proof_points": ["3 founder case studies", "live build demo"], "market_promise": "Ship your MVP this weekend." },
+  { "type": "offer_brief", "id": "ob-1", "derived_from_message_brief": "mb-1", "product_verifiable_claim": "Scaffolds a deployable Next.js app in under 10 minutes.", "offer_terms": "14-day trial, no card." },
+  { "type": "conversion_brief", "id": "cb-1", "derived_from_message_brief": "mb-1", "conversion_hypothesis": "Founders convert when they watch a real app get built live.", "objections_handled": ["is it real code?", "will it lock me in?"] },
+  { "type": "design_brief", "id": "db-1", "derived_from_message_brief": "mb-1", "visual_hierarchy": "hero demo > proof > CTA", "mobile_requirements": "single-column, thumb-reachable CTA" },
+  { "type": "build_spec", "id": "bs-1", "derived_from_message_brief": "mb-1", "components": ["Hero", "DemoPlayer", "ProofGrid", "CTA"], "acceptance_criteria": ["demo autoplays muted", "CTA above the fold on mobile"] },
+  { "type": "converting_artifact", "id": "ca-1", "derived_from_message_brief": "mb-1", "artifact_kind": "landing", "copy_ref": "copy/landing-v1.md", "creative_refs": ["higgsfield/hero-v1.mp4"] }
+]

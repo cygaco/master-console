@@ -1,0 +1,49 @@
+import { NextResponse, type NextRequest } from "next/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+// Open-redirect defense (CWE-601): safeNextUrl returns the VALIDATED
+// same-origin URL OBJECT and we redirect to it DIRECTLY — never re-parse a string derived
+// from it. Re-parsing is an open-redirect seam (a control char stripped mid-parse, or a
+// same-origin absolute whose `//evil.com` pathname re-parses protocol-relative). The
+// validator lives in safe-next and is unit-tested in safe-next.test.mjs.
+import { safeNextUrl } from "@/lib/supabase/safe-next";
+
+// PKCE code-exchange callback. Supabase redirects here after the user clicks the
+// magic link / completes OAuth; we exchange the one-time `code` for a session
+// (cookies persisted via the middleware/server cookie adapter), then redirect to
+// the sanitized `next`. no-store so the exchange response is never cached.
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  // A validated same-origin URL object — redirected to DIRECTLY below (no re-parse).
+  const next = safeNextUrl(url.searchParams.get("next"), url.origin);
+
+  const withNoStore = (response: NextResponse): NextResponse => {
+    response.headers.set("Cache-Control", "no-store");
+    return response;
+  };
+
+  if (!isSupabaseConfigured() || !code) {
+    return withNoStore(
+      NextResponse.redirect(new URL("/auth?error=auth_unavailable", url.origin)),
+    );
+  }
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return withNoStore(
+      NextResponse.redirect(new URL("/auth?error=auth_unavailable", url.origin)),
+    );
+  }
+
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error) {
+    return withNoStore(
+      NextResponse.redirect(new URL("/auth?error=exchange_failed", url.origin)),
+    );
+  }
+
+  // Redirect to the validated URL OBJECT directly — NO `new URL(next, origin)` re-parse
+  // (that re-parse is the open-redirect seam).
+  return withNoStore(NextResponse.redirect(next));
+}

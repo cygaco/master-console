@@ -1,0 +1,64 @@
+/**
+ * terminus.ts — the single commit seam every send path resolves through.
+ *
+ * PURE, framework-free: no React, no DOM. See
+ * _knowledge/design/INPUT_COMPOSER_PATTERN.md §3 "The single terminus".
+ *
+ * Every path — typed send, voice-then-send, transcript-then-edit-then-send —
+ * MUST route through `commit` before a save happens. This makes "exactly one
+ * save per commit" a pure, unit-testable assertion instead of a
+ * DOM-dependent one (the enforcer for the "two save paths drift apart" bug
+ * class). The composer component itself never writes; it emits `onSend` /
+ * `onTextChange` / `onTranscript` and the PARENT (the product's page) is the
+ * one place that calls `commit` and performs the save.
+ */
+
+export type ComposerState =
+  | "idle"
+  | "recording"
+  | "transcribing"
+  | "review"
+  | "failed";
+
+export type CommitAction =
+  | { type: "send"; text: string }
+  | { type: "cancel" };
+
+export interface CommitResult {
+  /** The trimmed text that would be saved (empty string if nothing commits). */
+  text: string;
+  /** Whether THIS commit should trigger exactly one save call. */
+  shouldSave: boolean;
+}
+
+/**
+ * commit — the ONE decision point for "does this action produce a save."
+ *
+ * `state` is informational context (kept so future state-gated rules — e.g.
+ * refusing a send mid-transcription — have a seam) — today every `send`
+ * action with non-empty trimmed text saves exactly once, regardless of which
+ * path produced the text: typed, voice-then-send (recording -> send skips
+ * transcript display but still routes text through here), or
+ * transcript-then-edit-then-send (review -> send).
+ *
+ * A `transcribing` state never commits — the field isn't final yet, so a
+ * stray `send` action during that window is a no-op (prevents a double save
+ * racing an in-flight transcription).
+ */
+export function commit(state: ComposerState, action: CommitAction): CommitResult {
+  if (action.type !== "send") {
+    return { text: "", shouldSave: false };
+  }
+
+  const text = action.text.trim();
+
+  if (!text) {
+    return { text, shouldSave: false };
+  }
+
+  if (state === "transcribing") {
+    return { text, shouldSave: false };
+  }
+
+  return { text, shouldSave: true };
+}

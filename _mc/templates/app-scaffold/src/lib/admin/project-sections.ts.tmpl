@@ -1,0 +1,35 @@
+export type AdminProjectRow = {
+  id: string;
+  label: string;
+  state: "healthy" | "needs_review" | "blocked";
+};
+
+export type AdminProjectSection = {
+  id: string;
+  title: string;
+  entity: string;
+  source: string;
+  operations: Array<"read" | "search" | "basic_moderate">;
+  rows: AdminProjectRow[];
+};
+
+export const ADMIN_PROJECT_SECTIONS: AdminProjectSection[] = [
+  {
+    id: "core-loop-entities",
+    title: "Core loop entities",
+    entity: "CoreLoopEntity",
+    source: "_requirements/00-canonical + declared Tech Stack",
+    operations: ["read", "search", "basic_moderate"],
+    rows: [
+      {
+        id: "{{SLUG}}-core-loop",
+        label: "{{SLUG}} core loop",
+        state: "healthy",
+      },
+    ],
+  },
+];
+
+export function listAdminProjectSections(): AdminProjectSection[] {
+  return ADMIN_PROJECT_SECTIONS;
+}

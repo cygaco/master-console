@@ -1,0 +1,6 @@
+{
+  "$schema": "mc/beta-ledger-refs-baseline/v1",
+  "rule": "Shrink-only. Known unresolved cross-references in paths.betaEvents that predate the beta-ledger-refs enforcer. An entry that starts resolving is STALE and turns the check RED until removed; an unresolved reference NOT listed here is a NEW defect and turns the check RED. Never add an entry for a row written after the enforcer was installed.",
+  "entries": [],
+  "adjudicated_out": []
+}

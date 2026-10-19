@@ -1,0 +1,104 @@
+{
+  "$schema": "mc/sprint-routing/v1",
+  "version": 1,
+  "comment": "Sprint Workflow v0.2 routing policy. Declarative — runProvider still controls actual provider selection. Honored by /sprint:plan, /sprint:design, /sprint:execute, /sprint:release where a model class is needed (planning, review, scoping, judgment). No new SDK installs; routing intent is preserved by class even when provider-fallback.json drives an actual swap. v0.2 adds the `concurrency` block — advisory knobs for parallel-sprint lanes.",
+  "concurrency": {
+    "max_lanes": 2,
+    "default_lane": "default",
+    "default_isolation": "worktree",
+    "rationale": "Number of sprints that may execute concurrently before /sprint:execute halts new ones. v0.2 ships advisory-only — no hard cap yet. default_lane is the lane type assigned when /sprint:plan omits one. default_isolation is the recommended isolation type for non-default lanes (worktree reuses the builder/oneshot primitive)."
+  },
+  "enforcement": {
+    "mode": "warn",
+    "rationale": "Ships in warn mode — the sprint-routing-guard hook emits warnings instead of blocking. Flip to 'block' once smoke confidence is high.",
+    "valid_modes": ["warn", "block"]
+  },
+  "policies": {
+    "planning": {
+      "model_class": "strongest_reasoning",
+      "diff_review": true,
+      "rationale": "Plan formation is the highest-leverage step. Strongest reasoning + diff-model review prevents fantasy plans."
+    },
+    "plan_contract_review": {
+      "model_class": "strongest_reasoning",
+      "diff_review": true,
+      "rationale": "Beta-like judgment over the Plan Contract — catches missing evidence, unsafe assumptions, scope creep."
+    },
+    "design": {
+      "model_class": "strong_reasoning",
+      "diff_review": true,
+      "rationale": "PRD/STORIES/COPY/INPUTS/TRACE design benefits from a strong reasoner and a second-vendor read."
+    },
+    "execution": {
+      "model_class": "economical_coder",
+      "escalate_to": "strong_reasoning",
+      "rationale": "Routine ticket execution is mechanical. Escalate to strong reasoning when a bugfix fails twice or a ticket touches architecture."
+    },
+    "qa": {
+      "model_class": "strong_reviewer",
+      "diff_review": true,
+      "rationale": "13-persona QA scan; diff review across two vendor families catches blind spots."
+    },
+    "redteam": {
+      "model_class": "independent_reviewer",
+      "diff_review": true,
+      "rationale": "Adversarial reasoning is most effective when the redteam model is not the model that wrote the code."
+    },
+    "release": {
+      "model_class": "strongest_reasoning",
+      "diff_review": true,
+      "rationale": "Final go/no-go judgment + release-notes synthesis."
+    },
+    "retrospective": {
+      "model_class": "strong_reasoning",
+      "diff_review": true,
+      "rationale": "Synthesizes a post-sprint retrospective from tracker artifacts. Strong reasoning so the model can connect Plan Contract predictions to actual outcomes; diff_review catches hallucinated wins/misses by surfacing a second-vendor read before sign-off. Fail-open: synthesis failure auto-falls-back to skeleton retro."
+    },
+    "docs_sync": {
+      "model_class": "economical_writer",
+      "rationale": "Docs/spec updates after code changes are mostly transcription — economical writer is fine."
+    },
+    "tracker_updates": {
+      "model_class": "economical_structurer",
+      "rationale": "Status changes, link updates, checkpoint writes — structural work."
+    },
+    "trace_updates": {
+      "model_class": "economical_structurer",
+      "rationale": "TRACE entry generation is structural, with a structured schema to fill."
+    },
+    "external_service_setup": {
+      "model_class": "strong_reasoning",
+      "diff_review": true,
+      "rationale": "ESD records affect approval, billing, secrets. Strong reasoning + diff review prevents misclassification."
+    }
+  },
+  "model_classes": {
+    "strongest_reasoning": ["claude:claude-fable-5", "claude:claude-opus-4-8", "openai:gpt-6.1-sol"],
+    "strong_reasoning": [
+      "claude:claude-opus-4-8",
+      "gemini:gemini-3.1-pro-preview"
+    ],
+    "strong_reviewer": ["openai:gpt-5.6-sol", "claude:claude-sonnet-4-6"],
+    "independent_reviewer": ["gemini:gemini-3.1-pro-preview", "openai:gpt-5.6-sol"],
+    "economical_coder": ["claude:claude-sonnet-4-6", "openai:gpt-6-luna"],
+    "economical_writer": [
+      "claude:claude-haiku-4-5-20251001",
+      "openai:gpt-6-luna"
+    ],
+    "economical_structurer": ["claude:claude-haiku-4-5-20251001"]
+  },
+  "diff_review_rule": "When diff_review is true, the sprint command MUST surface a second-model read from a different vendor row before the artifact is finalized. If a second vendor is unavailable, the command logs the unavailability (decision-ledger) and proceeds; it does not silently downgrade.",
+  "no_override_floor": [
+    "Approval boundaries",
+    "Safety hooks (dispatch-route-guard, memory-guard, secret-guard, framework-manifest-guard)",
+    "Service/security decisions",
+    "Production deploy authorization"
+  ],
+  "no_override_floor_note": "Cheaper models never override these. Routing only chooses which model class drafts the artifact — the approval gate is a separate decision recorded in the approvals/ folder.",
+  "fallback_interaction": "Sprint routing declares INTENT (a model class). Actual provider selection still flows through scripts/dispatch-agent.js / runProvider, which honors paths.providerFallbackPolicy. If the primary in a class is unavailable, runProvider falls back to a peer in the same class — routing intent (class) is preserved, vendor may shift.",
+  "notes": [
+    "Sprint v0.1: this file is loaded by /sprint:* commands but provider selection is still done by runProvider. No new SDK installs.",
+    "Update procedure: edit this file, no schema bump needed for additive policy keys.",
+    "If you want to disable sprint routing in a downstream repo, delete this file — sprint commands fall back to a single 'use whatever runProvider picks' path and log the absence."
+  ]
+}
