@@ -650,6 +650,7 @@ ci/no-personal-content.js
 ci/public-allowlist.txt
 ci/seeds.json
 ci/workflows/no-personal-content.yml
+docs/launch-film-thumbnail.png
 fixtures/hooks/change-trailer-guard/amend-no-edit.json
 fixtures/hooks/change-trailer-guard/trailerless-commit.json
 fixtures/hooks/change-trailer-guard/with-trailer.json
