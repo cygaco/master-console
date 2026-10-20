@@ -8,6 +8,10 @@
 **Hooks:** 78 automated hooks
 **License:** [AGPL-3.0](LICENSE)
 
+## Watch the launch film
+
+[![Watch the Master Console launch film](docs/launch-film-thumbnail.png)](https://github.com/cygaco/master-console/releases/tag/launch-film-v1)
+
 ## Who it is for
 
 Master Console is for developers and small teams who already use [Claude Code](https://claude.com/claude-code) and want it to run like a disciplined engineering organisation instead of a single chat: planned work, independent review, enforced policies and memory that survives between sessions. You install it into your own project; it adds agents, slash commands and hooks to that project's `.claude/` directory.
