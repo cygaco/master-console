@@ -10,6 +10,8 @@
 
 ## Watch the launch film
 
+https://github.com/user-attachments/assets/c89ef43e-73c0-431a-a90f-00c9d091d5d2
+
 [![Watch the Master Console launch film](docs/launch-film-thumbnail.png)](https://github.com/cygaco/master-console/releases/tag/launch-film-v1)
 
 ## Who it is for
