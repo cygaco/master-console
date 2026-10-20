@@ -3,6 +3,7 @@
 **Master Console.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
 
 **Version:** 2.1.0
+**Status:** Public beta, released 2026-10-20 ([release notes](https://github.com/cygaco/master-console/releases/tag/v2.1.0))
 **Skills:** 235 slash commands
 **Hooks:** 78 automated hooks
 **License:** [AGPL-3.0](LICENSE)
@@ -22,7 +23,7 @@ Master Console is for developers and small teams who already use [Claude Code](h
 
 - **Windows-first.** The installer is PowerShell (`install.ps1`); the hooks and scripts are Node.js. Other platforms are untested; a Node-based installer (`scripts/mc-setup.js`) exists but is not verified outside Windows.
 - **Prerequisites:** Claude Code, **Node.js 20 or newer** (`package.json` declares `engines.node >= 20`), Git, and PowerShell for `install.ps1`. Provider CLIs (OpenAI Codex, Antigravity) are optional; a missing CLI degrades to the fallback declared for that role.
-- **Maturity:** version 2.1.0, actively developed, single maintainer. Expect rough edges; deprecated aliases from the pre-2.0.0 names are removed in 2.2.0.
+- **Maturity:** version 2.1.0 is a public beta: actively developed, single maintainer. Known issues and their workarounds are pinned in [issue #1](https://github.com/cygaco/master-console/issues/1). Deprecated aliases from the pre-2.0.0 names are removed in 2.2.0.
 
 ## Five-minute path
 
