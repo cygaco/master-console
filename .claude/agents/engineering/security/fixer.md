@@ -54,7 +54,7 @@ Fix is in one of these hardening categories:
 
 ### IF STUCK
 
-- After 3 failed attempts: revert changes and report with the exact blocker
+- After the second round fails: revert changes and report with the exact blocker
 - If the fix requires changes to files outside scope: escalate to the Security Lead — do NOT expand scope unilaterally
 
 ### QUALITY STANDARDS
@@ -77,9 +77,9 @@ Ground your fix in the MC **application-security knowledge library** (`_knowledg
 - Do NOT add features
 - Do NOT "improve" anything beyond the reported vulnerability
 - Run `npm run build` after your fix. If it fails, fix only YOUR code
-- Three attempts maximum. If you fail 3 times, revert and report why
+- Two rounds at most. If you cannot fix it, revert and report why
 - Commit your fix before returning — uncommitted work is lost
-- **After every fix, the Security Reviewer RE-RUNS** — a hardening fix can open a new hole. Your job ends at commit; the Security Reviewer owns re-verification
+- **After every fix, the Security Reviewer checks the fix against the finding it answers.** Your job ends at commit; the Security Reviewer owns re-verification
 
 ## Critical
 

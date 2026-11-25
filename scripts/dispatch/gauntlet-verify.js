@@ -7,7 +7,9 @@ const fs = require("fs");
 const path = require("path");
 const { PATHS } = require("../hooks/lib/paths");
 const { normalizeRole } = require("../hooks/lib/role-aliases");
-const { verifyRecord } = require("./attest-signing");
+const { verifyRecord, isValidGauntletRunId } = require("./attest-signing");
+const { parseRequiredFlag } = require("../lib/strict-flag");
+const securityChoice = require("./security-choice");
 
 const FUTURE_SKEW_ALLOWANCE_MS = 24 * 60 * 60 * 1000;
 
@@ -92,6 +94,40 @@ function verifyGauntlet(args = {}) {
   const strictFallback = !!args.strictFallback;
   const requireSignature = args.requireSignature === true;
 
+  let gauntletRunId = null;
+  if (args.gauntletRunId !== undefined && args.gauntletRunId !== null) {
+    if (typeof args.gauntletRunId !== "string") {
+      throw new Error(
+        `verifyGauntlet: gauntletRunId was provided but is not a string (${typeof args.gauntletRunId}) — refusing (false/0/NaN/object would silently run an UNBOUND verify)`,
+      );
+    }
+    const trimmed = args.gauntletRunId.trim();
+    if (trimmed === "") {
+      throw new Error(
+        "verifyGauntlet: gauntletRunId was provided but is empty/whitespace — refusing (would silently run an UNBOUND verify)",
+      );
+    }
+    if (!isValidGauntletRunId(trimmed)) {
+      throw new Error(
+        "verifyGauntlet: gauntletRunId is not a conforming run id (g-<32 lowercase hex>) — refusing (a guessable/settable label never binds)",
+      );
+    }
+    if (!requireSignature) {
+      throw new Error(
+        "verifyGauntlet: gauntletRunId requires requireSignature === true (binding on an unsigned field is meaningless) — refusing",
+      );
+    }
+    gauntletRunId = trimmed;
+  }
+
+  let requireMultiLab = new Set();
+  if (args.requireMultiLabRoles !== undefined && args.requireMultiLabRoles !== null) {
+    if (!Array.isArray(args.requireMultiLabRoles) || !args.requireMultiLabRoles.every((r) => typeof r === "string" && r.trim())) {
+      throw new Error("verifyGauntlet: requireMultiLabRoles must be an array of role names — refusing (a malformed value would silently drop the multi-lab requirement)");
+    }
+    requireMultiLab = new Set(args.requireMultiLabRoles.map((r) => normalizeRole(r.trim())).filter(Boolean));
+  }
+
   const rolesIn = Array.isArray(args.roles) ? args.roles : [];
   const seen = new Set();
   const roles = [];
@@ -147,7 +183,7 @@ function verifyGauntlet(args = {}) {
   const effectiveUntilMs = untilMs ?? (hasWindow ? nowMs + FUTURE_SKEW_ALLOWANCE_MS : null);
   const hardCeilingMs = nowMs + FUTURE_SKEW_ALLOWANCE_MS;
 
-  const inWindow = (rec) => {
+  const inWindowBase = (rec) => {
     if (sprintId && rec.sprint_id !== undefined && rec.sprint_id !== sprintId) return false;
     if (sprintId && rec.sprint_id === undefined && sinceMs === null && untilMs === null) return false;
     const t = recordCompletedMs(rec);
@@ -158,7 +194,13 @@ function verifyGauntlet(args = {}) {
     if (t > hardCeilingMs) return false;
     return true;
   };
+  const inWindow = (rec) => {
+    const ok = inWindowBase(rec);
+    if (ok && gauntletRunId && rec.gauntlet_run_id !== gauntletRunId) return false;
+    return ok;
+  };
   const considered = records.filter(inWindow);
+  const foreignRunExcluded = gauntletRunId ? records.filter((r) => inWindowBase(r) && r.gauntlet_run_id !== gauntletRunId).length : 0;
 
   let filemalformedTainted = false;
   if (malformed > 0) {
@@ -167,7 +209,7 @@ function verifyGauntlet(args = {}) {
     } else {
       const inWindowLineIdxs = [];
       for (let i = 0; i < records.length; i++) {
-        if (inWindow(records[i]) && i < recordLineIndices.length) {
+        if (inWindowBase(records[i]) && i < recordLineIndices.length) {
           inWindowLineIdxs.push(recordLineIndices[i]);
         }
       }
@@ -197,13 +239,33 @@ function verifyGauntlet(args = {}) {
     let status;
     let record = null;
     let wellFormed = null;
+    let diversity;
 
     if (recs.length === 0) {
       status = "no-record";
     } else {
       const sigOk = (r) => !requireSignature || verifyRecord(r);
-      const okRec = recs.find((r) => r.ok === true && !r.fallback && isWellFormedOkRecord(r) && sigOk(r));
-      const fbRec = recs.find((r) => r.ok === true && r.fallback && isWellFormedOkRecord(r) && sigOk(r));
+      const validRecs = recs.filter((r) => r.ok === true && !r.fallback && isWellFormedOkRecord(r) && sigOk(r));
+      const alone = new Map();
+      const groupKey = (r) => {
+        if (typeof r.panel_run_id === "string" && r.panel_run_id) return `panel ${r.panel_run_id}`;
+        if (!alone.has(r)) alone.set(r, `alone ${alone.size}`);
+        return alone.get(r);
+      };
+      const hasClaim = (r) => Object.prototype.hasOwnProperty.call(r, "diversity");
+      const claimBad = (r) => {
+        if (!hasClaim(r)) return false;
+        const fromLedger = validRecs.filter((v) => groupKey(v) === groupKey(r)).map((v) => v.provider);
+        if (!securityChoice.checkDiversityClaim(r.diversity, fromLedger).ok) return true;
+        if (Array.isArray(r.lanes)) {
+          const fromLanes = r.lanes.filter((l) => l && l.ok === true).map((l) => l.provider);
+          if (!securityChoice.checkDiversityClaim(r.diversity, fromLanes).ok) return true;
+        }
+        return false;
+      };
+      const okRec = recs.find((r) => r.ok === true && !r.fallback && isWellFormedOkRecord(r) && sigOk(r) && !claimBad(r));
+      const fbRec = recs.find((r) => r.ok === true && r.fallback && isWellFormedOkRecord(r) && sigOk(r) && !claimBad(r));
+      const forgedRec = recs.find((r) => r.ok === true && isWellFormedOkRecord(r) && sigOk(r) && claimBad(r));
       const illTypedRec = recs.find((r) => r.ok === true && !isWellFormedOkRecord(r));
       const unsignedRec = requireSignature
         ? recs.find((r) => r.ok === true && isWellFormedOkRecord(r) && !verifyRecord(r))
@@ -223,6 +285,11 @@ function verifyGauntlet(args = {}) {
         record = unsignedRec;
         wellFormed = false;
         illTypedTaint = true;
+      } else if (forgedRec) {
+        status = "forged-diversity";
+        record = forgedRec;
+        wellFormed = false;
+        illTypedTaint = true;
       } else if (illTypedRec) {
         status = "ill-typed";
         record = illTypedRec;
@@ -233,6 +300,23 @@ function verifyGauntlet(args = {}) {
         record = failRec || recs[recs.length - 1];
         wellFormed = null;
       }
+
+      if (requireMultiLab.has(role) || recs.some(hasClaim)) {
+        const groups = new Map();
+        for (const v of validRecs) {
+          const k = groupKey(v);
+          if (!groups.has(k)) groups.set(k, []);
+          groups.get(k).push(v.provider);
+        }
+        const anyMulti = [...groups.values()].some((p) => securityChoice.deriveDiversity(p) === securityChoice.MULTI_LAB);
+        const all = validRecs.map((v) => v.provider);
+        const flat = securityChoice.deriveDiversity(all);
+        diversity = anyMulti
+          ? securityChoice.MULTI_LAB
+          : flat === securityChoice.MULTI_LAB
+            ? securityChoice.SINGLE_LAB
+            : flat;
+      }
     }
 
     let satisfied;
@@ -241,7 +325,12 @@ function verifyGauntlet(args = {}) {
     else if (status === "failed") satisfied = false;
     else satisfied = false;
 
-    return { role, status, satisfied, record, count: recs.length, wellFormed };
+    if (satisfied && requireMultiLab.has(role) && diversity !== securityChoice.MULTI_LAB) {
+      satisfied = false;
+      if (diversity === securityChoice.CLAUDE_ONLY || diversity === securityChoice.SINGLE_LAB) status = diversity;
+    }
+
+    return { role, status, satisfied, record, count: recs.length, wellFormed, ...(diversity !== undefined ? { diversity } : {}) };
   });
 
   const missingRoles = roleResults
@@ -253,6 +342,7 @@ function verifyGauntlet(args = {}) {
   return {
     ok: missingRoles.length === 0 && !malformedTainted,
     runId,
+    ...(gauntletRunId ? { gauntletRunId, foreignRunExcluded } : {}),
     sprintId: sprintId || undefined,
     window: { sinceMs, untilMs },
     completionsFile,
@@ -311,6 +401,10 @@ if (require.main === module) {
           "  --allow-failed      Accepted for backward compat; no longer greens a pure-failed role.",
           "                      A role whose only record is ok:false is never satisfied regardless of this flag.",
           "  --strict-fallback   Fail when any role only fell back to Claude (default: fell-back counts as ran).",
+          "  --multi-lab-roles a,b  Roles that must be reviewed by two or more labs (e.g. security-reviewer).",
+          "                      Derived from the signed records' provider stamps, never from a label: a",
+          "                      Claude-only (or one-lab) result is reported and does not satisfy the role; a",
+          "                      record claiming a diversity its stamps do not back is refused.",
           "  --no-require-sig    Disable origin-proof signature verification. Default is ON — a",
           "                      forged UNSIGNED ok:true record is fail-closed as 'unsigned'. Escape for",
           "                      transition/debug only; also MC_GAUNTLET_REQUIRE_SIG=0.",
@@ -320,6 +414,7 @@ if (require.main === module) {
     }
 
     const runId = getFlag("run") || getFlag("run-id");
+    const gauntletRunParsed = parseRequiredFlag(argv, "gauntlet-run");
     const sprintIdArg = getFlag("sprint");
     const rolesArg = getFlag("roles");
     const since = getFlag("since");
@@ -328,6 +423,14 @@ if (require.main === module) {
     const jsonMode = argv.includes("--json");
     const allowFailed = argv.includes("--allow-failed");
     const strictFallback = argv.includes("--strict-fallback");
+    const multiLabArg = getFlag("multi-lab-roles");
+    if (argv.includes("--multi-lab-roles") && (multiLabArg === undefined || multiLabArg === true)) {
+      process.stderr.write("Usage error: --multi-lab-roles needs a comma-separated role list. See --help.\n");
+      process.exit(2);
+    }
+    const requireMultiLabRoles = multiLabArg
+      ? String(multiLabArg).split(",").map((s) => s.trim()).filter(Boolean)
+      : undefined;
     const requireSignature =
       !argv.includes("--no-require-sig") && mcEnv.readEnv("GAUNTLET_REQUIRE_SIG") !== "0";
 
@@ -367,6 +470,14 @@ if (require.main === module) {
       }
     }
 
+    if (gauntletRunParsed.error) {
+      process.stderr.write(
+        `gauntlet-verify: ${gauntletRunParsed.error}. Refusing — a missing/ambiguous id would silently run an UNBOUND verify.
+`,
+      );
+      process.exit(2);
+    }
+
     const result = verifyGauntlet({
       runId: runId && runId !== true ? runId : undefined,
       sprintId: hasSprintCorrelation ? String(sprintIdArg) : undefined,
@@ -378,6 +489,8 @@ if (require.main === module) {
       allowFailed,
       strictFallback,
       requireSignature,
+      requireMultiLabRoles,
+      gauntletRunId: gauntletRunParsed.present ? gauntletRunParsed.value : undefined,
     });
 
     if (jsonMode) {
@@ -430,6 +543,10 @@ if (require.main === module) {
         } else if (r.status === "unsigned" && r.record) {
           const provider = r.record.provider || "?";
           detail = `ok:true well-formed but UNSIGNED/forged — no valid origin-proof signature (provider=${provider}) — NOT trusted (fail-closed)`;
+        } else if (r.status === "forged-diversity" && r.record) {
+          detail = `signed record claims diversity ${JSON.stringify(r.record.diversity)} but its provider stamps do not back it — claim REFUSED (fail-closed)`;
+        } else if ((r.status === "claude-only" || r.status === "single-lab") && r.record) {
+          detail = `reviewed by ${r.status === "claude-only" ? "Claude only" : "one lab"} — no second lab; NOT a multi-lab pass`;
         } else if (r.record) {
           const provider = r.record.provider || "?";
           const model = r.record.model || "?";

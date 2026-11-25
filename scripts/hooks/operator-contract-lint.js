@@ -49,7 +49,6 @@ function main() {
   }
 
   if (!contractCfg.enabled || contractCfg.strictness === "off") {
-    telemetry({ verdict: "pass", reason: "disabled", strictness: contractCfg.strictness });
     process.exit(0);
   }
 
@@ -70,7 +69,6 @@ function main() {
   }
 
   if (resolved.skip) {
-    telemetry({ verdict: "pass", reason: `skipped:${resolved.reason}` });
     process.exit(0);
   }
 
@@ -89,12 +87,14 @@ function main() {
   }
 
   const codes = result.findings.map((f) => f.code);
-  telemetry({
-    verdict: result.verdict,
-    strictness: contractCfg.strictness,
-    findings: codes,
-    lines: resolved.text.split(/\r\n|\r|\n/).length,
-  });
+  if (result.verdict !== "pass") {
+    telemetry({
+      verdict: result.verdict,
+      strictness: contractCfg.strictness,
+      findings: codes,
+      lines: resolved.text.split(/\r\n|\r|\n/).length,
+    });
+  }
 
   if (result.verdict !== "block") {
     if (result.verdict === "warn") {

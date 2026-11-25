@@ -21,6 +21,7 @@ function resolveTargets(opts) {
   const root = (opts && opts.projectRoot) || PROJECT;
   return {
     roadmap: path.join(root, "ROADMAP.md"),
+    roadmapArchive: path.join(root, "trackers", "ROADMAP-ARCHIVE.md"),
     releases: path.join(root, "RELEASES.md"),
   };
 }
@@ -64,6 +65,7 @@ function appendSprintRow(args, opts) {
       row,
       keyCol: 0,
       key: `[${args.id}]`,
+      archiveFile: targets.roadmapArchive,
     });
   }, args);
 }
@@ -246,7 +248,7 @@ function escapeCell(s) {
   return String(s).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }
 
-function writeRow({ file, anchor, row, keyCol, key }) {
+function writeRow({ file, anchor, row, keyCol, key, archiveFile }) {
   if (!fs.existsSync(file)) {
     return {
       written: false,
@@ -307,6 +309,20 @@ function writeRow({ file, anchor, row, keyCol, key }) {
       file,
       row: dupe.content,
     };
+  }
+  if (archiveFile && fs.existsSync(archiveFile)) {
+    const archived = fs
+      .readFileSync(archiveFile, "utf8")
+      .split(/\r?\n/)
+      .find((l) => /^\|/.test(l) && (parseRow(l)[keyCol] || "").includes(key));
+    if (archived) {
+      return {
+        written: false,
+        reason: "already-present-in-archive",
+        file: archiveFile,
+        row: archived,
+      };
+    }
   }
 
   const insertAt = sepLine + 1;
@@ -521,6 +537,28 @@ function selfTest() {
     if (r.written) throw new Error("expected written:false, got " + JSON.stringify(r));
     if (r.reason !== "already-present")
       throw new Error("expected reason:already-present, got " + r.reason);
+    return r;
+  });
+
+  check("appendSprintRow skips a sprint already in the archive", () => {
+    const archive = path.join(tmpdir, "ROADMAP-ARCHIVE.md");
+    fs.writeFileSync(
+      archive,
+      "| Sprint | Title | Status | Started | Closed | Release |\n|---|---|---|---|---|---|\n| [SP-99999999-002](.) | Archived | closed | 2026-01-01T00:00:00Z |  |  |\n",
+      "utf8",
+    );
+    const r = writeRow({
+      file: roadmap,
+      anchor: ANCHORS.roadmapSprints,
+      row: "| [SP-99999999-002](.) | Archived | closed | 2026-01-01T00:00:00Z |  |  |",
+      keyCol: 0,
+      key: "[SP-99999999-002]",
+      archiveFile: archive,
+    });
+    if (r.written || r.reason !== "already-present-in-archive")
+      throw new Error("expected already-present-in-archive, got " + JSON.stringify(r));
+    if (fs.readFileSync(roadmap, "utf8").includes("SP-99999999-002"))
+      throw new Error("archived sprint row was added to the roadmap");
     return r;
   });
 

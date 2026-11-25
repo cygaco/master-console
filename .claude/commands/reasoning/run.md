@@ -1,11 +1,5 @@
 ---
 description: Reason through a problem or decision — auto-detects quick triage vs deep deliberation
-says:
-  - reason through this
-  - think it through
-  - help me decide
-  - reasoning run
-says-args: free-text
 ---
 
 # /reasoning:run — Think, Then Act

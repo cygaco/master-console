@@ -1,12 +1,7 @@
 ---
+disable-model-invocation: true
 description: Design and create a new hook from a description
 user-invocable: true
-says:
-  - add a hook
-  - make a hook that
-  - new hook
-  - hooks add
-says-args: free-text
 ---
 
 # /hooks:add — Create a New Hook

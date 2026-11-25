@@ -31,7 +31,7 @@ function diagnose({ current, legacy, currentLabel = "current", legacyLabel = "le
       "legacy",
       true,
       null,
-      `DEPRECATED: only ${legacyLabel} is set — falling back to it; set ${currentLabel} instead (the legacy name is removed in 2.2.0)`
+      `DEPRECATED: only ${legacyLabel} is set — falling back to it; set ${currentLabel} instead (the legacy name is removed in 3.0.0)`
     );
   }
   if (c.fingerprint === l.fingerprint) {

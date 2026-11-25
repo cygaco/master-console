@@ -200,22 +200,22 @@ agree — keep them in sync.
 | qa | openai | independent failure-mode pass |
 | ops-analyst | openai | cross-run synthesis (formerly `learner`) |
 | redteam | openai | superseded by `security-reviewer` (antigravity/agy); back-compat FLOOR = openai, the verifiable GPT lane (the individual gemini CLI is SUNSET) |
-| design-lead | openai | gpt-5.6-sol xhigh — product design/UX/flows (ADR-0007) |
-| director-of-product | openai | gpt-5.6-sol xhigh — product strategy/sequencing/JTBD |
-| product-lead | openai | gpt-5.6-terra high — requirement authoring PRD/stories/AC |
-| director-of-growth | openai | gpt-5.6-sol high — go-to-market/message judgment |
-| copy-lead | openai | gpt-5.6-terra xhigh — direct-response copy |
-| conversion-lead | openai | gpt-5.6-terra xhigh — conversion copy + landing page |
-| marketing-lead | openai | gpt-5.6-terra high — paid media / campaigns / EQ scoring |
-| research-lead | antigravity | gemini-3.1-pro-high (agy) — audience research, thinking-on |
-| frontend-reviewer | claude | claude-opus-5 — code-quality review of the Claude FE builder (see CROSS-PROVIDER FALLBACK note below) |
-| backend-reviewer | claude | claude-opus-5 — code-quality review of the Claude BE builder (see CROSS-PROVIDER FALLBACK note below) |
-| qa-reviewer | claude | claude-opus-5 — traceability + integrity + functional (see CROSS-PROVIDER FALLBACK note below) |
-| security-reviewer | antigravity | gemini-3.1-pro-high via agy (Gemini lab; individual gemini CLI sunset) — 3-lab panel: + gpt-5.6-sol hunter + claude-opus-4-8@max in-process hunter + fable-5 planner/judge (ADR-0016) |
+| design-lead | openai | gpt-6.1-sol xhigh — product design/UX/flows (ADR-0007) |
+| director-of-product | openai | gpt-6.1-sol high — product strategy/sequencing/JTBD |
+| product-lead | openai | gpt-6.1-sol xhigh — requirement authoring PRD/stories/AC |
+| director-of-growth | openai | gpt-6.1-sol high — go-to-market/message judgment |
+| copy-lead | openai | gpt-6.1-sol xhigh — direct-response copy |
+| conversion-lead | openai | gpt-6.1-sol xhigh — conversion copy + landing page |
+| marketing-lead | openai | gpt-6.1-sol high — paid media / campaigns / EQ scoring |
+| research-lead | antigravity | gemini-4-argon-high (agy "Gemini 4 Argon (High)") — audience research, thinking-on |
+| frontend-reviewer | claude | claude-opus-5-5 high — code-quality review of the Claude FE builder (see CROSS-PROVIDER FALLBACK note below) |
+| backend-reviewer | claude | claude-opus-5-5 high — code-quality review of the Claude BE builder (see CROSS-PROVIDER FALLBACK note below) |
+| qa-reviewer | claude | claude-opus-5-5 xhigh — traceability + integrity + functional (see CROSS-PROVIDER FALLBACK note below) |
+| security-reviewer | antigravity | gemini-4-argon-high via agy (Gemini lab; individual gemini CLI sunset) — 3-lab panel: + gpt-5.6-sol hunter + claude-opus-5-5@max in-process hunter + claude-opus-5-5 planner/judge (ADR-0016) |
 | cabinet | openai | freeform cross-provider consult / second opinion — NO strict output schema (formerly `advisor`/`consult`) |
 
 > **CROSS-PROVIDER FALLBACK — reduces independence.** When a provider's circuit breaker is tripped (for example
-> `openai` credits exhausted), its lanes can be repinned `openai → claude` / `claude-opus-5` on all four surfaces
+> `openai` credits exhausted), its lanes can be repinned `openai → claude` / `claude-opus-5-5` on all four surfaces
 > together — the registry, `providers.js`, `catalog.js`, and this table. A repin that lands in the code tables but
 > not the doc is the doc-vs-code drift class `dispatch-routing-parity.js` exists to catch.
 >
@@ -232,6 +232,7 @@ agree — keep them in sync.
 > node scripts/dispatch-agent.js design-lead <prompt-file>
 > ```
 > **Do NOT** dispatch it via the in-process Agent tool (`Agent(subagent_type:"design-lead")`) or via `epsilon-runtime record-inprocess` — those are for the Claude **in-process** roster only (managers/leads/directors + design-quality/visual-review). `record-inprocess` will refuse it as a route mismatch **by design**. Every other lead/director (quality-lead, the frontend/backend/security leads, etc.) is Claude in-process; the GPT product-leadership chain (design-lead, product-lead, director-of-product, director-of-growth) is the intentional cross-provider set.
+> **Exception — the chain walked to Claude.** Each of these roles has an ordered model chain (`.claude/agents/_org/presets/default.json`): GPT, then Gemini, then Claude Opus 5.5. When the user is signed in to neither Codex nor Gemini (`node scripts/dispatch/signin.js`), the model resolver lands on the Claude entry, `dispatch-agent.js` hands Claude back (exit 2, naming the model), and `scripts/sprint/epsilon-runtime.js` routes the role **in-process** on that Claude model — so for that user the in-process spawn and `record-inprocess` are the correct route (the role's plan carries `chain_walk` saying why). The fail-closed security panel is never re-routed this way.
 
 Claude is the **fallback** for any non-Claude role on failure (`required-fallback.js`),
 not the default for the review layer — cross-provider diversity is the point.
@@ -254,7 +255,7 @@ reviewer.
 **Security runs as a 3-lab panel.** `security-reviewer` (which supersedes `redteam`)
 fires the Gemini lab via Antigravity `agy` (primary, corpus-diverse — the individual
 `gemini` CLI is SUNSET, so the Gemini lab routes through agy), then a `gpt-5.6-sol`
-jailbreak pass, then a `claude-opus-4-8` in-process hunter (last, so it never displaces
+jailbreak pass, then a `claude-opus-5-5` in-process hunter (last, so it never displaces
 the cross-family coverage; ADR-0016). A second GPT pass via the `--provider openai`
 override keeps two-model-family coverage if the agy lane is unavailable — the verifiable
 GPT floor is where the binding default sits (ADR-0031).
@@ -567,6 +568,13 @@ worktree path named in its brief; naming the path in prose changes nothing.
 
 This is the in-process sibling of the cwd-premise rule (which covers the CLI-wrapper lane only —
 its named enforcer cannot reach an Agent-tool spawn, because there is no wrapper to inject cwd).
+
+**Trap 3 — a refusal is not always a WarpOS guard.** Claude Code's own Agent worktree isolation
+refuses writes to a shared checkout for build-chain agent types; no hook under `paths.hooks` does
+this. Before you change a guard after a refusal, grep `paths.hooks` for the refusal text; if it is
+not there, the guard is correct and must not be routed around. When an in-process worker must edit an
+existing worktree, spawn it as `general-purpose` with a STEP-0 probe (write one file there, then
+`git -C <worktree> status`) and stop it within minutes if the write does not land.
 
 **Related transport trap — the gemini/`agy` argv ceiling.** The route assembles the whole prompt into
 argv and BLOCKS (does not truncate) above ~32,000 assembled characters. A ~30KB gate file plus its

@@ -152,3 +152,55 @@ test("paths.goldenPaths resolves to the glossary file in the generated registry"
   const { PATHS } = require(path.join(ROOT, "scripts", "hooks", "lib", "paths"));
   assert.strictEqual(path.resolve(PATHS.goldenPaths), path.join(ROOT, "_planning", "golden-paths.json"));
 });
+
+test("smoke_not_executable: a smoke path run-tests.js would not discover, or that is quarantined, is refused", () => {
+  const d = clone(REAL);
+  const p = d.features[0].smoke_tests[0];
+  const view = { discoverable: new Set(d.features.flatMap((f) => f.smoke_tests)), quarantined: new Set() };
+  assert.ok(!codes(validate(d, { root: ROOT, openEdIds: OPEN, ...view })).includes("smoke_not_executable"));
+  const undisc = { discoverable: new Set(), quarantined: new Set() };
+  const r1 = validate(d, { root: ROOT, openEdIds: OPEN, ...undisc });
+  assert.ok(codes(r1).includes("smoke_not_executable"));
+  const r2 = validate(d, { root: ROOT, openEdIds: OPEN, discoverable: view.discoverable, quarantined: new Set([p]) });
+  assert.ok(r2.findings.some((f) => f.code === "smoke_not_executable" && /quarantined/.test(f.detail)));
+  assert.ok(!codes(validate(d, { root: ROOT, openEdIds: OPEN })).includes("smoke_not_executable"));
+});
+
+test("loadRunnerView: only ENOENT means nothing quarantined; a corrupt register is an unknown view", () => {
+  const { loadRunnerView } = require("./golden-paths-validate");
+  const root = fs.mkdtempSync(path.join(require("os").tmpdir(), "gp-rv-"));
+  try {
+    const absent = loadRunnerView(root);
+    assert.ok(absent.quarantined instanceof Set && absent.quarantined.size === 0);
+    fs.mkdirSync(path.join(root, "tests"));
+    fs.writeFileSync(path.join(root, "tests", "quarantine.json"), "{ not json");
+    const bad = loadRunnerView(root);
+    assert.strictEqual(bad.quarantined, null);
+    assert.ok(bad.errors.some((e) => /quarantine\.json unreadable/.test(e)), bad.errors.join("|"));
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+test("CLI fails closed (runner_view_unknown, exit 1) when discovery or the quarantine register is unreadable", () => {
+  const root = fs.mkdtempSync(path.join(require("os").tmpdir(), "gp-cli-"));
+  try {
+    fs.mkdirSync(path.join(root, "tests"));
+    fs.writeFileSync(path.join(root, "tests", "quarantine.json"), "{ not json");
+    const doc = path.join(__dirname, "fixtures", "golden-paths", "sample.json");
+    const r = spawnSync(process.execPath, [SCRIPT, "--file", doc, "--root", root, "--json", "--ledger", path.join(root, "none.jsonl")], { encoding: "utf8" });
+    assert.strictEqual(r.status, 1, r.stdout + r.stderr);
+    const out = JSON.parse(r.stdout);
+    const unk = out.findings.filter((f) => f.code === "runner_view_unknown").map((f) => f.detail).join("\n");
+    assert.match(unk, /discovery unavailable/);
+    assert.match(unk, /quarantine\.json unreadable/);
+    assert.strictEqual(out.ok, false);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+test("smoke_not_executable: a real prefix-style *.js smoke path (not *.test.js) is flagged against the real runner view", () => {
+  const { loadRunnerView } = require("./golden-paths-validate");
+  const view = loadRunnerView(ROOT);
+  assert.ok(view.discoverable instanceof Set && view.discoverable.size > 0);
+  const d = clone(REAL);
+  d.features[0].smoke_tests = ["scripts/mc/test-cross-version-replay.js"];
+  assert.ok(codes(validate(d, { root: ROOT, openEdIds: OPEN, ...view })).includes("smoke_not_executable"));
+});

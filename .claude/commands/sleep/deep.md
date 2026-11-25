@@ -1,11 +1,6 @@
 ---
 description: "Full sleep cycle — all 6 phases: NREM consolidation, cleanup, replay, REM dreaming, repair, growth (~15-30 min)"
 user-invocable: true
-says:
-  - deep sleep
-  - full sleep cycle
-  - sleep deep
-  - run the sleep cycle
 ---
 
 # /sleep:deep — Full Sleep Cycle

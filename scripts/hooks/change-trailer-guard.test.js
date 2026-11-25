@@ -96,44 +96,56 @@ function assertThreeLines(stderr) {
   for (const l of CT.FIX_LINES) assert.ok(stderr.includes(l), `stderr names the line "${l}"; got: ${stderr}`);
 }
 
-test("RED: `git commit -m x` under an active sprint is blocked (exit 2) with the three lines", () => {
+function assertWarned(r, label) {
+  const why = `${label ? label + ": " : ""}${r.stdout}${r.stderr}`;
+  assert.strictEqual(r.status, 0, `never blocks: ${why}`);
+  assert.ok(/change-trailer-guard: warning:/.test(r.stderr), `prints the warning: ${why}`);
+  assertThreeLines(r.stderr);
+}
+
+function assertSilent(r, label) {
+  const why = `${label ? label + ": " : ""}${r.stdout}${r.stderr}`;
+  assert.strictEqual(r.status, 0, why);
+  assert.ok(!/change-trailer-guard: warning:/.test(r.stderr), `no warning expected: ${why}`);
+}
+
+test("`git commit -m x` under an active sprint exits 0 with the warning and the three lines", () => {
   const repo = makeRepo();
   const r = run(bash('git commit -m "x"'), { cwd: repo });
-  assert.strictEqual(r.status, 2, r.stderr);
-  assertThreeLines(r.stderr);
-  assert.ok(kinds(repo).includes("change-trailer-guard-blocked"), "the block is logged");
+  assertWarned(r);
+  assert.ok(kinds(repo).includes("change-trailer-guard-warned"), "the warning is logged");
+  assert.ok(!kinds(repo).includes("change-trailer-guard-blocked"), "nothing is logged as a block");
 });
 
-test("GREEN: the same commit with the trailer passes", () => {
+test("the same commit with the trailer passes silently", () => {
   const repo = makeRepo();
-  assert.strictEqual(run(bash(`git commit -m "x" -m "${TRAILER}"`), { cwd: repo }).status, 0);
-  assert.strictEqual(run(bash(`git commit -m "x
+  assertSilent(run(bash(`git commit -m "x" -m "${TRAILER}"`), { cwd: repo }));
+  assertSilent(run(bash(`git commit -m "x
 
-${TRAILER}"`), { cwd: repo }).status, 0);
-  assert.strictEqual(run(bash(`git commit -m "x" --trailer "Change: update" --trailer "Blast: minor" --trailer "Risks: hooks"`), { cwd: repo }).status, 0, "--trailer flags count");
+${TRAILER}"`), { cwd: repo }));
+  assertSilent(run(bash(`git commit -m "x" --trailer "Change: update" --trailer "Blast: minor" --trailer "Risks: hooks"`), { cwd: repo }), "--trailer flags count");
 });
 
-test("an invalid trailer value is blocked and named", () => {
+test("an invalid trailer value is warned about and named", () => {
   const repo = makeRepo();
   const r = run(bash('git commit -m "x" -m "Change: feature\nBlast: minor\nRisks: none"'), { cwd: repo });
-  assert.strictEqual(r.status, 2);
+  assertWarned(r);
   assert.ok(/invalid Change "feature"/.test(r.stderr));
 });
 
-test("`--amend --no-edit` inherits (not blocked); `--amend -m x` carries a NEW message and is blocked", () => {
+test("`--amend --no-edit` inherits (silent); `--amend -m x` carries a NEW message and is warned about", () => {
   const repo = makeRepo();
-  assert.strictEqual(run(bash("git commit --amend --no-edit"), { cwd: repo }).status, 0);
-  assert.strictEqual(run(bash("git commit -a --amend --no-edit"), { cwd: repo }).status, 0);
-  assert.strictEqual(run(bash("git commit --amend -C HEAD"), { cwd: repo }).status, 0, "-C reuses a message");
-  assert.strictEqual(run(bash('git commit --amend -m "new message"'), { cwd: repo }).status, 2);
+  assertSilent(run(bash("git commit --amend --no-edit"), { cwd: repo }));
+  assertSilent(run(bash("git commit -a --amend --no-edit"), { cwd: repo }));
+  assertSilent(run(bash("git commit --amend -C HEAD"), { cwd: repo }), "-C reuses a message");
+  assertWarned(run(bash('git commit --amend -m "new message"'), { cwd: repo }));
 });
 
-test("heredoc -m form: trailered passes, trailer-less blocks", () => {
+test("heredoc -m form: trailered is silent, trailer-less warns", () => {
   const repo = makeRepo();
   const heredoc = (body) => `git commit -m "$(cat <<'EOF'\n${body}\nEOF\n)"`;
-  assert.strictEqual(run(bash(heredoc(`subject\n\nbody (with parens) and "quotes"\n\n${TRAILER}\n\nCo-Authored-By: C <c@example.com>`)), { cwd: repo }).status, 0);
-  const bad = run(bash(heredoc("subject\n\nbody only\n\nCo-Authored-By: C <c@example.com>")), { cwd: repo });
-  assert.strictEqual(bad.status, 2, bad.stderr);
+  assertSilent(run(bash(heredoc(`subject\n\nbody (with parens) and "quotes"\n\n${TRAILER}\n\nCo-Authored-By: C <c@example.com>`)), { cwd: repo }));
+  assertWarned(run(bash(heredoc("subject\n\nbody only\n\nCo-Authored-By: C <c@example.com>")), { cwd: repo }));
 });
 
 test("-F <file> and -F - <<heredoc> are read", () => {
@@ -142,76 +154,90 @@ test("-F <file> and -F - <<heredoc> are read", () => {
   const bad = path.join(repo, "bad.txt");
   fs.writeFileSync(good, `s\n\n${TRAILER}\n`);
   fs.writeFileSync(bad, "s\n");
-  assert.strictEqual(run(bash(`git commit -F "${good.replace(/\\/g, "/")}"`), { cwd: repo }).status, 0);
-  assert.strictEqual(run(bash(`git commit -F "${bad.replace(/\\/g, "/")}"`), { cwd: repo }).status, 2);
-  assert.strictEqual(run(bash("git commit -F bad.txt"), { cwd: repo }).status, 2, "relative to the payload cwd");
-  assert.strictEqual(run(bash(`git commit -F - <<'EOF'\ns\n\n${TRAILER}\nEOF`), { cwd: repo }).status, 0);
-  assert.strictEqual(run(bash("git commit -F - <<'EOF'\ns\nEOF"), { cwd: repo }).status, 2);
+  assertSilent(run(bash(`git commit -F "${good.replace(/\\/g, "/")}"`), { cwd: repo }));
+  assertWarned(run(bash(`git commit -F "${bad.replace(/\\/g, "/")}"`), { cwd: repo }));
+  assertWarned(run(bash("git commit -F bad.txt"), { cwd: repo }), "relative to the payload cwd");
+  assertSilent(run(bash(`git commit -F - <<'EOF'\ns\n\n${TRAILER}\nEOF`), { cwd: repo }));
+  assertWarned(run(bash("git commit -F - <<'EOF'\ns\nEOF"), { cwd: repo }));
 });
 
 test("chained commands and `git -C <dir>` are judged against the repo being committed to", () => {
   const repo = makeRepo();
-  assert.strictEqual(run(bash('git add -A && git commit -m "x"'), { cwd: repo }).status, 2);
-  assert.strictEqual(run(bash(`git add -A && git commit -m "x" -m "${TRAILER}" && git status`), { cwd: repo }).status, 0);
+  assertWarned(run(bash('git add -A && git commit -m "x"'), { cwd: repo }));
+  assertSilent(run(bash(`git add -A && git commit -m "x" -m "${TRAILER}" && git status`), { cwd: repo }));
   const elsewhere = tmpDir("elsewhere");
   const target = repo.replace(/\\/g, "/");
-  assert.strictEqual(run(bash(`git -C "${target}" commit -m "x"`, elsewhere), { cwd: elsewhere }).status, 2, "the target repo has the live sprint");
-  assert.strictEqual(run(bash('git commit -m "x"', elsewhere), { cwd: elsewhere }).status, 0, "cwd is not a repository: nothing to enforce");
+  assertWarned(run(bash(`git -C "${target}" commit -m "x"`, elsewhere), { cwd: elsewhere }), "the target repo has the live sprint");
+  assertSilent(run(bash('git commit -m "x"', elsewhere), { cwd: elsewhere }), "cwd is not a repository: nothing to check");
 });
 
 test("clustered short flags (-am, -qm) are read", () => {
   const repo = makeRepo();
-  assert.strictEqual(run(bash('git commit -am "x"'), { cwd: repo }).status, 2);
-  assert.strictEqual(run(bash(`git commit -qm "x
+  assertWarned(run(bash('git commit -am "x"'), { cwd: repo }));
+  assertSilent(run(bash(`git commit -qm "x
 
-${TRAILER}"`), { cwd: repo }).status, 0);
+${TRAILER}"`), { cwd: repo }));
 });
 
-test("scope: no live sprint, no registry, non-commit commands and quoted mentions never block", () => {
+test("scope: no live sprint, no registry, non-commit commands and quoted mentions never warn", () => {
   const closed = makeRepo({ status: "closed" });
-  assert.strictEqual(run(bash('git commit -m "x"'), { cwd: closed }).status, 0, "primary sprint closed");
+  assertSilent(run(bash('git commit -m "x"'), { cwd: closed }), "primary sprint closed");
   const none = makeRepo({ registry: false });
-  assert.strictEqual(run(bash('git commit -m "x"'), { cwd: none }).status, 0, "no sprint registry");
+  assertSilent(run(bash('git commit -m "x"'), { cwd: none }), "no sprint registry");
   const live = makeRepo();
   for (const c of ['echo "git commit -m x"', "git log --grep commit", "git status", "npm run commit-lint", 'git push origin main']) {
-    assert.strictEqual(run(bash(c), { cwd: live }).status, 0, c);
+    assertSilent(run(bash(c), { cwd: live }), c);
   }
-  assert.strictEqual(run({ tool_name: "Edit", tool_input: { file_path: "x" } }, { cwd: live }).status, 0);
+  assertSilent(run({ tool_name: "Edit", tool_input: { file_path: "x" } }, { cwd: live }));
 });
 
-test("no active sprint, but the STAGED diff touches the tracked surface — trailer still required", () => {
+test("no active sprint, but the STAGED diff touches the tracked surface — the trailer is still checked", () => {
   const none = makeRepo({ registry: false });
   fs.mkdirSync(path.join(none, "scripts"), { recursive: true });
   fs.writeFileSync(path.join(none, "scripts", "x.js"), "module.exports = 1;\n");
   git(none, ["add", "scripts/x.js"]);
-  const red = run(bash('git commit -m "x"'), { cwd: none });
-  assert.strictEqual(red.status, 2, red.stdout + red.stderr);
-  const green = run(bash(`git commit -m "x" -m "${TRAILER}"`), { cwd: none });
-  assert.strictEqual(green.status, 0, green.stdout + green.stderr);
+  assertWarned(run(bash('git commit -m "x"'), { cwd: none }));
+  assertSilent(run(bash(`git commit -m "x" -m "${TRAILER}"`), { cwd: none }));
 
   git(none, ["reset"]);
   fs.mkdirSync(path.join(none, "docs"), { recursive: true });
   fs.writeFileSync(path.join(none, "docs", "notes.md"), "hello\n");
   git(none, ["add", "docs/notes.md"]);
-  const outside = run(bash('git commit -m "x"'), { cwd: none });
-  assert.strictEqual(outside.status, 0, outside.stdout + outside.stderr);
+  assertSilent(run(bash('git commit -m "x"'), { cwd: none }));
 
   for (const prefix of [".claude", "framework", "tests"]) {
     const repo = makeRepo({ registry: false });
     fs.mkdirSync(path.join(repo, prefix), { recursive: true });
     fs.writeFileSync(path.join(repo, prefix, "y.txt"), "y\n");
     git(repo, ["add", `${prefix}/y.txt`]);
-    const r = run(bash('git commit -m "x"'), { cwd: repo });
-    assert.strictEqual(r.status, 2, `${prefix}: ${r.stdout}${r.stderr}`);
+    assertWarned(run(bash('git commit -m "x"'), { cwd: repo }), prefix);
   }
+});
+
+test("scope: the tracked-surface rule is the HOME repo's convention only — a FOREIGN repo touching scripts/ with no sprint never warns", () => {
+  const home = makeRepo({ registry: false });
+  const foreign = makeRepo({ registry: false });
+  const posix = (p) => p.replace(/\\/g, "/");
+  fs.mkdirSync(path.join(foreign, "scripts"), { recursive: true });
+  fs.writeFileSync(path.join(foreign, "scripts", "x.js"), "module.exports = 1;\n");
+  git(foreign, ["add", "scripts/x.js"]);
+  assertSilent(run(bash(`git -C "${posix(foreign)}" commit -m "x"`), { cwd: home }));
+  fs.mkdirSync(path.join(home, "scripts"), { recursive: true });
+  fs.writeFileSync(path.join(home, "scripts", "x.js"), "module.exports = 1;\n");
+  git(home, ["add", "scripts/x.js"]);
+  assertWarned(run(bash('git commit -m "x"'), { cwd: home }));
+  const foreignSprint = makeRepo({ status: "building" });
+  fs.writeFileSync(path.join(foreignSprint, "a.txt"), "a\n");
+  git(foreignSprint, ["add", "a.txt"]);
+  assertWarned(run(bash(`git -C "${posix(foreignSprint)}" commit -m "x"`), { cwd: home }));
 });
 
 test("unreadable commits are left to the commit-msg git hook: editor commit, unresolved substitution", () => {
   const live = makeRepo();
-  assert.strictEqual(run(bash("git commit"), { cwd: live }).status, 0, "editor message");
-  assert.strictEqual(run(bash('git commit -m "$(date)"'), { cwd: live }).status, 0, "unresolved $(...)");
-  assert.strictEqual(run(bash("git commit -F /nonexistent/file.txt"), { cwd: live }).status, 0, "unreadable -F");
-  assert.strictEqual(run(bash("git commit --fixup HEAD"), { cwd: live }).status, 0);
+  assertSilent(run(bash("git commit"), { cwd: live }), "editor message");
+  assertSilent(run(bash('git commit -m "$(date)"'), { cwd: live }), "unresolved $(...)");
+  assertSilent(run(bash("git commit -F /nonexistent/file.txt"), { cwd: live }), "unreadable -F");
+  assertSilent(run(bash("git commit --fixup HEAD"), { cwd: live }));
 });
 
 function poisonedGuard() {
@@ -292,10 +318,10 @@ test("unreadable stdin exits 0 and records an unreadable-stdin event carrying th
   assert.ok(/EBADF/.test(String(ev.data.error)), `the event carries the read error message, got ${JSON.stringify(ev.data.error)}`);
 });
 
-test("kill switch: RED blocked without it; MC_CHANGE_TRAILER=off is a silent no-op (even with a broken validator)", () => {
+test("kill switch: warns without it; MC_CHANGE_TRAILER=off is a silent no-op (even with a broken validator)", () => {
   const repo = makeRepo();
   const cmd = bash('git commit -m "x"');
-  assert.strictEqual(run(cmd, { cwd: repo }).status, 2, "RED");
+  assertWarned(run(cmd, { cwd: repo }), "without the switch");
   const off = run(cmd, { cwd: repo, env: MCENV.envPair("CHANGE_TRAILER", "off") });
   assert.strictEqual(off.status, 0, "GREEN");
   assert.strictEqual(off.stderr, "", "silent");
@@ -307,21 +333,19 @@ test("kill switch: RED blocked without it; MC_CHANGE_TRAILER=off is a silent no-
   assert.ok(!kinds(repo2).includes("change-trailer-guard-crash"), "off never even loads the validator");
 });
 
-test("MC_CHANGE_TRAILER=report demotes to report-only AND logs it", () => {
+test("MC_CHANGE_TRAILER=report is accepted and behaves like the default warning", () => {
   const repo = makeRepo();
   const r = run(bash('git commit -m "x"'), { cwd: repo, env: MCENV.envPair("CHANGE_TRAILER", "report") });
-  assert.strictEqual(r.status, 0);
-  assert.ok(/report-only/.test(r.stderr));
-  assertThreeLines(r.stderr);
-  assert.ok(kinds(repo).includes("change-trailer-report-only"));
+  assertWarned(r);
+  assert.ok(kinds(repo).includes("change-trailer-guard-warned"));
 });
 
 test("fixtures/hooks/change-trailer-guard payloads behave as named", () => {
   const repo = makeRepo();
   const load = (n) => JSON.parse(fs.readFileSync(path.join(FIXDIR, n), "utf8"));
-  assert.strictEqual(run(load("trailerless-commit.json"), { cwd: repo }).status, 2);
-  assert.strictEqual(run(load("amend-no-edit.json"), { cwd: repo }).status, 0);
-  assert.strictEqual(run(load("with-trailer.json"), { cwd: repo }).status, 0);
+  assertWarned(run(load("trailerless-commit.json"), { cwd: repo }));
+  assertSilent(run(load("amend-no-edit.json"), { cwd: repo }));
+  assertSilent(run(load("with-trailer.json"), { cwd: repo }));
 });
 
 test("registration: registry row (fail-open, PreToolUse Bash, fixture listed), settings.json and manifest agree", () => {

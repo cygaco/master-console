@@ -1,12 +1,5 @@
 ---
 description: Deep fix — Full diagnostic with automatic framework selection, 5 solutions, root cause analysis, and prevention
-says:
-  - deep fix
-  - root cause this
-  - diagnose it properly
-  - fix deep
-  - full diagnostic
-says-args: free-text
 ---
 
 # /fix:deep — Deep Diagnostic Fix

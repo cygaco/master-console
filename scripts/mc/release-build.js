@@ -145,6 +145,8 @@ const KNOWN_DANGLING_REFS = [
   { skill: ".claude/commands/karpathy/run.md", script: "scripts/score.js",
     reason: "(A) karpathy run-local generated artifact ($KARPATHY_BASE/<run-id>/scripts/score.js), not a canonical script" },
 
+  { skill: ".claude/commands/commit/land.md", script: "scripts/public-repo/generate.js",
+    reason: "(B) the public-copy step runs only in a repo that has a public emit and says to skip otherwise; the emit tooling is private to the publishing repo, not shipped" },
   { skill: ".claude/commands/scan/issues.md", script: "scripts/recurring-issues-helper.js",
     reason: "(B) recurring-issues ledger helper; the recurring-issues store tracks MC-framework bugs (canonical-dev), not shipped" },
   { skill: ".claude/commands/issues/list.md", script: "scripts/recurring-issues-helper.js",
@@ -161,6 +163,10 @@ const KNOWN_DANGLING_REFS = [
     reason: "(B) hook-guard promotion analysis; canonical-dev framework tuning, not shipped" },
   { skill: ".claude/commands/mc/setup.md", script: "scripts/mc-setup.js",
     reason: "(B) canonical installer invoked from a product via ../MC/scripts/mc-setup.js; lives in the canonical clone, never shipped" },
+  { skill: ".claude/commands/maps/all.md", script: "scripts/regen-maps.js",
+    reason: "(B) relationship-maps regeneration (.claude/project/maps/); canonical-dev framework-maintenance tool, not shipped — /maps:* degrade gracefully (touchpoint.js rebuilds the require-graph in-process when absent)" },
+  { skill: ".claude/commands/maps/require-graph.md", script: "scripts/regen-maps.js",
+    reason: "(B) relationship-maps regeneration (.claude/project/maps/); canonical-dev framework-maintenance tool, not shipped — the require-graph rebuilds in-process when the local file is absent" },
 
   { skill: ".claude/commands/session/recap.md", script: "scripts/session-recap.js",
     reason: "(C) session transcript recap; consumer-eligible, not yet installed into products" },

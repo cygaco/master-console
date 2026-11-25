@@ -8,6 +8,14 @@ const hookPoints = require("./hook-points");
 
 const SCHEMA = "mc/gauntlet-package/v1";
 const SELECTOR_VERSION = "1.0.0";
+const FULL_OBLIGATION_STAGES = Object.freeze([
+  { stage: 0, name: "trailer", kind: "mechanical" },
+  { stage: 1, name: "sanity", kind: "tests", files: "FULL_SUITE" },
+  { stage: 2, name: "smoke", kind: "tests", files: "GOLDEN_SMOKE_FLOOR" },
+  { stage: 3, name: "security-shallow", kind: "mechanical" },
+  { stage: 4, name: "review", kind: "agents", roster: [{ role: "qa-reviewer" }, { role: "security-reviewer" }] },
+  { stage: 5, name: "security-deep", kind: "agents", roster: [{ role: "security-reviewer" }] },
+]);
 const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
 const CHANGE_VALUES = ["bugfix", "update", "release"];
 const BLAST_VALUES = ["minor", "major"];
@@ -139,7 +147,7 @@ function selectPackage(input = {}) {
   const fourthSprintForced = sprintOrdinal !== null && sprintOrdinal % 4 === 0;
   if (fourthSprintForced) reasons.push(`fourth_sprint_full:ordinal=${sprintOrdinal}`);
 
-  const forcedFull = change === "release" || unmappedEscalation || fourthSprintForced;
+  const forcedFull = change === "release" || unmappedEscalation || fourthSprintForced || mapStale;
 
   let packageName;
   let crossProvider = false;
@@ -158,6 +166,7 @@ function selectPackage(input = {}) {
   reasons.push(`package=${packageName}${crossProvider ? " (cross-provider)" : ""}`);
 
   const unitRole = unitReviewerRole(input.composition);
+  const hasFrontend = ((input.composition && input.composition.unit_types) || []).some((t) => ["frontend", "ui"].includes(String(t).toLowerCase()));
   let roster = [];
   let budget = { wall_ms: 0, dispatches: 0 };
   let stageIds = [0, 1, 2, 3, 4];
@@ -172,9 +181,17 @@ function selectPackage(input = {}) {
   } else if (packageName === "combined-focused") {
     roster = [{ role: unitRole || "qa-reviewer", passes: ["primary"], scope: "focused" }];
     budget = { wall_ms: 15 * 60 * 1000, dispatches: 1 };
+    if (unitRole) {
+      roster.push({ role: "qa-reviewer", passes: ["primary"], scope: "focused" });
+      budget.dispatches += 1;
+    }
+    if (hasFrontend) {
+      roster.push({ role: "visual-review", passes: ["primary"], scope: "focused" });
+      budget.dispatches += 1;
+    }
     if (security.hit) {
       roster.push({ role: "security-reviewer", passes: ["primary", "second_pass", "third_pass"], scope: "focused+touchpoint" });
-      budget = { wall_ms: 40 * 60 * 1000, dispatches: 4 };
+      budget = { wall_ms: 40 * 60 * 1000, dispatches: budget.dispatches + 3 };
       stageIds = [0, 1, 2, 3, 4, 5];
       securityDeepPresent = true;
     }
@@ -183,9 +200,13 @@ function selectPackage(input = {}) {
     if (unitRole) roster.push({ role: unitRole, passes: ["primary"], scope: "focused+touchpoint" });
     roster.push({ role: "qa-reviewer", passes: ["primary"], scope: "touchpoint" });
     budget = { wall_ms: 40 * 60 * 1000, dispatches: 2 };
+    if (hasFrontend) {
+      roster.push({ role: "visual-review", passes: ["primary"], scope: "focused+touchpoint" });
+      budget.dispatches += 1;
+    }
     if (security.hit) {
       roster.push({ role: "security-reviewer", passes: ["primary", "second_pass", "third_pass"], scope: "focused+touchpoint" });
-      budget = { wall_ms: 75 * 60 * 1000, dispatches: 5 };
+      budget = { wall_ms: 75 * 60 * 1000, dispatches: budget.dispatches + 3 };
       stageIds = [0, 1, 2, 3, 4, 5];
       securityDeepPresent = true;
     }
@@ -194,14 +215,16 @@ function selectPackage(input = {}) {
     if (unitRole) roster.push({ role: unitRole, passes: ["primary"], scope: "focused+touchpoint" });
     roster.push({ role: "qa-reviewer", passes: ["primary"], scope: "touchpoint" });
     roster.push({ role: "security-reviewer", passes: security.hit ? ["primary", "second_pass", "third_pass"] : ["primary"], scope: "focused+touchpoint" });
+    if (hasFrontend) roster.push({ role: "visual-review", passes: ["primary"], scope: "focused+touchpoint" });
     budget = security.hit ? { wall_ms: 120 * 60 * 1000, dispatches: 5 } : { wall_ms: 90 * 60 * 1000, dispatches: 3 };
+    if (hasFrontend) budget.dispatches += 1;
     if (security.hit) {
       stageIds = [0, 1, 2, 3, 4, 5];
       securityDeepPresent = true;
     }
   }
 
-  const sanityFiles = [...(focused.tests || [])];
+  const sanityFiles = uniq([...(focused.tests || []), ...(tp.tests || [])]);
   const smokeFiles = [...new Set([...(input.goldenSmokeFloor || [])])];
   const stageDefs = {
     0: { stage: 0, name: "trailer", kind: "mechanical", stop_on_fail: true },
@@ -224,6 +247,7 @@ function selectPackage(input = {}) {
     cross_provider: crossProvider,
     stages,
     focused: { files: (focused.files || []).length, tests: (focused.tests || []).length, list: [...(focused.tests || [])] },
+    declared_tests: { count: packageName === "full" ? null : sanityFiles.length, scope: packageName === "full" ? "FULL_SUITE" : "focused+touchpoint" },
     touchpoint: {
       files: (tp.files || []).length,
       tests: (tp.tests || []).length,
@@ -304,6 +328,22 @@ function lastSelectedEvent(sprint) {
   }
 }
 
+function isReleaseClassDecision(d) { // eslint-disable-line no-unused-vars
+  return true;
+}
+
+function releaseCloseRefusal(record) {
+  const rec = record && record.data && typeof record.data === "object" && !Array.isArray(record.data) ? record.data : record;
+  if (!rec || typeof rec !== "object" || Array.isArray(rec)) return { ok: false, problems: ["close record unreadable (not an object)"] };
+  const problems = [];
+  if (rec.skipped_stages !== undefined && !Array.isArray(rec.skipped_stages)) problems.push("skipped_stages is not an array (fail-closed)");
+  for (const s of Array.isArray(rec.skipped_stages) ? rec.skipped_stages : []) {
+    if (s && s.kind === "agents") problems.push(`stage ${s.stage} (${s.name}) is a skipped agents stage — a release-class close refuses it even with operator_ack`);
+  }
+  if (rec.lenient === true) problems.push("close was lenient:true — a release-class close refuses --lenient");
+  return { ok: problems.length === 0, problems };
+}
+
 function stageRecordGaps(decision, records = {}, opts = {}) {
   const evidence = opts.evidence || ((s, rec) => fileEvidence(s, rec, opts.baseDir));
   const stageRecs = (records && records.stages) || {};
@@ -323,7 +363,9 @@ function stageRecordGaps(decision, records = {}, opts = {}) {
     if (rec && typeof rec === "object" && Object.prototype.hasOwnProperty.call(rec, "skip")) {
       if (typeof rec.skip === "string" && rec.skip.trim()) {
         const ack = typeof rec.operator_ack === "string" ? rec.operator_ack.trim() : "";
-        if (s.kind === "agents" && !ack) {
+        if (s.kind === "agents" && isReleaseClassDecision(decision)) {
+          gaps.push({ ...label, why: "a release-class close refuses a skipped agents stage (operator_ack cannot waive a binding review on a release)" });
+        } else if (s.kind === "agents" && !ack) {
           gaps.push({ ...label, why: "a skip of an agents stage requires a non-empty operator_ack (the operator or alpha ruling that waived it)" });
         } else {
           satisfied.push({ ...label, by: `skip: ${rec.skip.trim()}`, skipped: true, ...(ack ? { operator_ack: ack } : {}) });
@@ -334,7 +376,7 @@ function stageRecordGaps(decision, records = {}, opts = {}) {
     if (s.kind === "agents") {
       const roles = uniq((s.roster || []).map((r) => r && r.role).filter(Boolean));
       if (!roles.length) {
-        satisfied.push({ ...label, by: "decision: no agent scheduled (empty roster)" });
+        gaps.push({ ...label, why: "a decision alone never satisfies a stage (round-4 OFF form)" });
         continue;
       }
       const missing = roles.filter((r) => !(statusOf(r) && statusOf(r).satisfied === true));
@@ -344,10 +386,6 @@ function stageRecordGaps(decision, records = {}, opts = {}) {
       continue;
     }
     if (s.kind === "tests" || s.kind === "mechanical") {
-      if (s.kind === "tests" && Array.isArray(s.files) && s.files.length === 0) {
-        satisfied.push({ ...label, by: "decision: no test files scheduled" });
-        continue;
-      }
       const ev = evidence(s, rec) || { ok: false, why: "evidence reader returned nothing" };
       if (ev.ok === true) satisfied.push({ ...label, by: ev.by || "recorded" });
       else gaps.push({ ...label, why: ev.why || "not recorded" });
@@ -386,7 +424,7 @@ function closeStageRecords(prior, opts = {}, deps = {}) {
     }
     fileRecs = raw.stages;
   }
-  const decision = prior.data;
+  const decision = { ...prior.data, stages: FULL_OBLIGATION_STAGES };
   const roles = uniq(stagesFor(decision).filter((s) => s.kind === "agents").flatMap((s) => (s.roster || []).map((r) => r && r.role).filter(Boolean)));
   const roleStatus = {};
   let verify = null;
@@ -641,7 +679,7 @@ function usage(msg) {
   process.stderr.write(
     "usage: node scripts/sprint/gauntlet-package.js select  --sprint <id> --diff <base>..<head> --trailer-json <file> [--root <dir>] [--sprint-ordinal N] [--json]\n" +
       "       node scripts/sprint/gauntlet-package.js explain --sprint <id> --diff <base>..<head> --trailer-json <file> [--root <dir>] [--sprint-ordinal N] [--json]\n" +
-      "       node scripts/sprint/gauntlet-package.js close   --sprint <id> --actual-ms N --actual-dispatches N [--rounds N] [--root <dir>] [--stage-records <file>] [--differential] [--strict|--lenient --lenient-reason <text>]\n",
+      "       node scripts/sprint/gauntlet-package.js close   --sprint <id> --actual-ms N --actual-dispatches N [--rounds N] [--head <sha>] [--root <dir>] [--stage-records <file>] [--differential] [--strict|--lenient --lenient-reason <text>]\n",
   );
   process.exit(2);
 }
@@ -668,6 +706,7 @@ function parseCliArgs(argv) {
     else if (a === "--actual-ms") opts.actualMs = Number(argv[++i]);
     else if (a === "--actual-dispatches") opts.actualDispatches = Number(argv[++i]);
     else if (a === "--rounds") opts.rounds = Number(argv[++i]);
+    else if (a === "--head") opts.reviewHead = argv[++i];
     else if (a === "--stage-records") opts.stageRecords = argv[++i];
     else if (a === "--differential") opts.differential = true;
     else if (a === "--strict") opts.strict = true;
@@ -714,6 +753,15 @@ function runSelectOrExplain(cmd, opts) {
   return 0;
 }
 
+function headBinding(priorHead, reviewHead) {
+  const a = reviewHead ? String(reviewHead) : "";
+  const b = priorHead ? String(priorHead) : "";
+  const MIN = 7;
+  const prefixOk = a.length >= MIN && b.length >= MIN && (a.startsWith(b) || b.startsWith(a));
+  const mismatch = Boolean(a) && Boolean(b) && !(a === b || prefixOk);
+  return { head: reviewHead || null, mismatch, bound: Boolean(a) && Boolean(b) && !mismatch };
+}
+
 function runClose(opts) {
   if (!opts.sprint) usage("--sprint is required");
   for (const [flag, v] of [["--actual-ms", opts.actualMs], ["--actual-dispatches", opts.actualDispatches]]) {
@@ -724,6 +772,21 @@ function runClose(opts) {
   const prior = lastSelectedEvent(opts.sprint);
   if (!prior) {
     process.stderr.write(`gauntlet-package: no gauntlet-package-selected event found for sprint ${opts.sprint}\n`);
+    return 1;
+  }
+  const hb = headBinding(prior.data.head, opts.reviewHead);
+  if (hb.mismatch) {
+    try {
+      const { log } = require("../hooks/lib/logger");
+      log("audit", { kind: "gauntlet-package-close-refused", schema: SCHEMA, sprint: opts.sprint, run_id: prior.data.run_id, package: prior.data.package, halt_reason: "head_mismatch", selection_head: prior.data.head, review_head: opts.reviewHead }, { actor: "gauntlet-package-selector", source: "scripts/sprint/gauntlet-package.js" });
+    } catch { }
+    process.stderr.write("gauntlet-package: close REFUSED (head_mismatch): review head " + opts.reviewHead + " != selection head " + prior.data.head + " for sprint " + opts.sprint + "\n");
+    process.stdout.write("gauntlet-package: close REFUSED — halt_reason head_mismatch\n");
+    return 1;
+  }
+  if (opts.lenient && isReleaseClassDecision(prior.data)) {
+    process.stderr.write(`gauntlet-package: close REFUSED for sprint ${opts.sprint} — --lenient is refused on a release-class close (change:"release")\n`);
+    process.stdout.write("gauntlet-package: close REFUSED — halt_reason release_lenient\n");
     return 1;
   }
   let stageCheck;
@@ -777,6 +840,9 @@ function runClose(opts) {
     sprint: opts.sprint,
     run_id: prior.data.run_id,
     package: prior.data.package,
+    head: hb.head,
+    head_bound: hb.bound,
+    selection_head: prior.data.head || null,
     budget,
     actual,
     exceeded,
@@ -830,6 +896,7 @@ function main() {
 module.exports = {
   SCHEMA,
   SELECTOR_VERSION,
+  FULL_OBLIGATION_STAGES,
   readTrailer,
   readTrailerFile,
   unitReviewerRole,
@@ -839,8 +906,12 @@ module.exports = {
   selectPackage,
   stagesFor,
   stageRecordGaps,
+  isReleaseClassDecision,
+  releaseCloseRefusal,
   fileEvidence,
   closeStageRecords,
+  headBinding,
+  runClose,
   validateDecision,
   emitSelected,
   emitClosed,

@@ -10,6 +10,7 @@ const REGISTRY = ".claude/agents/_org/role-registry.json";
 const TOP_MODEL = "claude-opus-4-8";
 const ALPHA_ALLOWED = [
   { model: "claude-fable-5-1", effort: "high" },
+  { model: "claude-opus-5-5", effort: "high" },
 ];
 const DOER_MODELS = new Set(["claude-sonnet-5-5"]);
 const MAX_ALLOWED_ROLES = new Set(["security-reviewer"]);
@@ -137,8 +138,9 @@ function evaluateModelChain({ reg, consumers, specs }) {
       const s = specs[name];
       if (!s || !s.exists) continue;
       const regEffort = r.effort === undefined ? null : r.effort;
+      const nonClaude = r.provider && r.provider !== "claude";
       for (const [label, has, val] of [
-        ["effort", s.hasEffortKey, s.effort],
+        ["effort", s.hasEffortKey && !nonClaude, s.effort],
         ["provider_reasoning_effort", s.hasProviderEffortKey, s.providerEffort],
       ]) {
         if (!has) continue;
@@ -286,7 +288,7 @@ function main(argv) {
   }
   if (errors.length === 0) {
     process.stdout.write(
-      `OK   [${NAME}] model/effort chain intentional — alpha = fable@high, doers = sonnet-5, max = security-reviewer, ultra ∈ {sol, terra}, registry↔catalog↔providers agree\n`,
+      `OK   [${NAME}] model/effort chain intentional — alpha = opus-5-5 or fable-5-1 @ high, doers = sonnet-5-5, max = security-reviewer, ultra ∈ {sol, terra}, registry↔catalog↔providers agree\n`,
     );
     return 0;
   }

@@ -425,6 +425,20 @@ function repoRoot(dir) {
   return top ? path.resolve(top) : null;
 }
 
+function isHomeRepo(root) {
+  const home = path.resolve(process.env.CLAUDE_PROJECT_DIR || path.join(__dirname, "..", ".."));
+  const norm = (p) => {
+    let q = p;
+    try {
+      q = fs.realpathSync.native(p);
+    } catch {
+    }
+    q = path.resolve(q).replace(/[\\/]+$/, "");
+    return process.platform === "win32" ? q.toLowerCase() : q;
+  };
+  return norm(root) === norm(home);
+}
+
 const TRACKED_SURFACE_RE = /^(?:scripts|\.claude|framework|tests)\//;
 
 function stagedTrackedSurfacePaths(dir) {
@@ -452,10 +466,21 @@ function modeFromEnv() {
       .trim()
       .toLowerCase();
     if (v === "off") return "off";
-    if (v === "report") return "report";
   } catch {
   }
-  return "enforce";
+  return "warn";
+}
+
+function warningMessage(errors, fixLines) {
+  return [
+    "change-trailer-guard: warning: the change-classification trailer is missing or invalid (this hook does not block the commit).",
+    ...errors.map((e) => `  - ${e}`),
+    "",
+    "Add these three lines to the final trailer block of the commit message (just above Co-Authored-By):",
+    ...(fixLines || []).map((l) => `  ${l}`),
+    "Silence this warning: MC_CHANGE_TRAILER=off.",
+    "",
+  ].join("\n");
 }
 
 function decide(payload) {
@@ -482,6 +507,7 @@ function decide(payload) {
     const sprint = CT.activeSprint(root);
     let trackedPaths = [];
     if (!sprint.active) {
+      if (!isHomeRepo(root)) continue;
       trackedPaths = stagedTrackedSurfacePaths(c.dir);
       if (!trackedPaths.length) continue;
     }
@@ -498,12 +524,8 @@ function decide(payload) {
   if (!problems.length) return { exit: 0 };
 
   const errors = [...new Set(problems.flatMap((p) => p.errors))];
-  if (mode === "report") {
-    emit("change-trailer-report-only", { errors, sprint: problems[0].sprint, trigger: problems[0].trigger, trackedPaths: problems[0].trackedPaths });
-    return { exit: 0, stderr: CT.blockMessage(errors, "change-trailer-guard (report-only)") };
-  }
-  emit("change-trailer-guard-blocked", { errors, sprint: problems[0].sprint, trigger: problems[0].trigger, trackedPaths: problems[0].trackedPaths });
-  return { exit: 2, stderr: CT.blockMessage(errors, "change-trailer-guard") };
+  emit("change-trailer-guard-warned", { errors, sprint: problems[0].sprint, trigger: problems[0].trigger, trackedPaths: problems[0].trackedPaths });
+  return { exit: 0, stderr: warningMessage(errors, CT.FIX_LINES) };
 }
 
 function main() {

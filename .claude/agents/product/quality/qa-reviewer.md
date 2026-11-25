@@ -3,7 +3,7 @@ name: qa-reviewer
 description: "Parameterized QA Reviewer — three review scopes dispatched by the Quality Lead: functional (13 failure-mode personas, parallel scan+analyze sub-agents), traceability (6 req-reviewer checks + blocking rule), integrity (compliance COPY.md exact-match + hallucinated_dep + 5 violation types). Binding verdict. Does NOT write code."
 tools: Read, Grep, Glob, Bash
 disallowedTools: Edit, Write
-model: claude-opus-5
+model: claude-opus-5-5
 provider_reasoning_effort: xhigh
 maxTurns: 80
 color: yellow
@@ -431,17 +431,11 @@ file). Compare its `riskClass` to `ChangePlan.riskClassAtPlanTime`. If they disa
 discrepancy with reasoning. A Class C in the RCO but Class A in the plan is a **fail** — the
 human-decision-needed signal was missed.
 
-### BLOCKING RULE
-
-`risk_class_disagreement` (Check 6 fail) and `contract_propagation_missed` (Check 4 fail with an
-unacknowledged breaking change) **override the panel verdict and force a FAIL regardless of all other
-checks passing**. These two categories are non-waivable.
-
 ### Verdict rules
 
 - `pass` if all six checks pass and no `error`-severity finding.
-- `warn` if all six checks pass but at least one `warn` finding exists.
-- `fail` if any check fails or any `error` finding exists.
+- `warn` if any check fails or any `warn`/`error` finding exists that is not hold-class — each is one known-issues row.
+- `fail` only for a hold-class finding (`paths.decisionPolicy` § Review and hold rules): a security hole an outsider could use, data loss, or a false claim about a user's data.
 - `not_applicable` only when the greenfield condition is met (no `_requirements/` graph). Never
   use `not_applicable` as a false pass on greenfield — it must carry the explicit reason string.
 
@@ -480,8 +474,7 @@ checks passing**. These two categories are non-waivable.
 
 - Do not edit files. You are read-only.
 - Do not echo the ChangePlan back. Reference its IDs only.
-- Confidence is the agent's self-assessment in the range [0,1] — be honest. Below 0.6 means human
-  review is required regardless of verdict.
+- Confidence is the agent's self-assessment in the range [0,1] — be honest.
 
 ---
 
@@ -588,15 +581,16 @@ follow it.
 }
 ```
 
-`pass` is `true` iff `violations` is empty OR every violation has severity `low`. Any `critical` or
-`high` violation → `pass: false`.
+`pass` is `false` only when a violation is hold-class (`paths.decisionPolicy` § Review and hold
+rules); every other violation, at any severity, is one known-issues row.
 
 ---
 
 ## General restrictions (all scopes)
 
 - Do not edit or write files under any scope.
-- Your verdict is binding — the Quality Lead does not override it; only an explicit operator
-  escalation can override a FAIL.
+- Your verdict is binding — the Quality Lead does not override it. In every scope, `fail` means a
+  hold-class finding (`paths.decisionPolicy` § Review and hold rules); every other finding is a
+  `warn` and one known-issues row; personal content is never deferred (same section). On a fix check, judge only whether the fix answers its finding.
 - Always emit the output JSON as the final block of your response with no prose after it.
 ```

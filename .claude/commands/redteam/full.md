@@ -1,11 +1,5 @@
 ---
 description: Full red team audit — 11 personas across deterministic scanning + LLM reasoning. Finds auth bypasses, prompt injection, business logic abuse, attack chains.
-says:
-  - red team it
-  - full red team
-  - attack the system
-  - security audit
-  - redteam full
 ---
 
 # /redteam:full — Full Red Team Audit

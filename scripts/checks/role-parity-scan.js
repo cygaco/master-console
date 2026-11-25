@@ -204,7 +204,18 @@ function validateRegistry(root, catalog) {
   const specTree = scanSpecTree(root);
   errors.push(...evaluateReportingStructure({ reg, specTree }));
   const specFm = readAllSpecFm(root, reg);
-  errors.push(...evaluateModelPins({ reg, specFm }));
+  let inProcess = null;
+  try {
+    const MR = require(path.join(root, "scripts", "dispatch", "model-resolve.js"));
+    inProcess = {};
+    for (const role of Object.keys(reg.roles || {})) {
+      const r = MR.resolveRole(role, { channel: "in-process" });
+      inProcess[role] = (r.spec_default && r.spec_default.model) || r.model;
+    }
+  } catch (e) {
+    errors.push(`model-pin: the model resolver could not give the in-process answers (${e && e.message}) — cross-provider spec models cannot be checked`);
+  }
+  errors.push(...evaluateModelPins({ reg, specFm, inProcess }));
   return { errors, fatal: false };
 }
 
@@ -272,7 +283,7 @@ function readAllSpecFm(root, reg) {
   return specFm;
 }
 
-function evaluateModelPins({ reg, specFm }) {
+function evaluateModelPins({ reg, specFm, inProcess }) {
   const errors = [];
   const roles = (reg && reg.roles) || {};
   for (const [name, r] of Object.entries(roles)) {
@@ -295,7 +306,15 @@ function evaluateModelPins({ reg, specFm }) {
       continue;
     }
     const provider = r.provider || "claude";
-    if (provider === "claude" && r.model && fm !== r.model) {
+    if (inProcess && Object.prototype.hasOwnProperty.call(inProcess, name)) {
+      const want = inProcess[name];
+      if (fm !== want) {
+        errors.push(
+          `model-pin: ${provider === "claude" ? "" : "cross-provider "}role "${name}" spec "${r.spec}" frontmatter model "${fm}" ` +
+          `≠ the model resolver's in-process answer "${want}" — run node scripts/dispatch/model-resolve.js --sync-specs`
+        );
+      }
+    } else if (provider === "claude" && r.model && fm !== r.model) {
       errors.push(
         `model-pin: registry role "${name}" spec "${r.spec}" frontmatter model "${fm}" ` +
         `≠ registry model "${r.model}" — the spec must pin the registry model for Claude roles`

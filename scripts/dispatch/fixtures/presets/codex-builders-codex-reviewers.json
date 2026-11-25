@@ -1,0 +1,66 @@
+{
+  "id": "codex-builders-codex-reviewers",
+  "title": "codex-builders-codex-reviewers",
+  "dated": "2026-10-31",
+  "reason": "Test fixture.",
+  "evidence": [
+    "scripts/dispatch/presets-coverage.test.js"
+  ],
+  "coverage": {
+    "code": "cross-family",
+    "security": "cross-family",
+    "visual": "exempt-capability"
+  },
+  "pins": {
+    "frontend-builder": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "frontend-fixer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "backend-builder": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "backend-fixer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "security-builder": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "security-fixer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "skeleton-builder": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "backend-reviewer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "frontend-reviewer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "qa-reviewer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    }
+  }
+}

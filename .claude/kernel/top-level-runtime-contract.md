@@ -288,7 +288,8 @@ future capability of the same kind.
 | `gpt-5.6-sol` | cli | proven on code/planning shape | real CLI dispatch |
 | `gpt-5.6-sol` | cli (security-review shape) | false | trips defensively on raw security/exploit-shaped prompts; the prompt reframe is the fix |
 | `claude-opus-4-8` | harness | true | in-process Agent-tool spawns, live |
-| `gemini-3.1-pro-high` | agy | false | lane not verified on this install |
+| `claude-opus-5-5` | harness | true | harness-spawn probe: `opus` spawns serve claude-opus-5-5 and spec effort arrives per turn |
+| `gemini-4-argon-high` | agy | false | lane not verified (re-pinned because `gemini-3.1-pro-high` is no longer served by agy) |
 
 **Kernel scope:** IN = this helm × capability × level contract + the Addendum A seed (both
 fixture-covered). OUT = per-request routing policy and the full `panel-3lab` BINDING gate,

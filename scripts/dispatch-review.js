@@ -11,6 +11,8 @@ const CLAUDE = path.join(__dirname, "dispatch-claude.js");
 const ROOT = process.env.CLAUDE_PROJECT_DIR || path.resolve(__dirname, "..");
 
 const LANE_ID = { claude: "claude", antigravity: "agy", openai: "gpt" };
+const securityChoice = require("./dispatch/security-choice");
+const CLAUDE_ONLY_LINE = securityChoice.CLAUDE_ONLY_LINE;
 
 function parseFlag(argv, name) {
   const i = argv.indexOf(name);
@@ -84,6 +86,20 @@ function resolvePassesForDispatch(passes, mode) {
   return restricted.length ? restricted : passes;
 }
 
+const HUNTER_LINE = "Claude hunter lane: not run by this script — the conductor summons it in-process";
+
+function splitInProcess(passes) {
+  const notRun = passes.filter((p) => p && p.route === "in-process" && p.provider === "claude");
+  return { fire: passes.filter((p) => !notRun.includes(p)), notRun };
+}
+
+function notRunGateLane(p) {
+  return {
+    pass: p.key, provider: p.provider, model: p.model, ok: false, verdict: "error",
+    laneId: LANE_ID[p.provider] || p.provider, observedProvider: p.provider, fallback: false, hasEvidence: false, lane_out: null,
+  };
+}
+
 async function main() {
   const argv = process.argv.slice(2);
   const role = argv[0];
@@ -108,12 +124,25 @@ async function main() {
     console.error(JSON.stringify({ ok: false, role, error: `unknown role (no passes in registry)` }));
     process.exit(2);
   }
+  const blocked = passes.find((p) => p.blocked);
+  if (blocked) {
+    console.error(JSON.stringify({ ok: false, role, error: "project_settings_unreadable", detail: blocked.blocked }));
+    process.exit(1);
+  }
   passes = resolvePassesForDispatch(passes, mcEnv.readEnv("REVIEW_PASSES"));
+  const choiceWarnings = passes.filter((p) => p.warning).map((p) => p.warning);
+  for (const w of choiceWarnings) console.error(`warning: ${w}`);
 
   const panelRunId = mcEnv.readEnv("PANEL_RUN_ID") || `panel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
   mcEnv.setEnv("PANEL_RUN_ID", panelRunId);
   const runnerStartMs = Date.now();
-  const settled = await Promise.all(passes.map((p) => spawnPass(role, promptFile, p, domain, laneOutDir)));
+  const { fire, notRun } = splitInProcess(passes);
+  if (!fire.length) {
+    console.error(JSON.stringify({ ok: false, role, error: "no_runnable_pass", detail: "every declared pass is summoned in-process by the conductor; this script has nothing to fire" }));
+    process.exit(2);
+  }
+  for (const p of notRun) console.error(HUNTER_LINE);
+  const settled = await Promise.all(fire.map((p) => spawnPass(role, promptFile, p, domain, laneOutDir)));
   const lanes = settled.map((s) => {
     const r = s.result || {};
     const isClaude = s.pass.provider === "claude";
@@ -158,22 +187,49 @@ async function main() {
     }
   }
 
-  const merged = mergeLanes(role, lanes);
+  const declaredPasses = passes.length;
+  let merged = mergeLanes(role, lanes, { declaredPasses });
+  merged = await applyClaudeOnlyFallback(role, lanes, merged, {
+    sprintId: mcEnv.readEnv("SPRINT_ID") || null,
+    sinceMs: runnerStartMs,
+    panelRunId,
+    declaredPasses,
+  });
+  if (notRun.length) {
+    merged.not_run_lanes = notRun.map((p) => ({ pass: p.key, provider: p.provider, model: p.model, route: p.route, run_by_this_script: false, note: HUNTER_LINE }));
+    merged.hunter_note = HUNTER_LINE;
+  }
+  if (choiceWarnings.length) merged.choice_warnings = choiceWarnings;
   merged.lane_out_dir = path.relative(ROOT, laneOutDir);
   merged.panel_run_id = panelRunId;
 
-  if (panelLanes && isSecurityPanelRole(role)) {
-    const panelGate = applyPanelGate(panelLanes, lanes, {
+  if (panelLanes && isSecurityPanelRole(role) && merged.diversity === securityChoice.CLAUDE_ONLY) {
+    let valid = null;
+    try {
+      valid = panelLanes.validatePanelManifest();
+    } catch {
+      valid = null;
+    }
+    if (!valid || !valid.ok) {
+      downgradeClaudeOnly(merged, "the panel manifest did not validate");
+    } else {
+      merged.panel = {
+        floor_pass: false,
+        manifest_valid: true,
+        contract_evaluated: "claude-only-fallback",
+        floor: { contract: "claude-only-fallback", status: "CLAUDE-ONLY", reason: CLAUDE_ONLY_LINE },
+        binding: { contract: "panel-3lab-binding", status: "NOT-CLAIMED", reason: "a Claude-only review is not a multi-lab sign-off" },
+      };
+      console.error(CLAUDE_ONLY_LINE);
+    }
+  } else if (panelLanes && isSecurityPanelRole(role)) {
+    const panelGate = applyPanelGate(panelLanes, [...lanes, ...notRun.map(notRunGateLane)], {
       sprintId: mcEnv.readEnv("SPRINT_ID") || null,
       sinceMs: runnerStartMs,
       panelRunId,
       requireSignature: true,
     });
-    merged.panel = panelGate;
-    if (!panelGate.floor_pass) {
-      merged.ok = false;
-      if (merged.verdict === "pass" || merged.verdict === "warn") merged.verdict = "error";
-    }
+    applyGateOutcome(merged, panelGate);
   }
 
   console.log(JSON.stringify(merged));
@@ -287,20 +343,20 @@ function applyPanelGate(panelLanes, lanes, ctx = {}) {
   };
 }
 
-function mergeLanes(role, lanes) {
+function mergeLanes(role, lanes, opts) {
   const anyFail = lanes.some((l) => l.verdict === "fail");
   const anyError = lanes.some((l) => !l.ok || !VALID_REVIEW_VERDICTS.has(String(l.verdict || "").toLowerCase()));
-  const mergedVerdict = anyFail ? "fail" : anyError ? "error" : lanes.some((l) => l.verdict === "warn") ? "warn" : "pass";
-  const clean = !anyFail && !anyError;
-
-  const multipass = lanes.length > 1;
+  const multipass = lanes.length > 1 || !!(opts && Number.isInteger(opts.declaredPasses) && opts.declaredPasses > 1);
   const live = lanes.filter((l) => l.ok);
   const liveFamilies = [...new Set(live.map((l) => l.provider))];
   const belowBar = multipass && liveFamilies.length < 2;
+  const mergedVerdict = anyFail ? "fail" : anyError || belowBar ? "error" : lanes.some((l) => l.verdict === "warn") ? "warn" : "pass";
+  const clean = !anyFail && !anyError && !belowBar;
+
   const survivingLanes = live.map((l) => ({ pass: l.pass, provider: l.provider, verdict: l.verdict, lane_out: l.lane_out || null }));
   const survivingVerdict = liveFamilies.length === 1 && live.length >= 1 ? live[0].verdict : null;
 
-  return {
+  const result = {
     ok: clean,
     role,
     multipass,
@@ -316,7 +372,83 @@ function mergeLanes(role, lanes) {
     surviving_verdict: survivingVerdict,
     parsed: { agent: role, verdict: mergedVerdict, lanes },
   };
+
+  if (belowBar && opts && opts.claudeOnly) {
+    const ev = securityChoice.evaluateClaudeOnly(lanes, opts.claudeOnly);
+    if (ev.accept) {
+      result.ok = true;
+      result.mergedVerdict = ev.verdict;
+      result.verdict = ev.verdict;
+      result.diversity = securityChoice.CLAUDE_ONLY;
+      result.verdict_text = `${ev.verdict} — ${CLAUDE_ONLY_LINE}`;
+      result.parsed = { agent: role, verdict: ev.verdict, diversity: securityChoice.CLAUDE_ONLY, lanes };
+    } else {
+      result.claude_only_declined = ev.reason;
+    }
+  }
+  return result;
+}
+
+async function applyClaudeOnlyFallback(role, lanes, merged, ctx, deps = {}) {
+  if (!merged.below_bar || !isSecurityPanelRole(role)) return merged;
+  const optIn = deps.optIn || (() => securityChoice.claudeOnlyOptIn());
+  if (optIn() !== true) return merged;
+  const signedIn = await (deps.checkSignedIn || (() => securityChoice.checkSignedIn()))();
+  const verified = (deps.claudeLaneRecordsVerified || claudeLaneRecordsVerified)(lanes, ctx);
+  const declared = ctx && Number.isInteger(ctx.declaredPasses) ? ctx.declaredPasses : merged.multipass ? Math.max(lanes.length, 2) : undefined;
+  return mergeLanes(role, lanes, { declaredPasses: declared, claudeOnly: { optIn: true, signedIn, claudeLaneVerified: verified === true } });
+}
+
+function applyGateOutcome(merged, panelGate) {
+  merged.panel = panelGate;
+  if (!panelGate.floor_pass) {
+    merged.ok = false;
+    for (const holder of [merged, merged.parsed]) {
+      if (!holder) continue;
+      for (const k of holder === merged ? ["verdict", "mergedVerdict"] : ["verdict"]) {
+        if (holder[k] === "pass" || holder[k] === "warn") holder[k] = "error";
+      }
+    }
+  }
+  return merged;
+}
+
+function downgradeClaudeOnly(merged, reason) {
+  merged.ok = false;
+  merged.verdict = "error";
+  merged.mergedVerdict = "error";
+  if (merged.parsed) {
+    merged.parsed.verdict = "error";
+    delete merged.parsed.diversity;
+  }
+  delete merged.diversity;
+  delete merged.verdict_text;
+  merged.claude_only_declined = reason;
+}
+
+function claudeLaneRecordsVerified(lanes, ctx = {}) {
+  try {
+    const claudeLanes = lanes.filter((l) => l.provider === "claude");
+    if (!claudeLanes.length || !ctx.panelRunId) return false;
+    const pv = require("./dispatch/provenance-verifier");
+    const { verifyRecord } = require("./dispatch/attest-signing");
+    const readLedger = ctx.readLedger || defaultReadLedger;
+    const toolIdOf = requireToolIdOf();
+    const contract = pv.laneContract("panel-2family", "claude");
+    const matching = (readLedger(ctx.sprintId || null) || []).filter((r) => {
+      if (!r || r.panel_run_id !== ctx.panelRunId) return false;
+      const t = Date.parse(r.completed_at || "");
+      if (!Number.isFinite(t) || t < (ctx.sinceMs || 0)) return false;
+      if (!pv.recordMatchesLane(r, contract, "claude")) return false;
+      if (!(r.ok === true && r.fallback === false)) return false;
+      if (!verifyRecord(r)) return false;
+      return !!r.output_digest && !!r.cmdline_checksum && r.tool_id === toolIdOf("claude");
+    });
+    return matching.length >= claudeLanes.length;
+  } catch {
+    return false;
+  }
 }
 
 if (require.main === module) main();
-module.exports = { verdictOf, mergeLanes, persistLane, laneFileName, isSecurityPanelRole, applyPanelGate, panelLoaderFailClosed, resolvePassesForDispatch };
+module.exports = { verdictOf, mergeLanes, persistLane, laneFileName, isSecurityPanelRole, applyPanelGate, panelLoaderFailClosed, resolvePassesForDispatch, splitInProcess, notRunGateLane, HUNTER_LINE, claudeLaneRecordsVerified, downgradeClaudeOnly, applyGateOutcome, applyClaudeOnlyFallback };

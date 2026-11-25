@@ -17,6 +17,7 @@ function scratchTree(version, allowlistEdit, extraFiles = {}) {
   copy(CHECK_REL);
   copy(ALLOW_REL);
   copy(path.join("scripts", "hooks", "lib"));
+  copy(path.join("scripts", "hooks", "mode-lifecycle-guard.js"));
   copy(path.join(".claude", "paths.json"));
   const registryRel = JSON.parse(fs.readFileSync(path.join(ROOT, ".claude", "paths.json"), "utf8")).modeLifecycleHooks;
   copy(registryRel);
@@ -63,11 +64,17 @@ test("the gate is wired into release-gates.js", () => {
 test("a release below every entry's review version passes the gate", () => {
   const { gate, summary } = releaseAt("2.1.0");
   assert.strictEqual(gate.severity, "green", gate.message);
-  assert.strictEqual(summary.red, 0);
+  assert.ok(
+    !summary.results.some((r) => r.name === GATE && r.severity === "red"),
+    `the mode-lifecycle gate must not be red below its review version (reds: ${summary.results.filter((r) => r.severity === "red").map((r) => r.name).join(", ")})`,
+  );
 });
 
-test("a 2.2.0 release with unreviewed entries is REFUSED", () => {
-  const { gate, summary } = releaseAt("2.2.0");
+test("a release reaching an unreviewed entry's version is REFUSED", () => {
+  const { gate, summary } = releaseAt("2.2.0", (al) => {
+    const first = Object.keys(al.wiring_pending)[0];
+    al.wiring_pending[first].review_by_version = "2.2.0";
+  });
   assert.strictEqual(gate.severity, "red", gate.message);
   assert.ok(summary.red >= 1 && summary.ok === false, "a red gate blocks the release (release-gates exits 2)");
   assert.ok((gate.details || []).some((d) => /REVIEW DUE at framework version 2\.2\.0/.test(d)), JSON.stringify(gate.details));
@@ -77,7 +84,10 @@ test("a due entry whose event is already emitted still refuses the release (the 
   const EV = "mode:switch:requested";
   const { gate } = releaseAt(
     "2.2.0",
-    (al) => { for (const [k, e] of Object.entries(al.wiring_pending)) e.review_by_version = k === EV ? "2.2.0" : "2.3.0"; },
+    (al) => {
+      al.wiring_pending[EV] = al.wiring_pending[EV] || { owner: "test", reason: "due+emitted invariant fixture" };
+      for (const [k, e] of Object.entries(al.wiring_pending)) e.review_by_version = k === EV ? "2.2.0" : "2.3.0";
+    },
     { "scripts/hooks/emits-requested.js": `require("./lib/lifecycle-events");\nemit("${EV}", {});\n` },
   );
   assert.strictEqual(gate.severity, "red", gate.message);

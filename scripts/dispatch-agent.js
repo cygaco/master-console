@@ -6,7 +6,7 @@ const path = require("path");
 const crypto = require("crypto");
 const {
   runProvider,
-  getProviderForRole,
+  providerForRoleStrict,
   providerAvailable,
   parseProviderJson,
 } = require("./hooks/lib/providers");
@@ -42,6 +42,17 @@ function observedCompletionFields(requestedProvider, result) {
   };
 }
 
+function failureRecordFields(result) {
+  if (result && result.ok) return { exit_code: 0 };
+  const failure = result && result.failure && typeof result.failure === "object" ? result.failure : null;
+  const real = failure ? failure.exit_code : null;
+  const kind = failure && typeof failure.kind === "string" && failure.kind ? failure.kind : null;
+  return {
+    exit_code: Number.isInteger(real) && real !== 0 ? real : 1,
+    ...(kind ? { failure_kind: kind } : {}),
+  };
+}
+
 function resolveModelRunOpts({ providerOverride, modelOverride, roleModel }) {
   const runOpts = {};
   if (providerOverride) {
@@ -53,6 +64,92 @@ function resolveModelRunOpts({ providerOverride, modelOverride, roleModel }) {
     runOpts.model = roleModel;
   }
   return runOpts;
+}
+
+function dispatchTarget({ role, providerOverride, modelOverride, prompt, needsWorkspace, seams }) {
+  providerOverride = typeof providerOverride === "string" && providerOverride.trim() ? providerOverride.trim() : null;
+  modelOverride = typeof modelOverride === "string" && modelOverride.trim() ? modelOverride.trim() : null;
+  const s = seams || {};
+  const strict = s.providerForRoleStrict || providerForRoleStrict;
+  const base = { chain_index: null, skipped: [], signin_state: "not-used" };
+  if (providerOverride || modelOverride) {
+    let provider = providerOverride;
+    if (!provider) {
+      try {
+        provider = strict(role);
+      } catch (e) {
+        return { ok: false, error: e && e.message };
+      }
+    }
+    return {
+      ok: true,
+      provider,
+      resolution: null,
+      runOpts: resolveModelRunOpts({ providerOverride, modelOverride, roleModel: getRoleModel(role) }),
+      recordFields: { ...base, resolve_source: "override" },
+    };
+  }
+  let resolution = null;
+  let resolverError = null;
+  try {
+    const mr = s.modelResolve || require("./dispatch/model-resolve");
+    resolution = mr.resolveRole(role, {
+      ...(s.resolveOpts || {}),
+      channel: "cli",
+      signin: s.signin || mr.readSigninState(s.resolveOpts || {}),
+      call: { promptChars: String(prompt || "").length, needsWorkspace: !!needsWorkspace },
+    });
+  } catch (e) {
+    resolverError = (e && e.message) || "resolver error";
+  }
+  if (resolution && resolution.provider && resolution.index > 0) {
+    let failsClosed = false;
+    try {
+      const roles = (s.loadRoles || require("./dispatch/registry-roles").loadRoles)();
+      failsClosed = !!(roles && roles[resolution.role] && roles[resolution.role].fails_closed_on_diversity_loss === true);
+    } catch (_) {
+      failsClosed = true;
+    }
+    if (failsClosed) {
+      return {
+        ok: false,
+        error: `role "${resolution.role}" fails closed on lab-diversity loss; its first lab (${resolution.chain[0].provider}/${resolution.chain[0].model}) cannot take this call (${resolution.skipped.map((x) => x.reason).join(", ")}) — run it through scripts/dispatch-review.js, which fires every declared lab, instead of walking to a later one`,
+      };
+    }
+  }
+  if (resolution && resolution.provider) {
+    return {
+      ok: true,
+      provider: resolution.provider,
+      resolution,
+      runOpts: { provider: resolution.provider, model: resolution.model, effort: resolution.effort },
+      recordFields: {
+        chain_index: resolution.index,
+        skipped: resolution.skipped,
+        signin_state: resolution.signin_state,
+        resolve_source: resolution.source,
+        ...(resolution.diversity ? { diversity: resolution.diversity } : {}),
+      },
+    };
+  }
+  let provider;
+  try {
+    provider = strict(role);
+  } catch (e) {
+    return { ok: false, error: e && e.message, resolverError };
+  }
+  return {
+    ok: true,
+    provider,
+    resolution: null,
+    resolverError,
+    runOpts: resolveModelRunOpts({ providerOverride: null, modelOverride: null, roleModel: getRoleModel(role) }),
+    recordFields: {
+      ...base,
+      signin_state: resolution ? resolution.signin_state : "not-used",
+      resolve_source: resolverError ? "pin-resolver-error" : "pin-unknown-role",
+    },
+  };
 }
 
 const AGENT_ROOT = path.resolve(__dirname, "..");
@@ -188,16 +285,22 @@ function recordCompletion(record) {
   const callerSha = record.code_sha;
   const runMismatch = callerRun != null && callerRun !== "" && derivedRun != null && callerRun !== derivedRun;
   const shaMismatch = callerSha != null && callerSha !== "" && derivedSha != null && callerSha !== derivedSha;
-  const enriched = { ...record, panel_run_id: derivedRun, code_sha: derivedSha };
+  const envGauntlet = mcEnv.readEnv("GAUNTLET_RUN_ID") || null;
+  const { isValidGauntletRunId } = require("./dispatch/attest-signing");
+  const envGauntletBad = envGauntlet != null && !isValidGauntletRunId(envGauntlet);
+  const derivedGauntlet = envGauntletBad ? null : envGauntlet;
+  const callerGauntlet = record.gauntlet_run_id;
+  const gauntletMismatch = envGauntletBad || (callerGauntlet != null && callerGauntlet !== "" && callerGauntlet !== derivedGauntlet);
+  const enriched = { ...record, panel_run_id: derivedRun, code_sha: derivedSha, gauntlet_run_id: derivedGauntlet };
   if (!enriched.quota || typeof enriched.quota !== "object") {
     try {
       enriched.quota = quotaField(enriched.provider || null).quota;
     } catch {
     }
   }
-  if (runMismatch || shaMismatch) {
+  if (runMismatch || shaMismatch || gauntletMismatch) {
     enriched.provenance_mismatch = true;
-    try { process.stderr.write(`[recordCompletion] provenance mismatch (caller panel_run_id/code_sha != writer-derived) — record written UNSIGNED, cannot attest\n`); } catch { }
+    try { process.stderr.write(`[recordCompletion] provenance mismatch (caller panel_run_id/code_sha/gauntlet_run_id != writer-derived) — record written UNSIGNED, cannot attest\n`); } catch { }
     appendJsonl(file, enriched);
     return;
   }
@@ -355,7 +458,9 @@ if (require.main !== module) {
     findAgentSpec,
     providerToolId,
     observedCompletionFields,
+    failureRecordFields,
     resolveModelRunOpts,
+    dispatchTarget,
     getRoleModel,
     detectMode,
     readModeFromProjectRoot,
@@ -390,12 +495,12 @@ const PROVIDER_ALIAS = {
   antigravity: "antigravity",
   agy: "antigravity",
 };
-const rawProviderOverride = parseFlag("--provider");
+const rawProviderOverride = (parseFlag("--provider") || "").trim() || null;
 const providerOverride = rawProviderOverride
   ? PROVIDER_ALIAS[rawProviderOverride.toLowerCase()] ||
     rawProviderOverride.toLowerCase()
   : null;
-const modelOverride = parseFlag("--model");
+const modelOverride = (parseFlag("--model") || "").trim() || null;
 const domainFlag = parseFlag("--domain");
 
 if (!role || !promptArg) {
@@ -448,7 +553,28 @@ if (!prompt.trim()) {
   process.exit(2);
 }
 
-const provider = providerOverride || getProviderForRole(role);
+const needsWorkspace = restArgs.includes("--needs-workspace");
+const resolveOnly = restArgs.includes("--resolve-only");
+
+const target = dispatchTarget({ role, providerOverride, modelOverride, prompt, needsWorkspace });
+if (target.resolverError) {
+  process.stderr.write(`[dispatch-agent] model resolver unavailable (${target.resolverError}) — using the role's pin\n`);
+}
+if (!target.ok) {
+  console.log(JSON.stringify({
+    ok: false,
+    code: "provider-pin-unreadable",
+    error: `provider resolution failed for role "${role}" — REFUSING dispatch (no silent Claude substitution): ${target.error}`,
+  }));
+  process.exit(1);
+}
+let provider = target.provider;
+const resolution = target.resolution;
+const resolutionFields = target.recordFields;
+if (resolveOnly) {
+  console.log(JSON.stringify({ ok: true, resolve_only: true, role, provider, model: target.runOpts.model || null, effort: resolution ? resolution.effort : null, ...resolutionFields, source: resolution ? resolution.source : "pin" }));
+  process.exit(0);
+}
 const promptBytes = Buffer.byteLength(prompt, "utf8");
 
 const dispatchId = makeDispatchId();
@@ -462,6 +588,7 @@ if (provider === "claude") {
       ok: false,
       provider: "claude",
       role,
+      ...(resolution ? { model: resolution.model, effort: resolution.effort, ...resolutionFields } : {}),
       error:
         "Provider is Claude — dispatch natively via Claude Code Agent tool or `claude -p --agent " +
         role +
@@ -604,10 +731,10 @@ recordDispatchStart({
 
 let result;
 try {
-  const roleModel = getRoleModel(role);
+  const roleModel = resolution ? resolution.model : getRoleModel(role);
   const withPropagatedTimeout = (opts) =>
     propagatedChildBaseMs != null ? { ...opts, timeoutMs: propagatedChildBaseMs } : opts;
-  const runOpts = resolveModelRunOpts({ providerOverride, modelOverride, roleModel });
+  const runOpts = target.runOpts;
   result = runProvider(role, prompt, withPropagatedTimeout(runOpts));
 
   if (
@@ -681,7 +808,7 @@ try {
     elapsed_ms: elapsedMs,
     prompt_bytes: promptBytes,
     cmdline_checksum: cmdChecksum,
-    exit_code: result.ok ? 0 : 1,
+    ...failureRecordFields(result),
     stdout_bytes: stdoutBytes,
     stderr_bytes: stderrBytes,
     fallback: observedRec.fallback,
@@ -703,6 +830,7 @@ try {
     cwd: AGENT_ROOT,
     output_digest: outputDigest(result.output),
     quota: quotaField(observedRec.provider, knownQuota).quota,
+    ...resolutionFields,
   });
 
   if (!result.ok && stdoutBytes === 0 && stderrBytes === 0) {

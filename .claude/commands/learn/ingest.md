@@ -1,11 +1,5 @@
 ---
 description: Ingest external knowledge from files, links, or YouTube videos and apply learnings to the system
-says:
-  - ingest this
-  - learn from this link
-  - read this and learn
-  - learn ingest
-says-args: free-text
 ---
 
 # /learner — External Knowledge Ingestion

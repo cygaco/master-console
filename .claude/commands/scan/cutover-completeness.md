@@ -1,5 +1,5 @@
 ---
-description: Cutover gate — greps the IMPERATIVE layer + keystone registries for RAW deleted-old-tree literals (00-alex/01-adhoc/02-oneshot/03-managers) + renamed-away role names, fail-closed. Catches the staleness role-parity can't, because it checks raw literals NOT alias-resolved roles (the alias table masks cutover-incompleteness).
+description: Cutover check — did a rename really finish? Searches the scripts, hooks, path tables, fixtures and keystone registries for raw literals of the retired old tree (00-alex/01-adhoc/02-oneshot/03-managers) and for renamed-away role names; fails closed. Read-only. Catches what role-parity misses, because it checks raw literals, not alias-resolved roles (the alias table hides an unfinished cutover).
 ---
 
 # /scan:cutover-completeness — Did the rename actually finish?

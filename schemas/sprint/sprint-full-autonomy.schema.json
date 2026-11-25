@@ -126,8 +126,8 @@
         },
         "gauntlet_package": {
           "type": "string",
-          "description": "Default gauntlet-package mode for this preset on the ε-conducted path. 'auto' best-effort resolves a lean-gauntlet PackageDecision (scripts/sprint/gauntlet-package.js) and fails open to the full registry-matched roster on any resolution error; 'full' is the explicit escape hatch (always pays today's full roster); 'differential' conducts the same as 'auto' and additionally runs the full test suite alongside the selected package, surfacing any selector_miss on stderr. Overridable per run via /sprint:full's own --gauntlet-package flag (scripts/sprint/full.js#parseArgs), which always wins over this preset default.",
-          "enum": ["auto", "full", "differential"],
+          "description": "Default gauntlet-package mode for this preset on the ε-conducted path. 'auto' best-effort resolves a lean-gauntlet PackageDecision (scripts/sprint/gauntlet-package.js) and fails open to the full registry-matched roster on any resolution error; 'full' is the explicit escape hatch (always pays today's full roster). Overridable per run via /sprint:full's own --gauntlet-package flag (scripts/sprint/full.js#parseArgs), which always wins over this preset default.",
+          "enum": ["auto", "full"],
           "default": "auto"
         }
       }

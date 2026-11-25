@@ -142,6 +142,123 @@ test("a GPT-hunter fallback-to-claude collapse → flagged (distinct providers <
   assert.ok(has(evaluateRuntime(recs, 3), "2/3 distinct providers"), "a fallback-to-claude diversity collapse must be flagged: " + evaluateRuntime(recs, 3).join(" | "));
 });
 
+test("runtime: a Claude-only review is labelled in the warning and never counted as multi-lab", () => {
+  const recs = [
+    { role: "security-reviewer", ok: false, provider: "antigravity", completed_at: "2026-07-16T00:00:00Z", prompt_digest: "panelC" },
+    { role: "security-reviewer", ok: false, provider: "openai", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "panelC" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:02:00Z", prompt_digest: "panelC", diversity: "claude-only" },
+  ];
+  const warns = evaluateRuntime(recs, 3);
+  assert.ok(has(warns, "1/3 distinct providers"), warns.join(" | "));
+  assert.ok(has(warns, "Claude only — no second lab"), warns.join(" | "));
+  assert.ok(!has(warns, "claim refused"), "an honest claude-only label is not a forged claim: " + warns.join(" | "));
+});
+test("runtime FALSIFIER: a record claiming multi-lab over Claude-only stamps is refused", () => {
+  const recs = [
+    { role: "security-reviewer", ok: false, provider: "openai", completed_at: "2026-07-16T00:00:00Z", prompt_digest: "panelD" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "panelD", diversity: "multi-lab" },
+  ];
+  const warns = evaluateRuntime(recs, 3);
+  assert.ok(has(warns, 'claims diversity "multi-lab" but its provider stamps show "claude-only"'), warns.join(" | "));
+});
+test("runtime FALSIFIER: a made-up diversity value is refused", () => {
+  const recs = [
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "panelE", diversity: "banana" },
+  ];
+  assert.ok(has(evaluateRuntime(recs, 3), "claim refused"));
+});
+test("runtime FALSIFIER: an older three-provider panel on the same prompt cannot hide a newer Claude-only panel", () => {
+  const recs = [
+    { role: "security-reviewer", ok: true, provider: "antigravity", completed_at: "2026-07-16T00:00:00Z", prompt_digest: "same", panel_run_id: "panel-old" },
+    { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "same", panel_run_id: "panel-old" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:02:00Z", prompt_digest: "same", panel_run_id: "panel-old" },
+    { role: "security-reviewer", ok: false, provider: "antigravity", completed_at: "2026-07-17T00:00:00Z", prompt_digest: "same", panel_run_id: "panel-new" },
+    { role: "security-reviewer", ok: false, provider: "openai", completed_at: "2026-07-17T00:01:00Z", prompt_digest: "same", panel_run_id: "panel-new" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-17T00:02:00Z", prompt_digest: "same", panel_run_id: "panel-new" },
+  ];
+  const warns = evaluateRuntime(recs, 3);
+  assert.ok(has(warns, 'security review "panel panel-new" completed 1/3'), warns.join(" | "));
+  assert.ok(!has(warns, "panel-old"), "the older complete panel is fine: " + warns.join(" | "));
+});
+test("runtime REGRESSION: a --review-fallback Claude record plus one surviving CLI lab is NOT 2/2 — it hides a failed CLI pass", () => {
+  const FIRED = ["antigravity", "openai"];
+  const recs = [
+    { role: "security-reviewer", ok: false, provider: "antigravity", completed_at: "2026-07-16T00:00:00Z", panel_run_id: "p-fb" },
+    { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:01:00Z", panel_run_id: "p-fb" },
+    { role: "security-reviewer", ok: true, fallback: true, provider: "claude", quota_fallback_from: "antigravity", completed_at: "2026-07-16T00:02:00Z", panel_run_id: "p-fb" },
+  ];
+  const warns = evaluateRuntime(recs, 2, null, FIRED);
+  assert.ok(has(warns, "1/2 distinct providers"), warns.join(" | "));
+});
+test("runtime: with the fired providers named, only non-fallback records from them count (positive, and a claude record outside them does not)", () => {
+  const FIRED = ["antigravity", "openai"];
+  const good = [
+    { role: "security-reviewer", ok: true, provider: "antigravity", completed_at: "2026-07-16T00:00:00Z", panel_run_id: "p-ok" },
+    { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:01:00Z", panel_run_id: "p-ok" },
+  ];
+  assert.equal(evaluateRuntime(good, 2, null, FIRED).length, 0);
+  const claudeInstead = [good[0], { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:01:00Z", panel_run_id: "p-ok" }];
+  assert.ok(has(evaluateRuntime(claudeInstead, 2, null, FIRED), "1/2 distinct providers"));
+  const fbOpenai = [good[0], { ...good[1], fallback: true }];
+  assert.ok(has(evaluateRuntime(fbOpenai, 2, null, FIRED), "1/2 distinct providers"));
+  assert.equal(evaluateRuntime(claudeInstead, 2).length, 0);
+});
+test("runnerFiredCount: the in-process Claude hunter is not expected from the runner; a CLI lab with a route label still is", () => {
+  const { runnerFiredCount } = require("./security-pass-count");
+  assert.equal(runnerFiredCount([{ provider: "antigravity" }, { provider: "openai" }, { provider: "claude", route: "in-process" }]), 2);
+  assert.equal(runnerFiredCount([{ provider: "antigravity" }, { provider: "openai", route: "in-process" }, { provider: "claude" }]), 3);
+  assert.equal(runnerFiredCount(undefined), 0);
+});
+test("runtime: a full runner review (two CLI labs ok, hunter recorded under its own role) is not an under-fire at the runner's count", () => {
+  const recs = [
+    { role: "security-reviewer", ok: true, provider: "antigravity", completed_at: "2026-07-16T00:00:00Z", panel_run_id: "p-full" },
+    { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:01:00Z", panel_run_id: "p-full" },
+    { role: "security_claude_hunter", ok: true, provider: "claude", completed_at: "2026-07-16T00:02:00Z", panel_run_id: "p-full" },
+  ];
+  assert.equal(evaluateRuntime(recs, 2).length, 0);
+  assert.ok(has(evaluateRuntime(recs.slice(0, 1).concat([{ ...recs[1], ok: false }]), 2), "1/2 distinct providers"), "a dead lab is still an under-fire");
+});
+test("runtime FALSIFIER: unsigned legacy keys cannot collide with a signed panel key (prompt_digest \"panel new\" vs panel_run_id \"new\")", () => {
+  const legacy = ["antigravity", "openai", "claude"].map((p, i) => ({
+    role: "security-reviewer", ok: true, provider: p, completed_at: `2026-07-16T00:0${i}:00Z`, prompt_digest: "panel new",
+  }));
+  const newer = [
+    { role: "security-reviewer", ok: false, provider: "antigravity", completed_at: "2026-07-17T00:00:00Z", panel_run_id: "new" },
+    { role: "security-reviewer", ok: false, provider: "openai", completed_at: "2026-07-17T00:01:00Z", panel_run_id: "new" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-17T00:02:00Z", panel_run_id: "new" },
+  ];
+  const warns = evaluateRuntime([...legacy, ...newer], 3);
+  assert.ok(has(warns, 'security review "panel new" completed 1/3'), "the newer Claude-only panel must be judged alone: " + warns.join(" | "));
+  assert.equal(warns.length, 1, warns.join(" | "));
+});
+test("runtime FALSIFIER: a multi-lab claim on a newer Claude-only panel is not backed by an older panel's labs", () => {
+  const recs = [
+    { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "same", panel_run_id: "panel-old" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-17T00:02:00Z", prompt_digest: "same", panel_run_id: "panel-new", diversity: "multi-lab" },
+  ];
+  assert.ok(has(evaluateRuntime(recs, 3), "claim refused"), evaluateRuntime(recs, 3).join(" | "));
+});
+test("runtime: a true multi-lab claim over real multi-lab stamps is accepted", () => {
+  const recs = [
+    { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:00:00Z", prompt_digest: "panelF", diversity: "multi-lab" },
+    { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "panelF", diversity: "multi-lab" },
+    { role: "security-reviewer", ok: true, provider: "antigravity", completed_at: "2026-07-16T00:02:00Z", prompt_digest: "panelF" },
+  ];
+  assert.equal(evaluateRuntime(recs, 3).length, 0);
+});
+test("runtime: a claim backed only by an UNSIGNED/forged ok record is refused (the stamp must be verified)", () => {
+  mcEnv.setEnv("LIVENESS_REQUIRE_SIG", "1");
+  try {
+    const recs = [
+      { role: "security-reviewer", ok: true, provider: "openai", completed_at: "2026-07-16T00:00:00Z", prompt_digest: "panelG", diversity: "multi-lab" },
+      { role: "security-reviewer", ok: true, provider: "claude", completed_at: "2026-07-16T00:01:00Z", prompt_digest: "panelG" },
+    ];
+    assert.ok(has(evaluateRuntime(recs, 3), "claim refused"), evaluateRuntime(recs, 3).join(" | "));
+  } finally {
+    mcEnv.setEnv("LIVENESS_REQUIRE_SIG", "0");
+  }
+});
+
 if (failures.length) {
   process.stderr.write(`FAIL [security-pass-count.test] ${failures.length} failure(s):\n${failures.map((f) => `  - ${f}`).join("\n")}\n`);
   process.exit(1);

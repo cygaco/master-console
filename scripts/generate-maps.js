@@ -307,7 +307,11 @@ function writeJsonl(file, entries) {
   fs.writeFileSync(file, content);
 }
 
+const WITH_VIEWS = process.argv.includes("--views");
+const VIEW_FILES = new Set(["skills.md", "tools.md", "systems-inventory.md"]);
+
 function writeMarkdown(file, title, entries, columns) {
+  if (!WITH_VIEWS && VIEW_FILES.has(path.basename(file))) return;
   const lines = [
     `# ${title}`,
     "",
@@ -417,5 +421,5 @@ console.log(`  Fresh inventory: ${systems.length}`);
 console.log(`  Orphans (in inventory, not in manifest): ${orphans.length}`);
 console.log(`  Drift (in manifest, not in inventory): ${drift.length}`);
 console.log(`\n  Gap categories: none — all 16 tiers covered.`);
-console.log(`\n  Action: review systems-inventory.md; if satisfied, run`);
+console.log(`\n  Action: review systems-inventory.jsonl; if satisfied, run`);
 console.log(`  /scan:system --update to migrate legacy → canonical.\n`);

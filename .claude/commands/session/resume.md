@@ -1,15 +1,7 @@
 ---
+disable-model-invocation: true
 description: Pick up the previous session and KEEP GOING — load the handoff, re-establish mode + team + turbo, and start executing the next action autonomously. The human shouldn't have to do anything.
 user-invocable: true
-says:
-  - pick up where we left off
-  - resume the session
-  - continue from last time
-  - session resume
-  - run session recovery
-  - where were we
-says-flags:
-  read only: --read-only
 ---
 
 # /session:resume — Resume and Continue
@@ -37,7 +29,7 @@ So: after `/session:resume`, you MAY proceed autonomously through the handoff's 
 1. **`DUMP.md`** (project root) — the prescriptive next-session handoff written by `/session:end`. THIS is the primary source — it carries the next-action, in-flight state, operating-model/directive changes, and anti-instructions. Prefer it.
 2. `.claude/runtime/handoff.md` — the Layer-1 live git-ground-truth snapshot (per-sid; `handoff-live.js`). Cross-check `DUMP.md` against it for uncommitted/untracked drift.
 3. `.claude/runtime/.session-checkpoint.json` — periodic checkpoint (crash fallback).
-4. `TRACKER.md` (root) — the enforced source of truth; **outranks the handoff** on any disagreement. Always reconcile the handoff against it.
+4. `TRACKER.md` (root) — the enforced source of truth; **outranks the handoff** on any disagreement. Always reconcile the handoff against it. Definitions, rules and history: `trackers/TRACKER-ARCHIVE.md`.
 
 ### Step 2 — Orient (and, if `--read-only`, STOP here)
 Read the loaded handoff + `TRACKER.md`. Establish: the active epic/sprint, the next action, blockers, the operating model in force, and any directives the previous session captured. Verify ground truth: `git -C <root> log --oneline -8` + `node scripts/trackers/validate.js` (must be green; if RED, fixing/​surfacing it is the first action). **If `--read-only`: display the handoff + a 3-line summary and STOP — no writes, no mode, no execution.**

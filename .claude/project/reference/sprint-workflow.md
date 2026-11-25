@@ -224,7 +224,8 @@ sprints continue to ship unchanged.
 | `/sprint:plan`           | Brief intent → Plan Contract | front door |
 | `/sprint:design`         | Plan Contract → PRD/STORIES/COPY/INPUTS/TRACE/AC/QA/release + tickets | design |
 | `/sprint:execute`        | Tickets → Ralph loops + checks + issues + checkpoints | execution |
-| `/sprint:release`        | Sprint → release record, approval, deploy mark, retrospective | release |
+| `/sprint:release`        | Sprint → release record, approval, retrospective | release |
+| `/sprint:deploy`         | Approved release → deploy mark or rollback (the person types it) | release |
 | `/sprint:retrospective`  | Closed sprint → structured retro (outcomes, friction, action items) + status flip to `retrospected` | post-release |
 | `/sprint:status`         | List every live sprint (v0.2) | read-only |
 

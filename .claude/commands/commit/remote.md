@@ -1,16 +1,10 @@
 ---
 description: Push current branch to remote — with safety checks
-says:
-  - push it
-  - push the branch
-  - push to remote
-  - commit remote
-says-confirm: always
 ---
 
 # /commit:remote — Push to Remote
 
-Push the current branch to the remote. Requires user confirmation.
+Push the current branch to the remote. A force push still needs the user's explicit confirmation.
 
 ## Input
 
@@ -27,19 +21,9 @@ Run in parallel:
 
 If on `main` or `master` and force push requested: **WARN and ask for explicit confirmation. Do not proceed without it.**
 
-### Step 2: Confirm
+### Step 2: Push
 
-Show the user:
-```
-Pushing to: origin/<branch>
-Commits: <N> new commits
-  <hash> <message>
-  <hash> <message>
-```
-
-Ask: "Push these commits?" (Even in dark mode — pushing is visible to others.)
-
-### Step 3: Push
+A push of green work to the operator's own repos does not ask (`CLAUDE.md` § Autonomy). If the remote is public, the zero-personal-content check and a security read of what is new come first.
 
 ```bash
 git push -u origin <branch>
@@ -49,7 +33,7 @@ git push -u origin <branch>
 - NEVER use `--force` unless user explicitly requested AND confirmed
 - NEVER skip hooks (`--no-verify`)
 
-### Step 4: Verify
+### Step 3: Verify
 
 Run `git status` to confirm branch is up to date with remote.
 

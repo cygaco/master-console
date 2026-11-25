@@ -1,25 +1,20 @@
 ---
-description: Prepare and execute a sprint release — final checks, approval, deploy gate, release notes, rollback prep, retrospective trigger.
+description: Prepare a sprint release — final checks, approval, release notes, rollback plan, release report, sprint archive and retrospective trigger. Going live is a separate step the person runs.
 user-invocable: true
-says:
-  - release the sprint
-  - ship the sprint
-  - sprint release
-  - cut the release
-says-confirm: always
 ---
 
 # /sprint:release — Sprint Release
 
 Drive the closing phase of a sprint: confirm gates, request release
-approval, mark deployment, capture post-release monitoring, trigger
-retrospective + learning capture.
+approval, capture post-release monitoring, trigger retrospective +
+learning capture.
 
 `/sprint:release` is conservative and approval-gated by default. It
-NEVER performs a production deployment automatically — the user
-invokes the deploy and `/sprint:release deploy` only marks it.
+NEVER performs a production deployment. Deploying is a separate step:
+`/sprint:deploy`, which the person types after running the deploy
+themselves; it only marks it (or rolls the record back).
 
-> Ledger contract — this skill writes a `RELEASES.md` sprint row via `scripts/sprint/ledger.js` on prepare AND deploy. See `paths.sprintReference#ledger-discipline` for what qualifies and the fail-open contract.
+> Ledger contract — this skill writes a `RELEASES.md` sprint row via `scripts/sprint/ledger.js` on prepare; the deploy mark (`/sprint:deploy`) updates it. See `paths.sprintReference#ledger-discipline` for what qualifies and the fail-open contract.
 
 ## When to use
 
@@ -55,22 +50,14 @@ the user for production deploy approval.")
 ```
 
 β responds DECIDE | DIRECTIVE | ESCALATE. Log the verdict to `paths.betaEvents`.
-Only when β returns ESCALATE do you surface to the user — and you must use
-the `ESCALATE:` prefix on the AskUserQuestion text so the beta-gate hook
-allows it through.
-
-The beta-gate hook blocks a release-context question dispatched without a
-recent Beta event (CLAUDE.md §"β consultation protocol").
-
-The beta-gate hook treats a Beta event recorded within the last 30 minutes
-mentioning "release", "RL-", "deploy", or "ship" in `data.question` or
-`data.topic_tags` as the satisfying consultation.
+Only when β returns ESCALATE do you surface to the user, as a
+`⚠️ DECISION NEEDED` (CLAUDE.md § Talking to the Operator).
 
 ### Step 1 — Prepare release record
 
 Before preparing the record, apply the gauntlet→release stop rule:
 
-> **DISCHARGE rule.** A gate is DISCHARGED when its declared oracle is measured ZERO on the certifying head ONCE, on the platforms the release declares. A discharged gate is not re-opened in this round by a new falsifier, vacuity probe, hermeticity scrub or platform floor; each of those is a ROADMAP item (`/roadmap:add`) with the measured cost, never a new lane. β at gauntlet→release answers exactly three questions: (1) is every stage of the selected package green on this head, (2) is the budget met or is the overrun recorded as a finding, (3) does any open lane cite a roadmap id. Three yes → DECIDE. A DIRECTIVE that opens a lane without a roadmap id is malformed.
+> **DISCHARGE rule.** A gate is DISCHARGED when its declared oracle is measured ZERO on the certifying head ONCE, on the platforms the release declares. A discharged gate is not re-opened in this round by a new falsifier, vacuity probe, hermeticity scrub or platform floor; each of those is a ROADMAP item (`/roadmap:add`) with the measured cost, never a new lane. β at gauntlet→release answers exactly three questions: (1) is every stage of the full package (in 2.1.0 the close always demands the full package, whatever the selection) green on this head, (2) is the budget met or is the overrun recorded as a finding, (3) does any open lane cite a roadmap id. Three yes → DECIDE. A DIRECTIVE that opens a lane without a roadmap id is malformed.
 
 ```bash
 node scripts/sprint/release.js prepare \
@@ -164,23 +151,14 @@ node scripts/sprint/release.js approve --id <RL-id> --approval <AP-id>
 
 This moves the release status to `ready_to_deploy`.
 
-### Step 5 — Deploy (out-of-band; mark in tracker)
+### Step 5 — Hand off the deploy (separate step: `/sprint:deploy`)
 
-The actual deployment is run by the human. After it completes:
-
-```bash
-node scripts/sprint/release.js deploy --id <RL-id> --by <user> --target "<env>"
-```
-
-This sets `deployed_at`, `deployed_by`, and `status: deployed`.
-
-If deploy fails or surfaces a regression:
-
-```bash
-node scripts/sprint/release.js rollback --id <RL-id> --reason "<text>"
-```
-
-This sets `rollback_at`, `rollback_reason`, and `status: rolled_back`.
+The actual deployment is run by the person, out-of-band. Marking it is
+its own skill: tell the person to run the deploy and then type
+`/sprint:deploy --id <RL-id>` (it calls `release.js deploy`, and
+`release.js rollback` when the deploy fails). Stop here until the
+release is `deployed` or `rolled_back`, then re-run `/sprint:release
+--id <RL-id>` to continue at Step 6 (see Recovery).
 
 ### Step 6 — Render the release report
 
@@ -252,7 +230,8 @@ If the session crashed during release:
 2. Read the release YAML — `status` plus `checklist` show what's done.
 3. Resume:
    - If `status: preparing` or `approval_pending` — re-run `release.js check`.
-   - If `status: ready_to_deploy` — the human still has to deploy.
+   - If `status: ready_to_deploy` — the person still has to deploy and
+     mark it with `/sprint:deploy`.
    - If `status: deployed` — render the report and capture learnings.
    - If `status: rolled_back` — write the rollback rationale into the
      report.
@@ -260,8 +239,8 @@ If the session crashed during release:
 ## Approval gates
 
 - Production deploy: **always** requires an approval record.
-- Rollback: does not require its own approval (it's a safety action),
-  but the rollback reason must be recorded.
+- Rollback (in `/sprint:deploy`): does not require its own approval
+  (it's a safety action), but the rollback reason must be recorded.
 - New paid services discovered late: require their own approvals
   before they appear in the release.
 
@@ -294,7 +273,8 @@ explicitly.
 
 ## Non-Goals
 
-- `/sprint:release` does NOT deploy code.
+- `/sprint:release` does NOT deploy code or mark a deployment; that is
+  `/sprint:deploy`.
 - `/sprint:release` does NOT bypass approval gates.
 - `/sprint:release` does NOT close a sprint that has unresolved blocking
   issues unless the user explicitly waives them via an approval record.

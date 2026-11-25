@@ -301,15 +301,33 @@ function gitShowAtRef(root, ref, relPath) {
 }
 
 function activeSprintAtRef(root, { base, head, readFn } = {}) {
-  const regRel = relFromPathsJson(root, "sprintActiveRegistry", DEFAULT_REGISTRY_REL);
-  const curRel = relFromPathsJson(root, "sprintCurrent", DEFAULT_CURRENT_REL);
   const read = readFn || ((ref, rel) => gitShowAtRef(root, ref, rel));
-  const ref = base;
-  if (!ref) return { ok: false, active: false, id: null, status: null, reason: "no resolved base to read the active-sprint registry from (the candidate HEAD is never trusted in its place)" };
+  if (!base) return { ok: false, active: false, id: null, status: null, reason: "no resolved base to read the active-sprint registry from (the candidate HEAD is never trusted in its place)" };
+  const refs = [base];
+  if (typeof head === "string" && head && !head.startsWith("-")) refs.push(`${head}~1`);
+  const results = refs.map((ref) => readOneRef(read, ref));
+  if (!results[0].ok) return results[0];
+  const readable = results.filter((r) => r.ok);
+  if (readable.length === 0) return results[0];
+  const act = readable.find((r) => r.active);
+  return act || readable[0];
+}
+
+function readOneRef(read, ref) {
+  let pj = null;
+  try {
+    const raw = read(ref, ".claude/paths.json");
+    if (raw !== null && raw !== undefined) pj = JSON.parse(raw);
+  } catch {
+    pj = null;
+  }
+  const pick = (key, fb) => (pj && typeof pj[key] === "string" && pj[key] ? pj[key] : fb);
+  const regRel = pick("sprintActiveRegistry", DEFAULT_REGISTRY_REL);
+  const curRel = pick("sprintCurrent", DEFAULT_CURRENT_REL);
   const text = read(ref, regRel);
-  if (text === null) {
+  if (text === null || text === undefined) {
     const curText = read(ref, curRel);
-    if (curText !== null) return { ok: true, active: true, id: null, status: null, reason: "current-sprint file present at ref, no registry" };
+    if (curText !== null && curText !== undefined) return { ok: true, active: true, id: null, status: null, reason: "current-sprint file present at ref, no registry" };
     return { ok: false, active: false, id: null, status: null, reason: `active-sprint registry unreadable at ref ${ref}` };
   }
   return { ok: true, ...parseActiveSprintText(text, false) };

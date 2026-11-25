@@ -1,6 +1,6 @@
 # Reader Discipline — query-first for the events log
 
-> Doctrine + enforcer.
+> Doctrine (no enforcer).
 > Prime directive it serves: the events log is the raw truth (kernel **CORE-4 / P7.4**);
 > reads must stay **complete** and **cheap**, and must not bypass the tier the compactor
 > now maintains.
@@ -54,25 +54,7 @@ and the materializers:
 `events:query`. If a new consumer genuinely needs raw-log access, it belongs in the events
 subsystem (and the allowlist), not scattered across analytics/reporting scripts.
 
-## The enforcer — and its honest limit
+## Enforcer
 
-**Enforcer:** `scripts/checks/reader-discipline.js`.
-
-It is a **sound-direction** check, not a sound-complete one. It carries the CLOSED allowlist
-above and scans `scripts/**/*.js` for the realistic **hand-rolled full-log read** — a
-read-call form (`readFileSync` / `readFile` / `createReadStream` / `readJsonl` / `readLines`)
-whose argument references the events-file literal (`events.jsonl`, `paths.eventsFile`,
-`EVENTS_FILE`). Any file **not** on the allowlist that matches is flagged with `file:line`.
-
-Design choice: **precision over completeness** — the allowlist is exact and comments are
-stripped before matching, so the check aims for **zero false positives**. It defaults to
-report-only (prints findings, exits 0, matching the `log-sink-caps` idiom) and takes
-`--enforce` to exit non-zero on any un-sanctioned reader.
-
-**What it cannot soundly catch (the residual).** Full-log reads have unbounded
-spellings the check cannot decide: a path computed at runtime and stored in a variable
-(`const p = PATHS.eventsFile; fs.readFileSync(p)`), a read performed in a subprocess, a
-re-exported `LOG_FILE` alias, or the literal built by string concatenation. Detecting all of
-these is undecidable, so the residual is named here rather than
-claimed as covered.
-This bounded honesty is the point — a policy names its enforcer **and** its gap.
+None. The report-only check that scanned `scripts/**/*.js` for hand-rolled full-log reads
+was deleted as unused; nothing detects an un-sanctioned reader today.

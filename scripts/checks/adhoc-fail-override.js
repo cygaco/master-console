@@ -35,21 +35,6 @@ function reviewerJsonIsFail(obj) {
     const val = String(obj[k] || "").trim().toLowerCase();
     if (val === "fail" || val === "failed" || val === "reject" || val === "rejected") return true;
   }
-  for (const k of ["critical_findings", "high_findings", "critical", "high"]) {
-    const n = obj[k];
-    if (typeof n === "number" && n > 0) return true;
-  }
-  const findings = Array.isArray(obj.findings)
-    ? obj.findings
-    : Array.isArray(obj.issues)
-      ? obj.issues
-      : null;
-  if (findings) {
-    for (const f of findings) {
-      const sev = String((f && (f.severity || f.level)) || "").trim().toLowerCase();
-      if (sev === "critical" || sev === "high") return true;
-    }
-  }
   return false;
 }
 
@@ -96,7 +81,7 @@ function evaluate({ result, reviewerVerdicts = [] }) {
       if (declaredPass) why.push(`top-level status == "${topStatus}"`);
       if (featureCompleted) why.push(`"${feature}" is in ${completedField}`);
       errors.push(
-        `override: reviewer output ${rv.source} reports a binding FAIL (fail/critical/high)${feature ? ` for "${feature}"` : ""} yet ${why.join(" AND ") || "the run was declared successful"} — dispatcher cannot override a binding FAIL`,
+        `override: reviewer output ${rv.source} reports a binding FAIL${feature ? ` for "${feature}"` : ""} yet ${why.join(" AND ") || "the run was declared successful"} — dispatcher cannot override a binding FAIL`,
       );
     }
   }

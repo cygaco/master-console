@@ -7,7 +7,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$Script:MC_VERSION = "2.1.0"
+$Script:MC_VERSION = "2.3.0"
 
 function Write-Step($msg) { Write-Host "[install] $msg" -ForegroundColor Cyan }
 function Write-Warn($msg) { Write-Host "[install] WARN: $msg" -ForegroundColor Yellow }
@@ -187,6 +187,23 @@ if (Test-Path $ScaffoldCore) {
     }
 } else {
     Write-Warn "scaffold-core.js not found at $ScaffoldCore - skipping product scaffold. The manifest may predate it; regenerate the framework manifest and re-run, or run /mc:setup from inside the project."
+}
+
+$SigninScript = Join-Path $Source "scripts\dispatch\signin.js"
+if (Test-Path $SigninScript) {
+    Write-Step "Sign-in check - asking each AI tool whether you are signed in"
+    $PrevProjectDir = $env:CLAUDE_PROJECT_DIR
+    try {
+        $env:CLAUDE_PROJECT_DIR = $Target
+        & node $SigninScript --refresh 2>$null | ForEach-Object { Write-Host "         $_" }
+        if ($LASTEXITCODE -ne 0) { Write-Warn "sign-in check did not finish cleanly - run /mc:health to check again" }
+    } catch {
+        Write-Warn "sign-in check could not run - run /mc:health to check again"
+    } finally {
+        $env:CLAUDE_PROJECT_DIR = $PrevProjectDir
+    }
+} else {
+    Write-Step "Sign-in check not installed yet - run /mc:health later to see which AI tools you are signed in to"
 }
 
 Write-Step "Stage 3/3 - install complete"

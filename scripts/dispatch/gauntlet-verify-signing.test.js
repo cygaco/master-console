@@ -64,6 +64,29 @@ test("requireSignature:true — a record with a BOGUS signature is rejected (fai
   assert.strictEqual(res.roles[0].status, "unsigned");
 });
 
+test("requireSignature:true — a SIGNED Claude-only record claiming multi-lab is refused (a label is never trusted)", () => {
+  const res = verifyGauntlet({
+    roles: ["security-reviewer"],
+    since: SINCE,
+    requireSignature: true,
+    records: [signed({ provider: "claude", tool_id: "claude", diversity: "multi-lab" })],
+  });
+  assert.strictEqual(res.ok, false);
+  assert.strictEqual(res.roles[0].status, "forged-diversity");
+});
+
+test("requireSignature:true — signed Claude-only records never satisfy a multi-lab role", () => {
+  const res = verifyGauntlet({
+    roles: ["security-reviewer"],
+    since: SINCE,
+    requireSignature: true,
+    requireMultiLabRoles: ["security-reviewer"],
+    records: [signed({ provider: "claude", tool_id: "claude", diversity: "claude-only" })],
+  });
+  assert.strictEqual(res.ok, false);
+  assert.strictEqual(res.roles[0].status, "claude-only");
+});
+
 test("requireSignature:true — a PROPERLY SIGNED record passes (no false-RED on real records)", () => {
   const res = verifyGauntlet({
     roles: ["security-reviewer"],

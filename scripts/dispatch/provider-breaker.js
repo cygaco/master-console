@@ -11,7 +11,7 @@ function resolveFilePath() {
   if (mcEnv.readEnv("PROVIDER_DOWN_FILE")) {
     return mcEnv.readEnv("PROVIDER_DOWN_FILE");
   }
-  const projectRoot = path.resolve(__dirname, "../../..");
+  const projectRoot = path.resolve(__dirname, "..", "..");
   return path.join(projectRoot, ".claude", "runtime", "provider-down.json");
 }
 
@@ -131,4 +131,4 @@ function clear(provider) {
   }
 }
 
-module.exports = { markDown, isDown, clear, computeUntil, DEFAULT_TTL_MS };
+module.exports = { markDown, isDown, clear, computeUntil, resolveFilePath, DEFAULT_TTL_MS };

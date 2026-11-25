@@ -1,12 +1,5 @@
 ---
 description: Record a policy/convention that has no automated enforcer — appends to paths.enforcementDebt
-says:
-  - log enforcement debt
-  - log an ed
-  - this has no enforcer
-  - enforcement log
-says-args: free-text
-says-confirm: always
 ---
 
 # /enforcement:log — Log Aspirational Policy

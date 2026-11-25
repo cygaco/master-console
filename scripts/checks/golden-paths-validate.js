@@ -54,7 +54,14 @@ function validate(doc, opts = {}) {
     for (const [field, code] of [["entry", "entry_missing"], ["smoke_tests", "smoke_missing"]]) {
       for (const p of f[field]) {
         if (!isRel(p)) { add("path_unsafe", `${field}: ${JSON.stringify(p)}`, id); continue; }
-        if (!exists(p)) add(code, p, id);
+        if (!exists(p)) { add(code, p, id); continue; }
+        if (field === "smoke_tests") {
+          if (opts.discoverable instanceof Set && !opts.discoverable.has(p)) {
+            add("smoke_not_executable", `${p} is not discovered by run-tests.js (name it *.test.js under scripts/ or tests/) — the runner silently skips it`, id);
+          } else if (opts.quarantined instanceof Set && opts.quarantined.has(p)) {
+            add("smoke_not_executable", `${p} is quarantined — the runner subtracts it from the primary run`, id);
+          }
+        }
       }
     }
 
@@ -79,6 +86,24 @@ function validate(doc, opts = {}) {
     add("globs_malformed", "security_surface_globs must be a non-empty array of relative glob strings");
   }
   return { findings, notes, featureCount: features.length };
+}
+
+function loadRunnerView(root) {
+  let discoverable = null;
+  let quarantined = new Set();
+  const errors = [];
+  try { discoverable = new Set(require(path.join(root, "scripts", "checks", "run-tests.js")).discoverTestFiles(root)); }
+  catch (e) { errors.push(`run-tests discovery unavailable: ${e && e.message}`); }
+  try {
+    const q = JSON.parse(fs.readFileSync(path.join(root, "tests", "quarantine.json"), "utf8"));
+    for (const e of q.entries || []) if (e && typeof e.file === "string") quarantined.add(e.file);
+  } catch (e) {
+    if (!(e && e.code === "ENOENT")) {
+      quarantined = null;
+      errors.push(`tests/quarantine.json unreadable: ${e && e.message}`);
+    }
+  }
+  return { discoverable, quarantined, errors };
 }
 
 function loadOpenEdIds(file) {
@@ -116,10 +141,12 @@ function main(argv) {
   try { doc = JSON.parse(fs.readFileSync(file, "utf8")); }
   catch (e) { process.stderr.write(`golden-paths-validate: cannot read/parse ${file}: ${e.message}\n`); return 2; }
 
+  const view = loadRunnerView(root);
   const res = validate(doc, {
-    root, strictLedger: args.includes("--strict-ledger"),
+    root, discoverable: view.discoverable, quarantined: view.quarantined, strictLedger: args.includes("--strict-ledger"),
     openEdIds: ledger ? loadOpenEdIds(ledger) : null,
   });
+  for (const msg of view.errors) res.findings.push({ code: "runner_view_unknown", detail: `${msg} — smoke_not_executable NOT verified (check UNKNOWN, not pass)` });
   if (args.includes("--json")) {
     process.stdout.write(JSON.stringify({ ok: res.findings.length === 0, ...res }, null, 2) + "\n");
   } else {
@@ -132,4 +159,4 @@ function main(argv) {
 
 if (require.main === module) process.exit(main(process.argv));
 
-module.exports = { validate, loadOpenEdIds, oneSentence, SCHEMA, MIN_FEATURES };
+module.exports = { validate, loadRunnerView, loadOpenEdIds, oneSentence, SCHEMA, MIN_FEATURES };

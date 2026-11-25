@@ -7,7 +7,6 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { PATHS } = require("../hooks/lib/paths");
-const { excludeFixtureEvents } = require("../lib/fixture-event-ids");
 
 const LEGACY_EXEMPT_BEFORE = null;
 
@@ -529,26 +528,6 @@ function computeFindings(events, sprintDates = {}, cutoff = LEGACY_EXEMPT_BEFORE
       }
     }
 
-    for (const ev of sd.consults) {
-      if (ev.verdict !== "ESCALATE") continue;
-      const evTs = typeof ev.ts === "string" ? ev.ts : "";
-      const hasMatchingHalt = sd.halts.some(
-        (h) =>
-          h.halt_reason === "beta_escalate" &&
-          (!evTs || !h.ts || h.ts >= evTs),
-      );
-      if (!hasMatchingHalt) {
-        findings.push(withFp({
-          sprint_id: sprintId,
-          phase: ev.phase_boundary ? ev.phase_boundary.replace("before_", "") : null,
-          expected_consult: ev.phase_boundary || null,
-          actual_event: "sprint_full_beta_consult",
-          verdict: "ESCALATE",
-          evidence: "no sprint_full_halt(halt_reason: beta_escalate) found for this sprint at/after consult timestamp",
-          finding_type: "escalate_without_halt",
-        }, ev.beta_message));
-      }
-    }
   }
 
   // ── Finding type 4 (C4): cross-sprint template reuse ──────────────────────
@@ -626,8 +605,6 @@ function loadAuditContext() {
   const reportsData = loadFullReportsData(
     mcEnv.readEnv("FULLREPORTS_DIR") || undefined,
   );
-
-  rawEvents = excludeFixtureEvents(rawEvents);
 
   return { rawEvents, malformedCount, sprintDates, reportsData };
 }

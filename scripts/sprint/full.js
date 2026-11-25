@@ -43,97 +43,17 @@ function sprintComposition(sprintId) {
   return hookPoints.compositionFromTickets(tickets);
 }
 
+const gauntletDecision = require("./gauntlet-decision");
 function resolveGauntletDecision(sprintId, composition, opts = {}) {
-  try {
-    const gauntletPackage = require("./gauntlet-package");
-    const changeTrailer = require("../checks/change-trailer");
-    const { execSync } = require("child_process");
-    const root = opts.root || REPO_ROOT;
+  return gauntletDecision.resolveGauntletDecision(sprintId, composition, opts);
+}
 
-    let trailer = null;
-    if (composition.change && composition.blast) {
-      let headMsg = null;
-      try {
-        headMsg = execSync("git log -1 --format=%B HEAD", { cwd: root, encoding: "utf8", windowsHide: true });
-      } catch {
-        headMsg = null;
-      }
-      const ticketTrailer = { change: composition.change, blast: composition.blast, risks: composition.risks || ["none"] };
-      const parsedHead = headMsg === null ? null : changeTrailer.parse(headMsg);
-      const headTrailerPresent = Boolean(
-        parsedHead && (parsedHead.change !== null || parsedHead.blast !== null || parsedHead.risks !== null || (parsedHead.errors || []).length > 0),
-      );
-      const hv = parsedHead === null ? null : changeTrailer.validate(parsedHead);
-      if (headTrailerPresent && hv && !hv.ok) {
-        return {
-          decision: null,
-          halt_reason: "change_trailer_invalid",
-          error: `change_trailer_invalid: HEAD commit carries an invalid change-classification trailer (cannot reconcile against the ticket's ${JSON.stringify(ticketTrailer)}): ${hv.errors.join("; ")}`,
-        };
-      }
-      if (!headTrailerPresent) {
-        let baseForSprintCheck = null;
-        try {
-          baseForSprintCheck = execFileSync("git", ["merge-base", "HEAD", opts.defaultBranch || "main"], { cwd: root, encoding: "utf8", windowsHide: true }).trim();
-        } catch {
-          baseForSprintCheck = null;
-        }
-        let headForSprintCheck = null;
-        try {
-          headForSprintCheck = execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8", windowsHide: true }).trim();
-        } catch {
-          headForSprintCheck = null;
-        }
-        const sprint = changeTrailer.activeSprintAtRef(root, { base: baseForSprintCheck, head: headForSprintCheck });
-        if (!sprint.ok) {
-          return {
-            decision: null,
-            halt_reason: "sprint_registry_unreadable",
-            error: `sprint_registry_unreadable: ${sprint.reason}`,
-          };
-        }
-        if (sprint.active) {
-          return {
-            decision: null,
-            halt_reason: "change_trailer_missing",
-            error: `change_trailer_missing: HEAD commit carries no change-classification trailer while sprint ${sprint.id} is active — the ticket's own classification (${JSON.stringify(ticketTrailer)}) may only widen an existing HEAD trailer, never substitute for a missing one`,
-          };
-        }
-      }
-      if (hv && hv.ok) {
-        const cmp = changeTrailer.compareClassification(ticketTrailer, hv.value);
-        if (cmp.blocked) {
-          return { decision: null, error: `change-trailer downgrade blocked: ticket declared ${JSON.stringify(ticketTrailer)}, HEAD commit trailer is lower (${cmp.downgrades.join(", ")})` };
-        }
-        Object.assign(ticketTrailer, changeTrailer.widenClassification(ticketTrailer, hv.value));
-      }
-      trailer = { ...ticketTrailer, source: "ticket" };
-    } else {
-      const headMsg = execSync("git log -1 --format=%B HEAD", { cwd: root, encoding: "utf8", windowsHide: true });
-      const v = changeTrailer.validate(headMsg);
-      if (!v.ok) return { decision: null, error: `no ticket classification and HEAD trailer invalid: ${v.errors.join("; ")}` };
-      trailer = { ...v.value, source: "commit" };
-    }
-
-    const defaultBranch = opts.defaultBranch || "main";
-    const head = execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8", windowsHide: true }).trim();
-    let base;
-    try {
-      base = execFileSync("git", ["merge-base", "HEAD", defaultBranch], { cwd: root, encoding: "utf8", windowsHide: true }).trim();
-    } catch {
-      return { decision: null, error: `no_base: could not resolve merge-base HEAD ${defaultBranch} (missing/unreachable default branch)` };
-    }
-    if (!base || base === head) return { decision: null, error: "base === head (nothing to diff yet) — skipping the selector for this run" };
-
-    const assembled = gauntletPackage.assembleInput({ root, trailer, composition, base, head, sprint: sprintId, runId: `run-${sprintId}-${Date.now()}` });
-    const decision = gauntletPackage.selectPackage(assembled);
-    if (decision.halt_reason) return { decision: null, error: decision.error || decision.halt_reason };
-    const problems = gauntletPackage.validateDecision(decision);
-    if (problems.length) return { decision: null, error: `selectPackage produced an invalid decision: ${problems.join("; ")}` };
-    return { decision, error: null };
-  } catch (e) {
-    return { decision: null, error: `resolveGauntletDecision failed: ${e.message}` };
+function rosterRoles(decision) {
+  const roles = new Set();
+  for (const st of (decision && Array.isArray(decision.stages)) ? decision.stages : []) {
+    for (const r of Array.isArray(st && st.roster) ? st.roster : []) if (r && r.role) roles.add(r.role);
   }
+  return [...roles];
 }
 
 function gauntletConductProblems(result) {
@@ -162,9 +82,16 @@ function gauntletConductProblems(result) {
 
 function emitPhaseConsults(sprintId, phase, opts = {}) {
   const steps = PHASE_TO_HOOK_STEPS[phase] || [];
-  if (!steps.length || !sprintId) return { ok: true };
+  if (!steps.length) return { ok: true };
+  if (!sprintId) {
+    if (opts.epsilon && steps.includes("gauntlet")) {
+      const detail = "the gauntlet step cannot be conducted without a sprint id";
+      return { ok: false, halt_reason: "gauntlet_not_conducted:no_sprint_id", message: detail, findings: [{ kind: "gauntlet_not_conducted:no_sprint_id", detail }] };
+    }
+    return { ok: true };
+  }
   let gauntletResult = null;
-  const differentialProblems = [];
+  const extraFindings = [];
   let conductingStep = null;
   try {
     const composition = sprintComposition(sprintId);
@@ -173,45 +100,28 @@ function emitPhaseConsults(sprintId, phase, opts = {}) {
         conductingStep = step;
         if (step === "gauntlet") {
           if (opts.gauntletPackage === "full") {
-            process.stderr.write(`[full.js] gauntlet-package: "full" escape hatch — skipping the lean selector, forcing today's full roster (sprint ${sprintId}).\n`);
-            gauntletResult = epsilonRuntime.conductStep(step, { ...composition, change: "release", blast: "major" }, sprintId, { dispatch: !!opts.epsilonDispatch });
+            process.stderr.write(`[full.js] gauntlet-package: "full" escape hatch — skipping the lean selector, forcing the verified FULL package (sprint ${sprintId}).\n`);
+            const forced = gauntletDecision.resolveGauntletDecision(sprintId, composition, { root: opts.root, packageMode: "full" });
+            if (!forced.decision) {
+              const kind = `gauntlet_resolution_refused:${forced.halt_reason || "selection_threw"}`;
+              return { ok: false, halt_reason: kind, message: forced.error || kind, findings: [{ kind: forced.halt_reason || "selection_threw", detail: forced.error || kind, override: "full" }] };
+            }
+            (typeof opts.emit === "function" ? opts.emit : emit)("gauntlet-package-full-override", { sprint: sprintId, package: forced.decision.package, roles: rosterRoles(forced.decision) });
+            gauntletResult = epsilonRuntime.conductStep(step, composition, sprintId, { dispatch: !!opts.epsilonDispatch, gauntletDecision: forced.decision });
             continue;
           }
           const { decision, error } = resolveGauntletDecision(sprintId, composition, { root: opts.root });
           if (decision) {
             gauntletResult = epsilonRuntime.conductStep(step, composition, sprintId, { dispatch: !!opts.epsilonDispatch, gauntletDecision: decision });
-            if (opts.gauntletPackage === "differential") {
-              try {
-                const gauntletPackage = require("./gauntlet-package");
-                const diff = gauntletPackage.runDifferential(decision, { root: opts.root || REPO_ROOT, strict: true });
-                const lenientReason = typeof opts.gauntletLenientReason === "string" ? opts.gauntletLenientReason.trim() : "";
-                const lenient = Boolean(opts.gauntletLenient) && Boolean(lenientReason);
-                if (opts.gauntletLenient && !lenientReason) {
-                  process.stderr.write(`[full.js] gauntlet-package: --lenient REFUSED without --lenient-reason <text> — staying strict (sprint ${sprintId}).\n`);
-                }
-                if (diff.selector_miss.length) {
-                  process.stderr.write(`[full.js] gauntlet-package: --differential found ${diff.selector_miss.length} selector_miss file(s) the "${decision.package}" package never covered: ${diff.selector_miss.join(", ")} (sprint ${sprintId}).\n`);
-                  if (!lenient) differentialProblems.push({ kind: "differential_selector_miss", detail: `--differential found ${diff.selector_miss.length} selector_miss file(s) the "${decision.package}" package never covered: ${diff.selector_miss.join(", ")}` });
-                }
-                if (diff.fail_open_roster_candidates && diff.fail_open_roster_candidates.length) {
-                  process.stderr.write(`[full.js] gauntlet-package: --differential found fail_open_roster_candidate(s) (matched_via:"unknown-open"): ${diff.fail_open_roster_candidates.join(", ")} (sprint ${sprintId}).\n`);
-                  if (!lenient) differentialProblems.push({ kind: "differential_fail_open_roster", detail: `--differential found fail_open_roster_candidate(s) (matched_via:"unknown-open"): ${diff.fail_open_roster_candidates.join(", ")}` });
-                }
-                if (lenient && (diff.selector_miss.length || (diff.fail_open_roster_candidates && diff.fail_open_roster_candidates.length))) {
-                  try {
-                    const { log } = require("../hooks/lib/logger");
-                    log("audit", { kind: "gauntlet-differential-lenient", sprint: sprintId, lenient_reason: lenientReason, selector_miss: diff.selector_miss, fail_open_roster_candidates: diff.fail_open_roster_candidates || [] }, { actor: "full.js", source: "scripts/sprint/full.js" });
-                  } catch { }
-                  process.stderr.write(`[full.js] gauntlet-package: --lenient — the finding(s) above are logged, not gating, for sprint ${sprintId}.\n`);
-                }
-              } catch (e) {
-                process.stderr.write(`[full.js] gauntlet-package: --differential could not run (${e.message}) — differential_unavailable HALTS under strict (sprint ${sprintId}).\n`);
-                differentialProblems.push({ kind: "differential_unavailable", detail: `--differential could not run: ${e.message}${e.halt_reason ? ` (${e.halt_reason})` : ""}` });
-              }
-            }
           } else {
             process.stderr.write(`[full.js] gauntlet-package: selector unavailable this run (${error}) — forcing the FULL roster (never falling open to a narrower gauntlet) (sprint ${sprintId}).\n`);
-            gauntletResult = epsilonRuntime.conductStep(step, { ...composition, change: "release", blast: "major" }, sprintId, { dispatch: !!opts.epsilonDispatch });
+            const forcedFull = gauntletDecision.resolveGauntletDecision(sprintId, composition, { root: opts.root, packageMode: "full" });
+            if (!forcedFull.decision) {
+              const kind = `gauntlet_resolution_refused:${forcedFull.halt_reason || "selection_threw"}`;
+              return { ok: false, halt_reason: kind, message: forcedFull.error || kind, findings: [{ kind: forcedFull.halt_reason || "selection_threw", detail: forcedFull.error || kind, override: "full" }] };
+            }
+            (typeof opts.emit === "function" ? opts.emit : emit)("gauntlet-package-full-override", { sprint: sprintId, package: forcedFull.decision.package, roles: rosterRoles(forcedFull.decision) });
+            gauntletResult = epsilonRuntime.conductStep(step, composition, sprintId, { dispatch: !!opts.epsilonDispatch, gauntletDecision: forcedFull.decision });
           }
           continue;
         }
@@ -232,8 +142,22 @@ function emitPhaseConsults(sprintId, phase, opts = {}) {
     }
   }
 
+  if (opts.epsilon && steps.includes("gauntlet") && (gauntletResult === null || typeof gauntletResult !== "object")) {
+    const detail = "the gauntlet step produced no result (not conducted)";
+    return { ok: false, halt_reason: "gauntlet_not_conducted", message: detail, findings: [{ kind: "gauntlet_not_conducted", detail }] };
+  }
+  // liveness-verified: gauntletResult.verify is the AGGREGATE return of conductGauntletStep's gauntlet-verify
+  if (opts.epsilon && opts.epsilonDispatch && gauntletResult && !(gauntletResult.verify && gauntletResult.verify.ok === true)) {
+    const detail = "the dispatched gauntlet step returned no passing gauntlet-verify result (verify.ok !== true; not verified)";
+    return { ok: false, halt_reason: "gauntlet_not_verified", message: detail, findings: [{ kind: "gauntlet_not_verified", detail }] };
+  }
+  if (opts.epsilon && gauntletResult && gauntletResult.verify === null && !opts.epsilonDispatch) {
+    process.stderr.write(`[full.js] gauntlet: conduct_mode:plan-only — no dispatch, no gauntlet-verify (not a close) (sprint ${sprintId}).\n`);
+    extraFindings.push({ kind: "conduct_mode:plan-only" });
+  }
+
   const { problems: conductProblems, focusedTestsZero } = gauntletConductProblems(gauntletResult);
-  const problems = [...conductProblems, ...differentialProblems];
+  const problems = conductProblems;
   if (focusedTestsZero) {
     process.stderr.write(`[full.js] gauntlet: stage 1 (sanity) finding focused_tests:0 — an empty Focused test set (sprint ${sprintId}).\n`);
   }
@@ -245,7 +169,7 @@ function emitPhaseConsults(sprintId, phase, opts = {}) {
       findings: problems,
     };
   }
-  return { ok: true };
+  return extraFindings.length ? { ok: true, findings: extraFindings } : { ok: true };
 }
 
 const REPO_ROOT = SPRINT.PROJECT;
@@ -303,8 +227,6 @@ function parseArgs(argv) {
     _epsilonExplicit: false,
     _epsilonDispatchExplicit: false,
     gauntletPackage: "auto",
-    gauntletLenient: false,
-    gauntletLenientReason: null,
   };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
@@ -323,10 +245,15 @@ function parseArgs(argv) {
     else if (a === "--cost-gate") out.costGate = argv[++i];
     else if (a === "--gauntlet-package") {
       const v = argv[++i];
-      out.gauntletPackage = v === "full" ? "full" : v === "differential" ? "differential" : "auto";
+      if (v === "full" || v === "auto") out.gauntletPackage = v;
+      else if (v === "differential") {
+        out.gauntletPackageError =
+          '--gauntlet-package "differential" was removed; use "auto" (default) or "full". ' +
+          "The full-suite differential is `node scripts/sprint/gauntlet-package.js close --differential`.";
+      } else {
+        out.gauntletPackageError = `--gauntlet-package ${JSON.stringify(v === undefined ? "" : v)} is not a known value; use "auto" (default) or "full".`;
+      }
     }
-    else if (a === "--lenient-reason") out.gauntletLenientReason = argv[++i];
-    else if (a === "--lenient") out.gauntletLenient = true;
     else if (a === "--epsilon") { out.epsilon = true; out._epsilonExplicit = true; }
     else if (a === "--epsilon-dispatch") {
       out.epsilon = true; out.epsilonDispatch = true;
@@ -585,6 +512,14 @@ function writeFinalReport(state) {
   const deferredTickets = lane("deferred");
   const abandonedTickets = lane("abandoned");
   const releasedTickets = lane("released");
+  const waiting = (Array.isArray(state.betaDirectives) ? state.betaDirectives : []).filter(
+    (d) => d && d.waits_for_operator,
+  );
+  const waitingBlock = waiting.length
+    ? `**Waiting for the operator:** ${waiting.length} judge ESCALATE${waiting.length === 1 ? "" : "s"}\n` +
+      waiting.map((d) => `- ${d.boundary || "(unknown boundary)"}: ${sanitizeBetaMessage(d.message) || "(no message)"}${d.ts ? ` (${d.ts})` : ""}`).join("\n") +
+      "\n"
+    : "";
   let body = `# /sprint:full report — ${state.sprintId}
 
 **Title:** ${state.sprintTitle || "(unknown)"}
@@ -594,7 +529,7 @@ function writeFinalReport(state) {
 **Total duration:** ${dur.toFixed(1)}s
 **Cost estimate:** $${state.cost.cumulative.toFixed(2)} (threshold $${state.cost.threshold.toFixed(2)}${state.cost.bumpedByAck ? ", bumped 2× via --cost-acknowledged" : ""})
 **Outcome:** ${state.outcome || "done"}
-
+${waitingBlock}
 ## Phase timeline
 
 | # | Phase | Duration | Exit | Auto-approvals | Notes |
@@ -870,23 +805,9 @@ function maybeConsultBeta(state, boundary, args) {
   }
 
   if (verdict === "ESCALATE") {
-    return {
-      ok: false,
-      halt_reason: "beta_escalate",
-      boundary,
-      beta_verdict: "ESCALATE",
-      message:
-        `Beta ESCALATE at phase boundary '${boundary}': ${betaMessage}. ` +
-        `Resolve the escalation with Alpha (${boundary} phase cannot proceed until ` +
-        `Beta clears it), then resume with a DECIDE or DIRECTIVE verdict.`,
-      resume_command:
-        `/sprint:full --sprint ${state.sprintId} --resume` +
-        ` --pending-phase ${boundary}` +
-        ` --beta-verdict <DECIDE|DIRECTIVE>` +
-        ` --beta-message "<resolution>"`,
-      next_human_action:
-        `Resolve Beta escalation for '${boundary}', then resume with DECIDE or DIRECTIVE.`,
-    };
+    if (!state.betaDirectives) state.betaDirectives = [];
+    state.betaDirectives.push({ boundary, message: betaMessage, ts, waits_for_operator: true });
+    return { ok: true, verdict: "ESCALATE", waiting_action: betaMessage };
   }
 
   /* c8 ignore next */
@@ -1343,7 +1264,28 @@ function findExistingStagingRelease(sprintId, target) {
   }
 }
 
-function phase4ReleasePrep(state) {
+function workOnOriginMain(root = REPO_ROOT, sinceIso = null) {
+  const since = sinceIso ? new Date(sinceIso) : null;
+  if (!since || !Number.isFinite(since.getTime())) return false;
+  const revList = (...extra) => {
+    const r = spawnSync("git", ["-C", root, "rev-list", `--since=${since.toISOString()}`, "HEAD", ...extra], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      windowsHide: true,
+    });
+    return r.status === 0 ? r.stdout.split(/\s+/).filter(Boolean) : null;
+  };
+  try {
+    const own = revList();
+    if (!own || own.length === 0) return false;
+    const notOnMain = revList("^origin/main");
+    return Array.isArray(notOnMain) && notOnMain.length === 0;
+  } catch {
+    return false;
+  }
+}
+
+function phase4ReleasePrep(state, opts = {}) {
   state.currentPhase = "release-prep";
   mcEnv.setEnv("PHASE_ID", state.currentPhase);
   emit("sprint_full_phase_started", {
@@ -1383,6 +1325,29 @@ function phase4ReleasePrep(state) {
         `Action: complete at least one ticket (mark it 'done' via \`node scripts/sprint/ticket.js update --sprint ${state.sprintId} --id <T-id> --status done\`), or formally abandon the sprint via /sprint:retrospective with no release. ` +
         `Resume with \`/sprint:full --sprint ${state.sprintId} --resume\`.`,
     };
+  }
+
+  const onMain = typeof opts.onMain === "function" ? opts.onMain : workOnOriginMain;
+  if (onMain(REPO_ROOT, currentForCheck.created_at)) {
+    const dur = Date.now() - startTs;
+    state.timeline.push({
+      idx: 4,
+      phase: "release-prep",
+      duration_ms: dur,
+      exit_code: 0,
+      auto_approvals_recorded: 0,
+      notes: "work already on origin/main — no release record; close is the store update",
+    });
+    emit("sprint_full_phase_completed", {
+      sprint_id: state.sprintId,
+      phase: "release-prep",
+      duration_ms: dur,
+      helper_exit_code: 0,
+      auto_approvals_recorded: 0,
+      notes: "skipped: work already on origin/main",
+    });
+    checkpoint(state, "running", "Phase 5: retrospective", "work already on origin/main — release-prep skipped");
+    return { ok: true, skipped: true, reason: "on_main" };
   }
 
   const levels = state.preset.pre_authorized_approval_levels || [];
@@ -1558,6 +1523,10 @@ function main() {
     printHelp();
     return 0;
   }
+  if (args.gauntletPackageError) {
+    process.stderr.write(`${args.gauntletPackageError}\n`);
+    return 2;
+  }
   if (!args.resume && (!args.request || args.request.length < 10)) {
     process.stderr.write(
       'Usage: /sprint:full "<request>" [...]\n\nRun with --help for full options.\n',
@@ -1680,8 +1649,6 @@ function main() {
     epsilon: !!args.epsilon,
     epsilonDispatch: !!args.epsilonDispatch,
     gauntletPackage: args.gauntletPackage || "auto",
-    gauntletLenient: !!args.gauntletLenient,
-    gauntletLenientReason: args.gauntletLenientReason || null,
   };
 
   const bp = checkBranchProtection(args, preset, sprintId);
@@ -1773,7 +1740,7 @@ function main() {
       );
       return 1;
     }
-    const consultResult = emitPhaseConsults(sprintId, PHASES[i], { epsilon: state.epsilon, epsilonDispatch: state.epsilonDispatch, gauntletPackage: state.gauntletPackage, gauntletLenient: state.gauntletLenient, gauntletLenientReason: state.gauntletLenientReason });
+    const consultResult = emitPhaseConsults(sprintId, PHASES[i], { epsilon: state.epsilon, epsilonDispatch: state.epsilonDispatch, gauntletPackage: state.gauntletPackage });
     if (consultResult && consultResult.ok === false) {
       state.halts.push({
         phase: state.currentPhase,
@@ -1823,6 +1790,7 @@ module.exports = {
   phase2Design,
   phase3Execute,
   phase4ReleasePrep,
+  workOnOriginMain,
   findExistingStagingRelease,
   flipActiveSprintsStatusForRetro,
   maybeConsultBeta,

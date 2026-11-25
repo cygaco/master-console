@@ -1,12 +1,5 @@
 ---
 description: Append a new entry to ROADMAP.md — picks section, formats consistently, preserves existing content
-says:
-  - add to the roadmap
-  - put this on the roadmap
-  - roadmap add
-  - add a roadmap entry
-  - road map ad
-says-args: free-text
 ---
 
 # /roadmap:add — Add ROADMAP Entry
@@ -33,7 +26,7 @@ If `$ARGUMENTS` already contains a `###` markdown heading, treat the input as a 
 
 ## Steps
 
-1. Read `ROADMAP.md` at project root. If missing, error: `ROADMAP.md not found — run from project root or create a scaffold first.`
+1. Read `ROADMAP.md` at project root. If missing, error: `ROADMAP.md not found — run from project root or create a scaffold first.` `ROADMAP.md` is the active page (Epics, Sprint Pickup Queue, Sprints) and new entries go there; Strategy, the Shipped sections, Later and the older queue live in `trackers/ROADMAP-ARCHIVE.md`.
 2. Parse `$ARGUMENTS` for topic, hints, status, date, body.
 3. **Choose section** (state the choice explicitly before writing):
    - If a section hint flag is present, use it.
@@ -42,7 +35,7 @@ If `$ARGUMENTS` already contains a `###` markdown heading, treat the input as a 
      - Status `DEFERRED` / `DISCUSSED` of a research/exploration topic → Known issues with a clear "parked" framing.
      - Planned work → the matching epic under `## Epics` (name the epic; if more than one fits, say which and why).
      - Parked / trigger-gated → `## Later`.
-     - Historical, already-shipped → `## Shipped`.
+     - Historical, already-shipped → a `## ✅ Shipped` section in `trackers/ROADMAP-ARCHIVE.md`.
    - If nothing fits and no `--new-section` flag, fall back to Known issues with a clear status marker.
 4. **Format** the entry to match the section's existing pattern:
    - Known issues / epic backlogs: `### Title (STATUS-YYYY-MM-DD)` heading + prose body. May include numbered hypotheses, bullet lists, cross-references.

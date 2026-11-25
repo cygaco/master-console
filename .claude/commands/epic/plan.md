@@ -1,13 +1,6 @@
 ---
 description: Turn a messy plain-language epic request into a durable, validate-shape epic tracker file plus a companion plan artifact (AC, sprint candidates, dependency/risk maps, tracker linkage). The epic equivalent of /sprint:plan.
 user-invocable: true
-says:
-  - plan an epic
-  - make this an epic
-  - epic plan
-  - mint the epic
-  - write the epic tracker
-says-args: free-text
 ---
 
 # /epic:plan — Epic Plan

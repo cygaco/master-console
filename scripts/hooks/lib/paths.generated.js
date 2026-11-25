@@ -91,6 +91,7 @@ const PATHS = {
   "dispatchCompletionsFile": path.join(PROJECT, ".claude", "runtime", "dispatch-completions.jsonl"),
   "providerTmp": path.join(PROJECT, ".claude", "runtime", ".provider-tmp"),
   "providerTierConfig": path.join(PROJECT, ".claude", "runtime", "provider-tier-config.json"),
+  "modelSigninCache": path.join(PROJECT, ".claude", "runtime", "model-signin.json"),
   "providerFallbackPolicy": path.join(PROJECT, ".claude", "agents", "president", "_system", "policy", "provider-fallback.json"),
   "sprintRoot": path.join(PROJECT, ".claude", "project", "sprint"),
   "sprintCurrent": path.join(PROJECT, ".claude", "project", "sprint", "current-sprint.yaml"),
@@ -116,6 +117,7 @@ const PATHS = {
   "sprintSchemas": path.join(PROJECT, "schemas", "sprint"),
   "sprintReference": path.join(PROJECT, ".claude", "project", "reference", "sprint-workflow.md"),
   "sprintRouting": path.join(PROJECT, ".claude", "agents", "president", "_system", "policy", "sprint-routing.json"),
+  "modelPresetLog": path.join(PROJECT, ".claude", "project", "model-presets.log.jsonl"),
   "orgRoleRegistry": path.join(PROJECT, ".claude", "agents", "_org", "role-registry.json"),
   "sprintHookPoints": path.join(PROJECT, ".claude", "agents", "_org", "sprint-hook-points.json"),
   "goldenPaths": path.join(PROJECT, "_planning", "golden-paths.json"),
@@ -130,7 +132,6 @@ const PATHS = {
   "portfolioCommands": path.join(PROJECT, ".claude", "commands", "portfolio"),
   "portfolioScripts": path.join(PROJECT, "scripts", "portfolio"),
   "portfolioTemplates": path.join(PROJECT, "_mc", "templates", "portfolio"),
-  "skillCatalog": path.join(PROJECT, ".claude", "runtime", "skill-catalog.json"),
   "providerSmokeSkill": path.join(PROJECT, "scripts", "mc", "provider-smoke.js"),
   "providerFailureModes": path.join(PROJECT, ".claude", "agents", "president", "_system", "policy", "provider-failure-modes.json"),
   "providerRcaLib": path.join(PROJECT, "scripts", "mc", "lib", "provider-rca.js"),
@@ -147,7 +148,9 @@ const PATHS = {
   "contractsSpec": path.join(PROJECT, "_requirements", "10-contracts", "ARTIFACT-CONTRACTS.md"),
   "etcEvalPacks": path.join(PROJECT, ".claude", "project", "etc", "eval-packs"),
   "etcDecisions": path.join(PROJECT, "runtime", "etc", "decisions"),
-  "etcConsults": path.join(PROJECT, "runtime", "etc", "consults")
+  "etcConsults": path.join(PROJECT, "runtime", "etc", "consults"),
+  "watchDir": path.join(PROJECT, "runtime", "watch"),
+  "plainState": path.join(PROJECT, ".claude", "runtime", "plain")
 };
 
 module.exports = { PROJECT, PATHS };

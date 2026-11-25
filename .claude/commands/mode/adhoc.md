@@ -1,13 +1,6 @@
 ---
+disable-model-invocation: true
 description: Enter adhoc team mode — Alpha + Beta + Gamma for collaborative feature development
-says:
-  - adhoc mode
-  - enter adhoc mode
-  - team mode
-  - switch to adhoc
-says-flags:
-  turbo: --turbo
-says-confirm: fuzzy-only
 ---
 
 # /mode:adhoc — Adhoc Team Mode
@@ -29,7 +22,7 @@ Without `--turbo`, the skill behaves as before. With `--turbo` and no further ar
 
 ### Default turbo scope
 
-`manifest-edit,write-jsonl,worktree-ops` — config edits, jsonl audit writes, and worktree operations for builder dispatch. No `push-to-main`, no `destructive-git`. TTL = 60m. Sibling skill: [`/turbo`](../turbo.md).
+`manifest-edit,write-jsonl,worktree-ops` — config edits, jsonl audit writes, and worktree operations for builder dispatch. No `destructive-git`; turbo has no push scope. TTL = 60m. Sibling skill: [`/turbo`](../turbo.md).
 
 > **`node-e-fs` is deliberately excluded from the default.** The auto-mode classifier hard-denies a turbo scope that auto-approves arbitrary `node -e` execution, so a default containing it fails on first use. Pass it explicitly only in a non-auto-mode session; the durable `settings.allow` already grants the common `node -e` fs writes. (`scripts/turbo/apply.js` also drops it under auto-mode.)
 
@@ -137,6 +130,8 @@ Agent(
   prompt: "STARTUP DIRECTIVE — Acknowledge readiness via SendMessage to \"team-lead\", then go idle. Do NOT claim tasks.\n\nYou are Alex β. Joining team <project>-adhoc as \"Beta\".\nLoad: .claude/agents/president/beta.md, .claude/agents/president/_system/policy/decision-policy.md, .claude/project/stage/current-stage.md\nSendMessage(to: \"team-lead\", summary: \"Beta online\", message: \"β online — ready for consultation.\")\nGo idle."
 )
 ```
+
+No `model` parameter: an in-process spawn runs only Claude models, and every role's spec already carries the Claude model the model resolver picks for it (`node scripts/dispatch/model-resolve.js --sync-specs` writes it; `/scan:model-resolution` fails on drift). A spawn whose model is not Claude is refused by the spawn guard, which names the fix. Pass a model alias (and effort) only when `node scripts/dispatch/harness-spawn-model.js <role>` prints one: for a spawn type that has no spec, or for a role this project pinned (its pin lives in `.claude/manifest.json` and rides at spawn time; the guard then requires exactly that alias and effort).
 
 Success response:
 ```

@@ -1,11 +1,6 @@
 ---
 description: Turn an approved Plan Contract into PRD, stories, COPY, INPUTS, TRACE, acceptance criteria, QA, red-team, release plan — then mint tickets.
 user-invocable: true
-says:
-  - design the sprint
-  - sprint design
-  - write the prd and stories
-  - turn the plan into a design
 ---
 
 # /sprint:design — Sprint Design

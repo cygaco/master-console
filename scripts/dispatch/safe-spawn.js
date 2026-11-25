@@ -67,14 +67,47 @@ const CMDLINE_MAX = 32000;
 function assembledCmdlineLen(toolPath, args) {
   return String(toolPath || "").length + (args || []).reduce((n, a) => n + String(a).length + 3, 0);
 }
-const isInRepo = (p) => {
+function _stripNs(p) {
+  return process.platform === "win32" && p.startsWith("\\\\?\\") && !p.startsWith("\\\\?\\UNC\\") ? p.slice(4) : p;
+}
+function nativeReal(p, opts = {}) {
+  const rp = typeof opts.realpathNative === "function" ? opts.realpathNative : fs.realpathSync.native;
+  const ok = (r) => (typeof r === "string" && r && path.isAbsolute(r) ? _stripNs(r) : null);
+  if (p == null || String(p) === "") return null;
   try {
-    const r = path.resolve(p);
-    return r === PROJECT_ROOT || r.startsWith(PROJECT_ROOT + path.sep);
+    return ok(rp(String(p)));
   } catch {
-    return false;
+    if (!opts.allowMissingTail) return null;
   }
-};
+  let cur = path.resolve(String(p));
+  const tail = [];
+  for (;;) {
+    try { fs.lstatSync(cur); return null; } catch (e) { if (!e || e.code !== "ENOENT") return null; }
+    const parent = path.dirname(cur);
+    if (parent === cur) return null;
+    tail.unshift(path.basename(cur));
+    cur = parent;
+    let r;
+    try { r = rp(cur); } catch { continue; }
+    const base = ok(r);
+    return base ? path.join(base, ...tail) : null;
+  }
+}
+function _underReal(child, root) {
+  const ci = process.platform === "win32";
+  const c = ci ? child.toLowerCase() : child;
+  let r = ci ? root.toLowerCase() : root;
+  if (c === r) return true;
+  if (!r.endsWith(path.sep)) r += path.sep;
+  return c.startsWith(r);
+}
+function underNative(child, root, opts = {}) {
+  const c = nativeReal(child, opts);
+  const r = nativeReal(root, { realpathNative: opts.realpathNative });
+  if (!c || !r) return null;
+  return _underReal(c, r);
+}
+const isInRepo = (p, opts = {}) => underNative(p, PROJECT_ROOT, { allowMissingTail: true, ...opts }) === true;
 const isUnderDir = (p, dir) => {
   try {
     const r = path.resolve(p);
@@ -290,24 +323,37 @@ const _under = (child, root) => _eqPath(child, root) || (process.platform === "w
 const _real = (p) => { try { return fs.realpathSync(p); } catch { return path.resolve(p); } };
 
 function unsafeReason(toolId, real, opts = {}) {
-  if (!opts.allowRepoLocal && isInRepo(real)) {
-    return `resolved '${toolId}' to a repo-local path (${real}) — refusing (PATH-hijack guard)`;
+  const rpo = { realpathNative: opts.realpathNative };
+  if (!nativeReal(real, rpo)) {
+    return `resolved '${toolId}' (${real}) cannot be native-realpath'd — refusing (hijack guards fail closed)`;
+  }
+  if (!opts.allowRepoLocal) {
+    const inRepo = underNative(real, PROJECT_ROOT, rpo);
+    if (inRepo !== false) {
+      return inRepo === null
+        ? `repo root (${PROJECT_ROOT}) cannot be native-realpath'd — refusing '${toolId}' (PATH-hijack guard fails closed)`
+        : `resolved '${toolId}' to a repo-local path (${real}) — refusing (PATH-hijack guard)`;
+    }
   }
   const tmp = os.tmpdir();
-  if (real === tmp || real.startsWith(tmp + path.sep)) {
-    return `resolved '${toolId}' under the OS temp dir (${real}) — refusing (writable-hijack guard)`;
+  const inTmp = underNative(real, tmp, rpo);
+  if (inTmp !== false) {
+    return inTmp === null
+      ? `OS temp dir (${tmp}) cannot be native-realpath'd — refusing '${toolId}' (writable-hijack guard fails closed)`
+      : `resolved '${toolId}' under the OS temp dir (${real}) — refusing (writable-hijack guard)`;
   }
   const approved = (mcEnv.readEnv("APPROVED_TOOL_ROOTS") || "").split(path.delimiter).filter(Boolean);
-  if (approved.length && !approved.some((root) => real === root || real.startsWith(root + path.sep))) {
-    return `resolved '${toolId}' (${real}) is under no MC_APPROVED_TOOL_ROOTS entry`;
+  if (approved.length && !approved.some((root) => underNative(real, root, rpo) === true)) {
+    return `resolved '${toolId}' (${real}) is under no MC_APPROVED_TOOL_ROOTS entry (native-realpath compare)`;
   }
   return null;
 }
 
 function probeEnv() {
-  const keep = ["PATH", "SystemRoot", "windir", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "TEMP", "TMP", "TMPDIR", "LANG", "npm_config_prefix", "NPM_CONFIG_PREFIX"];
+  const keep = ["PATH", "SystemRoot", "windir", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "TEMP", "TMP", "TMPDIR", "LANG"];
   const env = {};
   for (const k of keep) if (process.env[k] !== undefined) env[k] = process.env[k];
+  for (const k of Object.keys(env)) if (/^npm_config_/i.test(k)) delete env[k];
   return env;
 }
 
@@ -329,19 +375,32 @@ function npmGlobalPrefix() {
 
 const _pkgDirs = (prefix) => [path.join(prefix, "node_modules", "@openai", "codex"), path.join(prefix, "lib", "node_modules", "@openai", "codex")];
 
-function npmMetaVersion(real, prefix) {
+function npmCodexPackage(prefix, opts = {}) {
   if (!prefix) return null;
-  const rp = _real(prefix);
+  const rpo = { realpathNative: opts.realpathNative };
+  const rp = nativeReal(prefix, rpo);
+  if (!rp) return null;
   for (const d of _pkgDirs(rp)) {
     try {
-      const dr = fs.realpathSync(d);
-      if (!_under(dr, rp)) continue;
+      const dr = nativeReal(d, rpo);
+      if (!dr || !_underReal(dr, rp)) continue;
       const j = JSON.parse(fs.readFileSync(path.join(dr, "package.json"), "utf8"));
-      const m = j && j.name === "@openai/codex" ? String(j.version || "").match(/^(\d+\.\d+\.\d+)(?:[-+][0-9A-Za-z.+-]*)?$/) : null;
-      if (m) return m[1];
+      if (!j || j.name !== "@openai/codex") continue;
+      const m = String(j.version || "").match(/^(\d+\.\d+\.\d+)(?:[-+][0-9A-Za-z.+-]*)?$/);
+      if (!m) continue;
+      const binRel = typeof j.bin === "string" ? j.bin : j.bin && typeof j.bin === "object" ? j.bin.codex : null;
+      if (typeof binRel !== "string" || !binRel || path.isAbsolute(binRel)) continue;
+      const entry = nativeReal(path.join(dr, binRel), rpo);
+      if (!entry || _eqPath(entry, dr) || !_underReal(entry, dr)) continue;
+      if (!fs.statSync(entry).isFile()) continue;
+      return { dir: dr, version: m[1], entry };
     } catch { }
   }
   return null;
+}
+function npmMetaVersion(real, prefix) {
+  const pkg = npmCodexPackage(prefix);
+  return pkg ? pkg.version : null;
 }
 
 function toolVersion(p, opts = {}) {
@@ -389,6 +448,9 @@ function resolveTool(toolId, opts = {}) {
   const envPath = mcEnv.readEnv(`TOOL_${toolId.toUpperCase()}_PATH`);
   let p = opts.path || envPath || null;
   let resolution = null;
+  let sawCodexCandidates = false;
+  let chosenPkg = null;
+  const refused = [];
   if (toolId === "codex") {
     if (p) {
       const pinned = path.resolve(p).toLowerCase();
@@ -403,14 +465,19 @@ function resolveTool(toolId, opts = {}) {
       resolution = { reason: opts.path ? "explicit-path" : "env-override", chosen: p, chosen_version: null, alternatives: others };
     } else {
       const pre = opts.npmPrefix !== undefined ? opts.npmPrefix : npmGlobalPrefix();
-      const cands = whichAll("codex").map((c) => {
+      const all = whichAll("codex");
+      sawCodexCandidates = all.length > 0;
+      const cands = [];
+      for (const c of all) {
         const r = _real(c);
-        return { path: c, real: r, npm: isNpmGlobalPath(c, r, pre), version: null };
-      });
+        const npm = isNpmGlobalPath(c, r, pre);
+        if (!npm) { cands.push({ path: c, real: r, npm, version: null }); continue; }
+        const pkg = npmCodexPackage(pre, opts);
+        if (!pkg) { refused.push({ path: c, npm: true, reason: "npm-package-unvalidated" }); continue; }
+        cands.push({ path: c, real: r, npm, version: pkg.version, pkg });
+      }
       if (cands.length > 1 && cands.some((c) => c.npm) && !cands[0].npm) {
         cands[0].version = toolVersion(cands[0].path, { ...opts, npmPrefix: pre });
-        const n = cands.find((c) => c.npm);
-        n.version = toolVersion(n.path, { ...opts, npmPrefix: pre });
       }
       const pick = pickCodexCandidate(cands);
       if (pick.chosen) {
@@ -420,20 +487,38 @@ function resolveTool(toolId, opts = {}) {
           chosen: pick.chosen.path,
           chosen_version: pick.chosen.version,
           alternatives: cands.filter((c) => c !== pick.chosen).map((c) => ({ path: c.path, version: c.version, npm: c.npm })),
+          ...(refused.length ? { refused } : {}),
         };
+        if (pick.chosen.pkg) chosenPkg = pick.chosen.pkg;
       }
     }
   }
+  if (!p && sawCodexCandidates) {
+    return { ok: false, reason: `no safe codex candidate (${refused.map((r) => r.path + ": " + r.reason).join("; ")})` };
+  }
   if (!p) p = which(toolId);
   if (!p) return { ok: false, reason: `tool '${toolId}' not found on PATH` };
-  let real;
-  try {
-    real = fs.realpathSync(p);
-  } catch {
-    real = path.resolve(p);
-  }
+  const real = nativeReal(p, opts);
+  if (!real) return { ok: false, reason: `resolved '${toolId}' (${p}) cannot be native-realpath'd — refusing (fail closed)` };
   const unsafe = unsafeReason(toolId, real, opts);
   if (unsafe) return { ok: false, reason: unsafe };
+  if (toolId === "codex") {
+    const pre = opts.npmPrefix !== undefined ? opts.npmPrefix : npmGlobalPrefix();
+    if (!chosenPkg && isNpmGlobalPath(p, real, pre)) {
+      chosenPkg = npmCodexPackage(pre, opts);
+      if (!chosenPkg) return { ok: false, reason: `npm-global codex (${real}) has no validated @openai/codex package (name / bin.codex / entry) — refusing; the shim is never launched` };
+    }
+    if (chosenPkg) {
+      const entryUnsafe = unsafeReason(toolId, chosenPkg.entry, opts);
+      if (entryUnsafe) return { ok: false, reason: entryUnsafe };
+      if (resolution) {
+        resolution.chosen_version = chosenPkg.version;
+        resolution.entry = chosenPkg.entry;
+        resolution.package_dir = chosenPkg.dir;
+      }
+      return { ok: true, path: process.execPath, kind: "node-entry", entry: chosenPkg.entry, shim: real, version: chosenPkg.version, ...(resolution ? { resolution } : {}) };
+    }
+  }
   const ext = path.extname(real).toLowerCase();
   const kind = ext === ".cmd" || ext === ".bat" ? "cmd-shim" : ext === ".exe" || ext === "" ? "native" : "script";
   if (resolution) {
@@ -525,7 +610,7 @@ function safeSpawnSync(toolId, args, opts = {}) {
     return { ok: false, reaped: false, reason: "agy_requires_native_exe", detail: `agy resolved to a ${tool.kind} (${tool.path}) — the multi-line -p carve-out is native-exe only; a .cmd/.bat shim is refused`, stdout: "", stderr: "", exitCode: null };
   }
 
-  const assembledLen = assembledCmdlineLen(tool.path, args);
+  const assembledLen = assembledCmdlineLen(tool.path, tool.kind === "node-entry" ? [tool.entry, ...(args || [])] : args);
   if (assembledLen > CMDLINE_MAX) {
     return { ok: false, reaped: false, reason: "cmdline_oversize", detail: `assembled command line ${assembledLen} chars exceeds the ${CMDLINE_MAX} bound (Windows CreateProcess ceiling minus margin) — the payload is BLOCKED, never truncated-and-sent. Account this run as the lane BLOCKED (agy-unavailable-equivalent), NEVER a partial-review pass.`, stdout: "", stderr: "", exitCode: null };
   }
@@ -537,7 +622,10 @@ function safeSpawnSync(toolId, args, opts = {}) {
   let bin = tool.path;
   let spawnArgs = args || [];
   const useShell = false;
-  if (tool.kind === "cmd-shim" && process.platform === "win32") {
+  if (tool.kind === "node-entry") {
+    bin = process.execPath;
+    spawnArgs = [tool.entry, ...(args || [])];
+  } else if (tool.kind === "cmd-shim" && process.platform === "win32") {
     const cmdExe = system32("cmd.exe");
     if (!cmdExe) {
       return { ok: false, reaped: false, reason: "cmd_exe_unresolved", detail: `cmd.exe not found under ${systemRoot()}\\System32`, stdout: "", stderr: "", exitCode: null };
@@ -583,7 +671,7 @@ function safeSpawnSync(toolId, args, opts = {}) {
     pid: typeof sp.pid === "number" ? sp.pid : null,
     stdout: reaped ? "" : stdout,
     stderr: stderr.slice(0, 4000),
-    tool: { id: toolId, path: tool.path, kind: tool.kind, ...(tool.resolution ? { resolution: tool.resolution } : {}) },
+    tool: { id: toolId, path: tool.path, kind: tool.kind, ...(tool.entry ? { entry: tool.entry } : {}), ...(tool.resolution ? { resolution: tool.resolution } : {}) },
     durationMs,
   };
 }
@@ -625,7 +713,7 @@ function safeSpawnFile(toolId, args, opts = {}) {
     return { ok: false, reaped: false, reason: "agy_requires_native_exe", detail: `agy resolved to a ${tool.kind} (${tool.path}) — the multi-line -p carve-out is native-exe only; a .cmd/.bat shim is refused`, stdout: "", stderr: "", exitCode: null };
   }
 
-  const assembledLen = assembledCmdlineLen(tool.path, args);
+  const assembledLen = assembledCmdlineLen(tool.path, tool.kind === "node-entry" ? [tool.entry, ...(args || [])] : args);
   if (assembledLen > CMDLINE_MAX) {
     return { ok: false, reaped: false, reason: "cmdline_oversize", detail: `assembled command line ${assembledLen} chars exceeds the ${CMDLINE_MAX} bound (Windows CreateProcess ceiling minus margin) — the payload is BLOCKED, never truncated-and-sent. Account this run as the lane BLOCKED (agy-unavailable-equivalent), NEVER a partial-review pass.`, stdout: "", stderr: "", exitCode: null };
   }
@@ -636,7 +724,10 @@ function safeSpawnFile(toolId, args, opts = {}) {
 
   let bin = tool.path;
   let spawnArgs = args || [];
-  if (tool.kind === "cmd-shim" && process.platform === "win32") {
+  if (tool.kind === "node-entry") {
+    bin = process.execPath;
+    spawnArgs = [tool.entry, ...(args || [])];
+  } else if (tool.kind === "cmd-shim" && process.platform === "win32") {
     const cmdExe = system32("cmd.exe");
     if (!cmdExe) {
       return { ok: false, reaped: false, reason: "cmd_exe_unresolved", detail: `cmd.exe not found under ${systemRoot()}\\System32`, stdout: "", stderr: "", exitCode: null };
@@ -699,9 +790,9 @@ function safeSpawnFile(toolId, args, opts = {}) {
     stdout: reaped ? "" : stdout,
     stderr: stderr.slice(0, 4000),
     outFile,
-    tool: { id: toolId, path: tool.path, kind: tool.kind, ...(tool.resolution ? { resolution: tool.resolution } : {}) },
+    tool: { id: toolId, path: tool.path, kind: tool.kind, ...(tool.entry ? { entry: tool.entry } : {}), ...(tool.resolution ? { resolution: tool.resolution } : {}) },
     durationMs,
   };
 }
 
-module.exports = { resolveTool, whichAll, toolVersion, compareVer, isNpmGlobalPath, pickCodexCandidate, assertArgs, normalizeStdin, treeKill, safeSpawnSync, safeSpawnFile, TOOL_IDS, ARG_POLICY, PROJECT_ROOT, CMDLINE_MAX, assembledCmdlineLen, AGY_FORBIDDEN_SKIP_PERM, withCodexHome, DEFAULT_CODEX_HOME, resolveCodexHome };
+module.exports = { nativeReal, underNative, npmCodexPackage, resolveTool, whichAll, toolVersion, compareVer, isNpmGlobalPath, pickCodexCandidate, assertArgs, normalizeStdin, treeKill, safeSpawnSync, safeSpawnFile, TOOL_IDS, ARG_POLICY, PROJECT_ROOT, CMDLINE_MAX, assembledCmdlineLen, AGY_FORBIDDEN_SKIP_PERM, withCodexHome, DEFAULT_CODEX_HOME, resolveCodexHome };

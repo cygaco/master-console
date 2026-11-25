@@ -1,13 +1,7 @@
 ---
-description: Read-only status view of every live sprint — shows id, lane, status, phase, last checkpoint, and the resume command for each in-flight sprint, and flags drift between paths.sprintActiveRegistry and on-disk sprints/.
+description: Show where every live sprint stands — a read-only view of the id, lane, status, phase, last checkpoint and resume command for each in-flight sprint; flags drift between paths.sprintActiveRegistry and on-disk sprints/.
 user-invocable: true
 tags: [sprint, status, read-only]
-says:
-  - sprint status
-  - where are the sprints
-  - what's running
-  - how's the sprint going
-  - show me live sprints
 ---
 
 # /sprint:status — Sprint Status

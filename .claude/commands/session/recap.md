@@ -1,13 +1,6 @@
 ---
 description: Catch up on the last N turns of this session — what you asked, what I did, what's still pending
 user-invocable: true
-says:
-  - recap the session
-  - catch me up
-  - what did we do
-  - what's still pending
-  - session recap
-says-args: topic
 ---
 
 # /session:recap — Last-N-Turns Recap

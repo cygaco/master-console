@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
 const path = require("path");
 const { PROJECT, relPath, PATHS } = require("./lib/paths");
 const { logEvent } = require("./lib/logger");
@@ -98,44 +97,6 @@ process.stdin.on("end", () => {
     const toolName = event.tool_name || "";
 
     if (event.tool_response !== undefined) {
-      if (toolName === "Write" || toolName === "Edit") {
-        const filePath = (event.tool_input || {}).file_path || "";
-        if (filePath.includes("learnings.jsonl")) {
-          try {
-            const absPath = path.join(memoryDir, "learnings.jsonl");
-            if (fs.existsSync(absPath)) {
-              const content = fs.readFileSync(absPath, "utf8").trim();
-              const lines = content ? content.split("\n") : [];
-              let activeCount = 0;
-              for (const line of lines) {
-                try {
-                  const entry = JSON.parse(line);
-                  if (
-                    entry.status !== "implemented" &&
-                    entry.effective !== false
-                  ) {
-                    activeCount++;
-                  }
-                } catch {
-                }
-              }
-              if (activeCount > 1000) {
-                process.stderr.write(
-                  `\x1b[33m[memory-guard] WARN: ${activeCount} active learnings (max: 1000). Consider pruning with /learn:conversation.\x1b[0m\n`,
-                );
-                logEvent(
-                  "warn",
-                  "system",
-                  "learning-count-high",
-                  "",
-                  `${activeCount} active learnings exceeds 1000 max`,
-                );
-              }
-            }
-          } catch {
-          }
-        }
-      }
       process.exit(0);
     }
 

@@ -8,7 +8,7 @@ Audits the Beta consultation cadence enforced by `/sprint:full`. For every audit
 
 ## What it detects
 
-Eight finding types, each with shape `{ sprint_id, phase, expected_consult, actual_event, verdict, evidence, finding_type, fingerprint }` (the `fingerprint` keys the waiver ledger — see Triage / waivers below):
+Seven finding types, each with shape `{ sprint_id, phase, expected_consult, actual_event, verdict, evidence, finding_type, fingerprint }` (the `fingerprint` keys the waiver ledger — see Triage / waivers below):
 
 1. **`missing_consult`** — a phase boundary was reached (`sprint_full_phase_started` for that phase) but no `sprint_full_beta_consult` event was recorded for the sprint + boundary. The four expected boundaries are `before_design`, `before_execute`, `before_release-prep`, `before_retro` (corresponding to transitions into phases 2–5). `before_plan` is not a check boundary.
 
@@ -16,7 +16,7 @@ Eight finding types, each with shape `{ sprint_id, phase, expected_consult, actu
    - Kind is `sprint_full_beta_consultation` (the placeholder name), **or**
    - Kind is `sprint_full_beta_consult` but `beta_message` is empty/missing, `latency_ms` is null/undefined, or `model` is empty/missing. Note: `latency_ms = 0` is valid (CLI resume has no live round-trip; it is not a placeholder signal).
 
-3. **`escalate_without_halt`** — a `sprint_full_beta_consult` with `verdict: "ESCALATE"` has no corresponding `sprint_full_halt` with `halt_reason: "beta_escalate"` for the same sprint at/after the consult timestamp.
+An ESCALATE without a `beta_escalate` halt is not a finding: an ESCALATE no longer halts the run; it is recorded for the operator and the run continues (publishing, spend and irreversible steps stay behind their own gates).
 
 **Canned / non-substantive verdicts.** `placeholder_verdict` catches *absent* messages; these catch present-but-*non-substantive* ones. The contract: a substantive verdict is **≥40 chars AND structured** — a decision token (`DECIDE`/`DIRECTIVE`/`ESCALATE`/`CLASS`/`confidence`/`0.xx`) **OR** a grounding reference (a ticket/sprint/precedent id or a reasoning connective like `because`/`per`/`rubric`/`reversible`/`blast-radius`). The lenient **OR** (flag only when *both* are absent) keeps the runtime false-positive rate low; real verdicts carry both. The **runtime** guard enforces only these per-message checks (C1/C2); the cross-boundary/cross-sprint duplicate checks (C3/C4) are **audit-only** (each `/sprint:full` resume is a fresh process with no prior-consult history). This is a **deterministic string/structure check — no model judgment**, so β cannot be prompted past it (the self-reference trap). Synthetic/test sprints (prefix `SP-J`) are exempt from the audit; the runtime guard in `scripts/sprint/full.js` (`maybeConsultBeta`) enforces the same contract **fail-closed at the boundary** (halt `beta_message_non_substantive`, kill switch `MC_BETA_SUBSTANCE_GATE=off`).
 

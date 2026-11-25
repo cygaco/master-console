@@ -15,7 +15,7 @@ on:
     branches: [main]
 
 env:
-  MC_NPC_GATE_PIN: SELF
+  MC_NPC_GATE_PIN: 5ec416d6314002b8b495aa39ed898b30af45857e
 
 jobs:
   gate:

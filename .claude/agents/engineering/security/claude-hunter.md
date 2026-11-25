@@ -1,9 +1,9 @@
 ---
 name: security_claude_hunter
-description: Security Claude Hunter — the ADR-0022 REAL registered producer for the panel-3lab BINDING claude lane (= security-reviewer.third_pass, claude-opus-4-8, in-process). Summoned by the panel-run CONDUCTOR (α-as-ε or teammate-ε synchronous Agent spawn) + record-inprocess, which writer-stamps role=security_claude_hunter + shape=in-process-agent. Binding verdict; read-only; does NOT write code or dispatch.
+description: Security Claude Hunter — the ADR-0022 REAL registered producer for the panel-3lab BINDING claude lane (= security-reviewer.third_pass, claude-opus-5-5 at max effort applied by the panel conductor, in-process). Summoned by the panel-run CONDUCTOR (α-as-ε or teammate-ε synchronous Agent spawn) + record-inprocess, which writer-stamps role=security_claude_hunter + shape=in-process-agent. Binding verdict; read-only; does NOT write code or dispatch.
 tools: Read, Grep, Glob, Bash
 disallowedTools: Agent, Edit, Write
-model: claude-opus-4-8
+model: claude-opus-5-5
 provider: claude
 maxTurns: 60
 color: red

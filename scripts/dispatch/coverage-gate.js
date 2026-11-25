@@ -55,6 +55,17 @@ function sha256File(p) {
 
 const { isVerifiedLivenessRecord } = require("./verified-liveness-read");
 
+const normProvider = (p) => p || null;
+
+function pinnedProvider(role, pinOpts) {
+  try {
+    const pin = require("./effective-pin").effectivePin(role, pinOpts);
+    return pin && pin.provider ? normProvider(pin.provider) : null;
+  } catch {
+    return null;
+  }
+}
+
 function evaluate(input) {
   const {
     records = [],
@@ -63,6 +74,7 @@ function evaluate(input) {
     schemaVersion = ARGV_SCHEMA_VERSION,
     verifyArtifacts = false,
     requireSignature = true,
+    pinOpts = undefined,
   } = input || {};
   const isLive = (r) => isVerifiedLivenessRecord(r, { requireSignature });
   const violations = [];
@@ -120,8 +132,15 @@ function evaluate(input) {
       continue;
     }
 
-    if (c && c.coverage && c.coverage.cross_provider_required && hit.provider === "claude") {
-      violations.push(`role '${role}' requires cross-provider review but its record shows provider=claude — a Claude clone graded Claude's work (diversity violation).`);
+    if (c && c.coverage && c.coverage.cross_provider_required) {
+      const pinned = pinnedProvider(role, pinOpts);
+      if (pinned === null) {
+        violations.push(`coverage-unmet: role '${role}' requires cross-provider review but has no readable pin, so its record (provider=${hit.provider || "none"}) cannot be shown to cross families.`);
+      } else if (familyOf(pinned) === null || familyOf(hit.provider) === null) {
+        violations.push(`coverage-unmet: role '${role}' requires cross-provider review but the pinned provider (${String(pinned)}) or record provider (${String(hit.provider || "none")}) is not a known family — an unknown family never satisfies cross-family.`);
+      } else if (normProvider(hit.provider) !== pinned) {
+        violations.push(`role '${role}' is pinned to provider=${pinned} but its record shows provider=${hit.provider || "none"} — the pinned provider was substituted (a fallback record does not cover a pinned reviewer).`);
+      }
     }
 
     if (exp.artifact) {
@@ -208,7 +227,82 @@ function reviewLanePolicy(classesUnderChange, lanesRun, opts) {
   return { ok: enforce ? warnings.length === 0 : true, warnings, enforce };
 }
 
-module.exports = { evaluate, readLedger, isBackedRecord, hasArtifactProof, waiverProvenance, sha256File, parseExpect, reviewLanePolicy, W3_REVIEW_LANE_MIN };
+const FAMILY = { claude: "anthropic", openai: "openai", antigravity: "google" };
+const familyOf = (p) => {
+  const k = normProvider(p);
+  return typeof k === "string" && Object.prototype.hasOwnProperty.call(FAMILY, k) ? FAMILY[k] : null;
+};
+const CODE_REVIEW_ROLES = ["backend-reviewer", "frontend-reviewer", "qa-reviewer"];
+const SECURITY_REVIEW_ROLES = ["security-reviewer", "security_claude_hunter"];
+const UNIT_CLASSES = ["code", "security", "visual"];
+
+function presetCoverage(input) {
+  const { unitClass, builderRole, records = [], opts = {} } = input || {};
+  const presets = require("./presets");
+  if (!UNIT_CLASSES.includes(unitClass)) {
+    return { ok: false, declared: null, code: "coverage-unit-class-invalid", reason: `unknown unit class ${JSON.stringify(unitClass)} (code, security or visual)`, lanes: [] };
+  }
+  let active = "default";
+  try {
+    active = presets.activePresetId(opts);
+  } catch {
+  }
+  try {
+    const applied = presets.appliedPresets(opts);
+    if (applied.length) active = applied.slice().sort((a, b) => a.index - b.index)[applied.length - 1].id;
+  } catch {
+  }
+  let preset;
+  try {
+    preset = presets.loadPreset(active, { ...opts, allowInvalid: true });
+  } catch (e) {
+    return { ok: false, declared: null, code: "coverage-preset-unreadable", reason: `cannot load preset '${active}': ${e.message}`, lanes: [] };
+  }
+  const declared = preset.coverage && preset.coverage[unitClass];
+  if (declared === "exempt-capability" || declared === "same-family") {
+    return { ok: true, declared, reason: `preset '${active}' declares ${unitClass} ${declared}; nothing to cross`, lanes: [] };
+  }
+  if (declared !== "cross-family") {
+    return { ok: false, declared: declared || null, code: "coverage-undeclared", reason: `preset '${active}' declares no valid coverage for ${unitClass}`, lanes: [] };
+  }
+  const live = (r) => r && r.ok === true && isBackedRecord(r);
+  const builderRec = records.find((r) => live(r) && r.role === builderRole);
+  let builderFamily = null;
+  if (builderRec && builderRec.provider) builderFamily = familyOf(builderRec.provider);
+  else {
+    try {
+      const pin = require("./effective-pin").effectivePin(builderRole, opts);
+      builderFamily = pin ? familyOf(pin.provider) : null;
+    } catch {
+    }
+  }
+  if (!builderFamily) {
+    return {
+      ok: false,
+      declared,
+      code: "coverage-family-unmet",
+      reason: `coverage-family-unmet: preset '${active}' declares ${unitClass} cross-family but the builder role '${builderRole}' has no readable pin / known provider family, so cross-family cannot be shown`,
+      lanes: [],
+    };
+  }
+  const roles = unitClass === "security" ? SECURITY_REVIEW_ROLES : CODE_REVIEW_ROLES;
+  const lanes = records
+    .filter((r) => live(r) && roles.includes(r.role))
+    .map((r) => ({ role: r.role, provider: r.provider || null, family: familyOf(r.provider) }));
+  if (lanes.some((l) => l.family && l.family !== builderFamily)) {
+    return { ok: true, declared, reason: `preset '${active}' declares ${unitClass} cross-family and a reviewer family differs from the builder family (${builderFamily})`, lanes };
+  }
+  const seen = [...new Set(lanes.map((l) => l.family || "unknown"))].sort();
+  return {
+    ok: false,
+    declared,
+    code: "coverage-family-unmet",
+    reason: `coverage-family-unmet: preset '${active}' declares ${unitClass} cross-family but no backed review record is outside the builder family (${builderFamily || "unknown"}); families seen: ${seen.join(", ") || "none"}`,
+    lanes,
+  };
+}
+
+module.exports = { presetCoverage, familyOf, normProvider, evaluate, readLedger, isBackedRecord, hasArtifactProof, waiverProvenance, sha256File, parseExpect, reviewLanePolicy, W3_REVIEW_LANE_MIN };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
@@ -223,8 +317,15 @@ if (require.main === module) {
   const verifyArtifacts = argv.includes("--verify-artifacts");
   const records = readLedger(flag("--ledger"));
   const res = evaluate({ records, expected, runId, verifyArtifacts });
+  const unitClass = flag("--unit-class");
+  let preset = null;
+  if (unitClass) {
+    const scoped = runId ? records.filter((r) => r && r.run_id === runId) : records;
+    preset = presetCoverage({ unitClass, builderRole: flag("--builder-role"), records: scoped });
+  }
   process.stdout.write(
-    JSON.stringify({ mode: enforce ? "blocking" : "report-only", run: runId, ...res }, null, 2) + "\n",
+    JSON.stringify({ mode: enforce ? "blocking" : "report-only", run: runId, ...res, ...(preset ? { preset_coverage: preset } : {}) }, null, 2) + "\n",
   );
+  if (preset && !preset.ok && enforce) process.exit(1);
   process.exit(enforce && !res.ok ? 1 : 0);
 }

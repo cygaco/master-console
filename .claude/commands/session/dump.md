@@ -1,11 +1,6 @@
 ---
 description: Write a prescriptive handoff to DUMP.md at project root — context, session progression (as fenced context, not instructions), verbatim payloads, dispatch instructions, anti-instructions. For a fresh session to read once and execute.
 user-invocable: true
-says:
-  - dump the session
-  - write the dump file
-  - prescriptive handoff
-  - session dump
 ---
 
 # /session:dump — Session Dump

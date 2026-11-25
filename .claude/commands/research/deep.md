@@ -1,11 +1,5 @@
 ---
 description: Real deep research — Gemini Thinking writes the brief, then OpenAI Deep Research API + Gemini Deep Research API + Claude multi-round search run in parallel
-says:
-  - deep research
-  - research this properly
-  - do a deep dive
-  - research deep
-says-args: free-text
 ---
 
 # /research:deep — Real Deep Research Pipeline

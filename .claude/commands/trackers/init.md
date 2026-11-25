@@ -20,7 +20,7 @@ node scripts/trackers/init.js --dry-run        # print the plan, write nothing
 Then confirm it's green:
 
 ```bash
-node scripts/trackers/validate.js              # expect: all 20 checks pass, exit 0
+node scripts/trackers/validate.js              # expect: all 19 checks pass, exit 0
 ```
 
 ## What it creates / ensures (idempotent, read-before-write)
@@ -48,4 +48,4 @@ The 9 templates under `trackers/templates/*` are **framework content shipped by 
 ## Reference
 
 - Engine: `scripts/trackers/init.js` — pure `plan(root, force)` (read-before-write) + thin `apply()`, with the seed renderers (`renderTracker` / `renderRoadmapSeed` / `renderUntrackedWork*`). `SECTION_ORDER` + `CORE_TERMS` are kept in lockstep with `scripts/trackers/validate.js`.
-- Validator: [`/trackers:validate`](validate.md) — run it after init to confirm all 20 checks pass (exit 0).
+- Validator: [`/trackers:validate`](validate.md) — run it after init to confirm all 19 checks pass (exit 0).

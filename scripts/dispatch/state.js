@@ -5,14 +5,13 @@ const fs = require("node:fs");
 const path = require("node:path");
 const {
   PROVIDERS,
-  DEFAULT_PROVIDER_PER_ROLE,
   DEFAULT_EFFORT_PER_ROLE,
   resolveModelAlias,
 } = require("./catalog");
 const registryRoles = require("./registry-roles");
 
 const resolveModelAliasFromCatalog = resolveModelAlias;
-const { readManifest } = require("./manifest-patch");
+const { effectivePin, effectiveProviderForRole } = require("./effective-pin");
 const { buildRoleFileMap } = require("./role-files");
 const { parse: parseFm, getValue } = require("./frontmatter");
 
@@ -71,9 +70,13 @@ function readRoleFrontmatter(files) {
   };
 }
 
-function resolveProvider(role, manifest) {
-  const ap = manifest.agentProviders || {};
-  return ap[role] || DEFAULT_PROVIDER_PER_ROLE[role];
+function resolveProvider(role) {
+  return effectiveProviderForRole(role);
+}
+
+function providerSourceOf(role) {
+  const pin = effectivePin(role);
+  return pin && (pin.source === "project" || pin.source === "overlay") ? "manifest" : "default";
 }
 
 function resolveModel(role, provider, fm) {
@@ -168,18 +171,23 @@ function relPosix(p) {
 }
 
 function buildPanelState() {
-  const { data: manifest } = readManifest();
   const roleFiles = buildRoleFileMap();
 
   const roles = [];
   for (const role of registryRoles.roleIds()) {
     const files = roleFiles[role] || [];
-    const fm = readRoleFrontmatter(files);
-    const provider = resolveProvider(role, manifest);
-    const providerSource =
-      manifest.agentProviders && manifest.agentProviders[role]
-        ? "manifest"
-        : "default";
+    const fmRaw = readRoleFrontmatter(files);
+    const pin = effectivePin(role);
+    const fm = { ...fmRaw };
+    if (pin && pin.model) {
+      if (pin.provider === "claude") fm.model = pin.model;
+      else fm.provider_model = pin.model;
+    }
+    if (pin && pin.effort) {
+      fm.provider_reasoning_effort = pin.effort;
+    }
+    const provider = resolveProvider(role);
+    const providerSource = providerSourceOf(role);
     const { model, modelSource, envShadowsModel } = resolveModel(
       role,
       provider,
@@ -199,7 +207,7 @@ function buildPanelState() {
       fallback,
       files: files.map(relPosix),
       envShadows: [...envShadowsModel, ...envShadowsEffort],
-      raw: fm,
+      raw: fmRaw,
     });
   }
 

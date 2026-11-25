@@ -41,23 +41,6 @@ const MAX_LEARNINGS = 60;
 const MAX_TRACES = 20;
 const MAX_DECISIONS = 20;
 
-const SKILL_RANKER_ENABLED = process.env.SKILL_RANKER_ENABLED === "1";
-const RANKER_TOP_K = (() => {
-  const raw = parseInt(process.env.RANKER_TOP_K || "3", 10);
-  if (!Number.isFinite(raw)) return 3;
-  return Math.max(1, Math.min(5, raw));
-})();
-const RANKER_MIN_SCORE = (() => {
-  const raw = parseFloat(process.env.RANKER_MIN_SCORE || "0.6");
-  if (!Number.isFinite(raw)) return 0.6;
-  return Math.max(0, Math.min(1, raw));
-})();
-const CATALOG_MAX_INPUT_TOKENS = (() => {
-  const raw = parseInt(process.env.CATALOG_MAX_INPUT_TOKENS || "5000", 10);
-  if (!Number.isFinite(raw)) return 5000;
-  return Math.max(1000, Math.min(20000, raw));
-})();
-
 const SKIP_WORDS = new Set([
   "approve",
   "continue",
@@ -106,18 +89,11 @@ For task-oriented messages, do THREE things:
 
 3. SELECT the most relevant items across ALL categories. Only items that are relevant AND non-stale for this specific message. Limits: 5-7 learnings, 0-3 traces, 0-3 decisions, 0-3 system state, 0-3 inbox. Fewer is better. Zero in a category is fine. If related items exist, synthesize into one line.
 
-4. RANK SKILLS (only if a SKILLS section is provided below). Score the top candidates from the skill catalog against the user's intent. A skill matches when the user is asking for the procedure that skill encodes — not when keywords merely overlap. Output 0–3 skills, each with:
-   - "id": the skill id from the catalog (the "id" field, e.g. "skill:fix:fast")
-   - "slug": the slug (e.g. "fix:fast")
-   - "score": 0.0–1.0 relevance; only include skills scoring >= 0.6
-   - "why": one short clause naming the matched intent
-   Return an empty array when no skill clearly fits. Do not invent skills — only use ids/slugs present in the SKILLS catalog. Never recommend skills the user did not implicitly ask for.
-
 Output ONLY this JSON (no markdown, no explanation):
-{"prompt":"...","learnings":["..."],"traces":["..."],"decisions":["..."],"state":["..."],"inbox":["..."],"skills":[{"id":"...","slug":"...","score":0.0,"why":"..."}]}
+{"prompt":"...","learnings":["..."],"traces":["..."],"decisions":["..."],"state":["..."],"inbox":["..."]}
 
 If no enrichment needed and no items are relevant:
-{"prompt":"original text unchanged","learnings":[],"traces":[],"decisions":[],"state":[],"inbox":[],"skills":[]}`;
+{"prompt":"original text unchanged","learnings":[],"traces":[],"decisions":[],"state":[],"inbox":[]}`;
 
 function getLogDir() {
   const sessionId = getSessionId();
@@ -206,105 +182,6 @@ function filterInjected(items, injectedHashes) {
   return items.filter((item) => !injectedHashes.has(hashItem(item)));
 }
 
-function estTokens(str) {
-  return Math.ceil((str || "").length / 4);
-}
-
-function loadSkillCatalog() {
-  try {
-    const catalogPath = path.join(
-      PROJECT,
-      PATHS.skillCatalog || ".claude/runtime/skill-catalog.json",
-    );
-    if (!fs.existsSync(catalogPath)) return null;
-    const raw = fs.readFileSync(catalogPath, "utf8");
-    const parsed = JSON.parse(raw);
-    if (!parsed || !Array.isArray(parsed.entries)) return null;
-    const entries = parsed.entries.filter(
-      (e) => e && e.user_invocable !== false && e.description,
-    );
-    return { entries, truncated: 0 };
-  } catch {
-    return null;
-  }
-}
-
-function formatCatalogForHaiku(catalog) {
-  if (!catalog || !Array.isArray(catalog.entries)) {
-    return { text: "", totalShown: 0, truncated: 0 };
-  }
-  const lines = [];
-  let tokenBudget = CATALOG_MAX_INPUT_TOKENS;
-  let truncated = 0;
-  for (const e of catalog.entries) {
-    const desc = (e.description || "").slice(0, 240);
-    const tagPart =
-      Array.isArray(e.tags) && e.tags.length > 0
-        ? ` [${e.tags.slice(0, 4).join(",")}]`
-        : "";
-    const line = `${e.id} /${e.slug}${tagPart}: ${desc}`;
-    const cost = estTokens(line) + 1;
-    if (cost > tokenBudget) {
-      truncated = catalog.entries.length - lines.length;
-      break;
-    }
-    tokenBudget -= cost;
-    lines.push(line);
-  }
-  return { text: lines.join("\n"), totalShown: lines.length, truncated };
-}
-
-function sanitizeRankedSkills(rawSkills, catalog) {
-  if (!Array.isArray(rawSkills) || rawSkills.length === 0) return [];
-  if (!catalog || !Array.isArray(catalog.entries)) return [];
-  const bySlug = new Map();
-  const byId = new Map();
-  for (const e of catalog.entries) {
-    if (e.slug) bySlug.set(String(e.slug).toLowerCase(), e);
-    if (e.id) byId.set(String(e.id).toLowerCase(), e);
-  }
-  const out = [];
-  for (const s of rawSkills) {
-    if (!s || typeof s !== "object") continue;
-    const rawSlug = typeof s.slug === "string" ? s.slug.replace(/^\//, "") : "";
-    const rawId = typeof s.id === "string" ? s.id : "";
-    const entry =
-      bySlug.get(rawSlug.toLowerCase()) || byId.get(rawId.toLowerCase());
-    if (!entry) continue;
-    const score = typeof s.score === "number" ? s.score : 0;
-    if (!Number.isFinite(score) || score < RANKER_MIN_SCORE) continue;
-    out.push({
-      id: entry.id,
-      slug: entry.slug,
-      description: entry.description,
-      score: Math.max(0, Math.min(1, score)),
-      why: typeof s.why === "string" ? s.why.slice(0, 200) : "",
-    });
-  }
-  out.sort((a, b) => b.score - a.score);
-  return out.slice(0, RANKER_TOP_K);
-}
-
-function emitSuggestedEvents(rankedSkills, promptText) {
-  if (!Array.isArray(rankedSkills) || rankedSkills.length === 0) return;
-  try {
-    const { logSkillSuggested, hashPrompt } = require("./lib/skill-telemetry");
-    const promptHash = hashPrompt(promptText || "");
-    rankedSkills.forEach((skill, idx) => {
-      try {
-        logSkillSuggested({
-          skill_id: skill.id,
-          prompt_hash: promptHash,
-          score: skill.score,
-          rank: idx + 1,
-        });
-      } catch {
-      }
-    });
-  } catch {
-  }
-}
-
 function callHaiku(userMessage, contextPayload) {
   return new Promise((resolve) => {
     if (!API_KEY) {
@@ -383,7 +260,7 @@ function shouldSkip(prompt) {
   return null;
 }
 
-function assembleContext(result, injectedHashes, rankedSkills) {
+function assembleContext(result, injectedHashes) {
   const fresh = (arr) =>
     (arr || []).filter((line) => !injectedHashes.has(hashItem(line)));
   result = {
@@ -422,18 +299,10 @@ function assembleContext(result, injectedHashes, rankedSkills) {
     );
   }
 
-  if (Array.isArray(rankedSkills) && rankedSkills.length > 0) {
-    const skillLines = rankedSkills.map((s) => {
-      const desc = (s.description || "").split(/(?<=[.!?])\s/)[0].slice(0, 120);
-      return `  /${s.slug} — ${desc} (score ${s.score.toFixed(2)})`;
-    });
-    parts.push("SUGGESTED SKILLS:\n" + skillLines.join("\n"));
-  }
-
   return parts.length > 0 ? parts.join("\n\n") : "";
 }
 
-function log(logDir, ts, prompt, result, skipReason, latencyMs, rankerNote) {
+function log(logDir, ts, prompt, result, skipReason, latencyMs) {
   try {
     let entry;
     if (skipReason) {
@@ -443,18 +312,9 @@ function log(logDir, ts, prompt, result, skipReason, latencyMs, rankerNote) {
     } else {
       const enriched = result.prompt !== prompt ? "ENRICHED" : "PASSTHROUGH";
       const counts = `L:${result.learnings?.length || 0} T:${result.traces?.length || 0} D:${result.decisions?.length || 0} S:${result.state?.length || 0} I:${result.inbox?.length || 0}`;
-      const rankerSuffix = rankerNote ? ` [${rankerNote}]` : "";
-      entry = `[${ts}] ${enriched} (${latencyMs}ms, ${counts})${rankerSuffix}\n  RAW: ${prompt.replace(/\n/g, " ").slice(0, 300)}\n  OUT: ${(result.prompt || "").replace(/\n/g, " ").slice(0, 300)}\n`;
+      entry = `[${ts}] ${enriched} (${latencyMs}ms, ${counts})\n  RAW: ${prompt.replace(/\n/g, " ").slice(0, 300)}\n  OUT: ${(result.prompt || "").replace(/\n/g, " ").slice(0, 300)}\n`;
     }
     fs.appendFileSync(path.join(logDir, "smart-context.log"), entry);
-  } catch {
-  }
-}
-
-function logRanker(logDir, ts, label, prompt, latencyMs) {
-  try {
-    const line = `[${ts}] ${label} (${latencyMs}ms): ${prompt.replace(/\n/g, " ").slice(0, 200)}\n`;
-    fs.appendFileSync(path.join(logDir, "smart-context.log"), line);
   } catch {
   }
 }
@@ -542,21 +402,6 @@ async function main() {
       `=== INBOX (${inbox.length}) ===\n${formatInboxForHaiku(inbox)}`,
     );
 
-  let skillCatalog = null;
-  let catalogTruncated = 0;
-  if (SKILL_RANKER_ENABLED) {
-    skillCatalog = loadSkillCatalog();
-    if (skillCatalog) {
-      const formatted = formatCatalogForHaiku(skillCatalog);
-      catalogTruncated = formatted.truncated;
-      if (formatted.text) {
-        sections.push(
-          `=== SKILLS (${formatted.totalShown} of ${skillCatalog.entries.length}) ===\n${formatted.text}`,
-        );
-      }
-    }
-  }
-
   if (sections.length === 0) {
     log(logDir, ts, prompt, null, "no new context", 0);
     process.exit(0);
@@ -570,43 +415,10 @@ async function main() {
 
   if (!result) {
     log(logDir, ts, prompt, result, null, latencyMs);
-    if (SKILL_RANKER_ENABLED && skillCatalog) {
-      logRanker(logDir, ts, "RANKER_TIMEOUT", prompt, latencyMs);
-    }
     process.exit(0);
   }
 
-  let rankedSkills = [];
-  let rankerNote = null;
-  if (SKILL_RANKER_ENABLED) {
-    if (!skillCatalog) {
-      rankerNote = "CATALOG_MISSING";
-      logRanker(logDir, ts, "CATALOG_MISSING", prompt, latencyMs);
-    } else if (!Array.isArray(result.skills)) {
-      rankerNote = "RANKER_PARSE_FAIL";
-      logRanker(logDir, ts, "RANKER_PARSE_FAIL", prompt, latencyMs);
-    } else {
-      rankedSkills = sanitizeRankedSkills(result.skills, skillCatalog);
-      if (rankedSkills.length === 0) {
-        rankerNote = "RANKER_EMPTY";
-        logRanker(logDir, ts, "RANKER_EMPTY", prompt, latencyMs);
-      } else {
-        rankerNote = `RANKER_OK(${rankedSkills.length})`;
-        if (catalogTruncated > 0) {
-          logRanker(
-            logDir,
-            ts,
-            `CATALOG_TRUNCATED(${catalogTruncated})`,
-            prompt,
-            latencyMs,
-          );
-        }
-        emitSuggestedEvents(rankedSkills, prompt);
-      }
-    }
-  }
-
-  log(logDir, ts, prompt, result, null, latencyMs, rankerNote);
+  log(logDir, ts, prompt, result, null, latencyMs);
 
   const injectedHashes = loadInjectedHashes(logDir);
   const newHashes = new Set(injectedHashes);
@@ -628,7 +440,7 @@ async function main() {
     output.hookSpecificOutput.modifiedPrompt = result.prompt;
   }
 
-  let context = assembleContext(result, injectedHashes, rankedSkills);
+  let context = assembleContext(result, injectedHashes);
 
   try {
     const oneshotStorePath =

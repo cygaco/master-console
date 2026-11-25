@@ -54,16 +54,6 @@ try {
 
     const keywords = extractKeywords(relFile, toolInput);
 
-    const entry = {
-      ts: new Date().toISOString().slice(0, 19),
-      tool: toolName,
-      success,
-      error: errorMsg || undefined,
-      file: relFile || undefined,
-      keywords,
-      terminal: process.env.CLAUDE_SESSION_ID || "unknown",
-    };
-
     log(
       "tool",
       {

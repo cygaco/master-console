@@ -1,10 +1,3 @@
-/**
- * backup.js — directory-based backup ring.
- *
- * Each backup is a directory under .claude/agents/.system/dispatch-backups/<ISO-ts>/
- * with the original relative paths preserved. index.jsonl records the change
- * summary. Ring keeps the most recent N (default 50).
- */
 
 "use strict";
 
@@ -15,8 +8,7 @@ const PROJECT_ROOT = process.cwd();
 const BACKUP_DIR = path.join(
   PROJECT_ROOT,
   ".claude",
-  "agents",
-  ".system",
+  "runtime",
   "dispatch-backups",
 );
 const INDEX_FILE = path.join(BACKUP_DIR, "index.jsonl");

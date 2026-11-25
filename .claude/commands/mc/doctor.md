@@ -1,12 +1,6 @@
 ---
 description: "Unified MC diagnostic — runs every health check in one place. Like /mc:health but full-coverage."
 user-invocable: true
-says:
-  - mc doctor
-  - run the doctor
-  - diagnose mc
-  - is master console healthy
-  - master console doctor
 ---
 
 # /mc:doctor — Comprehensive MC diagnostic
@@ -47,6 +41,7 @@ In parallel where possible:
 8. **`scripts/mc/release-build.js <current-version> --check`** — current capsule integrity.
 9. **Runtime-leak scan** — anything under `paths.runtime/` accidentally tracked in git.
 10. **Version consistency** — `version.json`, `framework-manifest.json`, capsule `release.json` all agree on current version.
+11. **Local overrides** — read `.claude/framework-installed.json#localOverrides` (written by `/mc:update --keep-local`). Report `N local overrides, M with a newer framework version available`: for each, the path, its ownerClass (content/engine), the action (kept-local / took-target), and the sibling on disk (`<path>.mc-new` for content, `<path>.local-<v>` for engine). GRN when the array is absent/empty; YEL (informational, never RED) when present — these are intentional operator customizations preserved across the upgrade, surfaced so the operator can reconcile a `.mc-new` when ready.
 
 ## Output shape
 

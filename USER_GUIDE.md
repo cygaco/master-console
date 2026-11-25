@@ -25,6 +25,16 @@ That's the baseline. Everything else builds on it.
 
 ---
 
+## 1.5 Say what you want
+
+You do not need the slash or the exact skill name. Say what you want, typed or dictated — "show me what's next on the roadmap", "checkpoint this session", or a command read aloud, such as "session colon end" — and the assistant works out which skill you mean and what to give it. A command you type with the slash runs as usual.
+
+For a skill that deletes, deploys or spends, the reply gives you the exact command instead of starting it. Type that command to run it. A check stops the assistant from starting one of those skills itself, so a misheard or misread message does not start one.
+
+This is on by default. Type `/plain` to see whether it is on and what it costs in tokens, and to switch it off or on. Switching it off leaves that check in place.
+
+---
+
 ## 2. The Three Modes
 
 Pick ONE at a time. Modes are **project-wide and persistent** — whatever you set stays active until you change it, across every terminal you open. You can't have solo in one terminal and adhoc in another simultaneously; switching in any terminal switches for all. Switch with `/mode:solo`, `/mode:adhoc`, `/mode:oneshot`.

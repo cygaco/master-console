@@ -1,12 +1,5 @@
 ---
 description: Audit ROADMAP.md — detect completed items, stale entries, duplicates, hidden urgencies; propose a cleanup plan
-says:
-  - clean up the roadmap
-  - tidy the roadmap
-  - condense the roadmap
-  - roadmap cleanup
-says-flags:
-  apply: --apply
 ---
 
 # /roadmap:cleanup — ROADMAP Audit + Condense
@@ -31,11 +24,11 @@ ROADMAPs rot. Items get shipped without being moved to "Shipped." Entries duplic
 
 Read in parallel:
 
-- `ROADMAP.md` at project root.
+- `ROADMAP.md` at project root (the active page) and `trackers/ROADMAP-ARCHIVE.md` (Strategy, the Shipped sections, Later, the older queue and older ledger rows).
 - `paths.sprintActiveRegistry` — what sprints exist, their status (`closed` / `retrospected` → likely shipped).
 - Last 30 days of commits (`git log --since="30 days ago" --oneline --no-merges`) — what actually shipped.
 - `paths.eventsFile` events of type `release.*` or matching `sprint.*released` in last 30 days.
-- The `## Shipped` section's bullets — what's already documented as shipped.
+- The `## ✅ Shipped` sections' bullets in the archive — what's already documented as shipped.
 - `paths.systemsFile` — for cross-checking entries that name systems.
 
 ## Phase 2: Detection passes (run in parallel)
@@ -46,7 +39,7 @@ Each detector collects findings independently. Don't act yet — gather first.
 - Does a retrospected sprint title match the entry's topic? (Fuzzy match on key nouns.)
 - Does the corresponding artifact (file, hook, skill, check, path key) exist on disk?
 - Does a commit message in the last 30 days reference the entry's title or key noun?
-- If yes to any: candidate for move → `## Shipped`. Record evidence.
+- If yes to any: candidate for move → a `## ✅ Shipped` section in `trackers/ROADMAP-ARCHIVE.md`. Record evidence.
 
 **B. Partial completion.** For each item with a checkbox list:
 - Count `- [x]` vs `- [ ]`. If ≥50% checked: candidate for split — done items move to Shipped, open items stay backlog.

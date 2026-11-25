@@ -5,18 +5,18 @@
   "presets": {
     "conservative": {
       "preset_name": "conservative",
-      "description": "Halt on anything non-trivial. Only auto-progresses phase boundaries when plan_quality=pass and zero gates fire. Beta ESCALATE halts. Cost gate at $5. Refuses on main.",
+      "description": "Halt on anything non-trivial. Only auto-progresses phase boundaries when plan_quality=pass and zero gates fire. A failing ticket is held on its own; the run goes on. Cost gate at $5. Refuses on main.",
       "pre_authorized_approval_levels": ["no_approval_needed"],
       "release_approval_targets": [],
       "stop_condition_policy": {
         "approval_required": "halt",
         "human_setup_required": "halt",
-        "repeated_failure": "halt",
+        "repeated_failure": "defer",
         "scope_expansion": "halt",
         "destructive_action_needed": "halt",
         "production_deploy_needed": "halt",
-        "beta_warning": "halt",
-        "unclear_intent": "halt"
+        "beta_warning": "auto_continue",
+        "unclear_intent": "defer"
       },
       "halt_threshold_failed_tickets_pct": 0,
       "cost_estimate_threshold_usd": 5.0,
@@ -24,7 +24,7 @@
     },
     "moderate": {
       "preset_name": "moderate",
-      "description": "Default preset. Auto-defers tickets that hit the 3-attempt rule (matches execute.js behavior). Pre-authorizes design-time approvals AND the non-production (staging) release-RECORD step only (release.js prepare — reversible, no deploy, no push). Halts on execution approval, production release, paid services, Beta-ESCALATE. Production release approval and any deploy/push remain HARD-blocked regardless of this preset (the orchestrator's hardcoded FORBIDDEN_PRE_AUTH enum + schema enum forbid production targets). Cost gate at $5. Refuses on main. Note: when the sprint's Plan Contract carries goal_verification.reproduction=executable, scripts/sprint/design.js refuses to advance until every AC in acceptance-criteria.md has a real `verified_by: <file>::<name>` linkage. A moderate-preset /sprint:full run on such a sprint will halt at Phase 2 (design) if the linkage is missing — author the fixtures (or set reproduction=not_applicable with a non-empty justification) before resuming.",
+      "description": "Default preset. Auto-defers a ticket that hits the two-round ceiling (matches execute.js behavior); only that ticket is held. Pre-authorizes design-time approvals AND the non-production (staging) release-RECORD step only (release.js prepare — reversible, no deploy, no push). Halts on execution approval, production release, paid services. Production release approval and any deploy/push remain HARD-blocked regardless of this preset (the orchestrator's hardcoded FORBIDDEN_PRE_AUTH enum + schema enum forbid production targets). Cost gate at $5. Refuses on main. Note: when the sprint's Plan Contract carries goal_verification.reproduction=executable, scripts/sprint/design.js refuses to advance until every AC in acceptance-criteria.md has a real `verified_by: <file>::<name>` linkage. A moderate-preset /sprint:full run on such a sprint will halt at Phase 2 (design) if the linkage is missing — author the fixtures (or set reproduction=not_applicable with a non-empty justification) before resuming.",
       "pre_authorized_approval_levels": [
         "no_approval_needed",
         "design_approval_required",
@@ -38,8 +38,8 @@
         "scope_expansion": "halt",
         "destructive_action_needed": "halt",
         "production_deploy_needed": "halt",
-        "beta_warning": "halt",
-        "unclear_intent": "halt"
+        "beta_warning": "auto_continue",
+        "unclear_intent": "defer"
       },
       "halt_threshold_failed_tickets_pct": 50,
       "cost_estimate_threshold_usd": 5.0,
@@ -47,7 +47,7 @@
     },
     "aggressive": {
       "preset_name": "aggressive",
-      "description": "Maximum autonomy within hard ceilings. Pre-authorizes execution + staging releases. Auto-defers repeated_failure. Allows --allow-main override. Still halts on production deploy, paid services, Beta ESCALATE, destructive actions, scope expansion. Cost gate at $5.",
+      "description": "Maximum autonomy within hard ceilings. Pre-authorizes execution + staging releases. Auto-defers repeated_failure. Allows --allow-main override. Still halts on production deploy, paid services, destructive actions, scope expansion. Cost gate at $5.",
       "pre_authorized_approval_levels": [
         "no_approval_needed",
         "design_approval_required",
@@ -62,8 +62,8 @@
         "scope_expansion": "halt",
         "destructive_action_needed": "halt",
         "production_deploy_needed": "halt",
-        "beta_warning": "halt",
-        "unclear_intent": "halt"
+        "beta_warning": "auto_continue",
+        "unclear_intent": "defer"
       },
       "halt_threshold_failed_tickets_pct": 75,
       "cost_estimate_threshold_usd": 5.0,

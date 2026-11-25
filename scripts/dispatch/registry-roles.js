@@ -56,13 +56,26 @@ const providerOf = (role, roles = loadRoles()) => (roles[role] ? roles[role].pro
 const effortOf = (role, roles = loadRoles()) => (roles[role] ? roles[role].effort : undefined);
 const modelOf = (role, roles = loadRoles()) => (roles[role] ? roles[role].model : undefined);
 
-function passesOf(role, roles = loadRoles()) {
-  const r = roles[role];
-  if (!r) return [];
+function passesOf(role, roles = loadRoles(), opts = {}) {
+  const base = registryPassesOf(role, roles);
+  if (!base.length) return base;
+  try {
+    const o = { ...opts };
+    if (!o.registryPath) o.registryPath = registryPath();
+    return require("./security-choice").applyProjectChoices(role, base, o);
+  } catch (e) {
+    const reason = `project choices for ${role} could not be applied (${(e && e.message) || "error"})`;
+    return base.map((p) => ({ ...p, blocked: reason, warning: reason }));
+  }
+}
+
+function registryPassesOf(role, roles = loadRoles()) {
+  const r = Object.prototype.hasOwnProperty.call(roles, role) ? roles[role] : null;
+  if (!r || typeof r !== "object") return [];
   const out = [{ provider: r.provider, model: r.model || null, effort: r.effort || null, key: "primary" }];
   for (const key of ["second_pass", "third_pass"]) {
     const p = r[key];
-    if (p && p.provider) out.push({ provider: p.provider, model: p.model || null, effort: p.effort || null, key });
+    if (p && p.provider) out.push({ provider: p.provider, model: p.model || null, effort: p.effort || null, key, ...(typeof p.route === "string" && p.route ? { route: p.route } : {}) });
   }
   return out;
 }
@@ -135,6 +148,7 @@ module.exports = {
   effortOf,
   modelOf,
   passesOf,
+  registryPassesOf,
   buildChainRoles,
   flagshipOpenaiRoles,
   fixerRoles,

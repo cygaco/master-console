@@ -7,7 +7,6 @@ const fs = require("fs");
 const path = require("path");
 const { PATHS } = require("../hooks/lib/paths");
 const { isVerifiedLivenessRecord } = require("../dispatch/verified-liveness-read");
-const { excludeFixtureEvents } = require("../lib/fixture-event-ids");
 
 const LEGACY_EXEMPT_BEFORE = null;
 
@@ -380,8 +379,6 @@ if (require.main === module) {
     }
   } catch {
   }
-
-  rawEvents = excludeFixtureEvents(rawEvents);
 
   let dispatchRecords = [];
   const dispatchPath =

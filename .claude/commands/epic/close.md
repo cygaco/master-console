@@ -1,12 +1,6 @@
 ---
 description: Close a completed epic — verify every DoD item is satisfied + evidenced, fill the Completion record, set state to Completed at 100%, and reconcile ROADMAP/TRACKER. Refuses to close on unmet/un-evidenced DoD. (Designed; build deferred.)
 user-invocable: true
-says:
-  - close the epic
-  - wrap up the epic
-  - finish the epic
-  - epic close
-says-args: topic
 ---
 
 # /epic:close — Close an Epic

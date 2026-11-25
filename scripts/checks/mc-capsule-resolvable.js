@@ -16,6 +16,7 @@ const TARGET_ROOT = path.resolve(
   arg("--target") || process.env.CLAUDE_PROJECT_DIR || process.cwd(),
 );
 const VERSION = arg("--to");
+const SOURCE_ROOT = arg("--source") ? path.resolve(arg("--source")) : null;
 
 function emit(result) {
   const out = {
@@ -102,6 +103,7 @@ function installedSource() {
 
 function searchLocations() {
   const list = [];
+  if (SOURCE_ROOT) list.push({ kind: "explicit-source", root: SOURCE_ROOT });
   list.push({ kind: "self", root: TARGET_ROOT });
   list.push({
     kind: "sibling-MC",

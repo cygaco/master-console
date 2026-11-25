@@ -281,6 +281,15 @@ test("H: empty (YAML null) spec effort vs non-null registry → DRIFT", () => {
   assert.ok(has(errs, "[DRIFT]") && has(errs, "frontmatter effort"), errs.join(" | "));
 });
 
+test("H: a NON-Claude role's effort line is the in-process answer (spec sync owns it) → not compared with the registry", () => {
+  const reg = cleanReg();
+  const specs = { "security-reviewer": { exists: true, hasEffortKey: true, effort: "high", hasProviderModelKey: true, providerModel: reg.roles["security-reviewer"].model, path: "x/sr.md" } };
+  const errs = evaluateModelChain({ reg, specs });
+  assert.ok(!has(errs, "frontmatter effort"), errs.join(" | "));
+  const specs2 = { "security-reviewer": { exists: true, hasProviderEffortKey: true, providerEffort: "high", hasProviderModelKey: true, providerModel: reg.roles["security-reviewer"].model, path: "x/sr.md" } };
+  assert.ok(has(evaluateModelChain({ reg, specs: specs2 }), "provider_reasoning_effort"));
+});
+
 test("H2: cross-provider spec provider_model drift (stale gpt-5.5) → DRIFT", () => {
   const reg = cleanReg();
   const specs = { "qa-reviewer": { exists: true, hasProviderModelKey: true, providerModel: "gpt-5.5", path: "x/qa.md" } };

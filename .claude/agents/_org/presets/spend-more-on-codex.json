@@ -1,0 +1,30 @@
+{
+  "id": "spend-more-on-codex",
+  "kind": "overlay",
+  "title": "Spend more on Codex",
+  "dated": "2026-11-17",
+  "reason": "Moves code review to Codex, so code built by the Claude builders is reviewed by a different model family on every code unit. Each listed role falls back to Claude when Codex is not available. Builders stay on Claude.",
+  "evidence": [
+    "scripts/dispatch/model-resolve.test.js — this overlay replaces only the listed roles' lists, and each list still ends on a Claude model",
+    "scripts/dispatch/catalog.js — every model and effort level in these lists is in the model catalog"
+  ],
+  "coverage": {
+    "code": "cross-family",
+    "security": "cross-family",
+    "visual": "exempt-capability"
+  },
+  "chains": {
+    "frontend-reviewer": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "backend-reviewer": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "qa-reviewer": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ]
+  }
+}

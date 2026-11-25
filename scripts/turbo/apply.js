@@ -41,7 +41,6 @@ function logAudit(action, target, detail, meta) {
 }
 
 const KNOWN_SCOPES = new Set([
-  "push-to-main",
   "manifest-edit",
   "destructive-git",
   "node-e-fs",
@@ -76,11 +75,53 @@ const SCOPE_PERMISSIONS = {
     "Bash(git worktree prune *)",
     "Bash(git worktree move *)",
   ],
-  "push-to-main": [
-    "Bash(git push origin main)",
-    "Bash(git push origin HEAD:main)",
-  ],
 };
+
+const SPEED_CADENCE = [
+  "parallel builds by default (independent units fan out to concurrent builders)",
+  "at most two review rounds per unit; a failure holds only the unit it blames",
+  "gauntlet sized by the change trailer (Change/Blast/Risks), never skipped",
+  "work already on origin/main closes with the sprint-store update alone",
+  "cheap, reversible, local bookkeeping: act, don't deliberate",
+];
+
+const TRUST_COMMAND = "node scripts/operator/trust-my-repos.js";
+
+function userSettingsPath() {
+  return path.join(require("os").homedir(), ".claude", "settings.json");
+}
+
+function trustStatus(opts = {}) {
+  const settingsPath = opts.settingsPath || userSettingsPath();
+  let trust = null;
+  try {
+    trust = require(path.join(__dirname, "..", "operator", "trust-my-repos.js"));
+  } catch {
+    return { present: false, account: null, settingsPath, command: TRUST_COMMAND };
+  }
+  const dir = opts.repoDir || PROJECT;
+  const account = trust.accountFromOrigin(dir);
+  const repo = trust.repoFromOrigin(dir);
+  let settings = null;
+  try {
+    settings = JSON.parse(fs.readFileSync(settingsPath, "utf8").replace(/^\uFEFF/, ""));
+  } catch {
+    settings = null;
+  }
+  const target = repo || account;
+  const present = !!(target && settings && trust.hasTrustBlock(settings, target));
+  const command = repo ? TRUST_COMMAND : `${TRUST_COMMAND} --repo <host>/<owner>/<repo>`;
+  return { present, account, repo, settingsPath, command };
+}
+
+function renderTrust(t) {
+  const name = t.repo || t.account;
+  if (t.present) return [`  push trust:    present for ${name} (${t.settingsPath})`];
+  return [
+    `  push trust:    MISSING${name ? ` for ${name}` : ""} — pushes stay refused by the safety check.`,
+    `  operator runs: ${t.command}   (prints a preview; add --write to apply it)`,
+  ];
+}
 
 const DEFAULT_SCOPES = ["manifest-edit", "write-jsonl", "worktree-ops"];
 const AUTO_MODE_DENIED_SCOPES = new Set(["node-e-fs"]);
@@ -293,6 +334,7 @@ function writeAuthorization(scopes, ttlMin, reason, spendCeilingUsd, opts = {}) 
     reason: reason || "",
     snapshot_path: path.relative(PROJECT, SNAPSHOT_PATH).replace(/\\/g, "/"),
     safety_floor: SAFETY_FLOOR,
+    cadence: "speed",
   };
   if (typeof spendCeilingUsd === "number" && Number.isFinite(spendCeilingUsd) && spendCeilingUsd > 0) {
     auth.spend_ceiling_usd = spendCeilingUsd;
@@ -357,14 +399,16 @@ function countBypassEvents(grantedIso) {
   }
 }
 
-function renderStatus() {
+function renderStatus(opts = {}) {
   const auth = readAuthorization();
+  const trust = renderTrust(trustStatus(opts));
   if (!auth) {
     return [
       "/turbo --status",
       "",
       "  status:      INACTIVE",
       "  scopes:      (none)",
+      ...trust,
       "",
       "SAFETY FLOOR (never bypassed, even with --scope all):",
       ...SAFETY_FLOOR.map((s) => `  - ${s}`),
@@ -390,6 +434,8 @@ function renderStatus() {
     `  provenance:    ${Array.isArray(auth.provenance) && auth.provenance.length ? auth.provenance.length + " attestation(s)" : "(none — no widening re-grants)"}`,
     `  snapshot:      ${auth.snapshot_path}`,
     `  bypasses:      ${bypasses} since granted_at`,
+    `  cadence:       ${auth.cadence === "speed" ? "speed" : "(not set)"}`,
+    ...trust,
     "",
     "SAFETY FLOOR (never bypassed, even with --scope all):",
     ...SAFETY_FLOOR.map((s) => `  - ${s}`),
@@ -523,6 +569,10 @@ function main() {
       `  spend_ceiling: ${spendCeilingUsd != null ? "$" + spendCeilingUsd + " (operator-raised)" : "$100 (framework default)"}`,
       `  permissions:   +${added} entries (additive merge)`,
       `  snapshot:      ${snapshotTaken ? "taken (first apply this session)" : "skipped (already in turbo session)"}`,
+      ...renderTrust(trustStatus()),
+      "",
+      "Speed cadence ON:",
+      ...SPEED_CADENCE.map((s) => `  - ${s}`),
       "",
       "Safety floor (NEVER bypassed):",
       ...SAFETY_FLOOR.map((s) => `  - ${s}`),
@@ -545,6 +595,10 @@ module.exports = {
   DEFAULT_TTL_MIN,
   FRAMEWORK_DEFAULT_CEILING_USD,
   SAFETY_FLOOR,
+  SPEED_CADENCE,
+  TRUST_COMMAND,
+  trustStatus,
+  renderStatus,
   parseArgs,
   parseTtlMinutes,
   parseSpendCeiling,

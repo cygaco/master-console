@@ -290,6 +290,33 @@ test("model-pin: claude role spec pins wrong model → rejected", () => {
   );
 });
 
+test("model-pin: cross-provider spec model ≠ the resolver's in-process answer → rejected (planted drift)", () => {
+  const inProcess = { "director-of-engineering": "claude-opus-4-8", cabinet: "claude-opus-5-5" };
+  const good = {
+    ".claude/agents/engineering/director-of-engineering.md": "claude-opus-4-8",
+    ".claude/agents/president/cabinet.md": "claude-opus-5-5",
+  };
+  assert.deepStrictEqual(evaluateModelPins({ reg: mpReg, specFm: good, inProcess }), [], "matching in-process answer → clean");
+  for (const planted of ["gpt-5.5", "claude-opus-4-8"]) {
+    const errs = evaluateModelPins({ reg: mpReg, specFm: { ...good, ".claude/agents/president/cabinet.md": planted }, inProcess });
+    assert.ok(
+      errs.some((e) => /model-pin: cross-provider role "cabinet".*in-process answer "claude-opus-5-5"/.test(e)),
+      `planted ${planted} must be rejected, got: ${errs.join("; ")}`
+    );
+  }
+});
+
+test("model-pin: with resolver answers, a Claude role follows the answer (an overlay is not drift) and drift from it is rejected", () => {
+  const inProcess = { "director-of-engineering": "claude-fable-5-2", cabinet: "claude-opus-5-5" };
+  const overlay = {
+    ".claude/agents/engineering/director-of-engineering.md": "claude-fable-5-2",
+    ".claude/agents/president/cabinet.md": "claude-opus-5-5",
+  };
+  assert.deepStrictEqual(evaluateModelPins({ reg: mpReg, specFm: overlay, inProcess }), [], "spec == resolver answer → clean");
+  const drift = evaluateModelPins({ reg: mpReg, specFm: { ...overlay, ".claude/agents/engineering/director-of-engineering.md": "claude-opus-4-8" }, inProcess });
+  assert.ok(drift.some((e) => /model-pin: role "director-of-engineering".*in-process answer "claude-fable-5-2"/.test(e)), `expected drift error, got: ${drift.join("; ")}`);
+});
+
 const cpLeadReg = { roles: {
   "design-lead": { tier: "lead", kind: "lead", provider: "openai", model: "gpt-5.5" },
   "product-lead": { tier: "lead", kind: "lead", provider: "claude", model: "claude-opus-4-8" },

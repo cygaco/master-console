@@ -1,9 +1,9 @@
 {
   "$schema": "mc/version/v1",
   "name": "mc",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "description": "MC — autonomous AI operating system for software engineering. Registry-driven hooks, transactional updates, honest release gates, generic promotion.",
-  "releasedAt": "2026-07-29",
+  "releasedAt": "2026-11-25",
   "minUpgradeableFrom": "0.1.2",
   "channel": "main",
   "frameworkManifestSchema": "mc/framework-manifest/v2",
@@ -54,7 +54,9 @@
     "1.0.0",
     "1.1.0",
     "1.2.0",
-    "2.0.0"
+    "2.0.0",
+    "2.1.0",
+    "2.2.0"
   ],
-  "notes": "Minor bump from 2.0.0: the lean gauntlet, the operator message contract, voice skill routing and the model refresh. Version set ahead of the release cut; releasedAt is stamped by release-canonical.js at the cut. The compat removal announced for 2.1.0 moved to 2.2.0; see CHANGELOG.md [2.1.0]."
+  "notes": "Minor bump from 2.2.0, and the first public release since 2.1.0 (2.2.0 was prepared but never published on its own): model presets with fallback lists ending on Claude, sign-in detection, /models:swap, security review models you can switch, the session scorecard, one manifest command, lighter review rules and faster hooks. The removal of the pre-2.0.0 names stays at the 3.0.0 major. See CHANGELOG.md [2.3.0]."
 }

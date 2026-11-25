@@ -447,9 +447,9 @@ process.stdin.on("end", () => {
     let dispatchReference = "";
     if (source === "startup" || source === "clear") {
       dispatchReference =
-        "MANDATORY REFERENCE — Build-chain dispatch must use " +
-        "`node scripts/dispatch-agent.js <role> <prompt-file>` (or the " +
-        "documented `claude -p --agent <role>` Claude fallback). Raw " +
+        "MANDATORY REFERENCE — Build-chain Claude roles dispatch with " +
+        "`node scripts/dispatch-claude.js <role> <prompt-file> -w`; " +
+        "cross-provider roles with `node scripts/dispatch-agent.js <role> <prompt-file>`. Raw " +
         "`codex exec` / `agy -p` / `cat … | codex|agy|claude` " +
         "calls from Bash are blocked by the dispatch-route-guard hook. Full " +
         "rules:.claude/agents/_system/guides/agent-dispatch-guide.md " +
@@ -481,9 +481,14 @@ process.stdin.on("end", () => {
             first.role +
             " resolves to " +
             (first.provider || "unknown provider") +
-            " but its CLI is not reachable; cross-provider dispatch will " +
-            "fall back to Claude (loses diff-model coverage). Run " +
-            "/mc:health for the full per-role verdict.";
+            " but its CLI is not reachable; most roles fall back to Claude " +
+            "(loses diff-model coverage). " +
+            (first.provider === "openai"
+              ? "The sprint security panel needs Codex — without it the " +
+                "sign-off returns BLOCKED-INCONCLUSIVE (install + sign in to " +
+                "Codex before /sprint:full). "
+              : "The security panel's two-lab check is unaffected. ") +
+            "Run /mc:health for the full per-role verdict.";
         }
       } catch {
       }
@@ -493,11 +498,17 @@ process.stdin.on("end", () => {
     if (source === "startup" || source === "clear") {
       try {
         let curMode = "";
+        let staleMode = "";
         try {
-          curMode = (
-            JSON.parse(fs.readFileSync(path.join(runtimeDir, "mode.json"), "utf8"))
-              .mode || ""
-          ).toLowerCase();
+          const markerPath = path.join(runtimeDir, "mode.json");
+          const marker = JSON.parse(fs.readFileSync(markerPath, "utf8"));
+          curMode = (marker.mode || "").toLowerCase();
+          let enteredMs = Date.parse(marker.enteredAt || "");
+          if (!Number.isFinite(enteredMs)) enteredMs = fs.statSync(markerPath).mtimeMs;
+          if (curMode && Date.now() - enteredMs > 24 * 3600000) {
+            staleMode = curMode;
+            curMode = "";
+          }
         } catch {
         }
         let registryFaces;
@@ -507,14 +518,20 @@ process.stdin.on("end", () => {
           registryFaces = [];
         }
         const FACE_PRESENTATION = {
-          epsilon: ["Epsilon (ε)", ".claude/agents/president/epsilon.md + scripts/sprint/epsilon-runtime.js + .claude/agents/_org/sprint-hook-points.json"],
-          beta: ["Beta (β)", ".claude/agents/president/beta.md"],
-          gamma: ["Gamma (γ)", ".claude/agents/president/gamma.md"],
+          epsilon: ["Epsilon", ".claude/agents/president/epsilon.md + scripts/sprint/epsilon-runtime.js + .claude/agents/_org/sprint-hook-points.json"],
+          beta: ["Beta", ".claude/agents/president/beta.md"],
+          gamma: ["Gamma", ".claude/agents/president/gamma.md"],
         };
         const MODE_DESC = {
           sprint: "α lead + ε conductor + β judgment",
           adhoc: "α lead + β judgment + γ build-orchestrator",
         };
+        if (staleMode && MODE_DESC[staleMode]) {
+          teamInitDirective =
+            `The mode marker (.claude/runtime/mode.json) says "${staleMode}" but was entered more than a day ago, ` +
+            `so it is treated as stale and no team is started. Clear it with \`node scripts/mode-set.js solo\`, ` +
+            `or re-enter the mode with /mode:${staleMode} when a build starts.`;
+        }
         let spec = null;
         if (registryFaces.length && MODE_DESC[curMode]) {
           const spawns = registryFaces
@@ -525,8 +542,6 @@ process.stdin.on("end", () => {
           }
         }
         if (spec) {
-          const slug =
-            path.basename(cwd).toLowerCase().replace(/[^a-z0-9]/g, "") || "project";
           let live = false;
           try {
             const teamsRoot = path.join(
@@ -574,27 +589,50 @@ process.stdin.on("end", () => {
             }
           }
           if (!live) {
-            const team = `${slug}-${curMode}`;
+            const pinnedParams = (t) => {
+              try {
+                const h = require(path.join(cwd, "scripts", "dispatch", "harness-spawn-model.js")).harnessSpawnModel(t);
+                if (!h || !h.pinned || !h.spawn_model_param) return "";
+                return ` model:"${h.spawn_model_param}",${h.spawn_effort_param ? ` effort:"${h.spawn_effort_param}",` : ""}`;
+              } catch {
+                return "";
+              }
+            };
             const calls = spec.spawns
               .map(
                 ([t, nm, load]) =>
-                  `  Agent(subagent_type:"${t}", name:"${nm}", run_in_background:true, team_name:"${team}", prompt:"STARTUP DIRECTIVE — SendMessage readiness to team-lead, then go idle (do NOT auto-claim tasks). Load: ${load}.")`,
+                  `  Agent(subagent_type:"${t}", name:"${nm}",${pinnedParams(t)} run_in_background:true, prompt:"STARTUP DIRECTIVE — SendMessage readiness to team-lead, then go idle (do NOT auto-claim tasks). Load: ${load}.")`,
               )
               .join("\n");
             teamInitDirective =
-              `⛔ ${curMode.toUpperCase()} MODE IS ACTIVE (mode.json) but the persistent team is NOT up. ` +
-              `Per /mode:${curMode} Step 1.75, your FIRST action MUST be to stand up the company faces by spawning them ` +
-              `as NAMED BACKGROUND SUBAGENTS — the SYSTEM's procedure with the RIGHT agents, NOT improvised ` +
-              `general-purpose workers, NOT a memory summary. The first spawn implicitly creates the session-scoped team ` +
-              `(TeamCreate/TeamDelete were removed in Claude Code v2.1.178):\n${calls}\n` +
-              `Then WAIT for both readiness pings (SendMessage to team-lead) before any boundary consult or work; do NOT proceed with the task until the team acks.`;
+              `${curMode.toUpperCase()} MODE IS ACTIVE (mode.json) but the persistent team is not up. ` +
+              `Per /mode:${curMode} Step 1.75, when the work needs the team, stand up the company faces by spawning them ` +
+              `as named background subagents (these agents, not improvised general-purpose workers). ` +
+              `The first spawn creates the session-scoped team:\n${calls}\n` +
+              `Wait for their readiness pings before the first boundary consult.`;
           }
         }
       } catch {
       }
     }
 
+    let watchLines = [];
+    if (source === "startup" || source === "clear") {
+      try {
+        const { startupLines } = require("../watch/startup-lines");
+        watchLines = startupLines({
+          projectDir: cwd,
+          sessionId: event.session_id || process.env.CLAUDE_SESSION_ID || "",
+          budgetMs: 2000,
+        });
+        if (!Array.isArray(watchLines)) watchLines = [];
+      } catch {
+        watchLines = [];
+      }
+    }
+
     if (
+      watchLines.length ||
       teamInitDirective ||
       handoffContext ||
       liveStateContext ||
@@ -607,6 +645,9 @@ process.stdin.on("end", () => {
       let ctx = "";
       if (teamInitDirective) {
         ctx += `${teamInitDirective}\n\n`;
+      }
+      if (watchLines.length) {
+        ctx += `SESSION SCORECARD (last session):\n${watchLines.join("\n")}\n\n`;
       }
       if (liveStateContext) {
         ctx += `⚠ LIVE SESSION STATE (newer than the last narrative handoff — uncommitted/untracked work may not be reflected in the handoff below):\n\n${liveStateContext}\n\n`;
@@ -631,14 +672,14 @@ process.stdin.on("end", () => {
       }
       ctx +=
         "Use this context to continue seamlessly. Do not ask the user to recap — you already have the state.";
-      process.stdout.write(
-        JSON.stringify({
-          hookSpecificOutput: {
-            hookEventName: "SessionStart",
-            additionalContext: ctx,
-          },
-        }),
-      );
+      const out = {
+        hookSpecificOutput: {
+          hookEventName: "SessionStart",
+          additionalContext: ctx,
+        },
+      };
+      if (watchLines.length) out.systemMessage = watchLines.join("\n");
+      process.stdout.write(JSON.stringify(out));
     }
 
     logEvent(

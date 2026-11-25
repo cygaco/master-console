@@ -1055,6 +1055,8 @@ function loadNarrativeAllowlist(file) {
       if (!Number.isInteger(e.count) || e.count < 1) throw new CannotRun('narrative allowlist entry has an invalid count');
       count = e.count;
     }
+    if (e.history_only !== undefined && e.history_only !== true) throw new CannotRun('narrative allowlist entry has an invalid history_only');
+    const historyOnly = e.history_only === true;
     let members;
     if (e.kind === 'citation') {
       if (typeof e.name !== 'string' || !e.name.trim() || typeof e.work !== 'string' || !e.work.trim()) throw new CannotRun('narrative allowlist citation needs name and work');
@@ -1064,7 +1066,7 @@ function loadNarrativeAllowlist(file) {
       if (!NARR_CHECKS.includes(mem)) throw new CannotRun('narrative allowlist entry has an unknown member');
       members = [mem];
     }
-    for (const m of members) entries.push({ path: e.path, member: m, sha: e.line_sha256.toLowerCase(), count, citation: e.kind === 'citation' ? e.name.trim() : null });
+    for (const m of members) entries.push({ path: e.path, member: m, sha: e.line_sha256.toLowerCase(), count, citation: e.kind === 'citation' ? e.name.trim() : null, historyOnly });
   }
   return { entries, present: true };
 }
@@ -1108,7 +1110,9 @@ function runInner(opts) {
 
   const counts = {};
   const narrAllow = loadNarrativeAllowlist(opts.narrativeAllowlist ? path.resolve(opts.narrativeAllowlist) : path.join(root, 'ci', 'narrative-allowlist.json'));
-  const narrAllowed = new Set(narrAllow.entries.map((e) => e.member + '\0' + e.path + '\0' + e.sha));
+  const narrAllowed = new Set(narrAllow.entries.filter((e) => !e.historyOnly).map((e) => e.member + '\0' + e.path + '\0' + e.sha));
+  const histAllowed = new Set(narrAllow.entries.map((e) => e.member + '\0' + e.path + '\0' + e.sha));
+  const histOnlyUsed = new Set();
 
   if (!selfTest(fp)) throw new CannotRun('control self-test failed (matchers did not hit the controls)');
 
@@ -1135,12 +1139,20 @@ function runInner(opts) {
     const trackedSet = new Set(files);
     for (const e of narrAllow.entries) {
       const p = e.path;
-      if (/[*?[\]{}]/.test(p) || p.endsWith('/') || p.includes('\\') || path.posix.normalize(p) !== p || !trackedSet.has(p)) {
+      if (/[*?[\]{}]/.test(p) || p.endsWith('/') || p.includes('\\') || path.posix.normalize(p) !== p || (!e.historyOnly && !trackedSet.has(p))) {
         throw new CannotRun('narrative allowlist entry is not an exact tracked file path');
       }
     }
     const lineCache = new Map();
     for (const e of narrAllow.entries) {
+      if (e.historyOnly) {
+        if (trackedSet.has(e.path)) {
+          let hbuf;
+          try { hbuf = fs.readFileSync(path.join(root, e.path)); } catch (_) { throw new CannotRun('narrative allowlist entry file unreadable'); }
+          if (utf8OrLatin1(hbuf).split(/\r\n|\r|\n/).some((ln) => lineSha(ln) === e.sha)) throw new CannotRun('history_only narrative allowlist entry matches a current line');
+        }
+        continue;
+      }
       let shas = lineCache.get(e.path);
       if (!shas) {
         let buf;
@@ -1275,7 +1287,8 @@ function runInner(opts) {
       const nr = scanNarrative(rel, text, nctx, { noClosure: true });
       for (const h of nr.hits) {
         const sh = lineSha(nr.lines[h.line - 1] || '');
-        if (rels.some((r) => narrAllowed.has(h.check + '\0' + r + '\0' + sh))) continue;
+        const k = rels.map((r) => h.check + '\0' + r + '\0' + sh).find((x) => histAllowed.has(x));
+        if (k) { histOnlyUsed.add(k); continue; }
         add(h.check, rel, h.line);
       }
     };
@@ -1360,6 +1373,9 @@ function runInner(opts) {
         for (const text of an.texts) for (const h of scanText(text, fp, counts)) add(h.check, rel, h.line);
         if (!an.binary && !an.filetype && an.texts.length === 1) histNarr(rel, an.texts[0], rels);
       }
+    }
+    for (const e of narrAllow.entries) {
+      if (e.historyOnly && !histOnlyUsed.has(e.member + '\0' + e.path + '\0' + e.sha)) throw new CannotRun('history_only narrative allowlist entry matches no history line (stale)');
     }
   }
 

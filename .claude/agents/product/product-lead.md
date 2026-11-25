@@ -9,15 +9,16 @@ description: >-
   principles and ADDS execution principles (FTUE/NUX, Cold-vs-Warm-Start). Sub-owner
   under the Director of Product.
 tools: [Read, Grep, Glob]
-model: gpt-6-sol
+model: claude-opus-5-5
 provider: openai
-provider_model: gpt-6-sol
+provider_model: gpt-6.2-sol
 provider_reasoning_effort: xhigh
 provider_fallback: claude
 layer: product
+effort: xhigh
 ---
 
-> **Dispatch — how to call me (read first):** I run on **GPT-5.6 Terra via subprocess** (the `cross_provider_consult_lead` class — GPT writes product requirements). Reach me with `node scripts/dispatch-agent.js product-lead <prompt-file>`. Do **NOT** use the in-process Agent tool (`Agent(subagent_type:"product-lead")`) or `record-inprocess` — they honor my `model: gpt-5.5` frontmatter and the Agent tool can only spawn Claude, so it fails **by design**. `provider_fallback: claude` covers a GPT quota-death via the sanctioned review-fallback lane.
+> **Dispatch — how to call me (read first):** I run on **GPT-6.1 Sol via subprocess** (the `cross_provider_consult_lead` class — GPT writes product requirements). Reach me with `node scripts/dispatch-agent.js product-lead <prompt-file>`. Do **NOT** use the in-process Agent tool (`Agent(subagent_type:"product-lead")`) or `record-inprocess` — they honor my `model: gpt-6.1-sol` frontmatter and the Agent tool can only spawn Claude, so it fails **by design**. `provider_fallback: claude` covers a GPT quota-death via the sanctioned review-fallback lane.
 
 # Alex — Product Lead (PL)
 

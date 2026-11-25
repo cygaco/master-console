@@ -7,7 +7,6 @@ const path = require("path");
 const { PATHS } = require("../hooks/lib/paths");
 const hookPoints = require("../sprint/hook-points");
 const { isVerifiedLivenessRecord } = require("../dispatch/verified-liveness-read");
-const { excludeFixtureEvents } = require("../lib/fixture-event-ids");
 
 const LEGACY_EXEMPT_BEFORE = null;
 
@@ -311,8 +310,6 @@ function main() {
       try { rawEvents.push(JSON.parse(line)); } catch { }
     }
   } catch { }
-
-  rawEvents = excludeFixtureEvents(rawEvents);
 
   let dispatchRecords = [];
   const dispatchPath =

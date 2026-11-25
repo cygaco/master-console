@@ -375,6 +375,24 @@ function testFinalReportReadsCurrentYaml() {
       /-\s*Abandoned:\s*0\b/.test(body),
       body.match(/-\s*Abandoned:[^\n]*/)?.[0],
     );
+    ok("a run with no waiting escalation has no 'Waiting for the operator' line", !/Waiting for the operator/.test(body));
+
+    state.betaDirectives = [
+      { boundary: "before_release", message: "judge wants the operator\nto choose", ts: "t1", waits_for_operator: true },
+      { boundary: "before_plan", message: "advice only", ts: "t0" },
+    ];
+    const waitingBody = fs.readFileSync(full.writeFinalReport(state), "utf8");
+    const outcomeAt = waitingBody.indexOf("**Outcome:**");
+    const waitingAt = waitingBody.indexOf("**Waiting for the operator:** 1 judge ESCALATE");
+    ok(
+      "a judge ESCALATE that waits for the operator is listed right under the outcome",
+      outcomeAt !== -1 && waitingAt > outcomeAt && waitingAt < waitingBody.indexOf("## Phase timeline"),
+      waitingBody.slice(0, 600),
+    );
+    ok(
+      "the waiting line names the boundary and the one-line message; advice-only directives are not listed",
+      waitingBody.includes("- before_release: judge wants the operator to choose (t1)") && !waitingBody.includes("- before_plan: advice only"),
+    );
   } catch (e) {
     ok("writeFinalReport test ran without throwing", false, e.message);
   } finally {
@@ -488,11 +506,16 @@ function testBetaConsultContract() {
       pendingPhase: "before_execute",
     };
     const r = full.maybeConsultBeta(state, "before_execute", args);
-    ok("J ESCALATE: ok===false", r.ok === false, JSON.stringify(r));
+    ok("J ESCALATE: ok===true (run continues)", r.ok === true && r.verdict === "ESCALATE", JSON.stringify(r));
     ok(
-      "J ESCALATE: halt_reason===beta_escalate",
-      r.halt_reason === "beta_escalate",
+      "J ESCALATE: no halt_reason",
+      r.halt_reason === undefined,
       r.halt_reason,
+    );
+    ok(
+      "J ESCALATE: named action recorded as waiting for the operator",
+      state.betaDirectives.length === 1 && state.betaDirectives[0].waits_for_operator === true,
+      JSON.stringify(state.betaDirectives),
     );
   }
 
@@ -1461,8 +1484,13 @@ function testGauntletPackageWiring() {
 
   ok("default gauntletPackage is 'auto'", full.parseArgs(["node", "full.js", "x"]).gauntletPackage === "auto");
   ok("--gauntlet-package full is captured", full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "full"]).gauntletPackage === "full");
-  ok("--gauntlet-package differential is captured", full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "differential"]).gauntletPackage === "differential");
-  ok("--gauntlet-package <anything else> normalizes to 'auto' (fail-safe default)", full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "bogus"]).gauntletPackage === "auto");
+  const bogus = full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "bogus"]);
+  ok("--gauntlet-package <unknown> is refused with a message (never silently mapped)", bogus.gauntletPackage === "auto" && /not a known value/.test(bogus.gauntletPackageError || ""));
+  const removed = full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "differential"]);
+  ok("--gauntlet-package differential is refused as removed, naming the replacement", /was removed/.test(removed.gauntletPackageError || "") && /close --differential/.test(removed.gauntletPackageError || ""));
+  ok("--gauntlet-package auto/full carry no refusal", !full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "full"]).gauntletPackageError && !full.parseArgs(["node", "full.js", "x", "--gauntlet-package", "auto"]).gauntletPackageError);
+  const cli = require("child_process").spawnSync(process.execPath, [path.join(__dirname, "full.js"), "a request long enough", "--gauntlet-package", "differential"], { encoding: "utf8", windowsHide: true, timeout: 60000 });
+  ok("CLI: --gauntlet-package differential exits 2 with the message", cli.status === 2 && /was removed/.test(cli.stderr), `status=${cli.status} stderr=${cli.stderr}`);
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-gp-resolve-"));
   try {
@@ -1504,7 +1532,7 @@ function testGauntletPackageWiring() {
     }
     ok("resolveGauntletDecision never throws even with a bogus defaultBranch", threw2 === false);
     ok("...result is a well-formed { decision, error } shape either way", res2 && ("decision" in res2) && ("error" in res2), JSON.stringify(res2));
-    ok("an unresolvable defaultBranch refuses (no_base or sprint_registry_unreadable), never falls back to HEAD or HEAD~1", res2 && res2.decision === null && /^(no_base|sprint_registry_unreadable):/.test(res2.error || ""), JSON.stringify(res2));
+    ok("gap (d)/F-13: an unresolvable defaultBranch refuses (no_base or sprint_registry_unreadable), never falls back to HEAD or HEAD~1", res2 && res2.decision === null && /^(no_base|sprint_registry_unreadable|change_trailer_missing):/.test(res2.error || ""), JSON.stringify(res2));
   } finally {
     try { fs.rmSync(tmp2, { recursive: true, force: true }); } catch { }
   }
@@ -1558,10 +1586,18 @@ function testGauntletPackageWiring() {
     const res5 = full.resolveGauntletDecision(
       "SP-TEST-GP5",
       { unit_types: ["backend"], max_risk: "low", domains: [], change: "bugfix", blast: "minor", risks: ["none"] },
-      { root: tmp5 },
+      { root: tmp5, leanAuto: false },
     );
-    ok("regression guard: a genuinely ABSENT HEAD trailer is not an error — the ticket value is used", res5 && res5.decision !== null, JSON.stringify(res5));
-    ok("...and the resolved package used the ticket's own classification", res5 && res5.decision && res5.decision.trailer.change === "bugfix" && res5.decision.trailer.blast === "minor", JSON.stringify(res5 && res5.decision && res5.decision.trailer));
+    ok("RT-008 regression guard: a genuinely ABSENT HEAD trailer is not an error — the ticket value is used", res5 && res5.decision !== null, JSON.stringify(res5));
+    ok("...and the resolved package is the constant full package (OFF-B3), not the ticket's own classification", res5 && res5.decision && res5.decision.package === "full" && res5.decision.trailer.change === "release", JSON.stringify(res5 && res5.decision && { package: res5.decision.package, trailer: res5.decision.trailer }));
+    const res5b = full.resolveGauntletDecision(
+      "SP-TEST-GP5",
+      { unit_types: ["backend"], max_risk: "low", domains: [], change: "bugfix", blast: "minor", risks: ["none"] },
+      { root: tmp5, leanAuto: true },
+    );
+    ok("leanAuto:true twin of res5: ticket-derived lean classification (bugfix/minor, source ticket), NOT the forced release/major",
+      res5b && res5b.decision && res5b.decision.trailer.change === "bugfix" && res5b.decision.trailer.blast === "minor" && res5b.decision.trailer.source === "ticket" && res5b.decision.reasons.includes("change=bugfix") && res5b.decision.reasons.includes("blast=minor"),
+      JSON.stringify(res5b && res5b.decision && { package: res5b.decision.package, trailer: res5b.decision.trailer, reasons: res5b.decision.reasons }));
   } finally {
     try { fs.rmSync(tmp5, { recursive: true, force: true }); } catch { }
   }
@@ -1633,8 +1669,8 @@ function testGauntletPackageWiring() {
       { root: tmp10 },
     );
     ok(
-      "regression guard: an unreadable/missing registry at every ref REFUSES (sprint_registry_unreadable), never silently 'not active'",
-      res10 && res10.decision === null && res10.halt_reason === "sprint_registry_unreadable",
+      "gap (2) regression guard: an unreadable/missing registry at every ref REFUSES (sprint_registry_unreadable), never silently 'not active'",
+      res10 && res10.decision === null && (res10.halt_reason === "sprint_registry_unreadable" || res10.halt_reason === "change_trailer_missing"),
       JSON.stringify(res10),
     );
   } finally {
@@ -1653,7 +1689,7 @@ function testGauntletPackageWiring() {
     const res6 = full.resolveGauntletDecision(
       "SP-TEST-GP6",
       { unit_types: ["backend"], max_risk: "low", domains: [], change: "bugfix", blast: "minor", risks: ["hooks"] },
-      { root: tmp6 },
+      { root: tmp6, leanAuto: true },
     );
     ok("blast widens to the HEAD commit's stricter 'major' (not the ticket's own 'minor')", res6 && res6.decision && res6.decision.trailer.blast === "major", JSON.stringify(res6 && res6.decision && res6.decision.trailer));
     ok("risks is the UNION of both sources (ticket's 'hooks' + commit's 'ci')", res6 && res6.decision && new Set(res6.decision.trailer.risks).size === 2 && res6.decision.trailer.risks.includes("hooks") && res6.decision.trailer.risks.includes("ci"), JSON.stringify(res6 && res6.decision && res6.decision.trailer));
@@ -1721,6 +1757,9 @@ function testGauntletConductProblemsAndHalt() {
 
   {
     const epsilonRuntime = require("./epsilon-runtime");
+    const gauntletDecisionMod = require("./gauntlet-decision");
+    const originalResolve = gauntletDecisionMod.resolveGauntletDecision;
+    gauntletDecisionMod.resolveGauntletDecision = () => ({ decision: { schema: "x", package: "full", stages: [] }, halt_reason: null, error: null });
     const originalConductStep = epsilonRuntime.conductStep;
     try {
       epsilonRuntime.conductStep = () => ({
@@ -1746,6 +1785,7 @@ function testGauntletConductProblemsAndHalt() {
       const resNonGauntlet = full.emitPhaseConsults("SP-TEST-CONSULT-PLAN", "plan", { epsilon: true });
       ok("a non-gauntlet phase (no halt-worthy fields possible) → ok:true", resNonGauntlet && resNonGauntlet.ok === true, JSON.stringify(resNonGauntlet));
     } finally {
+      gauntletDecisionMod.resolveGauntletDecision = originalResolve;
       epsilonRuntime.conductStep = originalConductStep;
     }
   }
@@ -1797,136 +1837,18 @@ function testGapAFullOnSelectorFailure() {
       throw new Error("planted selector failure");
     };
     let seenComposition = null;
+    let gauntletConducts = 0;
     epsilonRuntime.conductStep = (step, composition) => {
-      if (step === "gauntlet") seenComposition = composition;
+      if (step === "gauntlet") { seenComposition = composition; gauntletConducts++; }
       return { step, halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] };
     };
     const res = full.emitPhaseConsults("SP-TEST-GAPA", "execute", { epsilon: true });
-    ok("emitPhaseConsults does not itself halt just because the selector could not resolve", res && res.ok === true, JSON.stringify(res));
-    ok(
-      "the gauntlet step was conducted with the FORCED-FULL composition (release/major), not the original (unenriched) one",
-      seenComposition && seenComposition.change === "release" && seenComposition.blast === "major",
-      JSON.stringify(seenComposition),
-    );
+    ok("a selector resolution failure (forced-full resolve also fails) HALTS ok:false", res && res.ok === false, JSON.stringify(res));
+    ok("...with halt_reason gauntlet_resolution_refused:<reason>", res && typeof res.halt_reason === "string" && res.halt_reason.startsWith("gauntlet_resolution_refused:"), JSON.stringify(res));
+    ok("...and the gauntlet step was NOT conducted", gauntletConducts === 0 && seenComposition === null, JSON.stringify(seenComposition));
   } finally {
     epsilonRuntime.conductStep = originalConductStep;
     gauntletPackage.assembleInput = originalAssembleInput;
-  }
-}
-
-function testDIFFDifferentialHalts() {
-  out.push("S. full.js's own --gauntlet-package differential call site HALTS on strict findings, not just logs them");
-
-  const epsilonRuntime = require("./epsilon-runtime");
-  const gauntletPackage = require("./gauntlet-package");
-  const originalConductStep = epsilonRuntime.conductStep;
-  const originalSelectPackage = gauntletPackage.selectPackage;
-  const originalRunDifferential = gauntletPackage.runDifferential;
-
-  const DIFF_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "mc-diff-root-"));
-  {
-    const { execSync } = require("child_process");
-    const git = (c) => execSync(c, { cwd: DIFF_ROOT, windowsHide: true, stdio: "ignore" });
-    git("git init -q -b main");
-    git('git -c user.email=t@t -c user.name=t commit --allow-empty -q -m "base"');
-    git("git checkout -q -b feature");
-    const msg = path.join(DIFF_ROOT, ".msg");
-    fs.writeFileSync(msg, "fix: synthetic change\n\nChange: bugfix\nBlast: minor\nRisks: none\n");
-    git(`git -c user.email=t@t -c user.name=t commit --allow-empty -q -F "${msg}"`);
-  }
-  process.on("exit", () => { try { fs.rmSync(DIFF_ROOT, { recursive: true, force: true }); } catch { } });
-
-  const validDecision = () => ({
-    schema: gauntletPackage.SCHEMA,
-    sprint: "SP-TEST-DIFF",
-    run_id: "run-SP-TEST-DIFF",
-    base: "base-sha",
-    head: "head-sha",
-    trailer: { change: "bugfix", blast: "minor", risks: ["none"] },
-    package: "combined-focused",
-    cross_provider: false,
-    stages: [
-      { stage: 0, name: "trailer", kind: "mechanical" },
-      { stage: 4, name: "review", kind: "agents", roster: [{ role: "qa-reviewer", passes: ["primary"], scope: "focused" }] },
-    ],
-    budget: { wall_ms: 1000, dispatches: 1 },
-    reasons: ["differential-test"],
-    selector_version: gauntletPackage.SELECTOR_VERSION,
-  });
-
-  try {
-    gauntletPackage.selectPackage = () => validDecision();
-    epsilonRuntime.conductStep = () => ({ step: "gauntlet", halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] });
-    gauntletPackage.runDifferential = () => ({ ok: false, package_files: [], full_files: [], full_failures: [], selector_miss: [], fail_open_roster_candidates: ["qa-reviewer"] });
-    const res = full.emitPhaseConsults("SP-TEST-DIFF", "execute", { epsilon: true, gauntletPackage: "differential", root: DIFF_ROOT });
-    ok("(a): a fail_open_roster_candidate HALTS the sprint by default (ok:false)", res && res.ok === false, JSON.stringify(res));
-    ok("(a): halt_reason names differential_fail_open_roster", res && typeof res.halt_reason === "string" && res.halt_reason.includes("differential_fail_open_roster"), JSON.stringify(res));
-  } finally {
-    gauntletPackage.selectPackage = originalSelectPackage;
-    epsilonRuntime.conductStep = originalConductStep;
-    gauntletPackage.runDifferential = originalRunDifferential;
-  }
-
-  try {
-    gauntletPackage.selectPackage = () => validDecision();
-    epsilonRuntime.conductStep = () => ({ step: "gauntlet", halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] });
-    gauntletPackage.runDifferential = () => ({ ok: false, package_files: [], full_files: [], full_failures: ["scripts/sprint/y.test.js"], selector_miss: ["scripts/sprint/y.test.js"], fail_open_roster_candidates: [] });
-    const res = full.emitPhaseConsults("SP-TEST-DIFFB", "execute", { epsilon: true, gauntletPackage: "differential", root: DIFF_ROOT });
-    ok("(b): a selector_miss HALTS the sprint by default (ok:false)", res && res.ok === false, JSON.stringify(res));
-    ok("(b): halt_reason names differential_selector_miss", res && typeof res.halt_reason === "string" && res.halt_reason.includes("differential_selector_miss"), JSON.stringify(res));
-  } finally {
-    gauntletPackage.selectPackage = originalSelectPackage;
-    epsilonRuntime.conductStep = originalConductStep;
-    gauntletPackage.runDifferential = originalRunDifferential;
-  }
-
-  try {
-    gauntletPackage.selectPackage = () => validDecision();
-    epsilonRuntime.conductStep = () => ({ step: "gauntlet", halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] });
-    gauntletPackage.runDifferential = () => ({ ok: false, package_files: [], full_files: [], full_failures: [], selector_miss: [], fail_open_roster_candidates: ["qa-reviewer"] });
-    const res = full.emitPhaseConsults("SP-TEST-DIFFC", "execute", { epsilon: true, gauntletPackage: "differential", gauntletLenient: true, gauntletLenientReason: "alpha ruling: (c) lenient fixture", root: DIFF_ROOT });
-    ok("(c): --lenient keeps the SAME finding log-only, never halting (ok:true)", res && res.ok === true, JSON.stringify(res));
-  } finally {
-    gauntletPackage.selectPackage = originalSelectPackage;
-    epsilonRuntime.conductStep = originalConductStep;
-    gauntletPackage.runDifferential = originalRunDifferential;
-  }
-
-  try {
-    gauntletPackage.selectPackage = () => validDecision();
-    epsilonRuntime.conductStep = () => ({ step: "gauntlet", halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] });
-    gauntletPackage.runDifferential = () => { const e = new Error("quarantine register unreadable"); e.halt_reason = "quarantine_register_unreadable"; throw e; };
-    const res = full.emitPhaseConsults("SP-TEST-DIFFE", "execute", { epsilon: true, gauntletPackage: "differential", root: DIFF_ROOT });
-    ok("differential: a differential exception HALTS (ok:false), never only a log line", res && res.ok === false, JSON.stringify(res));
-    ok("differential: halt_reason names differential_unavailable", res && typeof res.halt_reason === "string" && res.halt_reason.includes("differential_unavailable"), JSON.stringify(res));
-  } finally {
-    gauntletPackage.selectPackage = originalSelectPackage;
-    epsilonRuntime.conductStep = originalConductStep;
-    gauntletPackage.runDifferential = originalRunDifferential;
-  }
-
-  try {
-    gauntletPackage.selectPackage = () => validDecision();
-    epsilonRuntime.conductStep = () => ({ step: "gauntlet", halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] });
-    gauntletPackage.runDifferential = () => ({ ok: false, package_files: [], full_files: [], full_failures: [], selector_miss: [], fail_open_roster_candidates: ["qa-reviewer"] });
-    const res = full.emitPhaseConsults("SP-TEST-DIFFF", "execute", { epsilon: true, gauntletPackage: "differential", gauntletLenient: true, root: DIFF_ROOT });
-    ok("lenient: a reasonless --lenient stays strict (ok:false)", res && res.ok === false, JSON.stringify(res));
-  } finally {
-    gauntletPackage.selectPackage = originalSelectPackage;
-    epsilonRuntime.conductStep = originalConductStep;
-    gauntletPackage.runDifferential = originalRunDifferential;
-  }
-
-  try {
-    gauntletPackage.selectPackage = () => validDecision();
-    epsilonRuntime.conductStep = () => ({ step: "gauntlet", halt_reason: null, verify: { ok: true }, dispatched: [], stage_results: [] });
-    gauntletPackage.runDifferential = () => ({ ok: true, package_files: [], full_files: [], full_failures: [], selector_miss: [], fail_open_roster_candidates: [] });
-    const res = full.emitPhaseConsults("SP-TEST-DIFFD", "execute", { epsilon: true, gauntletPackage: "differential", root: DIFF_ROOT });
-    ok("(d) regression guard: a clean differential never halts", res && res.ok === true, JSON.stringify(res));
-  } finally {
-    gauntletPackage.selectPackage = originalSelectPackage;
-    epsilonRuntime.conductStep = originalConductStep;
-    gauntletPackage.runDifferential = originalRunDifferential;
   }
 }
 
@@ -1937,6 +1859,9 @@ function testConductThrowHalts() {
   const hookConsult = require("./hook-consult");
   const originalConductStep = epsilonRuntime.conductStep;
   const originalEmitStepConsults = hookConsult.emitStepConsults;
+  const gauntletDecisionU = require("./gauntlet-decision");
+  const originalResolveU = gauntletDecisionU.resolveGauntletDecision;
+  gauntletDecisionU.resolveGauntletDecision = () => ({ decision: { schema: "x", package: "full", stages: [] }, halt_reason: null, error: null });
   try {
     epsilonRuntime.conductStep = (step) => {
       if (step === "gauntlet") throw new Error("planted gauntlet conduct failure");
@@ -1958,8 +1883,40 @@ function testConductThrowHalts() {
     const resDefault = full.emitPhaseConsults("SP-TEST-CONSULT-THROW-DEFAULT", "execute", {});
     ok("default path: a throw from the telemetry-only consults still returns ok:true", resDefault && resDefault.ok === true && Object.keys(resDefault).length === 1, JSON.stringify(resDefault));
   } finally {
+    gauntletDecisionU.resolveGauntletDecision = originalResolveU;
     epsilonRuntime.conductStep = originalConductStep;
     hookConsult.emitStepConsults = originalEmitStepConsults;
+  }
+}
+
+function testWorkOnOriginMain() {
+  out.push("V. workOnOriginMain (release-prep skip predicate)");
+  const { execSync } = require("child_process");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mc-onmain-"));
+  const g = (cmd, date) =>
+    execSync(cmd, {
+      cwd: tmp,
+      stdio: "ignore",
+      env: date ? { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date } : process.env,
+    });
+  const commit = (msg, date) => g(`git -c user.email=t@t -c user.name=t commit --allow-empty -q -m "${msg}"`, date);
+  const OPENED = "2001-01-01T00:00:00Z";
+  try {
+    g("git init -q -b main");
+    commit("base", "2000-01-01T00:00:00Z");
+    ok("no origin/main ref → false (normal release-prep path)", full.workOnOriginMain(tmp, OPENED) === false);
+    g("git update-ref refs/remotes/origin/main HEAD");
+    ok("no own commits since the sprint opened (HEAD equals origin/main) → false", full.workOnOriginMain(tmp, OPENED) === false);
+    commit("own work", "2002-01-01T00:00:00Z");
+    ok("own commits not on origin/main → false", full.workOnOriginMain(tmp, OPENED) === false);
+    g("git update-ref refs/remotes/origin/main HEAD");
+    ok("own commits all on origin/main → true (skip)", full.workOnOriginMain(tmp, OPENED) === true);
+    commit("more own work", "2003-01-01T00:00:00Z");
+    ok("some own commits not on origin/main → false", full.workOnOriginMain(tmp, OPENED) === false);
+    ok("no sprint open time → false", full.workOnOriginMain(tmp) === false && full.workOnOriginMain(tmp, "not a date") === false);
+    ok("not a git repo → false", full.workOnOriginMain(path.join(tmp, "missing"), OPENED) === false);
+  } finally {
+    try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { }
   }
 }
 
@@ -1990,9 +1947,9 @@ function main() {
   testGauntletPackageWiring();
   testGauntletConductProblemsAndHalt();
   testGapAFullOnSelectorFailure();
-  testDIFFDifferentialHalts();
   testConductThrowHalts();
   testHermeticEventsHome();
+  testWorkOnOriginMain();
 
   out.push("");
   out.push(`Results: ${passes} passed, ${failures} failed.`);

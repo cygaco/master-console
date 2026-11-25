@@ -1,11 +1,5 @@
 ---
 description: Stage and commit changes locally — smart message, no push
-says:
-  - commit this
-  - commit locally
-  - save a commit
-  - commit local
-  - make a commit
 ---
 
 # /commit:local — Commit Changes Locally

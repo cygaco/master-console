@@ -33,8 +33,32 @@ function detectMcVersion(repoPath) {
   }
 }
 
-function runUpdate(productRepoPath, mcCloneRoot) {
+function readMcVersion(mcCloneRoot) {
+  try {
+    const vf = path.join(mcCloneRoot, "version.json");
+    const data = JSON.parse(fs.readFileSync(vf, "utf8"));
+    return data.version || null;
+  } catch {
+    return null;
+  }
+}
+
+function buildUpdateArgs(updateScript, productRepoPath, mcCloneRoot, options) {
+  const o = options || {};
+  const args = [
+    updateScript,
+    "--to", String(o.toVersion),
+    "--source", mcCloneRoot,
+    "--target", productRepoPath,
+  ];
+  args.push(o.dryRun ? "--dry-run" : "--apply");
+  if (o.confirmDeletes) args.push("--confirm-deletes");
+  return args;
+}
+
+function runUpdate(productRepoPath, mcCloneRoot, options) {
   return new Promise((resolve) => {
+    const o = options || {};
     const updateScript = path.join(mcCloneRoot, "scripts", "mc", "update.js");
     if (!fs.existsSync(updateScript)) {
       return resolve({
@@ -43,6 +67,14 @@ function runUpdate(productRepoPath, mcCloneRoot) {
         stderr: "scripts/mc/update.js not found at " + updateScript,
       });
     }
+    if (!o.toVersion) {
+      return resolve({
+        ok: false,
+        status: "missing-to-version",
+        stderr: "runUpdate requires options.toVersion (the capsule version to update to)",
+      });
+    }
+    const args = buildUpdateArgs(updateScript, productRepoPath, mcCloneRoot, o);
     let child;
     let settled = false;
     const settle = (r) => {
@@ -51,10 +83,9 @@ function runUpdate(productRepoPath, mcCloneRoot) {
       resolve(r);
     };
     try {
-      const childEnv = Object.assign({}, process.env, { CLAUDE_PROJECT_DIR: productRepoPath });
-      child = spawn("node", [updateScript], {
+      child = spawn("node", args, {
         cwd: productRepoPath,
-        env: childEnv,
+        env: process.env,
         stdio: ["ignore", "pipe", "pipe"],
         shell: false,
       });
@@ -112,6 +143,22 @@ async function syncRegistry(opts) {
   emitTrace({ type: "portfolio_sync", phase: "start", product_count: products.length });
 
   const mcCloneRoot = locateMcCloneRoot();
+  const toVersion = (opts && opts.toVersion) || readMcVersion(mcCloneRoot);
+  if (!toVersion) {
+    stderr.write(
+      "portfolio:sync: cannot resolve a target version — the MC clone has no readable " +
+        "version.json#version. Pass --to <version>.\n",
+    );
+    emitTrace({
+      type: "portfolio_sync",
+      phase: "end",
+      success_count: 0,
+      failure_count: 0,
+      error: "no-target-version",
+    });
+    return { exitCode: 2, results: [] };
+  }
+  const confirmDeletes = !!(opts && opts.confirmDeletes);
   const results = [];
 
   for (const product of products) {
@@ -141,21 +188,39 @@ async function syncRegistry(opts) {
     }
 
     if (dryRun) {
+      let dr;
+      try {
+        dr = await runUpdate(product.repo_path, mcCloneRoot, {
+          toVersion,
+          dryRun: true,
+          confirmDeletes,
+        });
+      } catch (err) {
+        dr = { ok: false, status: "internal-error", stderr: err.message };
+      }
       const r = {
         slug: product.slug,
-        ok: true,
-        status: "dry-run",
+        ok: !!dr.ok,
+        status: dr.ok ? "dry-run" : dr.status,
         fromVersion,
-        toVersion: fromVersion,
+        toVersion,
       };
-      stdout.write(`(dry-run) would update from ${fromVersion}\n`);
+      stdout.write(
+        `${dr.ok ? "(dry-run) ok" : "(dry-run) FAILED (" + dr.status + ")"}` +
+          ` (mc ${fromVersion} → ${toVersion})\n`,
+      );
+      if (!dr.ok && dr.stderr) {
+        for (const line of dr.stderr.split(/\r?\n/)) {
+          if (line.trim()) stderr.write("  " + line + "\n");
+        }
+      }
       emitTrace({
         type: "portfolio_sync",
         phase: "per_product",
         slug: product.slug,
         from_version: fromVersion,
-        to_version: fromVersion,
-        status: "dry-run",
+        to_version: toVersion,
+        status: r.status,
       });
       results.push(r);
       continue;
@@ -163,20 +228,24 @@ async function syncRegistry(opts) {
 
     let updateR;
     try {
-      updateR = await runUpdate(product.repo_path, mcCloneRoot);
+      updateR = await runUpdate(product.repo_path, mcCloneRoot, {
+        toVersion,
+        dryRun: false,
+        confirmDeletes,
+      });
     } catch (err) {
       updateR = { ok: false, status: "internal-error", stderr: err.message };
     }
-    const toVersion = updateR.ok ? detectMcVersion(product.repo_path) || fromVersion : fromVersion;
+    const resultVersion = updateR.ok ? detectMcVersion(product.repo_path) || toVersion : fromVersion;
     const r = {
       slug: product.slug,
       ok: !!updateR.ok,
       status: updateR.status,
       fromVersion,
-      toVersion,
+      toVersion: resultVersion,
     };
     stdout.write(
-      `${updateR.ok ? "ok" : "FAILED (" + updateR.status + ")"} (mc ${fromVersion} → ${toVersion})\n`,
+      `${updateR.ok ? "ok" : "FAILED (" + updateR.status + ")"} (mc ${fromVersion} → ${resultVersion})\n`,
     );
     if (!updateR.ok && updateR.stderr) {
       for (const line of updateR.stderr.split(/\r?\n/)) {
@@ -188,7 +257,7 @@ async function syncRegistry(opts) {
       phase: "per_product",
       slug: product.slug,
       from_version: fromVersion,
-      to_version: toVersion,
+      to_version: resultVersion,
       status: updateR.status,
     });
     results.push(r);
@@ -223,8 +292,12 @@ async function syncRegistry(opts) {
 }
 
 async function main() {
-  const dryRun = process.argv.includes("--dry-run");
-  const r = await syncRegistry({ dryRun });
+  const argv = process.argv.slice(2);
+  const dryRun = argv.includes("--dry-run");
+  const confirmDeletes = argv.includes("--confirm-deletes");
+  const toIdx = argv.indexOf("--to");
+  const toVersion = toIdx !== -1 ? argv[toIdx + 1] : null;
+  const r = await syncRegistry({ dryRun, toVersion, confirmDeletes });
   process.exit(r.exitCode);
 }
 
@@ -238,6 +311,8 @@ if (require.main === module) {
 module.exports = {
   syncRegistry,
   runUpdate,
+  buildUpdateArgs,
+  readMcVersion,
   detectMcVersion,
   locateMcCloneRoot,
 };

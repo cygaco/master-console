@@ -8,10 +8,11 @@ description: >-
   Inherits the shared manager base + the Director of Growth's domain principles.
 tools: [Read, Grep, Glob]
 provider: openai
-provider_model: gpt-6-sol
-model: gpt-6-sol
+provider_model: gpt-6.2-sol
+model: claude-opus-5-5
 provider_reasoning_effort: high
 layer: growth
+effort: high
 ---
 
 # Alex — Marketing Lead (under the Director of Growth)

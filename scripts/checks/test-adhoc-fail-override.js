@@ -81,10 +81,10 @@ ok("isFailVerdict('FAIL') → true (case-insensitive)", isFailVerdict("FAIL") ==
 ok("isFailVerdict('pass') → false", isFailVerdict("pass") === false);
 ok("isFailVerdict('skipped') → false", isFailVerdict("skipped") === false);
 ok("reviewerJsonIsFail({verdict:'FAIL'}) → true", reviewerJsonIsFail({ verdict: "FAIL" }) === true);
-ok("reviewerJsonIsFail({critical_findings:2}) → true", reviewerJsonIsFail({ critical_findings: 2 }) === true);
+ok("reviewerJsonIsFail({critical_findings:2}) → false (severity is not a verdict)", reviewerJsonIsFail({ critical_findings: 2 }) === false);
 ok(
-  "reviewerJsonIsFail({findings:[{severity:'high'}]}) → true",
-  reviewerJsonIsFail({ findings: [{ severity: "high" }] }) === true,
+  "reviewerJsonIsFail({verdict:'PASS', findings:[{severity:'high'}]}) → false (known issue, not a hold)",
+  reviewerJsonIsFail({ verdict: "PASS", findings: [{ severity: "high" }] }) === false,
 );
 ok("reviewerJsonIsFail({verdict:'PASS'}) → false", reviewerJsonIsFail({ verdict: "PASS" }) === false);
 ok("reviewerJsonIsFail({findings:[{severity:'low'}]}) → false", reviewerJsonIsFail({ findings: [{ severity: "low" }] }) === false);

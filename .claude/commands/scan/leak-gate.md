@@ -1,5 +1,5 @@
 ---
-description: Open-source leak gate — runs the five fail-closed leak enforcers (privacy, framework-purity full-tree, tracked-transients, hashed leak-denylist, README drift) sequentially with real exit codes.
+description: Check whether this tree can go to the public repo without leaking anything — the open-source leak gate runs the five fail-closed leak enforcers (privacy, framework-purity full-tree, tracked-transients, hashed leak-denylist, README drift) sequentially with real exit codes.
 user-invocable: true
 namespace: scan
 reads: []

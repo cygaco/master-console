@@ -49,7 +49,6 @@ const FAIL_CLOSED = new Set([
   "gauntlet-gate.js",
   "cycle-enforcer.js",
   "prompt-validator.js",
-  "beta-gate.js",
 ]);
 
 function readJson(file) {

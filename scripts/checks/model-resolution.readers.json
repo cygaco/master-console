@@ -1,0 +1,42 @@
+{
+  "$doc": "Reader census: every non-test file under scripts/ that reads a role's provider or model. Each is classified: routed (the real call decides through model-resolve.js or the spec frontmatter it writes), display-only (reads for a check, a panel, telemetry or a library definition, never for a real call), or unrouted (picks a provider/model for a real call without the resolver; the reason says why it is not routed in this change). scripts/checks/model-resolution-readers.js findUnlistedReaders() fails on any file that matches a pattern below and is not listed here.",
+  "patterns": [
+    "getProviderForRole\\(",
+    "providerForRoleStrict\\(",
+    "effectivePin\\(",
+    "effectivePinMap\\(",
+    "effectiveProviderForRole\\(",
+    "provider_model",
+    "\\bmodelOf\\(",
+    "\\bmodelMap\\(",
+    "getRoleModel\\(",
+    "passesOf\\(",
+    "runProvider\\("
+  ],
+  "readers": {
+    "scripts/dispatch/model-resolve.js": { "class": "routed", "reason": "The resolver itself: chains, user pin, sign-in record, call shape." },
+    "scripts/dispatch/effective-pin.js": { "class": "routed", "reason": "The pin layer the resolver reads for the user pin (project layer); no call of its own." },
+    "scripts/dispatch/harness-spawn-model.js": { "class": "routed", "reason": "Delegates to resolveRole(role, {channel: in-process}); the tier map is the fail-safe only." },
+    "scripts/dispatch-agent.js": { "class": "routed", "reason": "dispatchTarget() picks provider/model/effort through resolveRole(cli); --provider/--model overrides and an unknown role keep the pin path (providerForRoleStrict + spec provider_model)." },
+    "scripts/hooks/lib/providers.js": { "class": "routed", "reason": "runProvider runs the provider/model/effort its caller passes (dispatch-agent passes the resolved entry); its getProviderForRole/default-model fill-in applies only when a caller passes none." },
+    "scripts/agents/cli.js": { "class": "routed", "reason": "/agents:test spawns dispatch-agent.js (resolver); its own pin read only decides to skip Claude roles and lists spec provider_model for display." },
+    "scripts/dispatch-claude.js": { "class": "routed", "reason": "Runs claude --agent <role>: the model and effort come from the role spec frontmatter, which the spec sync (model-resolve.js --sync-specs) writes, unless --model/--effort are passed." },
+    "scripts/dispatch/save.js": { "class": "display-only", "reason": "The route writer: writes a user pin (manifest + frontmatter, in-process lines from the resolver); reads the previous pin only for the provenance note." },
+    "scripts/dispatch/presets.js": { "class": "display-only", "reason": "Preset load/validate/status; coverage validation reads effective pins; no call." },
+    "scripts/dispatch/coverage-gate.js": { "class": "display-only", "reason": "Coverage check at gauntlet close reads the builder's pin family; never a dispatch." },
+    "scripts/dispatch/registry-roles.js": { "class": "display-only", "reason": "Defines the registry readers (modelOf, modelMap, passesOf); each caller is classified on its own row." },
+    "scripts/dispatch/state.js": { "class": "display-only", "reason": "Dispatch Console panel state: shows the pin, its source and env shadows." },
+    "scripts/dispatch/panel-lanes.js": { "class": "display-only", "reason": "Validates the security panel-lane manifest against passesOf; no call." },
+    "scripts/agents/provider-trace.js": { "class": "display-only", "reason": "Telemetry: stamps the expected provider on the provider trace." },
+    "scripts/checks/dispatch-readiness.js": { "class": "display-only", "reason": "Readiness table check." },
+    "scripts/checks/model-chain.js": { "class": "display-only", "reason": "Parity check (registry vs catalog vs consumers vs spec frontmatter)." },
+    "scripts/checks/security-binding-lane.js": { "class": "display-only", "reason": "Security lane check (passesOf / alias consistency)." },
+    "scripts/checks/security-pass-count.js": { "class": "display-only", "reason": "Counts security pass stamps against passesOf." },
+    "scripts/dispatch-review.js": { "class": "unrouted", "reason": "Fires the security panel's passes (primary, second_pass, third_pass from passesOf: the registry row, with the project's own valid choice per pass) with explicit --provider/--model each; the panel's lab-diversity rule judges whatever was chosen, so its passes are not walked along chains." },
+    "scripts/models/swap.js": { "class": "display-only", "reason": "A config editor: rewrites the provider_model frontmatter line of role specs during a swap and undo. It never picks a provider or model for a call itself; its live ping goes through dispatch-agent.js (routed)." },
+    "scripts/dispatch/security-choice.js": { "class": "routed", "reason": "Reads the project layer (the role's saved pin through effective-pin, and reviewPasses in the manifest) for the security panel's pass choices, validated against the catalog; passesOf is its only caller." },
+    "scripts/checks/shipped-spec-models.js": { "class": "display-only", "reason": "Release check: compares the shipped spec lines (model, effort, provider, provider_model, ...) with the default preset; it reports and never chooses a model for a call." },
+    "scripts/sprint/epsilon-runtime.js": { "class": "unrouted", "reason": "Chooses the route (dispatch-agent / dispatch-claude / in-process) from the pin (effectivePin), then asks the resolver: a cross-provider role whose chain walks to its Claude entry for this sign-in is routed in-process on that Claude model (resolveRoute; not for the fail-closed security panel or multi-pass roles). Still unrouted: a preset overlay that puts a CLI model first for a Claude-pinned role (spend-more-on-codex reviewers) is not applied on this path, and a walk to Claude decided only at call time (an agy entry skipped for prompt length) is handed back by dispatch-agent with exit 2. Panel passes via passesOf as dispatch-review." },
+    "scripts/mc/provider-smoke.js": { "class": "unrouted", "reason": "Smoke-tests each role's PINNED provider on purpose (getProviderForRole + spec provider_model, through runProvider); walking the chain would hide a dead pin." }
+  }
+}

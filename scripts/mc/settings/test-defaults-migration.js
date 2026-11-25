@@ -51,10 +51,6 @@ if (fs.existsSync(DEFAULTS_FILE)) {
     ok("defaults.json has env key", typeof defaults.env === "object");
     ok("defaults.json has permissions key", typeof defaults.permissions === "object");
     ok(
-      "defaults.json env has CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS",
-      defaults.env && defaults.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS === "1",
-    );
-    ok(
       "defaults.json hooks has SessionStart",
       defaults.hooks && Array.isArray(defaults.hooks.SessionStart) && defaults.hooks.SessionStart.length > 0,
     );

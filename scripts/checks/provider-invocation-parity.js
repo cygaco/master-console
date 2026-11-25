@@ -29,7 +29,7 @@ const ROOT = path.join(__dirname, "..", "..");
 
 const PROVIDERS = [
   { name: "openai", model: "gpt-6.1-sol" },
-  { name: "antigravity", model: "gemini-3.1-pro-high" },
+  { name: "antigravity", model: "gemini-4-argon-high" },
 ];
 const DOCS = ["AGENTS.md", "CODEX.md", "ANTIGRAVITY.md"];
 

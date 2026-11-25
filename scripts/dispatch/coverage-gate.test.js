@@ -29,7 +29,7 @@ h.pass("all expected roles have ok:true backed records => covered", () =>
     runId: RUN,
     records: [
       rec({ role: "frontend-builder", provider: "claude", dispatch_id: "d-b" }),
-      rec({ role: "security-reviewer", provider: "gemini", dispatch_id: "d-r" }),
+      rec({ role: "security-reviewer", provider: "antigravity", dispatch_id: "d-r" }),
     ],
     expected: [{ role: "frontend-builder" }, { role: "security-reviewer" }],
   }));
@@ -40,7 +40,7 @@ h.violation("expected role with NO record is flagged (sprint theater)", () =>
 h.violation("expected role whose only record is ok:false is NOT covered", () =>
   evaluate({
     runId: RUN,
-    records: [rec({ role: "security-reviewer", provider: "gemini", ok: false })],
+    records: [rec({ role: "security-reviewer", provider: "antigravity", ok: false })],
     expected: [{ role: "security-reviewer" }],
   }));
 
@@ -54,33 +54,33 @@ h.violation("cross-provider reviewer satisfied by provider=claude is flagged (di
 h.violation("a phantom ok:true row with no dispatch_id/cmdline_checksum is rejected", () =>
   evaluate({
     runId: RUN,
-    records: [{ run_id: RUN, role: "security-reviewer", provider: "gemini", ok: true }],
+    records: [{ run_id: RUN, role: "security-reviewer", provider: "antigravity", ok: true }],
     expected: [{ role: "security-reviewer" }],
   }));
 
 h.violation("a record from another run_id does NOT satisfy this run's coverage", () =>
   evaluate({
     runId: RUN,
-    records: [rec({ role: "security-reviewer", provider: "gemini", run_id: "OTHER-RUN", dispatch_id: "d-o" })],
+    records: [rec({ role: "security-reviewer", provider: "antigravity", run_id: "OTHER-RUN", dispatch_id: "d-o" })],
     expected: [{ role: "security-reviewer" }],
   }));
 
 h.violation("a record with no output_digest/artifact is blind coverage (rejected)", () =>
   evaluate({
     runId: RUN,
-    records: [rec({ role: "security-reviewer", provider: "gemini", dispatch_id: "d-np", output_digest: null })],
+    records: [rec({ role: "security-reviewer", provider: "antigravity", dispatch_id: "d-np", output_digest: null })],
     expected: [{ role: "security-reviewer" }],
   }));
 
 h.violation("a record at a stale argv_schema_version does not satisfy coverage", () =>
   evaluate({
     runId: RUN,
-    records: [rec({ role: "security-reviewer", provider: "gemini", dispatch_id: "d-sv", argv_schema_version: "0" })],
+    records: [rec({ role: "security-reviewer", provider: "antigravity", dispatch_id: "d-sv", argv_schema_version: "0" })],
     expected: [{ role: "security-reviewer" }],
   }));
 
 h.violation("a record with no argv_schema_version is stale/backfilled (rejected)", () => {
-  const r = rec({ role: "security-reviewer", provider: "gemini", dispatch_id: "d-ns" });
+  const r = rec({ role: "security-reviewer", provider: "antigravity", dispatch_id: "d-ns" });
   delete r.argv_schema_version;
   return evaluate({ runId: RUN, records: [r], expected: [{ role: "security-reviewer" }] });
 });
@@ -137,7 +137,7 @@ h.pass("record with run_id + sprint_id satisfies runId-scoped coverage", () =>
     records: [
       rec({
         role: "security-reviewer",
-        provider: "gemini",
+        provider: "antigravity",
         dispatch_id: "d-runscoped",
         sprint_id: "SP-99999999-001",
         phase_id: "gauntlet",
@@ -155,7 +155,7 @@ h.violation(
       records: [
         rec({
           role: "security-reviewer",
-          provider: "gemini",
+          provider: "antigravity",
           dispatch_id: "d-nullrun",
           run_id: null,
         }),
@@ -165,7 +165,7 @@ h.violation(
 );
 
 h.pass("signed-gate: a validly SIGNED backed ok:true record satisfies coverage under requireSignature", () => {
-  const r = rec({ role: "security-reviewer" });
+  const r = rec({ role: "security-reviewer", provider: "antigravity" });
   r.attest_sig = signRecord(r);
   return _evaluateRaw({ runId: RUN, records: [r], expected: [{ role: "security-reviewer" }], requireSignature: true });
 });

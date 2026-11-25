@@ -492,14 +492,18 @@ function isGraphStale(graph, root = DEFAULT_ROOT) {
   return false;
 }
 
-function loadOrBuildRequireGraph(root = DEFAULT_ROOT) {
+function loadOrBuildRequireGraphResult(root = DEFAULT_ROOT) {
   const onDisk = loadRequireGraph(root);
-  if (onDisk && !isGraphStale(onDisk, root)) return onDisk;
+  if (onDisk && !isGraphStale(onDisk, root)) return { graph: onDisk, map_stale: false, reason: null };
   try {
-    return module.exports.buildRequireGraph(root);
-  } catch {
-    return onDisk || null;
+    return { graph: module.exports.buildRequireGraph(root), map_stale: false, reason: null };
+  } catch (e) {
+    return { graph: null, map_stale: true, reason: "build_failed:" + String((e && e.message) || e).slice(0, 200) };
   }
+}
+
+function loadOrBuildRequireGraph(root = DEFAULT_ROOT) {
+  return loadOrBuildRequireGraphResult(root).graph;
 }
 
 module.exports = {
@@ -509,6 +513,7 @@ module.exports = {
   regenRequireGraph,
   loadRequireGraph,
   loadOrBuildRequireGraph,
+  loadOrBuildRequireGraphResult,
   isGraphStale,
   graphPath,
 };

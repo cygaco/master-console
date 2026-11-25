@@ -22,6 +22,10 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/tracker-start-of-work.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/plain-session.js\""
           }
         ]
       }
@@ -36,7 +40,7 @@
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/skill-router.js\""
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/plain-prompt.js\""
           }
         ]
       }
@@ -173,6 +177,10 @@
           },
           {
             "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/agent-spawn-model-guard.js\""
+          },
+          {
+            "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/worktree-preflight.js\""
           },
           {
@@ -212,24 +220,17 @@
         ]
       },
       {
-        "matcher": "AskUserQuestion",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/beta-gate.js\""
-          }
-        ]
-      },
-      {
         "matcher": "SlashCommand|Skill",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/skill-invocation-tracker.js\""
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/mode-lifecycle-guard.js\""
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/mode-lifecycle-guard.js\""
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/plain-guard.js\"",
+            "timeout": 10,
+            "onFailure": "block"
           }
         ]
       }
@@ -253,15 +254,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/memory-guard.js\""
-          },
-          {
-            "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/store-validator.js\""
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/path-guard.js\""
           },
           {
             "type": "command",
@@ -289,35 +282,11 @@
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/save-session-lint.js\""
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/template-fillability.js\""
-          },
-          {
-            "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/learning-validator.js\""
           },
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/ui-lint.js\""
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/step-hardcode-suggester.js\""
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/region-marker-guard.js\""
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/spec-test-staleness.js\""
-          },
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/skill-catalog-regen.js\""
           },
           {
             "type": "command",
@@ -430,9 +399,7 @@
       }
     ]
   },
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
+  "env": {},
   "permissions": {
     "allow": [
       "Edit(.claude/manifest.json)",
@@ -454,6 +421,6 @@
     ]
   },
   "_compiledBy": "mc/settings-compiler/v1",
-  "_defaultsSha": "4cad51acf5260e431843f1ecd9e10f2bdd78cab97a2ff6b8cb94cc4db933dbd4",
+  "_defaultsSha": "a7272c439c5ec36beb24902c7be4d92e94824f26d17fcd7949222ba2052560db",
   "_localSha": null
 }

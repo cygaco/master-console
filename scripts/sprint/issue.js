@@ -186,12 +186,12 @@ function cmdUpdate(argv) {
   writeYaml(ip, issue);
   process.stdout.write(`updated ${issue.id} status=${issue.status}\n`);
   if (
-    issue.fix_attempts.length >= 3 &&
+    issue.fix_attempts.length >= 2 &&
     issue.status !== "deferred" &&
     issue.status !== "abandoned"
   ) {
     process.stderr.write(
-      `WARN: ${issue.id} has ${issue.fix_attempts.length} failed fix attempts. Per CLAUDE.md and the 3-attempt rule, consider /fix:deep or marking deferred/abandoned.\n`,
+      `WARN: ${issue.id} has ${issue.fix_attempts.length} failed fix attempts (ceiling 2). Consider /fix:deep or marking it deferred/abandoned.\n`,
     );
   }
   return 0;

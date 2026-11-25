@@ -1,14 +1,6 @@
 ---
+disable-model-invocation: true
 description: Enter sprint mode — ε (Alex Epsilon) conducts the full sprint lifecycle (plan→design→build→gauntlet→release→retro) via the registry-driven runtime, with REAL agent dispatch.
-says:
-  - sprint mode
-  - enter sprint mode
-  - initiate sprint mode
-  - switch to sprint mode
-  - go to sprint mode
-says-flags:
-  turbo: --turbo
-says-confirm: fuzzy-only
 ---
 
 # /mode:sprint — Sprint Mode
@@ -110,8 +102,8 @@ gated exactly like a CLI reviewer lane.
 ### Default turbo scope
 
 `manifest-edit,write-jsonl,worktree-ops` — config edits, jsonl audit writes, and worktree
-operations for builder dispatch. No `push-to-main`, no `destructive-git`. TTL = 60m. (`push-to-main`
-is opt-in only, per CLAUDE.md autonomy.)
+operations for builder dispatch. No `destructive-git`. TTL = 60m. Turbo has no push scope: a push
+of green work to the operator's own repos is the lead's call; publishing anything public still asks.
 
 ## ⛔ Mode-init ≠ authorization — STOP after setup
 
@@ -194,6 +186,15 @@ legacy team panel — `/mc:health` §3.5 reports it as informational only.
      run_in_background: true,
      prompt: "STARTUP DIRECTIVE — SendMessage readiness to \"team-lead\", then go idle; do NOT claim tasks.\nYou are Alex β joining <project>-sprint as \"Beta\".\nLoad: .claude/agents/president/beta.md + .claude/agents/president/_system/policy/decision-policy.md.\nSendMessage(to:\"team-lead\", summary:\"Beta online\", message:\"β online — ready for boundary consultation.\")\nGo idle.")
    ```
+
+   No `model` parameter on either spawn: an in-process spawn runs only Claude models, and each
+   role's spec already carries the Claude model the model resolver picks for it
+   (`node scripts/dispatch/model-resolve.js --sync-specs`; `/scan:model-resolution` fails on drift).
+   A non-Claude spawn is refused by the spawn guard, which names the fix. The same holds for
+   conductor-made roster spawns. Pass a model alias (and effort) only when
+   `node scripts/dispatch/harness-spawn-model.js <role>` prints one: for a spawn type with no spec,
+   or for a role this project pinned (the pin lives in `.claude/manifest.json`; the guard then
+   requires exactly that alias and effort).
 
 3. **Confirm readiness BEFORE proceeding — a spawned team is not a live team until it
    acknowledges.** Wait for BOTH `SendMessage(to:"team-lead")` readiness pings (ε + β)

@@ -1,10 +1,5 @@
 ---
 description: Learning integrator — promote validated high-score learnings into actual system enforcement (hooks, rules, skills, agent specs, reference docs)
-says:
-  - integrate the learnings
-  - promote the learnings
-  - learn integrate
-  - wire in the learnings
 ---
 
 # /learn:integrate — Turn Learnings Into Enforcement

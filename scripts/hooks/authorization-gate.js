@@ -122,26 +122,12 @@ function matchWorktreeOps(toolName, ti) {
   return null;
 }
 
-function matchPushToMain(toolName, ti) {
-  if (toolName !== "Bash") return null;
-  const cmd = String(ti.command || "");
-  if (
-    /\bgit\s+push\b/.test(cmd) &&
-    /\bmain\b/.test(cmd) &&
-    !/--force/.test(cmd)
-  ) {
-    return { scope: "push-to-main", pattern: "Bash(git push * main)" };
-  }
-  return null;
-}
-
 const MATCHERS = [
   matchManifestEdit,
   matchWriteJsonl,
   matchNodeEFs,
   matchDestructiveGit,
   matchWorktreeOps,
-  matchPushToMain,
 ];
 
 function extractDeleteTargets(cmd) {
@@ -305,7 +291,6 @@ module.exports = {
   matchNodeEFs,
   matchDestructiveGit,
   matchWorktreeOps,
-  matchPushToMain,
   MATCHERS,
   extractDeleteTargets,
   isGitTracked,

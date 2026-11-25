@@ -2,12 +2,6 @@
 name: skill:edit
 description: Edit the body or frontmatter of an existing skill under .claude/commands — guided flow that preserves frontmatter contract and re-validates after the edit.
 tags: [skills, edit]
-says:
-  - edit the skill
-  - change the skill
-  - update the skill
-  - skills edit
-says-args: topic
 ---
 
 # /skill:edit — Edit a Skill

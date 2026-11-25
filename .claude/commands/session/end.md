@@ -1,55 +1,44 @@
 ---
-description: Full session wrap-up — cognitive maintenance (learn/mine/sleep → integrate learnings + β recs) → reconcile + validate TRACKER.md (fail-closed) → fresh handoff → land to main → fresh branch → tear down teams. The one "we're done, tee up next session" command. Use --fast to skip the cognitive chain and wrap to a recoverable, zero-loss state in the fewest steps.
-says:
-  - wrap up the session
-  - end the session
-  - we're done for today
-  - close out the session
-  - session end
-  - call it a day
-says-flags:
-  quick: --quick
-  no push: --no-push
-  keep the team: --keep-teams
-says-confirm: always
+description: Wrap up this session and tee up the next one — by default the fast wrap (TRACKER.md must validate → write a fresh handoff → land the work to main → start a fresh branch → tear down teams), a recoverable, zero-loss state in the fewest steps. The learning chain (learn/mine/sleep → integrate learnings and Beta recommendations, then the debt sweep) runs only when asked for with --full.
 ---
 
-# /session:end — Full Session Wrap-Up
+# /session:end — Session Wrap-Up
 
-One command to close a working session cleanly: consolidate what was learned, write the next-session handoff, land the work to `main`, start a fresh branch, and tear down the agent team. Run it when you're done for the session and want the next one to start clean.
+One command to close a working session cleanly: write the next-session handoff, land the work to `main`, start a fresh branch, and tear down the agent team (and, with `--full`, consolidate what was learned first). Run it when you're done for the session and want the next one to start clean.
 
 This is an **orchestration skill** — it chains existing skills in dependency order; it does not reimplement them. Phases are SEQUENTIAL (each depends on the prior). Fail-open: if a non-critical phase fails, note it and continue; never let a cleanup phase block the handoff/land.
 
 ## Input
 
-`/session:end [--fast] [--quick] [--no-push] [--keep-teams] [--branch <name>]`
+`/session:end [--full] [--quick] [--no-push] [--keep-teams] [--branch <name>]`
 
-- `--fast` — **minimum-unit wrap to a recoverable, zero-progress-loss state.** SKIPS the cognitive-maintenance chain (Phases 1–4: `/learn:deep`, `/beta:mine`, `/sleep:*`, integrators) entirely and runs only the recoverability core: Phase 5 (TRACKER green — light reconcile, full re-narration may defer to the DUMP), Phase 6 (DUMP handoff — the load-bearing artifact), Phase 7 (commit EVERYTHING so nothing is lost; land/merge only if clean — see Fast mode below), Phase 8–10 (branch/teardown/report, best-effort). Use when you want to stop NOW and have the next session pick up with no loss. See **## Fast mode** for the exact contract.
-- `--quick` — use `/sleep:quick` (NREM + cleanup, ~5 min) instead of `/sleep:deep` (~15-30 min). Default: deep. (Ignored under `--fast`, which skips sleep entirely.)
-- `--no-push` — stop at a LOCAL commit+merge; do not push (use when the operator has not authorized a push in the current, ending session).
+- **Default (no flag): the fast wrap** — a recoverable, zero-progress-loss state in the fewest steps. Runs only the recoverability core: Phase 5 (TRACKER green — light reconcile, full re-narration may defer to the DUMP), Phase 6 (DUMP handoff — the load-bearing artifact), Phase 7 (commit all working state so nothing is lost — run records under `runtime/` stay local; land/merge only if clean — see Fast mode below), Phase 8–10 (branch/teardown/report, best-effort). See **## Fast mode** for the exact contract. `--fast` is accepted and means the same.
+- `--full` — also run the cognitive-maintenance chain first (Phases 1–4.5: `/learn:deep`, `/beta:mine`, `/sleep:*`, the integrators, `/enforcement:sweep`). Only on request: this flag, or a plain request for a full wrap or the learning pass.
+- `--quick` — under `--full`, use `/sleep:quick` (NREM + cleanup, ~5 min) instead of `/sleep:deep` (~15-30 min). Ignored without `--full` (the default wrap skips sleep).
+- `--no-push` — stop at a LOCAL commit+merge; do not push.
 - `--keep-teams` — skip the team-teardown phase (Phase 9).
 - `--branch <name>` — name for the fresh post-land branch. Default: `session/<YYYY-MM-DD>` (or `work/<YYYY-MM-DD>`).
 
-## Fast mode (`--fast`) — the recoverability core
+## Fast mode (the default) — the recoverability core
 
 The contract: **reach a state the next session can resume from with ZERO progress loss, in the fewest steps.** Skip everything that's about *learning from* the session; keep everything that's about *not losing* it.
 
-| Phase | `--fast` |
+| Phase | default (fast) |
 |---|---|
-| 1–4 cognitive (learn/mine/sleep/integrate) | **SKIP** (note "deferred to a full `/session:end`" in the report; capture any one-line durable insight as a memory + an `/enforcement:log` gap instead of the full chain) |
-| 4.5 debt sweep (`/enforcement:sweep`) | **SKIP** (full-chain only; a `--fast` wrap files at most the one-line `/enforcement:log` gaps it already captures) |
+| 1–4 cognitive (learn/mine/sleep/integrate) | **SKIP** (runs only with `--full`; capture any one-line durable insight as a memory instead of the chain) |
+| 4.5 debt sweep (`/enforcement:sweep`) | **SKIP** (runs only with `--full`) |
 | 5 TRACKER reconcile (fail-CLOSED) | **KEEP** — `node scripts/trackers/validate.js` MUST exit 0. Light reconcile only: if green and not *lying*, the rich per-item state can live in the DUMP (Phase 6) instead of a full header re-narration. If RED, fix to green before proceeding (still fail-closed). |
-| 6 DUMP handoff | **KEEP — this is the load-bearing artifact.** It must carry the next-action, in-flight state, and any operating-model/directive changes so a fresh session needs nothing else. |
-| 7 Land | **KEEP commit (no loss); CONDITIONAL merge.** Commit ALL working state so nothing is lost. Then: **merge/land to `main` ONLY if the work is genuinely done** (e.g. a sprint whose gauntlet is GREEN). If a sprint is mid-fix-cycle / gauntlet-RED / otherwise unfinished, **commit + push the working branch for backup but do NOT merge to main** — landing unfinished work is a progress-*corruption*, not progress-saving. Surface the judgment. |
+| 6 DUMP handoff | **KEEP — this is the load-bearing artifact.** It must carry the next-action, in-flight state, and any operating-model/directive changes so a fresh session needs nothing else. Includes the **Scorecard** and **Proposals** steps (Phase 6, steps 1–2) — same as the full wrap. |
+| 7 Land | **KEEP commit (no loss); CONDITIONAL merge.** Commit ALL working state (except gitignored runtime/ records) so nothing is lost. Then: **merge/land to `main` ONLY if the work is genuinely done** (e.g. a sprint whose gauntlet is GREEN). If a sprint is mid-fix-cycle / gauntlet-RED / otherwise unfinished, **commit it on its working branch and do NOT merge to main**; push that branch only if its tests pass and its remote is private (a public remote first needs the zero-personal-content check and a security read of what is new) — landing unfinished work is a progress-*corruption*, not progress-saving. Surface the judgment. |
 | 8 Fresh branch | **CONDITIONAL.** If the work landed to main, branch fresh off main. If the work is intentionally unmerged (Phase 7 conditional), **STAY on the working branch** — it IS the resume point; forcing a fresh branch off a stale main just makes the next session switch back. |
-| 9 Teardown | **KEEP, best-effort — but NEVER purposefully reap working agents to finish the wrap.** Classify each member FIRST: **idle** → `shutdown_request`; **mid-work** (building, mining, mid-append, mid-subprocess) → do NOT kill it to complete `--fast` — either give it one short drain window to reach a natural boundary, or LEAVE it as a straggler and say so in the report. There is no `TeamDelete` as of Claude Code v2.1.178 — teams are session-scoped and release when the session ends; stragglers left alive are reconciled by the next session's `/mode:sprint` step 1.75. Speed never justifies discarding in-flight work; "fast" bounds the *waiting*, not the agents' right to finish. Don't poll indefinitely. |
+| 9 Teardown | **KEEP, best-effort — but NEVER purposefully reap working agents to finish the wrap.** Classify each member FIRST: **idle** → `shutdown_request`; **mid-work** (building, mining, mid-append, mid-subprocess) → do NOT kill it to complete the wrap — either give it one short drain window to reach a natural boundary, or LEAVE it as a straggler and say so in the report. There is no `TeamDelete` as of Claude Code v2.1.178 — teams are session-scoped and release when the session ends; stragglers left alive are reconciled by the next session's `/mode:sprint` step 1.75. Speed never justifies discarding in-flight work; "fast" bounds the *waiting*, not the agents' right to finish. Don't poll indefinitely. |
 | 10 Report | **KEEP.** State what was skipped (cognitive chain), the TRACKER result, the DUMP next-pick, what committed/pushed/landed-or-not (with the merge judgment), teardown state, and "clear to start fresh." |
 
-`--fast` still honors every hard ceiling (push autonomy-gate, safety floor, no force-push) and stays fail-closed on Phase 5.
+The fast wrap still honors every hard ceiling (push autonomy-gate, safety floor, no force-push) and stays fail-closed on Phase 5.
 
 ## Procedure
 
-> **`--fast`?** Skip Phases 1–4 entirely and run only Phases 5–10 per the **## Fast mode** table above (commit-everything + DUMP + tracker-green = recoverable, no loss). The phases below are the FULL flow.
+> **Default:** skip Phases 1–4.5 and run only Phases 5–10 per the **## Fast mode** table above (commit + DUMP + tracker-green = recoverable, no loss). Phases 1–4.5 run only with `--full` (or when the operator asks for the learning chain in words).
 
 ### Phase 1 — Extract learnings (`/learn:deep`)
 Run `/learn:deep`. It mines THREE sources in parallel: conversation, event log, and retro/report files (oneshot retros + **sprint retros** `paths.sprintHistory` + **`_reports/`**). Subagents can't read the transcript — do the conversation phase yourself; fan out events + retros as read-only subagents that RETURN candidates (write centrally to avoid concurrent-write conflicts on `paths.learningsFile`).
@@ -69,26 +58,28 @@ Both run AFTER sleep (Phase 3) so they act on the **consolidated + reviewed** se
 
 ### Phase 4.5 — Debt sweep (`/enforcement:sweep`)
 Run `/enforcement:sweep`. Finds UNFILED debt — deferral comments, prompt suppressions, skipped
-tests, unenforced-policy claims, review residuals — and reconciles it against `paths.enforcementDebt`,
-filing what's missing. Runs AFTER integrate (Phase 4) so freshly-promoted learnings don't double-file,
+tests, unenforced-policy claims, review residuals — and reports it against `paths.enforcementDebt`;
+it files a row only when the operator asks. Runs AFTER integrate (Phase 4) so freshly-promoted learnings don't double-file,
 BEFORE the tracker reconcile (Phase 5) so the handoff reflects an honest ledger. Fail-open: on
 failure, note it and continue — but capture the triage report path in the DUMP.
 
 ### Phase 5 — Reconcile + validate `TRACKER.md` (fail-CLOSED)
-`TRACKER.md` (root) is the enforced source of truth — the Handoff (Phase 6) is built FROM it and the Land (Phase 7) pushes it, so it must be ACCURATE and GREEN before either. Never write a handoff or land on a tracker that lies about state.
-1. **Validate.** Run `node scripts/trackers/validate.js` (the full check set — currently **20 checks**: 12 single-file + 8 cross-file incl. `cross-file-reconciliation`, `epics-in-roadmap`, `roadmap-epic-based`). It must exit 0.
+`TRACKER.md` (root) is the enforced source of truth — the Handoff (Phase 6) is built FROM it and the Land (Phase 7) pushes it, so it must be ACCURATE and GREEN before either. Never write a handoff or land on a tracker that lies about state. Definitions, rules and history: `trackers/TRACKER-ARCHIVE.md`.
+1. **Validate.** Run `node scripts/trackers/validate.js` (the full check set — currently **19 checks**: 11 single-file + 8 cross-file incl. `cross-file-reconciliation`, `epics-in-roadmap`, `roadmap-epic-based`). It must exit 0.
 2. **Reconcile if needed.** If it FAILs — OR if `TRACKER.md` doesn't reflect THIS session's work — UPDATE it AND its linked `trackers/epics/E-*.md` + `trackers/sprints/*.md` files so every item's state / percent / evidence / next-action matches reality (state changes, items moved to Completed, new gaps recorded, definitions added, change-log + session-log entries). `cross-file-reconciliation` FAILs if a TRACKER item's state disagrees with its linked file — update BOTH. If roadmap-coupled state changed, reconcile `ROADMAP.md` § Epics too. Re-run the validator until **all checks PASS, exit 0**.
 3. **Why fail-closed (unlike the cleanup phases):** a red/stale tracker at session end is the exact failure the enforced tracker exists to prevent (recorded state drifting silently from reality, work that feels done but isn't) — and the next session resumes from it. If the validator cannot be made green, **STOP and surface it**; do NOT proceed to Handoff/Land on a lying tracker. (This is the PROACTIVE counterpart to the `scripts/hooks/tracker-completion-gate.js` Stop hook, which catches a red tracker at the actual session Stop — reconcile here so that hook stays silent.)
 
 ### Phase 6 — Handoff (`/session:dump`)
-Run `/session:dump` to write a fresh prescriptive `DUMP.md` at project root. MUST include: (a) what shipped in the ending session (commits + ISO date, verified), (b) the **next-session pickup** (ranked, role-aware — consult `director-of-product`/`product-lead` for the top pick), (c) **immediate issues found** during the ending session, (d) anti-instructions / coordination lessons, (e) state + spend notes. `DUMP.md` is gitignored/local — it does not get committed; it's read once by the next session.
+1. **Scorecard (fast and full wrap, when `scripts/watch/scorecard.js` exists).** Run `node scripts/watch/scorecard.js --session latest --write --lines` (no model call; it writes this session's scorecard so the next session start can show it, prints its two summary lines, and on any error prints one line on stderr and exits 0). Paste its stdout lines verbatim into the DUMP under a `## Scorecard` heading. If it prints nothing or the script is absent, write "Scorecard: not available" there and continue — never block the wrap on it.
+2. **Proposals (fast and full wrap, when `scripts/watch/propose.js` exists).** Then run `node scripts/watch/propose.js run --session latest`. Only when the scorecard trips a threshold does it make ONE analyst call (numbers only) and store at most 3 step-removing proposals locally; the next session start shows the top one. It always exits 0 with one summary line (plus one line per proposal); paste that output under the same `## Scorecard` heading. Never block the wrap on it.
+3. Run `/session:dump` to write a fresh prescriptive `DUMP.md` at project root. MUST include: (a) what shipped in the ending session (commits + ISO date, verified), (b) the **next-session pickup** (ranked, role-aware — consult `director-of-product`/`product-lead` for the top pick), (c) **immediate issues found** during the ending session, (d) anti-instructions / coordination lessons, (e) state + spend notes. `DUMP.md` is gitignored/local — it does not get committed; it's read once by the next session.
 
 > **Anti-deixis writing discipline (applies to the DUMP content):** the reader's "this session" is NOT the writer's — a bare deictic written today reads as a present-tense instruction tomorrow. In the DUMP: anchor every status to an ISO date and (where one exists) a commit hash; give every imperative an explicit actor and scope ("the next session must X", "do NOT merge SP-X to main until <condition>"), never a bare "in this session, do not execute" / "don't do this now"; write negatives past-tense + dated ("push authorization was NOT given in the YYYY-MM-DD session"), not "no push this session". Same convention as the tracker's `session-relative-language` advisory.
 
 ### Phase 7 — Land (`/commit:land`)
-Regenerate BOTH manifests first if any hash-tracked file changed (`node scripts/generate-framework-manifest.js` + `node scripts/mc/manifest/build.js`) — else the manifest checks go red. Then run `/commit:land` (commit → push branch → **brokered** merge onto default via `scripts/dispatch/broker-merge.js` → push default).
+Run `/commit:land` (commit → push branch → **brokered** merge onto default via `scripts/dispatch/broker-merge.js` → push default). Its Step 1 regenerates and verifies the manifests once (`node scripts/mc/manifest/regen-all.js`) when hash-tracked files changed.
 
-> **AUTONOMY CEILING (hard):** pushing to remote requires operator authorization (CLAUDE.md `## Autonomy`). `/session:end` does NOT auto-push unless the operator has authorized a push in the current session OR turbo `push-to-main` scope is active. With `--no-push` (or no authorization), stop at the LOCAL commit + brokered merge onto `main` (the fenced land, no push) and surface "ready to push — confirm." NEVER force-push; never bypass the safety floor.
+> **AUTONOMY CEILING (hard):** a push of green work to the operator's own repos does not ask (CLAUDE.md `## Autonomy`); a push to a public repo first passes the zero-personal-content check and a security read of what is new. With `--no-push`, stop at the LOCAL commit + brokered merge onto `main` (the fenced land, no push). NEVER force-push; never bypass the safety floor.
 
 ### Phase 8 — Fresh branch
 After the land, create a clean working branch off `main` so the next session doesn't start on a dirty/merged branch:
@@ -113,10 +104,10 @@ Tell the operator: what consolidated (learnings/recs/integrations), **the TRACKE
 - **Sequential by dependency** — sleep needs learn+mine; BOTH integrators (`/learn:integrate` + `/beta:integrate`) need sleep; **the TRACKER.md reconcile (Phase 5) must precede the handoff + land** (both consume the tracker as source of truth); dump needs the analysis; land needs manifests fresh; branch + teardown come last.
 - **TRACKER reconcile is fail-CLOSED** (Phase 5) — unlike the fail-open cleanup phases, a red/stale tracker BLOCKS the handoff + land. The handoff is built from it and the next session resumes from it; a lying tracker poisons both. Reconcile `TRACKER.md` + its epic/sprint files + `ROADMAP.md` § Epics until `node scripts/trackers/validate.js` is fully green.
 - **Mine + integrate are a PAIR (run both halves)** — `/beta:mine` only STAGES recommendations; `/beta:integrate` is what APPLIES the validated ones to the judgment model. Running mine without integrate leaves recs perpetually staged. Same shape as `/learn:deep`→`/learn:integrate`.
-- **Push is autonomy-gated** — default to local-only unless authorized.
+- **Pushes follow the push and publish rule** (`paths.decisionPolicy` § Escalation red lines): green work to the operator's own repos goes without asking; a public destination first passes the zero-personal-content check and a security read of what is new.
 - **First real run of a new orchestration skill should be operator-supervised** — don't trust an untested wrap-up on a critical push; hand-drive once, then rely on it.
-- **Don't `node -e` fs-writes** (merge-guard blocks) — use Write/Edit or a one-shot `scripts/*.js`.
-- **Never purposefully reap working agents to finish a wrap** (a `--fast` wrap must not shutdown-request still-running miners/fixers just to complete teardown). Stragglers + an honest report beat a fast-but-lossy teardown; the wrap is complete WITH stragglers noted. The mechanical counterpart (`scripts/hooks/session-end-team-teardown.js`) should carry the same idle-vs-mid-work classification — gap candidate for `/enforcement:log` if not yet wired.
+- **Don't `node -e` fs-writes** (merge-guard warns) — use Write/Edit or a one-shot `scripts/*.js`.
+- **Never purposefully reap working agents to finish a wrap** (a `--fast` wrap must not shutdown-request still-running miners/fixers just to complete teardown). Stragglers + an honest report beat a fast-but-lossy teardown; the wrap is complete WITH stragglers noted. The mechanical counterpart (`scripts/hooks/session-end-team-teardown.js`) should carry the same idle-vs-mid-work classification.
 
 ## Related
 - `/learn:deep`, `/beta:mine`, `/sleep:deep`, `/sleep:quick`, `/learn:integrate`, `/beta:integrate` — the cognitive-maintenance chain (mine+integrate and deep+integrate are PAIRS — run both halves).

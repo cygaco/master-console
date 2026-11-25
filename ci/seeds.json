@@ -5,8 +5,8 @@
     ".claude/agents/president/_system/beta/judgement-model.md": "cf61ddc36059550bf724ff52d1b18d36fbdd612e0aeb238aa33a859ff6bd6d0e",
     ".claude/agents/president/_system/policy/adr/INDEX.md": "40dbb05e898eccdacfcac54aa2650fd29c2590d16e103f00f2ab6844587ee209",
     ".claude/project/reference/playbook.md": "1e78dc49babdc7a2cc7bd0ab5e5c9aac80b0d1d054dc9d1200ebf816c6399f24",
-    ".claude/settings.json": "c05e09420616c954bb148b9f690789b8b4749875d075970d3ddf2ab8107c9e9d",
-    ".gitignore": "d0d5f71b064d7ce572809fd38e7ae317fc1bc5c06b4b6792740fd3acbf43fd40",
+    ".claude/settings.json": "45efb71da61327137ff78292534e0034175f2ab370cb2e3afd55a85e8c615cd1",
+    ".gitignore": "6a318c5ac25f3e0c32befce62f1d7a5e53ca2af4d21e94b9a7c03691c27d41a6",
     "ROADMAP.md": "1a28cab793ab62f99507bf768ebf2c0ef6f00a51420f83c7a75638fb8b1ab470"
   }
 }

@@ -2,14 +2,77 @@
 
 All notable changes to Master Console are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
-Where a capsule's notes were left as the generated placeholder at release time, the entry below says so rather than inventing content.
+Where a capsule's notes were left as the generated placeholder at release time, the entry below says so rather than inventing content — the capsule and the commit history are the record. The engineering ledger, with the per-sprint release rows, is [RELEASES.md](RELEASES.md).
 
-## [2.1.0] — Unreleased
+## [Unreleased]
+
+## [2.3.0] — 2026-11-25
+
+2.3.0 is the first public release since 2.1.0. Version 2.2.0 (below) was prepared but never published on its own; everything in it is included in 2.3.0.
 
 ### Added
-- **Lean gauntlet.** During an active sprint each commit carries a change trailer (`change`, `blast`, `risks`); a commit-message guard checks it, fails open on its own errors and has a kill switch. A package selector, `scripts/sprint/gauntlet-package.js`, picks the gauntlet package from the trailer and the files a change touches, so a small change no longer pays for the whole suite. A differential oracle checks the selector's choice against the full suite and subtracts the quarantine register.
-- **Operator message contract.** Status messages use fixed headers and an executive register. A Stop-hook lint checks them; it is on by default and can be switched off per install.
-- **Voice skill routing.** Skills declare the sentences that should reach them (`says:` in their frontmatter), and a deterministic prompt-time router maps a dictated sentence to its skill. The router runs on every prompt by default and can match any routable skill by its name, not only the 71 that declare `says:`. Irreversible skills always ask before running, and permission-widening skills run only when named exactly.
+- **Model presets with fallback lists.** Every role has an ordered list of models to try (the default preset, `.claude/agents/_org/presets/default.json`). Each list ends on Claude Opus 5.5, so a setup with only Claude still runs every role. Your own choice for a role is kept in `.claude/manifest.json`, never in the shipped role files.
+- **Sign-in detection.** `/mc:health`, `/mc:setup` and the installer ask each tool's own status command whether you are signed in to Claude, Codex and Gemini. The answer is kept for 7 days.
+- **Find and swap models (`/models:swap`).** `find` lists what each lab serves now and which configured models are gone; `swap` replaces one model with another across the shipped defaults or for one role; `undo` reverses the last swap and keeps later edits.
+- **Security review models you can switch.** Each security review pass takes its provider, model and effort from your project's choice when you set one, checked against the model catalog; the shipped registry stays the default.
+- **A Claude-only security fallback (opt-in, off by default).** When the other labs are known not to be signed in, a review read by Claude alone can be accepted, labelled as reviewed by Claude only and never counted as a multi-lab pass. See Known issues.
+- **Session scorecard (`/session:scorecard`).** Reads what is already on disk (transcripts, git, the dispatch log) and prints wall and active time, idle time by cause, tokens by actor, review rounds and shipped units. Session start shows a short card; a wrap proposes one change when a threshold trips. Not in the public copy in this release: a fix to how its cache is protected is still under review.
+- **One manifest command.** `node scripts/mc/manifest/regen-all.js` regenerates and verifies every manifest in one run.
+- **A guard on agent spawns.** A hook refuses an Agent-tool spawn whose model is not a Claude model.
+- **`/portfolio:new --parent <dir>`**, and an empty existing folder is accepted as the new product's home.
+- **Plain words start the right skill (on by default).** Three plain-language hooks replace the old skill router: at session start Claude gets a map of the skills, and when a message matches one it gets one short line naming it and starts it with the Skill tool. A skill marked "~" (it deletes, deploys or spends) is never started by the model: the guard refuses it and you get the exact `/command` to type. `/plain` shows what the hooks add and whether routing is on; `/plain off` and `/plain on` switch routing (the guard stays on).
+
+### Fixed
+- **An install now copies every script its skills need.** The scripts behind `/models:check`, `/models:swap` and the growth skills, and `scripts/dispatch.js`, were missing from installed products, so those skills failed there. Update an existing product to get them.
+- **The installer runs its own sign-in check**, never a sign-in script it finds in the target folder (`mc-setup.js` and `install.ps1`).
+- **`/mc:update` conflict paths keep every copy.** `--save-conflicts` backs the live file up into the transaction, so a rollback restores it, and never overwrites an earlier saved copy; `--keep-local` never overwrites an earlier `.mc-new` or `.local-<version>` file.
+- **The session scorecard cache no longer stores raw transcript bytes**, and its folder ignores itself, so a `git add -A` cannot commit it.
+- **The launch-film scaffold stops before writing over existing files** in the folder you chose.
+
+### Changed
+- **Defaults.** GPT-6.2 Sol is the OpenAI default and the security panel's second pass. Gemini 4 Neon (High) is the default Google model for the security reviewer and the research lead. Claude Opus 5.5 is the default for alpha and the director of engineering; Fable 5.2 is opt-in.
+- **Lighter review rules.** One review round sized to the risk; a finding holds only the unit it is about; only a security hole an outsider could use, data loss, or a false claim about a user's data holds anything else; two rounds is the ceiling. Small sprints skip the advisory plan pair and the release re-review.
+- **Faster hooks.** Unused checks and advisory-only edit hooks are removed (see Removed); the commit-trailer guard and the inline-script write rule now advise instead of block; hooks write fewer log rows; the pre-commit check scans only the staged files.
+- **`/session:end` runs the fast wrap by default.**
+- **Turbo no longer grants pushes.** Claude Code's own safety check decides pushes, and it reads its trust rules only from your user settings. `node scripts/operator/trust-my-repos.js` is a script you run yourself (an agent never runs it). By default it only previews: it prints the lines it would add to the `autoMode` trust lists in your user settings file (`~/.claude/settings.json`) for this project's repository, and writes nothing. `--write` applies them, after saving a timestamped backup of the file next to it; every repository under your account is a separate choice, `--whole-account`; `--file <copy>` tries it on a copy. Non-force pushes to the trusted repository then stop being refused.
+
+### Removed
+- `scripts/checks/assert-mc-templates-shipped.js`, `file-usage-trace.js`, `reader-discipline.js`, `taste-gate-presence.js` (and their tests), the inert judge-consult hook `beta-gate.js`, the old skill router (`skill-router.js`, its catalog and its telemetry) and `/scan:voice-routing` (skills no longer carry `says:` phrase lists), and the edit hooks `region-marker-guard.js`, `save-session-lint.js`, `spec-test-staleness.js`, `step-hardcode-suggester.js`, `template-fillability.js`.
+
+### Known issues
+- **The Claude-only security fallback cannot accept a real review yet.** It needs a live Claude review lane with a signed record, and the security panel's only Claude lane runs inside the conductor, not in the script that decides; so it declines, and the review stays blocked rather than passing.
+- **A saved "signed out" answer is used without a live re-check.** Anything that can already edit your project could forge it to move a role to a later model on its list; each such move is recorded, and security-review roles refuse instead of moving.
+- **A full security panel run does not pass its final check yet.** It ends blocked rather than passing; a fix is planned.
+- **No in-place update from public 2.1.0.** The public copy does not carry the release capsules the updater reads; install 2.3.0 fresh.
+- **`--save-conflicts` and `--keep-local` rollbacks are incomplete.** A rollback does not put back a file that `--save-conflicts` replaced (your original stays in the saved-conflicts folder), and a `--keep-local` rollback deletes whatever is at a side file it wrote, even a newer file you saved there. Take a version-control checkpoint before an update with either flag.
+- **`--rollback` does not undo a migration's renames** take a version-control checkpoint first).
+
+## [2.2.0] — 2026-11-05
+
+Prepared but never published on its own; it reaches the public copy as part of 2.3.0. 2.2.0 ships the 2.1.0 fix rounds that never reached the public tree, the additions below, and the portfolio-update fixes that let installed products update to the current framework. The per-sprint engineering ledger is [RELEASES.md](RELEASES.md); the capsule and commit history are the record for the individual fix-round changes.
+
+### Added
+- **`/growth:launch-film` — a workflow skill for producing a launch film.** Scaffolds a Remotion project into the user's own chosen video folder (never a product dependency) and documents the render, assemble and release-encode steps, with a matching `_guides/LAUNCH_FILM_GUIDE.md` and ADR-0043. Workflow only — it carries no creative or content rules. Remotion's licence is stated as in ADR-0043 (free for individuals and organisations of up to 3 people; a paid Company License from 4 people) with no cost-free claim.
+
+### Changed
+- **The removal of the pre-2.0.0 names moves to 3.0.0.** The `warp:*` command aliases, the `.warpos/` / `_warpos/` directory fallbacks, and the `WARPOS_*` environment and settings names were announced for removal in 2.2.0 (itself moved there from 2.1.0). They are **NOT removed in 2.2.0** — they keep working as deprecated aliases and read-fallbacks. The removal moves to the **3.0.0** major. The rename-partition compat windows, the alias map (`removeIn` / `expiryVersion`), and every deprecation notice now state 3.0.0; nothing is removed in this release.
+- **A new release gate, `published_emit_drift`, refuses a release whose source would drop content already present in the published public tree.**
+- **`/portfolio:sync` now drives real per-product updates.** It passes `--to` (the target version), `--source` (the MC clone) and `--target` (each product) to the update engine and applies with `--apply`; previously it ran the engine with no arguments, so every product exited with "Missing --to." The `/mc:update` skill documents the explicit `--source` form for a canonical clone that is not a `master-console`/`MC`/`mc` sibling.
+- **Lean-gauntlet narrowing is on by default.** `scripts/sprint/gauntlet-decision.js` now defaults `leanAuto` on, so a sprint runs the gauntlet package its change trailer and touched files call for instead of the full roster every time. A release, an unclassifiable change, a security-surface touch, a Golden-path entry file, and a size or stale-map escalation still widen the package to full. The R-5 seeded-defect differential gates the change: lean shows **zero misses on the seeded corpus** (`missed_by_lean = 0` in every column, with a per-column green control). The corpus's consumer cases are all name-siblings, so generality beyond the seeded corpus rests on the selector's unit tests rather than the differential alone; a non-sibling consumer case is tracked for the next corpus revision.
+
+### Known issues
+- **`--rollback` does not undo a migration's renames.** Upgrading a pre-2.0.0 install across the WarpOS→MC rename runs file moves the transaction does not reverse, so `--rollback` leaves a hybrid tree (restored legacy roots plus the new `_mc/` roots). Take a version-control checkpoint before a cross-rename upgrade and reset to it for a clean revert.
+
+### Fixed
+- **A refused gauntlet selection now halts instead of silently falling back to unchecked review conduct.** Inside `/sprint:full` the gauntlet step resolves a forced-full decision and halts (`gauntlet_resolution_refused`) when even that yields no decision, rather than conducting a 2.0.0 legacy review that does not verify the reviews ran yet reports success.
+- **A gauntlet close is now bound to the commit its reviews ran on.** The close records and compares the review head against the selection head and refuses a close whose asserted head does not match, so a full set of reviews recorded at an older commit can no longer close a newer one.
+
+## [2.1.0] — 2026-10-09
+
+### Added
+- **Lean gauntlet (E-LEAN-GAUNTLET-001).** During an active sprint each commit carries a change trailer (`change`, `blast`, `risks`); a commit-message guard checks it, fails open on its own errors and has a kill switch. A package selector, `scripts/sprint/gauntlet-package.js`, picks the gauntlet package from the trailer and the files a change touches, so a small change no longer pays for the whole suite. A differential oracle checks the selector's choice against the full suite and subtracts the quarantine register. A review conducted on the verified path is scoped to the change's Focused and Touchpoint files; the unchecked fallback under Known issues runs it unscoped.
+- **Operator message contract (E-SELF-MONITOR-001).** Status messages use fixed headers and an executive register. A Stop-hook lint checks them; it is on by default and can be switched off per install.
+- **Voice skill routing (E-VOICE-SKILLS-001).** Skills declare the sentences that should reach them (`says:` in their frontmatter), and a deterministic prompt-time router maps a dictated sentence to its skill. Irreversible skills always ask before running. Permission-widening skills also always ask, however exactly they are named: a skill whose name has a word starting with `turbo` or `authoriz` (for example `/session:turbo`, `/permissions:authorized`, `/scan:turbo-spend`), and any skill suggested with a `--turbo` flag. Skills whose file marks them confirm-first on a fuzzy match (`/mode:sprint`, `/mode:adhoc`, `/mode:solo`, `/sprint:full`) run when named exactly and ask otherwise. When a catalog is present but its generator is missing or cannot be read, the router treats the catalog as untrusted and asks before every skill.
 
 ### Changed
 - **Model refresh (2026-10-03).** The model catalog is refreshed. Builders and other doers move to Claude Sonnet 5.5, and the OpenAI lanes default to the GPT-6 family. The Claude provider default and the in-process roles stay on Claude Opus 4.8 until a later release proves what the harness serves. Reviewer defaults stay where they were until a replay proof lands. The codex resolver prefers the newest npm `@openai/codex` over an older bundled binary, and never runs a candidate binary before it passes the path guards.
@@ -17,20 +80,31 @@ Where a capsule's notes were left as the generated placeholder at release time, 
 - **Deprecated command aliases hidden.** The 33 deprecated alias forwarders no longer appear in the skill menu or the skill catalog, and Claude Code no longer lists them as slash commands. Claude can still run one when asked for it by name. They are removed in 2.2.0.
 
 ### Fixed
-- A gauntlet package close now refuses unless every scheduled stage has a signed completion record or an explicit skip with a reason; skipping a review stage also needs an operator acknowledgement, and every skip is stamped on the closed event. A close whose differential fails writes a refusal, not a closed event. Before, a close could report the full package with no reviews dispatched.
+- A close whose differential fails writes a refusal, not a closed event. Before, a close could report the full package with no reviews dispatched.
 - A failed gauntlet stage now halts the sprint and shows the stage's output, instead of stopping silently.
 - The codex resolver no longer runs binaries found on PATH before validating them, and no longer passes a path through `cmd.exe`.
 - The voice router no longer reaches a confident match from a negated or past-tense mention ("disable turbo mode", "I already ran the full scan"), and a skill with a missing confirm class asks instead of running.
 - The operator-contract lint accepts text after a header, needs a real command signal before it calls a line a command, and classifies code fences by what they hold.
 - Test runs no longer write fixture rows into the real events log.
+- The sprint audits (beta honesty, hook coverage, manager consult) no longer drop rows through a quarantine filter: no `events-quarantined` row, and no listed fixture id, can hide a sprint from them. The audits keep their own static exemptions (see Known issues); historical test-fixture rows outside them now show up as findings on their own fixture sprint ids.
+- Every gauntlet package close is held to the release-class rules (no skipped review stage, no `--lenient`), and no stage is satisfied by the selection's own word: a stage needs its record or evidence.
+- The codex path guards compare native real paths on both sides, and an npm-installed codex now runs as `node` with the package's own entry script instead of through its `.cmd` shim.
 
 ### Known issues
 - **GPT-6 default lanes need codex 0.160 or newer** (npm `@openai/codex`). The desktop-bundled codex 0.146 returns HTTP 400 on every GPT-6 lane. The resolver prefers the newer npm binary, and `models:check` warns whenever the codex it finds is older than 0.160, but a machine with only the bundled binary gets errors on those lanes.
-- **Codex runs cannot prove which model served them.** The dispatch smoke checks that codex itself reports running the requested model; there is no server-attested served id, and the model's own answer about its id is not reliable.
-- **A package close checks that each review ran, not what it concluded.** A failing review still counts as a completed stage at close; the release decision reads the verdicts separately. Test and mechanical stages are recorded from evidence the caller commits to.
+- **Codex and agy runs cannot prove which model served them.** The dispatch smoke checks that codex itself reports running the requested model; there is no server-attested served id, agy reports none at all, and the model's own answer about its id is not reliable. Tracked as ED-230.
+- **A refused gauntlet selection falls back to unchecked review conduct.** When `/sprint:full` conducts a sprint and the gauntlet selection cannot be resolved, the gauntlet step falls back to 2.0.0's review conduct, which does not verify that the reviews ran and reports success. That happens on a commit with no change trailer while the sprint is active, an invalid trailer, a commit trailer lower than the ticket's classification, a sprint registry that cannot be read at either the merge base or the commit's parent, no merge base with the default branch, a HEAD that equals its merge base (nothing to diff yet), any error while selecting, and a sprint hook-point registry with no gauntlet reviewer row for a release-class change (the shipped registry has them). An error thrown while the gauntlet step is being conducted is also reported as success. Pending a product decision; tracked as ED-489.
+- **The in-process gauntlet close can be satisfied by another run's records.** Inside `/sprint:full`, the stage check counts a review from any completion record for that role in the time window, signed or not and from any sprint. The signed, sprint-scoped CLI close (`gauntlet-package.js close`) is not part of the release path. Tracked as ED-488.
+- **A gauntlet close is not bound to the commit its reviews ran on.** A full set of reviews recorded at an older commit can close a newer one. Tracked as ED-490.
+- **A package close checks that each review ran, not what it concluded.** A failing review still counts as a completed stage at close; the release decision reads the verdicts separately. Test and mechanical stages (including the full-suite stage) pass on any non-empty evidence file the caller names with exit 0, or on a skip with any reason; the close cannot tell whether a runner wrote the file. Tracked as ED-466.
+- The constant full-package obligation names qa-reviewer and security-reviewer only, so a CLI close does not demand the frontend, backend or visual reviewers that `/sprint:full` conducts for a code sprint's full roster.
 - **The operator-contract lint fails open by design.** A crash or malformed input lets the turn end normally; the lint shapes messages and is not a security control.
-- **Older event logs still hold test fixture rows.** Rows that test runs wrote before this release stay in the logs, which are append-only. Readers can recognise them by sprint or unit id: `SP-CLI2`, `SP-DIFF`, `SP-GAP7-CLI`, `SP-POISON`, `SP-R3STRICT-*`, `SP-R3LENIENT-*` and `SP-DIFFQ-*` on gauntlet-package events; `SP-T` and `SP-GP-*` on manager-consult events; `SP-TEST-*` sprints and beta-consult rows that cite an `SP-J<n>` rubric; and the `ROADMAP.md` ledger receipt.
+- **Older event logs still hold test fixture rows.** Rows that test runs wrote before this release stay in the logs, which are append-only, and the sprint audits report those outside their static exemptions as findings on their fixture sprint ids. Readers can recognise them by sprint or unit id: `SP-CLI2`, `SP-DIFF`, `SP-GAP7-CLI`, `SP-POISON`, `SP-R3STRICT-*`, `SP-R3LENIENT-*` and `SP-DIFFQ-*` on gauntlet-package events; `SP-T` and `SP-GP-*` on manager-consult events; `SP-TEST-*` sprints and beta-consult rows that cite an `SP-J<n>` rubric; and the `ROADMAP.md` `[S-PF-01]` ledger receipt.
+- **A permission-widening skill without `turbo` or `authoriz` in its name relies on stale-catalog detection.** The router decides "permission-widening" from those two name stems; any other skill is held to confirm-first only by its catalog entry, so a stale catalog with a readable generator relies on the router's stale-catalog check alone.
+- An install made with `scripts/mc-setup.js` ships neither `scripts/generate-skill-catalog.js` nor a skill catalog, so the router has nothing to route and suggests nothing; the voice skill routing above works only where the generator and a catalog exist. If installs ever carry a catalog, they must also carry a way to check that it is current (the generator or a stamped hash), or the stale-catalog bypass returns; until then the router treats such a catalog as untrusted and asks before every skill. Tracked as ED-492.
+- **The sprint audits keep static exemptions.** Hook coverage also skips sprint ids that start with `SP-J` or `SP-TEST`, and manager consult skips those that start with `SP-J`; beta honesty audits `SP-J` sprints but skips some of its checks for them.
 - **Migrated alias skills still name 2.1.0.** Alias skills that the 1.2.0 → 2.0.0 migration wrote into a product say "Removed in mc@2.1.0". The removal is in 2.2.0.
+- **2.0.0 and 2.1.0 ship without a release capsule.** `framework/releases/` holds capsules through 1.2.0 only. Tracked as ED-495.
 
 ## [2.0.0] — 2026-10-06
 

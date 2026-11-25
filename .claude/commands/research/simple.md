@@ -1,11 +1,5 @@
 ---
 description: Deep research pipeline — queries Claude, ChatGPT (Codex), and Gemini in parallel, saves reports, synthesizes, and applies learnings
-says:
-  - quick research
-  - look this up
-  - research simple
-  - simple research
-says-args: free-text
 ---
 
 # /research — Deep Research Pipeline

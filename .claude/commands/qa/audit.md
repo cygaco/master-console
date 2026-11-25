@@ -1,10 +1,5 @@
 ---
 description: Active full-codebase QA audit — systematically walks all 7 failure-mode personas
-says:
-  - qa audit
-  - run the qa
-  - audit the code for bugs
-  - quality audit
 ---
 
 # /qa:audit — Active QA Audit

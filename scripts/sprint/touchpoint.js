@@ -2,8 +2,9 @@
 "use strict";
 
 const path = require("path");
+const fs = require("fs");
 const { spawnSync } = require("child_process");
-const { loadOrBuildRequireGraph } = require("../maps/require-graph");
+const { loadOrBuildRequireGraphResult } = require("../maps/require-graph");
 
 const SCHEMA = "mc/touchpoint/v1";
 const DEFAULT_ROOT = path.resolve(__dirname, "..", "..");
@@ -69,7 +70,15 @@ function touchpointClosure(changedFiles, opts = {}) {
   }
   const root = path.resolve(o.root || DEFAULT_ROOT);
   const depth = o.depth === undefined || o.depth === null ? 1 : o.depth;
-  const graph = o.graph || loadOrBuildRequireGraph(root);
+  let graph = o.graph;
+  let mapStale = false;
+  let mapStaleReason = null;
+  if (!graph) {
+    const res = loadOrBuildRequireGraphResult(root);
+    graph = res.graph;
+    mapStale = Boolean(res.map_stale);
+    mapStaleReason = res.reason || null;
+  }
   const changed = [...new Set((files || []).map((f) => normalize(f, root)).filter(Boolean))].sort();
 
   const base = {
@@ -86,6 +95,8 @@ function touchpointClosure(changedFiles, opts = {}) {
     graph_ok: Boolean(graph && Array.isArray(graph.nodes) && Array.isArray(graph.edges)),
     map_generated_at: (graph && graph.generatedAt) || null,
     map_head: (graph && graph.head) || null,
+    map_stale: mapStale,
+    map_stale_reason: mapStaleReason,
   };
 
   if (!base.graph_ok) {
@@ -173,9 +184,36 @@ function touchpointClosure(changedFiles, opts = {}) {
     hits.push({ file: u.file, expr: u.expr, line: u.line, reason: "in-scope-dynamic" });
   }
 
-  const closure = [...visited].filter((f) => !changedSet.has(f)).sort();
+  const closureSet = new Set([...visited].filter((f) => !changedSet.has(f)));
+  for (const f of [...closureSet]) {
+    if (TEST_FILE.test(f)) continue;
+    const siblingTest = f.replace(/\.(?:js|cjs|mjs)$/, ".test.js");
+    if (siblingTest === f || closureSet.has(siblingTest)) continue;
+    try {
+      if (fs.statSync(path.join(root, siblingTest)).isFile()) closureSet.add(siblingTest);
+    } catch {
+    }
+  }
+  const closure = [...closureSet].sort();
   base.files = closure;
-  base.tests = closure.filter((f) => TEST_FILE.test(f));
+
+  const reachSeed = [...new Set([...changed, ...closure.filter((f) => !TEST_FILE.test(f))])].filter((f) => index.nodes.has(f));
+  const reachVisited = new Set(reachSeed);
+  let reachFrontier = reachSeed;
+  while (reachFrontier.length) {
+    const nextReach = [];
+    for (const f of reachFrontier) {
+      for (const e of index.reverse.get(f) || []) {
+        if (!reachVisited.has(e.from)) {
+          reachVisited.add(e.from);
+          nextReach.push(e.from);
+        }
+      }
+    }
+    reachFrontier = nextReach;
+  }
+  const reachTests = [...reachVisited].filter((f) => TEST_FILE.test(f));
+  base.tests = [...new Set([...closure.filter((f) => TEST_FILE.test(f)), ...reachTests])].sort();
   base.edges_used = edgesUsed.sort(
     (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to) || a.kind.localeCompare(b.kind),
   );

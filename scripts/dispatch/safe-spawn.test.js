@@ -410,7 +410,9 @@ const _shimSrc = (dir, ver) => {
 const _npmFake = (prefix, ver) => {
   const pkg = _win ? path.join(prefix, "node_modules", "@openai", "codex") : path.join(prefix, "lib", "node_modules", "@openai", "codex");
   fs.mkdirSync(pkg, { recursive: true });
-  fs.writeFileSync(path.join(pkg, "package.json"), JSON.stringify({ name: "@openai/codex", version: ver }));
+  fs.writeFileSync(path.join(pkg, "package.json"), JSON.stringify({ name: "@openai/codex", version: ver, bin: { codex: "bin/codex.js" } }));
+  fs.mkdirSync(path.join(pkg, "bin"), { recursive: true });
+  fs.writeFileSync(path.join(pkg, "bin", "codex.js"), "process.stdout.write('codex-entry ' + process.argv.slice(2).join(' '));\n");
   const dir = _win ? prefix : path.join(prefix, "bin");
   fs.mkdirSync(dir, { recursive: true });
   if (_win) fs.writeFileSync(path.join(dir, "codex.cmd"), "@echo off\r\necho codex-cli 0.0.0-lying\r\n");
@@ -439,7 +441,9 @@ h.test("resolveTool('codex'): newer npm-global (package metadata) wins over the 
     assert.equal(whichAll("codex").length, 2, "both shims visible: " + whichAll("codex").join(" | "));
     const r = resolveTool("codex", { npmPrefix: aPre });
     assert.ok(r.ok, r.reason);
-    assert.ok(r.path.toLowerCase().startsWith(fs.realpathSync(aNpm).toLowerCase()), "npm shim chosen: " + r.path);
+    assert.equal(r.kind, "node-entry", "npm pick launches via node-entry: " + JSON.stringify(r));
+    assert.equal(r.path, process.execPath);
+    assert.ok(r.shim.toLowerCase().startsWith(fs.realpathSync.native(aNpm).toLowerCase()), "npm shim chosen: " + r.shim);
     assert.equal(r.resolution.reason, "npm-global-newer-than-path-first");
     assert.equal(r.resolution.chosen_version, "999.0.0");
     assert.equal(r.resolution.alternatives[0].version, _ver);

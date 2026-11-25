@@ -1,11 +1,5 @@
 ---
 description: Deep learning — extracts from conversation + event log + retro/report files (oneshot retros, sprint retros, _reports) in parallel, deduplicates, reports
-says:
-  - extract the learnings
-  - deep learn
-  - what did we learn
-  - learn deep
-  - harvest learnings
 ---
 
 # /learn:deep — Comprehensive Learning Extraction
@@ -28,7 +22,7 @@ Only `/learn:deep`, `/learn:integrate`, and `/learn:ingest` remain in the learn 
 
 Launch three agents in parallel (single message, three Agent tool calls). Each agent appends learnings to `paths.learningsFile` via the canonical `logLearning()` helper.
 
-**Do NOT call this inline as `node -e "require('./scripts/hooks/lib/logger').logLearning(...)"`.** The merge-guard hook blocks `node -e` invocations that perform fs writes. The helper does an `fs.appendFileSync` to `paths.learningsFile`, so it trips the rule even though the helper itself is canonical.
+**Do NOT call this inline as `node -e "require('./scripts/hooks/lib/logger').logLearning(...)"`.** The merge-guard hook warns (it does not block) on `node -e` invocations that perform fs writes, because the Edit/Write hooks never see that write. The helper does an `fs.appendFileSync` to `paths.learningsFile`, so it trips the warning even though the helper itself is canonical.
 
 Allowed alternatives:
 1. **One-shot script file (preferred).** Write a tiny `scripts/log-learnings-phase-<a|b|c>.js` that requires the helper and calls `logLearning(...)` once per learning. Run it via `node scripts/log-learnings-phase-<a|b|c>.js`. Delete after the run if it was truly one-shot.

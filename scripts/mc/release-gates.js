@@ -802,7 +802,79 @@ const GATES = [
       details: (r.stderr || r.stdout || "").split(/\r?\n/).filter(Boolean).slice(-6),
     };
   }),
+
+  gate("shipped_spec_models", () => {
+    const r = runScript("scripts/checks/shipped-spec-models.js");
+    if (r.status === 0) return { ok: true, severity: "green", message: "Shipped role specs carry the product default models." };
+    return {
+      ok: false,
+      severity: "red",
+      message: r.status === 1 ? "A role spec carries this checkout's own model pin; it would be published." : "shipped-spec-models could not run - not a pass.",
+      details: `${r.stderr || ""}${r.stdout || ""}`.split("\n").filter(Boolean).slice(0, 8),
+    };
+  }),
+
+  gate("model_defaults_decided", () => {
+    let pending;
+    try {
+      const presets = require(path.join(REPO_ROOT, "scripts", "dispatch", "presets.js"));
+      const d = presets.loadPreset(presets.DEFAULT_PRESET_ID, { projectRoot: REPO_ROOT });
+      pending = d && d.pending && typeof d.pending === "object" ? Object.keys(d.pending) : [];
+    } catch (e) {
+      return { ok: false, severity: "red", message: "The default model preset could not be read - not a pass.", details: [String(e && e.message)] };
+    }
+    if (pending.length === 0) return { ok: true, severity: "green", message: "The default model preset carries no undecided default." };
+    return {
+      ok: false,
+      severity: "red",
+      message: `The default model preset still marks ${pending.length} role default(s) as awaiting a decision: ${pending.join(", ")}.`,
+      details: ["Remove the role's entry from default.json `pending` once the product owner has confirmed it."],
+    };
+  }),
+
+  gate("published_emit_drift", () => {
+    const r = runScript("scripts/checks/emit-drift-vs-published.js", ["--source", ".", "--ref", "HEAD", "--json"]);
+    let payload = null;
+    try {
+      const j = JSON.parse(r.stdout || "");
+      if (j && typeof j === "object" && !Array.isArray(j)) payload = j;
+    } catch {
+    }
+    const cannot = (why) => ({
+      ok: false,
+      severity: "red",
+      message: `published_emit_drift COULD NOT RUN - not a pass (${why}). Nothing was verified; absence of a finding is not a finding of absence.`,
+      details: [String((payload && payload.error) || r.stderr || r.stdout || "").slice(0, 200)].filter(Boolean),
+    });
+    let interpretResult = null;
+    try {
+      ({ interpretResult } = require(path.join(REPO_ROOT, "scripts", "checks", "emit-drift-vs-published.js")));
+    } catch {
+    }
+    if (typeof interpretResult !== "function") return cannot("the enforcer does not export interpretResult");
+    const res = interpretResult(r.status === undefined ? null : r.status, r.signal || null, r.stdout || "");
+    const stale = res.payload.stale_exceptions.length;
+    if (res.state === "skipped") return { ok: true, severity: "green", message: "published_emit_drift n/a: publisher source only" };
+    if (res.state === "green")
+      return {
+        ok: true,
+        severity: "green",
+        message: `published_emit_drift: the emit drops nothing that is published (published commit ${payload.published_commit}; ${stale} stale exception(s)).`,
+      };
+    if (res.state === "cannot-run") return cannot(res.reason);
+    const removals = Array.isArray(payload.removals) ? payload.removals : [];
+    const changed = Array.isArray(payload.changed) ? payload.changed : [];
+    const describe = (x) => `${x.path}: ${x.kind === "line" ? x.line : x.kind}`;
+    return {
+      ok: false,
+      severity: "red",
+      message: `published_emit_drift FAILED - this source would drop published content (${removals.length} removed, ${changed.length} changed; published commit ${payload.published_commit}; ${stale} stale exception(s)). Land the content in the source or pin a reviewed exception.`,
+      details: removals.map(describe).concat(changed.map(describe)).slice(0, 8),
+    };
+  }),
 ];
+
+const NONSKIPPABLE = new Set(["published_emit_drift"]);
 
 function run(opts) {
   const skip = new Set((opts && opts.skip) || []);
@@ -812,7 +884,8 @@ function run(opts) {
   let manual = 0;
   let degraded = 0;
   for (const g of GATES) {
-    if (skip.has(g.name)) {
+    const refused = skip.has(g.name) && NONSKIPPABLE.has(g.name);
+    if (skip.has(g.name) && !refused) {
       results.push({
         name: g.name,
         severity: "skipped",
@@ -830,6 +903,7 @@ function run(opts) {
         message: `${g.name} threw: ${e.message}`,
       };
     }
+    if (refused) r = { ...r, message: `REFUSED to skip non-skippable gate; ran it anyway. ${r.message || ""}` };
     results.push({ name: g.name, ...r });
     if (r.severity === "red") red += 1;
     else if (r.severity === "yellow") yellow += 1;
@@ -857,6 +931,10 @@ if (require.main === module) {
       skip.push(args[i + 1]);
       i += 1;
     }
+  }
+  const refusedSkips = skip.filter((n) => NONSKIPPABLE.has(n));
+  if (refusedSkips.length) {
+    console.error(`WARNING: --skip ${refusedSkips.join(", ")} refused - non-skippable gate(s) will run anyway.`);
   }
   const summary = run({ skip });
   if (json) {

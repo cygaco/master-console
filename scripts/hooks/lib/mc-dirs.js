@@ -14,7 +14,7 @@
  * path here checks existence only (a full directory walk per hook process would be a tax on every tool call).
  *
  * The legacy names are DERIVED from mc-env's LEGACY_PREFIX, so this file adds no second legacy literal.
- * Removal: the legacy twins stop being read in mc 2.2.0 (mc-env's REMOVED_IN).
+ * Removal: the legacy twins stop being read in mc 3.0.0 (mc-env's REMOVED_IN).
  */
 
 const fs = require("fs");

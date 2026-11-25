@@ -109,19 +109,20 @@ Allowed values:
 | Value | Meaning |
 |---|---|
 | ~~`inherit`~~ | **FORBIDDEN for registry-routed roles.** See note below. |
-| `sonnet` | Alias → `claude-sonnet-4-6` |
-| `opus` | Alias → `claude-opus-4-8` |
-| `haiku` | Alias → `claude-haiku-4-5` |
-| `claude-opus-4-8` | Explicit ID |
-| `claude-sonnet-4-6` | Explicit ID |
-| `claude-haiku-4-5-20251001` | Explicit ID with snapshot |
+| `sonnet` | Alias → `claude-sonnet-5-5` (latest Sonnet; Claude Code resolves the alias to the latest model) |
+| `opus` | Alias → `claude-opus-5-5` (latest Opus; API default effort is medium — set `effort:` explicitly) |
+| `haiku` | Alias → `claude-haiku-5-5` |
+| `claude-opus-5-5` | Explicit ID (the in-process opus pin since 2026-11-05) |
+| `claude-sonnet-5-5` | Explicit ID |
+| `claude-opus-4-8` | Explicit ID (legacy, still served) |
+| `claude-haiku-4-5-20251001` | Explicit ID with snapshot (legacy, still served) |
 
 When `provider` is set to a non-Anthropic value, `model` is ignored for routing and `provider_model` is used instead; however the `model:` key still governs Agent-tool / claude-fallback spawns and MUST be set (see below).
 
 > **`model: inherit` is FORBIDDEN for roles present in `role-registry.json`.**
 > The registry is the single routing source of truth (ADR-0008). Frontmatter `model:` must be kept in sync with the registry entry:
 >
-> - **Claude roles** (`provider: claude` or absent): set `model:` to the registry's `model` value (e.g. `claude-opus-4-8`).
+> - **Claude roles** (`provider: claude` or absent): set `model:` to the registry's `model` value (e.g. `claude-opus-5-5`).
 > - **Cross-provider roles** (`provider: openai` or `gemini`): the role is subprocess-dispatched; frontmatter `model:` only governs the Agent-tool / claude-fallback spawn path. Set it to the claude-fallback pin — `claude-opus-4-8` — not `inherit`.
 >
 > `inherit` silently causes the in-process Agent-tool spawn to inherit the caller's session model, bypassing registry routing. Enforcer: `scripts/checks/role-parity-scan.js` (model-pin check).
@@ -253,7 +254,7 @@ color: red
 
 The CLI rejects saves that:
 
-1. Set `provider: openai` without a valid `provider_model` from the openai models in `scripts/dispatch/catalog.js` (`gpt-6-astra | gpt-6.1-sol | gpt-6-sol | gpt-6-luna | gpt-5.6-sol | gpt-5.6-terra | gpt-5.6-luna`).
+1. Set `provider: openai` without a valid `provider_model` from the openai models in `scripts/dispatch/catalog.js` (`gpt-6-astra | gpt-6.1-sol | gpt-6.1-terra | gpt-6-sol | gpt-6-luna | gpt-5.6-sol | gpt-5.6-terra | gpt-5.6-luna`).
 2. Set `provider: gemini` with a deprecated or excluded model (e.g. `gemini-2.5-pro`).
 3. Set `provider_reasoning_effort: max` on a non-Anthropic provider.
 4. Set `provider_reasoning_effort: xhigh` on Sonnet 4.6 (only Opus 4.8 supports xhigh on Anthropic).

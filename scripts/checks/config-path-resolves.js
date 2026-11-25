@@ -31,6 +31,7 @@ const DATA_SOURCES = {
   "scripts/checks/doc-ref-integrity.allowlist.json": { noPaths: "lists references that are allowed NOT to resolve (gitignored or written at install time)" },
   "scripts/check/privacy.allowlist.json": { noPaths: "names email addresses and domains, not paths" },
   "scripts/checks/leak-denylist.json": { noPaths: "hashed phrases, not paths" },
+  "scripts/open-source/rename-mc.denylist.json": { noPaths: "a rename-partition artifact (glob patterns, future entries, and compat member/occurrence paths); its entries are validated by scripts/open-source/partition-loader.js (checkStale F7 + validateEntries + checkFreeze), not by path-resolution here" },
 };
 
 const CODE_SOURCES = [
@@ -65,7 +66,7 @@ const RUNTIME_PATHS = {
     "_requirements/03-architecture/PATH_KEYS.md": { writer: "scripts/paths/build.js", how: "the paths build writes the reference table" },
     ".claude/dreams/": { writer: ".claude/paths.json", how: "paths.dreams: the sleep cycle's journals" },
     ".claude/agents/president/_system/oneshot/retros/": { writer: ".claude/paths.json", how: "paths.oneshotRetros: a oneshot run's retro" },
-    ".claude/agents/.system/dispatch-backups/": { writer: "scripts/dispatch/backup.js", how: "the dispatch console's backup ring" },
+    ".claude/runtime/dispatch-backups/": { writer: "scripts/dispatch/backup.js", how: "the dispatch console's backup ring" },
     "backups/": { writer: "scripts/dispatch/backup.js", how: "backup directories, such as the dispatch backup ring" },
     ".claude/.session-checkpoint.json": { writer: "scripts/hooks/session-tracker.js", how: "the session-tracker hook writes it under .claude/", named: false },
     ".claude/.last-checkpoint": { writer: "scripts/hooks/session-tracker.js", how: "the session-tracker hook writes it under .claude/", named: false },

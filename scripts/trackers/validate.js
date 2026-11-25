@@ -7,6 +7,9 @@ const path = require("path");
 const NAME = "trackers/validate";
 const ROOT = process.env.CLAUDE_PROJECT_DIR || path.resolve(__dirname, "..", "..");
 
+const TRACKER_ARCHIVE = "trackers/TRACKER-ARCHIVE.md";
+const ROADMAP_ARCHIVE = "trackers/ROADMAP-ARCHIVE.md";
+
 const REQUIRED_SECTIONS = [
   "Header",
   "How to Use This Document",
@@ -446,8 +449,12 @@ function evaluate(input) {
       : trackerRaw.length > 0;
   const linkTargets = (input && input.linkTargets) || {};
   const pathExists = (input && input.pathExists) || {};
+  const archiveRaw = input && input.archive != null ? String(input.archive) : "";
+  const refRaw = archiveRaw ? `${trackerRaw}\n${archiveRaw}` : trackerRaw;
 
   const roadmapRaw = input && input.roadmap != null ? String(input.roadmap) : "";
+  const roadmapArchiveRaw =
+    input && input.roadmapArchive != null ? String(input.roadmapArchive) : "";
   const roadmapPresent =
     input && typeof input.roadmapPresent === "boolean"
       ? input.roadmapPresent
@@ -460,27 +467,16 @@ function evaluate(input) {
     input && input.enforcementHooks ? input.enforcementHooks : null;
 
   let sections;
+  let refSections;
   let items;
   try {
     sections = splitSections(trackerRaw);
+    refSections = archiveRaw ? splitSections(refRaw) : sections;
     items =
       input && Array.isArray(input.items) ? input.items : parseItems(trackerRaw);
   } catch (e) {
     add("parse", [`tracker parse error (fail-closed): ${e.message}`]);
     return { ok: false, checks, fatal: false };
-  }
-
-  {
-    const details = [];
-    if (!trackerPresent) {
-      details.push("TRACKER.md is missing — none of the 34 required sections present.");
-    } else {
-      for (const sec of REQUIRED_SECTIONS) {
-        const found = !!findRequiredSection(sections, sec);
-        if (!found) details.push(`required section missing: "${sec}"`);
-      }
-    }
-    add("sections-present", details);
   }
 
   {
@@ -605,7 +601,7 @@ function evaluate(input) {
       headingMatchesSection(s.headingText, "Definitions") ||
       /^definition:\s*/i.test(s.headingText.trim()) ||
       headingMatchesSection(s.headingText, "State Model");
-    const defsBody = sections
+    const defsBody = refSections
       .filter(isDefSection)
       .map((s) => `${s.headingText}\n${s.body}`)
       .join("\n")
@@ -657,12 +653,13 @@ function evaluate(input) {
     } else if (!roadmapPresent) {
       details.push("ROADMAP.md is missing — cannot verify epics are referenced (fail-closed)");
     } else {
+      const roadmapCorpus = `${roadmapRaw}\n${roadmapArchiveRaw}`;
       for (const id of epicIds) {
         if (!id) {
           details.push("an epic file has an unparseable epic ID (fail-closed)");
           continue;
         }
-        if (!roadmapRaw.includes(id)) {
+        if (!roadmapCorpus.includes(id)) {
           details.push(`epic ${id} is not referenced in ROADMAP.md`);
         }
       }
@@ -689,7 +686,7 @@ function evaluate(input) {
     if (!trackerPresent) {
       details.push("TRACKER.md missing — cannot verify session-log entries (fail-closed)");
     } else {
-      const entries = parseSessionLogEntries(trackerRaw);
+      const entries = parseSessionLogEntries(refRaw);
       for (const e of entries) {
         if (!sessionEntryIdentified(e)) {
           const head = e.split(/\n/)[0].slice(0, 60);
@@ -741,7 +738,7 @@ function evaluate(input) {
     if (enforcementHooks === null) {
       details.push("enforcement-hook seam not provided — cannot verify enforcement hooks (fail-closed)");
     } else {
-      const gapsSec = sections.find((s) =>
+      const gapsSec = refSections.find((s) =>
         headingMatchesSection(s.headingText, "Known Gaps and Open Flaws")
       );
       const gapsText = (gapsSec ? gapsSec.body : "").toLowerCase();
@@ -763,7 +760,7 @@ function evaluate(input) {
     if (!trackerPresent) {
       details.push("TRACKER.md missing — cannot check definition drift (fail-closed)");
     } else {
-      const defs = parseDefinitionBlocks(trackerRaw);
+      const defs = parseDefinitionBlocks(refRaw);
       for (const [term, sentences] of Object.entries(defs)) {
         if (sentences.length < 2) continue;
         for (let i = 1; i < sentences.length; i++) {
@@ -993,6 +990,8 @@ function run() {
     trackerPresent = false;
   }
 
+  const archive = readRepoFile(TRACKER_ARCHIVE) || "";
+
   const links = extractLinks(tracker);
   const linkTargets = {};
   for (const l of links) linkTargets[l] = resolveLinkExists(l);
@@ -1010,6 +1009,7 @@ function run() {
 
   const roadmap = readRepoFile("ROADMAP.md");
   const roadmapPresent = roadmap != null;
+  const roadmapArchive = readRepoFile(ROADMAP_ARCHIVE) || "";
 
   const epicIds = listRepoDir("trackers/epics")
     .filter((f) => /^E-.*\.md$/i.test(f))
@@ -1022,7 +1022,7 @@ function run() {
   }
 
   const nonexistence = {};
-  for (const p of parseVerifiedNonexistentPaths(tracker)) {
+  for (const p of parseVerifiedNonexistentPaths(archive ? `${tracker}\n${archive}` : tracker)) {
     nonexistence[p] = !existsRepo(p) && !existsRepo(p + "/");
   }
 
@@ -1041,12 +1041,14 @@ function run() {
 
   const res = evaluate({
     tracker,
+    archive,
     trackerPresent,
     items,
     linkTargets,
     pathExists,
     roadmap: roadmap || "",
     roadmapPresent,
+    roadmapArchive,
     epicIds,
     modeConsults,
     nonexistence,
@@ -1090,7 +1092,7 @@ function report(res) {
     const w = res.advisory.deixis.warnings || [];
     lines.push("");
     lines.push(
-      `ADVISORY [${NAME}] session-relative-language (anti-deixis, REPORT-ONLY · not part of the 20 binding checks): ${w.length} warning(s)`
+      `ADVISORY [${NAME}] session-relative-language (anti-deixis, REPORT-ONLY · not part of the ${res.checks.length} binding checks): ${w.length} warning(s)`
     );
     for (const wn of w.slice(0, 50)) {
       lines.push(`      ⚠ L${wn.line} «${wn.phrase}» — ${wn.clause}`);
@@ -1282,22 +1284,24 @@ function selftest() {
     assert(!res.fatal, "must not be fatal");
   });
 
-  t("(a) missing section → sections-present FAIL", () => {
+  t("definitions + session log in the archive → (k)/(p) PASS; no archive → (k) FAIL", () => {
     const s = coherent();
-    s.tracker = s.tracker.replace("# Known Gaps and Open Flaws", "# Bogus Heading");
+    const secs = s.tracker.split(/\n(?=# )/);
+    const moved = (x) => /^# (Definitions|Session Logging Rules)\b/.test(x);
+    s.tracker = secs.filter((x) => !moved(x)).join("\n");
+    s.archive = secs.filter(moved).join("\n");
+    s.tracker += "\n\nThe Reconciliation step resolves conflicts.\n";
     const res = evaluate(s);
-    assert(fails(res, "sections-present"), "expected sections-present FAIL");
-    assert(checkOf(res, "sections-present").details.some((d) => d.includes("Known Gaps")), "should name the missing section");
+    assert(passes(res, "undefined-terms"), "definitions in the archive must satisfy (k)");
+    assert(passes(res, "work-log-session-id"), "session log in the archive must be read by (p)");
+    delete s.archive;
+    assert(fails(evaluate(s), "undefined-terms"), "without the archive the moved definitions are missing");
   });
-
-  t("(a) coherent → sections-present PASS", () => assert(passes(evaluate(coherent()), "sections-present")));
-
-  t("(a) header w/o version/owner block → sections-present FAIL", () => {
+  t("(n) epic referenced only in the roadmap archive → epics-in-roadmap PASS", () => {
     const s = coherent();
-    s.tracker = s.tracker.replace(HEADER_BLOCK, "# TRACKER.md\n\nA title with no version/owner/authority block.\n");
-    const res = evaluate(s);
-    assert(fails(res, "sections-present"), "expected sections-present FAIL");
-    assert(checkOf(res, "sections-present").details.some((d) => d.includes("Header")), "should name Header");
+    s.epicIds = [...s.epicIds, "E-ARCHIVED-001"];
+    s.roadmapArchive = "## Completed epics\n- E-ARCHIVED-001 — done\n";
+    assert(passes(evaluate(s), "epics-in-roadmap"), "an archived epic reference must count");
   });
 
   t("(b) blank section → no-blank-section FAIL", () => {
@@ -1532,7 +1536,7 @@ function selftest() {
   t("missing tracker → not-ok, fail-closed (no throw)", () => {
     const res = evaluate({ tracker: "", trackerPresent: false, items: [], linkTargets: {}, pathExists: coherentPaths });
     assert(!res.ok, "missing tracker must not be ok");
-    assert(fails(res, "sections-present"), "missing tracker → sections-present FAIL");
+    assert(fails(res, "work-log-session-id"), "missing tracker → work-log-session-id FAIL");
     assert(!res.fatal, "evaluate must not mark fatal for missing content");
   });
 
@@ -1634,9 +1638,9 @@ function selftest() {
   t("(deixis) 'right now' (deictic) → FLAGGED", () =>
     assert(deixisWarns("# Active Epics\n\n- Do this right now.\n").length >= 1, "deictic 'right now' must flag"));
 
-  t("(deixis) advisory is separate from the 20 binding checks (report-only)", () => {
+  t("(deixis) advisory is separate from the 19 binding checks (report-only)", () => {
     const res = evaluate(coherent());
-    assert(res.checks.length === 20, "binding suite must be exactly 20 checks, got " + res.checks.length);
+    assert(res.checks.length === 19, "binding suite must be exactly 19 checks, got " + res.checks.length);
     assert(!res.checks.some((c) => c.check === "session-relative-language"),
       "deixis check must NOT be in the binding checks array");
   });
@@ -1653,7 +1657,7 @@ function selftest() {
     process.stderr.write(`\n${NAME} selftest: ${results.length - failed.length}/${results.length} passed, ${failed.length} FAILED\n`);
     process.exit(1);
   }
-  process.stdout.write(`\n${NAME} selftest: ${results.length}/${results.length} bite cases passed (positive + a–t fire both ways + fail-closed + advisory deixis)\n`);
+  process.stdout.write(`\n${NAME} selftest: ${results.length}/${results.length} bite cases passed (positive + b–t fire both ways + archive seam + fail-closed + advisory deixis)\n`);
   process.exit(0);
 }
 

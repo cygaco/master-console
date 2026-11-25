@@ -68,6 +68,16 @@ console.log("\nagentsForStep (router, real registry):");
   ok("plan (any comp) → director-of-product + product-lead", plan.includes("director-of-product") && plan.includes("product-lead"), plan.join(","));
   ok("plan rows are order-sorted", plan[0] === "director-of-product", plan.join(","));
 
+  const small = { unit_types: ["backend"], change: "update", blast: "minor" };
+  ok("plan(small sprint) → no agents", agentsForStep("plan", small, REG).length === 0);
+  ok("release(small sprint) → no qa-reviewer", !agentsForStep("release", small, REG).some((r) => r.role === "qa-reviewer"));
+  for (const big of [{ change: "update", blast: "major" }, { change: "release", blast: "minor" }]) {
+    const comp = { unit_types: ["backend"], ...big };
+    const p = agentsForStep("plan", comp, REG).map((r) => r.role);
+    ok(`plan(${big.change}/${big.blast}) → director-of-product + product-lead`, p.includes("director-of-product") && p.includes("product-lead"), p.join(","));
+    ok(`release(${big.change}/${big.blast}) → qa-reviewer`, agentsForStep("release", comp, REG).some((r) => r.role === "qa-reviewer"));
+  }
+
   const designFE = agentsForStep("design", { unit_types: ["frontend"], max_risk: "high" }, REG).map((r) => r.role);
   ok("design(FE,high) includes product-lead (always)", designFE.includes("product-lead"), designFE.join(","));
   ok("design(FE,high) includes director-of-engineering (code)", designFE.includes("director-of-engineering"), designFE.join(","));

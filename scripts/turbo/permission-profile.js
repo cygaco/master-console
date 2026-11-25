@@ -4,11 +4,6 @@
 
 const LEVELS = ["auto", "notice", "confirm", "never"];
 
-const LOAD_BEARING_COMMENT =
-  "push-to-main: confirm — classifier gate is above permissions.allow " +
-  "(empirically proven); this profile entry SURFACES the push requirement, " +
-  "it does not satisfy the classifier.";
-
 const PROFILE = {
   spend: {
     level: "auto",
@@ -17,10 +12,6 @@ const PROFILE = {
   commit: { level: "auto", note: "local commits — reversible, classifier-honored" },
   branch: { level: "auto", note: "branch create/checkout/worktree — classifier-honored" },
 
-  "push-to-main": {
-    level: "confirm",
-    note: LOAD_BEARING_COMMENT,
-  },
   "merge-to-main": {
     level: "confirm",
     note: "merge to the default branch is per-action in practice — the push that lands it is classifier-gated.",
@@ -40,7 +31,7 @@ const PROFILE = {
   deploy: { level: "confirm", note: "production deploy — confirm." },
 };
 
-const MUST_BE_CONFIRM = ["push-to-main", "merge-to-main"];
+const MUST_BE_CONFIRM = ["merge-to-main"];
 const MUST_BE_NEVER = [
   "force-push-main",
   "backup-branch-delete",
@@ -67,6 +58,16 @@ function validateProfile(profile = PROFILE) {
         `scope "${scope}" has invalid/absent level "${level}" (must be one of ${LEVELS.join(
           " | ",
         )})`,
+      );
+    }
+  }
+
+  for (const [scope, entry] of Object.entries(profile)) {
+    const lvl = entry && entry.level;
+    if (/push/i.test(scope) && (lvl === "auto" || lvl === "notice")) {
+      violations.push(
+        `HONESTY VIOLATION: scope "${scope}" is "${lvl}" but turbo grants no push ` +
+          `— the classifier sits above permissions.allow; push trust is the operator's own step.`,
       );
     }
   }
@@ -102,18 +103,6 @@ function validateProfile(profile = PROFILE) {
     }
   }
 
-  const pushNote = (profile["push-to-main"] && profile["push-to-main"].note) || "";
-  if (
-    profile["push-to-main"] &&
-    profile["push-to-main"].level === "confirm" &&
-    !/classifier/i.test(pushNote)
-  ) {
-    violations.push(
-      `scope "push-to-main" is confirm but its note is missing the load-bearing ` +
-        `classifier rationale (the entry must explain WHY it cannot be auto).`,
-    );
-  }
-
   return { ok: violations.length === 0, violations };
 }
 
@@ -135,7 +124,7 @@ function renderProfile() {
     lines.push("");
   }
   const v = validateProfile();
-  lines.push(`  honesty invariant: ${v.ok ? "OK (push-to-main = confirm)" : "VIOLATED"}`);
+  lines.push(`  honesty invariant: ${v.ok ? "OK (turbo grants no push)" : "VIOLATED"}`);
   if (!v.ok) for (const x of v.violations) lines.push(`    ! ${x}`);
   return lines.join("\n");
 }
@@ -143,7 +132,6 @@ function renderProfile() {
 module.exports = {
   LEVELS,
   PROFILE,
-  LOAD_BEARING_COMMENT,
   MUST_BE_CONFIRM,
   MUST_BE_NEVER,
   MUST_BE_AUTO,

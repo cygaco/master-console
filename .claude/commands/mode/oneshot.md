@@ -1,14 +1,6 @@
 ---
+disable-model-invocation: true
 description: Initiate a oneshot build — launch Delta as standalone orchestrator for full skeleton runs
-says:
-  - oneshot mode
-  - start a oneshot
-  - one shot build
-  - enter oneshot mode
-says-flags:
-  turbo: --turbo
-says-args: free-text
-says-confirm: always
 ---
 
 # /mode:oneshot — Oneshot Mode
@@ -29,7 +21,7 @@ Without `--turbo`, the skill behaves as before. With `--turbo` and no further ar
 
 ### Default turbo scope
 
-`manifest-edit,write-jsonl,node-e-fs,worktree-ops` — same scope set as `/mode:adhoc --turbo`, but with TTL = 4h to match a typical Delta run. No `push-to-main`, no `destructive-git`. Sibling skill: [`/turbo`](../turbo.md).
+`manifest-edit,write-jsonl,node-e-fs,worktree-ops` — same scope set as `/mode:adhoc --turbo`, but with TTL = 4h to match a typical Delta run. No `destructive-git`; turbo has no push scope. Sibling skill: [`/turbo`](../turbo.md).
 
 ## ⛔ Mode-init ≠ authorization — STOP after setup
 

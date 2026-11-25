@@ -61,3 +61,16 @@ test("architecture.md leaves out the pages, steps, dashboard and extension secti
   assert.match(md, /## UI atoms/);
   for (const h of ["## Pages", "## Steps", "## Extension", "## Dashboard", "DM modules"]) assert.ok(!md.includes(h), `unexpected section ${h}`);
 });
+
+test("views no script reads are written only with --views", () => {
+  const root = freshTree();
+  const dir = path.join(root, ".claude", "project", "maps");
+  const views = ["inventory-skills.json", "inventory-hooks.json", "skills.md", "tools.md", "systems-inventory.md"];
+  let r = regen(root);
+  assert.strictEqual(r.status, 0, r.stderr);
+  for (const f of views) assert.ok(!fs.existsSync(path.join(dir, f)), `${f} written without --views`);
+  for (const f of ["skills.jsonl", "hooks.jsonl", "systems-inventory.jsonl"]) assert.ok(fs.existsSync(path.join(dir, f)), `${f} missing`);
+  r = spawnSync(process.execPath, [path.join(root, "scripts", "regen-maps.js"), "--views"], { cwd: root, encoding: "utf8" });
+  assert.strictEqual(r.status, 0, r.stderr);
+  for (const f of views) assert.ok(fs.existsSync(path.join(dir, f)), `${f} not written with --views`);
+});

@@ -25,64 +25,65 @@ const FLAGS = {
   json: argv.includes("--json"),
   strict: argv.includes("--strict"),
   fixIndex: argv.includes("--fix-index"),
+  dumpRules: argv.includes("--dump-rules"),
 };
 const scopeGlob = argv.find((a) => !a.startsWith("--"));
 
 const CRITICAL = [
   {
     re: /\.claude\/events\/[^/\s"'`)\]]/g,
-    suggestion: ".claude/project/events/ (or PATHS.events)",
-    why: "path moved under .claude/project/ in v2 layout",
+    suggestion: ".claude/project/events/ (or paths.events)",
+    why: "legacy path; the current path is .claude/project/events/ (paths.events)",
   },
   {
     re: /\.claude\/memory\/[^/\s"'`)\]]/g,
-    suggestion: ".claude/project/memory/ (or PATHS.memory)",
-    why: "path moved under .claude/project/ in v2 layout",
+    suggestion: ".claude/project/memory/ (or paths.memory)",
+    why: "legacy path; the current path is .claude/project/memory/ (paths.memory)",
   },
   {
     re: /\.claude\/maps\/[^/\s"'`)\]]/g,
-    suggestion: ".claude/project/maps/ (or PATHS.maps)",
-    why: "path moved under .claude/project/ in v2 layout",
+    suggestion: ".claude/project/maps/ (or paths.maps)",
+    why: "legacy path; the current path is .claude/project/maps/ (paths.maps)",
   },
   {
     re: /\.claude\/handoffs\//g,
-    suggestion: ".claude/runtime/handoffs/ (or PATHS.handoffs)",
-    why: "handoffs moved under .claude/runtime/",
+    suggestion: ".claude/runtime/handoffs/ (or paths.handoffs)",
+    why: "legacy path; the current path is .claude/runtime/handoffs/ (paths.handoffs)",
   },
   {
     re: /\.claude\/logs\//g,
-    suggestion: ".claude/runtime/logs/ (or PATHS.logs)",
-    why: "logs moved under .claude/runtime/",
+    suggestion: ".claude/runtime/logs/ (or paths.logs)",
+    why: "legacy path; the current path is .claude/runtime/logs/ (paths.logs)",
   },
   {
     re: /\.claude\/plans\//g,
-    suggestion: ".claude/runtime/plans/ (or PATHS.plans)",
-    why: "plans moved under .claude/runtime/",
+    suggestion: ".claude/runtime/plans/ (or paths.plans)",
+    why: "legacy path; the current path is .claude/runtime/plans/ (paths.plans)",
   },
   {
     re: /context-enhancer\.js/g,
     suggestion: "smart-context.js",
-    why: "renamed",
+    why: "legacy hook name; the current hook is smart-context.js",
   },
   {
     re: /prompt-enhancer\.js/g,
     suggestion: "smart-context.js",
-    why: "merged into smart-context.js",
+    why: "legacy hook name; the current hook is scripts/hooks/smart-context.js",
   },
   {
     re: /\.claude\/agents\/\.system\/oneshot\/store\.json/g,
-    suggestion: ".claude/agents/store.json (or PATHS.store)",
+    suggestion: ".claude/agents/store.json (or paths.store)",
     why: "wrong path — no .system/oneshot/ dir",
   },
   {
     re: /\bbeta-persona\.md\b/g,
-    suggestion: "judgement-model.md (or PATHS.judgmentModel)",
-    why: "renamed to judgement-model.md",
+    suggestion: "judgement-model.md (or paths.judgmentModel)",
+    why: "legacy file name; the current file is judgement-model.md (paths.judgmentModel)",
   },
   {
     re: /\.beta-mining-recommendations\.md/g,
     suggestion: "judgement-model-recommendations.md",
-    why: "renamed to judgement-model-recommendations.md",
+    why: "legacy file name; the current file is judgement-model-recommendations.md",
   },
 ];
 
@@ -157,11 +158,14 @@ if (GENERATED_RULES) {
   for (const r of GENERATED_RULES.critical || []) {
     if (!r.match) continue;
     try {
-      CRITICAL.push({
-        re: new RegExp(r.match, "g"),
-        suggestion: r.suggestion || "",
-        why: r.why || "registry rule",
-      });
+      const re = new RegExp(r.match, "g");
+      const existing = CRITICAL.find((c) => c.re.source === re.source);
+      if (existing) {
+        existing.suggestion = r.suggestion || "";
+        existing.why = r.why || "registry rule";
+      } else {
+        CRITICAL.push({ re, suggestion: r.suggestion || "", why: r.why || "registry rule" });
+      }
     } catch {
     }
   }
@@ -175,6 +179,15 @@ if (GENERATED_RULES) {
     } catch {
     }
   }
+}
+
+if (FLAGS.dumpRules) {
+  console.log(
+    JSON.stringify(
+      CRITICAL.map((r) => ({ match: r.re.source, suggestion: r.suggestion, why: r.why })),
+    ),
+  );
+  process.exit(0);
 }
 
 const EXTENSIONS = new Set([

@@ -1,9 +1,9 @@
 ---
-description: Update the dispatch catalog to the latest models — re-ingest vendor docs, migrate deprecated/shut-down ids, add new options, sync routing, and regenerate manifests. Beta-gated for default-model changes.
+description: Update the dispatch catalog to the latest models — re-ingest vendor docs, migrate deprecated/shut-down ids, add new options, and sync routing. Beta-gated for default-model changes.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js, runtime/models-research]
-writes: [scripts/dispatch/catalog.js, .claude/manifest.json, .claude/agents, .claude/framework-manifest.json, .claude/framework-installed.json]
+writes: [scripts/dispatch/catalog.js, .claude/manifest.json, .claude/agents]
 ---
 
 # /models:update — bring the catalog to the latest models
@@ -15,7 +15,7 @@ agreement. This is the writer half of `/models:check` (the read-only auditor).
 > **Decision boundary:** ADDING options and MIGRATING shut-down ids are reversible config
 > (decide directly). CHANGING a build-chain *default* model family is a meaningful
 > technical call — consult **Beta** first (β-consultation protocol); surface to the
-> operator only on `ESCALATE`. Never push (ask first per CLAUDE.md autonomy).
+> operator only on `ESCALATE`. This skill does not push; a push of the green result is the lead's call.
 
 ## Input
 
@@ -66,12 +66,7 @@ $ARGUMENTS
    node scripts/test-dispatch-config.js
    ```
 
-6. **Regenerate manifests** (hash-tracked `scripts/**` + `.claude/**` changed):
-   ```bash
-   node scripts/generate-framework-manifest.js && node scripts/mc/snapshot-installed.js
-   ```
-
-7. **Verify + report:**
+6. **Verify + report** (manifests are regenerated once per landing with `npm run manifests`, not here):
    ```bash
    node scripts/models/check.js          # expect: all current, 0 error
    node scripts/dispatch.js show         # confirm routing rendered

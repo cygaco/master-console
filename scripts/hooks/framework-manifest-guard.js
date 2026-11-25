@@ -13,11 +13,6 @@ const MANIFEST_PATH = path.join(
   ".claude",
   "framework-manifest.json",
 );
-const FRAMEWORK_INSTALLED_PATH = path.join(
-  PROJECT_DIR,
-  ".claude",
-  "framework-installed.json",
-);
 const SENTINEL_PATH = path.join(
   PROJECT_DIR,
   ".mc",
@@ -43,25 +38,6 @@ if (fs.existsSync(SENTINEL_PATH)) {
 
 if (!fs.existsSync(MANIFEST_PATH)) process.exit(0);
 
-const TRACKED_PREFIXES = [
-  ".claude/agents/",
-  ".claude/commands/",
-  ".claude/project/reference/",
-  ".claude/project/maps/",
-  "scripts/hooks/",
-  "scripts/tools/",
-  "_requirements/",
-  "patterns/",
-];
-const TRACKED_TOP_LEVEL = [
-  "scripts/path-lint.js",
-  "scripts/dispatch-agent.js",
-  "scripts/generate-maps.js",
-  "scripts/generate-framework-manifest.js",
-  "CLAUDE.md",
-  "AGENTS.md",
-];
-
 const PATHS_RELATED = [
   "framework/paths.registry.json",
   ".claude/paths.json",
@@ -73,30 +49,6 @@ const PATHS_RELATED = [
   "scripts/paths/gate.js",
 ];
 
-function detectInstallKind() {
-  const hasCanonicalMarkers =
-    fs.existsSync(path.join(PROJECT_DIR, "version.json")) &&
-    fs.existsSync(path.join(PROJECT_DIR, "install.ps1")) &&
-    fs.existsSync(
-      path.join(PROJECT_DIR, "scripts", "generate-framework-manifest.js"),
-    );
-  const hasInstalledSnapshot = fs.existsSync(FRAMEWORK_INSTALLED_PATH);
-  if (hasCanonicalMarkers && !hasInstalledSnapshot) return "canonical";
-  return "product";
-}
-
-function isClaudeGitignored() {
-  try {
-    const gi = fs.readFileSync(path.join(PROJECT_DIR, ".gitignore"), "utf8");
-    return /\b\.claude\/?\s*$/m.test(gi) || /^\.claude\b/m.test(gi);
-  } catch {
-    return false;
-  }
-}
-
-const INSTALL_KIND = detectInstallKind();
-const CLAUDE_IGNORED = INSTALL_KIND === "product" && isClaudeGitignored();
-
 function block(reason) {
   try {
     const { logEvent } = require("./lib/logger");
@@ -104,16 +56,6 @@ function block(reason) {
   } catch {
   }
   console.log(JSON.stringify({ decision: "block", reason }));
-  process.exit(0);
-}
-
-function warn(reason) {
-  try {
-    const { logEvent } = require("./lib/logger");
-    logEvent("warn", "system", "framework-manifest-guard", "", reason);
-  } catch {
-  }
-  process.stderr.write("[framework-manifest-guard] " + reason + "\n");
   process.exit(0);
 }
 
@@ -129,31 +71,6 @@ function bypassMessage() {
     "  Repo-local sentinel (gitignore-safe; bypass is logged):",
     "    mkdir -p .mc && touch .mc/manifest-guard-disable",
   ].join("\n");
-}
-
-function isTracked(relPath) {
-  for (const prefix of TRACKED_PREFIXES) {
-    if (relPath.startsWith(prefix)) return true;
-  }
-  return TRACKED_TOP_LEVEL.includes(relPath);
-}
-
-function manifestFreshEnough(stagedTracked) {
-  try {
-    const manifestStat = fs.statSync(MANIFEST_PATH);
-    const manifestMtimeMs = manifestStat.mtimeMs;
-    let newestStaged = 0;
-    for (const f of stagedTracked) {
-      try {
-        const s = fs.statSync(path.join(PROJECT_DIR, f));
-        if (s.mtimeMs > newestStaged) newestStaged = s.mtimeMs;
-      } catch {
-      }
-    }
-    return manifestMtimeMs + 60_000 >= newestStaged;
-  } catch {
-    return false;
-  }
 }
 
 let input = "";
@@ -181,7 +98,6 @@ process.stdin.on("end", () => {
       process.exit(0);
     }
 
-    const stagedTracked = staged.filter(isTracked);
     const stagedPaths = staged.filter((f) => PATHS_RELATED.includes(f));
 
     if (stagedPaths.length > 0) {
@@ -209,58 +125,7 @@ process.stdin.on("end", () => {
         );
       }
     }
-
-    if (stagedTracked.length === 0) process.exit(0);
-
-    const manifestStaged = staged.includes(".claude/framework-manifest.json");
-
-    if (manifestStaged) {
-      process.exit(0);
-    }
-
-    const list = stagedTracked.slice(0, 6).join("\n  - ");
-    const extra =
-      stagedTracked.length > 6
-        ? `\n  ... and ${stagedTracked.length - 6} more`
-        : "";
-
-    if (CLAUDE_IGNORED) {
-      if (manifestFreshEnough(stagedTracked)) {
-        process.exit(0);
-      }
-      warn(
-        [
-          "Staged MC-tracked changes detected, .claude/ is gitignored, and the",
-          "on-disk framework-manifest is older than your edits.",
-          "",
-          `Affected files (${stagedTracked.length}):`,
-          `  - ${list}${extra}`,
-          "",
-          "Regenerate the manifest before pushing so /mc:update consumers",
-          "stay honest:",
-          "  node scripts/generate-framework-manifest.js",
-          "",
-          "(Warn-only because product .claude/ is gitignored; the manifest",
-          "cannot be tracked here.)",
-        ].join("\n"),
-      );
-    }
-
-    block(
-      [
-        "framework-manifest-guard: staged changes to MC-tracked assets,",
-        "but .claude/framework-manifest.json is NOT staged. Regenerate it:",
-        "",
-        "  node scripts/generate-framework-manifest.js",
-        "  git add .claude/framework-manifest.json",
-        "",
-        `Affected files (${stagedTracked.length}):`,
-        `  - ${list}${extra}`,
-        "",
-        `Install kind: ${INSTALL_KIND} (claude_gitignored=${CLAUDE_IGNORED})`,
-        bypassMessage(),
-      ].join("\n"),
-    );
+    process.exit(0);
   } catch (_e) {
     process.exit(0);
   }

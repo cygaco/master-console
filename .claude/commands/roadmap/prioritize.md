@@ -1,10 +1,5 @@
 ---
-description: Role-aware roadmap prioritization — runs /roadmap:cleanup first, then consults the Product Lead (single-product) or Director of Product (strategic) to rank the open roadmap into a clear do-next order, and applies the ordering content-preservingly.
-says:
-  - prioritize the roadmap
-  - rank the roadmap
-  - reorder the roadmap
-  - roadmap prioritize
+description: Put the roadmap in priority order — runs /roadmap:cleanup first, then consults the Product Lead (single-product) or Director of Product (strategic) to rank the open roadmap into a clear do-next order, and applies the ordering without losing any content.
 ---
 
 # /roadmap:prioritize — Order the Roadmap (role-aware: Product Lead / Director of Product)
@@ -32,7 +27,7 @@ Run `/roadmap:cleanup` to detect completed/stale/duplicate entries and surface h
 
 ### Phase 2: Consult the role-appropriate product manager
 Resolve the candidate agents from the skill-hook registry at call time: `node scripts/skills/skill-hook-points.js resolve roadmap:prioritize rank`. It returns both personas with their `condition` (single-product vs strategic) and the `default`. Pick per the **Role routing** rules above; when scope is ambiguous, dispatch the `default` role (the no-regression fallback). Do NOT hardcode a role name. State which you chose and why in one line. Dispatch that persona and hand it:
-- the cleaned `ROADMAP.md` (Epics + Sprint Pickup Queue + backlog),
+- the cleaned `ROADMAP.md` (Epics + Sprint Pickup Queue + Sprints) plus the older queue and backlog in `trackers/ROADMAP-ARCHIVE.md`,
 - canonical intent (`_requirements/00-canonical/*` when present) + the lifecycle model (`.claude/project/reference/product-lifecycle.md`) + the playbook (`.claude/project/reference/playbook.md`),
 - any `$ARGUMENTS` focus/constraint.
 
@@ -51,12 +46,8 @@ Write the consulted persona's ranking into `ROADMAP.md` **without rewriting any 
 - Record the manager's **confidence** + the "what would change it" note so the ranking is auditable.
 - If the manager **escalated** a strategic question, surface it to the operator and DO NOT silently resolve it — mark the ranking **conditional** on that answer. (The Product Lead escalates strategic/cross-product/lifecycle calls up to the Director of Product; either may escalate genuinely irreversible/business calls to the operator.)
 
-### Phase 4: Regenerate manifests + report
-`ROADMAP.md` is framework-tracked, so the regression-seed enforcer reds on an un-regenerated edit. After applying:
-```
-node scripts/generate-framework-manifest.js && node scripts/mc/manifest/build.js
-```
-Then verify green (`node scripts/mc/scan-regressions.js --enforce`; in a product, where the suite does not ship, it prints one plain line and exits 0) and report: which persona was consulted (Product Lead vs Director of Product) + why, the keystone, the ranked top-N, what got deferred, the manager's confidence, and any escalated decision the operator still owes.
+### Phase 4: Report
+No manifest regeneration here — manifests are regenerated once per landing (`npm run manifests`). Report: which persona was consulted (Product Lead vs Director of Product) + why, the keystone, the ranked top-N, what got deferred, the manager's confidence, and any escalated decision the operator still owes.
 
 ## Notes
 - The **consulted persona is the source of the judgment** (Product Lead for execution-altitude, Director of Product for strategic — see **Role routing**); this skill is the orchestration + the content-preserving apply.

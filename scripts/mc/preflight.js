@@ -14,7 +14,12 @@ const GATES = [
   {
     name: "mc-capsule-resolvable",
     script: "scripts/checks/mc-capsule-resolvable.js",
-    args: (o) => (o.toVersion ? ["--to", o.toVersion] : []),
+    args: (o) => {
+      const args = [];
+      if (o.toVersion) args.push("--to", o.toVersion);
+      if (o.sourceRoot) args.push("--source", o.sourceRoot);
+      return args;
+    },
     overrideFlag: null,
   },
   {

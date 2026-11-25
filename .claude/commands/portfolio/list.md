@@ -1,10 +1,5 @@
 ---
 description: List all registered portfolio products — slug, path, MC version, last commit, dirty count, current sprint.
-says:
-  - list the products
-  - show the portfolio
-  - what products do we have
-  - portfolio list
 ---
 
 # /portfolio:list — List Portfolio Products

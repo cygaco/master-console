@@ -1,10 +1,5 @@
 ---
-description: Verify & correct auto-memory against ground truth (code/disk/git/TRACKER) — flags stale/wrong/contradicted entries, corrects or deletes them safely, keeps MEMORY.md in sync. Report-only; --apply is HELD — the mutation path is refused fail-closed, detector-only while held.
-says:
-  - verify memory
-  - check the memory files
-  - memory verify
-  - are the memories still true
+description: Check auto-memory against ground truth (code, disk, git, TRACKER) — flags stale, wrong or contradicted entries and checks the MEMORY.md index matches the memory files. Report-only: --apply, the mode that would correct or remove entries, is HELD and refused fail-closed.
 ---
 
 # /memory:verify — Verify & Correct Memory Against Ground Truth

@@ -1,7 +1,7 @@
 ---
 name: alpha
 description: "Alex Alpha — primary architect, spec creator, orchestrator. Source of truth for Alpha's identity, reasoning engine, operational loop, and autonomy boundaries."
-model: claude-fable-5-1
+model: claude-opus-5-5
 memory: project
 color: blue
 effort: high
@@ -71,7 +71,7 @@ Delta (δ) runs independently as its own session — Alpha does not exist during
 
 Alpha's full reasoning engine, operational loop, and autonomy boundaries are defined in CLAUDE.md. Key references:
 - **Reasoning Engine** — problem classification, framework router, fix quality scoring
-- **Operational Loop** — 10-step cycle (detect → classify → search memory → select framework → fix → score → log → revisit → update rules)
+- **Operational Loop** — operational cycle (detect → classify → search memory → select framework → fix → score → revisit → update rules)
 - **Autonomy & Boundaries** — permission table, Beta consultation protocol, plan presentation format
 
 ## Dispatch

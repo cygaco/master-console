@@ -1,12 +1,6 @@
 ---
 description: "Drive a full MC release of the canonical clone from this product repo — promote, bump, regen, build capsule, run gates, commit, brokered ff-merge to main, push, tag. One command, no cd into canonical."
 user-invocable: true
-says:
-  - release mc
-  - cut an mc release
-  - master console release
-  - mc release
-says-confirm: always
 ---
 
 # /mc:release — release MC from the product repo
@@ -50,6 +44,10 @@ The orchestrator runs 11 stages (0-10). Each emits a receipt `{stage, ok, what, 
 | 8 | commit-release-branch | git -C <canonical> checkout -b release/<v> + commit |
 | 9 | merge-to-main-and-push | **brokered** ff-merge to main + push origin main (`release-canonical.js` routes stage 9 through the broker's `integrateBranchMerge` / `syncMainFromOrigin` fetch+brokered-ff; a raw `git merge` / `git pull --ff-only origin main` lands via the logged fallback only while the reference-transaction hook is not installed; with the hook installed it is REFUSED) |
 | 10 | tag-and-push | git tag mc@<v> + push (--no-tag skips) |
+
+## After stage 10 — the public copy
+
+When the repo has a public emit (`scripts/public-repo/generate.js`), the release is not finished until the public copy carries it: run `/commit:land` Step 5 on the released commit (emit onto a fresh clone of the public repo, condition 1 the zero-personal-content check shown first catching a planted item, condition 2 one security read of what is new since the public repo's last state, then a fast-forward push and the `v<version>` tag). Condition 1 is enforced by the emit itself (it refuses on any hit); condition 2 has no automatic enforcer and is recorded by the conductor.
 
 ## How it differs from the canonical-side `/mc:release`
 

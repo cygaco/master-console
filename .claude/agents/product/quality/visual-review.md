@@ -3,8 +3,9 @@ name: visual-review
 description: "Drives a real Chromium browser via Playwright MCP to visually review a feature's UI. Takes screenshots, inspects computed styles, and reasons about layout/colors/contrast against the design-system docs. Returns a VisualReviewResult JSON. Does NOT write code."
 tools: Bash, Read, Grep, Glob, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_fill_form, mcp__playwright__browser_evaluate, mcp__playwright__browser_wait_for, mcp__playwright__browser_file_upload, mcp__playwright__browser_resize, mcp__playwright__browser_console_messages, mcp__playwright__browser_close
 disallowedTools: Agent, Edit, Write
-model: claude-opus-4-8
+model: claude-opus-5-5
 provider: claude
+effort: high
 maxTurns: 30
 color: magenta
 ---

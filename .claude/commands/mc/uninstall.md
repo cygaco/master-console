@@ -1,4 +1,5 @@
 ---
+disable-model-invocation: true
 description: Completely remove MC from a project — restores pre-install state from backup
 user-invocable: true
 ---

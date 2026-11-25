@@ -1,0 +1,1 @@
+{"tool_name":"Agent","cwd":".","tool_input":{"subagent_type":"general-purpose","model":"gpt-6.1-sol","prompt":"fixture: a non-Claude model passed to the Agent tool is refused before the spawn"}}

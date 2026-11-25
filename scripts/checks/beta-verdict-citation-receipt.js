@@ -12,7 +12,7 @@ const DEFAULT_DOC_DIRS = [
   path.join(REPO, ".claude", "agents", "president", "_system", "policy", "adr"),
   path.join(REPO, "trackers", "epics"),
 ];
-const DEFAULT_DOC_FILES = [path.join(REPO, "ROADMAP.md")];
+const DEFAULT_DOC_FILES = [path.join(REPO, "ROADMAP.md"), path.join(REPO, "trackers", "ROADMAP-ARCHIVE.md")];
 
 const CITATION_RE = /(?<![A-Za-z])(?:β|beta|Beta)[\s:\u2014\u2013-]*(?:DECIDE|DIRECTIVE|ESCALATE|ruled|verdict|approved|DECIDES)\b/;
 const MSGID_IN_TEXT_RE = /\bmsg_id[:=\s]+[`'"]?([A-Za-z0-9][A-Za-z0-9_-]*)/i;

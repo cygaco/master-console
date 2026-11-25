@@ -1,0 +1,15 @@
+{
+  "unitClass": "visual",
+  "builderRole": "frontend-builder",
+  "records": [
+    {
+      "dispatch_id": "d-1",
+      "cmdline_checksum": "sha256:dead",
+      "run_id": "run-cov",
+      "role": "frontend-builder",
+      "provider": "claude",
+      "ok": true,
+      "output_digest": "sha256:aaaa"
+    }
+  ]
+}

@@ -1,11 +1,6 @@
 ---
+disable-model-invocation: true
 description: Enter solo mode — just Alpha and the user, no agent team
-says:
-  - solo mode
-  - just you and me
-  - no team
-  - switch to solo
-says-confirm: fuzzy-only
 ---
 
 # /mode:solo — Solo Mode
@@ -27,7 +22,7 @@ Without `--turbo`, the skill behaves as before. With `--turbo` and no further ar
 
 ### Default turbo scope
 
-`manifest-edit,write-jsonl` — config edits + jsonl audit writes. No `push-to-main`, no `destructive-git`, no `node-e-fs`. TTL = 60m. Sibling skill: [`/turbo`](../turbo.md).
+`manifest-edit,write-jsonl` — config edits + jsonl audit writes. No `destructive-git`, no `node-e-fs`; turbo has no push scope. TTL = 60m. Sibling skill: [`/turbo`](../turbo.md).
 
 ## ⛔ Mode-init ≠ authorization — STOP after setup
 

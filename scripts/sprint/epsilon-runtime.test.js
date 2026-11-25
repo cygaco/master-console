@@ -71,6 +71,13 @@ console.log("(1) resolveRoute derives the route from registry fields:");
   const unr = rt.resolveRoute("ghost-role", ROLES);
   ok("unregistered role → unresolved + resolved:false", unr.route === rt.ROUTE.UNRESOLVED && unr.resolved === false);
   ok("resolveRoute carries provider+model from the row", rt.resolveRoute("security-reviewer", ROLES).model === "gemini-3.1-pro-preview");
+  const liveRoles = require("../../.claude/agents/_org/role-registry.json").roles;
+  const claudeOnly = { state: "known", providers: { claude: { signedIn: true }, openai: { signedIn: false }, antigravity: { signedIn: false } } };
+  const allIn = { state: "known", providers: { claude: { signedIn: true }, openai: { signedIn: true }, antigravity: { signedIn: true } } };
+  const walked = rt.resolveRoute("beta", liveRoles, true, { signin: claudeOnly, projectRoot: path.resolve(__dirname, "..", "..") });
+  ok("claude-only: beta walks to Claude -> claude-agent on the walked model", walked.route === rt.ROUTE.CLAUDE_AGENT && walked.provider === "claude" && /^claude-/.test(walked.model) && walked.chain_walk.skipped.length === 2);
+  ok("all signed in: beta stays on dispatch-agent", rt.resolveRoute("beta", liveRoles, true, { signin: allIn, projectRoot: path.resolve(__dirname, "..", "..") }).route === rt.ROUTE.DISPATCH_AGENT);
+  ok("claude-only: the security panel role is NOT re-routed (its own rule decides)", rt.resolveRoute("security-reviewer", liveRoles, true, { signin: claudeOnly, projectRoot: path.resolve(__dirname, "..", "..") }).route === rt.ROUTE.DISPATCH_AGENT);
 }
 
 console.log("\n(2) planStep resolves the matched agent-set under a composition:");
@@ -79,6 +86,7 @@ console.log("\n(2) planStep resolves the matched agent-set under a composition:"
   const gauntlet = rt.planStep("gauntlet", uiComp, SEAMS);
   const roster = gauntlet.agents.map((a) => a.role);
   ok("UI gauntlet includes design-quality + visual-review", roster.includes("design-quality") && roster.includes("visual-review"));
+  ok("every planned agent carries chain_walk (null when no chain walk moved it)", gauntlet.agents.every((a) => Object.prototype.hasOwnProperty.call(a, "chain_walk") && a.chain_walk === null));
   ok("gauntlet block_roles are the binding reviewers", gauntlet.block_roles.includes("qa-reviewer") && gauntlet.block_roles.includes("security-reviewer"));
   ok("design-quality is advisory (not block)", gauntlet.advisory_roles.includes("design-quality"));
 

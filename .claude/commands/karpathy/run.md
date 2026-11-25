@@ -1,4 +1,5 @@
 ---
+disable-model-invocation: true
 description: Karpathy autoresearch loop — plan a closed-loop experiment, review, then run autonomously in an isolated worktree. Optimize any editable artifact (agent spec, skill, hook policy) against a scalar metric.
 ---
 

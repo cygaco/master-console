@@ -1,12 +1,5 @@
 ---
 description: Quick fix — Direct Investigation, no formal framework. Read error, find cause, fix it, verify.
-says:
-  - quick fix
-  - fix it fast
-  - just fix it
-  - fix fast
-  - patch this
-says-args: free-text
 ---
 
 # /fix:fast — Quick Fix (Direct Investigation)

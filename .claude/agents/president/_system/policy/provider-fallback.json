@@ -4,7 +4,7 @@
   "comment": "UNENFORCED legacy scaffold. The LIVE fallback authority is now family-aware routing in scripts/hooks/lib/providers.js (suggestFallbackProvider + PROVIDER_FAMILY) — a quota/outage fallback lands in a DIFFERENT model family, never same-family. This file's per-role policies below carry legacy role keys (reviewer/compliance/qa) and legacy model ids; they are documentation only and no consumer routes off them. Individual `gemini` CLI targets point to antigravity (agy). Do not treat the ids below as authoritative.",
   "policies": {
     "security-reviewer": {
-      "primary": "antigravity:gemini-3.1-pro-high",
+      "primary": "antigravity:gemini-4-argon-high",
       "fallback": "openai:gpt-5.6-sol",
       "deep_fallback": "claude:claude-opus-4-8",
       "second_pass": "openai:gpt-5.6-sol",

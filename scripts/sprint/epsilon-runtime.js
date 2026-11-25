@@ -10,6 +10,7 @@ const SPRINT = require("./paths");
 const hookPoints = require("./hook-points");
 const hookConsult = require("./hook-consult");
 const registryRoles = require("../dispatch/registry-roles");
+const { parseRequiredFlag } = require("../lib/strict-flag");
 
 const { foregroundAwareTimeout, WRAPPER_DEFAULTS } = require("../dispatch/timeout-policy");
 
@@ -33,7 +34,17 @@ const ROUTE = Object.freeze({
   UNRESOLVED: "unresolved",
 });
 
-function resolveRoute(role, roles) {
+function effectivePinSafe(role) {
+  try {
+    const ep = require("../dispatch/effective-pin");
+    const pin = ep.effectivePin(role);
+    return pin ? { ...pin, provider: ep.effectiveProviderForRole(role) } : null;
+  } catch {
+    return null;
+  }
+}
+
+function resolveRoute(role, roles, usePin, walkOpts) {
   const r = roles && roles[role];
   if (!r || typeof r !== "object") {
     return {
@@ -48,7 +59,8 @@ function resolveRoute(role, roles) {
       resolved: false,
     };
   }
-  const provider = r.provider || "claude";
+  const pin = usePin ? effectivePinSafe(role) : null;
+  const provider = pin ? pin.provider : (r.provider || require("../dispatch/effective-pin").DEFAULT_PROVIDER);
   const build_chain = r.build_chain === true;
   const claude_pinned = r.claude_pinned === true;
   const kind = r.kind || null;
@@ -67,7 +79,20 @@ function resolveRoute(role, roles) {
     route = ROUTE.DISPATCH_AGENT;
   }
 
-  return { role, route, provider, model: r.model || null, residency, build_chain, claude_pinned, kind, resolved: true };
+  if (route === ROUTE.DISPATCH_AGENT && usePin && r.fails_closed_on_diversity_loss !== true && !r.second_pass && !r.third_pass) {
+    try {
+      const res = require("../dispatch/model-resolve").resolveRole(role, { channel: "cli", ...(walkOpts && walkOpts.signin ? { signin: walkOpts.signin } : {}), ...(walkOpts && walkOpts.projectRoot ? { projectRoot: walkOpts.projectRoot } : {}) });
+      if (res && res.provider === "claude" && res.model) {
+        return {
+          role, route: ROUTE.CLAUDE_AGENT, provider: "claude", model: res.model, residency, build_chain, claude_pinned, kind, resolved: true,
+          chain_walk: { index: res.index, skipped: res.skipped, signin_state: res.signin_state },
+        };
+      }
+    } catch {
+    }
+  }
+
+  return { role, route, provider, model: (pin && pin.model) || r.model || null, residency, build_chain, claude_pinned, kind, resolved: true };
 }
 
 function canDispatchBuilders(step, routeInfo) {
@@ -114,7 +139,7 @@ function planStep(step, composition, opts = {}) {
   const nc = hookPoints.normalizeComposition(composition);
 
   const agents = rows.map((row) => {
-    const routeInfo = resolveRoute(row.role, roles);
+    const routeInfo = resolveRoute(row.role, roles, opts.usePin !== undefined ? opts.usePin : !opts.roles);
     return {
       role: row.role,
       step,
@@ -127,6 +152,7 @@ function planStep(step, composition, opts = {}) {
       model: routeInfo.model,
       residency: routeInfo.residency,
       resolved: routeInfo.resolved,
+      chain_walk: routeInfo.chain_walk || null,
       can_dispatch_builders: canDispatchBuilders(step, routeInfo),
       is_author_consult: step === "design",
       is_builder: routeInfo.build_chain === true,
@@ -167,7 +193,7 @@ function betaBoundaryAfter(step) {
 function planLifecycle(composition, opts = {}) {
   const registry = opts.registry || hookPoints.load();
   const roles = opts.roles || hookPoints.loadRoles();
-  const steps = LIFECYCLE.map((step) => planStep(step, composition, { registry, roles }));
+  const steps = LIFECYCLE.map((step) => planStep(step, composition, { registry, roles, usePin: !opts.roles }));
   const nc = hookPoints.normalizeComposition(composition);
   return {
     composition: { unit_types: [...nc.unit_types], max_risk: nc.max_risk, domains: [...nc.domains] },
@@ -254,18 +280,19 @@ function recordAgentDispatch(
     dispatch_id: dispatchId,
     pid: process.pid,
     role: agentPlan.role,
-    provider: agentPlan.provider || "claude",
+    provider: agentPlan.provider,
     model: agentPlan.model || null,
     started_at: startedAt,
     completed_at: now,
     elapsed_ms: elapsedMs,
     prompt_bytes: promptBytes,
-    cmdline_checksum: t.cmdlineChecksum(agentPlan.role, agentPlan.provider || "claude", promptBytes),
+    cmdline_checksum: t.cmdlineChecksum(agentPlan.role, agentPlan.provider, promptBytes),
     exit_code: ok ? 0 : 1,
     stdout_bytes: stdoutBytes,
     stderr_bytes: 0,
     fallback: false,
     ok,
+    chain_walk: agentPlan.chain_walk || null,
     shape,
     run_id: mcEnv.readEnv("RUN_ID") || null,
     panel_run_id: mcEnv.readEnv("PANEL_RUN_ID") || null,
@@ -519,7 +546,31 @@ function defaultBaseGateCheck(cmd, base, root) {
   }
 }
 
+function computeSmokeExecution(root, requested, opts = {}) {
+  const rt = require("../checks/run-tests");
+  const discover = opts.discoverTestFiles || rt.discoverTestFiles;
+  const loadQ = opts.loadQuarantine || rt.loadQuarantine;
+  const want = [...new Set(requested.map((f) => rt.normalizeFocusedFile(f, root)).filter(Boolean))];
+  const discovered = new Set(discover(root));
+  const { entries } = loadQ(path.join(root, "tests", "quarantine.json"), root);
+  const quarantined = new Set((entries || []).map((e) => e.file));
+  const executed_files = want.filter((f) => discovered.has(f) && !quarantined.has(f));
+  const not_executable = want.filter((f) => !discovered.has(f) || quarantined.has(f));
+  return { executed_files, not_executable };
+}
+
 function conductGauntletStep(composition, sprintId, decision, opts = {}) {
+  const gauntletRunId = "g-" + crypto.randomBytes(16).toString("hex");
+  const envSnap = mcEnv.snapshotEnv("GAUNTLET_RUN_ID");
+  mcEnv.setEnv("GAUNTLET_RUN_ID", gauntletRunId);
+  try {
+    return conductGauntletStepBody(composition, sprintId, decision, opts, gauntletRunId);
+  } finally {
+    mcEnv.restoreEnv(envSnap);
+  }
+}
+
+function conductGauntletStepBody(composition, sprintId, decision, opts, gauntletRunId) {
   const enriched = enrichCompositionForGauntlet(composition, decision);
   const plan = planStep("gauntlet", enriched, opts);
 
@@ -594,6 +645,26 @@ function conductGauntletStep(composition, sprintId, decision, opts = {}) {
         });
         continue;
       }
+      let smokeExec = null;
+      if (stage.name === "smoke" && !isFullSuite) {
+        let computed;
+        try {
+          computed = computeSmokeExecution(root, files, opts);
+        } catch (e) {
+          computed = { error: e && e.message ? e.message : String(e) };
+        }
+        if (computed.error || computed.not_executable.length) {
+          const failure = computed.error
+            ? { error: "smoke_file_not_executable", detail: `quarantine/discovery unreadable (fail-closed): ${computed.error}`, not_executable: files.slice(), executed_files: [], golden_executed: 0 }
+            : { error: "smoke_file_not_executable", not_executable: computed.not_executable, executed_files: computed.executed_files, golden_executed: computed.executed_files.length };
+          const failOutput = `smoke_file_not_executable: ${failure.not_executable.join(", ")}${failure.detail ? " (" + failure.detail + ")" : ""}`;
+          surfaceStageFailure(stage, { exit_code: "n/a", output: failOutput });
+          stageResults.push({ stage: stage.stage, name: stage.name, ok: false, exit_code: "n/a", output: failOutput, ...failure });
+          if (stage.stop_on_fail) haltedAtStage = stage.stage;
+          continue;
+        }
+        smokeExec = { executed_files: computed.executed_files, golden_executed: computed.executed_files.length };
+      }
       const args = [path.join(root, "scripts", "checks", "run-tests.js")];
       if (!isFullSuite) args.push("--files", files.join(","));
       const r = run(process.execPath, args, { encoding: "utf8" });
@@ -601,7 +672,7 @@ function conductGauntletStep(composition, sprintId, decision, opts = {}) {
       const stageOk = exit === 0;
       const failure = stageOk ? null : { output: capturedOutputTail(r) };
       if (failure) surfaceStageFailure(stage, { exit_code: exit, ...failure });
-      stageResults.push({ stage: stage.stage, name: stage.name, ok: stageOk, exit_code: exit, ...(failure || {}) });
+      stageResults.push({ stage: stage.stage, name: stage.name, ok: stageOk, exit_code: exit, ...(failure || {}), ...(smokeExec || {}) });
       if (!stageOk && stage.stop_on_fail) haltedAtStage = stage.stage;
       continue;
     }
@@ -621,7 +692,7 @@ function conductGauntletStep(composition, sprintId, decision, opts = {}) {
           const promptFile = writeStepPrompt(a, sprintId, {
             reviewScope: { package: decision.package, files: rosterEntry ? rosterEntry.files : [] },
           });
-          const out = spawn(a, sprintId, { ...opts, promptFile });
+          const out = spawn(a, sprintId, { ...opts, promptFile, env: { ...(opts.env || {}), ...mcEnv.envPair("GAUNTLET_RUN_ID", gauntletRunId) } });
           dispatched.push({ role: a.role, route: a.route, spawned: out.spawned, ok: out.ok, recorded: out.recorded, reason: out.reason });
         }
       }
@@ -644,7 +715,15 @@ function conductGauntletStep(composition, sprintId, decision, opts = {}) {
       const verifyRoles = [...new Set([...dispatched.map((d) => d.role), ...scheduledRoles])];
       if (verifyRoles.length) {
         const verifyFn = opts.verifyGauntlet || defaultVerifyGauntlet;
-        verify = verifyFn({ runId: sprintId, roles: verifyRoles, since: verifyWindowStart });
+        verify = verifyFn({
+          runId: sprintId,
+          sprintId,
+          gauntletRunId,
+          roles: verifyRoles,
+          since: verifyWindowStart,
+          until: new Date().toISOString(),
+          requireSignature: true,
+        });
       }
     }
   }
@@ -664,6 +743,7 @@ function conductGauntletStep(composition, sprintId, decision, opts = {}) {
 
   return {
     step: "gauntlet",
+    gauntlet_run_id: gauntletRunId,
     plan,
     consulted,
     dispatched,
@@ -806,10 +886,28 @@ function main(argv) {
       );
       return 2;
     }
+    const grFlag = parseRequiredFlag(argv, "gauntlet-run");
+    if (grFlag.error) {
+      process.stderr.write(`record-inprocess: ${grFlag.error}. Refusing — nothing written.
+`);
+      return 2;
+    }
+    if (grFlag.present && !require("../dispatch/attest-signing").isValidGauntletRunId(grFlag.value)) {
+      process.stderr.write(`record-inprocess: --gauntlet-run value is not a conforming run id (g-<32 lowercase hex>). Refusing — nothing written.
+`);
+      return 2;
+    }
     const roles = hookPoints.loadRoles();
-    const rr = resolveRoute(role, roles);
-    const agentPlan = { role, step, route: rr.route, provider: rr.provider, model: rr.model };
-    const out = recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedMs });
+    const rr = resolveRoute(role, roles, true);
+    const agentPlan = { role, step, route: rr.route, provider: rr.provider, model: rr.model, chain_walk: rr.chain_walk || null };
+    const grSnap = mcEnv.snapshotEnv("GAUNTLET_RUN_ID");
+    if (grFlag.present) mcEnv.setEnv("GAUNTLET_RUN_ID", grFlag.value);
+    let out;
+    try {
+      out = recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedMs });
+    } finally {
+      mcEnv.restoreEnv(grSnap);
+    }
     process.stdout.write(JSON.stringify({ command: "record-inprocess", sprint_id: sprintId, ...agentPlan, ...out }, null, json ? 2 : 0) + "\n");
     return out.recorded ? 0 : 1;
   }

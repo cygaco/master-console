@@ -238,6 +238,28 @@ breaker.clear("openai");
 const downAfterClear = breaker.isDown("openai");
 check("isDown false after clear", downAfterClear === false, `got ${downAfterClear}`);
 
+process.stdout.write("\n§6 default state file resolves inside the project root\n");
+
+{
+  const snap = mcEnv.snapshotEnv(["PROVIDER_DOWN_FILE"]);
+  mcEnv.unsetEnv("PROVIDER_DOWN_FILE");
+  let resolved = "";
+  try {
+    resolved = breaker.resolveFilePath();
+  } finally {
+    mcEnv.restoreEnv(snap);
+  }
+  const projectRoot = path.resolve(__dirname, "..", "..");
+  const expected = path.join(projectRoot, ".claude", "runtime", "provider-down.json");
+  check("default path is <project>/.claude/runtime/provider-down.json", resolved === expected, `got ${resolved}`);
+  check(
+    "default path is not in the folder above the project",
+    resolved !== path.join(path.dirname(projectRoot), ".claude", "runtime", "provider-down.json"),
+    `got ${resolved}`,
+  );
+  check("the test seam still wins once restored", breaker.resolveFilePath() === tmpFile, `got ${breaker.resolveFilePath()}`);
+}
+
 try { fs.unlinkSync(tmpFile); } catch { }
 
 process.stdout.write(`\n${passed} passed, ${failed} failed\n`);

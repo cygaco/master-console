@@ -8,10 +8,11 @@ description: >-
   a PROGRAMMABLE principles field; owns persuade-by-argument · hook-first · chief-coherence.
 tools: [Read, Grep, Glob]
 provider: openai
-provider_model: gpt-6-sol
-model: gpt-6-sol
+provider_model: gpt-6.2-sol
+model: claude-opus-5-5
 provider_reasoning_effort: xhigh
 layer: growth
+effort: xhigh
 ---
 
 # Alex — Copy Lead (under the Director of Marketing)

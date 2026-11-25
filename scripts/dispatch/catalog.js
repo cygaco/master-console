@@ -8,11 +8,20 @@ const ANTHROPIC = {
   cliEffortFlagTemplate: "--effort {effort}",
   syntaxTemplate: "claude -p {reasoning} --agent {role}",
   requiresFallback: false,
-  defaultModel: "claude-opus-4-8",
+  defaultModel: "claude-opus-5-5",
   models: [
     {
+      id: "claude-fable-5-2",
+      label: "Claude Fable 5.2 (top brain tier — latest; replaces fable-5-1)",
+      effortLevels: ["low", "medium", "high", "xhigh", "max"],
+      contextTokens: 1_000_000,
+      maxOutputTokens: 128_000,
+      pricing: { inPerMTok: 8, outPerMTok: 40 },
+      aliases: ["fable", "fable-5-2", "claude-fable-5-2"],
+    },
+    {
       id: "claude-fable-5-1",
-      label: "Claude Fable 5.1 (top brain tier — GA 2026-09-01; replaces fable-5)",
+      label: "Claude Fable 5.1 (legacy — superseded by claude-fable-5-2; still served)",
       effortLevels: ["low", "medium", "high", "xhigh", "max"],
       contextTokens: 1_000_000,
       maxOutputTokens: 128_000,
@@ -26,7 +35,7 @@ const ANTHROPIC = {
       contextTokens: 1_000_000,
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 10, outPerMTok: 50 },
-      aliases: ["fable", "claude-fable-5"],
+      aliases: ["claude-fable-5"],
     },
     {
       id: "claude-sonnet-5-5",
@@ -35,7 +44,7 @@ const ANTHROPIC = {
       contextTokens: 1_000_000,
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 2, outPerMTok: 10 },
-      aliases: ["sonnet-5-5", "claude-sonnet-5-5"],
+      aliases: ["sonnet", "sonnet-5-5", "claude-sonnet-5-5"],
     },
     {
       id: "claude-sonnet-5",
@@ -63,34 +72,44 @@ const ANTHROPIC = {
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 4, outPerMTok: 20 },
       defaultEffort: "medium",
-      aliases: ["claude-opus-5-5"],
+      aliases: ["opus", "claude-opus-5-5"],
     },
     {
       id: "claude-opus-4-8",
-      label: "Claude Opus 4.8",
+      label: "Claude Opus 4.8 (legacy — still served; provider-fallback deep_fallback target)",
       effortLevels: ["low", "medium", "high", "xhigh", "max"],
       contextTokens: 1_000_000,
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 5, outPerMTok: 25 },
-      aliases: ["opus", "claude-opus-4-8"],
+      aliases: ["claude-opus-4-8"],
     },
     {
       id: "claude-sonnet-4-6",
-      label: "Claude Sonnet 4.6",
+      label: "Claude Sonnet 4.6 (legacy — still served; superseded by claude-sonnet-5-5)",
       effortLevels: ["low", "medium", "high", "max"],
       contextTokens: 1_000_000,
       maxOutputTokens: 64_000,
       pricing: { inPerMTok: 3, outPerMTok: 15 },
-      aliases: ["sonnet", "claude-sonnet-4-6"],
+      aliases: ["claude-sonnet-4-6"],
+    },
+    {
+      id: "claude-haiku-5-5",
+      label: "Claude Haiku 5.5 (haiku tier — GA 2026-10-07; API default effort = medium)",
+      effortLevels: ["low", "medium", "high", "xhigh", "max"],
+      contextTokens: 1_000_000,
+      maxOutputTokens: 128_000,
+      pricing: { inPerMTok: 0.1, outPerMTok: 0.5 },
+      defaultEffort: "medium",
+      aliases: ["haiku", "haiku-5-5", "claude-haiku-5-5"],
     },
     {
       id: "claude-haiku-4-5-20251001",
-      label: "Claude Haiku 4.5",
+      label: "Claude Haiku 4.5 (legacy — still served; superseded by claude-haiku-5-5)",
       effortLevels: [],
       contextTokens: 200_000,
       maxOutputTokens: 64_000,
       pricing: { inPerMTok: 1, outPerMTok: 5 },
-      aliases: ["haiku", "claude-haiku-4-5"],
+      aliases: ["claude-haiku-4-5"],
     },
   ],
 };
@@ -132,7 +151,7 @@ const OPENAI = {
       id: "gpt-6-astra",
       servability: { codexChatgptAccount: true, codexVersion: "0.160.0" },
       label: "GPT-6 Astra (newest flagship — $10/$50)",
-      effortLevels: ["low", "medium", "high", "xhigh", "max"],
+      effortLevels: ["low", "medium", "high", "xhigh", "max", "ultra"],
       contextTokens: 1_050_000,
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 10, outPerMTok: 50 },
@@ -141,16 +160,25 @@ const OPENAI = {
       id: "gpt-6.1-sol",
       servability: { codexChatgptAccount: true, codexVersion: "0.160.0" },
       label: "GPT-6.1 Sol (coding flagship — Codex CLI default; migrate_to for gpt-5.5 / gpt-5.4)",
-      effortLevels: ["low", "medium", "high", "xhigh", "max"],
+      effortLevels: ["low", "medium", "high", "xhigh", "max", "ultra"],
       contextTokens: 1_050_000,
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 2, outPerMTok: 10 },
     },
     {
+      id: "gpt-6.1-terra",
+      servability: { codexChatgptAccount: true, codexVersion: "0.159.0" },
+      label: "GPT-6.1 Terra (fast/efficient — writing, visual reasoning, computer use; $1/$5)",
+      effortLevels: ["none", "low", "medium", "high", "xhigh", "max", "ultra"],
+      contextTokens: 1_050_000,
+      maxOutputTokens: 128_000,
+      pricing: { inPerMTok: 1, outPerMTok: 5 },
+    },
+    {
       id: "gpt-6-sol",
       servability: { codexChatgptAccount: true, codexVersion: "0.160.0" },
       label: "GPT-6 Sol (GA; superseded by gpt-6.1-sol)",
-      effortLevels: ["none", "low", "medium", "high", "xhigh", "max"],
+      effortLevels: ["none", "low", "medium", "high", "xhigh", "max", "ultra"],
       contextTokens: 1_050_000,
       maxOutputTokens: 128_000,
       pricing: { inPerMTok: 2, outPerMTok: 10 },
@@ -174,11 +202,22 @@ const ANTIGRAVITY = {
   cliEffortFlagTemplate: "",
   syntaxTemplate: "agy --model {model} --print-timeout 90s -p '{prompt}'",
   requiresFallback: true,
-  defaultModel: "gemini-3.1-pro-high",
+  defaultModel: "gemini-4-argon-high",
   models: [
     {
+      id: "gemini-4-argon-high",
+      label: "Gemini 4 Argon (high thinking) — via agy",
+      agyModelName: "Gemini 4 Argon (High)",
+      apiId: "gemini-4-argon",
+      effortLevels: [],
+      contextTokens: 1_048_576,
+      maxOutputTokens: 65_536,
+      thinkingAlwaysOn: true,
+      pricing: { inPerMTok: 2, outPerMTok: 10 },
+    },
+    {
       id: "gemini-3.1-pro-high",
-      label: "Gemini 3.1 Pro (high thinking) — via agy",
+      label: "Gemini 3.1 Pro (high thinking) — via agy — NOT SERVED by agy since 2026-10-17",
       agyModelName: "Gemini 3.1 Pro (High)",
       apiId: "gemini-3.1-pro-preview",
       effortLevels: [],
@@ -202,6 +241,87 @@ const ANTIGRAVITY = {
 };
 
 const PROVIDERS = { claude: ANTHROPIC, openai: OPENAI, antigravity: ANTIGRAVITY };
+
+const CATALOG_MODELS_FILE = require("path").join(__dirname, "catalog-models.json");
+const DATA_ROW_ID = /^[a-z0-9][a-z0-9._-]{0,63}$/;
+const DATA_ROW_DISPLAY = /^[A-Za-z0-9][A-Za-z0-9 .()\-]{0,63}$/;
+
+const DATA_ROW_EFFORT = /^(low|medium|high|xhigh|max|ultra)$/i;
+const isNonNegNum = (v) => typeof v === "number" && Number.isFinite(v) && v >= 0;
+
+function warnRow(msg) {
+  process.stderr.write("catalog-models.json: " + msg + "\n");
+}
+
+function mergeDataRows(providers, file) {
+  let doc;
+  try {
+    doc = JSON.parse(require("fs").readFileSync(file, "utf8"));
+  } catch (_) {
+    return 0;
+  }
+  const rows = doc && Array.isArray(doc.models) ? doc.models : [];
+  const own = Object.prototype.hasOwnProperty;
+  const seen = new Set();
+  let added = 0;
+  for (const row of rows) {
+    const p =
+      row && typeof row === "object" && typeof row.provider === "string" && own.call(providers, row.provider)
+        ? providers[row.provider]
+        : null;
+    const bad =
+      !p || !Array.isArray(p.models) ? "unknown provider"
+      : typeof row.id !== "string" || !DATA_ROW_ID.test(row.id) ? "bad id"
+      : typeof row.displayName !== "string" || !DATA_ROW_DISPLAY.test(row.displayName) ? "bad displayName"
+      : null;
+    if (bad) {
+      warnRow(`skipped row ${JSON.stringify(row && row.id)} (${bad})`);
+      continue;
+    }
+    const key = row.provider + "/" + row.id;
+    if (seen.has(key)) {
+      warnRow(`duplicate row ${JSON.stringify(row.id)} ignored (first one kept)`);
+      continue;
+    }
+    seen.add(key);
+    if (p.models.some((m) => m.id === row.id || (m.aliases || []).includes(row.id))) continue;
+    let efforts = [];
+    if (Array.isArray(row.effortLevels)) {
+      efforts = row.effortLevels.filter((e) => typeof e === "string" && DATA_ROW_EFFORT.test(e));
+      if (efforts.length !== row.effortLevels.length) {
+        warnRow(`row ${JSON.stringify(row.id)}: dropped effort levels outside the allowed vocabulary`);
+      }
+    }
+    const m = {
+      id: row.id,
+      label: `${row.displayName} — via ${p.cli}`,
+      displayName: row.displayName,
+      effortLevels: efforts,
+      fromDataFile: true,
+    };
+    if (typeof row.apiId === "string") m.apiId = row.apiId;
+    for (const k of ["contextTokens", "maxOutputTokens"]) {
+      if (row[k] === undefined) continue;
+      if (isNonNegNum(row[k])) m[k] = row[k];
+      else warnRow(`row ${JSON.stringify(row.id)}: ignored non-numeric ${k}`);
+    }
+    if (row.pricing !== undefined) {
+      const pr = row.pricing;
+      const clean = {};
+      if (pr && typeof pr === "object" && !Array.isArray(pr)) {
+        for (const k of Object.keys(pr)) if (isNonNegNum(pr[k])) clean[k] = pr[k];
+      }
+      if (Object.keys(clean).length) m.pricing = clean;
+      else warnRow(`row ${JSON.stringify(row.id)}: ignored invalid pricing`);
+    }
+    if (p.id === "antigravity") m.agyModelName = row.displayName;
+    p.models.push(m);
+    added++;
+  }
+  return added;
+}
+
+mergeDataRows(PROVIDERS, CATALOG_MODELS_FILE);
 const PROVIDER_LIST = [ANTHROPIC, OPENAI, ANTIGRAVITY];
 
 const PROVIDER_ALIASES = {
@@ -219,7 +339,9 @@ function normalizeProviderId(id) {
   return PROVIDER_ALIASES[id.toLowerCase()] || id;
 }
 
-const ROLES = [
+const LEGACY_ROLE_NAMES = Object.freeze(["builder", "fixer", "reviewer", "compliance", "qa", "redteam"]);
+
+const LITERAL_ROLES = [
   "alpha",
   "beta",
   "gamma",
@@ -251,6 +373,15 @@ const ROLES = [
 ];
 
 const registryRoles = require("./registry-roles");
+
+const ROLES = registryRoles.deriveOrFallback(
+  () => {
+    const ids = registryRoles.roleIds();
+    return ids.length ? [...ids, ...LEGACY_ROLE_NAMES.filter((r) => !ids.includes(r))] : [];
+  },
+  LITERAL_ROLES,
+  "catalog.ROLES",
+);
 
 const LITERAL_DEFAULT_PROVIDER_PER_ROLE = {
   alpha: "claude",
@@ -382,6 +513,7 @@ module.exports = {
   PROVIDER_LIST,
   PROVIDER_ALIASES,
   ROLES,
+  LEGACY_ROLE_NAMES,
   DEFAULT_PROVIDER_PER_ROLE,
   LITERAL_DEFAULT_PROVIDER_PER_ROLE,
   DEFAULT_EFFORT_PER_ROLE,
@@ -391,4 +523,5 @@ module.exports = {
   agyModelName,
   normalizeProviderId,
   validateTuple,
+  mergeDataRows,
 };

@@ -1,7 +1,7 @@
 ---
 description: "[alias → /session:turbo] Pre-authorize a session batch of high-impact actions via permissions.allow entries. Removes the keyboard cadence for repeat approvals."
 user-invocable: true
-says-confirm: fuzzy-only
+disable-model-invocation: true
 ---
 
 # /turbo
@@ -13,7 +13,7 @@ says-confirm: fuzzy-only
 > + safety floor. For the speed-cadence levers, see `/session:turbo`.
 
 Pre-authorize a batch of high-impact actions for a bounded time window. Designed
-to remove the "yes push", "yes manifest", "yes destructive-git" keyboard cadence
+to remove the "yes manifest", "yes destructive-git" keyboard cadence
 in batch work sessions, while preserving a hard safety floor that nothing can
 bypass.
 
@@ -22,6 +22,9 @@ Also invoked by `/mode:<solo|adhoc|oneshot>` when `--turbo` is passed; see those
 The skill is a thin wrapper around `scripts/turbo/apply.js`. The apply script
 snapshots `.claude/settings.json`, additively merges curated `permissions.allow`
 entries by scope, writes a runtime state file with a TTL, and prints status.
+It grants no push: it checks (read-only) whether the operator's user settings
+trust this repository and, if not, prints `node scripts/operator/trust-my-repos.js`
+for the operator to run — a dry run by default; `--write` applies it (see `/session:turbo`).
 Pair with the registered `scripts/hooks/authorization-gate.js` PreToolUse hook
 so project guards (merge-guard, sprint-tracker-guard, etc.) also honor the
 authorization while it is active.
@@ -32,7 +35,7 @@ authorization while it is active.
 /turbo [--scope <csv>|all] [--ttl <duration>] [--reason "<text>"] [--off|--status]
 ```
 
-- `--scope <csv>` — comma-separated scope vocab (see below). Default: `manifest-edit,write-jsonl,node-e-fs`. **`push-to-main` is opt-in only** — never in the default set, per CLAUDE.md autonomy rule.
+- `--scope <csv>` — comma-separated scope vocab (see below). Default: `manifest-edit,write-jsonl,worktree-ops`. There is no push scope.
 - `--scope all` — every scope except those in the safety floor.
 - `--ttl <duration>` — e.g. `30m`, `60m`, `2h`. Default: `60m`.
 - `--reason "<text>"` — operator-readable reason logged with the authorization.
@@ -43,7 +46,6 @@ authorization while it is active.
 
 | Scope | Pattern category |
 |---|---|
-| `push-to-main` | `git push` to default branch (OPT-IN ONLY) |
 | `manifest-edit` | Edits / writes to `.claude/manifest.json` |
 | `destructive-git` | `git rm`, `git reset --hard` (still safety-floored) |
 | `node-e-fs` | `node -e` invocations that write files (temporarily reopens the file-write anti-pattern) |
@@ -122,7 +124,7 @@ If a session crashes mid-apply:
 
 ## Reference
 
-`scripts/turbo/apply.js`, `scripts/turbo/install-hook.js`, `scripts/hooks/authorization-gate.js`.
+`scripts/turbo/apply.js`, `scripts/turbo/install-hook.js`, `scripts/hooks/authorization-gate.js`, `scripts/operator/trust-my-repos.js` (operator-run).
 
 Sibling skill: `/fewer-permission-prompts` (transcript-mined long-term harness tuning).
 This skill is the short-term batch authorization counterpart.

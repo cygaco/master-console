@@ -941,15 +941,18 @@ console.log(`  modes — so review/compliance/qa run on OpenAI, and the`);
 console.log(
   `  security reviewer's Gemini lab runs through Antigravity (agy).`,
 );
-console.log(`  Without these CLIs, agents fall back to`);
-console.log(`  Claude (still works, just loses the diversity benefit).\n`);
+console.log(`  Without these CLIs, most agents fall back to Claude (still works,`);
+console.log(`  just loses the diversity benefit). The exception is the sprint`);
+console.log(`  security panel: it needs reviewers from two AI labs, so without`);
+console.log(`  Codex its sign-off returns BLOCKED-INCONCLUSIVE.\n`);
 
 if (codexPresent) {
   console.log(`  ${OK} Codex CLI detected (review agents will use OpenAI)`);
 } else {
   console.log(
-    `  ${WARN} Codex CLI missing — review agents will fall back to Claude`,
+    `  ${WARN} Codex CLI missing — review agents fall back to Claude, but the security panel returns BLOCKED-INCONCLUSIVE`,
   );
+  console.log(`       Install and sign in to Codex before /sprint:full.`);
   console.log(`       Install:  npm i -g @openai/codex`);
   console.log(`       Auth:     codex login   (or set OPENAI_API_KEY)`);
 }
@@ -957,10 +960,35 @@ if (agyPresent) {
   console.log(`  ${OK} Antigravity CLI (agy) detected (security reviewer's Gemini lab)`);
 } else {
   console.log(
-    `  ${WARN} Antigravity CLI (agy) missing — the Gemini security lab will fall back to Claude`,
+    `  ${WARN} Antigravity CLI (agy) missing — agy-routed agents fall back to Claude; the security panel's two-lab check does not require agy (it needs Codex)`,
   );
   console.log(`       Install:  the standalone Antigravity 'agy' CLI (not npm)`);
   console.log(`       Auth:     sign in to Antigravity so its ~/.gemini keyring carries a session`);
+}
+
+{
+  console.log(`\n${HEADER}  SIGN-IN${RESET}`);
+  const signinScript = path.join(MC, "scripts", "dispatch", "signin.js");
+  if (!fs.existsSync(signinScript)) {
+    log("info", "sign-in check not installed yet — run /mc:health later to see which AI tools you are signed in to");
+  } else {
+    try {
+      const r = spawnSync(process.execPath, [signinScript, "--refresh"], {
+        cwd: TARGET,
+        env: { ...process.env, CLAUDE_PROJECT_DIR: TARGET },
+        encoding: "utf8",
+        timeout: 90000,
+        windowsHide: true,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+      for (const line of String(r.stdout || "").split(/\r?\n/).filter(Boolean)) console.log(`       ${line}`);
+      if (r.error || r.status !== 0) {
+        log("warn", "sign-in check did not finish cleanly — setup continues; run /mc:health to check again");
+      }
+    } catch {
+      log("warn", "sign-in check could not run — setup continues; run /mc:health to check again");
+    }
+  }
 }
 
 if (!SKIP_MANIFEST_CHECK) {

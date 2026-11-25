@@ -1,0 +1,48 @@
+{
+  "id": "spend-more-on-claude",
+  "kind": "overlay",
+  "title": "Spend more on Claude",
+  "dated": "2026-11-17",
+  "reason": "Moves advisory and authoring work to Claude and keeps one Codex code-review lane (backend); frontend and QA code review stay on Claude, so code units are not reviewed by a different model family on every lane. The top two roles lead with the newest Claude Fable model, which can bill to usage credits on some plans. The security panel is unchanged.",
+  "evidence": [
+    "scripts/dispatch/model-resolve.test.js — this overlay replaces only the listed roles' lists, and each list still ends on a Claude model that is not Fable",
+    "scripts/dispatch/catalog.js — every model and effort level in these lists is in the model catalog"
+  ],
+  "coverage": {
+    "code": "same-family",
+    "security": "cross-family",
+    "visual": "exempt-capability"
+  },
+  "chains": {
+    "product-lead": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "design-lead": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "director-of-product": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "director-of-growth": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "beta": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "cabinet": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "backend-reviewer": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "alpha": [
+      { "provider": "claude", "model": "claude-fable-5-2", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "director-of-engineering": [
+      { "provider": "claude", "model": "claude-fable-5-2", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ]
+  }
+}

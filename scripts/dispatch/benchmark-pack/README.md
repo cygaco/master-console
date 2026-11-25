@@ -130,7 +130,7 @@ are heavy-by-design; a real A/B of each is expensive). To earn it for a specific
 6. **Anti-rot** — re-measure on skill change.
 
 > **Enforcer note (anti-rot):** `subprocess_verified` must be invalidated when a
-> skill's `.md` changes (the `skill-catalog-regen` hook) and re-checked at `/scan:full`. A
+> skill's `.md` changes and re-checked at `/scan:full`. A
 > stale stamp (skill changed since) reverts to unverified — no "tested once, trusted
 > forever." Treat any stamp as provisional until that invalidation is wired, and log the
 > gap via `/enforcement:log`.

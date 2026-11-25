@@ -417,6 +417,11 @@
       "const": ".claude/runtime/provider-tier-config.json",
       "description": "json (runtime) — paths.providerTierConfig"
     },
+    "modelSigninCache": {
+      "type": "string",
+      "const": ".claude/runtime/model-signin.json",
+      "description": "json (runtime) — paths.modelSigninCache"
+    },
     "providerFallbackPolicy": {
       "type": "string",
       "const": ".claude/agents/president/_system/policy/provider-fallback.json",
@@ -542,6 +547,11 @@
       "const": ".claude/agents/president/_system/policy/sprint-routing.json",
       "description": "json (framework) — paths.sprintRouting"
     },
+    "modelPresetLog": {
+      "type": "string",
+      "const": ".claude/project/model-presets.log.jsonl",
+      "description": "jsonl (project) — paths.modelPresetLog"
+    },
     "orgRoleRegistry": {
       "type": "string",
       "const": ".claude/agents/_org/role-registry.json",
@@ -611,11 +621,6 @@
       "type": "string",
       "const": "_mc/templates/portfolio",
       "description": "dir (framework) — paths.portfolioTemplates"
-    },
-    "skillCatalog": {
-      "type": "string",
-      "const": ".claude/runtime/skill-catalog.json",
-      "description": "json (generated) — paths.skillCatalog"
     },
     "providerSmokeSkill": {
       "type": "string",
@@ -701,6 +706,16 @@
       "type": "string",
       "const": "runtime/etc/consults",
       "description": "dir (runtime) — paths.etcConsults"
+    },
+    "watchDir": {
+      "type": "string",
+      "const": "runtime/watch",
+      "description": "dir (runtime) — paths.watchDir"
+    },
+    "plainState": {
+      "type": "string",
+      "const": ".claude/runtime/plain",
+      "description": "dir (runtime) — paths.plainState"
     }
   }
 }

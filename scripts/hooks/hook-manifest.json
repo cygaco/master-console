@@ -1,7 +1,7 @@
 {
   "$schema": "mc/hook-manifest/v1",
   "generatedFrom": "framework/hooks.registry.json",
-  "updatedAt": "sha256:5692605878b44946",
+  "updatedAt": "sha256:d1f0f63687fd703b",
   "hooks": {
     "session-start.js": {
       "script": "scripts/hooks/session-start.js",
@@ -54,8 +54,8 @@
       "fixturesRequired": true,
       "enabled": true
     },
-    "skill-router.js": {
-      "script": "scripts/hooks/skill-router.js",
+    "plain-prompt.js": {
+      "script": "scripts/hooks/plain-prompt.js",
       "events": [
         {
           "hookEvent": "UserPromptSubmit",
@@ -65,9 +65,8 @@
       "failMode": "fail-open",
       "blocks": [],
       "testFixtures": [
-        "fixtures/hooks/skill-router/user-prompt.json",
-        "fixtures/hooks/skill-router/slash.json",
-        "fixtures/hooks/skill-router/approval-word.json"
+        "fixtures/hooks/plain-prompt/user-prompt.json",
+        "fixtures/hooks/plain-prompt/slash.json"
       ],
       "owner": "framework",
       "fixturesRequired": true,
@@ -103,10 +102,6 @@
         },
         {
           "hookEvent": "PreToolUse",
-          "matcher": "Edit|Write"
-        },
-        {
-          "hookEvent": "PostToolUse",
           "matcher": "Edit|Write"
         }
       ],
@@ -282,10 +277,6 @@
         {
           "hookEvent": "PreToolUse",
           "matcher": "Edit|Write"
-        },
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
         }
       ],
       "failMode": "fail-closed",
@@ -452,6 +443,26 @@
       "fixturesRequired": true,
       "enabled": true
     },
+    "agent-spawn-model-guard.js": {
+      "script": "scripts/hooks/agent-spawn-model-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "Agent"
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [
+        "Agent spawn whose effective model is not a catalog Claude id, a harness alias (sonnet/opus/haiku/fable) or absent/inherit"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json",
+        "fixtures/hooks/agent-spawn-model-guard/non-claude-model-param.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true
+    },
     "worktree-preflight.js": {
       "script": "scripts/hooks/worktree-preflight.js",
       "events": [
@@ -563,23 +574,6 @@
         }
       ],
       "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/noop.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
-    "beta-gate.js": {
-      "script": "scripts/hooks/beta-gate.js",
-      "events": [
-        {
-          "hookEvent": "PreToolUse",
-          "matcher": "AskUserQuestion"
-        }
-      ],
-      "failMode": "fail-closed",
       "blocks": [],
       "testFixtures": [
         "fixtures/hooks/default/noop.json"
@@ -728,40 +722,6 @@
       "fixturesRequired": true,
       "enabled": true
     },
-    "save-session-lint.js": {
-      "script": "scripts/hooks/save-session-lint.js",
-      "events": [
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/post-edit.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
-    "template-fillability.js": {
-      "script": "scripts/hooks/template-fillability.js",
-      "events": [
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/post-edit.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
     "learning-validator.js": {
       "script": "scripts/hooks/learning-validator.js",
       "events": [
@@ -781,57 +741,6 @@
     },
     "ui-lint.js": {
       "script": "scripts/hooks/ui-lint.js",
-      "events": [
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/post-edit.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
-    "step-hardcode-suggester.js": {
-      "script": "scripts/hooks/step-hardcode-suggester.js",
-      "events": [
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/post-edit.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
-    "region-marker-guard.js": {
-      "script": "scripts/hooks/region-marker-guard.js",
-      "events": [
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/post-edit.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
-    "spec-test-staleness.js": {
-      "script": "scripts/hooks/spec-test-staleness.js",
       "events": [
         {
           "hookEvent": "PostToolUse",
@@ -920,6 +829,24 @@
       ],
       "owner": "framework",
       "fixturesRequired": false,
+      "enabled": true
+    },
+    "plain-session.js": {
+      "script": "scripts/hooks/plain-session.js",
+      "events": [
+        {
+          "hookEvent": "SessionStart",
+          "matcher": ""
+        }
+      ],
+      "failMode": "fail-open",
+      "blocks": [],
+      "testFixtures": [
+        "fixtures/hooks/plain-session/session-start.json",
+        "fixtures/hooks/plain-session/not-session.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
       "enabled": true
     },
     "tracker-completion-gate.js": {
@@ -1089,40 +1016,6 @@
       "fixturesRequired": true,
       "enabled": true
     },
-    "skill-invocation-tracker.js": {
-      "script": "scripts/hooks/skill-invocation-tracker.js",
-      "events": [
-        {
-          "hookEvent": "PreToolUse",
-          "matcher": "SlashCommand|Skill"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/bash-safe.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
-    "skill-catalog-regen.js": {
-      "script": "scripts/hooks/skill-catalog-regen.js",
-      "events": [
-        {
-          "hookEvent": "PostToolUse",
-          "matcher": "Edit|Write"
-        }
-      ],
-      "failMode": "fail-open",
-      "blocks": [],
-      "testFixtures": [
-        "fixtures/hooks/default/post-edit.json"
-      ],
-      "owner": "framework",
-      "fixturesRequired": true,
-      "enabled": true
-    },
     "memory-enforcement-guard.js": {
       "script": "scripts/hooks/memory-enforcement-guard.js",
       "events": [
@@ -1207,6 +1100,32 @@
       "owner": "framework",
       "fixturesRequired": false,
       "enabled": true
+    },
+    "plain-guard.js": {
+      "script": "scripts/hooks/plain-guard.js",
+      "events": [
+        {
+          "hookEvent": "PreToolUse",
+          "matcher": "SlashCommand|Skill"
+        }
+      ],
+      "failMode": "fail-closed",
+      "blocks": [
+        "model-started deny-class skill",
+        "unreadable skill call or skill file"
+      ],
+      "testFixtures": [
+        "fixtures/hooks/plain-guard/plain-skill.json",
+        "fixtures/hooks/plain-guard/deny-class.json",
+        "fixtures/hooks/plain-guard/unreadable-call.json"
+      ],
+      "owner": "framework",
+      "fixturesRequired": true,
+      "enabled": true,
+      "handler": {
+        "timeout": 10,
+        "onFailure": "block"
+      }
     },
     "session-end-team-teardown.js": {
       "script": "scripts/hooks/session-end-team-teardown.js",

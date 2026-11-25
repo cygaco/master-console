@@ -2,11 +2,27 @@
 
 **Master Console.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
 
-**Version:** 2.1.0
-**Status:** Public beta, released 2026-10-20 ([release notes](https://github.com/cygaco/master-console/releases/tag/v2.1.0))
-**Skills:** 235 slash commands
-**Hooks:** 78 automated hooks
+**Version:** 2.3.0
+**Status:** Public beta, released 2026-11-25 ([release notes](https://github.com/cygaco/master-console/releases/tag/v2.3.0))
+**Skills:** 239 slash commands
+**Hooks:** 71 automated hooks
 **License:** [AGPL-3.0](LICENSE)
+
+## New in 2.3.0
+
+2.3.0 is the first public release since 2.1.0 and includes 2.2.0, which was prepared but never published on its own. Full notes: [CHANGELOG.md](CHANGELOG.md).
+- Every role has an ordered list of models to try, ending on Claude, so a Claude-only setup runs every role; `/mc:health` shows which tools you are signed in to.
+- `/models:swap` finds what each lab serves now, swaps one model for another, and undoes the last swap.
+- You can choose the models the security review uses; the shipped choice stays the default.
+- Ask in plain words: the right skill starts on its own (Plain, on by default); a skill that deletes, deploys or spends is never started for you, you get the command to type instead.
+- Lighter review rules and faster hooks: one review round sized to the risk, and unused checks removed.
+- An install now copies every script its skills need; before, a few (such as the one behind `/models:check`) were left out, so those skills failed in an installed product. Update existing products.
+
+## Watch the launch film
+
+https://github.com/user-attachments/assets/c89ef43e-73c0-431a-a90f-00c9d091d5d2
+
+[![Watch the Master Console launch film](docs/launch-film-thumbnail.png)](https://github.com/cygaco/master-console/releases/tag/launch-film-v1)
 
 ## Who it is for
 
@@ -23,7 +39,7 @@ Master Console is for developers and small teams who already use [Claude Code](h
 
 - **Windows-first.** The installer is PowerShell (`install.ps1`); the hooks and scripts are Node.js. Other platforms are untested; a Node-based installer (`scripts/mc-setup.js`) exists but is not verified outside Windows.
 - **Prerequisites:** Claude Code, **Node.js 20 or newer** (`package.json` declares `engines.node >= 20`), Git, and PowerShell for `install.ps1`. Provider CLIs (OpenAI Codex, Antigravity) are optional; a missing CLI degrades to the fallback declared for that role.
-- **Maturity:** version 2.1.0 is a public beta: actively developed, single maintainer. Known issues and their workarounds are pinned in [issue #1](https://github.com/cygaco/master-console/issues/1). Deprecated aliases from the pre-2.0.0 names are removed in 2.2.0.
+- **Maturity:** version 2.3.0 is a public beta: actively developed, single maintainer. Known issues and their workarounds are pinned in [issue #1](https://github.com/cygaco/master-console/issues/1). Deprecated aliases from the pre-2.0.0 names are removed in 3.0.0.
 
 ## Five-minute path
 
@@ -49,7 +65,7 @@ Then read [USER_GUIDE.md](USER_GUIDE.md) for the daily rhythm. Details of each s
 The brand is **Master Console**; the engine in this repository was built and released under its previous name. The rebrand landed in two steps:
 
 1. **Brand layer (this README, the docs, the story)** — landed before 2.0.0.
-2. **Identifier layer** — 2.0.0. The package name is `mc`; skills live under `mc:*` (and `scan:mc-*`); environment variables are `MC_*`; the framework directory is `_mc/` and per-install state is `.mc/`; the per-install gap register is a file named MC.md (created on first use); release tags are `mc@<version>` from 2.0.0 on. The previous identifiers keep working through 2.1.x as deprecated aliases and read-fallbacks and are removed in 2.2.0 (moved from 2.1.0) — the exact policy is in [CHANGELOG.md](CHANGELOG.md). Installs at 1.2.0 upgrade through the 1.2.0-to-2.0.0 migration set shipped with the release.
+2. **Identifier layer** — 2.0.0. The package name is `mc`; skills live under `mc:*` (and `scan:mc-*`); environment variables are `MC_*`; the framework directory is `_mc/` and per-install state is `.mc/`; the per-install gap register is a file named MC.md (created on first use); release tags are `mc@<version>` from 2.0.0 on. The previous identifiers keep working through 2.1.x as deprecated aliases and read-fallbacks and are removed in 3.0.0 (moved from 2.1.0) — the exact policy is in [CHANGELOG.md](CHANGELOG.md). Installs at 1.2.0 upgrade through the 1.2.0-to-2.0.0 migration set shipped with the release.
 
 ## What is this?
 
@@ -69,8 +85,8 @@ Under Alex sit the **departments** — Product (with Quality), Engineering and G
 
 Around the agents:
 
-- **235 skills** — slash commands such as `/fix:fast`, `/research:deep`, `/sprint:full`, `/sleep:deep`. They live under `.claude/commands/<namespace>/<name>.md`; the count includes the deprecated aliases kept for one release under the previous skill names.
-- **78 hooks** — things that happen automatically around every prompt, edit and command: secret scanning, formatting, path guards, dispatch guards, tracker validation. Registered in `.claude/settings.json`; the scripts are under `scripts/hooks/`.
+- **239 skills** — slash commands such as `/fix:fast`, `/research:deep`, `/sprint:full`, `/sleep:deep`. They live under `.claude/commands/<namespace>/<name>.md`.
+- **71 hooks** — things that happen automatically around every prompt, edit and command: secret scanning, formatting, path guards, dispatch guards, tracker validation. Registered in `.claude/settings.json`; the scripts are under `scripts/hooks/`.
 - **Memory** — an append-only events log, scored learnings with a validation lifecycle, reasoning traces, and a sleep/dream consolidation cycle that prunes and promotes what the system learned.
 - **Enforcement** — every policy names an enforcer or logs the gap; `/scan:full` runs the whole enforcer suite; the sprint lifecycle refuses to close without real evidence.
 - **Cross-provider dispatch** — reviewers and judges can run on a different AI lab than the one that wrote the code, through each lab's own CLI.
@@ -115,7 +131,13 @@ codex login
 # Install and authenticate per the Antigravity CLI setup; see ANTIGRAVITY.md.
 ```
 
-A missing CLI degrades to the fallback declared for that role in the registry. The security panel is designed to refuse rather than review with a single lab. Run `/scan:environment` after install to see what is reachable. Full per-role chart: [AGENTS.md § Dispatch Topology](AGENTS.md).
+β and ε run on your Claude subscription by default; Codex and Gemini are optional add-ons, used when you are signed in to them. (The roles listed above as running on OpenAI or Gemini do so only when that tool is signed in; β's own teammate always runs on Claude, and its one-off consults use Codex, then Gemini, then Claude.) Every role has a list of models to try in order (the default preset, `.claude/agents/_org/presets/default.json`), and each list ends on Claude Opus 5.5, so a Claude-only setup runs every role. `/mc:health` shows which tools you are signed in to: it asks each tool's own status command (`claude auth status`, `codex login status`, and `agy models`, which contacts Gemini's own service to list its models); it reads no password or key files, and the engine itself calls no AI service to check. The answer is kept for 7 days; `/mc:health` refreshes it, so run it again after you sign in to or out of a tool. When the saved answer is missing or older than 7 days, a tool that is not installed is skipped and every installed tool is tried. Limits: which Claude models a given Claude plan offers is not something the engine can see, and Anthropic does not document per-plan access to Sonnet 5.5 (the builders' model); Fable models can bill to usage credits on some plans. The security panel is designed to refuse rather than review with a single lab, so without Codex or Gemini its sign-off stays blocked. Change a role's model with `/models:route` (your choice is kept in `.claude/manifest.json`, never in the shipped role files; `node scripts/dispatch.js set <role> --default` undoes it), or switch presets with `node scripts/dispatch/presets.js use <id>`. For a role that runs inside Claude Code, a pin chooses a tier (Opus, Sonnet, Haiku or Fable), not an exact version: Claude Code is told the tier when it starts the role. A pin that names the role's default model is still a pin; an entry that names only a provider is not. Full per-role chart: [AGENTS.md § Dispatch Topology](AGENTS.md).
+
+Known gaps in this release:
+- A saved "signed out" answer (`.claude/runtime/model-signin.json`) is used without a live re-check, so anything that can already edit your project could forge it to move a role to a later model on its list; each move is recorded, and security-review roles refuse instead of moving.
+- The Claude-only security fallback cannot accept a real review yet, so without Codex or Gemini a security review stays blocked rather than passing.
+- A full security panel run does not pass its final check yet, so it ends blocked rather than passing; a fix is planned.
+- If you link skill folders into .claude/skills or .claude/commands, give each folder the same name as its skill; otherwise the guard may not recognise a risky linked skill.
 
 ### Verify
 
@@ -135,6 +157,14 @@ Then read **[USER_GUIDE.md](USER_GUIDE.md)** — the daily-rhythm guide: modes, 
 | `/scan:full` | Run every check in parallel and get one unified health report |
 | `/session:handoff` | Write a rich handoff document for the next session |
 | `/commit:land` | Commit, push the branch, merge into the default branch |
+
+## Asking in plain words
+
+You do not need the slash or the exact skill name. Say what you want, typed or dictated — "show me what's next on the roadmap", "checkpoint this session", or a command read aloud, such as "session colon end" — and the assistant works out which skill you mean and what to give it. A command you type with the slash runs as usual.
+
+For a skill that deletes, deploys or spends, the reply gives you the exact command instead of starting it. Type that command to run it. A check stops the assistant from starting a skill itself when the skill's name or description names one of those actions, or when the skill is marked to ask first or to be started only by you; it judges those words, not what the skill's steps do.
+
+This is on by default. Type `/plain` to see whether it is on and what it costs in tokens, and to switch it off or on. Switching it off leaves that check in place. More in [USER_GUIDE.md](USER_GUIDE.md#15-say-what-you-want).
 
 ## Modes
 
@@ -156,9 +186,9 @@ Entering a mode only sets it up; nothing builds until you give an explicit task.
 ├── install.ps1             — PowerShell installer; scripts/mc-setup.js — Node installer
 ├── .claude/
 │   ├── agents/             — president/ (the five faces), engineering/, product/, growth/, _org/ (role registry)
-│   ├── commands/           — the 235 skills, one .md per slash command, grouped by namespace
+│   ├── commands/           — the 239 skills, one .md per slash command, grouped by namespace
 │   ├── project/reference/  — reasoning frameworks, operational loop, sprint workflow reference
-│   └── settings.json       — compiled hook wiring (78 hooks)
+│   └── settings.json       — compiled hook wiring (71 hooks)
 ├── scripts/                — hooks/, dispatch/, sprint/, paths/, checks/, mc/ (install + release engine)
 ├── framework/              — paths registry source (framework/paths.registry.json)
 ├── _requirements/          — spec templates: canonical brief, design system, architecture, features, ops, security, testing
@@ -188,7 +218,7 @@ Browse `.claude/commands/`. The namespaces:
 | `agents`, `models`, `hooks`, `skills`, `paths`, `manifest`, `enforcement`, `events` | Managing the engine itself |
 | `bootstrap`, `portfolio`, `admin`, `cockpit`, `panel`, `guides`, `knowledge`, `playbook` | Product on-ramps, multi-product operation, founder panels, guide and knowledge libraries |
 | `growth`, `content` | Message briefs, angles, landing pages, ad creative, posts |
-| `mc` | Install, update, release, health, diagnostics of the engine (the pre-2.0.0 `warp` names remain as deprecated aliases until 2.2.0) |
+| `mc` | Install, update, release, health, diagnostics of the engine (the pre-2.0.0 `warp` names remain as deprecated aliases until 3.0.0) |
 | `commit`, `linters`, `fav`, `check` | Landing work; linters; favourites; deprecated `check:*` aliases for `scan:*` |
 
 ## Requirements system

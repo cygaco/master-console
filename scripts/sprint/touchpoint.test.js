@@ -232,6 +232,67 @@ t("no graph passed + no map file on disk -> builds one IN-PROCESS (require-graph
     fs.rmSync(bare, { recursive: true, force: true });
   }
 });
+t("a touchpoint file's sibling test IS associated into the closure (R-5 touchpoint-consumer: the consumer's test is one reverse-hop beyond the consumer)", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "tp-consumer-test-"));
+  try {
+    fs.mkdirSync(path.join(root, "scripts", "lib"), { recursive: true });
+    fs.mkdirSync(path.join(root, "scripts", "app"), { recursive: true });
+    fs.writeFileSync(path.join(root, "scripts/lib/qz-normalize.js"), '"use strict";\nmodule.exports = { normalize: (s) => String(s).trim() };\n');
+    fs.writeFileSync(path.join(root, "scripts/app/report.js"), '"use strict";\nconst { normalize } = require("../lib/qz-normalize");\nmodule.exports = { report: (n) => "Report: " + normalize(n) };\n');
+    fs.writeFileSync(path.join(root, "scripts/app/report.test.js"), '"use strict";\nconst { report } = require("./report");\nreport("x");\n');
+    const r = touchpointClosure(["scripts/lib/qz-normalize.js"], { root, depth: 1 });
+    assert.ok(r.files.includes("scripts/app/report.js"), "the consumer file is reached by the reverse edge");
+    assert.ok(r.tests.includes("scripts/app/report.test.js"), "the consumer's sibling test is associated (the fix)");
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+t("a touchpoint file with NO sibling test on disk adds nothing (fail-safe: the association is existence-checked, never fabricated)", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "tp-consumer-notest-"));
+  try {
+    fs.mkdirSync(path.join(root, "scripts", "lib"), { recursive: true });
+    fs.mkdirSync(path.join(root, "scripts", "app"), { recursive: true });
+    fs.writeFileSync(path.join(root, "scripts/lib/qz-normalize.js"), '"use strict";\nmodule.exports = { normalize: (s) => String(s).trim() };\n');
+    fs.writeFileSync(path.join(root, "scripts/app/report.js"), '"use strict";\nconst { normalize } = require("../lib/qz-normalize");\nmodule.exports = { report: (n) => normalize(n) };\n');
+    const r = touchpointClosure(["scripts/lib/qz-normalize.js"], { root, depth: 1 });
+    assert.ok(r.files.includes("scripts/app/report.js"));
+    assert.deepStrictEqual(r.tests, [], "no sibling test exists on disk → none fabricated");
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+t("GRAPH REACH: a consumer test that is NOT sibling-named is still selected (the load-bearing generality proof)", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "tp-reach-nonsibling-"));
+  try {
+    fs.mkdirSync(path.join(root, "scripts", "lib"), { recursive: true });
+    fs.mkdirSync(path.join(root, "scripts", "app"), { recursive: true });
+    fs.mkdirSync(path.join(root, "tests"), { recursive: true });
+    fs.writeFileSync(path.join(root, "scripts/lib/qz-normalize.js"), '"use strict";\nmodule.exports = { normalize: (s) => String(s).trim() };\n');
+    fs.writeFileSync(path.join(root, "scripts/app/report.js"), '"use strict";\nconst { normalize } = require("../lib/qz-normalize");\nmodule.exports = { report: (n) => normalize(n) };\n');
+    fs.writeFileSync(path.join(root, "tests/report-check.js"), '"use strict";\nconst { report } = require("../scripts/app/report");\nreport("x");\n');
+    const r = touchpointClosure(["scripts/lib/qz-normalize.js"], { root, depth: 1 });
+    assert.ok(r.tests.includes("tests/report-check.js"), `graph reach must select the NON-sibling consumer test; got ${JSON.stringify(r.tests)}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+t("STRICTLY WIDENING: base.tests ⊇ every test in base.files — the sibling fallback is never dropped", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "tp-reach-superset-"));
+  try {
+    fs.mkdirSync(path.join(root, "scripts", "lib"), { recursive: true });
+    fs.mkdirSync(path.join(root, "scripts", "app"), { recursive: true });
+    fs.writeFileSync(path.join(root, "scripts/lib/qz-normalize.js"), '"use strict";\nmodule.exports = { normalize: (s) => String(s).trim() };\n');
+    fs.writeFileSync(path.join(root, "scripts/app/report.js"), '"use strict";\nconst { normalize } = require("../lib/qz-normalize");\nmodule.exports = { report: (n) => normalize(n) };\n');
+    fs.writeFileSync(path.join(root, "scripts/app/report.test.js"), '"use strict";\nconst { report } = require("./report");\nreport("x");\n');
+    const r = touchpointClosure(["scripts/lib/qz-normalize.js"], { root, depth: 1 });
+    for (const tf of r.files.filter((f) => /\.test\.js$/.test(f))) {
+      assert.ok(r.tests.includes(tf), `base.tests must include every test in base.files (sibling fallback kept): ${tf}`);
+    }
+    assert.ok(r.tests.includes("scripts/app/report.test.js"), JSON.stringify(r.tests));
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
 t("an in-process build that THROWS still fails closed (unmapped:true, never a silent empty-green)", () => {
   const requireGraph = require("../maps/require-graph");
   const originalBuild = requireGraph.buildRequireGraph;
@@ -294,6 +355,107 @@ t("regression guard: an UNrecognized risk token does NOT force a hit on its own"
   const { securitySurfaceHit } = require("./touchpoint");
   const r = securitySurfaceHit({ files: [], risks: ["release-pipeline-but-not-exactly"], goldenPaths: { security_surface_globs: [] } });
   assert.strictEqual(r.hit, false, JSON.stringify(r));
+});
+
+function mkRoot(graphObj) {
+  const r = fs.mkdtempSync(path.join(os.tmpdir(), "tp-mapstale-"));
+  fs.mkdirSync(path.join(r, "scripts"), { recursive: true });
+  fs.writeFileSync(path.join(r, "scripts", "a.js"), "module.exports = 1;\n");
+  if (graphObj) {
+    const gp = path.join(r, ".claude", "project", "maps", "require-graph.json");
+    fs.mkdirSync(path.dirname(gp), { recursive: true });
+    fs.writeFileSync(gp, JSON.stringify(graphObj));
+  }
+  return r;
+}
+function withBuildThrow(fn) {
+  const rg = require("../maps/require-graph");
+  const orig = rg.buildRequireGraph;
+  rg.buildRequireGraph = () => {
+    throw new Error("planted build failure");
+  };
+  try {
+    return fn(rg);
+  } finally {
+    rg.buildRequireGraph = orig;
+  }
+}
+const staleGraph = {
+  generatedAt: "2000-01-01T00:00:00.000Z",
+  head: "b".repeat(40),
+  nodes: ["scripts/a.js", "scripts/stale-target.js"],
+  edges: [{ from: "scripts/a.js", to: "scripts/stale-target.js", kind: "require" }],
+  unresolved: [],
+};
+t("R-4(a) stale on-disk graph + build throw → null / map_stale closure, stale edges never used", () => {
+  const root = mkRoot(staleGraph);
+  try {
+    withBuildThrow((rg) => {
+      assert.strictEqual(rg.loadOrBuildRequireGraph(root), null);
+      const res = rg.loadOrBuildRequireGraphResult(root);
+      assert.strictEqual(res.graph, null);
+      assert.strictEqual(res.map_stale, true);
+      assert.match(res.reason, /^build_failed:/);
+      const r = touchpointClosure(["scripts/stale-target.js"], { root });
+      assert.strictEqual(r.graph_ok, false, JSON.stringify(r));
+      assert.strictEqual(r.unmapped, true);
+      assert.strictEqual(r.map_stale, true);
+      assert.match(r.map_stale_reason, /^build_failed:/);
+      assert.deepStrictEqual(r.files, []);
+      assert.deepStrictEqual(r.edges_used, [], "stale edge must not surface");
+      assert.ok(!r.files.includes("scripts/a.js"));
+    });
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+t("R-4(b) that closure reaches package:full via the existing unmapped rule (map_stale marker + unmapped_escalation)", () => {
+  const root = mkRoot(staleGraph);
+  try {
+    withBuildThrow(() => {
+      const tp = touchpointClosure(["scripts/stale-target.js"], { root });
+      const { selectPackage } = require("./gauntlet-package");
+      const hookPoints = require("./hook-points");
+      const fullRoster = hookPoints.agentsForStep("gauntlet", { change: "release", blast: "major", surfaces: ["security"], unit_types: [], max_risk: "", domains: [] });
+      const d = selectPackage({ trailer: { change: "bugfix", blast: "minor", risks: [] }, touchpoint: tp, fullRoster });
+      assert.strictEqual(d.package, "full", JSON.stringify(d));
+      assert.ok(d.reasons.includes("map_stale_fallback"), JSON.stringify(d.reasons));
+      assert.ok(d.reasons.some((x) => /^unmapped_escalation:/.test(x)), JSON.stringify(d.reasons));
+    });
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+t("R-4(c) fresh on-disk graph + build throw → graph returned, map_stale:false", () => {
+  const fresh = { ...staleGraph, generatedAt: new Date(Date.now() + 3600e3).toISOString() };
+  const root = mkRoot(fresh);
+  try {
+    withBuildThrow((rg) => {
+      const res = rg.loadOrBuildRequireGraphResult(root);
+      assert.ok(res.graph && res.graph.nodes.includes("scripts/stale-target.js"));
+      assert.strictEqual(res.map_stale, false);
+      assert.strictEqual(res.reason, null);
+    });
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+t("R-4(d) no on-disk graph + build ok → map_stale:false; supplied opts.graph → map_stale:false/null", () => {
+  const root = mkRoot(null);
+  try {
+    const rg = require("../maps/require-graph");
+    const res = rg.loadOrBuildRequireGraphResult(root);
+    assert.ok(res.graph);
+    assert.strictEqual(res.map_stale, false);
+    const r = touchpointClosure(["scripts/a.js"], { root });
+    assert.strictEqual(r.map_stale, false);
+    assert.strictEqual(r.map_stale_reason, null);
+    const r2 = touchpointClosure(["scripts/a.js"], { graph: staleGraph });
+    assert.strictEqual(r2.map_stale, false);
+    assert.strictEqual(r2.map_stale_reason, null);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });
 
 if (skips.length) console.log(`\n${skips.length} skipped:\n${skips.map((s) => `  - ${s}`).join("\n")}`);

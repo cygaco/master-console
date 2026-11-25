@@ -295,9 +295,9 @@ process.stdin.on("end", () => {
 
       if (newStore.features) {
         for (const [name, feature] of Object.entries(newStore.features)) {
-          if ((feature.fixAttempts || 0) > 3) {
+          if ((feature.fixAttempts || 0) > 2) {
             issues.push(
-              `Feature "${name}" has fixAttempts=${feature.fixAttempts} (max 3). Escalate to Lead.`,
+              `Feature "${name}" has fixAttempts=${feature.fixAttempts} (max 2). Escalate to Lead.`,
             );
           }
         }

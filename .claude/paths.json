@@ -81,6 +81,7 @@
   "dispatchCompletionsFile": ".claude/runtime/dispatch-completions.jsonl",
   "providerTmp": ".claude/runtime/.provider-tmp",
   "providerTierConfig": ".claude/runtime/provider-tier-config.json",
+  "modelSigninCache": ".claude/runtime/model-signin.json",
   "providerFallbackPolicy": ".claude/agents/president/_system/policy/provider-fallback.json",
   "sprintRoot": ".claude/project/sprint",
   "sprintCurrent": ".claude/project/sprint/current-sprint.yaml",
@@ -106,6 +107,7 @@
   "sprintSchemas": "schemas/sprint",
   "sprintReference": ".claude/project/reference/sprint-workflow.md",
   "sprintRouting": ".claude/agents/president/_system/policy/sprint-routing.json",
+  "modelPresetLog": ".claude/project/model-presets.log.jsonl",
   "orgRoleRegistry": ".claude/agents/_org/role-registry.json",
   "sprintHookPoints": ".claude/agents/_org/sprint-hook-points.json",
   "goldenPaths": "_planning/golden-paths.json",
@@ -120,7 +122,6 @@
   "portfolioCommands": ".claude/commands/portfolio",
   "portfolioScripts": "scripts/portfolio",
   "portfolioTemplates": "_mc/templates/portfolio",
-  "skillCatalog": ".claude/runtime/skill-catalog.json",
   "providerSmokeSkill": "scripts/mc/provider-smoke.js",
   "providerFailureModes": ".claude/agents/president/_system/policy/provider-failure-modes.json",
   "providerRcaLib": "scripts/mc/lib/provider-rca.js",
@@ -137,5 +138,7 @@
   "contractsSpec": "_requirements/10-contracts/ARTIFACT-CONTRACTS.md",
   "etcEvalPacks": ".claude/project/etc/eval-packs",
   "etcDecisions": "runtime/etc/decisions",
-  "etcConsults": "runtime/etc/consults"
+  "etcConsults": "runtime/etc/consults",
+  "watchDir": "runtime/watch",
+  "plainState": ".claude/runtime/plain"
 }

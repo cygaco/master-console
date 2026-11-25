@@ -7,6 +7,7 @@ const path = require("path");
 const assert = require("assert");
 const {
   _installMC,
+  _existingDirRefusal,
   _resolveInstallerRoot,
   _isValidInstallSource,
 } = require("./new-lib");
@@ -180,6 +181,28 @@ try {
     const r = _installMC(repo, { spawn: fakeSpawn, resolveRoot: () => engine });
     assert.ok(!r.ok, "not ok when no engine tree produced");
     assert.ok(/produced no engine/.test(r.error), "explains the empty-install refusal");
+  });
+
+  test("absent target folder: scaffold may proceed", () => {
+    assert.strictEqual(_existingDirRefusal(path.join(freshDir(), "nope")), null);
+  });
+  test("EMPTY existing target folder: scaffold may proceed", () => {
+    assert.strictEqual(_existingDirRefusal(freshDir()), null);
+  });
+  test("existing folder with the user's files: refused, nothing overwritten", () => {
+    const d = freshDir();
+    fs.writeFileSync(path.join(d, "notes.txt"), "mine");
+    const r = _existingDirRefusal(d);
+    assert.strictEqual(r.ok, false);
+    assert.strictEqual(r.code, 4);
+    assert.ok(/already exists/.test(r.error), "says the folder exists");
+  });
+  test("leftovers of a failed scaffold: refused with the partial-scaffold message", () => {
+    const d = freshDir();
+    fs.writeFileSync(path.join(d, "README.md"), "# x");
+    const r = _existingDirRefusal(d);
+    assert.strictEqual(r.code, 4);
+    assert.ok(/partial-scaffold/.test(r.error), "names the partial scaffold");
   });
 } finally {
   try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { }

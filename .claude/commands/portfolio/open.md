@@ -1,11 +1,5 @@
 ---
 description: Open a registered portfolio product — print its path and a cd hint, or spawn a new terminal window with --spawn.
-says:
-  - open the product
-  - switch to the product
-  - portfolio open
-  - go to product
-says-args: topic
 ---
 
 # /portfolio:open — Open a Portfolio Product

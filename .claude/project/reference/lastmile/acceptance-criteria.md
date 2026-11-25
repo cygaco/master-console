@@ -7,7 +7,7 @@
 
 | # | Acceptance criterion | verified_by |
 |---|---|---|
-| AC-1 | Exists + follows MC command/skill conventions | `.claude/commands/bootstrap/lastmile.md` frontmatter (description + user-invocable) ; appears in `.claude/runtime/skill-catalog.json` ; mirrors `bootstrap:spinup` (single-file skill + `scripts/bootstrap/lastmile/` engine) |
+| AC-1 | Exists + follows MC command/skill conventions | `.claude/commands/bootstrap/lastmile.md` frontmatter (description + user-invocable) ; appears in the plain-language skill map ; mirrors `bootstrap:spinup` (single-file skill + `scripts/bootstrap/lastmile/` engine) |
 | AC-2 | Runs in a product repo → Last-Mile Gap Report + readiness score | `scripts/bootstrap/lastmile/phases/audit.js` ; `test-orchestrate.js` :: "audit: writes gap-report.md product-side (non-dry-run)" + "audit: returns score + 8 module detections" |
 | AC-3 | Generates sprint-ready roadmap items, not just advice | `phases/inject.js` (needs_orchestration → `/sprint:plan` + `/roadmap:add`) ; `test-orchestrate.js` :: "inject: needs_orchestration with a concrete prompt" |
 | AC-4 | Dispatches/recommends implementation sprints via existing workflow | `phases/execute.js` ; `test-orchestrate.js` :: "execute: needs_orchestration" |

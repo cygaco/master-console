@@ -1,11 +1,5 @@
 ---
 description: Create a new skill from a description — supports simple, multi-phase, and parallel workflows
-says:
-  - create a skill
-  - make a new skill
-  - new skill for
-  - skills create
-says-args: free-text
 ---
 
 # /skill:create — Create a New Skill
@@ -135,34 +129,11 @@ Read the created file(s) back. Confirm:
 Report: "Created `/namespace:name` — N steps. Try it with `/namespace:name`."
 For subcommanded: "Created `/namespace` — N subcommands: `:sub1`, `:sub2`, `:sub3`."
 
-## Spoken triggers — the `says:` frontmatter (operator-facing skills)
+## Plain-language routing (no phrase lists)
 
-Operator-facing skills (explicit `user-invocable: true`) carry a `says:` block so a dictated sentence ("wrap up the session") routes to the skill without the operator remembering its slug. This section is the authoring summary.
-
-```yaml
----
-description: ...
-user-invocable: true
-says:
-  - wrap up the session
-  - end the session
-  - session end
-says-flags:
-  quick: --quick
-says-args: none
-says-confirm: never
----
-```
-
-Rules:
-
-- `says` holds 3–6 phrases. Each is lowercase, 2–8 words, letters/digits/apostrophes/spaces only — no commas, colons, slashes, or hyphens (the dictated form never has them).
-- Put the natural sentence first and the slug spoken plainly ("session end") as one phrase. Add a mangled-dictation variant only when fuzzy matching would not catch it.
-- Phrases must be unique across the whole catalog. A phrase that maps to two skills is a lint failure, not a runtime tie.
-- `says-flags` maps a spoken form to a flag the skill body actually documents. Never invent a flag.
-- `says-args` is `none` (default), `free-text` (remainder passes verbatim as `$ARGUMENTS`), or `topic` (one quoted topic).
-- `says-confirm: always` (or `fuzzy-only`) is REQUIRED when the slug or a documented flag matches push, remote, land, deploy, release, delete, uninstall, authoriz, purchase, turbo, or force. Voice never lowers an autonomy ceiling. `fuzzy-only` applies to the permission-widening family (`mode:*`, `sprint:full`, `session:turbo`, `turbo`): an explicit, exactly-spoken name runs directly (HIGH); a fuzzy match, or the widening flag surfacing as a secondary modifier on another skill, asks one line first (MEDIUM).
-- Alias/forwarder skills (description starts `[alias →` or `[deprecated alias →`) must NOT carry `says:`.
-- Preserve every existing frontmatter key. Claude Code ignores unknown keys, so `says:` is harness-safe.
-
-Enforcer: `scripts/checks/skill-says-lint.js`.
+The plain-language hooks route a plain-words request from the skill file itself: its name, its
+`description` (first sentence first), `when_to_use` and `argument-hint`. Write those so a person's
+own words match them; there is no phrase list to maintain. A skill whose name or description
+says it deletes, deploys or spends, or whose frontmatter carries `confirm-first`, `ask-first` or
+`disable-model-invocation`, is marked "~": the model never starts it and gives the person the
+command to type. The word list and the flag keys live in `scripts/hooks/lib/plain/risk.js`.

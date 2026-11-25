@@ -16,14 +16,10 @@ const MAPPING = {
   ],
   gated: [
     {
-      scope: "push-to-main",
-      basis:
-        "the classifier sits above permissions.allow and gates push on per-action intent.",
-      evidence: "empirical observation",
-    },
-    {
       scope: "merge-to-main",
-      basis: "the push that lands a merge to the default branch is classifier-gated for the same reason.",
+      basis:
+        "the push that lands a merge to the default branch is classifier-gated: the classifier sits above permissions.allow and reads push trust only from the user settings (turbo grants no push).",
+      evidence: "empirical observation",
     },
     {
       scope: "force-push-main",
@@ -56,7 +52,7 @@ function buildMapping() {
     detail: MAPPING,
     provenance:
       "Empirically proven. " +
-      "Refresh by attempting one push-to-main under an active Bash(git push *) allow rule.",
+      "Refresh by attempting one push to the default branch under an active Bash(git push *) allow rule.",
   };
 }
 

@@ -9,10 +9,11 @@ description: >-
   from the shared base and the Director of Growth's domain principles.
 tools: [Read, Grep, Glob]
 provider: openai
-provider_model: gpt-6-sol
-model: gpt-6-sol
+provider_model: gpt-6.2-sol
+model: claude-opus-5-5
 provider_reasoning_effort: xhigh
 layer: growth
+effort: xhigh
 ---
 
 # Alex — Conversion Lead (under the Director of Growth)

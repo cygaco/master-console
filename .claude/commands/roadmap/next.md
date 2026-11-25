@@ -1,12 +1,5 @@
 ---
-description: The 1-idea alternative to /roadmap:ideas — the single highest-leverage next roadmap entry (the role-appropriate product persona's top pick — Product Lead for single-product, Director of Product for strategic) with a one-paragraph rationale. For "just tell me the one thing."
-says:
-  - what's next
-  - what's on the docket
-  - tell me what's on the docket
-  - what should we do next
-  - the one next thing
-  - roadmap next
+description: Tell me the one thing to do next on the roadmap — the single highest-leverage next roadmap entry (the role-appropriate product persona's top pick — Product Lead for single-product, Director of Product for strategic) with a one-paragraph rationale. Read-only; the 1-idea alternative to /roadmap:ideas.
 ---
 
 # /roadmap:next — the one thing to do next

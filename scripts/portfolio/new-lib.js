@@ -52,23 +52,8 @@ function createProductRepo(opts) {
 
   const repoPath = path.resolve(parentDir || path.resolve(MC_ROOT, ".."), slug);
 
-  if (fs.existsSync(repoPath)) {
-    const allowedLeftovers = new Set([".git", ".gitignore", "README.md", ".claude"]);
-    let partialScaffold = false;
-    try {
-      const existing = fs.readdirSync(repoPath);
-      partialScaffold = existing.length > 0 && existing.every((e) => allowedLeftovers.has(e));
-    } catch { }
-    if (partialScaffold) {
-      return {
-        ok: false, code: 4,
-        error:
-          `Directory ${repoPath} exists with only partial-scaffold contents from a prior failed run. ` +
-          `Remove it (rm -rf "${repoPath}") and re-run, or use /portfolio:register to register it as-is.`,
-      };
-    }
-    return { ok: false, code: 4, error: `Directory already exists: ${repoPath}. Remove it first or use /portfolio:register.` };
-  }
+  const refusal = _existingDirRefusal(repoPath);
+  if (refusal) return refusal;
 
   log(`scaffolding ${slug} at ${repoPath}... running /mc:setup... done.`);
   fs.mkdirSync(repoPath, { recursive: true });
@@ -161,6 +146,24 @@ function createProductRepo(opts) {
   });
 
   return { ok: true, repoPath, githubUrl, slug };
+}
+
+function _existingDirRefusal(repoPath) {
+  if (!fs.existsSync(repoPath)) return null;
+  let existing = null;
+  try { existing = fs.readdirSync(repoPath); } catch { }
+  if (existing && existing.length === 0) return null;
+  const allowedLeftovers = new Set([".git", ".gitignore", "README.md", ".claude"]);
+  const partialScaffold = !!existing && existing.every((e) => allowedLeftovers.has(e));
+  if (partialScaffold) {
+    return {
+      ok: false, code: 4,
+      error:
+        `Directory ${repoPath} exists with only partial-scaffold contents from a prior failed run. ` +
+        `Remove it (rm -rf "${repoPath}") and re-run, or use /portfolio:register to register it as-is.`,
+    };
+  }
+  return { ok: false, code: 4, error: `Directory already exists: ${repoPath}. Remove it first or use /portfolio:register.` };
 }
 
 function _copyTemplates(srcDir, destDir, slugVal) {
@@ -438,6 +441,7 @@ module.exports = {
   scaffoldProductApp,
   validateSlug,
   _installMC,
+  _existingDirRefusal,
   _resolveInstallerRoot,
   _isValidInstallSource,
   SLUG_RE,

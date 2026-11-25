@@ -33,28 +33,24 @@ Builder produces code
       Security scans (Claude)
   → Collect ALL results
   → ALL PASS → calculate points → mark done
-  → ANY FAIL → merge failures into unified fix brief
-    → Fix Agent addresses ALL issues in one pass (max 3 attempts)
-    → Snapshot diff: compare pre-fix and post-fix file hashes
-    → Targeted re-review (only reviewers whose files changed):
-        - Files that FAILED a reviewer + were changed → that reviewer re-checks ONLY those files
-        - Files that PASSED a reviewer + were changed → REGRESSION CHECK: that reviewer re-checks ONLY those files
-        - Files that PASSED a reviewer + were NOT changed → SKIP (snapshot proves no regression)
-        - Security: ALWAYS re-runs (non-negotiable, but scoped to changed files)
-    → ALL PASS → calculate points → mark done
-    → ANY FAIL → next fix attempt (up to 3 total)
-      → 3 failures → ops-analyst analyzes pattern
+  → Hold-class finding (outsider-usable security hole, data loss, false claim about a user's data)
+    → holds only that unit; every other finding → one known-issues row, fixed afterwards
+    → Fix Agent addresses the hold-class findings in one pass
+    → Check the fix against the finding it answers (the reviewer that raised it, changed files only)
+    → PASS → mark done
+    → still failing → a second round only with a product reason in one sentence; then set the unit aside
 ```
+
+Rules, and the items never deferred (personal content, the security read before anything goes public, passing tests): `paths.decisionPolicy` § Review and hold rules.
 
 ### Why this works
 
 | Problem                             | How parallel gauntlet solves it                                           |
 | ----------------------------------- | ------------------------------------------------------------------------- |
-| Compliance fix breaks the feature   | Evaluator re-checks changed files via regression tripwire                 |
-| Security fix introduces new bug     | Evaluator re-checks changed files via regression tripwire                 |
 | Sequential reviews waste wall clock | All 3 run in parallel — 3x faster                                         |
-| Fix agent fixes one thing at a time | Unified fix brief addresses all failures in one pass                      |
-| Full re-review after small fix      | Snapshot diff skips unchanged files — only re-review what the fix touched |
+| Fix agent fixes one thing at a time | Unified fix brief addresses all hold-class findings at once                     |
+| Full re-review after small fix      | The fix is checked against its finding only                               |
+| One failing unit stalls the rest    | A finding holds only the unit it blames                                   |
 
 ### Pipeline parallelism (overlaps that cut wall clock)
 
@@ -97,9 +93,8 @@ no API keys, no model config in this layer — each tool handles its own setup).
 A review is a single tool call with a prompt that instructs the tool to write its JSON result to
 a file (matching the result schema); the orchestrator then reads and parses that file.
 
-**Dispatch shape (current).** In adhoc mode (`gamma`), dispatches are sequential via the bounded
-CLI wrappers. In oneshot mode (`delta`) — or when the orchestrator dispatches directly — calls can
-fan out in parallel. (For the authoritative CLI-vs-API and wrapper-shape rules, defer to the
+**Dispatch shape (current).** In every mode the independent readers fan out in parallel, each
+through the bounded CLI wrappers. (For the authoritative CLI-vs-API and wrapper-shape rules, defer to the
 agent-dispatch guide; this doc only states the gauntlet's use of cross-provider review.)
 
 **Fallback chain.** If the configured command fails (not installed, rate-limited, errors out):
@@ -121,41 +116,35 @@ file in the feature's scope. After a fix, the orchestrator diffs the snapshot:
 
 | File state                       | Action                                                      |
 | -------------------------------- | ----------------------------------------------------------- |
-| File was NOT reviewed (new file) | ALL 3 reviewers check it                                    |
+| File was NOT reviewed (new file) | The reviewer whose finding the fix answers checks it against that finding |
 | File PASSED review + NOT changed | Skip — snapshot proves no regression                        |
-| File PASSED review + WAS changed | Regression check — the reviewer that passed it re-checks it |
-| File FAILED review + WAS changed | Re-check — the reviewer that failed it re-checks it         |
-| File FAILED review + NOT changed | Still fails — count as another failed attempt               |
+| File PASSED review + WAS changed | Skip — only the answered finding is checked                 |
+| File FAILED review + WAS changed | The reviewer that raised the finding checks the fix against it |
+| File FAILED review + NOT changed | Still held — the finding is unanswered                      |
 
 ---
 
 ## unified-fix-brief
 
 Instead of separate fix passes for eval, compliance, and security, the fix agent receives ONE
-brief that merges all failures, so it addresses everything in a single pass:
+brief that merges all hold-class findings, so it addresses them in a single pass:
 
 ```
 ## Fix Brief for: account-settings
 
-### Evaluator Failures
-- ProfileForm.tsx: no error state when the save request fails (line 45-60)
-- AvatarUpload.tsx: progress indicator not rendered while the upload runs
+### Hold-class findings
+- AvatarUpload.tsx (Security): accepts any file type without server-side validation
 
-### Compliance Failures
-- Check 3 (spec compliance): GS-XXX-NN acceptance criteria "save progress visible on every field" — no progress indicator found
-
-### Security Failures
-- AvatarUpload.tsx: accepts any file type without server-side validation
-
-Fix ALL of the above. Do not fix them separately.
-Files in scope: ProfileForm.tsx, AvatarUpload.tsx, SaveStatus.tsx
+Fix the finding above in one pass. The reviewers' other findings (no error state on a failed save,
+no upload progress indicator, the spec's progress criterion) are known-issues rows, fixed afterwards.
+Files in scope: AvatarUpload.tsx
 ```
 
 This typically reduces fix cycles from 3+ (one per reviewer) to 1.
 
-**Hard rule:** maximum **3 fix attempts** per unified brief. After 3 failures, `ops-analyst` takes
-over — it either patches the environment (spec / lint rule / hygiene doc) or escalates to the user.
-Agents NEVER loop indefinitely.
+**Hard rule:** two rounds at most per unit, the second needing a product reason in one sentence.
+A unit still held after that is set aside as a roadmap row whose first sentence says what is broken;
+`ops-analyst` may patch the environment (spec / lint rule / hygiene doc). Agents NEVER loop indefinitely.
 
 ---
 
@@ -215,8 +204,8 @@ interface Store {
 
 ```
 Issue occurs
-  → Fix Agent handles it (attempts 1-3)
-    → Still failing after 3 attempts?
+  → Fix Agent handles it (two rounds at most)
+    → Still failing after the second round? Set the unit aside; the rest goes on.
       → ops-analyst analyzes the pattern:
         → Spec is ambiguous       → ops-analyst patches spec, orchestrator re-dispatches
         → Instrumentation missing → ops-analyst adds lint rule or test
@@ -237,8 +226,8 @@ The circuit breaker protects the system from cascading failures.
 ### States
 
 ```
-CLOSED (normal)   → 3 consecutive failures on same step → OPEN
-OPEN (stopped)    → 30s cooldown                        → HALF-OPEN
+CLOSED (normal)   → 3 consecutive errors on one call      → OPEN (that call only)
+OPEN (paused)     → 30s cooldown                        → HALF-OPEN
 HALF-OPEN (probe) → success                             → CLOSED
 HALF-OPEN (probe) → failure                             → OPEN (double cooldown)
 ```
@@ -253,7 +242,8 @@ expected to take longer; all other statuses should transition within minutes.
 
 - **HTTP 402** — budget exhausted. Halt entire run. Surface the purchase/top-up flow to the user.
 - **HTTP 401** — auth expired. Halt entire run. Surface re-login to the user.
-- **5 total failures** across any steps in a single run — halt entire run.
+
+A count of unit failures never halts a run; a failing unit is set aside and the rest goes on.
 
 ### Special cases
 

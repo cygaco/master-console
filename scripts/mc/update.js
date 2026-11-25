@@ -385,6 +385,13 @@ function backupFile(targetRoot, txDir, relPath) {
   return dest;
 }
 
+function freeSibling(root, rel) {
+  if (!fs.existsSync(path.join(root, rel))) return rel;
+  let n = 2;
+  while (fs.existsSync(path.join(root, `${rel}.${n}`))) n++;
+  return `${rel}.${n}`;
+}
+
 function ensureDir(p) {
   fs.mkdirSync(p, { recursive: true });
 }
@@ -397,6 +404,12 @@ function flattenSourceAssets(manifest) {
     }
   }
   return out;
+}
+
+function keepLocalOwnerClass(dest) {
+  const d = String(dest || "").replace(/\\/g, "/");
+  if (/\.md$/i.test(d)) return "content";
+  return "engine";
 }
 
 function applyUpdateDecisions(
@@ -419,9 +432,13 @@ function applyUpdateDecisions(
     skipped_no_op: 0,
     errors: 0,
     backups: 0,
+    local_kept: 0,
+    local_took_target: 0,
   };
   const errors = [];
   const perFile = [];
+  const savedConflicts = [];
+  const localOverrides = [];
 
   const sourceAssets = flattenSourceAssets(capsuleManifest);
 
@@ -478,6 +495,71 @@ function applyUpdateDecisions(
           break;
         }
         case "MERGE_CONFLICT": {
+          if (opts.keepLocal) {
+            const asset = sourceAssets.get(d.dest);
+            const srcAbs = asset ? path.join(sourceTreeRoot, asset.src) : null;
+            if (fs.existsSync(dstAbs) && srcAbs && fs.existsSync(srcAbs)) {
+              const cls = keepLocalOwnerClass(d.dest);
+              const installedHash = cHash.contentHash(dstAbs);
+              const incomingHash = cHash.contentHash(srcAbs);
+              if (cls === "content") {
+                const sibling = freeSibling(targetRoot, `${d.dest}.mc-new`);
+                const sibAbs = path.join(targetRoot, sibling);
+                ensureDir(path.dirname(sibAbs));
+                fs.copyFileSync(srcAbs, sibAbs);
+                counts.local_kept += 1;
+                localOverrides.push({
+                  path: d.dest, class: "content", action: "kept-local",
+                  installedHash, incomingHash, sibling,
+                  newerAvailable: installedHash !== incomingHash,
+                  recordedAt: new Date().toISOString(),
+                });
+                perFile.push({ dest: d.dest, status: "kept_local", category: d.category, reason: `local kept live; incoming written beside as ${sibling}` });
+              } else {
+                const fromV = opts.fromVersion || "local";
+                const sibling = freeSibling(targetRoot, `${d.dest}.local-${fromV}`);
+                const sibAbs = path.join(targetRoot, sibling);
+                ensureDir(path.dirname(sibAbs));
+                fs.copyFileSync(dstAbs, sibAbs);
+                backupFile(targetRoot, txDir, d.dest);
+                counts.backups += 1;
+                ensureDir(path.dirname(dstAbs));
+                fs.copyFileSync(srcAbs, dstAbs);
+                counts.local_took_target += 1;
+                localOverrides.push({
+                  path: d.dest, class: "engine", action: "took-target",
+                  installedHash, incomingHash, sibling,
+                  newerAvailable: false,
+                  recordedAt: new Date().toISOString(),
+                });
+                perFile.push({ dest: d.dest, status: "took_target_saved_local", category: d.category, reason: `target version applied; local saved as ${sibling}` });
+              }
+              break;
+            }
+          }
+          if (opts.saveConflicts && opts.conflictsDir) {
+            const asset = sourceAssets.get(d.dest);
+            const srcAbs = asset ? path.join(sourceTreeRoot, asset.src) : null;
+            if (fs.existsSync(dstAbs) && srcAbs && fs.existsSync(srcAbs)) {
+              let savedAbs = path.join(opts.conflictsDir, d.dest);
+              if (fs.existsSync(savedAbs)) {
+                let n = 2;
+                while (fs.existsSync(`${savedAbs}.${n}`)) n++;
+                savedAbs = `${savedAbs}.${n}`;
+              }
+              ensureDir(path.dirname(savedAbs));
+              fs.copyFileSync(dstAbs, savedAbs);
+              backupFile(targetRoot, txDir, d.dest);
+              counts.backups += 1;
+              ensureDir(path.dirname(dstAbs));
+              fs.copyFileSync(srcAbs, dstAbs);
+              const savedRel = path.relative(targetRoot, savedAbs).replace(/\\/g, "/");
+              counts.conflicts_saved = (counts.conflicts_saved || 0) + 1;
+              savedConflicts.push({ dest: d.dest, savedTo: savedRel });
+              perFile.push({ dest: d.dest, status: "conflict_saved", category: d.category, reason: `local saved to ${savedRel}; target version applied` });
+              break;
+            }
+          }
           counts.merge_conflicts_held += 1;
           perFile.push({ dest: d.dest, status: "conflict", category: d.category, reason: d.reason || "" });
           break;
@@ -511,6 +593,27 @@ function applyUpdateDecisions(
           break;
         }
         case "DELETE_CONFLICT": {
+          if (opts.keepLocal && fs.existsSync(dstAbs)) {
+            const fromV = opts.fromVersion || "local";
+            const sibling = freeSibling(targetRoot, `${d.dest}.local-${fromV}`);
+            const sibAbs = path.join(targetRoot, sibling);
+            const installedHash = cHash.contentHash(dstAbs);
+            ensureDir(path.dirname(sibAbs));
+            fs.copyFileSync(dstAbs, sibAbs);
+            backupFile(targetRoot, txDir, d.dest);
+            counts.backups += 1;
+            fs.unlinkSync(dstAbs);
+            counts.deleted += 1;
+            counts.local_took_target += 1;
+            localOverrides.push({
+              path: d.dest, class: "engine", action: "deleted-saved-local",
+              installedHash, incomingHash: null, sibling,
+              newerAvailable: false,
+              recordedAt: new Date().toISOString(),
+            });
+            perFile.push({ dest: d.dest, status: "delete_conflict_saved", category: d.category, reason: `removed in target; local saved as ${sibling}` });
+            break;
+          }
           counts.skipped_no_op += 1;
           perFile.push({ dest: d.dest, status: "delete_conflict", category: d.category, reason: d.reason || "" });
           break;
@@ -534,7 +637,7 @@ function applyUpdateDecisions(
     }
   }
 
-  return { ok: counts.errors === 0, counts, errors, perFile };
+  return { ok: counts.errors === 0, counts, errors, perFile, savedConflicts, localOverrides };
 }
 
 function buildInstalledSnapshot(
@@ -582,6 +685,13 @@ function buildInstalledSnapshot(
     : [];
   const userModified = Array.from(new Set([...priorUserModified, ...newlyUserModified])).sort();
 
+  const priorOverrides = (prior && Array.isArray(prior.localOverrides)) ? prior.localOverrides : [];
+  const newOverrides = (applyResult && Array.isArray(applyResult.localOverrides)) ? applyResult.localOverrides : [];
+  const overrideByPath = new Map();
+  for (const o of priorOverrides) if (o && o.path) overrideByPath.set(o.path, o);
+  for (const o of newOverrides) if (o && o.path) overrideByPath.set(o.path, o);
+  const localOverrides = Array.from(overrideByPath.values()).sort((a, b) => a.path.localeCompare(b.path));
+
   const targetVersionJson = readJSON(path.join(targetRoot, "version.json"), {});
   const derivedPathRegistryVersion =
     (String(targetVersionJson.pathRegistrySchema || "").match(/v\d+$/) || [])[0] || "v5";
@@ -610,6 +720,7 @@ function buildInstalledSnapshot(
     applyCounts: applyResult.counts,
     migrationsApplied,
     userModified,
+    localOverrides,
   };
 }
 
@@ -875,38 +986,35 @@ async function run(opts) {
   };
 
   if (dryRun) {
-    return {
+    const asRow = (d) => ({ id: d.id, dest: d.dest, category: d.category, reason: d.reason });
+    const result = {
       ok: true,
       mode: "dry-run",
       report,
       sample: {
-        A: byClass.A.slice(0, 5).map((d) => ({
-          id: d.id,
-          dest: d.dest,
-          category: d.category,
-        })),
-        B: byClass.B.slice(0, 5).map((d) => ({
-          id: d.id,
-          dest: d.dest,
-          category: d.category,
-        })),
-        C: byClass.C.slice(0, 5).map((d) => ({
-          id: d.id,
-          dest: d.dest,
-          category: d.category,
-        })),
+        A: byClass.A.slice(0, 5).map(asRow),
+        B: byClass.B.slice(0, 5).map(asRow),
+        C: byClass.C.slice(0, 5).map(asRow),
       },
     };
+    if (opts.fullPlan) {
+      result.fullPlan = {
+        A: byClass.A.map(asRow),
+        B: byClass.B.map(asRow),
+        C: byClass.C.map(asRow),
+      };
+    }
+    return result;
   }
 
-  if (byClass.C.length > 0) {
+  if (byClass.C.length > 0 && !opts.saveConflicts && !opts.keepLocal) {
     const offenders = byClass.C.slice(0, 10).map(
       (d) => `${d.category}: ${d.dest}`,
     );
     return {
       ok: false,
       mode: "apply",
-      error: `ESCALATE: ${byClass.C.length} Class C item(s) must be resolved before --apply. Sample:\n  ${offenders.join("\n  ")}`,
+      error: `ESCALATE: ${byClass.C.length} Class C item(s) must be resolved before --apply. Sample:\n  ${offenders.join("\n  ")}\n  (re-run with --keep-local to resolve each by ownerClass keeping both versions — content stays local with a .mc-new sibling, engine takes the target with a .local-<v> sibling — or --save-conflicts to save each local copy aside and take the target version; never a silent overwrite.)`,
       report,
     };
   }
@@ -922,6 +1030,9 @@ async function run(opts) {
       allowStale: !!opts.allowStale,
       forceFresh: !!opts.forceFresh,
       allowVersionDrift: !!opts.allowVersionDrift,
+      operatorOverrides: opts.operatorOverrides,
+      overrideReason: opts.overrideReason,
+      operator: opts.operator,
       allRed: diagnostic,
     });
     if (!preflightReport.ok) {
@@ -936,6 +1047,9 @@ async function run(opts) {
             allowStale: !!opts.allowStale,
             forceFresh: !!opts.forceFresh,
             allowVersionDrift: !!opts.allowVersionDrift,
+            operatorOverrides: opts.operatorOverrides,
+            overrideReason: opts.overrideReason,
+            operator: opts.operator,
             allRed: true,
           });
         } catch {
@@ -1009,6 +1123,9 @@ async function run(opts) {
         allowStale: !!opts.allowStale,
         forceFresh: !!opts.forceFresh,
         allowVersionDrift: !!opts.allowVersionDrift,
+        operatorOverrides: opts.operatorOverrides,
+        overrideReason: opts.overrideReason,
+        operator: opts.operator,
         skipFastPreflight: !!opts.skipPreflight,
       });
       txId = txBegin.txId;
@@ -1036,8 +1153,24 @@ async function run(opts) {
       txDir,
       {
         confirmDeletes: !!opts.confirmDeletes,
+        saveConflicts: !!opts.saveConflicts,
+        conflictsDir: opts.saveConflicts
+          ? path.join(targetRoot, ".mc", `pre-${target}-conflicts`)
+          : null,
+        keepLocal: !!opts.keepLocal,
+        fromVersion,
       },
     );
+    if (opts.keepLocal && txDir && Array.isArray(applyResult.localOverrides)) {
+      for (const o of applyResult.localOverrides) {
+        if (o && o.sibling) {
+          transactionModule.recordDelta(txDir, { kind: "keep-local-sibling", dest: o.sibling });
+        }
+        if (o && o.class === "engine" && o.path) {
+          transactionModule.recordDelta(txDir, { kind: "keep-local-engine-restore", dest: o.path });
+        }
+      }
+    }
     if (!applyResult.ok) {
       const firstErr = (applyResult.errors && applyResult.errors[0]) || {
         dest: "<unknown>",
@@ -1625,6 +1758,32 @@ if (require.main === module) {
     });
     return;
   }
+  const operatorOverrides = new Set();
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--operator-override" && i + 1 < args.length) {
+      operatorOverrides.add(args[i + 1]);
+    }
+  }
+  for (const g of operatorOverrides) {
+    if (!preflightModule.KNOWN_GATE_NAMES.has(g)) {
+      console.error(
+        `unknown gate "${g}" for --operator-override. Valid: ${[...preflightModule.KNOWN_GATE_NAMES].sort().join(", ")}`,
+      );
+      process.exit(2);
+    }
+  }
+  let overrideReason = null;
+  if (operatorOverrides.size > 0) {
+    overrideReason = preflightModule.validateOverrideReason(
+      get("--override-reason"),
+    );
+    if (!overrideReason) {
+      console.error(
+        '--operator-override requires --override-reason "<text>" (8-500 chars after trim). No override applied.',
+      );
+      process.exit(2);
+    }
+  }
   const opts = {
     to: get("--to"),
     apply: args.includes("--apply"),
@@ -1647,6 +1806,12 @@ if (require.main === module) {
       args.includes("--accept-local-drift"),
     diagnostic: args.includes("--diagnostic"),
     allRed: args.includes("--all-red"),
+    fullPlan: args.includes("--full-plan"),
+    saveConflicts: args.includes("--save-conflicts"),
+    keepLocal: args.includes("--keep-local"),
+    operatorOverrides,
+    overrideReason,
+    operator: get("--operator") || null,
   };
   if (!opts.to) {
     console.error(
@@ -1692,8 +1857,25 @@ if (require.main === module) {
       if (isApply) {
         console.log("");
         console.log(
-          `Apply: added=${ac.added} repaired=${ac.updated} unchanged=${ac.unchanged || 0} conflict=${ac.merge_conflicts_held} deleted=${ac.deleted} (skipped=${ac.deletes_skipped}) kept-modified=${ac.kept_modified || 0} kept-unverified=${ac.kept_unverified || 0} backups=${ac.backups} no-op=${ac.skipped_no_op} errors=${ac.errors}`,
+          `Apply: added=${ac.added} repaired=${ac.updated} unchanged=${ac.unchanged || 0} conflict=${ac.merge_conflicts_held} conflict-saved=${ac.conflicts_saved || 0} kept-local=${ac.local_kept || 0} took-target=${ac.local_took_target || 0} deleted=${ac.deleted} (skipped=${ac.deletes_skipped}) kept-modified=${ac.kept_modified || 0} kept-unverified=${ac.kept_unverified || 0} backups=${ac.backups} no-op=${ac.skipped_no_op} errors=${ac.errors}`,
         );
+        const saved = r.apply.savedConflicts || [];
+        if (saved.length) {
+          console.log("");
+          console.log(`Saved ${saved.length} conflicted local copy(ies) aside before applying the target version (review and re-apply your customizations):`);
+          for (const s of saved) console.log(`  ${s.dest}  ->  ${s.savedTo}`);
+        }
+        const overrides = r.apply.localOverrides || [];
+        if (overrides.length) {
+          const kept = overrides.filter((o) => o.action === "kept-local");
+          const took = overrides.filter((o) => o.action === "took-target");
+          const newer = kept.filter((o) => o.newerAvailable).length;
+          console.log("");
+          console.log(`Local overrides (--keep-local): ${overrides.length} total — ${kept.length} content file(s) kept local (${newer} with a newer framework version available as .mc-new), ${took.length} engine file(s) took the target version (your copy saved as .local-<v>). Listed by /mc:doctor.`);
+          for (const o of overrides) {
+            console.log(`  [${o.class}/${o.action}] ${o.path}  ->  ${o.sibling}`);
+          }
+        }
         const perFile = r.apply.perFile || [];
         const verboseFiles = process.argv.includes("--verbose-files");
         const interesting = perFile.filter((p) => p.status !== "unchanged");
@@ -1821,6 +2003,7 @@ module.exports = {
   planClass,
   summarize,
   applyUpdateDecisions,
+  keepLocalOwnerClass,
   findRepoRootFromCapsule,
   discoverCanonical,
   loadCapsule,

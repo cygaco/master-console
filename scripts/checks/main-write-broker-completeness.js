@@ -57,6 +57,11 @@ const ALLOWLIST = Object.freeze({
     reason:
       "One-off smoke script. Creates its OWN throwaway repo (mkdtempSync -> `git init -b main`) and commits there; it never touches this repository's main.",
   },
+  "scripts/sprint/lean-differential.js": {
+    kind: "scratch",
+    reason:
+      "R-5 lean-vs-current differential runner. Every git init/commit it performs is inside a per-case throwaway repo (mkdtempSync -> `git init -b main`, loadCase/runSuite) for seeded-defect mutation testing; it never writes this repository's main. Flagged by the conservative recognizer because it SELECTS main (passes defaultBranch:\"main\" to the selector seam) and commits in its scratch repos.",
+  },
   ".claude/commands/karpathy/integrate.md": {
     kind: "non-main",
     reason:
@@ -90,7 +95,7 @@ const ALLOWLIST = Object.freeze({
   ".claude/commands/session/turbo.md": {
     kind: "doc-prose",
     reason:
-      "Guidance doc describing turbo-close ff-merge + a push-to-main opt-in; not an executable call-site. Allowlisted.",
+      "Guidance doc describing the turbo-close ff-merge; not an executable call-site. Allowlisted.",
   },
   ".claude/commands/mc/release.md": {
     kind: "doc-prose",

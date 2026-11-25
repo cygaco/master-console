@@ -861,6 +861,117 @@ test("CLI: --roles + --since (no sprint/until) -> NOT refused (has window)", () 
   assert.notStrictEqual(r.status, 2, `Should NOT exit 2 (has --since); got ${r.status} stderr=${r.stderr}`);
 });
 
+{
+  const nowIso = new Date().toISOString();
+  const sinceMs = Date.now() - 60_000;
+  const rec = (provider, extra = {}) => ({ role: "security-reviewer", ok: true, provider, model: "m", completed_at: nowIso, panel_run_id: "p1", ...extra });
+  const verify = (records, extra = {}) => verifyGauntlet({ roles: ["security-reviewer"], since: sinceMs, records, ...extra });
+  const row = (res) => res.roles[0];
+
+  test("diversity: roles unlisted and unclaimed are reported exactly as before (no diversity field)", () => {
+    const res = verify([rec("claude")]);
+    assert.strictEqual(res.ok, true);
+    assert.strictEqual(Object.prototype.hasOwnProperty.call(row(res), "diversity"), false);
+  });
+  test("diversity: requireMultiLabRoles + two labs in one review → satisfied, derived multi-lab", () => {
+    const res = verify([rec("openai"), rec("claude")], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, true);
+    assert.strictEqual(row(res).diversity, "multi-lab");
+    assert.strictEqual(row(res).status, "ran");
+  });
+  test("diversity FALSIFIER: Claude-only records never satisfy a multi-lab role (status claude-only, ok false)", () => {
+    const res = verify([rec("claude")], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, false);
+    assert.strictEqual(row(res).status, "claude-only");
+    assert.strictEqual(row(res).satisfied, false);
+    assert.deepStrictEqual(res.missingRoles, ["security-reviewer"]);
+  });
+  test("diversity: a Claude-only result carrying the honest claude-only label is reported claude-only, still not multi-lab", () => {
+    const res = verify([rec("claude", { diversity: "claude-only" })], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, false);
+    assert.strictEqual(row(res).status, "claude-only");
+    assert.strictEqual(row(res).diversity, "claude-only");
+  });
+  test("diversity: without the requirement a Claude-only role keeps today's liveness meaning (ran)", () => {
+    const res = verify([rec("claude", { diversity: "claude-only" })]);
+    assert.strictEqual(res.ok, true);
+    assert.strictEqual(row(res).status, "ran");
+    assert.strictEqual(row(res).diversity, "claude-only");
+  });
+  test("diversity FALSIFIER: a record claiming multi-lab over Claude-only stamps is refused (forged-diversity), ok false", () => {
+    const res = verify([rec("claude", { diversity: "multi-lab" })]);
+    assert.strictEqual(res.ok, false);
+    assert.strictEqual(row(res).status, "forged-diversity");
+    assert.strictEqual(row(res).satisfied, false);
+    assert.strictEqual(res.malformedTainted, true);
+  });
+  test("diversity FALSIFIER: a multi-lab claim whose own lanes are Claude-only is refused even when other labs are on the ledger", () => {
+    const res = verify([rec("openai"), rec("claude", { diversity: "multi-lab", lanes: [{ provider: "claude", ok: true }, { provider: "openai", ok: false }] })]);
+    assert.strictEqual(row(res).status, "ran");
+    assert.strictEqual(row(res).record.provider, "openai");
+    assert.strictEqual(row(res).record.diversity, undefined);
+  });
+  test("diversity FALSIFIER: a made-up diversity value is refused", () => {
+    const res = verify([rec("claude", { diversity: "banana" })]);
+    assert.strictEqual(res.ok, false);
+    assert.strictEqual(row(res).status, "forged-diversity");
+  });
+  test("diversity FALSIFIER: two labs on the ledger but in DIFFERENT reviews do not make one multi-lab review", () => {
+    const res = verify([rec("openai", { panel_run_id: "pA" }), rec("claude", { panel_run_id: "pB" })], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, false);
+    assert.notStrictEqual(row(res).diversity, "multi-lab");
+  });
+  test("diversity FALSIFIER: separately signed Claude and OpenAI reviews that merely share an UNSIGNED prompt_digest are not one multi-lab review", () => {
+    const a = { role: "security-reviewer", ok: true, provider: "claude", model: "m", completed_at: nowIso, prompt_digest: "same" };
+    const b = { role: "security-reviewer", ok: true, provider: "openai", model: "m", completed_at: nowIso, prompt_digest: "same" };
+    const res = verify([a, b], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, false);
+    assert.notStrictEqual(row(res).diversity, "multi-lab");
+  });
+  test("diversity FALSIFIER: records with NO panel_run_id never combine (two labs, one prompt, one run_id/sprint_id)", () => {
+    const a = { role: "security-reviewer", ok: true, provider: "claude", model: "m", completed_at: nowIso, run_id: "r", sprint_id: "s" };
+    const b = { role: "security-reviewer", ok: true, provider: "openai", model: "m", completed_at: nowIso, run_id: "r", sprint_id: "s" };
+    assert.strictEqual(verify([a, b], { requireMultiLabRoles: ["security-reviewer"] }).ok, false);
+  });
+  test("diversity: a multi-lab claim backed only by an unrelated review's labs is refused", () => {
+    const res = verify([rec("openai", { panel_run_id: "old" }), rec("claude", { panel_run_id: "old" }), rec("claude", { panel_run_id: "new", diversity: "multi-lab" })]);
+    assert.strictEqual(row(res).record.panel_run_id, "old");
+    assert.strictEqual(row(res).status, "ran");
+  });
+  test("diversity: fallback records add no lab (a gpt lane that fell back to Claude is one lab)", () => {
+    const res = verify([rec("openai", { fallback: true }), rec("claude")], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, false);
+    assert.strictEqual(row(res).diversity, "claude-only");
+  });
+  test("diversity: an honest multi-lab claim over real multi-lab stamps is not refused", () => {
+    const res = verify([rec("openai", { diversity: "multi-lab" }), rec("claude", { diversity: "multi-lab" })], { requireMultiLabRoles: ["security-reviewer"] });
+    assert.strictEqual(res.ok, true);
+  });
+  test("diversity: a malformed requireMultiLabRoles is refused, never silently dropped", () => {
+    assert.throws(() => verify([rec("claude")], { requireMultiLabRoles: "security-reviewer" }), /requireMultiLabRoles/);
+    assert.throws(() => verify([rec("claude")], { requireMultiLabRoles: [""] }), /requireMultiLabRoles/);
+    assert.throws(() => verify([rec("claude")], { requireMultiLabRoles: [5] }), /requireMultiLabRoles/);
+  });
+  test("diversity CLI: --multi-lab-roles with no value is a usage error (exit 2), not a dropped requirement", () => {
+    const r = cp.spawnSync(
+      process.execPath,
+      [path.join(__dirname, "gauntlet-verify.js"), "--roles", "security-reviewer", "--since", new Date(Date.now() - 60_000).toISOString(), "--multi-lab-roles"],
+      { encoding: "utf8" },
+    );
+    assert.strictEqual(r.status, 2, `exit ${r.status} ${r.stderr}`);
+  });
+  test("diversity CLI: Claude-only completions with --multi-lab-roles fail (exit 1)", () => {
+    const f = writeTempFile(JSON.stringify(rec("claude")) + "\n");
+    const r = cp.spawnSync(
+      process.execPath,
+      [path.join(__dirname, "gauntlet-verify.js"), "--roles", "security-reviewer", "--since", new Date(Date.now() - 60_000).toISOString(), "--completions", f, "--no-require-sig", "--multi-lab-roles", "security-reviewer"],
+      { encoding: "utf8" },
+    );
+    assert.strictEqual(r.status, 1, `exit ${r.status} ${r.stdout} ${r.stderr}`);
+    assert.match(r.stdout, /Claude only/);
+  });
+}
+
 cleanupTempFiles();
 
 if (failures.length) {

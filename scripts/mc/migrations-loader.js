@@ -41,13 +41,17 @@ function listMigrationDirs() {
     .filter(Boolean);
 }
 
+function fromPatFloor(fromPat) {
+  return String(fromPat).replace(/x/gi, "0");
+}
+
 function listMigrationsBetween(from, to) {
   const dirs = listMigrationDirs();
   const files = [];
   let current = from;
   let safety = 64;
   while (compareSemver(current, to) < 0 && safety-- > 0) {
-    const candidates = dirs
+    let candidates = dirs
       .filter(
         (d) =>
           patternMatches(d.fromPat, current) &&
@@ -55,6 +59,20 @@ function listMigrationsBetween(from, to) {
           compareSemver(d.toVer, to) <= 0,
       )
       .sort((a, b) => compareSemver(a.toVer, b.toVer));
+    if (candidates.length === 0) {
+      candidates = dirs
+        .filter(
+          (d) =>
+            compareSemver(fromPatFloor(d.fromPat), current) >= 0 &&
+            compareSemver(d.toVer, current) > 0 &&
+            compareSemver(d.toVer, to) <= 0,
+        )
+        .sort(
+          (a, b) =>
+            compareSemver(fromPatFloor(a.fromPat), fromPatFloor(b.fromPat)) ||
+            compareSemver(a.toVer, b.toVer),
+        );
+    }
     if (candidates.length === 0) break;
     const chosen = candidates[0];
     const dirAbs = path.join(MIGRATIONS_ROOT, chosen.dir);

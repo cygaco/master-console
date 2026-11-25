@@ -3,8 +3,9 @@ name: design-quality
 description: "The judgment lane of the design-quality gauntlet — the named cross-domain visual/UX approver. Drives a real browser via Playwright MCP to APPROVE OR REJECT rendered UI against the design_brief + design-system docs on six axes: design tokens, component usage, visual hierarchy, mobile/responsive, accessibility, design→build handoff. Builder-agnostic: reviews app-design (Product) AND web-design (Marketing). Returns a DesignQualityResult JSON. Does NOT write code."
 tools: Bash, Read, Grep, Glob, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_evaluate, mcp__playwright__browser_wait_for, mcp__playwright__browser_resize, mcp__playwright__browser_console_messages, mcp__playwright__browser_close
 disallowedTools: Agent, Edit, Write
-model: claude-opus-4-8
+model: claude-opus-5-5
 provider: claude
+effort: high
 maxTurns: 30
 color: magenta
 ---

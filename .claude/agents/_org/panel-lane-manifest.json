@@ -24,7 +24,7 @@
       "tool_id": "codex",
       "shape": "subprocess-cross-provider",
       "pass_key": "second_pass",
-      "model": "gpt-5.6-sol",
+      "model": "gpt-6.2-sol",
       "_role": "GPT jailbreak lab — CLI subprocess (dispatch-agent.js). An in-process-agent resolution is a contract violation (silent Claude clone)."
     },
     "claude": {
@@ -32,7 +32,7 @@
       "tool_id": "claude",
       "shape": "in-process-agent",
       "pass_key": "third_pass",
-      "model": "claude-opus-4-8",
+      "model": "claude-opus-5-5",
       "sanctioned_in_process": true,
       "sanctioned_lane_id": "security_claude_hunter",
       "_role": "The ONE legal in-process Claude lane — the ADR-0016 hunter (third_pass opus@max), summoned by e via the Agent tool + record-inprocess. Positive-identity-scoped: lane 'claude' AND provider 'claude'. A gpt/agy lane can NEVER assert this exemption."
@@ -42,7 +42,7 @@
       "tool_id": "agy",
       "shape": "subprocess-cross-provider",
       "pass_key": "primary",
-      "model": "gemini-3.1-pro-high",
+      "model": "gemini-4-neon-high",
       "fallback": "openai",
       "sunset_ref": "ADR-0031",
       "_role": "Gemini lab via Antigravity (the individual gemini CLI is sunset) — CLI subprocess. CONTRACTED; liveness is read from support-matrix agy-antigravity.status, and a zero-record agy lane resolves BLOCKED, never a pass."

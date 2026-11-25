@@ -80,10 +80,7 @@ function listAgents(args) {
 
 function loadProviderForRole(role) {
   try {
-    const manifest = JSON.parse(
-      fs.readFileSync(".claude/manifest.json", "utf8"),
-    );
-    return (manifest.agentProviders || {})[role] || null;
+    return require("../dispatch/effective-pin").effectiveProviderForRole(role) || null;
   } catch {
     return null;
   }

@@ -1,11 +1,6 @@
 ---
 description: Synthesize a post-sprint retrospective from tracker artifacts — outcomes, friction, action items. Idempotent, fail-open, schema-validated.
 user-invocable: true
-says:
-  - sprint retro
-  - write the retrospective
-  - do the retro
-  - retro the sprint
 ---
 
 # /sprint:retrospective — Sprint Retrospective

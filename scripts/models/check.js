@@ -225,6 +225,10 @@ function main() {
 
     for (const m of provider.models || []) {
       const id = m.id;
+      if (m.fromDataFile && !m.apiId) {
+        add(pid, "INFO", id, `not audited — data-file row with no apiId (nothing to check against the vendor docs).`);
+        continue;
+      }
       const key = norm(m.apiId || m.id);
       if (dead.has(key)) {
         const to = dead.get(key);

@@ -1,0 +1,14 @@
+{
+  "id": "x",
+  "reason": "fixture",
+  "evidence": [
+    "fixture"
+  ],
+  "kind": "overlay",
+  "chains": {},
+  "coverage": {
+    "code": "same-family",
+    "security": "cross-family",
+    "visual": "exempt-capability"
+  }
+}

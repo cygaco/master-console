@@ -12,10 +12,11 @@ Creates a fresh product repo as a sibling directory to MC on disk, installs the 
 ## Usage
 
 ```
-/portfolio:new <slug> [--from-brief <existing-slug>] [--github] [--no-scaffold] [--install]
+/portfolio:new <slug> [--parent <dir>] [--from-brief <existing-slug>] [--github] [--no-scaffold] [--install]
 ```
 
 - `<slug>` — lowercase, hyphenated, 1–64 chars (`^[a-z0-9][a-z0-9-]{0,63}$`).
+- `--parent <dir>` — create the product under this existing folder instead of next to MC (for people who keep their projects elsewhere). If `<dir>/<slug>` already exists and is empty, the scaffold goes into it and its name is kept as you wrote it; a folder with files in it is refused, never overwritten.
 - `--from-brief <slug>` — move brief files from `_docs/briefs/<slug>/` or `_docs/clones/<slug>/` into the new repo; they're committed with the scaffold.
 - `--github` — **opt-in.** Also create a private GitHub repo (`gh repo create … --private --push`) and push. Operator-run only (prefix the command with `!`, or be in a permissive permission mode) — the agent is blocked from this in plain auto mode.
 - `--no-scaffold` — **opt-out.** Skip the app scaffold. By default the product is scaffolded with a real Next+Tailwind v4+shadcn/ui+Radix+Lucide app (a real-component baseline rather than ad-hoc generated UI); pass this for non-web products.
@@ -24,7 +25,7 @@ Creates a fresh product repo as a sibling directory to MC on disk, installs the 
 ## What it does
 
 1. Validates slug (regex + reserved-name guard — exits 2 before any filesystem ops).
-2. Resolves sibling path: `path.resolve(<mcRoot>, '..', <slug>)`.
+2. Resolves the target path: `path.resolve(<mcRoot>, '..', <slug>)`, or `<dir>/<slug>` with `--parent <dir>`.
 3. Creates the directory, runs `git init`, copies scaffold templates from `_mc/templates/portfolio/`, makes an initial commit.
 4. Runs `/mc:setup` inside the new directory.
 5. Registers the slug via `scripts/portfolio/register.js`.
@@ -62,7 +63,7 @@ With `--github`, additionally creates + pushes the private remote and prints the
 
 ## Procedure
 
-Run: `node scripts/portfolio/new.js <slug> [--from-brief <brief-slug>] [--github] [--no-scaffold] [--install]`
+Run: `node scripts/portfolio/new.js <slug> [--parent <dir>] [--from-brief <brief-slug>] [--github] [--no-scaffold] [--install]`
 
 ## Related
 

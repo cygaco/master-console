@@ -19,7 +19,7 @@ New here? Read this block first, then act. It is single-sourced from `.claude/pr
 
 **Dispatch is CLI-first.** Agent dispatch runs through the CLI wrappers — `node scripts/dispatch-claude.js <role> <prompt-file> -w` for build-chain Claude roles, `node scripts/dispatch-agent.js <role> <prompt-file>` for cross-provider reviewers. CLI is mandatory; a provider API is used ONLY where there is no CLI equivalent. Cross-provider review diversity is required, and a binding FAIL cannot be overridden.
 
-**Guards, gates, and output destinations.** The repo's guarantees are enforced: the `refs/heads/main` reference-transaction fence (every write to main goes through the broker), `/scan:full`, and the release gates. Every policy names an enforcer or logs the debt. Write per-run output under `runtime/`, never a manifest-tracked project dir. Orchestrators hold envelopes, not content — heavy work goes to a subprocess that writes its full output to a file and returns a short envelope. Regenerate both manifests after editing any hash-tracked file.
+**Guards, gates, and output destinations.** The repo's guarantees are enforced: the `refs/heads/main` reference-transaction fence (every write to main goes through the broker), `/scan:full`, and the release gates. Name a policy's enforcer when one exists; write a debt row only when asked. Write per-run output under `runtime/`, never a manifest-tracked project dir. Orchestrators hold envelopes, not content — heavy work goes to a subprocess that writes its full output to a file and returns a short envelope. Regenerate the manifests once per landing (`npm run manifests`).
 
 **For identity, authority, and the complete rules, read `CLAUDE.md`.**
 <!-- MC:ENTERING-AGENT-PREAMBLE:END -->
@@ -86,9 +86,9 @@ The individual-tier `gemini` CLI is **sunset** — all Gemini routes through Ant
 
 | Family | Models | Use |
 |---|---|---|
-| OpenAI (`codex`) | `gpt-5.6-sol` (flagship) · `gpt-5.6-terra` (mid) · `gpt-5.6-luna` (cheap) | Product + Growth judgment/authoring; cross-lab reviewers. Never the bare `gpt-5.6` alias (400s + silently degrades). |
-| Anthropic (`claude`) | `claude-fable-5` (top brain) · `claude-opus-4-8` (conductors/leads/hunters + THE fallback target) · `claude-sonnet-5` (builders/fixers/legwork) | Engineering; in-process judgment. Retired: `claude-sonnet-4-6`, any Opus < 4.8. |
-| Gemini via Antigravity (`agy`) | `gemini-3.1-pro-high` (thinking always-on; our dispatch passes no `--effort` and MUST NOT — `agy` exposes `--effort` in `--help` but it is MODEL-GATED: Gemini 3.1 Pro rejects it, exit 1 `not supported for model`, effort baked into the model name; not wirable; see ANTIGRAVITY.md §2) | Security Gemini hunter lane · Growth research-lead. |
+| OpenAI (`codex`) | `gpt-6.1-sol` (coding flagship — the GPT pins) · `gpt-6-astra` (most capable, $10/$50) · `gpt-6.1-terra` (fast/efficient) · `gpt-6-luna` (cheap) · `gpt-5.6-sol/terra/luna` (still served; the security GPT hunter stays on `gpt-5.6-sol`) | Product + Growth judgment/authoring; the security GPT lane. Never the bare `gpt-5.6` alias (400s + silently degrades). |
+| Anthropic (`claude`) | `claude-opus-5-5` (shipped default for every judgment role incl. α and the Director of Engineering; conductors/leads/reviewers/hunter; the `opus` alias; API default effort is medium, so pins carry explicit effort) · `claude-sonnet-5-5` (builders/fixers/legwork) · `claude-fable-5-2` (opt-in top tier via the `spend-more-on-claude` preset; can bill to usage credits on some plans) · `claude-haiku-5-5` (option) | Engineering; in-process judgment. Legacy but still served: `claude-fable-5-1`, `claude-fable-5`, `claude-opus-5`, `claude-opus-4-8` (provider-fallback deep_fallback), `claude-sonnet-5`, `claude-sonnet-4-6`, `claude-haiku-4-5`. |
+| Gemini via Antigravity (`agy`) | `gemini-4-argon-high` = agy `"Gemini 4 Argon (High)"` (thinking always-on; our dispatch passes no `--effort` — it was proven MODEL-GATED on Gemini 3.1 Pro and is unprobed on Argon; see ANTIGRAVITY.md §2) · `gemini-3.8-flash` (option). agy no longer serves `"Gemini 3.1 Pro (High)"`. | Security Gemini hunter lane · Growth research-lead. |
 
 **Effort ladder:** `low · medium · high · xhigh · max · ultra`. `max` + `ultra` are for `sol`/`terra` only (`luna` caps at `max`). **Authors** (design/product/copy/conversion leads, qa-reviewer) run `xhigh`; **overseers/judges** (Directors, β, security judge, marketing-lead) run `high`. `ultra` = fans out parallel subagents (Cabinet, Ops-Analyst); `max` = maximum time on the single hardest indivisible problem (the Claude security-hunter lane).
 
@@ -96,34 +96,34 @@ The individual-tier `gemini` CLI is **sunset** — all Gemini routes through Ant
 
 | Department | Role | Model @ effort | Route | Fallback |
 |---|---|---|---|---|
-| President | α President (run) | `claude-fable-5` @ high | the harness session (`/model`) | — |
-| President | β Check (judgment) | `gpt-5.6-sol` @ high | **on-demand CLI consult per phase boundary** (NOT an in-process teammate) | `claude-opus-4-8` |
-| President | γ / δ / ε conductors | `claude-opus-4-8` @ xhigh | in-process / standalone | — |
-| President | ζ Cabinet · η Ops-Analyst | `gpt-5.6-sol` @ ultra | CLI | `claude-opus-4-8` |
-| Product | Director-of-Product | `gpt-5.6-sol` @ high | CLI consult | `claude-opus-4-8` |
-| Product | Product-Lead | `gpt-5.6-terra` @ xhigh | CLI consult | `claude-opus-4-8` |
-| Product | Design-Lead | `gpt-5.6-sol` @ xhigh | CLI consult | `claude-opus-4-8` |
-| Product | **Quality-Lead** | `claude-opus-4-8` @ high | **in-process — Claude-pinned carve-out** (Agent-tool fan-out) | — |
-| Product | qa-reviewer | `gpt-5.6-terra` @ xhigh | CLI (13 personas inline) | `claude-opus-4-8` |
-| Product | design-quality · visual-review | `claude-opus-4-8` @ high | Agent tool (Claude-pinned: visual judgment / Playwright-MCP) | — |
-| Product | test-runner | `claude-sonnet-5` @ medium | CLI | — |
-| Engineering | Director-of-Engineering | `claude-fable-5` @ high | in-process orchestrator | — |
-| Engineering | frontend / backend / security leads | `claude-opus-4-8` @ high | in-process | — |
-| Engineering | all builders + fixers | `claude-sonnet-5` @ high | CLI, isolated worktree | — |
-| Engineering | frontend / backend reviewers | `gpt-5.6-sol` @ high | CLI (cross-lab vs the Claude builder) | `claude-opus-4-8` |
-| Security | security-lead | `claude-opus-4-8` @ high | in-process (coordination) | — |
-| Security | planner + final judge | `claude-fable-5` @ high | in-process | — |
-| Security | hunter · Gemini lane | `gemini-3.1-pro-high` | CLI `agy` | **diversity-loss → fails CLOSED** |
+| President | α President (run) | `claude-opus-5-5` @ high (Fable 5.2 opt-in) | the harness session (`/model`) | — |
+| President | β Check (judgment) | `gpt-6.1-sol` @ high | **on-demand CLI consult per phase boundary** (NOT an in-process teammate) | `claude-opus-4-8` |
+| President | γ / δ / ε conductors | `claude-opus-5-5` @ xhigh | in-process / standalone | — |
+| President | ζ Cabinet · η Ops-Analyst | `gpt-6.1-sol` @ xhigh | CLI | `claude-opus-4-8` |
+| Product | Director-of-Product | `gpt-6.1-sol` @ high | CLI consult | `claude-opus-4-8` |
+| Product | Product-Lead | `gpt-6.1-sol` @ xhigh | CLI consult | `claude-opus-4-8` |
+| Product | Design-Lead | `gpt-6.1-sol` @ xhigh | CLI consult | `claude-opus-4-8` |
+| Product | **Quality-Lead** | `claude-opus-5-5` @ high | **in-process — Claude-pinned carve-out** (Agent-tool fan-out) | — |
+| Product | qa-reviewer | `claude-opus-5-5` @ xhigh | in-process (Claude reviewer class) | — |
+| Product | design-quality · visual-review | `claude-opus-5-5` @ high | Agent tool (Claude-pinned: visual judgment / Playwright-MCP) | — |
+| Product | test-runner | `claude-sonnet-5-5` @ medium | CLI | — |
+| Engineering | Director-of-Engineering | `claude-opus-5-5` @ high (Fable 5.2 opt-in) | in-process orchestrator | — |
+| Engineering | frontend / backend / security leads | `claude-opus-5-5` @ high | in-process | — |
+| Engineering | all builders + fixers | `claude-sonnet-5-5` @ high | CLI, isolated worktree | — |
+| Engineering | frontend / backend reviewers | `claude-opus-5-5` @ high | in-process (Claude reviewer class) | — |
+| Security | security-lead | `claude-opus-5-5` @ high | in-process (coordination) | — |
+| Security | planner + final judge | `claude-opus-5-5` @ high | in-process | — |
+| Security | hunter · Gemini lane | `gemini-4-argon-high` | CLI `agy` | **diversity-loss → fails CLOSED** |
 | Security | hunter · GPT lane | `gpt-5.6-sol` @ xhigh | CLI | **diversity-loss → fails CLOSED** |
-| Security | hunter · Claude lane | `claude-opus-4-8` @ max | in-process (Agent tool + `record-inprocess`) | — |
-| Growth | Director-of-Growth | `gpt-5.6-sol` @ high | CLI consult | `claude-opus-4-8` |
-| Growth | copy-lead · conversion-lead | `gpt-5.6-terra` @ xhigh | CLI consult | `claude-opus-4-8` |
-| Growth | marketing-lead | `gpt-5.6-terra` @ high | CLI consult | `claude-opus-4-8` |
-| Growth | research-lead | `gemini-3.1-pro-high` | CLI `agy` consult | `claude-opus-4-8` |
+| Security | hunter · Claude lane | `claude-opus-5-5` @ max | in-process (Agent tool + `record-inprocess`) | — |
+| Growth | Director-of-Growth | `gpt-6.1-sol` @ high | CLI consult | `claude-opus-4-8` |
+| Growth | copy-lead · conversion-lead | `gpt-6.1-sol` @ xhigh | CLI consult | `claude-opus-4-8` |
+| Growth | marketing-lead | `gpt-6.1-sol` @ high | CLI consult | `claude-opus-4-8` |
+| Growth | research-lead | `gemini-4-argon-high` | CLI `agy` consult | `claude-opus-4-8` |
 
 **Fallback policy (with teeth):** required **iff** `provider !== "claude"`; must differ from primary (claude→claude rejected); every OpenAI/Antigravity role → `fallback: claude` resolving to an explicit `claude-opus-4-8`. Outage-only, logged to the provider trace, alert on chronic fire. **Security fails CLOSED on lab-diversity loss** — a hunter falling back to Claude collapses the cross-lab guarantee → re-run or BLOCK.
 
-**Topology doctrine (context economy):** the orchestrator holds **envelopes, not content**. Heavy/verbose work → CLI subprocess (isolated context; writes full output to a file; returns a ≤8-line envelope). Light small-return judgment → in-process Agent tool (**Claude-only** — the harness Agent tool cannot summon a GPT/Gemini role; **top-orchestrator-only** — subagents cannot call the Agent tool). **Carve-out rule:** Claude-pin any role whose function requires Agent-tool fan-out (Quality-Lead, design-quality, visual-review, the security Claude judge/hunter); provider-spread only leaf/synthesis roles.
+**Topology doctrine (context economy):** the orchestrator holds **envelopes, not content**. Heavy/verbose work → CLI subprocess (isolated context; writes full output to a file; returns a ≤8-line envelope). Light small-return judgment → in-process Agent tool (**Claude-only** — the harness Agent tool cannot summon a GPT/Gemini role; an agent has the Agent tool iff its spec lists it — the sprint conductor does, ADR-0014). **Carve-out rule:** Claude-pin any role whose function requires Agent-tool fan-out (Quality-Lead, design-quality, visual-review, the security Claude judge/hunter); provider-spread only leaf/synthesis roles.
 
 **Greek call-signs = the President's office ONLY**. The five faces keep their letters (α β γ δ ε); `cabinet` = **ζ** and `ops-analyst` = **η** (office residents). Department roles carry no Greek letter — leads and directors are named by role, not glyph.
 
@@ -163,7 +163,7 @@ The individual-tier `gemini` CLI is **sunset** — all Gemini routes through Ant
 
 ## Review Protocol
 
-Every builder output runs a parallel gauntlet whose binding verdicts come from three review scopes:
+Every builder output runs one parallel review round (two at most) whose binding verdicts come from three review scopes. Only a hold-class finding fails a unit; the rest are known-issues rows, and personal content, the security read before anything goes public, and passing tests are never deferred (`paths.decisionPolicy` § Review and hold rules):
 1. **Code-quality reviewer** — the pod's `frontend`/`backend-reviewer` on a **cross-lab** GPT model (`gpt-5.6-sol`) vs the Claude builder: Check-7 (7A–7G) + holdout-fixture + CWD/branch pre-check. Code-quality ONLY.
 2. **QA-Reviewer** — one role (`gpt-5.6-terra`) carrying three scopes: **traceability** (the 6 req-reviewer checks), **integrity** (compliance — COPY exact-match, hallucinated-dep, 5 violation types), and **functional** (13 failure-mode personas). Absorbs the former Req-Reviewer + Compliance + QA agents.
 3. **Security-Reviewer** — the **3-lab panel** (replaces Red Team): `claude-fable-5` planner+judge over three hunter lanes (Gemini via `agy` → GPT → Claude@max), OWASP + injection + attack-chain-correlator + prompt-injection-prober, all-deterministic scan mode. **Fails CLOSED on lab-diversity loss.**

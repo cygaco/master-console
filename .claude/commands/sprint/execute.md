@@ -1,11 +1,6 @@
 ---
 description: Execute the sprint via Ralph-style plan/act/test/review/record/checkpoint loops per ticket, with crash-safe progress, issue tracking, and approval-aware stop conditions.
 user-invocable: true
-says:
-  - execute the sprint
-  - run the tickets
-  - sprint execute
-  - build the sprint
 ---
 
 # /sprint:execute — Sprint Execute
@@ -123,7 +118,7 @@ trigger:
 | Ticket meets all AC; tests pass | `completed` |
 | Approval required | `stopped_approval_required` |
 | Human setup / signup required | `stopped_human_setup_required` |
-| 3+ failed attempts on the same fix | `stopped_repeated_failure` |
+| 2 failed attempts on the same fix (two rounds) | `stopped_repeated_failure` |
 | Scope is expanding beyond the ticket | `stopped_scope_expansion` |
 | Destructive action needed | `stopped_destructive_action_needed` |
 | Production deploy needed | `stopped_production_deploy_needed` |

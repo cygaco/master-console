@@ -58,8 +58,8 @@ function signedRecord(overrides = {}) {
   return r;
 }
 
-test("SIGNED_FIELDS tail is [workorder_digest, dispatch_id] (dispatch_id appended at the END after workorder_digest, prior order untouched)", () => {
-  assert.deepStrictEqual(SIGNED_FIELDS.slice(-2), ["workorder_digest", "dispatch_id"]);
+test("SIGNED_FIELDS tail is [workorder_digest, dispatch_id, gauntlet_run_id] (appended at the END, prior order untouched)", () => {
+  assert.deepStrictEqual(SIGNED_FIELDS.slice(-3), ["workorder_digest", "dispatch_id", "gauntlet_run_id"]);
 });
 test("SIGNED_FIELDS retains every pre-existing field in its original relative order", () => {
   const preExisting = [
@@ -138,10 +138,13 @@ test("canonicalIdentityString is FIELD-BOUNDARY injective (a value cannot forge 
   const real = canonicalIdentityString(baseRecord({ role: "x", shape: "INJECTED" }));
   assert.notStrictEqual(forge, real, "a value embedding the raw \\x1f must not forge a real field split (JSON escapes it)");
 });
-test("canonicalIdentityString is stable for missing fields (serializes as empty)", () => {
-  const s = canonicalIdentityString({});
-  assert.strictEqual(typeof s, "string");
-  assert.ok(s.includes("role="));
+test("canonicalIdentityString: trailing absent fields truncate, mid-list absent emit empty (seam invariant, ADR-0025 amend)", () => {
+  assert.strictEqual(canonicalIdentityString({}), "", "all-absent record → empty canonical");
+  const withRole = canonicalIdentityString({ role: "x" });
+  assert.ok(withRole.includes("role="), "a present field is encoded");
+  assert.ok(!withRole.includes("ok="), "fields after the last present field are truncated");
+  const withTrailing = canonicalIdentityString({ role: "x", gauntlet_run_id: "g-" + "a".repeat(32) });
+  assert.ok(withTrailing.includes("ok="), "an interior absent field between two present fields emits an empty segment");
 });
 
 test("a record carrying workorder_digest signs + verifies", () => {

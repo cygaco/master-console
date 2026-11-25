@@ -55,6 +55,21 @@ function readJSON(p) {
   return JSON.parse(fs.readFileSync(p, "utf8"));
 }
 
+const WITH_VIEWS = process.argv.includes("--views");
+const VIEW_FILES = new Set([
+  "inventory-architecture.json",
+  "inventory-enforcements.json",
+  "inventory-hooks.json",
+  "inventory-memory.json",
+  "inventory-skills.json",
+  "inventory-systems.json",
+  "inventory-tools.json",
+  "skills.md",
+  "tools.md",
+  "systems-inventory.md",
+]);
+const isSkippedView = (p) => !WITH_VIEWS && VIEW_FILES.has(path.basename(p));
+
 function writeJSONL(p, header, entries) {
   const lines = [JSON.stringify(header)];
   for (const e of entries) lines.push(JSON.stringify(e));
@@ -62,10 +77,12 @@ function writeJSONL(p, header, entries) {
 }
 
 function writeText(p, s) {
+  if (isSkippedView(p)) return;
   fs.writeFileSync(p, s);
 }
 
 function writeJSON(p, obj) {
+  if (isSkippedView(p)) return;
   fs.writeFileSync(p, JSON.stringify(obj, null, 2) + "\n");
 }
 

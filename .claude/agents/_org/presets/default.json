@@ -1,0 +1,159 @@
+{
+  "id": "default",
+  "aliases": ["standard"],
+  "kind": "full",
+  "title": "Default",
+  "dated": "2026-11-17",
+  "reason": "The model each role uses out of the box. Every role lists its models in order: its usual model first, then the other add-on tool, then Claude. A role runs on the first model in its list that you are signed in to, so it still works with fewer tools signed in. Roles that run inside Claude Code always use a Claude model.",
+  "evidence": [
+    "scripts/dispatch/model-resolve.test.js — every role of every preset resolves to a model for each sign-in combination, and roles that run inside Claude Code never resolve to a non-Claude model",
+    "scripts/checks/model-resolution.test.js — the role registry's pin equals the first entry of this preset for every role",
+    "scripts/dispatch/catalog.js — every model and effort level in these lists is in the model catalog"
+  ],
+  "coverage": {
+    "code": "same-family",
+    "security": "cross-family",
+    "visual": "exempt-capability"
+  },
+  "chains": {
+    "alpha": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "beta": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "gamma": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "delta": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "epsilon": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "director-of-product": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "product-lead": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "design-lead": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "quality-lead": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "qa-reviewer": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "design-quality": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "visual-review": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "test-runner": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "medium" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "medium" }
+    ],
+    "director-of-engineering": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "frontend-lead": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "frontend-builder": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "frontend-reviewer": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "frontend-fixer": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "backend-lead": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "backend-builder": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "backend-reviewer": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "backend-fixer": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "security-lead": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "security-builder": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "security-reviewer": [
+      { "provider": "antigravity", "model": "gemini-4-neon-high", "effort": null },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "security_claude_hunter": [
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": null }
+    ],
+    "security-fixer": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "director-of-growth": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "research-lead": [
+      { "provider": "antigravity", "model": "gemini-4-neon-high", "effort": null },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "copy-lead": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "conversion-lead": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "marketing-lead": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "high" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "ops-analyst": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ],
+    "skeleton-builder": [
+      { "provider": "claude", "model": "claude-sonnet-5-5", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "high" }
+    ],
+    "cabinet": [
+      { "provider": "openai", "model": "gpt-6.2-sol", "effort": "xhigh" },
+      { "provider": "antigravity", "model": "gemini-4-argon-high", "effort": null },
+      { "provider": "claude", "model": "claude-opus-5-5", "effort": "xhigh" }
+    ]
+  }
+}

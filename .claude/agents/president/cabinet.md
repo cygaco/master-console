@@ -3,13 +3,14 @@ name: cabinet
 description: "Freeform cross-provider second opinion / outside counsel for the President. A non-Claude, NO-strict-schema consult role — brainstorm, sanity-check, devil's-advocate, or independent reasoning on a decision. Carries no review envelope. (Collapses the pseudo-roles `advisor` + `consult`; both legacy ids resolve to `cabinet` via role-aliases.)"
 tools: Read, Grep, Glob, Bash
 disallowedTools: Agent, Edit, Write
-model: claude-opus-4-8
+model: claude-opus-5-5
 provider: openai
-provider_model: gpt-6.1-sol
+provider_model: gpt-6.2-sol
 provider_fallback: claude
 provider_reasoning_effort: xhigh
 maxTurns: 20
 color: cyan
+effort: xhigh
 ---
 
 # cabinet Dispatch Template

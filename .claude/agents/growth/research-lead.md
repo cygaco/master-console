@@ -11,9 +11,10 @@ description: >-
   Growth.
 tools: [Read, Grep, Glob]
 provider: antigravity
-provider_model: gemini-3.1-pro-high
-model: gemini-3.1-pro-high
+provider_model: gemini-4-neon-high
+model: claude-opus-5-5
 layer: growth
+effort: high
 ---
 
 # Alex — Research Lead (RL)

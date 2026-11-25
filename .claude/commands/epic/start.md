@@ -1,12 +1,6 @@
 ---
 description: Transition a planned epic into active execution — mint its first wave of sprints, set state to Active, and stand up the required mode/team. (Designed; build deferred.)
 user-invocable: true
-says:
-  - start the epic
-  - kick off the epic
-  - begin the epic
-  - epic start
-says-args: topic
 ---
 
 # /epic:start — Start an Epic

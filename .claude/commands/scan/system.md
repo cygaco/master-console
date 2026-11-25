@@ -79,7 +79,7 @@ These are the canonical MC system categories. Scan each, produce a list, compare
 
 ### 8. Cognition
 - `paths.reference/reasoning-frameworks.md` — framework router
-- `paths.reference/operational-loop.md` — the 10-step loop
+- `paths.reference/operational-loop.md` — the operational loop
 - `paths.reference/learning-lifecycle.md` — learning staging rules
 
 ### 9. Orchestration

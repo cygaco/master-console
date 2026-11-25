@@ -60,7 +60,8 @@ function main() {
     emit(
       `TRACKER.md (the enforced source of truth) is VALID — all ${checks.length} tracker checks pass. ` +
         "Before meaningful work, consult TRACKER.md (start-of-work procedure): confirm the active epic/sprint, " +
-        "the current next action, blockers, and definitions. Authority: TRACKER.md outranks memory."
+        "the current next action and blockers. TRACKER.md is the active page; definitions, procedures, rules and " +
+        "older history are in trackers/TRACKER-ARCHIVE.md. Authority: TRACKER.md outranks memory."
     );
   } else {
     const names = failed.map((c) => c.check).join(", ");

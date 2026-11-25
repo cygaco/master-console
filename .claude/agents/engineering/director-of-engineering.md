@@ -9,8 +9,9 @@ description: >-
   Construction. Apex of the engineering domain; sibling of director-of-product and
   director-of-qa.
 tools: [Read, Grep, Glob]
-model: claude-fable-5-1
+model: claude-opus-5-5
 layer: engineering
+effort: high
 ---
 
 # Alex — Director of Engineering (DoE)

@@ -4,11 +4,6 @@ user-invocable: true
 namespace: events
 reads: [paths.eventsFile]
 writes: []
-says:
-  - tail the events
-  - show recent events
-  - last events
-  - events tail
 ---
 
 # /events:tail

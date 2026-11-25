@@ -77,7 +77,7 @@ Three self-contained pods. Each **Lead dispatches a Builder + Reviewer + Fixer**
 
 The company runs a **model spread** — different seats run on different AI labs, so a reviewer is never the same mind as the builder it checks (ADR-0016). In plain terms:
 
-- **Engineering builds on Claude.** Builders + fixers run `claude-sonnet-5`; the pod Leads run `claude-opus-4-8` and the Director runs `claude-fable-5` (the top brain). Their **code-quality reviewers run on OpenAI GPT** — a different lab, so the review isn't blind to Claude's own blind spots.
+- **Engineering builds on Claude.** Builders + fixers run `claude-sonnet-5-5`; the pod Leads and the Director run `claude-opus-5-5` (Fable 5.2 is opt-in through the `spend-more-on-claude` model preset). Their **code-quality reviewers run on OpenAI GPT** — a different lab, so the review isn't blind to Claude's own blind spots.
 - **Product & Growth think on GPT.** The Directors and most leads (Product, Design, Copy, Conversion, Marketing) run the `gpt-5.6` family for judgment and authoring; the Research Lead runs Gemini (via the Antigravity `agy` CLI).
 - **Quality stays Claude.** The Quality Lead + design-quality + visual-review are **Claude-pinned** — they fan out helpers in-process, which only Claude can do.
 - **Security is a 3-lab panel.** A Claude planner + judge (`claude-fable-5`) runs three hunter labs — Gemini, GPT, and Claude — and **fails closed** (blocks) if it ever loses a lab, so a security pass is never single-lab.

@@ -29,15 +29,13 @@ If `$ARGUMENTS` already contains a `###` heading, treat it as pre-formatted: cho
 4. **Format** to match existing plays: `### Title` heading, a **bold one-line thesis**, then the reasoning, a **worked example**, and a `*(source / lineage / date)*` line. Keep it short and opinionated.
 5. **Append** at the END of the chosen section — just before the next `## ` heading or the `---` divider — preserving the placeholder line for that section if present (replace a `*(plays about … — add via /playbook:add)*` stub with the real play; otherwise append after the last play).
 6. Convert any relative date to absolute (UTC `YYYY-MM-DD`).
-7. After writing, **regenerate the framework manifests** (the Playbook is framework-tracked): `node scripts/generate-framework-manifest.js && node scripts/mc/manifest/build.js`, so the regression-seed enforcer stays green.
-8. Echo: `Added to <Section>: <heading>. playbook.md +<N> lines.`
+7. Echo: `Added to <Section>: <heading>. playbook.md +<N> lines.`
 
 ## Anti-patterns
 
 - **Don't rewrite existing plays.** Append-only — consolidation is a separate, deliberate edit.
 - **Don't write a body the user didn't supply.** Stub it with `<!-- TODO: body -->`.
 - **Don't invent a section.** Reuse an existing one unless `--new-section` is explicit.
-- **Don't skip the manifest regen** (Step 7) — an un-regenerated Playbook edit reds the enforcer.
 
 ## Related
 

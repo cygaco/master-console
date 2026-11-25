@@ -1,4 +1,5 @@
 ---
+disable-model-invocation: true
 description: Set up MC end-to-end — clone, install, merge CLAUDE.md, restart, verify. Safe to re-run; auto-detects and completes missing steps.
 user-invocable: true
 ---
@@ -161,11 +162,21 @@ Run these once, after restart, before the user dispatches anything:
 ```bash
 node scripts/dispatch/prune-dead-locks.js
 node scripts/mc/provider-health-check.js --summary
+node scripts/dispatch/signin.js --refresh
 ```
 
 If `provider-health-check` flags any non-green provider, print its
 `suggestion` field verbatim to the user. The check is fail-open and
 should NOT block setup.
+
+`signin.js --refresh` asks Claude, Codex and Gemini (agy) — each with its own
+status command — whether the user is signed in, and saves the answer for the
+model picker (the installer already ran it once; this re-checks after the
+restart). Show its lines to the user as printed, including its last line: the
+Gemini tool asks Google's service for the user's model list; the engine itself
+calls no AI service to check. A tool that is not signed in is not a setup failure — roles that
+prefer it move down their model list to one that works. It is fail-open: never
+block setup on its exit code.
 
 ### Phase 3 — Provider CLIs (optional)
 
@@ -179,11 +190,13 @@ AFTER the user restarts, the first `/mc:health` will flag missing provider CLIs.
 │    npm i -g @openai/codex                                   │
 │    codex login                                              │
 │                                                             │
-│  Gemini CLI    (redteam / security)                        │
-│    npm i -g @google/gemini-cli                              │
-│    gemini auth login                                        │
+│  Antigravity   (agy — security reviewer's third lab)       │
+│    standalone 'agy' CLI (not npm); sign in to Antigravity   │
 │                                                             │
-│  Skip either → agents fall back to Claude automatically.   │
+│  Skip either → most agents fall back to Claude. Exception: │
+│  the sprint security panel needs Codex (two AI labs);      │
+│  without it, sign-off returns BLOCKED-INCONCLUSIVE.        │
+│  Install + sign in to Codex before /sprint:full.           │
 └─────────────────────────────────────────────────────────────┘
 ```
 

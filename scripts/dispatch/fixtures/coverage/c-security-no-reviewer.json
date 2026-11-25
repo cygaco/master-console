@@ -1,0 +1,15 @@
+{
+  "unitClass": "security",
+  "builderRole": "backend-builder",
+  "records": [
+    {
+      "dispatch_id": "d-1",
+      "cmdline_checksum": "sha256:dead",
+      "run_id": "run-cov",
+      "role": "backend-builder",
+      "provider": "claude",
+      "ok": true,
+      "output_digest": "sha256:aaaa"
+    }
+  ]
+}

@@ -107,6 +107,99 @@ function classifyQuotaFailure(text) {
   return null;
 }
 
+function classifyAgyError(stderr) {
+  try {
+    const text = String(stderr || "");
+    if (!text.includes("AGY_ERROR:")) return null;
+    const lines = text.split(/\r?\n/);
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const m = /^\s*AGY_ERROR:\s*(\{.*\})\s*$/.exec(lines[i]);
+      if (!m) continue;
+      let parsed;
+      try {
+        parsed = JSON.parse(m[1]);
+      } catch {
+        continue;
+      }
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) continue;
+      const str = (v) => (typeof v === "string" ? v : null);
+      return {
+        status: str(parsed.status),
+        reason: str(parsed.reason),
+        retryable: typeof parsed.retryable === "boolean" ? parsed.retryable : null,
+        short_error: str(parsed.short_error),
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function handleProviderFailure(err, { providerName, model, cfg } = {}) {
+  const errText = String(
+    (err && (err.stderr || err.message)) || err || "",
+  );
+  const exitCode = err && typeof err.status === "number" ? err.status : null;
+  const agyError = providerName === "antigravity" ? classifyAgyError(errText) : null;
+  const timeoutSource =
+    err && err.reason === "timeout_reap"
+      ? "wrapper_reap"
+      : agyError && (agyError.reason === "print_timeout" || agyError.status === "DEADLINE_EXCEEDED")
+        ? "agy_error"
+        : null;
+  const quota = timeoutSource ? null : classifyQuotaFailure(errText);
+  if (quota) {
+    if (quota.kind === "quota_exhausted" && providerBreaker) {
+      try {
+        providerBreaker.markDown(providerName, {
+          kind: quota.kind,
+          untilMs: providerBreaker.computeUntil(
+            providerName,
+            errText,
+            Date.now(),
+          ),
+          evidence: `${quota.kind} on model=${model}`.slice(0, 200),
+        });
+      } catch {
+      }
+    }
+    try {
+      process.stderr.write(
+        `[providers.js] QUOTA: ${providerName} (${model}) hit ${quota.kind}` +
+          `${quota.recoverable ? "" : " — UNRECOVERABLE (free-tier daily=0)"}.` +
+          ` Falling back to ${(cfg && cfg.fallback) || "claude"}. For a 2nd security pass` +
+          ` on a different family use runProvider(role, prompt, {provider:'openai'}).\n`,
+      );
+    } catch {
+    }
+  }
+  return {
+    ok: false,
+    provider: providerName,
+    model,
+    output: "",
+    fallback: true,
+    error: String((err && err.message) || err).slice(0, 500),
+    stderrBytes: err && typeof err.stderrBytes === "number" ? err.stderrBytes : 0,
+    failure: {
+      kind: timeoutSource ? "timeout" : quota ? "quota" : "unknown",
+      exit_code: exitCode,
+      ...(timeoutSource ? { source: timeoutSource } : {}),
+    },
+    ...(quota
+      ? {
+          quota: {
+            kind: quota.kind,
+            recoverable: quota.recoverable,
+            suggestFallbackProvider: suggestFallbackProvider(providerName, cfg),
+            auth_mode: detectAuthModeLabel(providerName),
+          },
+        }
+      : {}),
+  };
+}
+
 const PROVIDER_FAMILY = { claude: "anthropic", openai: "openai", antigravity: "google" };
 function suggestFallbackProvider(failedProvider, cfg) {
   const family = PROVIDER_FAMILY[failedProvider] || failedProvider;
@@ -202,7 +295,7 @@ const DEFAULT_PROVIDERS = {
   },
   antigravity: {
     cli: "agy",
-    default_model: process.env.ANTIGRAVITY_MODEL || "gemini-3.1-pro-high",
+    default_model: process.env.ANTIGRAVITY_MODEL || "gemini-4-argon-high",
     fallback: "openai",
     syntax: `agy {reasoning} --model {model} --print-timeout 90s -p`,
   },
@@ -254,24 +347,26 @@ const DEFAULT_AGENT_PROVIDERS = registryRoles
     )
   : LITERAL_DEFAULT_AGENT_PROVIDERS;
 
-function buildReasoningFlag(providerName, role) {
-  const level = getReasoningEffort(role);
+function buildReasoningFlag(providerName, role, effortOverride) {
+  const level = effortOverride !== undefined ? effortOverride : getReasoningEffort(role);
   if (!level) return "";
   if (providerName === "openai") return `-c model_reasoning_effort=${level}`;
   if (providerName === "claude") return `--effort ${level}`;
   return "";
 }
 
+function providerForRoleStrict(role) {
+  const canonical = normalizeRole(role);
+  return require("../../dispatch/effective-pin").effectiveProviderForRole(canonical);
+}
+
 function getProviderForRole(role) {
   const canonical = normalizeRole(role);
-  const manifest = loadManifest();
-  const agentMap = manifest.agentProviders || DEFAULT_AGENT_PROVIDERS;
-  return (
-    agentMap[canonical] ||
-    agentMap[role] ||
-    DEFAULT_AGENT_PROVIDERS[canonical] ||
-    "claude"
-  );
+  try {
+    return require("../../dispatch/effective-pin").effectiveProviderForRole(canonical);
+  } catch {
+    return "claude";
+  }
 }
 
 function getProviderConfig(providerName) {
@@ -368,9 +463,24 @@ function buildProviderArgv(providerName, model, reasoningArgs = [], opts = {}) {
   }
   if (providerName === "antigravity") {
     const agyModel = require("../../dispatch/catalog").agyModelName(model);
-    const agyTimeoutRaw = mcEnv.readEnv("AGY_PRINT_TIMEOUT") || "90s";
-    const agyTimeout = /^[0-9]+(ms|s|m|h)?$/.test(agyTimeoutRaw) ? agyTimeoutRaw : "90s";
-    return { toolId: "agy", argv: ["--model", agyModel, "--print-timeout", agyTimeout, "-p", opts.prompt || ""], usesStdin: false };
+    const agyTimeoutRaw = mcEnv.readEnv("AGY_PRINT_TIMEOUT");
+    const grammar = /^[0-9]+(ms|s|m|h)?$/;
+    let agyTimeout = "90s";
+    let printTimeoutNote = null;
+    if (agyTimeoutRaw && grammar.test(agyTimeoutRaw)) {
+      agyTimeout = agyTimeoutRaw;
+    } else if (opts.role === "security-reviewer") {
+      const { foregroundAwareTimeout, WRAPPER_DEFAULTS } = require("../../dispatch/timeout-policy");
+      const wrapperMs = Number.isFinite(opts.timeoutMs) && opts.timeoutMs > 0
+        ? opts.timeoutMs
+        : foregroundAwareTimeout(WRAPPER_DEFAULTS["run-provider"], opts);
+      const wantMs = 600 * 1000;
+      const ceilingMs = Math.max(30 * 1000, wrapperMs - 30 * 1000);
+      const useMs = Math.min(wantMs, ceilingMs);
+      agyTimeout = `${Math.floor(useMs / 1000)}s`;
+      if (useMs < wantMs) printTimeoutNote = `print timeout clamped to ${agyTimeout} (wrapper bound ${Math.floor(wrapperMs / 1000)}s minus a 30s margin; set MC_DISPATCH_BACKGROUND=1 for the full 600s)`;
+    }
+    return { toolId: "agy", argv: ["--model", agyModel, "--print-timeout", agyTimeout, "-p", opts.prompt || ""], usesStdin: false, printTimeout: agyTimeout, ...(printTimeoutNote ? { printTimeoutNote } : {}) };
   }
   return {
     fail: true,
@@ -440,13 +550,19 @@ function runProvider(role, prompt, opts = {}) {
   try {
     const promptContent = fs.readFileSync(promptFile, "utf8");
 
-    const reasoningFlag = buildReasoningFlag(providerName, role);
+    const reasoningFlag = buildReasoningFlag(
+      providerName,
+      role,
+      Object.prototype.hasOwnProperty.call(opts, "effort") ? opts.effort : undefined,
+    );
 
     const reasoningArgs = reasoningFlag
       ? reasoningFlag.split(/\s+/).filter(Boolean)
       : [];
     const built = buildProviderArgv(providerName, model, reasoningArgs, {
       prompt: promptContent,
+      role,
+      timeoutMs,
     });
     if (built.fail) {
       return { ok: false, provider: providerName, model, output: "", fallback: true, error: built.error };
@@ -550,56 +666,11 @@ function runProvider(role, prompt, opts = {}) {
           }
         : {}),
       ...(authFallback !== undefined ? { auth_fallback: authFallback } : {}),
+      ...(built.printTimeout ? { agy_print_timeout: built.printTimeout } : {}),
+      ...(built.printTimeoutNote ? { agy_print_timeout_note: built.printTimeoutNote } : {}),
     };
   } catch (err) {
-    const errText = String(
-      (err && (err.stderr || err.message)) || err || "",
-    );
-    const quota = classifyQuotaFailure(errText);
-    if (quota) {
-      if (quota.kind === "quota_exhausted" && providerBreaker) {
-        try {
-          providerBreaker.markDown(providerName, {
-            kind: quota.kind,
-            untilMs: providerBreaker.computeUntil(
-              providerName,
-              errText,
-              Date.now(),
-            ),
-            evidence: `${quota.kind} on model=${model}`.slice(0, 200),
-          });
-        } catch {
-        }
-      }
-      try {
-        process.stderr.write(
-          `[providers.js] QUOTA: ${providerName} (${model}) hit ${quota.kind}` +
-            `${quota.recoverable ? "" : " — UNRECOVERABLE (free-tier daily=0)"}.` +
-            ` Falling back to ${cfg.fallback || "claude"}. For a 2nd security pass` +
-            ` on a different family use runProvider(role, prompt, {provider:'openai'}).\n`,
-        );
-      } catch {
-      }
-    }
-    return {
-      ok: false,
-      provider: providerName,
-      model,
-      output: "",
-      fallback: true,
-      error: String(err.message || err).slice(0, 500),
-      stderrBytes: typeof err.stderrBytes === "number" ? err.stderrBytes : 0,
-      ...(quota
-        ? {
-            quota: {
-              kind: quota.kind,
-              recoverable: quota.recoverable,
-              suggestFallbackProvider: suggestFallbackProvider(providerName, cfg),
-              auth_mode: detectAuthModeLabel(providerName),
-            },
-          }
-        : {}),
-    };
+    return handleProviderFailure(err, { providerName, model, cfg });
   } finally {
     if (!mcEnv.readEnv("PROVIDER_DEBUG")) {
       try {
@@ -651,6 +722,7 @@ module.exports = {
   legacyAliasPin,
   buildProviderArgv,
   getProviderForRole,
+  providerForRoleStrict,
   getProviderConfig,
   getReasoningEffort,
   buildReasoningFlag,
@@ -658,6 +730,8 @@ module.exports = {
   parseProviderJson,
   assertStrictModel,
   classifyQuotaFailure,
+  classifyAgyError,
+  handleProviderFailure,
   suggestFallbackProvider,
   PROVIDER_FAMILY,
   DEFAULT_PROVIDERS,

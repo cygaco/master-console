@@ -1,11 +1,6 @@
 ---
 description: List recurring system issues — bugs/regressions in the agent framework, hooks, skills, .claude/, scripts/
 user-invocable: true
-says:
-  - list the issues
-  - what keeps breaking
-  - recurring issues
-  - issues list
 ---
 
 # /issues:list — Recurring System Issues

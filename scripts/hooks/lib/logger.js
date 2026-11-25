@@ -41,7 +41,6 @@ try {
 }
 
 const CATEGORY_FILES = {
-  tool: [path.join(EVENTS_DIR, "tools.jsonl")],
   spec: [path.join(EVENTS_DIR, "requirements.jsonl")],
   code: [path.join(EVENTS_DIR, "code.jsonl")],
   plan: [path.join(EVENTS_DIR, "plans.jsonl")],

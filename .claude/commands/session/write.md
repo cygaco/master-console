@@ -1,11 +1,5 @@
 ---
 description: Post a message to the cross-session inbox so other Alex sessions can see it. Default is fully automatic — no arguments needed. Use `--about <topic>` to focus the broadcast on a specific topic the user wants emphasized.
-says:
-  - post to the inbox
-  - tell the other sessions
-  - broadcast this
-  - session write
-says-args: free-text
 ---
 
 # /session:write — Cross-Session Message

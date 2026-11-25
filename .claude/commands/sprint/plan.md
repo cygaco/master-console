@@ -1,12 +1,6 @@
 ---
 description: Turn a brief plain-language request into a structured sprint plan and durable Plan Contract. Evidence-labeled, approval-aware, crash-recoverable.
 user-invocable: true
-says:
-  - plan a sprint
-  - sprint plan
-  - plan this as a sprint
-  - make a sprint plan
-says-args: free-text
 ---
 
 # /sprint:plan — Sprint Plan
@@ -217,8 +211,8 @@ node scripts/sprint/checkpoint.js \
 If running in adhoc mode and the plan touches Class B/C decisions per
 `paths.decisionPolicy`, consult Beta via SendMessage **before**
 presenting the next-recommended-command to the user. Log to
-`paths.betaEvents`. Honor `ESCALATE:` returns by prefixing the user
-report.
+`paths.betaEvents`. Surface an ESCALATE to the user as a
+`⚠️ DECISION NEEDED`.
 
 ### Step 12 — Surface the result to the user
 

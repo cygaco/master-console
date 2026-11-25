@@ -43,7 +43,7 @@ You fix ONE specific issue identified by the backend-reviewer or orchestrator. Y
 
 ### IF STUCK
 
-- After 3 failed attempts: revert changes and report
+- After the second round fails: revert changes and report
 - If the fix requires changes to files outside scope: escalate to the Backend Lead
 
 ### QUALITY STANDARDS
@@ -60,9 +60,8 @@ You are running in an isolated environment (worktree or sandbox) on branch agent
 - Do NOT add features, improve performance, or clean up unless the fix requires it.
 - Scope is BACKEND ONLY: API routes, data models, auth/session logic, server-side utilities.
 - Run `npm run build` after your fix. If it fails, fix only YOUR code.
-- Three attempts maximum. If you fail 3 times, stop and report.
-- Fixer AUTHORS — the backend-reviewer RE-RUNS after every fix. Do not self-certify.
-- This is attempt {{ATTEMPT_NUMBER}} of 3. If you cannot fix it, report why.
+- Fixer AUTHORS — the backend-reviewer checks the fix against the finding it answers. Do not self-certify.
+- This is round {{ATTEMPT_NUMBER}} of at most 2 (a round is one fix plus the check of that fix against its finding). If you cannot fix it, report why.
 - Commit your fix before returning — uncommitted work is lost
 
 ## Critical

@@ -1,4 +1,20 @@
 #!/usr/bin/env node
+/**
+ * merge-guard.js — Pre/PostToolUse hook for Bash commands.
+ *
+ * Blocks dangerous Bash commands that bypass other hooks:
+ * - git merge agent/* before gauntlet passes (cycleStep must be "review-complete")
+ * - git reset --hard (destructive)
+ * - git checkout agent/* (prevents branch switching to agent branches)
+ * - rm on src/ or _docs/ files (destructive)
+ *
+ * Warns without blocking on node -e with an fs write (bypasses Edit hooks).
+ *
+ * Allowlist-first for performance — read-only commands exit
+ * immediately.
+ * Fail-closed: parse errors or missing store
+ * → BLOCK.
+ */
 
 const fs = require("fs");
 const path = require("path");
@@ -7,6 +23,7 @@ const { logEvent } = require("./lib/logger");
 
 const STORE_PATH = path.resolve(PROJECT, ".claude", "agents", "store.json");
 
+// Read-only command prefixes — fast-path allow
 const ALLOWLIST = [
   "git log",
   "git status",
@@ -54,6 +71,8 @@ const ALLOWLIST = [
   "sed ",
   "awk ",
   "curl ",
+  // Provider CLIs intentionally NOT in this allowlist — the
+  // dispatch-route-guard hook is the authoritative gate.
 ];
 
 function readStore() {
@@ -70,19 +89,9 @@ function block(reason) {
   process.exit(0);
 }
 
-function allow(cmd) {
-  const trimmed = cmd.trim().slice(0, 30);
-  if (
-    !trimmed.startsWith("git log") &&
-    !trimmed.startsWith("git status") &&
-    !trimmed.startsWith("git diff") &&
-    !trimmed.startsWith("ls") &&
-    !trimmed.startsWith("cat") &&
-    !trimmed.startsWith("head") &&
-    !trimmed.startsWith("tail")
-  ) {
-    logEvent("merge", "system", "bash-allowed", "", trimmed);
-  }
+// Allowed commands are not logged: the harness transcript already holds every
+// command, and nothing reads an allow row. Blocks and advisories still log.
+function allow() {
   process.exit(0);
 }
 
@@ -93,6 +102,7 @@ process.stdin.on("end", () => {
     const event = JSON.parse(input);
     const toolName = event.tool_name || "";
 
+    // Only process Bash tool calls
     if (toolName !== "Bash") {
       process.exit(0);
     }
@@ -104,8 +114,14 @@ process.stdin.on("end", () => {
       process.exit(0);
     }
 
+    // PostToolUse mode: tool_response present → log and allow
     if (event.tool_response !== undefined) {
+      // Post-merge verification: check if a merge just completed
       if (cmd.includes("git merge")) {
+        // tool_response from Bash hooks is { stdout, stderr, error?, ... }
+        // not a plain string. String(obj) → "[object Object]" — every
+        // merge response would fail the .includes("Fast-forward") string match
+        // and be mislogged as "merge-unknown" with detail "[object Object]".
         const tr = event.tool_response;
         const response =
           typeof tr === "string"
@@ -131,6 +147,7 @@ process.stdin.on("end", () => {
           cmd.slice(0, 100),
           response.slice(0, 200),
         );
+        // Remind to run build after successful merge
         if (merged) {
           process.stderr.write(
             "\x1b[33m[merge-guard] POST-MERGE: Run `npm run build` to verify integration.\x1b[0m\n",
@@ -147,12 +164,26 @@ process.stdin.on("end", () => {
       process.exit(0);
     }
 
+    // === PreToolUse mode ===
+
+    // Pre-allowlist critical blocks (must run before fast-path)
+    // Backup branch deletion — "git branch" is in allowlist so this must come first
     if (/git\s+branch\s+-[dD]\s+backup-/.test(cmd)) {
       block(
         "Deleting backup branches blocked: backup branches are protected (CLAUDE.md).",
       );
     }
 
+    // Pre-allowlist auto-strip: redundant `cd <projectDir> && <tail>` prefix.
+    // Must fire here because the allowlist exits early for "cd ... && ...".
+    // CLAUDE.md anti-pattern: never prepend `cd <current-directory>`;
+    // tools operate on cwd.
+    // Now mutates tool_input.command via
+    // hookSpecificOutput.updatedInput and exits — the stripped command then
+    // re-enters PreToolUse where the rest of merge-guard's rules apply.
+    //
+    // Any tail benefits from the strip when target === <projectDir>, because
+    // every Bash tool call already runs in the project cwd.
     {
       const m = cmd.match(
         /^\s*cd\s+(?:"([^"]+)"|'([^']+)'|(\S+))\s*&&\s*(.+)$/,
@@ -184,6 +215,11 @@ process.stdin.on("end", () => {
             "\x1b[33m[merge-guard] AUTO-STRIP: removed redundant `cd <projectDir> && ` prefix. " +
               "Bash tool already runs in cwd; the prefix re-confuses path-aware tools (CLAUDE.md).\x1b[0m\n",
           );
+          // Emit PreToolUse mutation. Claude Code's PreToolUse hook contract
+          // honors hookSpecificOutput.updatedInput.command — the tool re-runs
+          // with the new command. If the harness ignores updatedInput, the
+          // event log's `cd-prefix-stripped` count will not drop (the
+          // measurable signal that tells us to escalate).
           const out = {
             hookSpecificOutput: {
               hookEventName: "PreToolUse",
@@ -196,6 +232,9 @@ process.stdin.on("end", () => {
       }
     }
 
+    // Fast-path: allowlist check — ALL sub-commands in a chain must be safe
+    // to exit early. Avoids `git status && rm -rf src/` sneaking past because
+    // the first token matches. Matches memory-guard's pattern.
     const subCmds = cmd
       .split(/\s*(?:&&|\|\||\||;)\s*/)
       .map((c) => c.trim())
@@ -209,6 +248,15 @@ process.stdin.on("end", () => {
       allow(cmd);
     }
 
+    // === Block rules ===
+
+    // MECHANICAL doc-ref-integrity gate (report-only inside /scan:full is
+    // theater; enforcements must be MECHANICAL).
+    // Fires AUTOMATICALLY at commit + non-agent merge time — a broken canon ref
+    // exits non-zero here, no human /scan:full invocation required. The allowlist
+    // + per-line `<!-- doc-ref-ignore -->` remain the escape. Fail-closed: a
+    // runner crash (exit 2) blocks too (a runner error is never a pass). Skipped
+    // silently if the enforcer is absent (older install layout).
     if (
       /^\s*git\s+commit\b/.test(cmd) ||
       (/^\s*git\s+merge\b/.test(cmd) && !/git\s+merge\s+agent\//.test(cmd))
@@ -220,6 +268,8 @@ process.stdin.on("end", () => {
           cwd: PROJECT,
           encoding: "utf8",
         });
+        // exit 0 = clean (allow); exit 1 = broken refs (block); exit 2 = runner
+        // crash (fail-closed block). Any other non-zero is also fail-closed.
         if (dr.status === 1) {
           const tail = (dr.stderr || dr.stdout || "")
             .split("\n")
@@ -241,20 +291,34 @@ process.stdin.on("end", () => {
       }
     }
 
+    // Path coherence gate runs before ANY git merge. If the gate
+    // fails, the merge is blocked — broken path identity must be fixed
+    // first. `--tracked`: it judges only files git tracks, so untracked
+    // leftovers in the checkout (not part of the repo) never block a merge.
+    // Skipped for the agent/* check below (which has its own gauntlet contract).
     if (/^\s*git\s+merge\b/.test(cmd) && !/git\s+merge\s+agent\//.test(cmd)) {
       const { spawnSync } = require("child_process");
       const result = spawnSync(
         process.execPath,
-        [path.join(PROJECT, "scripts", "paths", "gate.js")],
+        [path.join(PROJECT, "scripts", "paths", "gate.js"), "--tracked"],
         { cwd: PROJECT, encoding: "utf8" },
       );
       if (result.status !== 0) {
         const tail = (result.stdout || "").split("\n").slice(-10).join("\n");
         block(
-          `merge-guard: path coherence gate failed before merge.\n${tail}\n\nFix: node scripts/paths/build.js`,
+          `merge-guard: path coherence gate failed before merge (tracked files only).\n${tail}\n\nFix: the findings above name the file; for stale artifacts run node scripts/paths/build.js. Re-run: node scripts/paths/gate.js --tracked`,
         );
       }
 
+      // Generated-artifact Freshness Gate. A branch merge can land a
+      // changed framework/paths.registry.json (or hooks.registry.json) WITHOUT
+      // the regenerated artifacts (.claude/paths.json, paths.generated.js,
+      // settings.json hooks block), so the sprint pipeline + hooks silently read
+      // a stale paths.json post-merge. Both build.js scripts expose `--check`
+      // (exit 1 when any artifact is stale vs its registry). Run them BEFORE the
+      // merge; block if either reports stale. Skipped silently when a build
+      // script is absent (older install layout). Fast — pure file hashing, no
+      // network.
       for (const rel of [
         ["scripts", "paths", "build.js"],
         ["scripts", "hooks", "build.js"],
@@ -265,6 +329,8 @@ process.stdin.on("end", () => {
           cwd: PROJECT,
           encoding: "utf8",
         });
+        // exit 0 = fresh; exit 1 = stale (the documented signal). Any other
+        // exit (crash) → fail-closed, same posture as the requirements gate.
         if (fresh.status === 1) {
           const tail = (fresh.stdout || fresh.stderr || "")
             .split("\n")
@@ -285,6 +351,18 @@ process.stdin.on("end", () => {
         }
       }
 
+      // Requirements Freshness Gate — refuses merge when the spec
+      // has drifted from code. Class C RCOs and missing graph fail closed.
+      // Engine lives in scripts/requirements/. Skipped silently if engine
+      // hasn't shipped yet (older installs).
+      //
+      // Fail-closed semantics:
+      //   exit 0 → green, allow
+      //   exit 1 → yellow (warnings), allow
+      //   exit 2 → red, block
+      //   any other exit (crash, signal, undefined behavior) → block, with
+      //   the gate output surfaced. Falling open here would let any uncaught
+      //   exception in the gate become a silent merge.
       const reqGate = path.join(PROJECT, "scripts", "requirements", "gate.js");
       if (require("fs").existsSync(reqGate)) {
         const reqResult = spawnSync(process.execPath, [reqGate], {
@@ -301,6 +379,7 @@ process.stdin.on("end", () => {
             `merge-guard: requirements Freshness Gate failed before merge.\n${tail}\n\nFix: node scripts/requirements/graph-build.js && node scripts/requirements/apply-rco.js --auto-expire 30 — then resolve any open Class C RCOs.`,
           );
         } else if (reqStatus !== 0 && reqStatus !== 1) {
+          // Crash / unexpected exit — fail closed.
           const errTail =
             (reqResult.stderr || "").split("\n").slice(-8).join("\n") ||
             (reqResult.stdout || "").split("\n").slice(-8).join("\n");
@@ -309,10 +388,17 @@ process.stdin.on("end", () => {
             `merge-guard: requirements Freshness Gate crashed (exit=${reqStatus}${sig}).\n${errTail}\n\nFix: investigate scripts/requirements/gate.js — do not bypass the gate without a known-good reason.`,
           );
         }
+        // status 1 (yellow) — surface but do not block
       }
     }
 
+    // 1. git merge agent/* — block unless cycleStep is "review-complete"
     if (/git\s+merge\s+agent\//.test(cmd)) {
+      // The agent/* merge path runs the Freshness Gate too — without it the
+      // most common build merge
+      // could ship with unresolved Class C drift. Run the gate (red blocks,
+      // yellow allows). Path-coherence already runs above for non-agent
+      // merges; agent merges trust gauntlet review for that side.
       const reqGate = path.join(PROJECT, "scripts", "requirements", "gate.js");
       if (require("fs").existsSync(reqGate)) {
         const { spawnSync } = require("child_process");
@@ -353,6 +439,7 @@ process.stdin.on("end", () => {
             "Run gauntlet (eval+security+compliance) first.",
         );
       }
+      // cycleStep is review-complete — allow the merge
       logEvent(
         "merge",
         "boss",
@@ -363,12 +450,14 @@ process.stdin.on("end", () => {
       process.exit(0);
     }
 
+    // 2. git reset --hard — always block
     if (/git\s+reset\s+--hard/.test(cmd)) {
       block(
         "git reset --hard blocked: destructive operation. Use git revert instead.",
       );
     }
 
+    // 3. git checkout agent/ — block switching to agent branches
     if (/git\s+checkout\s+agent\//.test(cmd)) {
       block(
         "git checkout agent/* blocked: Boss should not switch to agent branches directly.",
@@ -381,12 +470,26 @@ process.stdin.on("end", () => {
       );
     }
 
+    // 4. node -e with fs write operations — ADVISORY (warn, never block).
+    // An inline write skips the Edit/Write hooks, but so does a standalone
+    // `node scripts/foo.js`, which was always allowed; blocking only the
+    // inline spelling forced a rewrite and protected nothing. memory-guard's
+    // Bash rule covers the append-only stores only where the target is visible
+    // in the command text: a shell overwrite redirect or tee, a cp/mv/rm/
+    // truncate operand, or writeFileSync called with a literal path naming the
+    // store. A write through a variable path, or from inside a script file,
+    // is not caught by either hook. Falls through so the rules
+    // below (rm on src/_docs, force-push) still apply to the same command.
     if (
       /node\s+-e\s/.test(cmd) &&
+      // Match fs WRITE methods only — the write families (write/append/mkdir/rm/unlink/rename/
+      // cp/truncate/createWriteStream) so read-only `node -e` passes through.
       /fs\.(writeFile|writeFileSync|appendFile|appendFileSync|mkdir|mkdirSync|rm|rmSync|rmdir|rmdirSync|unlink|unlinkSync|rename|renameSync|cp|cpSync|copyFile|copyFileSync|truncate|truncateSync|createWriteStream)\b/.test(
         cmd,
       )
     ) {
+      // The warning names the preferred path for the two dominant cases (a
+      // JSONL append and a full-file write), with a general hint otherwise.
       const isJsonl = /\.(jsonl|ndjson)['"]\s*[,)]/.test(cmd);
       const isAppend = /appendFileSync/.test(cmd);
       const isWrite = /writeFileSync/.test(cmd);
@@ -404,15 +507,30 @@ process.stdin.on("end", () => {
           "Use Edit/Write tools, or move the logic into scripts/<name>.js and run `node scripts/<name>.js`. " +
           "Hooks enforce ownership on Edit/Write but allow standalone scripts.";
       }
-      block(`node -e with fs write blocked: ${hint}`);
+      logEvent(
+        "warn",
+        "system",
+        "node-e-fs-write-advisory",
+        cmd.slice(0, 100),
+        "node -e with fs write (advisory, not blocked)",
+      );
+      process.stderr.write(
+        `\x1b[33m[merge-guard] WARNING: node -e with fs write (not blocked; Edit/Write hooks do not see this write). ${hint}\x1b[0m\n`,
+      );
     }
 
+    // 5. rm on src/ or _docs/ — block destructive deletes.
+    // Scoped per-segment so `cd src/ && rm /tmp/x` doesn't false-positive
+    // (merge-guard regex overmatch). `git rm` is
+    // allowed because git tracks the deletion and it's recoverable.
     {
       const segments = cmd.split(/(?:&&|\|\||;|\|)/);
       for (const seg of segments) {
         const s = seg.trim();
         if (!/\brm\b/.test(s)) continue;
         if (/\bgit\s+rm\b/.test(s)) continue;
+        // Only block when the rm command itself targets src/ or _docs/ —
+        // a path token starting with src/ or _docs/ in the same segment.
         if (/\b(?:src|docs)\//.test(s)) {
           block(
             "rm on src/ or _docs/ blocked: use `git rm` to manage file lifecycle.",
@@ -421,6 +539,9 @@ process.stdin.on("end", () => {
       }
     }
 
+    // 5b. ref-checker advisory on `git rm <path>` (CLAUDE.md §"Refactor & Rename Hygiene").
+    // Soft warning only — surfaces broken cross-file refs that the deletion may leave behind.
+    // Spawned async + detached so the Bash call isn't blocked by the ~1-2s scan.
     {
       const segments = cmd.split(/(?:&&|\|\||;|\|)/);
       const hasGitRm = segments.some((s) => /\bgit\s+rm\b/.test(s.trim()));
@@ -445,10 +566,16 @@ process.stdin.on("end", () => {
             "git rm detected — ref-checker spawned async",
           );
         } catch {
+          /* fail-open — ref-checker is advisory, never blocks the user */
         }
       }
     }
 
+    // 6. git push force forms — block all three:
+    //    (a) --force / --force-with-lease
+    //    (b) -f short flag
+    //    (c) +refspec form: git push origin +main  (equivalent to --force)
+    //    old regex caught only (a) and (b); +main syntax bypassed the guard.
     if (
       /git\s+push\s+.*--force/.test(cmd) ||
       /git\s+push\s+-f\b/.test(cmd) ||
@@ -459,12 +586,14 @@ process.stdin.on("end", () => {
       );
     }
 
+    // 6b. karpathy-run/* branches — block any push (experiment branches, never publish)
     if (/git\s+push\b.*karpathy-run\//.test(cmd)) {
       block(
         "karpathy-run/* branches are experiment-only; never pushed to remote. Use /karpathy:integrate to land the winning variant onto a feature branch off main.",
       );
     }
 
+    // 7. git push (non-force) — advisory warning, not a block
     if (
       /git\s+push\b/.test(cmd) &&
       !/--force|-f\b|--dry-run/.test(cmd) &&
@@ -480,10 +609,16 @@ process.stdin.on("end", () => {
       process.stderr.write(
         "\x1b[33m[merge-guard] ADVISORY: git push detected. Convention says ask before pushing.\x1b[0m\n",
       );
+      // Allow — this is advisory only
     }
 
+    // (Rule 8 — cd <projectDir> advisory — runs above the fast-path allowlist
+    // because `cd ... && git ...` chains exit early through allow().)
+
+    // Default: allow
     allow(cmd);
   } catch (e) {
+    // Fail-closed on parse error
     logEvent(
       "block",
       "system",

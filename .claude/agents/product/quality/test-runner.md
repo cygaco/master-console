@@ -155,8 +155,7 @@ Always emit a single JSON object as your final message. Wrap in a fenced
 ## On PASS — record the run for stale-detection
 
 After emitting a PASS verdict, write the timestamp + commit to
-`.claude/runtime/test-runs/<feature>.json` so the staleness hook
-(`scripts/hooks/spec-test-staleness.js`) and report
+`.claude/runtime/test-runs/<feature>.json` so the staleness report
 (`scripts/check-test-staleness.js`) can detect when a future spec edit
 makes this run stale:
 

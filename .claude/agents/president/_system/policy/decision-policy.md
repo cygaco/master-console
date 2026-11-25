@@ -44,20 +44,14 @@ Examples:
 
 When a Class B decision affects **architecture, dependencies, data model, security, or deployment**, also flag `OPEN_ADR: true` so Alpha drops a new ADR file in `paths.policy/adr/` in the next cycle.
 
-### Class C — Escalate to user
+### Class C — Ask the operator
 
-Strategic, irreversible, business-sensitive, or user-trust-affecting. Beta returns ESCALATE with **one recommended answer**, not a menu. Alpha asks the user only after this verdict.
+Only the three triggers in § Escalation red lines. Beta returns ESCALATE with **one recommended answer**, not a menu. Alpha asks the user only after this verdict.
 
 Examples:
-- Pricing model
-- Product positioning and messaging
-- Sensitive user data handling
-- Compliance posture (privacy, GDPR, CCPA, accessibility minimums)
-- Major vendor lock-in
-- Payment architecture
-- Public launch readiness gates
-- Data deletion and retention policy
-- Anything that could materially damage user trust if wrong
+- Pricing, positioning, a public launch, a compliance posture users are promised — each is a new public surface
+- Payment architecture or a vendor contract that costs $5 or more
+- Deleting data, retention that destroys records, exposing a credential — each is irreversible
 
 **State-conditional resolution.** A legitimate
 Class C resolution is to **defer the call to the decision point and make it
@@ -73,27 +67,28 @@ to "close" the question.
 
 ## Escalation red lines (Class C triggers)
 
-Always escalate, even if a decision otherwise reads as Class A or B. These exist because the cost of being wrong is large or irreversible.
+Only these three go to the operator:
 
-- Irreversible operations — deleting data, dropping features, force-pushing, removing branches
-- Spec semantics changes — anything that changes what users see, feel, or are promised
-- Spend ≥ $5 — API costs, service signups, paid plan upgrades
-- External-facing actions — push to remote, deploy, publish, send email, post to social
-- Credentials or secrets — anything involving keys, tokens, passwords
-- Contradicts an established `CLAUDE.md` rule
-- Pricing, positioning, or compliance questions
-- Sensitive user data (PII, user-uploaded document contents at boundaries)
-- Payment architecture
-- Public launch readiness
-- Anything that could materially damage user trust
+- **A new public surface** — a release not yet approved (a package, a deploy, a post), a new public repo, a visibility change, a new registry, pricing, positioning or compliance claims (promises about user data included); see the push and publish rule below
+- **Spend of $5 or more** — API costs, paid plans already signed up for
+- **An irreversible action** — deleting data, rewriting history, force-pushing, exposing a credential, a secret or a user's data off this machine
 
-When in doubt about whether a decision crosses one of these lines, **escalate**. The cost of an unnecessary ESCALATE is seconds. The cost of a wrong DECIDE on a red line is hours or worse.
+**Never allowed** (`CLAUDE.md` § Autonomy) — signing up for services, making purchases, deleting backup branches. These are not asked about; they are not done.
+
+**Everything else is decided internally.** An internal, undoable call that β would approve goes ahead; the operator gets one line saying what was decided and its real undo: a revert, a backup id or a command that exists, never an abstract claim that it can be undone. One β would refuse is not made. An ESCALATE costs hours when the operator is away, so when unsure about an internal undoable call, take the more reversible option and report it.
+
+**The push and publish rule** (`CLAUDE.md` § Autonomy carries the same three parts):
+1. Pushing green work to the operator's own repos, private or public (branches and main), does not ask. A push whose destination is public first passes the zero-personal-content check and carries a security read of what is new since that repo's last public state.
+2. Publishing a release the operator already approved by name does not ask again; it goes through the project's release or publish command after its content checks.
+3. Asked once: a release not yet approved, a new public repo, a visibility change, a new registry, pricing, positioning or compliance claims. These are what "a new public surface" means.
+
+**Unratified views are advice.** A pending item in `paths.judgmentModel` is cited and labelled as unratified, never as the reason a call goes to the operator.
 
 ### Build-the-seam on a missing dependency — NOT an escalation
 
 A **missing external credential / account / service is NOT an escalation and NOT a stop.** On a missing dependency, β directs **building the interface seam** (interface + adapter + deferred-credential/stub path) and **continuing the run**; the actual signup/purchase stays **operator-owned** and is surfaced as a **non-blocking deferred lastmile item**, never a mid-run halt.
 
-This does **not** touch the never-allowed hard ceiling: **building the seam is not signing up.** "Sign up for services / make purchases" remains operator-only (`CLAUDE.md` § Autonomy), and the "service signups / spend ≥ $5" red line above stands unchanged — this clause only forbids treating the *absence* of a credential/account as a reason to halt. It **removes an escalation path; it adds no authority.** Composes with `CLAUDE.md` "Never escalate"; this pins the *missing-dependency* case specifically.
+This does **not** touch the never-allowed hard ceiling: **building the seam is not signing up.** "Sign up for services / make purchases" remains operator-only (`CLAUDE.md` § Autonomy), and the never-allowed list above stands unchanged — this clause only forbids treating the *absence* of a credential/account as a reason to halt. It **removes an escalation path; it adds no authority.** Composes with `CLAUDE.md` "Never escalate"; this pins the *missing-dependency* case specifically.
 
 ---
 
@@ -139,16 +134,22 @@ is **HIGH**; **report-field incoherence over an honest store** — the system is
 contradicts itself or a sibling surface — is **MEDIUM**. Fixed here so it is not re-derived differently per
 sprint. Consumer: β loads this file on every invocation and carries the bar.
 
-## Pre-committed gate criteria
+## Review and hold rules
 
-Any escalation-terminal, round-limit, or reserved-pass gate MUST state its firing criterion BEFORE the round it
-governs, then apply it literally and record the outcome verbatim — reshaped neither into a clearance nor into a
-firing. Convergence on a re-confirmed HIGH is not a new HIGH. Applies to the gauntlet-terminal contract and any
-gate that can halt work after N rounds. Fixed criteria are what make post-hoc alteration
-detectable, in both directions (raising the bar to avoid stopping; inflating the count to force a stop).
-Enforcement: β refuses gate outcomes lacking a pre-stated criterion; the mechanical lint is owed as
-enforcement debt (`paths.enforcementDebt`) — a terminal record must reference a criterion artifact that predates the
-round's start.
+The one home of these rules; ε, γ, δ, the leads, reviewers and fixers point here.
+
+1. One review round per unit, readers in parallel, depth sized to the change's risk.
+2. Only three things hold a unit: a security hole an outsider could use, data loss, or a false claim about a user's data. Every other finding, at any severity, becomes one known-issues row (in the lane's status file and the result's `risks_remaining`) and is fixed afterwards.
+3. A finding that needs an attacker who can already edit the project (its files, PATH or settings) is a known issue, not a hold.
+4. After a fix, check the fix against the finding it answers. Do not re-read the whole unit.
+5. Two rounds is the ceiling, and the second needs a product reason stated in one sentence.
+6. A finding holds only the unit it blames. Units that passed land.
+7. No rule stops a whole lane, and a lane writes no stop rule for itself in advance.
+8. Every "on hold" report starts with one plain sentence saying what is broken.
+
+A unit still held after the ceiling is set aside with its finding's row (carrying rule 8's sentence), and the rest of the lane goes on.
+
+Three things are not review findings and are never deferred: nothing personal ships (the no-personal-content rule and its check stay fail-closed), anything going public gets its security read first, and tests and the build pass before a unit lands.
 
 ## Tech-introduction rule
 
@@ -179,24 +180,16 @@ Beta authorizes within the **MC policy frame** (Class A/B/C, the rubric, this do
 
 When the classifier blocks an action and cites intent mismatch with the user's original prompt ("user only asked to look it up", "user did not authorize publishing", etc.):
 
-1. **Beta DECIDE does NOT override.** A MC policy verdict is not a harness override. The classifier outranks Beta on harness-safety questions. **The classifier also sits ABOVE `permissions.allow`** (mechanical layering fact): a standing `Bash(git push *)` allow rule — even a turbo `push-to-main` scope — does NOT make a push-to-main classifier-immune; it still requires per-action operator intent. So β must never promise "classifier-immune auto-push" from a permissions profile (or a turbo grant) alone — push-to-main stays per-action regardless of `permissions.allow`. (The turbo-overrides-push-table autonomy clause is decided — see § Autonomy-ceiling resolution below.)
+1. **Beta DECIDE does NOT override.** A MC policy verdict is not a harness override. The classifier outranks Beta on harness-safety questions. **The classifier also sits ABOVE `permissions.allow`** (mechanical layering fact): a project allow rule or a turbo grant does not clear it; only the operator's own settings do. When it refuses a push, report "the safety check refused it" and never reshape the command.
 2. **Do not retry with Beta blessing alone.** Retrying the same Edit/Bash with a new "Beta said yes" prelude is bypass-by-rationalization; the classifier will block again and you will burn turns.
-3. **Surface to the user with one short plain-text sentence** describing the action and asking for go-ahead. Do NOT use AskUserQuestion (beta-gate intercepts it). The user types yes/no; the classifier re-evaluates with that confirmation in scope.
-4. **The shape echoes the autonomy table.** Push-to-remote and ≥$5 spend already "ask first" — that's an in-repo policy alignment with a harness-safety expectation. Treat classifier blocks as the same shape: confirm, don't override.
-
+3. **Surface it to the operator as one `⚠️ DECISION NEEDED`** (`CLAUDE.md` § Talking to the Operator): the action and one recommendation, the question last. The user types yes/no; the classifier re-evaluates with that confirmation in scope.
 ---
 
-## Autonomy-ceiling resolution — turbo override of the push table
+## Autonomy-ceiling resolution
 
-How an autonomy-class ESCALATE resolves, and what a turbo session may carry as a durable permissions profile.
+**An autonomy-class ESCALATE resolves UPWARD.** When β ESCALATEs an autonomy question, it recommends the **maximum-autonomy option bounded only by the never-allowed hard ceilings** — **backup-branch deletion, service signup, purchases** (`CLAUDE.md` § Autonomy) — not a conservative middle option; a conservative recommendation only adds a round-trip. The never-allowed list is the only floor β defends without flexing.
 
-1. **An autonomy-class ESCALATE resolves UPWARD.** When β ESCALATEs an autonomy question, it resolves to the **maximum-autonomy option bounded only by the never-allowed hard ceilings** — **backup-branch deletion, service signup, purchases** (`CLAUDE.md` § Autonomy). β still escalates (the call is genuinely Class C — irreversible/outward) but **frames the recommendation as the top autonomy level below whichever hard ceilings apply**, not a conservative middle option; the ceiling is chosen by the decision-maker anyway, so a conservative recommendation only adds a round-trip. The never-allowed list is the only floor β defends without flexing.
-
-2. **A turbo session may carry a durable OPERATOR-DECLARED permissions profile** that grants **spend (+$100 framework default, raisable per session) + commit + branch ops + merge-to-main**, **deliberately overriding the "Push = Ask first" autonomy-table line FOR TURBO SESSIONS.** This is legitimate because it is an **operator declaration, not a self-grant** — Alex never widens its own autonomy to this profile; the operator establishes it for the session.
-
-3. **BUT push-to-main still stays per-action.** Even with the operator-declared turbo profile and a standing `Bash(git push *)` in `permissions.allow`, the harness auto-mode classifier sits **above** `permissions.allow` and continues to gate push-to-main on per-action intent (the mechanical layering fact, § Two-gate authority point #1). So the turbo profile authorizes spend/commit/branch/merge **within the MC policy frame**, but push-to-main requires a per-action operator line (one typed push line per arc, or operator-run `! git push`) to clear the harness frame.
-
-See § Two-gate authority point #1. Composes with the autonomous-run authorization and arc-level push policies.
+**A turbo session may carry an OPERATOR-DECLARED permissions profile** granting spend (+$100 framework default, raisable per session), commit, branch ops and merge-to-main — an operator declaration, never a self-grant. Pushes need no turbo profile: a push of green work to the operator's own repos is the lead's call in every session.
 
 ---
 

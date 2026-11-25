@@ -1,10 +1,5 @@
 ---
 description: Mine patterns from user behavior — prompts, decisions, skill chains, evolution cycles
-says:
-  - mine beta patterns
-  - beta mine
-  - what patterns in my decisions
-  - mine the decisions
 ---
 
 # /beta:mine — Pattern Mining for Alex β's Judgment Model
@@ -18,7 +13,7 @@ Sleep reviews recommendations — this skill does NOT directly modify `judgement
 | Source | Location | Pattern Type |
 |--------|----------|-------------|
 | Prompts | `.claude/project/events/events.jsonl` (cat: prompt) | Prompt sequences, frustration signals |
-| Tool events | `.claude/project/events/tools.jsonl` | Skill chains, tool co-occurrence |
+| Tool events | `paths.eventsFile` rows with category "tool" | Skill chains, tool co-occurrence |
 | Alex β decisions | `.claude/agents/president/_system/beta/events.jsonl` | Accuracy, topic confidence |
 | Git | `git log --all --format` | Feature lifecycle, decision cycles |
 | Learnings | `.claude/project/memory/learnings.jsonl` | User corrections, preference signals |

@@ -1,11 +1,6 @@
 ---
 description: Generate a rich AI-analyzed handoff document (replaces /handoff)
 user-invocable: true
-says:
-  - write the handoff
-  - prepare a handoff
-  - hand off to the next session
-  - session handoff
 ---
 
 # /session:handoff — Generate Handoff

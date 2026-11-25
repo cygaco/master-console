@@ -36,6 +36,16 @@ test("check-lib-consumer-runner-error — pre-commit-check-lib.js's computeExitC
 test("check-lib-consumer-runner-error — pre-commit-check-lib.js CONTROL: a non-throwing, non-blocked runner result returns 0 (proving the runner-error code is DISTINCT from the ordinary clean path, not just 'always non-zero')", () => {
   const hook = require("../../hooks/pre-commit-check-lib");
   const cleanRunFn = () => ({ version: "v", results: [], missing: [], blocked: false, blockingReasons: [] });
-  const code = hook.computeExitCode({ runCheckLibSuiteFn: cleanRunFn });
-  assert.strictEqual(code, 0);
+  const fs = require("fs");
+  const os = require("os");
+  const path = require("path");
+  const { execFileSync } = require("child_process");
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "check-lib-control-"));
+  try {
+    execFileSync("git", ["init", "-q"], { cwd: root, stdio: "ignore", windowsHide: true });
+    const code = hook.computeExitCode({ root, runCheckLibSuiteFn: cleanRunFn });
+    assert.strictEqual(code, 0);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });

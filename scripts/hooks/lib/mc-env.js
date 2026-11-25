@@ -6,7 +6,7 @@ const LEGACY_SLUG = "warpos";
 const CURRENT_SLUG = "mc";
 const CURRENT_PREFIX = `${CURRENT_SLUG.toUpperCase()}_`;
 const LEGACY_PREFIX = `${LEGACY_SLUG.toUpperCase()}_`;
-const REMOVED_IN = "mc@2.2.0";
+const REMOVED_IN = "mc@3.0.0";
 const SUFFIX_RE = /^[A-Za-z0-9_][A-Za-z0-9_.-]*$/;
 
 const warned = { env: false };

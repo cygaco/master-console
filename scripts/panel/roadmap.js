@@ -33,12 +33,14 @@ function parseRoadmap(root) {
 
     const hasPickupQueue = /^##\s+Sprint Pickup Queue\s*$/m.test(text);
 
-    const lines = text.split(/\r?\n/);
-    let markerIdx = -1;
-    for (let i = 0; i < lines.length; i++) {
-      if (/^\*\*Ranked do-next:\*\*\s*$/.test(lines[i].trim())) {
-        markerIdx = i;
-        break;
+    const findMarker = (ls) => ls.findIndex((l) => /^\*\*Ranked do-next:\*\*\s*$/.test(l.trim()));
+    let lines = text.split(/\r?\n/);
+    let markerIdx = findMarker(lines);
+    if (markerIdx === -1) {
+      const archive = path.join(root, "trackers", "ROADMAP-ARCHIVE.md");
+      if (fs.existsSync(archive)) {
+        lines = fs.readFileSync(archive, "utf8").split(/\r?\n/);
+        markerIdx = findMarker(lines);
       }
     }
     if (markerIdx === -1) {
@@ -91,11 +93,11 @@ function parseTracker(root) {
     const nextHead = body.search(/^#{1,2}\s+\S/m);
     const section = nextHead === -1 ? body : body.slice(0, nextHead);
 
-    const m = /\*\*\s*(NEXT ACTION[\s\S]*?)\*\*/.exec(section);
-    if (!m || !m[1].trim()) {
-      throw new Error("no bolded **NEXT ACTION ...** line in the section");
+    const first = section.split(/\r?\n\s*\r?\n/).map((p) => p.trim()).find(Boolean);
+    if (!first) {
+      throw new Error("the next-action section is empty");
     }
-    const nextAction = m[1].replace(/\s+/g, " ").trim();
+    const nextAction = first.replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
     return { nextAction };
   } catch (e) {
     return { error: e && e.message ? e.message : String(e) };

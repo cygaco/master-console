@@ -1,0 +1,31 @@
+{
+  "id": "claude-builders-codex-reviewers",
+  "title": "claude-builders-codex-reviewers",
+  "dated": "2026-10-31",
+  "reason": "Test fixture.",
+  "evidence": [
+    "scripts/dispatch/presets-coverage.test.js"
+  ],
+  "coverage": {
+    "code": "cross-family",
+    "security": "cross-family",
+    "visual": "exempt-capability"
+  },
+  "pins": {
+    "backend-reviewer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "frontend-reviewer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    },
+    "qa-reviewer": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    }
+  }
+}

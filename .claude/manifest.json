@@ -14,7 +14,7 @@
     "mainBranch": "main"
   },
   "mc": {
-    "version": "2.0.0",
+    "version": "2.3.0",
     "installed": true,
     "source": "self",
     "features": [
@@ -94,22 +94,13 @@
     },
     "antigravity": {
       "cli": "agy",
-      "default_model": "gemini-3.1-pro-high",
+      "default_model": "gemini-4-argon-high",
       "fallback": "openai",
       "syntax": "agy {reasoning} --model {model} --print-timeout 90s -p"
     }
   },
-  "_agentProviders_note": "This per-project override WINS over the role-registry keystone (getProviderForRole reads manifest.agentProviders first). Every role not listed here derives from the registry single-source (DEFAULT_AGENT_PROVIDERS). Legacy names normalize + derive via the registry.",
-  "agentProviders": {
-    "alpha": "claude",
-    "beta": "openai",
-    "gamma": "claude",
-    "delta": "claude",
-    "epsilon": "claude",
-    "qa-reviewer": "claude",
-    "frontend-reviewer": "claude",
-    "backend-reviewer": "claude"
-  },
+  "_agentProviders_note": "This project's own model pins (the project layer). Empty = every role takes its model from the shipped default preset (.claude/agents/_org/presets/default.json) and its fallback chain. A pin set with `node scripts/dispatch.js set <role> ...` is written here (never into a role spec) and wins over the preset; `set <role> --default` removes it. An in-process (Claude) pin chooses a tier: it rides at spawn time as an alias (opus / sonnet / haiku / fable). This file ships, so the release gate shipped_spec_models requires it to stay empty in the product source.",
+  "agentProviders": {},
   "buildCommands": {},
   "fileOwnership": {
     "foundation": []

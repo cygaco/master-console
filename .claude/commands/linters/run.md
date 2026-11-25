@@ -4,11 +4,6 @@ user-invocable: true
 namespace: linters
 reads: []
 writes: []
-says:
-  - run the linters
-  - lint everything
-  - linters run
-  - run lint
 ---
 
 # /linters:run

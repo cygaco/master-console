@@ -1,11 +1,5 @@
 ---
 description: List open enforcement-debt entries — policies/conventions without an automated enforcer
-says:
-  - list enforcement debt
-  - show open eds
-  - what's unenforced
-  - enforcement list
-says-confirm: always
 ---
 
 # /enforcement:list — View Enforcement Debt

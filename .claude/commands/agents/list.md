@@ -4,11 +4,6 @@ user-invocable: true
 namespace: agents
 reads: [paths.agents]
 writes: []
-says:
-  - list the agents
-  - what agents do we have
-  - show the roster
-  - agents list
 ---
 
 # /agents:list

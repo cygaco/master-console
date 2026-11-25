@@ -3,9 +3,9 @@
   "site_unit_definition": "A site is the line on which the `catch` clause that receives a thrown error on a path the gate's decision depends on BEGINS (the `catch` keyword's own line — 'catch-line' below). This is a deliberately different anchor than scripts/checks/gate-failclosed-audit.js's own finding.line, which reports the line of the PERMISSIVE STATEMENT (process.exit(0) or the success-shaped return) inside the handler body, not the catch clause itself. Every row below states both: `line` (this registry's catch-line convention) and `tool_finding_line` (the detector's own anchor, when tool_correlated is true). The enforcer fails on a row whose `line` or `tool_finding_line` is past the end of its file or holds no code.",
   "rows": [
     {
-      "site_id": "scripts/hooks/dependency-admission-guard.js:30",
+      "site_id": "scripts/hooks/dependency-admission-guard.js:51",
       "file": "scripts/hooks/dependency-admission-guard.js",
-      "line": 30,
+      "line": 51,
       "disposition": "not-a-defect",
       "polarity_provenance": "manual-by-read",
       "decision_semantics_quote": "this gate blocks package.json dependency additions without an admission record — restrictive = block (exit 2). A payload-parse or checkPackageEdit() failure is \"could not evaluate this edit\", never \"nothing to admit\" (that path already exits 0 explicitly above, outside this catch). Fail closed rather than silently admitting an unreviewed dependency.",
@@ -187,9 +187,9 @@
       "note": "Every fs.statSync(capsuleDir) failure — including a permissions error (EACCES) on an EXISTING capsule directory, not only a legitimately-absent one — is collapsed into capsuleExists=false, and the very next statement (`if (!capsuleExists) return process.exit(0);`) exits 0 unconditionally, outside failClosed() and outside any policy gate. tool_correlated: false: the process.exit(0) is not inside the catch handler itself (the handler body is only `capsuleExists = false;`) but in a SEPARATE statement reached afterward regardless of which branch ran — the ceiling gap CEILING_TEXT (scripts/checks/gate-failclosed-audit.js) names as 'general reachability (flag-then-later-exit)', which the detector explicitly states it DOES NOT CLOSE. contested; not tool-correlated, so this disposition does not enter the enforcer's enforcement count."
     },
     {
-      "site_id": "scripts/hooks/worktree-preflight.js:137",
+      "site_id": "scripts/hooks/worktree-preflight.js:160",
       "file": "scripts/hooks/worktree-preflight.js",
-      "line": 137,
+      "line": 160,
       "disposition": "not-a-defect",
       "polarity_provenance": "manual-by-read",
       "decision_semantics_quote": "\"exit code 0 allows and exit code 2 blocks\" (this file's own header). A failure anywhere on this path (payload parse at L102, orphan-cleanup fs/git errors) means Step 2's smoke-marker check was never reached — could-not-check, not nothing-to-check. Fail closed rather than silently allowing a builder dispatch this session never actually smoke-tested.",
@@ -200,9 +200,9 @@
       "tool_finding_line": null
     },
     {
-      "site_id": "scripts/hooks/worktree-preflight.js:20",
+      "site_id": "scripts/hooks/worktree-preflight.js:30",
       "file": "scripts/hooks/worktree-preflight.js",
-      "line": 20,
+      "line": 30,
       "disposition": "contested",
       "polarity_provenance": "manual-by-read",
       "decision_semantics_quote": "function git(args, cwd) {\n  try {\n    return execSync(\"git \" + args, { cwd, stdio: [\"pipe\", \"pipe\", \"pipe\"] })\n      .toString()\n      .trim();\n  } catch {\n    return \"\";\n  }\n}",

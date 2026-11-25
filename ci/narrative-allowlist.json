@@ -74,13 +74,6 @@
       "reason": "Quote is a section title; operator is the product user role."
     },
     {
-      "path": ".claude/commands/skills/create.md",
-      "member": "narrative-speech",
-      "line_sha256": "e93927f4e878d8a83c42dce9b4b41d32af003d49fe70ea0767dab81319a7166a",
-      "count": 1,
-      "reason": "Example dictated phrase for skill routing; operator is the product user role."
-    },
-    {
       "path": ".claude/project/reference/lastmile/research-signal-2026.md",
       "member": "narrative-speech",
       "line_sha256": "ef16516dd1a5926b9c183dace624d0daabd516e4b026f8841a5c81ddeb0d1d8c",
@@ -107,6 +100,14 @@
       "line_sha256": "a9bf66298e3a1fffe42cfe15a7261b696bdafd2625e34cf00464d1ed231729b4",
       "count": 1,
       "reason": "End of the same sentence; says the sign-off flips the check and describes the enforce flag, role only."
+    },
+    {
+      "path": ".claude/commands/skills/create.md",
+      "member": "narrative-speech",
+      "line_sha256": "e93927f4e878d8a83c42dce9b4b41d32af003d49fe70ea0767dab81319a7166a",
+      "count": 1,
+      "history_only": true,
+      "reason": "Example dictated phrase for the old skill routing, in the published 2.1.0 history only (the 2.3.0 text removed it); operator is the product user role."
     }
   ]
 }

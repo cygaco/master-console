@@ -46,7 +46,7 @@ node scripts/checks/integration-seam-gate.js runtime/integration/<feature>/manif
 ```
 
 exit 0 = seam governed (or single-builder N/A) → proceed to the gauntlet; exit 1 = blocking
-defect (treat like a reviewer fail: fix brief → builder/fixer, max 3, re-run); exit 2 =
+defect (fix brief → builder/fixer, two rounds at most, re-run the gate); exit 2 =
 fail-closed error → HALT. In oneshot (no α/β) an unresolved conflict is parked via
 `scripts/arbitration/emit.js` (owner `gamma_integration`) and the run-end resolver blocks
 ship-ready. Full detail: `.claude/agents/president/gamma.md` → "Integration phase".
@@ -62,18 +62,18 @@ each reviewer via CLI:
 - **qa-reviewer** — ABSORBS the legacy qa + compliance + req-reviewer scopes: the 13 functional QA personas + integrity (COPY.md exact-match, hallucinated-dep) + traceability (behavior↔req↔code↔test, contract-propagation, risk-class agreement). Skipped only if `_requirements/_index/requirements.graph.json` is missing (older installs) drops the traceability lane.
 - **security-reviewer** — REPLACES redteam: OWASP Top 10 + adversarial patterns + attack-chain correlator + prompt-injection prober (gemini corpus-diverse + the internal 2nd-GPT pass).
 
-Dispatch sequentially (CLI `-p` is blocking). Collect ALL results before proceeding. If `qa-reviewer` returns `fail` with severity `error` finding category `risk_class_disagreement` or `contract_propagation_missed`, treat as a blocking finding regardless of the other reviewers' verdicts (the absorbed req-reviewer BLOCKING rule).
+Dispatch the readers in parallel (one bounded-wrapper call each, issued together). Collect ALL results before proceeding. One round per feature, depth sized to risk (`paths.decisionPolicy` § Review and hold rules).
 
 ### 3. Fix cycle (if needed)
 
-If any gauntlet reviewer reports failures:
-1. Merge all findings into a single fix brief
+Only a hold-class finding (an outsider-usable security hole, data loss, a false claim about a user's data) holds the feature. Every other finding is one known-issues row in `human_report.risks_remaining`, fixed afterwards; personal content, the security read before anything goes public, and passing tests are never deferred (same section). For a hold-class finding:
+1. Put it in a fix brief
 2. Dispatch the pod fixer via the bounded wrapper (fixers are build-chain): `node scripts/dispatch-claude.js <pod>-fixer <fix-brief-file> --model sonnet -w` (e.g. `frontend-fixer`/`backend-fixer`/`security-fixer` — match the pod whose reviewer failed)
-3. Max 3 fix attempts per feature
-4. After each fix: targeted re-review (only re-check what failed — the same pod reviewer RE-RUNS)
+3. Check the fix against the finding it answers — not a full re-read
+4. Two rounds at most; the second needs a product reason in one sentence
 
 > **Independence invariant (ADR-0007): the dispatcher CANNOT override a binding FAIL.**
-> If a reviewer's verdict is `fail` and fix attempts are exhausted, the run is reported
+> If a reviewer's hold-class finding still stands after the second round, the run is reported
 > `status: "fail"`/`"halted"` and the feature is NOT placed in `features_completed` — a
 > dispatcher may never flip a binding FAIL to a declared success. Enforced by
 > `scripts/checks/adhoc-fail-override.js` (`/scan:adhoc-fail-override`), which reads the

@@ -1,10 +1,5 @@
 ---
 description: Read the cross-session inbox — see what other Alex sessions have been doing
-says:
-  - read the inbox
-  - what are the other sessions doing
-  - cross session inbox
-  - session read
 ---
 
 # /session:read — Read Cross-Session Inbox

@@ -1,12 +1,6 @@
 ---
 description: Fold new information, constraints, bugs, or scope into an EXISTING epic intelligently — classify the item against the 14-class taxonomy, detect conflicts with stable commitments (flag, never silently overwrite), and append a provenance Change Log entry. Idempotent.
 user-invocable: true
-says:
-  - fold this into the epic
-  - add this to the epic
-  - update the epic with
-  - epic fold
-says-args: free-text
 ---
 
 # /epic:fold — Fold into an Epic

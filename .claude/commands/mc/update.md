@@ -1,14 +1,6 @@
 ---
 description: "Update MC in this project to a target release. Default = latest. Default mode = dry-run; pass --apply to execute."
 user-invocable: true
-says:
-  - update mc
-  - update master console
-  - pull the latest mc
-  - mc update
-says-flags:
-  apply: --apply
-says-confirm: always
 ---
 
 # /mc:update — Apply a MC release capsule
@@ -31,7 +23,15 @@ The actual engine lives at `scripts/mc/update.js`. This skill is a thin wrapper 
 
 Check `.claude/framework-installed.json` exists. If not: tell the user to run `install.ps1` first; this skill is for upgrades, not fresh installs.
 
-**Do NOT pre-check the local `framework/releases/<version>/` directory.** 0.4.1+ update.js auto-discovers canonical clones via sibling walk (`../MC`, `../mc`) and via `manifest.json#mc.source` / `framework-installed.json#source`. If the local repo's `framework/releases/` is stale, the engine reads the capsule from canonical and the slash command stays silent about the lookup. Only fall back to "list available capsules" if the engine itself reports the capsule can't be found anywhere.
+**Do NOT pre-check the local `framework/releases/<version>/` directory.** 0.4.1+ update.js auto-discovers canonical clones via sibling walk (`../master-console`, `../MC`, `../mc`) and via `manifest.json#mc.source` / `framework-installed.json#source`. If the local repo's `framework/releases/` is stale, the engine reads the capsule from canonical and the slash command stays silent about the lookup. Only fall back to "list available capsules" if the engine itself reports the capsule can't be found anywhere.
+
+**When the source is NOT a `master-console`/`MC`/`mc` sibling — pass `--source` explicitly.** Auto-discovery matches only those three sibling directory names (plus the manifest/installed-snapshot hints). A canonical clone with any other directory name will NOT be found by the sibling walk, and the `capsule-resolvable` gate (preflight gate 2) reports red. Give the engine the path directly:
+
+```bash
+node scripts/mc/update.js --to <version> --source <abs-path-to-mc-clone> --target <product-path> --apply
+```
+
+`/portfolio:sync` already passes `--source` (the MC clone) and `--target` (each product) for every product it updates, so the portfolio path needs no manual `--source`. The explicit form above is for a one-off `/mc:update` run inside a single product whose canonical clone is not a standard-named sibling.
 
 ### Step 2 — invoke engine
 

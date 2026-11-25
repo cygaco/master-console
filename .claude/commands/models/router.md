@@ -4,11 +4,6 @@ user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js]
 writes: []
-says:
-  - open the model router
-  - model router
-  - route the models
-  - show the dispatch console
 ---
 
 # /models:router — open the model router panel

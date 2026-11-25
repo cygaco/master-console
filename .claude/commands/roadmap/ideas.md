@@ -1,10 +1,5 @@
 ---
 description: Predict candidate roadmap entries across four evidence lenses (3 each = 12 ideas) — whole-roadmap, last-3-shipped, last-3-active, vision/canonical. Read-only; proposes only, pairs with /roadmap:add. Role-aware — consults the Product Lead (single-product) or Director of Product (strategic) for a real product lens.
-says:
-  - roadmap ideas
-  - give me roadmap ideas
-  - what could we add
-  - brainstorm the roadmap
 ---
 
 # /roadmap:ideas — predictive roadmap-entry generator
@@ -30,7 +25,7 @@ Whole-slate runs (all four lenses, no product scoping) default to the **Director
 
 ## Evidence the skill reads (ground every idea — never invent)
 
-1. `ROADMAP.md` — Strategy block, Epics (the upcoming sequence and each epic), Sprint Pickup Queue, Known issues, Later, Shipped.
+1. `ROADMAP.md` (the active page: Epics, Sprint Pickup Queue, Sprints) and `trackers/ROADMAP-ARCHIVE.md` (Strategy block, epic details, Later, Shipped, the older queue).
 2. Canonical intent (if present) — `_requirements/00-canonical/*` (CORE_BRIEF, USER_COHORTS, GOLDEN_PATHS, PRODUCT_MODEL, EVOLUTION, FAILURE_STATES).
 3. Recent activity — `git log` (last ~15), `paths.eventsFile` tail, `PROJECT.md`.
 

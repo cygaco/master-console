@@ -27,6 +27,7 @@ const SIGNED_FIELDS = Object.freeze([
   "auth_fallback",
   "workorder_digest",
   "dispatch_id",
+  "gauntlet_run_id",
 ]);
 
 let _cachedSecret;
@@ -48,7 +49,10 @@ function sessionSecret() {
 }
 
 function canonicalIdentityString(record, fields = SIGNED_FIELDS) {
-  return fields.map((f) => `${f}=${record && record[f] != null ? JSON.stringify(record[f]) : ""}`).join("\x1f");
+  const segs = fields.map((f) => `${f}=${record && record[f] != null ? JSON.stringify(record[f]) : ""}`);
+  let end = fields.length;
+  while (end > 0 && !(record && record[fields[end - 1]] != null)) end--;
+  return segs.slice(0, end).join("\x1f");
 }
 
 function signRecord(record, secret = sessionSecret()) {
@@ -69,4 +73,9 @@ function verifyRecord(record, secret = sessionSecret()) {
   }
 }
 
-module.exports = { sessionSecret, canonicalIdentityString, signRecord, verifyRecord, SIGNED_FIELDS, SECRET_FILE };
+const GAUNTLET_RUN_ID_RE = /^g-[0-9a-f]{32}$/;
+function isValidGauntletRunId(id) {
+  return typeof id === "string" && GAUNTLET_RUN_ID_RE.test(id);
+}
+
+module.exports = { isValidGauntletRunId, sessionSecret, canonicalIdentityString, signRecord, verifyRecord, SIGNED_FIELDS, SECRET_FILE };

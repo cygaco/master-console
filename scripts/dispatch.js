@@ -124,6 +124,15 @@ function cmdShow() {
   }
 
   console.log("");
+  try {
+    for (const line of require("./dispatch/presets").footerLines()) {
+      console.log(c.dim(line));
+    }
+  } catch (e) {
+    console.log(c.dim(`presets: unavailable (${e.message})`));
+  }
+
+  console.log("");
   console.log(
     c.dim(
       "Source key: p=provider m=model e=effort · m/d/f = manifest/default/frontmatter, e=env",
@@ -138,11 +147,20 @@ function cmdShow() {
 }
 
 function cmdSet(argv) {
+  if (argv.length === 2 && argv[1] === "--default") {
+    const role = argv[0];
+    if (!ROLES.includes(role)) {
+      console.error(c.red(`unknown role: ${role}`));
+      process.exit(2);
+    }
+    doSave({ role, remove: true }, false);
+    return;
+  }
   const [roleArg, providerArg, model, effortArg, fallbackArg] = argv;
   if (!roleArg || !providerArg || !model) {
     console.error(
       c.red(
-        "usage: dispatch.js set <role> <provider> <model> [effort] [fallback]",
+        "usage: dispatch.js set <role> <provider> <model> [effort] [fallback]   |   dispatch.js set <role> --default",
       ),
     );
     process.exit(2);
@@ -517,6 +535,7 @@ ${c.bold("commands:")}
   ${c.cyan("edit")} <role>                             interactive cascade wizard (terminal)
   ${c.cyan("set")}  <role> <provider> <model> [effort] [fallback]
                                           non-interactive set
+  ${c.cyan("presets")} <list|show|status|snapshot|apply|unapply|undo>  named pin bundles with a reason
   ${c.cyan("backups")}                                 list saved backups
   ${c.cyan("revert")} <backup-id>                      restore a backup
   ${c.cyan("help")}                                    show this message
@@ -536,7 +555,7 @@ ${c.bold("provider ids:")}  claude (alias: anthropic) · openai (alias: gpt) · 
 ${c.bold("on save:")}
   - .claude/manifest.json              (agentProviders block)
   - .claude/agents/**/*.md frontmatter (matching role's files)
-  - .claude/agents/.system/dispatch-backups/<ts>/  (backup ring, last 50)
+  - .claude/runtime/dispatch-backups/<ts>/        (backup ring, last 50)
 
 ${c.bold("docs:")}
   _requirements/09-integrations/PROVIDER/             (model lists per provider)
@@ -562,6 +581,14 @@ async function main() {
     case "revert":
       cmdRevert(rest);
       break;
+    case "presets": {
+      const r = require("node:child_process").spawnSync(
+        process.execPath,
+        [path.join(__dirname, "dispatch", "presets.js"), ...rest],
+        { stdio: "inherit" },
+      );
+      process.exit(r.status === null ? 1 : r.status);
+    }
     case "gui": {
       const { startGui } = require("./dispatch/gui");
       const noOpen = rest.includes("--no-open");

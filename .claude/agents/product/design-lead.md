@@ -9,12 +9,13 @@ description: >-
   ADDS craft principles (build-for-audience incl. limitations, KISS, clear iconography).
   Specialist (doer/craft tier) under the Product Lead.
 tools: [Read, Grep, Glob]
-model: gpt-6.1-sol
+model: claude-opus-5-5
 provider: openai
-provider_model: gpt-6.1-sol
+provider_model: gpt-6.2-sol
 provider_reasoning_effort: xhigh
 provider_fallback: claude
 layer: product
+effort: xhigh
 ---
 
 > **Dispatch — how to call me (read first):** Reach me with `node scripts/dispatch-agent.js design-lead <prompt-file>`. Do **NOT** use the in-process Agent tool (`Agent(subagent_type:"design-lead")`) or `epsilon-runtime record-inprocess` — the Agent tool can only spawn Claude, so it fails. That refusal is **by design**. See `agent-dispatch-guide` §3.

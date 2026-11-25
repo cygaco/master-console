@@ -4,13 +4,6 @@ user-invocable: true
 namespace: report
 reads: [paths.sprintActiveRegistry, paths.sprintHistory, paths.eventsFile, paths.roadmap]
 writes: [paths.reportsDir]
-says:
-  - file a report
-  - write the report
-  - eli5 report
-  - report this
-  - write up what happened
-says-args: topic
 ---
 
 # /report — File a Plain-Language Report

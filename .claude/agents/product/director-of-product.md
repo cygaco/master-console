@@ -8,12 +8,13 @@ description: >-
   Lean Product Development. Generalizes a roadmap-scoped Director-of-PM into
   a general callable agent.
 tools: [Read, Grep, Glob]
-model: gpt-6.1-sol
+model: claude-opus-5-5
 provider: openai
-provider_model: gpt-6.1-sol
+provider_model: gpt-6.2-sol
 provider_reasoning_effort: high
 provider_fallback: claude
 layer: product
+effort: high
 ---
 
 > **Dispatch — how to call me (read first):** I run on **GPT-5.6 Sol via subprocess** (the `cross_provider_consult_lead` class — GPT is best at product strategy + requirements). Reach me with `node scripts/dispatch-agent.js director-of-product <prompt-file>`. Do **NOT** use the in-process Agent tool (`Agent(subagent_type:"director-of-product")`) or `record-inprocess` — they honor my `model: gpt-5.5` frontmatter and the Agent tool can only spawn Claude, so it fails **by design**. `provider_fallback: claude` covers a GPT quota-death via the sanctioned review-fallback lane.

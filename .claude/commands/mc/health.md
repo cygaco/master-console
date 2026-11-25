@@ -1,10 +1,5 @@
 ---
 description: Verify MC installation — checks every system, reports green/yellow/red with plain-English fixes
-says:
-  - mc health
-  - health of the install
-  - master console health
-  - provider health
 ---
 
 # /mc:health — Installation Health Check
@@ -218,6 +213,64 @@ The preferred-tier config (`.claude/runtime/provider-tier-config.json`,
 `paths.providerTierConfig`) is written ONLY behind the confirm-class
 `--set-tier` / `--write` flag; this health read never mutates it.
 
+### 11.7 Sign-in
+
+Run `node scripts/dispatch/signin.js --refresh`.
+
+It asks each AI tool, with that tool's own status command, whether you are
+signed in: Claude (`claude auth status`), Codex for OpenAI models (`codex login
+status`) and Gemini (`agy models` — agy has no status command, so the model list
+is the check). It reads no password or key files and keeps only "signed in or
+not", the method name, the exit code, the Codex version and the list of Gemini
+model names. The Gemini tool contacts its own service to list its models;
+the engine itself calls no AI service to check. The answer is saved for the model picker
+(only the model picker reads the saved answer; read it back through this command,
+never by opening the file) and is refreshed here, at install, and whenever you
+run the command yourself. A check that could not tell (slow, refused or
+unreadable) is shown as "could not check" and treated as signed in, so no role
+moves off its first choice on a guess. The saved answer is used for 7 days; after
+that (or when there is none) a tool that is not installed is skipped and every
+installed tool is tried, so tell the user to run /mc:health again after signing in
+to or out of a tool.
+
+### 11.8 Model resolution
+
+Run `node scripts/checks/model-resolution.js`.
+
+It checks that every role resolves to a model its tool offers, under every
+shipped preset and every sign-in combination, that Claude Code's in-process
+spawns only ever get Claude models, and that each role's spec carries the model
+the picker chose. Exit 0 → GREEN. Exit 1 → RED: name each failing line; the usual
+fix is `node scripts/dispatch/model-resolve.js --sync-specs`. Exit 2 → the check
+could not run (RED). Its last line names any role that runs on one model family
+only for a Claude-only user — say that in plain words, it is not a failure.
+
+Pins: a model the user chose for a role (`node scripts/dispatch.js set ...`) is kept
+in `.claude/manifest.json`, never in a role file. For a role that runs inside Claude
+Code the pin chooses a tier (Opus, Sonnet, Haiku or Fable): it is passed as the
+spawn's model alias, together with the pinned effort — Claude Code's Agent tool
+takes an effort setting, so a pinned effort is applied. A pin that names a model
+no tier reaches cannot be honoured: say so and give the fix
+`node scripts/dispatch.js set <role> --default`. A pin that names the role's default
+model is still a pin: that role is spawned with its tier and effort like any other
+pinned role.
+
+Tell the user in plain words:
+- Which tools are signed in, one line each, as the command prints them.
+- Each role has a list of models to try in order. A role whose first choice runs
+  on a tool you are not signed in to moves down its list to the next model it
+  can use; the last entry is always a Claude model, so every role still runs.
+- If neither Codex nor Gemini is signed in: the security review can only run on
+  Claude models, which is one model family. The security panel's rule needs
+  reviewers from more than one AI company, so it blocks its sign-off until you
+  sign in to Codex (`codex login`) or Gemini (open `agy` and sign in). This is
+  the panel's rule working as intended, not a fault.
+
+Status: every tool signed in → GREEN. Codex or Gemini not signed in → YELLOW
+(work still runs, with less model variety). Neither Codex nor Gemini signed in →
+YELLOW plus the security-panel sentence above. The command exits 0 whatever the
+sign-in state; exit 1 only means the answer could not be saved.
+
 ### 12. Dispatch Hygiene
 
 Run `node scripts/dispatch/prune-dead-locks.js`. Report `scanned`/`removed_dead`
@@ -261,6 +314,7 @@ MC Health Check
   ✓  Reference docs              3 frameworks available
   ✓  Git                         Repository initialized
   !  Smart context               ANTHROPIC_API_KEY not found — set in .env.local
+  !  Sign-in                     Claude signed in; Codex and Gemini not installed (roles fall back along their model lists)
   ─  Optional: codex             Not installed (npm i -g @openai/codex)
   ─  Optional: gemini            Not installed
   ─  Optional: yt-dlp            Not installed

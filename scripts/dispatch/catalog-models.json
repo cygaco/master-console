@@ -1,0 +1,82 @@
+{
+  "schema": "mc/catalog-models/v1",
+  "models": [
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-neon-high",
+      "displayName": "Gemini 4 Neon (High)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-neon-xhigh",
+      "displayName": "Gemini 4 Neon (XHigh)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-neon-medium",
+      "displayName": "Gemini 4 Neon (Medium)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-neon-low",
+      "displayName": "Gemini 4 Neon (Low)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-carbon-medium",
+      "displayName": "Gemini 4 Carbon (Medium)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-carbon-high",
+      "displayName": "Gemini 4 Carbon (High)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-carbon-low",
+      "displayName": "Gemini 4 Carbon (Low)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-argon-medium",
+      "displayName": "Gemini 4 Argon (Medium)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-argon-low",
+      "displayName": "Gemini 4 Argon (Low)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-hydrogen-high",
+      "displayName": "Gemini 4 Hydrogen (High)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-hydrogen-xhigh",
+      "displayName": "Gemini 4 Hydrogen (XHigh)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-hydrogen-medium",
+      "displayName": "Gemini 4 Hydrogen (Medium)"
+    },
+    {
+      "provider": "antigravity",
+      "id": "gemini-4-hydrogen-low",
+      "displayName": "Gemini 4 Hydrogen (Low)"
+    },
+    {
+      "provider": "openai",
+      "id": "gpt-6.2-sol",
+      "displayName": "gpt-6.2-sol",
+      "effortLevels": ["low", "medium", "high", "xhigh", "max", "ultra"]
+    },
+    {
+      "provider": "openai",
+      "id": "gpt-6.2-astra",
+      "displayName": "gpt-6.2-astra",
+      "effortLevels": ["low", "medium", "high", "xhigh", "max", "ultra"]
+    }
+  ]
+}

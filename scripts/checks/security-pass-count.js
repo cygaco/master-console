@@ -3,6 +3,7 @@
 const mcEnv = require("../hooks/lib/mc-env");
 const fs = require("fs");
 const { isVerifiedLivenessRecord } = require("../dispatch/verified-liveness-read");
+const securityChoice = require("../dispatch/security-choice");
 const path = require("path");
 
 const NAME = "security-pass-count";
@@ -43,7 +44,11 @@ function evaluateConfig(passes) {
   return { hard };
 }
 
-function evaluateRuntime(records, expectedCount, exemptBefore = LEGACY_EXEMPT_BEFORE) {
+function runnerFiredCount(passes) {
+  return (Array.isArray(passes) ? passes : []).filter((p) => !(p && p.route === "in-process" && p.provider === "claude")).length;
+}
+
+function evaluateRuntime(records, expectedCount, exemptBefore = LEGACY_EXEMPT_BEFORE, firedProviders = null) {
   const warns = [];
   const sec = records.filter(
     (r) => r && r.role === ROLE && typeof r.completed_at === "string" && (!exemptBefore || r.completed_at.slice(0, 10) >= exemptBefore),
@@ -51,18 +56,27 @@ function evaluateRuntime(records, expectedCount, exemptBefore = LEGACY_EXEMPT_BE
   if (!sec.length) return warns;
   const groups = new Map();
   for (const r of sec) {
-    const key = r.prompt_digest || r.run_id || r.sprint_id;
+    const legacy = r.prompt_digest || r.run_id || r.sprint_id;
+    const key = typeof r.panel_run_id === "string" && r.panel_run_id ? JSON.stringify(["panel", r.panel_run_id]) : legacy ? JSON.stringify(["legacy", legacy]) : null;
     if (!key) continue;
-    if (!groups.has(key)) groups.set(key, { total: 0, okProviders: new Set() });
+    if (!groups.has(key)) groups.set(key, { total: 0, okProviders: new Set(), claims: [], label: typeof r.panel_run_id === "string" && r.panel_run_id ? `panel ${r.panel_run_id}` : String(legacy) });
     const g = groups.get(key);
     g.total += 1;
-    if (isVerifiedLivenessRecord(r, { requireSignature: mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0" }) && r.provider)
+    if (Object.prototype.hasOwnProperty.call(r, "diversity")) g.claims.push(r.diversity);
+    const counts = !Array.isArray(firedProviders) || (!r.fallback && firedProviders.includes(r.provider));
+    if (counts && isVerifiedLivenessRecord(r, { requireSignature: mcEnv.readEnv("LIVENESS_REQUIRE_SIG") !== "0" }) && r.provider)
       g.okProviders.add(r.provider);
   }
   for (const [key, g] of groups) {
+    const derived = securityChoice.deriveDiversity([...g.okProviders]);
+    for (const claim of g.claims) {
+      const c = securityChoice.checkDiversityClaim(claim, [...g.okProviders]);
+      if (!c.ok) warns.push(`security review "${g.label}" ${c.reason}`);
+    }
     if (g.total >= 2 && g.okProviders.size < expectedCount) {
+      const label = derived === securityChoice.CLAUDE_ONLY ? " (Claude only — no second lab; never counted as a multi-lab pass)" : "";
       warns.push(
-        `security review "${key}" completed ${g.okProviders.size}/${expectedCount} distinct providers ok (of ${g.total} pass records) — the ${expectedCount}-pass review did not fully succeed`,
+        `security review "${g.label}" completed ${g.okProviders.size}/${expectedCount} distinct providers ok (of ${g.total} pass records)${label} — the ${expectedCount}-pass review did not fully succeed`,
       );
     }
   }
@@ -73,14 +87,21 @@ function main(argv) {
   const strict = (argv || []).includes("--strict");
   const json = (argv || []).includes("--json");
   let passes;
+  let shipped;
   try {
     const registryRoles = require(path.join(ROOT, "scripts", "dispatch", "registry-roles"));
     passes = registryRoles.passesOf(ROLE);
+    shipped = registryRoles.registryPassesOf(ROLE);
+    const blocked = passes.find((p) => p.blocked);
+    if (blocked) {
+      process.stderr.write(`${NAME}: the review is blocked — ${blocked.blocked}\n`);
+      return 2;
+    }
   } catch (e) {
     process.stderr.write(`${NAME}: cannot resolve registry passes for ${ROLE}: ${e.message}\n`);
     return 2;
   }
-  const { hard } = evaluateConfig(passes);
+  const { hard } = evaluateConfig(shipped);
 
   let records = [];
   const ledger = path.join(ROOT, ".claude", "runtime", "dispatch-completions.jsonl");
@@ -101,10 +122,13 @@ function main(argv) {
     }
   } catch {
   }
-  const warns = evaluateRuntime(records, passes.length);
+  const firedProviders = passes.filter((p) => !(p && p.route === "in-process" && p.provider === "claude")).map((p) => p.provider);
+  const warns = evaluateRuntime(records, runnerFiredCount(passes), LEGACY_EXEMPT_BEFORE, firedProviders);
+  const choiceWarnings = passes.filter((p) => p.warning).map((p) => p.warning);
+  for (const w of choiceWarnings) process.stderr.write(`${NAME}: warning: ${w}\n`);
 
   if (json) {
-    process.stdout.write(JSON.stringify({ ok: hard.length === 0, check: NAME, expected_passes: passes.length, config_breaks: hard, runtime_gaps: warns, strict }, null, 2) + "\n");
+    process.stdout.write(JSON.stringify({ ok: hard.length === 0, check: NAME, expected_passes: passes.length, config_breaks: hard, runtime_gaps: warns, strict, ...(choiceWarnings.length ? { choice_warnings: choiceWarnings } : {}) }, null, 2) + "\n");
   } else if (hard.length === 0 && warns.length === 0) {
     process.stdout.write(`OK   [${NAME}] ${ROLE} declares ${passes.length} distinct-provider passes, dispatch-review.js fires them, no runtime under-fire\n`);
   } else {
@@ -119,4 +143,4 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { evaluateConfig, evaluateRuntime, main, NAME, ROLE, LEGACY_EXEMPT_BEFORE };
+module.exports = { evaluateConfig, evaluateRuntime, runnerFiredCount, main, NAME, ROLE, LEGACY_EXEMPT_BEFORE };

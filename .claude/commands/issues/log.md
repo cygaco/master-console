@@ -1,12 +1,6 @@
 ---
 description: Record a new instance of a recurring system issue — appends to recurring-issues.jsonl, dedupes by title overlap
 user-invocable: true
-says:
-  - log an issue
-  - this keeps breaking
-  - record a recurring issue
-  - issues log
-says-args: free-text
 ---
 
 # /issues:log — Log a Recurring System Issue Instance

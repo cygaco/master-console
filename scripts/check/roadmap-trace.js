@@ -38,7 +38,10 @@ if (!fs.existsSync(roadmapPath)) {
   process.exit(0);
 }
 
-const roadmap = fs.readFileSync(roadmapPath, "utf8");
+const archivePath = path.join(REPO_ROOT, "trackers", "ROADMAP-ARCHIVE.md");
+const roadmap =
+  fs.readFileSync(roadmapPath, "utf8") +
+  (fs.existsSync(archivePath) ? `\n${fs.readFileSync(archivePath, "utf8")}` : "");
 
 function shippedRegion(md) {
   const lines = md.split(/\r?\n/);

@@ -4,12 +4,6 @@ user-invocable: true
 namespace: events
 reads: [paths.eventsFile]
 writes: []
-says:
-  - query the events
-  - search the events
-  - find events about
-  - events query
-says-args: free-text
 ---
 
 # /events:query

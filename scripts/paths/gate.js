@@ -10,12 +10,24 @@ const argv = process.argv.slice(2);
 const FLAGS = {
   json: argv.includes("--json"),
   strict: argv.includes("--strict"),
+  tracked: argv.includes("--tracked"),
   check: (() => {
     const i = argv.indexOf("--check");
     if (i === -1) return null;
     return argv[i + 1] || null;
   })(),
 };
+
+let trackedFiles = null;
+function isJudged(rel) {
+  if (!FLAGS.tracked) return true;
+  if (!trackedFiles) {
+    const r = spawnSync("git", ["ls-files", "-z"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    if (r.status !== 0) throw new Error(`git ls-files failed (exit ${r.status})`);
+    trackedFiles = new Set(r.stdout.split("\0").filter(Boolean));
+  }
+  return trackedFiles.has(rel);
+}
 
 function readRegistry() {
   const raw = fs.readFileSync(REGISTRY_FILE, "utf8");
@@ -168,6 +180,7 @@ function checkPathLint() {
   }
   const findings = [];
   for (const f of report.critical || []) {
+    if (f.file && !isJudged(f.file)) continue;
     findings.push({
       severity: "error",
       area: "path-lint",
@@ -178,6 +191,7 @@ function checkPathLint() {
   }
   if (FLAGS.strict) {
     for (const w of report.warnings || []) {
+      if (w.file && !isJudged(w.file)) continue;
       findings.push({
         severity: "warn-strict",
         area: "path-lint",
@@ -307,7 +321,7 @@ function checkDeprecatedAliases() {
   const accept = (f) => {
     const rel = path.relative(ROOT, f).replace(/\\/g, "/");
     if (rel.startsWith("runtime/") || skips.some((s) => rel.includes(s))) return false;
-    return /\.(md|js|json)$/.test(f);
+    return /\.(md|js|json)$/.test(f) && isJudged(rel);
   };
   const findings = [];
   const files = walk(ROOT, accept);
@@ -389,7 +403,7 @@ function checkDocsTokens() {
   const accept = (f) => {
     const rel = path.relative(ROOT, f).replace(/\\/g, "/");
     if (rel.startsWith("runtime/") || SKIP_SUBSTRINGS.some((s) => rel.includes(s))) return false;
-    return /\.md$/.test(f);
+    return /\.md$/.test(f) && isJudged(rel);
   };
 
   const TOKEN_RE = /(?<![A-Za-z0-9_./])paths\.([a-zA-Z][a-zA-Z0-9]*)/g;

@@ -394,24 +394,12 @@ function writeProductManifest({ target, interview = {}, stack = "unknown", frame
         },
         antigravity: {
           cli: "agy",
-          default_model: "gemini-3.1-pro-high",
+          default_model: "gemini-4-argon-high",
           fallback: "openai",
           syntax: "agy --model {model} --print-timeout 90s -p",
         },
       },
-      agentProviders: {
-        alpha: "claude",
-        beta: "claude",
-        gamma: "claude",
-        delta: "claude",
-        builder: "claude",
-        fixer: "claude",
-        evaluator: "openai",
-        compliance: "openai",
-        auditor: "openai",
-        qa: "openai",
-        redteam: "openai",
-      },
+      agentProviders: {},
       buildCommands: {},
       fileOwnership: { foundation: [] },
     };
@@ -522,11 +510,6 @@ function writeProductSettings({ target, mcRoot, hookTools = {}, log, HEADER = ""
     }
   }
 
-  if (!settings.env) settings.env = {};
-  if (!settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) {
-    settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-  }
-
   if (!settings.permissions) settings.permissions = {};
   if (!settings.permissions.allow) settings.permissions.allow = [];
   const requiredPerms = [
@@ -616,10 +599,8 @@ function writeProductSettings({ target, mcRoot, hookTools = {}, log, HEADER = ""
           cmd("lint.js"),
           cmd("edit-watcher.js"),
           cmd("systems-sync.js"),
-          cmd("save-session-lint.js"),
           cmd("learning-validator.js"),
           cmd("ui-lint.js"),
-          cmd("path-guard.js"),
         ],
       },
     ],

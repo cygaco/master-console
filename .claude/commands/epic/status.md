@@ -1,12 +1,6 @@
 ---
 description: Report an epic's true, evidence-based status — percent completion, sprint roll-up, DoD progress, blockers, and tracker/roadmap reconciliation drift. Read-only. (Designed; build deferred.)
 user-invocable: true
-says:
-  - epic status
-  - how's the epic
-  - where is the epic
-  - how far along is the epic
-says-args: topic
 ---
 
 # /epic:status — Epic Status

@@ -47,6 +47,8 @@ function buildHookManifest(registry) {
       fixturesRequired: !!h.fixturesRequired,
       enabled: h.enabled !== false,
     };
+    const extra = handlerFields(h);
+    if (Object.keys(extra).length) hooks[basename].handler = extra;
   }
   let updatedAt = null;
   try {
@@ -67,10 +69,30 @@ function buildHookManifest(registry) {
   };
 }
 
+const HANDLER_FIELDS = {
+  timeout: (v) => Number.isInteger(v) && v > 0,
+  onFailure: (v) => v === "block" || v === "allow",
+};
+
+function handlerFields(h) {
+  if (h.handler === undefined) return {};
+  if (!h.handler || typeof h.handler !== "object" || Array.isArray(h.handler)) {
+    throw new Error(`registry hook ${h.id}: "handler" must be an object`);
+  }
+  const out = {};
+  for (const [k, v] of Object.entries(h.handler)) {
+    if (!HANDLER_FIELDS[k]) throw new Error(`registry hook ${h.id}: unknown handler field "${k}"`);
+    if (!HANDLER_FIELDS[k](v)) throw new Error(`registry hook ${h.id}: bad value for handler field "${k}"`);
+    out[k] = v;
+  }
+  return out;
+}
+
 function buildSettingsHooks(registry) {
   const byEvent = {};
   for (const h of registry.hooks) {
     if (h.enabled === false) continue;
+    const extra = handlerFields(h);
     for (const reg of h.registrations || []) {
       const event = reg.event;
       const matcher = reg.matcher || "";
@@ -79,6 +101,7 @@ function buildSettingsHooks(registry) {
       byEvent[event][matcher].push({
         type: "command",
         command: `node "$CLAUDE_PROJECT_DIR/${h.script}"`,
+        ...extra,
       });
     }
   }

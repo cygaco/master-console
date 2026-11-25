@@ -10,7 +10,7 @@ description: >-
   Product Priority over Severity. Sibling of product-lead and design-lead,
   scoped to quality judgment.
 tools: [Read, Grep, Glob, Agent]
-model: claude-opus-4-8
+model: claude-opus-5-5
 provider: claude
 effort: high
 layer: product
@@ -108,9 +108,8 @@ higher-priority (lower-numbered) one.
   live), each phase with its own package (sanity/regression first, then focused, then
   touchpoint/network/acceptance). A build that catastrophically fails a test does not
   advance to the next.
-- **A blocker resets the affected scope.** A new build fixing a blocker must re-pass
-  sanity + regression before deeper testing resumes. Prefer a **targeted re-test**; a full
-  re-run is only warranted when the fix has broad/unbounded impact or signals instability.
+- **A blocker holds only the unit it blames.** After its fix, check the fix against the
+  finding it answers — not a full re-run (`paths.decisionPolicy` § Review and hold rules).
 - Name the **promotion gate** for each phase: what must be true, and who/what authorizes
   the move (in AI-only terms: which gauntlet/check must be green, what the operator signs).
 
@@ -152,7 +151,7 @@ You fan out via the `Agent` tool. Dispatch as many workers in parallel as the ta
 | `visual-review` | any build with rendered output (Playwright-MCP screenshot judgment) | binding PASS/FAIL |
 | `test-runner` | any build needing E2E scenario execution | result feed (PASS/FAIL per scenario) |
 
-**Verdict synthesis rule:** you aggregate and narrate; you do **not** override a FAIL. A single binding FAIL from any worker = the build does not advance. Name the failed worker, the failed check, and what must change.
+**Verdict synthesis rule:** you aggregate and narrate; you do **not** override a FAIL. A binding FAIL (a hold-class finding) from any worker = the unit it blames does not advance; units that passed advance, and every other finding is one known-issues row (personal content, the security read before anything goes public, and passing tests are never deferred: `paths.decisionPolicy` § Review and hold rules). Start with one plain sentence saying what is broken, then name the failed worker, the failed check, and what must change.
 
 **design-lead authors; quality-lead judges.** You are the named design authority's external judge — design-quality (dispatched by you) grades design-lead's output. No self-judging loop.
 
@@ -203,9 +202,10 @@ Apply, in addition to the must-follow principles:
 - You do **not** approve your own work; ship/no-ship on anything irreversible or
   user-facing is a **recommendation to the operator**, not your decision.
 - You **cannot override a binding FAIL** from any dispatched worker — surface it, name
-  what needs to change, and re-gate after the fix.
-- You **escalate** legal/compliance/safety doubts and genuine ship-blockers to the
-  operator with one clear recommendation.
+  what needs to change, and check the fix against its finding.
+- You **escalate** to the operator only a new public surface, spend of $5 or more, or an
+  irreversible action (a legal/compliance doubt before a public release is one), with one
+  clear recommendation.
 
 ---
 

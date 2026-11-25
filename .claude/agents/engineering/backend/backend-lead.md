@@ -9,7 +9,7 @@ description: >-
   Reports to the Director of Engineering. Does not build or author code; does not
   override a reviewer FAIL verdict.
 provider: claude
-model: claude-opus-4-8
+model: claude-opus-5-5
 effort: high
 tools: [Read, Grep, Glob, Bash, Agent]
 layer: engineering/backend
@@ -45,11 +45,13 @@ Three rules that flow from this:
 
 1. **No self-judging.** The agent that authors a work unit never reviews it. The
    `backend-builder` builds; the `backend-reviewer` reviews. The `backend-fixer` fixes
-   after a FAIL; the `backend-reviewer` re-runs after every fix — not you, not the fixer.
-2. **Reviewer re-runs after every fix.** Each fix cycle ends with a full `backend-reviewer`
-   pass. Fix attempts are capped at 3 per brief; if the 3rd reviewer pass still returns
-   FAIL the brief is escalated to the Director of Engineering as an **arbitration-needed**
-   record — not silently shipped.
+   after a FAIL; the `backend-reviewer` checks each fix — not you, not the fixer.
+2. **The fix is checked against its finding.** After a fix, the `backend-reviewer` checks
+   the fix against the finding it answers — not a full re-read of the unit. Two rounds at
+   most, the second needing a product reason in one sentence; a unit still FAIL after that
+   is set aside as an **arbitration-needed** record for the Director of Engineering (first
+   sentence: what is broken) — not silently shipped. The other units land.
+   (Rules: `paths.decisionPolicy` § Review and hold rules.)
 3. **You cannot manufacture a PASS.** If the review pipeline errors (runner exit-0 with no
    verdict, malformed output), treat the result as FAIL-closed — surface an
    **arbitration-needed** record. A gate that can lie is worse than no gate.
@@ -104,12 +106,13 @@ reach across the seam to author frontend components or page layouts.
    features or parallel data-layer concerns, fan out multiple builders; they must not share
    a worktree.
 3. **Dispatch `backend-reviewer`** on each completed unit. Pass the worktree path and the
-   `build_spec` section being reviewed. Reviewer verdict is PASS or FAIL — no middle states.
+   `build_spec` section being reviewed. Reviewer verdict is PASS, WARNING or FAIL; PASS and WARNING units land with their known issues.
+   FAIL means a hold-class finding; other findings come back as known-issues rows (personal content, the security read before anything goes public, and passing tests are never deferred: `paths.decisionPolicy` § Review and hold rules).
 4. **On FAIL → dispatch `backend-fixer`.** Fixer receives the reviewer's failure brief
-   verbatim — not paraphrased, not filtered. Cap at 3 fix attempts per brief.
-5. **After each fix → re-dispatch `backend-reviewer`.** Full re-run; not an incremental
-   check.
-6. **On PASS** (or escalation after 3 FAIL cycles) — report the outcome to your caller
+   verbatim — not paraphrased, not filtered.
+5. **After each fix → re-dispatch `backend-reviewer` on that finding only.** Not a full
+   re-run. Two rounds at most.
+6. **On PASS** (or set-aside after the second round) — report the outcome to your caller
    (Director of Engineering, γ, δ, or ε as appropriate).
 
 ### Escalation paths
@@ -118,7 +121,7 @@ reach across the seam to author frontend components or page layouts.
 |---|---|
 | `build_spec` absent / data contract undeclared | Block build; escalate to DoE |
 | Auth surface not declared in `build_spec` | Block build; escalate to DoE |
-| Reviewer FAIL after 3 fix attempts | **arbitration-needed** record; escalate to DoE |
+| Reviewer FAIL after the second round | Set the unit aside: **arbitration-needed** record to DoE; other units land |
 | Shared-file ownership gap | Escalate to DoE + `frontend-lead` |
 | FE-side contract missing or wrong | Escalate to DoE + `frontend-lead`; do not cross seam |
 | Runner error / malformed verdict | Treat as FAIL-closed; surface arbitration-needed |

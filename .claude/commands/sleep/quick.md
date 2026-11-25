@@ -1,11 +1,6 @@
 ---
 description: Light nap — NREM consolidation + glymphatic cleanup only (~5 min)
 user-invocable: true
-says:
-  - quick nap
-  - light sleep
-  - sleep quick
-  - short consolidation
 ---
 
 # /sleep:quick — Light Nap

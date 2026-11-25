@@ -3,13 +3,6 @@ description: Open the roadmap "what's next" panel in your BROWSER — an interac
 user-invocable: true
 namespace: panel
 reads: [framework/panel-registry.json, scripts/panel/roadmap-gui.js, scripts/panel/roadmap.js]
-says:
-  - show me the roadmap
-  - open the roadmap panel
-  - roadmap board
-  - the what's next panel
-says-flags:
-  text: --text
 ---
 
 # /panel:roadmap — open the visual roadmap panel (browser)

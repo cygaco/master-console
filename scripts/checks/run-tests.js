@@ -120,12 +120,12 @@ const LEGACY_EMPTY_SENTINEL = "(no failure line captured)";
 
 function usage(msg) {
   if (msg) process.stderr.write(`run-tests: ${msg}\n`);
-  process.stderr.write("usage: node scripts/checks/run-tests.js [--root <dir>] [--quarantine <file>] [--verify-base] [--files a,b,c | --files-from <file>] [--with-quarantine]\n");
+  process.stderr.write("usage: node scripts/checks/run-tests.js [--root <dir>] [--quarantine <file>] [--verify-base] [--files a,b,c | --files-from <file>] [--with-quarantine] [--fail-on-skip]\n");
   process.exit(2);
 }
 
 function parseArgs(argv) {
-  const opts = { root: DEFAULT_ROOT, quarantine: null, verifyBase: false, files: null, filesFrom: null, withQuarantine: false };
+  const opts = { root: DEFAULT_ROOT, quarantine: null, verifyBase: false, files: null, filesFrom: null, withQuarantine: false, failOnSkip: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--root" || a === "--quarantine") {
@@ -142,6 +142,8 @@ function parseArgs(argv) {
       const v = argv[++i];
       if (!v) usage(`${a} needs a value`);
       opts.filesFrom = path.resolve(v);
+    } else if (a === "--fail-on-skip") {
+      opts.failOnSkip = true;
     } else if (a === "--with-quarantine") {
       opts.withQuarantine = true;
     } else if (a === "--help" || a === "-h") {
@@ -746,9 +748,13 @@ async function main() {
   const discoveredSet = new Set(discovered);
   const quarantined = new Set(entries.map((e) => e.file));
   let primaryFiles;
+  let skippedRequested = 0;
   if (focusedMode) {
     const notFound = requestedFiles.filter((f) => !discoveredSet.has(f));
     if (notFound.length) log(`run-tests: focused — ${notFound.length} requested file(s) not found among discovered test files: ${notFound.join(", ")}`);
+    for (const f of notFound) log(`run-tests: SKIPPED requested file (not a discoverable test): ${f}`);
+    for (const f of requestedFiles) if (discoveredSet.has(f) && quarantined.has(f)) log(`run-tests: SKIPPED requested file (quarantined): ${f}`);
+    skippedRequested = requestedFiles.filter((f) => !discoveredSet.has(f) || quarantined.has(f)).length;
     primaryFiles = requestedFiles.filter((f) => discoveredSet.has(f) && !quarantined.has(f));
   } else {
     primaryFiles = discovered.filter((f) => !quarantined.has(f));
@@ -863,16 +869,19 @@ async function main() {
   for (const v of violations) log(`run-tests: QUARANTINE VIOLATION — ${v}`);
 
   const quarantineOk = violations.length === 0;
-  const ok = primaryExit === 0 && quarantineOk;
+  const skipFails = focusedMode && opts.failOnSkip && skippedRequested > 0;
+  if (skipFails) log(`run-tests: FAIL — --fail-on-skip: ${skippedRequested} requested file(s) were not run`);
+  const ok = primaryExit === 0 && quarantineOk && !skipFails;
   log(
     `run-tests: ${ok ? "PASS" : "FAIL"} — ${focusedMode ? `focused (${requestedFiles.length} requested): ` : ""}primary: ${primaryFiles.length} file(s) in ${primaryBatches.length} batch(es), exit ${primaryExit} ` +
       `(tests ${primaryCounts.tests}, pass ${primaryCounts.pass}, fail ${primaryCounts.fail}, cancelled ${primaryCounts.cancelled}, skipped ${primaryCounts.skipped}, todo ${primaryCounts.todo}) · ` +
+      (focusedMode ? `skipped_requested: ${skippedRequested} · ` : "") +
       (runTeeth
         ? `quarantine: ${entries.length} entr${entries.length === 1 ? "y" : "ies"}, ${stillFailing} still failing, ${unexpectedlyPassed} unexpectedly passed, ${missing} missing/undiscovered, ${unobserved} unobserved, ${notAtBase} not verified at base`
         : "quarantine: SKIPPED (focused mode)")
   );
   if (primaryExit !== 0) return primaryExit;
-  return quarantineOk ? 0 : 1;
+  return quarantineOk && !skipFails ? 0 : 1;
 }
 
 module.exports = {

@@ -1,5 +1,5 @@
 ---
-description: Route a specific command/role to a specific model — thin, validated wrapper over the Dispatch Console (provider/model/effort/fallback), with an atomic backup ring.
+description: Use a specific model for one command or role — routes it through a thin, validated wrapper over the Dispatch Console (provider/model/effort/fallback), with an atomic backup ring.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js, .claude/manifest.json]

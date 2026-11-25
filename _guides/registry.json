@@ -137,6 +137,15 @@
       "title": "INCIDENT_RESPONSE_GUIDE.md — Your Worst Day, on a Checklist Instead of in a Panic (for Total Newbies)"
     },
     {
+      "guide": "LAUNCH_FILM",
+      "file": "_guides/LAUNCH_FILM_GUIDE.md",
+      "anchor": "none",
+      "shape": "walkthrough",
+      "timing": "reference",
+      "lead_time": "none (budget time for the first render: the renderer downloads its own browser)",
+      "title": "LAUNCH_FILM_GUIDE.md — Making a Launch Film With Code (for Total Newbies)"
+    },
+    {
       "guide": "LEGAL",
       "file": "_guides/LEGAL_GUIDE.md",
       "anchor": "lastmile:gate/legal",

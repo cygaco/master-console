@@ -55,13 +55,11 @@ function readTrace() {
 }
 
 function check() {
-  let manifest = {};
   try {
-    manifest = JSON.parse(fs.readFileSync(path.join(ROOT, ".claude", "manifest.json"), "utf8"));
+    JSON.parse(fs.readFileSync(path.join(ROOT, ".claude", "manifest.json"), "utf8"));
   } catch {
     return { ok: false, findings: ["manifest missing"] };
   }
-  const manifestProviders = manifest.agentProviders || {};
   let reviewRoles;
   try {
     reviewRoles = require("../dispatch/org-roles").gauntletReviewRoles();
@@ -69,11 +67,13 @@ function check() {
   } catch {
     reviewRoles = ["frontend-reviewer", "backend-reviewer", "qa-reviewer", "security-reviewer"];
   }
-  let resolveProvider = (r) => manifestProviders[r];
-  try {
-    const { getProviderForRole } = require("../hooks/lib/providers");
-    resolveProvider = (r) => manifestProviders[r] || getProviderForRole(r);
-  } catch { }
+  let resolveProvider = (r) => {
+    try {
+      return require("../dispatch/effective-pin").effectiveProviderForRole(r);
+    } catch {
+      return require("../hooks/lib/providers").getProviderForRole(r);
+    }
+  };
   const expected = new Set(reviewRoles.map(resolveProvider).filter(Boolean));
   const findings = [];
   const warnings = [];

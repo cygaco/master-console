@@ -9,9 +9,10 @@ Every problem, every session, every task — this is the cycle:
 5. **Generate fix/solution** — Multiple options when stakes are high.
 6. **Evaluate immediately** — Build passes? Behavior correct? Edge cases?
 7. **Score quality** — Level 0-4. Be honest.
-8. **Log everything** — Trace to `traces.jsonl`, learning to `learnings.jsonl`.
-9. **Revisit** — `/sleep` and `/retro` re-evaluate past fixes.
-10. **Update rules** — Patterns that repeat 3x become skills, hygiene rules, or hooks.
+8. **Revisit** — `/sleep` and `/retro` re-evaluate past fixes.
+9. **Update rules** — Patterns that repeat 3x become skills, hygiene rules, or hooks.
+
+Traces (`traces.jsonl`) and learnings (`learnings.jsonl`) are written on request (`/learn:*`, or when the operator asks), not at every fix or every wrap.
 
 ## Session Rhythms
 

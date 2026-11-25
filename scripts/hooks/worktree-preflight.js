@@ -1,20 +1,74 @@
 #!/usr/bin/env node
+// PreToolUse hook (Agent matcher): advisory infrastructure notes before a builder spawn.
+//
+// A spawn is a builder spawn when its subagent_type is a build-chain role
+// (role-registry build_chain:true, plus the legacy builder/fixer ids). For those:
+//
+// 1. Lists (one line) orphan agent/* branches and unlisted folders under the
+//    sibling .worktrees folder. It never removes anything: other lanes and a
+//    cleanup agent may be using them; cleanup is a deliberate, separate step.
+// 2. Warns if no worktree smoke marker exists this session (never blocks).
+// 3. Warns if run_in_background is not set.
+//
+// Exit code: always 0 (advisory only; fail-open on any error).
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-const RED = "\x1b[31m";
-const GREEN = "\x1b[32m";
 const YELLOW = "\x1b[33m";
+const GREEN = "\x1b[32m";
 const RESET = "\x1b[0m";
 
 const MARKER_DIR = path.resolve(__dirname, "..", "..", ".claude", "runtime");
 const SMOKE_MARKER = path.join(MARKER_DIR, ".worktree-smoke-passed");
 
+const BUILD_CHAIN_LITERAL = [
+  "builder",
+  "backend-builder",
+  "frontend-builder",
+  "security-builder",
+  "skeleton-builder",
+  "stub-scaffold",
+  "fixer",
+  "frontend-fixer",
+  "backend-fixer",
+  "security-fixer",
+];
+
+function buildChainRoles() {
+  try {
+    const rr = require("../dispatch/registry-roles");
+    return new Set(
+      rr.deriveOrFallback(
+        () => [...rr.buildChainRoles(), "builder", "fixer"],
+        BUILD_CHAIN_LITERAL,
+        "worktree-preflight.buildChainRoles",
+      ),
+    );
+  } catch {
+    return new Set(BUILD_CHAIN_LITERAL);
+  }
+}
+
+function normalize(role) {
+  try {
+    return require("./lib/role-aliases").normalizeRole(role);
+  } catch {
+    return role;
+  }
+}
+
+function isBuilderDispatch(toolInput) {
+  const sub = String((toolInput || {}).subagent_type || "").trim().toLowerCase();
+  if (!sub) return false;
+  const roles = buildChainRoles();
+  return roles.has(sub) || roles.has(normalize(sub));
+}
+
 function git(args, cwd) {
   try {
-    return execSync("git " + args, { cwd, stdio: ["pipe", "pipe", "pipe"] })
+    return execFileSync("git", args, { cwd, stdio: ["pipe", "pipe", "pipe"] })
       .toString()
       .trim();
   } catch {
@@ -22,61 +76,29 @@ function git(args, cwd) {
   }
 }
 
-function isBuilderDispatch(prompt) {
-  if (!/^feature:\s*\S+/m.test(prompt)) return false;
-  if (
-    /evaluator|security|compliance|fix agent|lead/i.test(
-      prompt.substring(0, 500),
-    )
-  )
-    return false;
-  return true;
-}
-
-function cleanOrphanWorktrees(repoRoot) {
-  const cleaned = [];
-
-  git("worktree prune", repoRoot);
-
-  const worktreeList = git("worktree list --porcelain", repoRoot);
+// Read-only: what an orphan cleanup would touch. Nothing is pruned or removed here.
+function listOrphans(repoRoot) {
+  const worktreeList = git(["worktree", "list", "--porcelain"], repoRoot);
   const activeBranches = new Set();
+  const activePaths = new Set();
   for (const line of worktreeList.split("\n")) {
-    const m = line.match(/^branch refs\/heads\/(agent\/.+)/);
-    if (m) activeBranches.add(m[1]);
+    const b = line.match(/^branch refs\/heads\/(agent\/.+)/);
+    if (b) activeBranches.add(b[1].trim());
+    const w = line.match(/^worktree (.+)/);
+    if (w) activePaths.add(path.resolve(w[1].trim()).toLowerCase());
   }
-
-  const allBranches = git("branch -l", repoRoot)
+  const branches = git(["branch", "--list", "agent/*", "--format=%(refname:short)"], repoRoot)
     .split("\n")
-    .map((b) => b.replace(/^\*?\s+/, "").trim())
-    .filter((b) => b.startsWith("agent/"));
-
-  for (const branch of allBranches) {
-    if (!activeBranches.has(branch)) {
-      git(`branch -D "${branch}"`, repoRoot);
-      cleaned.push(branch);
-    }
-  }
-
+    .map((b) => b.trim())
+    .filter((b) => b && !activeBranches.has(b));
+  const folders = [];
   const worktreeParent = path.join(path.dirname(repoRoot), ".worktrees");
   if (fs.existsSync(worktreeParent)) {
-    const dirs = fs.readdirSync(worktreeParent);
-    for (const dir of dirs) {
-      const wtPath = path.join(worktreeParent, dir);
-      if (!worktreeList.includes(wtPath.replace(/\\/g, "/"))) {
-        try {
-          git(`worktree remove "${wtPath}" --force`, repoRoot);
-        } catch {
-          try {
-            fs.rmSync(wtPath, { recursive: true, force: true });
-          } catch {
-          }
-        }
-        cleaned.push(dir);
-      }
+    for (const dir of fs.readdirSync(worktreeParent)) {
+      if (!activePaths.has(path.resolve(worktreeParent, dir).toLowerCase())) folders.push(dir);
     }
   }
-
-  return cleaned;
+  return { branches, folders };
 }
 
 let input = "";
@@ -84,60 +106,39 @@ process.stdin.on("data", (chunk) => (input += chunk));
 process.stdin.on("end", () => {
   try {
     const event = JSON.parse(input);
-    const prompt = event.tool_input?.prompt || "";
-
-    if (!isBuilderDispatch(prompt)) process.exit(0);
+    if (!isBuilderDispatch(event.tool_input)) process.exit(0);
 
     const repoRoot = path.resolve(__dirname, "..", "..");
 
-    const cleaned = cleanOrphanWorktrees(repoRoot);
-    if (cleaned.length > 0) {
+    const { branches, folders } = listOrphans(repoRoot);
+    if (branches.length || folders.length) {
       process.stderr.write(
-        `${YELLOW}[worktree-preflight] Cleaned ${cleaned.length} orphan(s): ${cleaned.join(", ")}${RESET}\n`,
+        `${YELLOW}[worktree-preflight] Orphans (not removed): ${branches.length} agent branch(es) without a worktree, ${folders.length} unlisted .worktrees folder(s)${RESET}\n`,
       );
-    }
-
-    try {
-      const remainingBranches = git("branch --list agent/*", repoRoot);
-      if (remainingBranches) {
-        const stale = remainingBranches
-          .split("\n")
-          .map((b) => b.trim())
-          .filter(Boolean);
-        if (stale.length > 0) {
-          process.stderr.write(
-            `${YELLOW}[worktree-preflight] WARNING: ${stale.length} stale agent branch(es) remain after cleanup: ${stale.join(", ")}${RESET}\n`,
-          );
-        }
-      }
-    } catch {
     }
 
     if (!fs.existsSync(SMOKE_MARKER)) {
       process.stderr.write(
-        `${RED}[worktree-preflight] BLOCKED: No worktree smoke test this session.${RESET}\n` +
-          `${YELLOW}Dispatch a no-op agent with isolation: "worktree" first to verify the system works.${RESET}\n` +
-          `${YELLOW}After the test passes, create the marker: touch .claude/runtime/.worktree-smoke-passed${RESET}\n`,
+        `${YELLOW}[worktree-preflight] WARNING: no worktree smoke marker this session. If this builder fails on worktree setup, check the infra before dispatching more.${RESET}\n`,
       );
-      process.exit(2);
     }
 
-    const runInBg = event.tool_input?.run_in_background;
-    if (!runInBg) {
+    if (!(event.tool_input || {}).run_in_background) {
       process.stderr.write(
         `${YELLOW}[worktree-preflight] WARNING: Builder dispatched without run_in_background: true. ` +
-          `This blocks the Boss until the builder finishes.${RESET}\n`,
+          `This blocks the orchestrator until the builder finishes.${RESET}\n`,
       );
     }
 
-    process.stderr.write(
-      `${GREEN}[worktree-preflight] OK: infra checks passed for builder dispatch.${RESET}\n`,
-    );
+    process.stderr.write(`${GREEN}[worktree-preflight] OK: advisory checks done for builder dispatch.${RESET}\n`);
     process.exit(0);
   } catch (e) {
+    // Advisory hook: an error here never blocks a spawn.
     process.stderr.write(
-      `${RED}[worktree-preflight] BLOCKED: could not complete the infra preflight (${e && e.message ? e.message : "unknown error"}) — failing closed.${RESET}\n`,
+      `${YELLOW}[worktree-preflight] could not complete the advisory checks (${e && e.message ? e.message : "unknown error"}).${RESET}\n`,
     );
-    process.exit(2);
+    process.exit(0);
   }
 });
+
+module.exports = { isBuilderDispatch, listOrphans };

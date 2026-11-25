@@ -296,9 +296,9 @@ function cmdPhase(argv) {
   current.updated_at = nowIso();
   writeYaml(SPRINT.current, current);
 
-  if (ralph.failed_attempts.length >= 3 && ralph.status === "running") {
+  if (ralph.failed_attempts.length >= 2 && ralph.status === "running") {
     process.stderr.write(
-      `WARN: ${f.ticket} has ${ralph.failed_attempts.length} failed attempts. Per CLAUDE.md and the Ralph stop conditions, halt and escalate via /fix:deep or mark deferred.\n`,
+      `WARN: ${f.ticket} has ${ralph.failed_attempts.length} failed attempts (ceiling 2). Hold this ticket only: escalate via /fix:deep or mark it deferred.\n`,
     );
   }
   process.stdout.write(

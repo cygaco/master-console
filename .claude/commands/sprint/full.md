@@ -1,13 +1,6 @@
 ---
-description: Single-invocation execution of the full sprint pipeline (plan→design→execute→release-prep→retro) under a bounded autonomy preset. Cannot bypass CLAUDE.md hard ceilings.
+description: Run a whole sprint from start to finish in one go — the full pipeline (plan→design→execute→release-prep→retro) under a bounded autonomy preset; it commits locally and never pushes. Cannot bypass CLAUDE.md hard ceilings.
 user-invocable: true
-says:
-  - run the full sprint
-  - do the whole sprint
-  - sprint full
-  - run the sprint end to end
-  - kick off the sprint
-says-confirm: fuzzy-only
 ---
 
 # /sprint:full — Autonomous Sprint Orchestrator
@@ -68,7 +61,7 @@ contracts (validation + failure modes) live in
 
 ## Hard ceilings (NEVER bypassable by any preset)
 
-- `push_to_remote` — orchestrator commits locally but never pushes.
+- `push_to_remote` — the orchestrator script commits locally but never pushes; the lead pushes green work to the operator's own repos (`CLAUDE.md` § Autonomy).
 - `paid_service_signup` — operator handles out-of-band.
 - `production_deploy` — operator runs `release.js deploy` manually.
 - `destructive_migration` — operator runs migrations manually.
@@ -193,12 +186,12 @@ Mapping `execute.js` stop_reasons to the preset's
 | `completed` | continue | continue | continue |
 | `approval_required` | halt | halt | auto_continue (within preset) |
 | `human_setup_required` | halt | halt | halt |
-| `repeated_failure` | halt | **defer** (3-attempt) | **defer** |
+| `repeated_failure` | defer | **defer** (two rounds) | defer |
 | `scope_expansion` | halt | halt | halt |
 | `destructive_action_needed` | halt | halt | halt |
 | `production_deploy_needed` | halt | halt | halt |
-| `beta_warning` | halt | halt | halt |
-| `unclear_intent` | halt | halt | halt |
+| `beta_warning` | auto_continue | auto_continue | auto_continue |
+| `unclear_intent` | defer | defer | defer |
 
 ### Step 4 — Skill body Phase 4 release-prep handoff
 
@@ -235,9 +228,8 @@ node scripts/sprint/full.js --sprint <SP-id> --resume \
   --beta-message "<Beta's response>"
 ```
 
-ESCALATE is a **hard halt regardless of preset** — the orchestrator
-records the verdict and writes a halt report with
-`halt_reason: beta_escalate`. Solo mode skips Beta entirely.
+ESCALATE is recorded for the operator (listed under Beta consultations
+in the final report) and the run continues. Solo mode skips Beta entirely.
 
 ### Step 6 — Halt handling
 
@@ -310,8 +302,8 @@ Report:
 3. Per-phase durations from the timeline.
 4. Total cost estimate vs threshold.
 5. Auto-approvals recorded (if any).
-6. Next command (`/sprint:release deploy` if shipping, or the resume
-   command if halted).
+6. Next command (`/sprint:deploy`, typed by the person, if shipping, or
+   the resume command if halted).
 
 ## Outputs
 
@@ -348,7 +340,6 @@ command and the human action needed. Most common:
 - `beta_consult_pending` — adhoc mode reached a Beta phase boundary;
   consult Beta (Alex β), then resume with --beta-verdict / --beta-message /
   --pending-phase.
-- `beta_escalate` — address Beta's concern, then resume.
 - `cost_threshold` — resume with `--cost-acknowledged` (2× for this
   run only) or raise the threshold permanently in the autonomy preset.
 - `esd_signup` — complete the external setup, mark the ESD
@@ -383,7 +374,7 @@ trace in v0.1.
 - **Solo:** Alpha runs all 5 phases directly. No Beta cadence. ε-conduct default still applies
   when mode is `sprint`; toggle with `--no-epsilon` if you need bare-scaffold behavior.
 - **Adhoc (default):** Alpha runs phases; Beta consulted at the 4 phase boundaries. ESCALATE
-  halts regardless of preset. ε-conduct is the default in sprint sessions (see above).
+  is recorded for the operator; the run continues. ε-conduct is the default in sprint sessions (see above).
 - **Sprint (session-level):** When `/mode:sprint` is active, the orchestrator auto-enables
   `epsilon + epsilonDispatch` — ε conducts the full lifecycle via the ADR-0009 registry-driven
   runtime. The ε conductor — top-level OR teammate-spawned — calls the in-process roster directly
@@ -396,7 +387,7 @@ trace in v0.1.
 ## Non-goals
 
 - Auto-deploying to production — hard ceiling.
-- Auto-pushing to remote — hard ceiling.
+- Auto-pushing to remote from the script — the lead pushes.
 - Auto-signing up for paid services — hard ceiling.
 - Replacing `/sprint:plan` as the front door — per-phase commands
   remain available.

@@ -1,6 +1,7 @@
 ---
 description: Operator authorization — durably allow a blocked action by adding a scoped permissions.allow rule from a growing catalog of cases, then recompiles settings so it takes effect this session.
 user-invocable: true
+disable-model-invocation: true
 ---
 
 # /permissions:authorized — Operator Authorization

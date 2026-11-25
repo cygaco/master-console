@@ -11,6 +11,7 @@
     "fixturesRequired": "true ⇒ scripts/hooks/test.js fails if testFixtures is empty",
     "registrations": "[{event,matcher}] — direct mapping to .claude/settings.json hooks block",
     "testFixtures": "fixture JSON paths used by scripts/hooks/test.js",
+    "handler": "optional extra fields copied onto the hook handler object in settings.json by scripts/hooks/build.js: timeout (seconds), onFailure (block | allow). Closed list; an unknown field fails the build",
     "blocks": "human-readable list of warnings/blocks this hook emits",
     "purpose": "one-line description"
   },
@@ -50,18 +51,17 @@
       "testFixtures": ["fixtures/hooks/default/user-prompt.json"]
     },
     {
-      "id": "skill-router",
-      "script": "scripts/hooks/skill-router.js",
+      "id": "plain-prompt",
+      "script": "scripts/hooks/plain-prompt.js",
       "owner": "framework",
       "enabled": true,
       "failMode": "fail-open",
       "fixturesRequired": true,
-      "purpose": "Deterministic natural-language → skill router for dictated prompts; injects SUGGESTED SKILLS with scores + parsed flags. No LLM, <=50ms in-process budget. Kill switch: MC_SKILL_ROUTER=0.",
+      "purpose": "Plain-language routing, per message: adds at most one short line (the skill the user named without its slash, or up to three confident candidates); never offers a skill that changes something outside the project. Off with mc.plain.enabled false in the manifest (/plain off) or MC_PLAIN_OFF=1; never blocks.",
       "registrations": [{ "event": "UserPromptSubmit", "matcher": "" }],
       "testFixtures": [
-        "fixtures/hooks/skill-router/user-prompt.json",
-        "fixtures/hooks/skill-router/slash.json",
-        "fixtures/hooks/skill-router/approval-word.json"
+        "fixtures/hooks/plain-prompt/user-prompt.json",
+        "fixtures/hooks/plain-prompt/slash.json"
       ]
     },
     {
@@ -88,8 +88,7 @@
       "purpose": "Block direct edits to runtime memory stores; route via logger.",
       "registrations": [
         { "event": "PreToolUse", "matcher": "Bash" },
-        { "event": "PreToolUse", "matcher": "Edit|Write" },
-        { "event": "PostToolUse", "matcher": "Edit|Write" }
+        { "event": "PreToolUse", "matcher": "Edit|Write" }
       ],
       "testFixtures": ["fixtures/hooks/default/bash-safe.json"]
     },
@@ -122,7 +121,7 @@
       "enabled": true,
       "failMode": "fail-open",
       "fixturesRequired": true,
-      "purpose": "Block `git commit` while a sprint is active when the message lacks the Change/Blast/Risks classification trailer. Fail-open on its own crash (telemetry event); kill switch MC_CHANGE_TRAILER=off|report.",
+      "purpose": "Advisory: warn (never block) on `git commit` while a sprint is active, or when tracked paths are staged, if the message lacks the Change/Blast/Risks classification trailer. Fail-open on its own crash (telemetry event); MC_CHANGE_TRAILER=off silences it.",
       "registrations": [{ "event": "PreToolUse", "matcher": "Bash" }],
       "testFixtures": ["fixtures/hooks/change-trailer-guard/trailerless-commit.json"]
     },
@@ -203,10 +202,7 @@
       "failMode": "fail-closed",
       "fixturesRequired": true,
       "purpose": "Block edits that introduce hardcoded path literals where a path-key exists.",
-      "registrations": [
-        { "event": "PreToolUse", "matcher": "Edit|Write" },
-        { "event": "PostToolUse", "matcher": "Edit|Write" }
-      ],
+      "registrations": [{ "event": "PreToolUse", "matcher": "Edit|Write" }],
       "testFixtures": ["fixtures/hooks/default/edit-text.json"]
     },
     {
@@ -312,6 +308,21 @@
       "testFixtures": ["fixtures/hooks/default/agent-scoped.json"]
     },
     {
+      "id": "agent-spawn-model-guard",
+      "script": "scripts/hooks/agent-spawn-model-guard.js",
+      "owner": "framework",
+      "enabled": true,
+      "failMode": "fail-open",
+      "fixturesRequired": true,
+      "purpose": "Refuse an Agent spawn whose model (the model param, else the role spec's model: line) is not a Claude model the harness can run; names the role, spec and fix. Framework trees only; its own crash allows with one warning.",
+      "blocks": ["Agent spawn whose effective model is not a catalog Claude id, a harness alias (sonnet/opus/haiku/fable) or absent/inherit"],
+      "registrations": [{ "event": "PreToolUse", "matcher": "Agent" }],
+      "testFixtures": [
+        "fixtures/hooks/default/agent-scoped.json",
+        "fixtures/hooks/agent-spawn-model-guard/non-claude-model-param.json"
+      ]
+    },
+    {
       "id": "worktree-preflight",
       "script": "scripts/hooks/worktree-preflight.js",
       "owner": "framework",
@@ -389,19 +400,6 @@
       "purpose": "Audit excalidraw MCP exports.",
       "registrations": [
         { "event": "PreToolUse", "matcher": "mcp__claude_ai_Excalidraw__*" }
-      ],
-      "testFixtures": ["fixtures/hooks/default/noop.json"]
-    },
-    {
-      "id": "beta-gate",
-      "script": "scripts/hooks/beta-gate.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-closed",
-      "fixturesRequired": true,
-      "purpose": "Force consultation with Beta before AskUserQuestion in adhoc mode.",
-      "registrations": [
-        { "event": "PreToolUse", "matcher": "AskUserQuestion" }
       ],
       "testFixtures": ["fixtures/hooks/default/noop.json"]
     },
@@ -498,28 +496,6 @@
       "testFixtures": ["fixtures/hooks/default/post-edit.json"]
     },
     {
-      "id": "save-session-lint",
-      "script": "scripts/hooks/save-session-lint.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Lint session-save artifacts after edits.",
-      "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
-      "testFixtures": ["fixtures/hooks/default/post-edit.json"]
-    },
-    {
-      "id": "template-fillability",
-      "script": "scripts/hooks/template-fillability.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Verify requirements templates are still fillable after edits.",
-      "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
-      "testFixtures": ["fixtures/hooks/default/post-edit.json"]
-    },
-    {
       "id": "learning-validator",
       "script": "scripts/hooks/learning-validator.js",
       "owner": "framework",
@@ -538,39 +514,6 @@
       "failMode": "fail-open",
       "fixturesRequired": true,
       "purpose": "Audit UI edits against design-system docs.",
-      "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
-      "testFixtures": ["fixtures/hooks/default/post-edit.json"]
-    },
-    {
-      "id": "step-hardcode-suggester",
-      "script": "scripts/hooks/step-hardcode-suggester.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Suggest STEPS.json keys for hardcoded step strings.",
-      "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
-      "testFixtures": ["fixtures/hooks/default/post-edit.json"]
-    },
-    {
-      "id": "region-marker-guard",
-      "script": "scripts/hooks/region-marker-guard.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Validate ── region ── markers in framework files.",
-      "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
-      "testFixtures": ["fixtures/hooks/default/post-edit.json"]
-    },
-    {
-      "id": "spec-test-staleness",
-      "script": "scripts/hooks/spec-test-staleness.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Emit test.stale event when feature spec edited without re-running tests.",
       "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
       "testFixtures": ["fixtures/hooks/default/post-edit.json"]
     },
@@ -619,6 +562,20 @@
       "purpose": "SessionStart: run the tracker validator + inject the tracker's validity verdict so an agent cannot begin work unaware the source-of-truth TRACKER.md is red (Start-of-Work Enforcement).",
       "registrations": [{ "event": "SessionStart", "matcher": "" }],
       "testFixtures": ["fixtures/hooks/default/session-start.json"]
+    },
+    {
+      "id": "plain-session",
+      "script": "scripts/hooks/plain-session.js",
+      "owner": "framework",
+      "enabled": true,
+      "failMode": "fail-open",
+      "fixturesRequired": true,
+      "purpose": "Plain-language routing, once per session: refreshes the skill index and adds the compact skill map (at most 2,000 tokens). Off with mc.plain.enabled false in the manifest (/plain off) or MC_PLAIN_OFF=1; never blocks.",
+      "registrations": [{ "event": "SessionStart", "matcher": "" }],
+      "testFixtures": [
+        "fixtures/hooks/plain-session/session-start.json",
+        "fixtures/hooks/plain-session/not-session.json"
+      ]
     },
     {
       "id": "tracker-completion-gate",
@@ -764,30 +721,6 @@
       "testFixtures": ["fixtures/hooks/default/bash-safe.json"]
     },
     {
-      "id": "skill-invocation-tracker",
-      "script": "scripts/hooks/skill-invocation-tracker.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Emit skill-suggested-vs-invoked telemetry on PreToolUse SlashCommand|Skill.",
-      "registrations": [
-        { "event": "PreToolUse", "matcher": "SlashCommand|Skill" }
-      ],
-      "testFixtures": ["fixtures/hooks/default/bash-safe.json"]
-    },
-    {
-      "id": "skill-catalog-regen",
-      "script": "scripts/hooks/skill-catalog-regen.js",
-      "owner": "framework",
-      "enabled": true,
-      "failMode": "fail-open",
-      "fixturesRequired": true,
-      "purpose": "Regenerate paths.skillCatalog after edits under paths.commands.",
-      "registrations": [{ "event": "PostToolUse", "matcher": "Edit|Write" }],
-      "testFixtures": ["fixtures/hooks/default/post-edit.json"]
-    },
-    {
       "id": "memory-enforcement-guard",
       "script": "scripts/hooks/memory-enforcement-guard.js",
       "owner": "framework",
@@ -846,6 +779,25 @@
       ],
       "blocks": [],
       "testFixtures": ["fixtures/hooks/default/bash-safe.json"]
+    },
+    {
+      "id": "plain-guard",
+      "script": "scripts/hooks/plain-guard.js",
+      "owner": "framework",
+      "enabled": true,
+      "failMode": "fail-closed",
+      "fixturesRequired": true,
+      "purpose": "Deny-only Skill-tool guard: refuses a model-started skill that deletes, deploys or spends, or one it cannot read, and tells the model to give the person the command to type. Stays on when routing is off (/plain off does not reach it); onFailure block makes a guard that cannot run block the call.",
+      "registrations": [
+        { "event": "PreToolUse", "matcher": "SlashCommand|Skill" }
+      ],
+      "handler": { "timeout": 10, "onFailure": "block" },
+      "blocks": ["model-started deny-class skill", "unreadable skill call or skill file"],
+      "testFixtures": [
+        "fixtures/hooks/plain-guard/plain-skill.json",
+        "fixtures/hooks/plain-guard/deny-class.json",
+        "fixtures/hooks/plain-guard/unreadable-call.json"
+      ]
     },
     {
       "id": "session-end-team-teardown",

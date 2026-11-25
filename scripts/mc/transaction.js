@@ -76,6 +76,9 @@ function runFastPreflightSubset(opts) {
     allowStale: opts.allowStale,
     forceFresh: opts.forceFresh,
     allowVersionDrift: opts.allowVersionDrift,
+    operatorOverrides: opts.operatorOverrides,
+    overrideReason: opts.overrideReason,
+    operator: opts.operator,
     allRed: true,
     txId: opts.txId,
   });
@@ -349,6 +352,57 @@ function rollbackTransaction(txDir, opts) {
       firstError = firstError || err.message;
       writeDiagnostic(txDir, `rollback: error on ${e.dest}: ${err.message}`);
     }
+  }
+
+  try {
+    const deltaFile = path.join(txDir, "snapshot.delta.jsonl");
+    if (fs.existsSync(deltaFile)) {
+      const lines = fs
+        .readFileSync(deltaFile, "utf8")
+        .split("\n")
+        .filter((l) => l.trim());
+      for (const line of lines) {
+        let rec;
+        try {
+          rec = JSON.parse(line);
+        } catch {
+          continue;
+        }
+        if (rec && rec.kind === "keep-local-sibling" && rec.dest) {
+          const abs = path.join(targetRoot, rec.dest);
+          try {
+            if (fs.existsSync(abs)) {
+              fs.unlinkSync(abs);
+              unlinkedCount += 1;
+            }
+          } catch (err) {
+            partial = true;
+            firstError = firstError || err.message;
+            writeDiagnostic(txDir, `rollback: error unlinking sibling ${rec.dest}: ${err.message}`);
+          }
+        } else if (rec && rec.kind === "keep-local-engine-restore" && rec.dest) {
+          const backupAbs = path.join(txDir, "backup", rec.dest);
+          const liveAbs = path.join(targetRoot, rec.dest);
+          try {
+            if (fs.existsSync(backupAbs)) {
+              fs.mkdirSync(path.dirname(liveAbs), { recursive: true });
+              fs.copyFileSync(backupAbs, liveAbs);
+              restoredCount += 1;
+            } else {
+              partial = true;
+              firstError = firstError || `keep-local backup missing: ${rec.dest}`;
+              writeDiagnostic(txDir, `rollback: keep-local backup missing for ${rec.dest} — leaving in place`);
+            }
+          } catch (err) {
+            partial = true;
+            firstError = firstError || err.message;
+            writeDiagnostic(txDir, `rollback: error restoring engine file ${rec.dest}: ${err.message}`);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    writeDiagnostic(txDir, `rollback: delta-pass failed: ${err.message}`);
   }
 
   const resultFile = path.join(txDir, "result.json");

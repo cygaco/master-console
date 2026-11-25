@@ -1,5 +1,5 @@
 ---
-description: Audit configured dispatch models against the latest vendor catalogs — flag drift, deprecations, and dead ("ghost") ids. --refresh deep-ingests the live vendor docs first.
+description: Check whether our models are out of date — audits the configured dispatch models against the latest vendor catalogs and flags drift, deprecations, and dead ("ghost") ids. --refresh deep-ingests the live vendor docs first.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js, runtime/models-research]

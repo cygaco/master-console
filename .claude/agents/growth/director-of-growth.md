@@ -9,12 +9,13 @@ description: >-
   Growth application of the shared clarity-is-king). Apex of the Growth
   domain; sibling of director-of-product / director-of-engineering.
 tools: [Read, Grep, Glob]
-model: gpt-6.1-sol
+model: claude-opus-5-5
 provider: openai
-provider_model: gpt-6.1-sol
+provider_model: gpt-6.2-sol
 provider_reasoning_effort: high
 provider_fallback: claude
 layer: growth
+effort: high
 ---
 
 > **Dispatch — how to call me (read first):** I run on **GPT-5.6 Sol via subprocess** (the `cross_provider_consult_lead` class — GPT is best at message/go-to-market judgment). Reach me with `node scripts/dispatch-agent.js director-of-growth <prompt-file>`. Do **NOT** use the in-process Agent tool (`Agent(subagent_type:"director-of-growth")`) or `record-inprocess` — they honor my `model: gpt-5.5` frontmatter and the Agent tool can only spawn Claude, so it fails **by design**. `provider_fallback: claude` covers a GPT quota-death via the sanctioned review-fallback lane.
