@@ -147,6 +147,8 @@ const KNOWN_DANGLING_REFS = [
 
   { skill: ".claude/commands/commit/land.md", script: "scripts/public-repo/generate.js",
     reason: "(B) the public-copy step runs only in a repo that has a public emit and says to skip otherwise; the emit tooling is private to the publishing repo, not shipped" },
+  { skill: ".claude/commands/commit/land.md", script: "scripts/public-repo/check-public-tree.js",
+    reason: "(B) same public-copy step (its pre-push re-check); the emit tooling is private to the publishing repo, not shipped" },
   { skill: ".claude/commands/scan/issues.md", script: "scripts/recurring-issues-helper.js",
     reason: "(B) recurring-issues ledger helper; the recurring-issues store tracks MC-framework bugs (canonical-dev), not shipped" },
   { skill: ".claude/commands/issues/list.md", script: "scripts/recurring-issues-helper.js",

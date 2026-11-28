@@ -8,6 +8,11 @@ const path = require("path");
 mcEnv.setEnv("ATTEST_SECRET_FILE", path.join(os.tmpdir(), `attest-secret-panel-test-${process.pid}-${Date.now()}`));
 const { attestLane, attestPanelRun, readLedgerRecords } = require("./cert-attest");
 const { signRecord } = require("../dispatch/attest-signing");
+const { hunterBindingDigest } = require("../dispatch/provenance-verifier");
+const crypto = require("crypto");
+const sha = (x) => crypto.createHash("sha256").update(x).digest("hex");
+const PACKET = sha("review-packet-bytes");
+const EVID = sha("reviewer-returned-bytes");
 
 let passed = 0;
 const failures = [];
@@ -23,11 +28,14 @@ const LANES = {
 const S = "SP-TEST-999999", R = "panel-run-abc";
 const SHA = "abc1234";
 
+const T0 = Date.parse("2000-01-01T12:00:00.000Z");
+const at = (ms) => new Date(T0 + ms).toISOString();
 const rec = (o) => { const r = { sprint_id: S, run_id: R, panel_run_id: R, code_sha: SHA, ok: true, fallback: false, ...o }; r.attest_sig = signRecord(r); return r; };
 const reSign = (r) => { const { attest_sig, ...rest } = r; return { ...rest, attest_sig: signRecord(rest) }; };
-const gptOk = rec({ role: "security-reviewer", provider: "openai", tool_id: "codex", shape: "subprocess-cross-provider", output_digest: "d-gpt", cmdline_checksum: "c-gpt" });
+const gptOk = rec({ role: "security-reviewer", provider: "openai", tool_id: "codex", shape: "subprocess-cross-provider", output_digest: "d-gpt", cmdline_checksum: "c-gpt", started_at: at(0), prompt_digest: "sha256:" + PACKET.slice(0, 32), packet_sha256: PACKET });
 const agyOk = rec({ role: "security-reviewer", provider: "antigravity", tool_id: "agy", shape: "subprocess-cross-provider", output_digest: "d-agy", cmdline_checksum: "c-agy" });
-const claudeHunterOk = rec({ role: "security_claude_hunter", provider: "claude", via: "epsilon-agent", shape: "in-process-agent", evidence_sha: "e-cl", cmdline_checksum: "c-cl" });
+const hunterRec = (o = {}) => { const packet = o.packet_sha256 || PACKET; return rec({ role: "security_claude_hunter", provider: "claude", via: "epsilon-agent", shape: "in-process-agent", verdict: "pass", completed_at: at(-60000), evidence_sha: EVID, packet_sha256: packet, output_digest: hunterBindingDigest(packet, EVID), cmdline_checksum: "c-cl", ...o }); };
+const claudeHunterOk = hunterRec();
 const claudeFloorOk = rec({ role: "security-reviewer", provider: "claude", tool_id: "claude", shape: "subprocess-claude", output_digest: "d-fl", cmdline_checksum: "c-fl" });
 
 test("panel-3lab with a VALID signed agy record → BLOCKED (agy lane fail-closed at the panel reader)", () => {
@@ -54,17 +62,133 @@ test("neg: non-catalog agy model record → agy lane unattested", () => {
 });
 
 test("panel-2family FLOOR still attests (agy hard-fail does not touch the non-agy floor)", () => {
-  const out = attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeFloorOk] });
+  const out = attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeHunterOk] });
   assert.ok(out.ok, out.reason);
 });
 
-test("panel-2family FLOOR (gpt CLI + claude subprocess) → ATTESTED via the profile-aware resolver", () => {
-  const out = attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeFloorOk] });
-  assert.ok(out.ok, `the valid subprocess-claude floor must attest: ${out.reason}`);
+test("panel-2family FLOOR (gpt CLI + packet-bound claude hunter) → ATTESTED via the profile-aware resolver", () => {
+  const out = attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeHunterOk] });
+  assert.ok(out.ok, `the hunter-shaped, packet-bound floor must attest: ${out.reason}`);
 });
 test("the SAME subprocess-claude floor record does NOT attest the panel-3lab binding hunter lane", () => {
   const out = attestLane(LANES.claude, [claudeFloorOk], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-3lab" });
   assert.equal(out.attested, false, "the binding hunter lane requires the in-process hunter, not the floor's subprocess-claude");
+});
+
+test("RED: hunter record bound to a DIFFERENT packet than the run's CLI lanes reviewed → not attested", () => {
+  const other = sha("some-other-packet");
+  const out = attestLane(LANES.claude, [gptOk, hunterRec({ packet_sha256: other })], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" });
+  assert.equal(out.attested, false);
+});
+test("RED: hunter record whose packet_sha256 was edited after signing → not attested", () => {
+  const { attest_sig, ...rest } = claudeHunterOk;
+  const out = attestLane(LANES.claude, [gptOk, { ...rest, packet_sha256: sha("x"), attest_sig }], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" });
+  assert.equal(out.attested, false);
+});
+test("RED: hunter record with output_digest not the binding digest → not attested", () => {
+  const out = attestLane(LANES.claude, [gptOk, hunterRec({ output_digest: "d-plain" })], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" });
+  assert.equal(out.attested, false);
+});
+test("RED: unsigned hunter record (otherwise perfectly bound) → not attested", () => {
+  const { attest_sig, ...unsigned } = claudeHunterOk;
+  assert.equal(attestLane(LANES.claude, [gptOk, unsigned], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" }).attested, false);
+});
+test("RED: other-run hunter record → not attested", () => {
+  const out = attestLane(LANES.claude, [gptOk, hunterRec({ panel_run_id: "other-run", run_id: "other-run" })], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" });
+  assert.equal(out.attested, false);
+});
+const ctxAttest = { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" };
+test("a hunter whose signed verdict is error or fail does not attest the Claude lane; warn does", () => {
+  assert.equal(attestLane(LANES.claude, [gptOk, hunterRec({ verdict: "error" })], ctxAttest).attested, false);
+  assert.equal(attestLane(LANES.claude, [gptOk, hunterRec({ verdict: "fail" })], ctxAttest).attested, false);
+  assert.equal(attestLane(LANES.claude, [gptOk, hunterRec({ verdict: "warn" })], ctxAttest).attested, true);
+});
+test("an earlier signed hunter pass does not mask a signed fail for the same packet", () => {
+  assert.equal(attestLane(LANES.claude, [gptOk, hunterRec(), hunterRec({ verdict: "fail" })], ctxAttest).attested, false);
+});
+test("a signed not-ok hunter error beside a signed pass (same run, same packet) does not attest, in either order", () => {
+  const error = hunterRec({ ok: false, verdict: "error" });
+  for (const hunters of [[claudeHunterOk, error], [error, claudeHunterOk]]) {
+    assert.equal(attestLane(LANES.claude, [gptOk, ...hunters], ctxAttest).attested, false);
+  }
+});
+test("a signed hunter record marked as a fallback, or a not-ok fail, beside a signed pass also holds", () => {
+  for (const contrary of [hunterRec({ fallback: true }), hunterRec({ ok: false, verdict: "fail" })]) {
+    assert.equal(attestLane(LANES.claude, [gptOk, claudeHunterOk, contrary], ctxAttest).attested, false);
+  }
+});
+test("an error from another run or packet, or without a valid signature, does not hold a signed pass", () => {
+  const error = { ok: false, verdict: "error" };
+  const strays = [
+    hunterRec({ ...error, panel_run_id: "other-run" }),
+    hunterRec({ ...error, packet_sha256: sha("another packet") }),
+    { ...hunterRec(error), attest_sig: "0".repeat(64) },
+  ];
+  assert.equal(attestLane(LANES.claude, [gptOk, claudeHunterOk, ...strays], ctxAttest).attested, true);
+});
+test("a CLI completion with only the unsigned prefix digest (no packet_sha256) attests nothing for the Claude lane", () => {
+  const { attest_sig, packet_sha256, ...rest } = gptOk;
+  const prefixOnly = reSign(rest);
+  assert.equal(attestLane(LANES.claude, [prefixOnly, claudeHunterOk], ctxAttest).attested, false);
+});
+test("every attesting CLI completion must carry the hunter's packet digest; one that differs holds", () => {
+  const other = rec({ ...gptOk, attest_sig: undefined, packet_sha256: sha("another packet"), tool_id: "codex2", provider: "openai2" });
+  assert.equal(attestLane(LANES.claude, [gptOk, other, claudeHunterOk], ctxAttest).attested, false);
+});
+test("a same-run CLI row that is not on the security-reviewer contract is not used and does not block", () => {
+  const stray = rec({ role: "other-role", provider: "openai", tool_id: "codex", shape: "subprocess-cross-provider", output_digest: "d-x", cmdline_checksum: "c-x", packet_sha256: sha("stray") });
+  assert.equal(attestLane(LANES.claude, [gptOk, stray, claudeHunterOk], ctxAttest).attested, true);
+});
+
+const claudeLane = (records) => attestLane(LANES.claude, records, ctxAttest).attested;
+const HOUR = 60 * 60 * 1000;
+test("a hunter pass completed after the earliest CLI started_at does not attest", () => {
+  assert.equal(claudeLane([gptOk, hunterRec({ completed_at: at(1) })]), false);
+  const later = reSign({ ...gptOk, started_at: at(10 * 60000) });
+  assert.equal(claudeLane([later, gptOk, hunterRec({ completed_at: at(5 * 60000) })]), false, "the EARLIEST start bounds the window");
+  assert.equal(claudeLane([gptOk, later, hunterRec({ completed_at: at(5 * 60000) })]), false, "in either order");
+});
+test("a hunter pass completed inside the window attests; both edges count, older does not", () => {
+  for (const ms of [-1, 0, -HOUR]) assert.equal(claudeLane([gptOk, hunterRec({ completed_at: at(ms) })]), true, String(ms));
+  assert.equal(claudeLane([gptOk, hunterRec({ completed_at: at(-HOUR - 1) })]), false);
+});
+test("an attesting CLI completion with no signed start time leaves no window: nothing attests", () => {
+  const { attest_sig, started_at, ...rest } = gptOk;
+  assert.equal(claudeLane([reSign(rest), claudeHunterOk]), false);
+  assert.equal(claudeLane([gptOk, reSign({ ...rest, started_at: "not a time" }), claudeHunterOk]), false);
+});
+test("a signed hunter fail outside the window still holds a pass inside it", () => {
+  assert.equal(claudeLane([gptOk, claudeHunterOk, hunterRec({ verdict: "fail", completed_at: at(HOUR) })]), false);
+});
+test("the gate and the attestation read one exported window length", () => {
+  assert.equal(require("../dispatch/provenance-verifier").HUNTER_WINDOW_MS, HOUR);
+});
+
+const deadLab = (provider, tool_id) => rec({ role: "security-reviewer", provider, tool_id, shape: "subprocess-cross-provider", ok: false, output_digest: null, cmdline_checksum: "c", started_at: at(0), packet_sha256: PACKET });
+const claudeOnlyRun = () => [deadLab("openai", "codex"), deadLab("antigravity", "agy"), claudeHunterOk];
+const attestRun = (profile, lanes, records) => attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: profile }, lanes, records });
+test("a Claude-only run never attests panel-2family or panel-3lab, and the report carries the claude-only label", () => {
+  for (const [profile, lanes] of [["panel-2family", [LANES.gpt, LANES.claude]], ["panel-3lab", [LANES.gpt, LANES.claude, LANES.agy]]]) {
+    const out = attestRun(profile, lanes, claudeOnlyRun());
+    assert.equal(out.ok, false, profile);
+    assert.equal(out.lanes.some((l) => l.attested), false, "no lane of it attests, the Claude lane included");
+    assert.equal(out.diversity, "claude-only", profile);
+    assert.match(out.reason, /reviewed by Claude only — no second lab/);
+  }
+});
+test("the claude-only label comes from verified stamps only: not on a two-lab run, and no claim field changes it", () => {
+  assert.equal("diversity" in attestRun("panel-2family", [LANES.gpt, LANES.claude], [gptOk, claudeHunterOk]), false);
+  const claimed = attestRun("panel-2family", [LANES.gpt, LANES.claude], [...claudeOnlyRun(), { ...gptOk, attest_sig: "0".repeat(64), diversity: "multi-lab" }]);
+  assert.equal(claimed.diversity, "claude-only", "an unverifiable other-lab record does not remove the label");
+  const stray = attestRun("panel-2family", [LANES.gpt, LANES.claude], [hunterRec({ panel_run_id: "other-run" })]);
+  assert.equal("diversity" in stray, false, "another run's records say nothing about this one");
+});
+
+test("RED: no same-run CLI lane record to corroborate the packet → hunter not attested", () => {
+  assert.equal(attestLane(LANES.claude, [claudeHunterOk], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" }).attested, false);
+});
+test("GREEN: signed, same-run, bound hunter + matching CLI packet → attested", () => {
+  assert.equal(attestLane(LANES.claude, [gptOk, claudeHunterOk], { runId: R, sprintId: S, codeSha: SHA, profileName: "panel-2family" }).attested, true);
 });
 
 test("role='security-reviewer' + sanctioned_lane_id='security_claude_hunter' + shape=in-process-agent → hunter unattested", () => {
@@ -79,7 +203,7 @@ test("sanctioned_lane_id=hunter but shape FORGED-ABSENT (subprocess-claude) → 
 });
 
 test("every lane attested but code_sha absent → NOT ok", () => {
-  const out = attestPanelRun({ runId: R, sprintId: S, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeFloorOk] });
+  const out = attestPanelRun({ runId: R, sprintId: S, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeHunterOk] });
   assert.equal(out.ok, false, "a binding attestation must bind to a code SHA");
   assert.ok(/code_sha/.test(out.reason), out.reason);
 });
@@ -236,7 +360,7 @@ test("a single hand-authored hunter record (right fields, no sig) does NOT attes
   assert.equal(out.attested, false, "an unsigned hunter record is a forgery — the in-process lane must reject it");
 });
 test("no over-block: a REAL SIGNED panel-2family floor STILL attests (origin-proof is not a blanket block)", () => {
-  const out = attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeFloorOk] });
+  const out = attestPanelRun({ runId: R, sprintId: S, codeSha: SHA, profile: { name: "panel-2family" }, lanes: [LANES.gpt, LANES.claude], records: [gptOk, claudeHunterOk] });
   assert.ok(out.ok, `a properly signed set must still attest: ${out.reason}`);
 });
 test("tampering a SIGNED field (role) after signing invalidates the signature → not attested", () => {

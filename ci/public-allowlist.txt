@@ -1366,6 +1366,7 @@ scripts/hooks/create-worktree-from-head.js
 scripts/hooks/create-worktree-from-head.sh
 scripts/hooks/cycle-enforcer.js
 scripts/hooks/dependency-admission-guard.js
+scripts/hooks/dependency-admission-guard.test.js
 scripts/hooks/dispatch-route-guard.js
 scripts/hooks/dispatch-route-guard.scope.test.js
 scripts/hooks/edit-watcher.js
@@ -1496,6 +1497,7 @@ scripts/knowledge/registry.js
 scripts/learn/mine-events-7d.js
 scripts/learn/probe-shapes.js
 scripts/learn/probe-spec-and-audit.js
+scripts/lib/ensure-gitignore-line.js
 scripts/lib/fixture-event-ids.js
 scripts/lib/fixture-event-ids.test.js
 scripts/lib/hermetic-events-home.js
@@ -1522,6 +1524,7 @@ scripts/mc/diff.js
 scripts/mc/generate-roadmap-scaffold.js
 scripts/mc/lf-normalize-target.js
 scripts/mc/lib/content-hash.js
+scripts/mc/lib/merge-local.js
 scripts/mc/lib/provider-autofix.js
 scripts/mc/lib/provider-rca.js
 scripts/mc/lib/provider-tier-config.js

@@ -1,5 +1,5 @@
 ---
-description: Update the model table — find the new models each lab serves and swap one in, with undo. Use for "are we on the latest models", "refresh the model list", "swap us to the newest Gemini/GPT/Claude"; swaps a configured model across the shipped defaults (or one role) and undoes the last swap.
+description: Update or refresh the model table: find the latest models each lab serves, swap one in, undo. For "are we on the latest models", "any new models out", "refresh the model list", "swap us to the newest Gemini", "check for newer models and switch"; a question only runs find, swaps nothing.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js, scripts/dispatch/catalog-models.json, .claude/agents/_org/presets, .claude/agents/_org/role-registry.json, .claude/agents/_org/panel-lane-manifest.json]
@@ -14,7 +14,8 @@ One command, `scripts/models/models.js`, three verbs.
 names the old model to move to the new one without hand-editing JSON.
 
 **Plain requests that mean this flow:** "update the model table", "are we on the latest models",
-"refresh the model list", "swap us to the newest Gemini" (or GPT, or Claude). The flow is:
+"any new models out we should be using", "refresh the model list", "swap us to the newest Gemini"
+(or GPT, or Claude), "check for newer models and switch". The flow is:
 
 1. `find` shows what is new and what is gone.
 2. For a change of a DEFAULT, run one quick same-packet smoke through the old and new models
@@ -22,6 +23,10 @@ names the old model to move to the new one without hand-editing JSON.
    Adding a model as an option needs neither.
 3. One `swap`.
 4. `undo` if a real run misbehaves.
+
+**A question only finds.** A question ("are we on the latest models", "any new models out") means:
+run the find step (`node scripts/models/models.js find`) and report what is new and what is no
+longer served. Swap nothing until the person asks for a swap.
 
 ## find — what is served now
 

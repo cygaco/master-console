@@ -32,7 +32,7 @@ See `.claude/project/reference/operational-loop.md` for the operational cycle, s
 ## Skill Use
 
 The skill library under `.claude/commands` encodes known-good procedures; prefer a skill over re-deriving its procedure. The plain-language hooks add a skill map once per session and, when a message matches a skill, one short line naming it.
-- **Plain words start the skill that fits.** When the person asks for what a skill does, however worded, start it with the Skill tool and take its arguments from the message. A question, status check or discussion gets an answer, not a skill.
+- **Plain words start the skill that fits.** When the person asks for what a skill does, however worded, start it with the Skill tool and take its arguments from the message. A question, status check or discussion gets an answer, not a skill — except when a skill's read-only step answers the question: then start that skill, run only that step and change nothing. Example: "are we on the latest models" starts /models:swap, which runs its find step, reports and swaps nothing.
 - **Never start a skill marked "~"** (it deletes, deploys or spends): give the person the exact `/command` to type. The Skill-tool guard refuses it anyway.
 - **Manual invocation always overrides.** A typed `/skill:name` always runs — no second-guessing.
 - **Irreversible skills still respect the autonomy table.** A match is not authorization: skills that publish, delete or deploy follow `## Autonomy`; a push of green work to the operator's own repos is the lead's call.

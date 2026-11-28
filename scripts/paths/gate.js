@@ -377,6 +377,7 @@ function checkDocsTokens() {
     ".claude/project/events/",
     ".claude/project/memory/",
     ".claude/project/maps/",
+    ".claude/project/sprint/",
     ".claude/agents/.system/dispatch-backups/",
     ".claude/agents/president/_system/oneshot/retros/",
     "node_modules/",

@@ -15,7 +15,7 @@
       "required": ["gpt", "claude"],
       "optional": ["agy"],
       "min_families": 2,
-      "_note": "The DEGRADED interim floor while agy liveness is operator-owned. Buildable work runs here (2-family: GPT + Claude). Passing panel-2family does NOT satisfy the binding panel-3lab exit."
+      "_note": "The DEGRADED interim floor while agy liveness is operator-owned. Buildable work runs here (2-family: GPT + Claude). Its claude lane is the same in-process hunter as the binding's (one Claude-lane contract), bound to the reviewed packet. Passing panel-2family does NOT satisfy the binding panel-3lab exit."
     }
   },
   "lanes": {

@@ -184,6 +184,35 @@ console.log("\n(7) DISPATCH really spawns; no record without a real outcome:");
   ok("non-zero exit → ok:false", rt.interpretSpawn({ status: 1, stdout: "" }, { role: "r", route: rt.ROUTE.CLAUDE_RAW }, false).ok === false);
   ok("spawn error → spawned:false", rt.interpretSpawn({ error: new Error("ENOENT") }, { role: "r", route: rt.ROUTE.DISPATCH_AGENT }, true).spawned === false);
 
+  {
+    const LABEL = "pass — reviewed by Claude only — no second lab";
+    const plan = { role: "security-reviewer", step: "gauntlet", route: rt.ROUTE.DISPATCH_AGENT, provider: "gemini", model: "x" };
+    const runnerOut = (o) => ({ status: 0, stdout: "a progress line\n" + JSON.stringify({ ok: true, role: "security-reviewer", ...o }) + "\n" });
+    const labelled = rt.spawnAgent(plan, "SP-T", { run: () => runnerOut({ diversity: "claude-only", verdict_text: LABEL }), promptFile: __filename });
+    ok("a Claude-only runner result carries diversity + verdict_text on the spawn outcome", labelled.ok === true && labelled.diversity === "claude-only" && labelled.verdict_text === LABEL, JSON.stringify(labelled));
+    for (const stdout of ["ok", JSON.stringify({ ok: true }), JSON.stringify({ ok: true, diversity: "multi-lab", verdict_text: "x" })]) {
+      const other = rt.interpretSpawn({ status: 0, stdout }, plan, true);
+      ok("any other output adds no label: " + stdout, !("diversity" in other) && !("verdict_text" in other), JSON.stringify(other));
+    }
+    const spawn = (a) => ({ spawned: true, ok: true, recorded: true, route: a.route, ...(a.role === "security-reviewer" ? { diversity: "claude-only", verdict_text: LABEL } : {}) });
+    const reg = { rows: [{ role: "security-reviewer", step: "gauntlet", condition: "always", mode: "block", order: 10 }] };
+    const roles = { "security-reviewer": { provider: "openai", model: "m", kind: "reviewer", binding_verdict: true, home: "engineering" } };
+    const comp = { unit_types: ["backend"], max_risk: "low", domains: [] };
+    const plain = rt.conductStep("gauntlet", comp, "SP-T", { registry: reg, roles, logFn: () => {}, dispatch: true, spawn });
+    const entry = plain.dispatched.find((d) => d.role === "security-reviewer");
+    ok("conductStep's dispatch list carries the label", !!entry && entry.diversity === "claude-only" && entry.verdict_text === LABEL, JSON.stringify(plain.dispatched));
+    const decision = {
+      package: "combined-focused", focused: { files: ["scripts/sprint/x.js"], tests: [] }, touchpoint: { files: [] },
+      trailer: { change: "bugfix", blast: "minor" }, security: { hit: true, by: [] },
+      stages: [{ stage: 4, name: "review", kind: "agents", stop_on_fail: true, roster: [{ role: "security-reviewer", passes: ["primary"], scope: "focused", files: ["scripts/sprint/x.js"] }] }],
+    };
+    const packaged = rt.conductGauntletStep(comp, "SP-T", decision, { registry: reg, roles, logFn: () => {}, dispatch: true, spawn, run: () => ({ status: 0, stdout: "ok" }), verifyGauntlet: () => ({ ok: false, roles: [] }) });
+    const staged = packaged.dispatched.find((d) => d.role === "security-reviewer");
+    ok("the package gauntlet's dispatch list carries the label", !!staged && staged.diversity === "claude-only" && staged.verdict_text === LABEL, JSON.stringify(packaged.dispatched));
+    ok("the conductor's text line names the Claude-only role", rt.claudeOnlyNote(plain.dispatched) === ` security-reviewer: ${LABEL}`, rt.claudeOnlyNote && rt.claudeOnlyNote(plain.dispatched));
+    ok("with no Claude-only result the text line is unchanged", typeof rt.claudeOnlyNote === "function" && rt.claudeOnlyNote([{ role: "x", ok: true }]) === "");
+  }
+
   const cliOut = rt.spawnAgent({ role: "security-reviewer", step: "gauntlet", route: rt.ROUTE.DISPATCH_AGENT, provider: "gemini", model: "x" }, "SP-T", { run: () => ({ status: 0, stdout: "ok" }), promptFile: __filename });
   ok("CLI route really spawns → spawned:true, ok:true, recorded-by-cli", cliOut.spawned === true && cliOut.ok === true && cliOut.recorded === true);
 
@@ -242,6 +271,76 @@ console.log("\n(7b) in-process dispatch records are evidence-bound:");
 
   if (prevLedger === undefined) delete process.env.DISPATCH_LEDGER_DIR;
   else process.env.DISPATCH_LEDGER_DIR = prevLedger;
+  try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { }
+}
+
+console.log("\n(7c) the security_claude_hunter record is verdict-from-evidence and packet-bound:");
+{
+  const crypto = require("crypto");
+  const { spawnSync } = require("child_process");
+  const mcEnvLocal = require("../hooks/lib/mc-env");
+  const pvLocal = require("../dispatch/provenance-verifier");
+  const { verifyRecord } = require("../dispatch/attest-signing");
+  const tmp = path.join(os.tmpdir(), `epsilon-hunter-${process.pid}`);
+  const led = path.join(tmp, "ledger");
+  fs.mkdirSync(led, { recursive: true });
+  const prevLedger = process.env.DISPATCH_LEDGER_DIR;
+  const prevSecret = process.env.MC_ATTEST_SECRET_FILE;
+  const snapSecret = mcEnvLocal.snapshotEnv("ATTEST_SECRET_FILE");
+  const snapRun = mcEnvLocal.snapshotEnv("PANEL_RUN_ID");
+  process.env.DISPATCH_LEDGER_DIR = led;
+  mcEnvLocal.setEnv("ATTEST_SECRET_FILE", path.join(tmp, "secret"));
+  mcEnvLocal.setEnv("PANEL_RUN_ID", "panel-hunter-test");
+  const readLast = () => {
+    const f = path.join(led, "dispatch-completions.jsonl");
+    if (!fs.existsSync(f)) return null;
+    const lines = fs.readFileSync(f, "utf8").trim().split("\n").filter(Boolean);
+    return lines.length ? JSON.parse(lines[lines.length - 1]) : null;
+  };
+  const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
+  const plan = { role: "security_claude_hunter", step: "gauntlet", route: rt.ROUTE.CLAUDE_AGENT, provider: "claude" };
+  const packet = path.join(tmp, "packet.txt");
+  fs.writeFileSync(packet, "review packet bytes");
+  const evFor = (name, body) => { const f = path.join(tmp, name); fs.writeFileSync(f, body); return f; };
+
+  const passEv = evFor("pass.json", JSON.stringify({ verdict: "pass" }));
+  const failEv = evFor("fail.json", JSON.stringify({ verdict: "FAIL" }));
+  const r1 = rt.recordInProcessCompletion(plan, "SP-T", { evidenceFile: failEv, packetFile: packet, verdict: "pass" });
+  const rec1 = readLast();
+  ok("hunter record: verdict comes from the evidence bytes (a supplied verdict is ignored)", r1.recorded === true && rec1.verdict === "fail");
+
+  const r2 = rt.recordInProcessCompletion(plan, "SP-T", { evidenceFile: passEv, packetFile: packet });
+  const rec2 = readLast();
+  ok("hunter record: stores the sha256 of the packet FILE bytes, shape/role writer-stamped, signed",
+    r2.recorded === true && rec2.packet_sha256 === sha(fs.readFileSync(packet)) && rec2.shape === "in-process-agent" && rec2.role === "security_claude_hunter" && verifyRecord(rec2) === true && rec2.verdict === "pass");
+  ok("hunter record: the gate predicate accepts it for that packet and rejects another", pvLocal.hunterPacketBound(rec2, sha(fs.readFileSync(packet))) === true && pvLocal.hunterPacketBound(rec2, sha("other")) === false);
+  ok("hunter record: editing the packet digest after the fact breaks the signature", verifyRecord({ ...rec2, output_digest: sha("x") }) === false);
+
+  for (const [label, body] of [["non-JSON", "not json at all"], ["JSON without a verdict", "{\"summary\":\"x\"}"], ["unknown verdict", "{\"verdict\":\"great\"}"]]) {
+    const r = rt.recordInProcessCompletion(plan, "SP-T", { evidenceFile: evFor("bad.json", body), packetFile: packet });
+    const rec = readLast();
+    ok(`hunter record: ${label} → verdict "error" (never a pass)`, r.recorded === true && rec.verdict === "error");
+  }
+
+  const before = fs.readFileSync(path.join(led, "dispatch-completions.jsonl"), "utf8");
+  const noPacket = rt.recordInProcessCompletion(plan, "SP-T", { evidenceFile: passEv });
+  const missingPacket = rt.recordInProcessCompletion(plan, "SP-T", { evidenceFile: passEv, packetFile: path.join(tmp, "nope.txt") });
+  const emptyPacketFile = evFor("empty-packet.txt", "");
+  const emptyPacket = rt.recordInProcessCompletion(plan, "SP-T", { evidenceFile: passEv, packetFile: emptyPacketFile });
+  ok("hunter record: no / missing / empty --packet → refused, nothing written",
+    noPacket.recorded === false && missingPacket.recorded === false && emptyPacket.recorded === false && fs.readFileSync(path.join(led, "dispatch-completions.jsonl"), "utf8") === before);
+
+  const cli = spawnSync(process.execPath, [path.join(__dirname, "epsilon-runtime.js"), "record-inprocess", "--sprint", "SP-T", "--role", "security_claude_hunter", "--step", "gauntlet", "--evidence", passEv],
+    { encoding: "utf8", env: { ...process.env, DISPATCH_LEDGER_DIR: led } });
+  ok("record-inprocess CLI without --packet for the hunter → exit 2, nothing written", cli.status === 2 && /--packet/.test(cli.stderr) && fs.readFileSync(path.join(led, "dispatch-completions.jsonl"), "utf8") === before);
+
+  const other = rt.recordInProcessCompletion({ role: "product-lead", step: "plan", route: rt.ROUTE.CLAUDE_AGENT, provider: "claude" }, "SP-T", { evidenceFile: passEv });
+  const recOther = readLast();
+  ok("a non-hunter role is unchanged: no packet needed, none stored", other.recorded === true && recOther.packet_sha256 === undefined);
+
+  if (prevLedger === undefined) delete process.env.DISPATCH_LEDGER_DIR; else process.env.DISPATCH_LEDGER_DIR = prevLedger;
+  mcEnvLocal.restoreEnv(snapSecret);
+  mcEnvLocal.restoreEnv(snapRun);
   try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { }
 }
 

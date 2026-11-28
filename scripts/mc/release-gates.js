@@ -52,6 +52,11 @@ const UPGRADE_REQUIRED_NAMED_ASSERTS = [
   "fresh_n_parity_type_3c",
   "fresh_n_parity_symlink_target_3c",
   "fresh_n_parity_content_3c",
+  "worked_in_committed",
+  "worked_in_post_update_checks_all_passed",
+  "worked_in_md_edit_preserved",
+  "worked_in_allowlist_entry_preserved",
+  "worked_in_transients_untracked",
 ];
 function gateBNamedEvidencePresent(payload) {
   const asserts = (payload && payload.asserts) || [];
@@ -359,7 +364,7 @@ const GATES = [
       return {
         ok: true,
         severity: "green",
-        message: `upgrade_current_to_new: ${payload.from_version} -> ${payload.to_version} applied and conforms (ps_available=${payload.ps_available}).`,
+        message: `upgrade_current_to_new: ${payload.from_version} -> ${payload.to_version} applied and conforms, pristine and worked-in (ps_available=${payload.ps_available}).`,
       };
     }
     if (payload && payload.ps_available === false) {

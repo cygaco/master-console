@@ -2,11 +2,17 @@
 
 **Master Console.** An AI operating system for Claude Code: it turns one assistant into an autonomous AI company — an architect that plans, a judge that second-guesses, builders that work in isolated branches, reviewers that check every build, and a memory that survives sessions.
 
-**Version:** 2.3.0
-**Status:** Public beta, released 2026-11-25 ([release notes](https://github.com/cygaco/master-console/releases/tag/v2.3.0))
+**Version:** 2.3.1
+**Status:** Public beta, released 2026-11-28 ([release notes](https://github.com/cygaco/master-console/releases/tag/v2.3.1))
 **Skills:** 239 slash commands
 **Hooks:** 71 automated hooks
 **License:** [AGPL-3.0](LICENSE)
+
+## New in 2.3.1
+
+A fix release for the update path: updating a product you have worked in (one that edited framework files or committed its `.mc/` folder) from 2.2.0 or 2.3.0 now applies instead of stopping, and your edits to framework files are kept. Full notes: [CHANGELOG.md](CHANGELOG.md).
+
+This public copy does not carry the release capsule that `scripts/mc/update.js` needs, so the update command does not run from it: it stops with `Capsule 2.3.1 missing release.json` and changes nothing. A fresh install from this copy gets 2.3.1.
 
 ## New in 2.3.0
 
@@ -39,7 +45,7 @@ Master Console is for developers and small teams who already use [Claude Code](h
 
 - **Windows-first.** The installer is PowerShell (`install.ps1`); the hooks and scripts are Node.js. Other platforms are untested; a Node-based installer (`scripts/mc-setup.js`) exists but is not verified outside Windows.
 - **Prerequisites:** Claude Code, **Node.js 20 or newer** (`package.json` declares `engines.node >= 20`), Git, and PowerShell for `install.ps1`. Provider CLIs (OpenAI Codex, Antigravity) are optional; a missing CLI degrades to the fallback declared for that role.
-- **Maturity:** version 2.3.0 is a public beta: actively developed, single maintainer. Known issues and their workarounds are pinned in [issue #1](https://github.com/cygaco/master-console/issues/1). Deprecated aliases from the pre-2.0.0 names are removed in 3.0.0.
+- **Maturity:** version 2.3.1 is a public beta: actively developed, single maintainer. Known issues and their workarounds are pinned in [issue #1](https://github.com/cygaco/master-console/issues/1). Deprecated aliases from the pre-2.0.0 names are removed in 3.0.0.
 
 ## Five-minute path
 

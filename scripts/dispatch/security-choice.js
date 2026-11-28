@@ -174,29 +174,28 @@ function nonClaudeProviders() {
 function evaluateClaudeOnly(lanes, ctx) {
   const no = (reason) => ({ accept: false, reason, verdict: null });
   if (!ctx || ctx.optIn !== true) return no("the Claude-only fallback is not switched on for this project");
-  if (!Array.isArray(lanes) || lanes.length < 2) return no("not a multi-lab review");
-  const claude = lanes.filter((l) => l && l.provider === "claude");
-  const others = lanes.filter((l) => l && l.provider !== "claude");
-  if (!claude.length) return no("no Claude lane ran — the Claude hunter lane is summoned in-process by the conductor, not by this script, so the Claude-only fallback cannot accept here");
-  if (!others.length) return no("there is no other lab to be missing");
-  for (const l of claude) {
-    if (l.ok !== true) return no("the Claude lane did not finish");
-    const v = String(l.verdict || "").toLowerCase();
-    if (v !== "pass" && v !== "warn") return no(`the Claude verdict is "${v || "none"}", not pass or warn`);
+  const fired = Array.isArray(lanes) ? lanes : [];
+  if (!fired.some((l) => l && typeof l.provider === "string" && l.provider !== "claude")) {
+    return no("no other lab's review was started, so there is no other lab to be missing");
+  }
+  for (const l of fired) {
+    if (!l || typeof l.provider !== "string") return no("a lane names no provider — the review holds");
+    if (l.ok === true) return no(`the ${l.provider} lane finished, so this is not a Claude-only review`);
+    if (String(l.verdict || "").toLowerCase() === "fail") return no(`the ${l.provider} lane reported fail — the review holds`);
   }
   const signedIn = isPlainObject(ctx.signedIn) ? ctx.signedIn : {};
-  for (const l of others) {
-    if (l.ok === true) return no(`the ${l.provider} lane finished, so this is not a Claude-only review`);
-    if (typeof l.provider !== "string") return no("a lane names no provider — the review holds");
-  }
   for (const p of nonClaudeProviders()) {
     if (!has(signedIn, p) || signedIn[p] !== false) {
       return no(`${p} is not known to be signed out — the review holds`);
     }
   }
-  if (ctx.claudeLaneVerified !== true) return no("the Claude lane has no verified record of this run");
-  const verdict = claude.some((l) => String(l.verdict).toLowerCase() === "warn") ? "warn" : "pass";
-  return { accept: true, reason: null, verdict };
+  const hunter = isPlainObject(ctx.hunter) ? ctx.hunter : {};
+  if (hunter.otherLabReview) return no("another lab reviewed this run; a Claude-only result cannot replace it");
+  if (hunter.verdict === "fail") return no("the Claude review failed");
+  if ((hunter.verdict !== "pass" && hunter.verdict !== "warn") || !isPlainObject(hunter.record)) {
+    return no("no verified Claude review of this packet exists");
+  }
+  return { accept: true, reason: null, verdict: hunter.verdict };
 }
 
 async function checkSignedIn(opts) {

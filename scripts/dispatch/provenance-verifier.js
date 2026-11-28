@@ -27,8 +27,67 @@ function isSanctionedHunterLane(laneId, lane) {
 
 function claudeLaneContract(profileName) {
   assertRecognizedProfile(profileName);
-  if (profileName === "panel-3lab") return { shape: IN_PROCESS_SHAPE, role: HUNTER_ROLE, isHunter: true };
-  return { shape: SUBPROCESS_CLAUDE_SHAPE, role: PANEL_ROLE, isHunter: false };
+  return { shape: IN_PROCESS_SHAPE, role: HUNTER_ROLE, isHunter: true };
+}
+
+function hunterBindingDigest(packetSha, evidenceSha) {
+  return require("crypto").createHash("sha256").update(`hunter-binding\n${String(packetSha)}\n${String(evidenceSha)}`).digest("hex");
+}
+
+function hunterPacketBound(r, expectedPacketSha) {
+  if (!r || typeof expectedPacketSha !== "string" || !/^[0-9a-f]{64}$/.test(expectedPacketSha)) return false;
+  if (r.packet_sha256 !== expectedPacketSha) return false;
+  if (typeof r.evidence_sha !== "string" || !/^[0-9a-f]{64}$/.test(r.evidence_sha)) return false;
+  return r.output_digest === hunterBindingDigest(r.packet_sha256, r.evidence_sha);
+}
+
+const HUNTER_WINDOW_MS = 60 * 60 * 1000;
+
+function hunterWindowFor(cliRecords, fallbackUntilMs) {
+  const starts = (cliRecords || []).map((r) => Date.parse((r && r.started_at) || ""));
+  const readable = starts.filter(Number.isFinite);
+  const untilMs = readable.length ? Math.min(...readable) : fallbackUntilMs;
+  if ((readable.length && readable.length !== starts.length) || !Number.isFinite(untilMs)) {
+    return { sinceMs: Infinity, untilMs: -Infinity };
+  }
+  return { sinceMs: untilMs - HUNTER_WINDOW_MS, untilMs };
+}
+
+function hunterVerdictFor(records, { panelRunId, sprintId, packetSha, verify, sinceMs, untilMs } = {}) {
+  const out = (verdict, record, reason) => ({ verdict, record, reason });
+  const bound = (records || []).filter(
+    (r) =>
+      !!panelRunId && typeof verify === "function" && verify(r) === true && isHunterRecord(r) &&
+      r.panel_run_id === panelRunId && (sprintId == null || r.sprint_id === sprintId) && hunterPacketBound(r, packetSha),
+  );
+  const isLive = (r) => r.ok === true && r.fallback === false;
+  const isClean = (r) => r.verdict === "pass" || r.verdict === "warn";
+  const inWindow = (r) => {
+    if (sinceMs == null && untilMs == null) return true;
+    const t = Date.parse(r.completed_at || "");
+    return Number.isFinite(t) && (sinceMs == null || t >= sinceMs) && (untilMs == null || t <= untilMs);
+  };
+  const carrier = bound.find((r) => isLive(r) && isClean(r) && inWindow(r)) || null;
+  if (bound.some((r) => String(r.verdict).toLowerCase() === "fail")) {
+    return out("fail", carrier, "a signed hunter record of this run and packet says fail");
+  }
+  if (bound.some((r) => !isLive(r) || !isClean(r))) {
+    return out("error", carrier, "a signed hunter record of this run and packet is not a live pass or warn");
+  }
+  if (!carrier) return out("error", null, "no live signed hunter pass or warn for this run and packet inside the time bounds");
+  const verdict = bound.some((r) => r.verdict === "warn") ? "warn" : "pass";
+  return out(verdict, carrier, "every signed hunter record of this run and packet is a live pass or warn");
+}
+
+function liveOtherLabRecordFor(records, { panelRunId, verify } = {}) {
+  if (!panelRunId || typeof verify !== "function") return null;
+  return (
+    (records || []).find(
+      (r) =>
+        verify(r) === true && r.panel_run_id === panelRunId && typeof r.provider === "string" && r.provider !== "claude" &&
+        r.ok === true,
+    ) || null
+  );
 }
 
 function laneContract(profileName, provider) {
@@ -51,6 +110,8 @@ const { readGitHead } = require("./git-head");
 
 module.exports = {
   HUNTER_ROLE,
+  HUNTER_WINDOW_MS,
+  hunterWindowFor,
   IN_PROCESS_SHAPE,
   SUBPROCESS_CLAUDE_SHAPE,
   CROSS_PROVIDER_SHAPE,
@@ -60,6 +121,10 @@ module.exports = {
   isHunterRecord,
   isSanctionedHunterLane,
   claudeLaneContract,
+  hunterBindingDigest,
+  hunterPacketBound,
+  hunterVerdictFor,
+  liveOtherLabRecordFor,
   laneContract,
   recordMatchesLane,
   servedModelUnverifiableFromRecord,

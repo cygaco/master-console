@@ -366,7 +366,7 @@ function buildSkeletonReleaseJson(canonical, version) {
       "node scripts/hooks/build.js --check",
       "node scripts/hooks/test.js",
       "node scripts/checks/mc-structure-parity.js",
-      "node scripts/mc/provider-smoke.js --providers claude,openai,gemini",
+      "node scripts/mc/provider-smoke.js --providers claude,openai,antigravity",
     ],
     checksumsFile: "checksums.json",
   };
@@ -1140,4 +1140,9 @@ if (require.main === module) {
     });
 }
 
-module.exports = { run, locateCanonical, bumpVersion };
+module.exports = {
+  run,
+  locateCanonical,
+  bumpVersion,
+  buildSkeletonReleaseJson,
+};

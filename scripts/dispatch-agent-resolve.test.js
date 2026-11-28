@@ -5,7 +5,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const { dispatchTarget } = require("./dispatch-agent");
+const { dispatchTarget, packetSha256 } = require("./dispatch-agent");
 
 const ROOT = __dirname;
 const REPO = path.join(ROOT, "..");
@@ -116,6 +116,44 @@ test("CLI --resolve-only: a stamped record with Codex signed out routes beta to 
   assert.deepStrictEqual([out.provider, out.model, out.chain_index, out.signin_state], ["antigravity", "gemini-4-argon-high", 1, "known"]);
   assert.deepStrictEqual(out.skipped.map((s) => [s.provider, s.reason]), [["openai", "not-signed-in"]]);
   assert.strictEqual(r.status, 0);
+});
+
+test("the completion record carries the FULL sha256 of the prompt bytes it sent (packet_sha256)", () => {
+  const text = "review packet é line";
+  const want = require("crypto").createHash("sha256").update(Buffer.from(text, "utf8")).digest("hex");
+  assert.equal(packetSha256(text), want);
+  assert.equal(packetSha256(Buffer.from(text, "utf8")), want);
+  assert.notEqual(packetSha256(text + "x"), want);
+  const src = fs.readFileSync(path.join(ROOT, "dispatch-agent.js"), "utf8");
+  assert.ok(/packet_sha256:\s*packetSha256\(prompt\)/.test(src), "recordCompletion must write packet_sha256 from the prompt it sent");
+});
+
+test("the printed envelope carries the dispatch id that the signed completion record carries", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "da-id-"));
+  const preload = path.join(dir, "stub.js");
+  const lib = (...p) => JSON.stringify(path.join(ROOT, ...p));
+  fs.writeFileSync(preload, [
+    `const providers = require(${lib("hooks", "lib", "providers.js")});`,
+    `providers.providerAvailable = () => true;`,
+    `providers.runProvider = () => ({ ok: true, provider: "openai", model: "gpt-6.2-sol", output: '{"verdict":"pass"}' });`,
+    `const slots = require(${lib("hooks", "lib", "concurrency-lock.js")});`,
+    `slots.acquireSlotSync = () => ({});`,
+    `slots.releaseSlot = () => {};`,
+    `require(${lib("agents", "provider-trace.js")}).record = () => {};`,
+  ].join("\n"));
+  const prompt = path.join(dir, "prompt.txt");
+  fs.writeFileSync(prompt, "review this");
+  const env = { ...process.env, DISPATCH_LEDGER_DIR: path.join(dir, "ledger"), MC_ATTEST_SECRET_FILE: path.join(dir, "secret") };
+  delete env.CLAUDE_PROJECT_DIR;
+  const r = spawnSync(process.execPath, ["-r", preload, path.join(ROOT, "dispatch-agent.js"), "security-reviewer", prompt, "--provider", "openai", "--model", "gpt-6.2-sol"], { env, encoding: "utf8", timeout: 60000 });
+  assert.strictEqual(r.status, 0, `exit ${r.status}: ${r.stderr}`);
+  const envelope = JSON.parse(r.stdout.trim().split("\n").filter(Boolean).pop());
+  const rows = fs.readFileSync(path.join(dir, "ledger", "dispatch-completions.jsonl"), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  const done = rows.filter((x) => x.phase !== "started");
+  assert.strictEqual(done.length, 1);
+  assert.ok(typeof envelope.dispatch_id === "string" && envelope.dispatch_id, "the envelope names its dispatch");
+  assert.strictEqual(envelope.dispatch_id, done[0].dispatch_id);
+  assert.deepStrictEqual([envelope.ok, envelope.provider, envelope.parsed.verdict], [true, "openai", "pass"], "the other envelope fields are unchanged");
 });
 
 if (failures.length) {

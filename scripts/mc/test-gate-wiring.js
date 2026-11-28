@@ -63,6 +63,11 @@ const CANNED = {
         { name: "fresh_n_parity_type_3c", ok: true, detail: "", loadBearing: true },
         { name: "fresh_n_parity_symlink_target_3c", ok: true, detail: "", loadBearing: true },
         { name: "fresh_n_parity_content_3c", ok: true, detail: "", loadBearing: true },
+        { name: "worked_in_committed", ok: true, detail: "", loadBearing: true },
+        { name: "worked_in_post_update_checks_all_passed", ok: true, detail: "", loadBearing: true },
+        { name: "worked_in_md_edit_preserved", ok: true, detail: "", loadBearing: true },
+        { name: "worked_in_allowlist_entry_preserved", ok: true, detail: "", loadBearing: true },
+        { name: "worked_in_transients_untracked", ok: true, detail: "", loadBearing: true },
         { name: "dirty_set_content_unchanged", ok: true, detail: "", loadBearing: true },
       ],
       sandbox_isolation: { no_delta: true, onlyBefore: [], onlyAfter: [], dirty_set_content_unchanged: true, dirty_set_changed_files: [] },
@@ -342,6 +347,43 @@ CANNED["test-upgrade-current-to-new.js"] = {
   const gb = new Map(run({ skip: KNOWN_HEAVY_OR_UNRELATED }).results.map((r) => [r.name, r])).get("upgrade_current_to_new");
   ok("upgrade gate: a dirty-set content-hash violation is RED (blocks unconditionally, even though no_delta itself held)", gb && gb.severity === "red", gb && `severity=${gb.severity}`);
   ok("upgrade gate dirty-set message names DIRTY-SET CONTENT CHANGED", gb && /DIRTY-SET CONTENT CHANGED/.test(gb.message), gb && gb.message);
+}
+
+{
+  const { WORKED_IN_NAMED_ASSERTS } = require("./test-upgrade-current-to-new");
+  const pristine = [
+    "scan_install_green_3b",
+    "fresh_n_parity_pathset_3c",
+    "fresh_n_parity_type_3c",
+    "fresh_n_parity_symlink_target_3c",
+    "fresh_n_parity_content_3c",
+  ];
+  const runWith = (asserts) => {
+    CANNED["test-upgrade-current-to-new.js"] = {
+      status: 0,
+      stdout: JSON.stringify({
+        ok: true,
+        from_version: "0.16.0",
+        to_version: "0.17.0",
+        ran: true,
+        ps_available: true,
+        asserts,
+        sandbox_isolation: { no_delta: true, onlyBefore: [], onlyAfter: [], dirty_set_content_unchanged: true, dirty_set_changed_files: [] },
+      }),
+      stderr: "",
+    };
+    const others = [...byName.keys()].filter((n) => n !== "upgrade_current_to_new");
+    return new Map(run({ skip: others }).results.map((r) => [r.name, r])).get("upgrade_current_to_new");
+  };
+  const full = [...pristine, ...WORKED_IN_NAMED_ASSERTS].map((name) => ({ name, ok: true }));
+  const control = runWith(full);
+  ok("upgrade gate: full pristine + worked-in evidence is green (control)", control && control.severity === "green", control && control.message);
+  for (const name of WORKED_IN_NAMED_ASSERTS) {
+    const absent = runWith(full.filter((a) => a.name !== name));
+    ok(`upgrade gate: ${name} ABSENT is never green`, absent && absent.severity === "red", absent && `severity=${absent.severity}`);
+    const failed = runWith(full.map((a) => (a.name === name ? { name, ok: false } : a)));
+    ok(`upgrade gate: ${name} FAILED is never green`, failed && failed.severity === "red", failed && `severity=${failed.severity}`);
+  }
 }
 
 cp.spawnSync = realSpawnSync;

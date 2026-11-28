@@ -2,7 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const { printHumanReport } = require("./report-format");
+const { printHumanReport, renderKeptEdits } = require("./report-format");
 const migrationsLoader = require("./migrations-loader");
 const preflightModule = require("./preflight");
 const transactionModule = require("./transaction");
@@ -14,6 +14,13 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 
 const ORPHAN_KEPT_LABEL = "kept (modified by you)";
 const ORPHAN_UNVERIFIED_LABEL = "kept (cannot verify it is unmodified)";
+const LOCAL_KEPT_LABEL = "edited by you; this version does not change it — kept";
+const USER_MODIFIED_CATEGORIES = new Set([
+  "MERGE_CONFLICT",
+  "LOCAL_CUSTOMIZED",
+  "MERGE_CLEAN",
+  "MERGE_KEPT_LOCAL",
+]);
 
 const stripBom = (s) => (typeof s === "string" ? s.replace(/^﻿/, "") : s);
 
@@ -159,7 +166,71 @@ function flattenAssets(manifest) {
   return out;
 }
 
-function classify(installed, capsule, targetRoot) {
+function loadMergeLocal() {
+  try {
+    return require("./lib/merge-local");
+  } catch {
+    return null;
+  }
+}
+
+function resolveTrueConflict({ dest, asset, mergeStrategy, localPath, root, baseHash, installedCommit, sourceTreeRoot, mergeLocal }) {
+  const isJson = mergeStrategy === "json_union";
+  if (!isJson && mergeStrategy !== "three_way_markdown" && !/\.md$/i.test(dest)) {
+    return null;
+  }
+  let merged = null;
+  const srcAbs = sourceTreeRoot && asset.src ? path.join(sourceTreeRoot, asset.src) : null;
+  if (mergeLocal && srcAbs && fs.existsSync(srcAbs)) {
+    try {
+      const localText = fs.readFileSync(localPath, "utf8");
+      const targetText = fs.readFileSync(srcAbs, "utf8");
+      const baseText = baseHash
+        ? mergeLocal.readInstalledBase({
+            sourceRoot: sourceTreeRoot,
+            installedCommit,
+            src: asset.src,
+            expectedHash: baseHash,
+          })
+        : null;
+      if (isJson) {
+        const r = mergeLocal.mergeJsonUnion({
+          localText,
+          targetText,
+          ...(typeof baseText === "string" ? { baseText } : {}),
+        });
+        if (r && r.ok && typeof r.text === "string") merged = r.text;
+      } else if (typeof baseText === "string") {
+        const r = mergeLocal.mergeMarkdown3({ localText, baseText, targetText });
+        if (r && r.clean && typeof r.text === "string") merged = r.text;
+      }
+    } catch {
+      merged = null;
+    }
+  }
+  if (merged !== null) {
+    return {
+      category: "MERGE_CLEAN",
+      reason: "edited by you and changed in this version — both sets of changes merged",
+      mergedText: merged,
+    };
+  }
+  if (isJson) return null;
+  const sibling = freeSibling(root, dest + ".mc-new");
+  return {
+    category: "MERGE_KEPT_LOCAL",
+    reason: "edited by you and changed in this version — yours kept; the new version is written beside it as " + sibling,
+  };
+}
+
+function classify(installed, capsule, targetRoot, options = {}) {
+  const mergeLocal =
+    options.mergeLocal !== undefined ? options.mergeLocal : loadMergeLocal();
+  const userModified = new Set(
+    installed && Array.isArray(installed.userModified)
+      ? installed.userModified
+      : [],
+  );
   const targetAssets = flattenAssets(capsule.manifest);
   const installedAssets =
     installed && installed.assets
@@ -178,6 +249,7 @@ function classify(installed, capsule, targetRoot) {
 
     let category = "UNKNOWN";
     let reason = "";
+    let mergedText;
 
     if (asset.owner === "framework_template" && localExists) {
       const matches = hashMatches(localSha, targetSha);
@@ -238,6 +310,7 @@ function classify(installed, capsule, targetRoot) {
       });
     } else if (
       installedRecord &&
+      !userModified.has(dest) &&
       hashMatches(localSha, installedRecord.installedHash)
     ) {
       category = "UPDATE_SAFE";
@@ -245,6 +318,7 @@ function classify(installed, capsule, targetRoot) {
         "Local matches the version originally installed → upstream change is safe to apply.";
     } else if (
       installedRecord &&
+      !userModified.has(dest) &&
       installedRecord.installedHash &&
       hashMatches(
         sha256FileLfNormalized(localPath),
@@ -259,7 +333,14 @@ function classify(installed, capsule, targetRoot) {
         asset.mergeStrategy ||
         installedRecord?.mergeStrategy ||
         "replace_if_unmodified";
-      if (mergeStrategy === "regenerate") {
+      const baseHash =
+        (userModified.has(dest)
+          ? installedRecord.baseHash
+          : installedRecord.installedHash) || null;
+      if (baseHash && targetSha && hashMatches(baseHash, targetSha)) {
+        category = "LOCAL_CUSTOMIZED";
+        reason = LOCAL_KEPT_LABEL;
+      } else if (mergeStrategy === "regenerate") {
         category = "GENERATED_REBUILD";
         reason =
           "Local customized but file is regenerable — overwriting with regenerated content.";
@@ -267,8 +348,23 @@ function classify(installed, capsule, targetRoot) {
         category = "LOCAL_CUSTOMIZED";
         reason = "Local customized, mergeStrategy=keep_local — leave as-is.";
       } else {
-        category = "MERGE_CONFLICT";
-        reason = `Local customized, mergeStrategy=${mergeStrategy} — three-way merge not implemented; requires human review.`;
+        const resolved = resolveTrueConflict({
+          dest,
+          asset,
+          mergeStrategy,
+          localPath,
+          root,
+          baseHash,
+          installedCommit: (installed && installed.installedCommit) || null,
+          sourceTreeRoot: options.sourceTreeRoot || null,
+          mergeLocal,
+        });
+        if (resolved) {
+          ({ category, reason, mergedText } = resolved);
+        } else {
+          category = "MERGE_CONFLICT";
+          reason = "Local customized, mergeStrategy=" + mergeStrategy + " — changed both locally and in this version; requires human review.";
+        }
         if (targetSha) {
           updateEvents.emitContentHashMismatch(root, {
             txId: null,
@@ -289,14 +385,10 @@ function classify(installed, capsule, targetRoot) {
       owner: asset.owner || "framework",
       category,
       reason,
+      ...(mergedText !== undefined ? { mergedText } : {}),
     });
   }
 
-  const userModified = new Set(
-    installed && Array.isArray(installed.userModified)
-      ? installed.userModified
-      : [],
-  );
   for (const [dest, rec] of installedAssets) {
     if (!targetAssets.has(dest)) {
       const localPath = path.join(root, dest);
@@ -317,18 +409,9 @@ function classify(installed, capsule, targetRoot) {
         !cHash.hashMatches(localSha, rec.installedHash) ||
         userModified.has(dest)
       ) {
-        if (
-          rec.owner === "framework_template" ||
-          rec.owner === "project_owned"
-        ) {
-          category = "ORPHAN_KEPT";
-          reason = ORPHAN_KEPT_LABEL;
-          keptBecause = "modified";
-        } else {
-          category = "DELETE_CONFLICT";
-          reason =
-            "Removed in target but modified locally (differs from the installed snapshot, or recorded as user-modified) — preserve.";
-        }
+        category = "ORPHAN_KEPT";
+        reason = ORPHAN_KEPT_LABEL;
+        keptBecause = "modified";
       }
       decisions.push({
         id: rec.id || dest,
@@ -360,6 +443,8 @@ function planClass(decisions) {
 
     GENERATED_REBUILD: "A",
     MERGE_SAFE: "B",
+    MERGE_CLEAN: "A",
+    MERGE_KEPT_LOCAL: "B",
     RENAME_SAFE: "B",
     MIGRATION_REQUIRED: "B",
     LOCAL_ONLY: "A",
@@ -390,6 +475,45 @@ function freeSibling(root, rel) {
   let n = 2;
   while (fs.existsSync(path.join(root, `${rel}.${n}`))) n++;
   return `${rel}.${n}`;
+}
+
+function mustRecordDelta(txDir, entry) {
+  if (!transactionModule.recordDelta(txDir, entry)) {
+    throw new Error(`could not record rollback delta for ${entry.dest}`);
+  }
+}
+
+function writeSiblingRecorded(txDir, targetRoot, siblingRel, bytes, preservesFor) {
+  const abs = path.join(targetRoot, siblingRel);
+  mustRecordDelta(txDir, {
+    kind: "keep-local-sibling",
+    dest: siblingRel,
+    sha256: transactionModule.sha256Buffer(bytes),
+    ...(preservesFor ? { preservesFor } : {}),
+  });
+  ensureDir(path.dirname(abs));
+  fs.writeFileSync(abs, bytes, { flag: "wx" });
+}
+
+function replaceLiveRecorded(txDir, targetRoot, rel, src, kind) {
+  const abs = path.join(targetRoot, rel);
+  backupFile(targetRoot, txDir, rel);
+  mustRecordDelta(txDir, {
+    kind,
+    dest: rel,
+    sha256: Buffer.isBuffer(src)
+      ? transactionModule.sha256Buffer(src)
+      : src
+        ? transactionModule.sha256File(src)
+        : null,
+  });
+  if (src === null) {
+    fs.unlinkSync(abs);
+    return;
+  }
+  ensureDir(path.dirname(abs));
+  if (Buffer.isBuffer(src)) fs.writeFileSync(abs, src);
+  else fs.copyFileSync(src, abs);
 }
 
 function ensureDir(p) {
@@ -434,6 +558,9 @@ function applyUpdateDecisions(
     backups: 0,
     local_kept: 0,
     local_took_target: 0,
+    merged: 0,
+    kept_edited: 0,
+    kept_new_beside: 0,
   };
   const errors = [];
   const perFile = [];
@@ -504,9 +631,7 @@ function applyUpdateDecisions(
               const incomingHash = cHash.contentHash(srcAbs);
               if (cls === "content") {
                 const sibling = freeSibling(targetRoot, `${d.dest}.mc-new`);
-                const sibAbs = path.join(targetRoot, sibling);
-                ensureDir(path.dirname(sibAbs));
-                fs.copyFileSync(srcAbs, sibAbs);
+                writeSiblingRecorded(txDir, targetRoot, sibling, fs.readFileSync(srcAbs));
                 counts.local_kept += 1;
                 localOverrides.push({
                   path: d.dest, class: "content", action: "kept-local",
@@ -518,13 +643,9 @@ function applyUpdateDecisions(
               } else {
                 const fromV = opts.fromVersion || "local";
                 const sibling = freeSibling(targetRoot, `${d.dest}.local-${fromV}`);
-                const sibAbs = path.join(targetRoot, sibling);
-                ensureDir(path.dirname(sibAbs));
-                fs.copyFileSync(dstAbs, sibAbs);
-                backupFile(targetRoot, txDir, d.dest);
+                writeSiblingRecorded(txDir, targetRoot, sibling, fs.readFileSync(dstAbs), d.dest);
+                replaceLiveRecorded(txDir, targetRoot, d.dest, srcAbs, "keep-local-engine-restore");
                 counts.backups += 1;
-                ensureDir(path.dirname(dstAbs));
-                fs.copyFileSync(srcAbs, dstAbs);
                 counts.local_took_target += 1;
                 localOverrides.push({
                   path: d.dest, class: "engine", action: "took-target",
@@ -549,10 +670,8 @@ function applyUpdateDecisions(
               }
               ensureDir(path.dirname(savedAbs));
               fs.copyFileSync(dstAbs, savedAbs);
-              backupFile(targetRoot, txDir, d.dest);
+              replaceLiveRecorded(txDir, targetRoot, d.dest, srcAbs, "conflict-restore");
               counts.backups += 1;
-              ensureDir(path.dirname(dstAbs));
-              fs.copyFileSync(srcAbs, dstAbs);
               const savedRel = path.relative(targetRoot, savedAbs).replace(/\\/g, "/");
               counts.conflicts_saved = (counts.conflicts_saved || 0) + 1;
               savedConflicts.push({ dest: d.dest, savedTo: savedRel });
@@ -596,13 +715,10 @@ function applyUpdateDecisions(
           if (opts.keepLocal && fs.existsSync(dstAbs)) {
             const fromV = opts.fromVersion || "local";
             const sibling = freeSibling(targetRoot, `${d.dest}.local-${fromV}`);
-            const sibAbs = path.join(targetRoot, sibling);
             const installedHash = cHash.contentHash(dstAbs);
-            ensureDir(path.dirname(sibAbs));
-            fs.copyFileSync(dstAbs, sibAbs);
-            backupFile(targetRoot, txDir, d.dest);
+            writeSiblingRecorded(txDir, targetRoot, sibling, fs.readFileSync(dstAbs), d.dest);
+            replaceLiveRecorded(txDir, targetRoot, d.dest, null, "keep-local-engine-restore");
             counts.backups += 1;
-            fs.unlinkSync(dstAbs);
             counts.deleted += 1;
             counts.local_took_target += 1;
             localOverrides.push({
@@ -622,7 +738,38 @@ function applyUpdateDecisions(
           counts.skipped_no_op += 1;
           perFile.push({ dest: d.dest, status: "local_only", category: d.category });
           break;
+        case "MERGE_CLEAN": {
+          if (typeof d.mergedText !== "string") {
+            throw new Error("MERGE_CLEAN decision carries no merged text");
+          }
+          replaceLiveRecorded(txDir, targetRoot, d.dest, Buffer.from(d.mergedText, "utf8"), "keep-local-engine-restore");
+          counts.backups += 1;
+          counts.merged += 1;
+          perFile.push({ dest: d.dest, status: "merged", category: d.category, reason: d.reason || "" });
+          break;
+        }
+        case "MERGE_KEPT_LOCAL": {
+          const asset = sourceAssets.get(d.dest);
+          const srcAbs = asset ? path.join(sourceTreeRoot, asset.src) : null;
+          if (!srcAbs || !fs.existsSync(srcAbs)) {
+            throw new Error("source missing: " + (asset ? asset.src : "asset not in source manifest"));
+          }
+          const sibling = freeSibling(targetRoot, d.dest + ".mc-new");
+          writeSiblingRecorded(txDir, targetRoot, sibling, fs.readFileSync(srcAbs));
+          counts.kept_new_beside += 1;
+          const installedHash = cHash.contentHash(dstAbs);
+          const incomingHash = cHash.contentHash(srcAbs);
+          localOverrides.push({
+            path: d.dest, class: "content", action: "kept-local",
+            installedHash, incomingHash, sibling,
+            newerAvailable: installedHash !== incomingHash,
+            recordedAt: new Date().toISOString(),
+          });
+          perFile.push({ dest: d.dest, status: "kept_with_new_beside", category: d.category, sibling, reason: "yours kept; the new version is beside it as " + sibling });
+          break;
+        }
         case "LOCAL_CUSTOMIZED":
+          counts.kept_edited += 1;
           counts.skipped_no_op += 1;
           perFile.push({ dest: d.dest, status: "local_customized", category: d.category, reason: d.reason || "" });
           break;
@@ -680,10 +827,36 @@ function buildInstalledSnapshot(
     : [];
   const newlyUserModified = Array.isArray(decisions)
     ? decisions
-        .filter((d) => d.category === "MERGE_CONFLICT" || d.category === "LOCAL_CUSTOMIZED")
+        .filter(
+          (d) =>
+            USER_MODIFIED_CATEGORIES.has(d.category) ||
+            (d.category === "ORPHAN_KEPT" && d.keptBecause === "modified"),
+        )
         .map((d) => d.dest)
     : [];
-  const userModified = Array.from(new Set([...priorUserModified, ...newlyUserModified])).sort();
+  const modifiedSet = new Set([...priorUserModified, ...newlyUserModified]);
+  const decisionByDest = new Map(
+    (Array.isArray(decisions) ? decisions : []).map((d) => [d.dest, d]),
+  );
+  const targetAssets = flattenAssets(capsule.manifest);
+  for (const rec of assets) {
+    const targetSha = targetAssets.get(rec.dest)?.sha256;
+    if (!targetSha) continue;
+    if (rec.currentHashAtInstall && hashMatches(rec.currentHashAtInstall, targetSha)) {
+      modifiedSet.delete(rec.dest);
+      continue;
+    }
+    const decision = decisionByDest.get(rec.dest);
+    const sitsOnTarget =
+      !!decision &&
+      (decision.category === "MERGE_CLEAN" ||
+        (decision.category === "LOCAL_CUSTOMIZED" &&
+          decision.reason === LOCAL_KEPT_LABEL));
+    if (modifiedSet.has(rec.dest) && sitsOnTarget) {
+      rec.baseHash = targetSha;
+    }
+  }
+  const userModified = Array.from(modifiedSet).sort();
 
   const priorOverrides = (prior && Array.isArray(prior.localOverrides)) ? prior.localOverrides : [];
   const newOverrides = (applyResult && Array.isArray(applyResult.localOverrides)) ? applyResult.localOverrides : [];
@@ -767,6 +940,50 @@ async function runMigrations(fromVersion, toVersion, targetRoot, alreadyApplied)
   }
 }
 
+async function runBeforePreflightMigrations(fromVersion, toVersion, targetRoot, alreadyApplied) {
+  const trackedBefore = transactionModule.trackedPaths(targetRoot, [".mc"]);
+  const untracked = () => {
+    if (trackedBefore.length === 0) return [];
+    const still = new Set(transactionModule.trackedPaths(targetRoot, [".mc"]));
+    return trackedBefore.filter((p) => !still.has(p));
+  };
+  let log;
+  try {
+    log = await migrationsLoader.applyAll(fromVersion, toVersion, {
+      targetRoot,
+      alreadyApplied,
+      phase: migrationsLoader.BEFORE_PREFLIGHT,
+    });
+  } catch (e) {
+    return { ok: false, error: e.message, log: [], newlyApplied: [], untracked: untracked() };
+  }
+  for (const e of log) {
+    process.stderr.write(`[update] before-preflight migration ${e.migration}: ${JSON.stringify(e.result)}\n`);
+  }
+  const bad = log.find((e) => e.result && e.result.ok === false);
+  return {
+    ok: !bad,
+    error: bad ? `${bad.migration}: ${bad.result.error || "returned ok:false"}` : null,
+    log,
+    newlyApplied: log.filter((e) => !e.skipped && e.result && e.result.ok).map((e) => e.migration),
+    untracked: untracked(),
+  };
+}
+
+function withBeforePreflight(result, before) {
+  if (before.log.length === 0) return result;
+  const ran = before.log.filter((e) => !e.skipped).length;
+  return {
+    ...result,
+    ran: result.ran + ran,
+    skipped_already_applied: result.skipped_already_applied + (before.log.length - ran),
+    newlyApplied: [...before.newlyApplied, ...(result.newlyApplied || [])],
+    log: [...before.log, ...result.log],
+    status: result.status === "skipped" ? "passed" : result.status,
+    reason: result.status === "skipped" ? undefined : result.reason,
+  };
+}
+
 function runPostUpdateChecks(checks, targetRoot) {
   const out = [];
   for (const check of checks || []) {
@@ -797,6 +1014,7 @@ function runPostUpdateChecks(checks, targetRoot) {
     }
     const r = spawnSync(process.execPath, [scriptAbs, ...args], {
       cwd: targetRoot,
+      env: { ...process.env, CLAUDE_PROJECT_DIR: targetRoot },
       encoding: "utf8",
       timeout: 60_000,
     });
@@ -828,6 +1046,7 @@ function runGenerators(targetRoot, decisions) {
     }
     const r = spawnSync(process.execPath, [abs], {
       cwd: targetRoot,
+      env: { ...process.env, CLAUDE_PROJECT_DIR: targetRoot },
       encoding: "utf8",
       timeout: 120_000,
     });
@@ -867,6 +1086,18 @@ function createNewlyIntroducedDirs(targetRoot, toVersion) {
 }
 
 async function run(opts) {
+  const pending = { targetRoot: null, paths: [] };
+  try {
+    return await runUpdate(opts, pending);
+  } finally {
+    if (pending.paths.length > 0) {
+      const r = transactionModule.retrackPaths(pending.targetRoot, pending.paths);
+      process.stderr.write(`[update] the update stopped early: ${transactionModule.describeRetrack(r)}\n`);
+    }
+  }
+}
+
+async function runUpdate(opts, pending) {
   const target = opts.to;
   const apply = !!opts.apply;
   const dryRun = !!opts.dryRun || !apply;
@@ -909,45 +1140,36 @@ async function run(opts) {
 
   if (!target) throw new Error("Missing --to <version>");
 
-  if (opts.reconcileBaseline && apply) {
-    const targetSnap = path.join(
-      targetRoot,
-      "scripts",
-      "mc",
-      "snapshot-installed.js",
-    );
-    const realRoot = (p) => {
-      let r;
-      try {
-        r = fs.realpathSync.native(p);
-      } catch {
-        r = path.resolve(p);
-      }
-      return process.platform === "win32" ? r.toLowerCase() : r;
-    };
-    const hasTargetSnap = fs.existsSync(targetSnap);
-    if (!hasTargetSnap && realRoot(targetRoot) !== realRoot(REPO_ROOT)) {
+  if (opts.reconcileBaseline) {
+    if (!installed && fs.existsSync(installedFile)) {
       throw new Error(
-        `reconcile-baseline refused: the target ${targetRoot} has no scripts/mc/snapshot-installed.js, so its baseline cannot be reconciled in place. Nothing was changed.`,
+        `RECONCILE-BASELINE FAILED: ${installedFile} could not be parsed. Nothing was changed.`,
       );
     }
-    const snapScript = hasTargetSnap
-      ? targetSnap
-      : path.join(__dirname, "snapshot-installed.js");
-    const sr = spawnSync(process.execPath, [snapScript], {
-      cwd: targetRoot,
-      encoding: "utf8",
-      timeout: 120_000,
-    });
-    if (sr.status !== 0) {
-      throw new Error(
-        `RECONCILE-BASELINE FAILED (exit ${sr.status}): ${(sr.stderr || sr.stdout || "").slice(0, 400)}`,
-      );
+    const { inspectAssets } = require("../checks/mc-manifest-honesty");
+    const edited = installed
+      ? inspectAssets(targetRoot, installed.assets || []).edited.map(
+          (i) => i.file,
+        )
+      : [];
+    if (edited.length > 0) {
+      const prior = Array.isArray(installed.userModified)
+        ? installed.userModified
+        : [];
+      installed = {
+        ...installed,
+        userModified: Array.from(new Set([...prior, ...edited])).sort(),
+      };
+      if (apply) {
+        fs.writeFileSync(
+          installedFile,
+          JSON.stringify(installed, null, 2) + "\n",
+        );
+      }
     }
     process.stderr.write(
-      `[update] reconcile-baseline: ${(sr.stdout || "").trim()}\n`,
+      `[update] reconcile-baseline: ${edited.length} locally edited files ${apply ? "recorded" : "found (dry run, nothing written)"}; the update keeps them\n`,
     );
-    installed = readJSON(installedFile, installed);
   }
 
   const capsule = loadCapsule(sourceRoot, target);
@@ -964,7 +1186,7 @@ async function run(opts) {
     sourceTreeRoot = findRepoRootFromCapsule(capsule.dir);
   }
 
-  const decisions = classify(installed, capsule, targetRoot);
+  const decisions = classify(installed, capsule, targetRoot, { sourceTreeRoot });
   const counts = summarize(decisions);
   const byClass = planClass(decisions);
 
@@ -997,6 +1219,10 @@ async function run(opts) {
         C: byClass.C.slice(0, 5).map(asRow),
       },
     };
+    const done = new Set((installed && installed.migrationsApplied) || []);
+    result.beforePreflight = (await migrationsLoader.listBeforePreflight(fromVersion, target))
+      .filter((m) => !done.has(m.id))
+      .map((m) => ({ id: m.id, description: m.description }));
     if (opts.fullPlan) {
       result.fullPlan = {
         A: byClass.A.map(asRow),
@@ -1015,6 +1241,23 @@ async function run(opts) {
       ok: false,
       mode: "apply",
       error: `ESCALATE: ${byClass.C.length} Class C item(s) must be resolved before --apply. Sample:\n  ${offenders.join("\n  ")}\n  (re-run with --keep-local to resolve each by ownerClass keeping both versions — content stays local with a .mc-new sibling, engine takes the target with a .local-<v> sibling — or --save-conflicts to save each local copy aside and take the target version; never a silent overwrite.)`,
+      report,
+    };
+  }
+
+  const beforePreflight = await runBeforePreflightMigrations(
+    fromVersion,
+    target,
+    targetRoot,
+    new Set((installed && installed.migrationsApplied) || []),
+  );
+  pending.targetRoot = targetRoot;
+  pending.paths = beforePreflight.untracked;
+  if (!beforePreflight.ok) {
+    return {
+      ok: false,
+      mode: "apply",
+      error: `BEFORE-PREFLIGHT MIGRATION FAILED: ${beforePreflight.error}. The update stopped here; no framework file was copied.`,
       report,
     };
   }
@@ -1145,6 +1388,15 @@ async function run(opts) {
   let applyResult;
   let migrationsResult;
   try {
+    if (pending.paths.length > 0) {
+      if (
+        !opts.noTransaction &&
+        !transactionModule.recordDelta(txDir, { kind: "untracked", paths: pending.paths })
+      ) {
+        throw new Error("could not record rollback delta for the untracked .mc/ files");
+      }
+      pending.paths = [];
+    }
     applyResult = applyUpdateDecisions(
       sourceTreeRoot,
       targetRoot,
@@ -1161,16 +1413,6 @@ async function run(opts) {
         fromVersion,
       },
     );
-    if (opts.keepLocal && txDir && Array.isArray(applyResult.localOverrides)) {
-      for (const o of applyResult.localOverrides) {
-        if (o && o.sibling) {
-          transactionModule.recordDelta(txDir, { kind: "keep-local-sibling", dest: o.sibling });
-        }
-        if (o && o.class === "engine" && o.path) {
-          transactionModule.recordDelta(txDir, { kind: "keep-local-engine-restore", dest: o.path });
-        }
-      }
-    }
     if (!applyResult.ok) {
       const firstErr = (applyResult.errors && applyResult.errors[0]) || {
         dest: "<unknown>",
@@ -1184,7 +1426,10 @@ async function run(opts) {
     const priorApplied = (installed && Array.isArray(installed.migrationsApplied))
       ? new Set(installed.migrationsApplied)
       : new Set();
-    migrationsResult = await runMigrations(fromVersion, target, targetRoot, priorApplied);
+    migrationsResult = withBeforePreflight(
+      await runMigrations(fromVersion, target, targetRoot, priorApplied),
+      beforePreflight,
+    );
     if (migrationsResult.status === "failed") {
       throw new Error(
         `migration phase failed: ${migrationsResult.failed} migration(s) failed during ${fromVersion}->${target}`,
@@ -1335,7 +1580,11 @@ async function run(opts) {
           compileArgs.push("--local", settingsLocalFile);
         }
         const { spawnSync } = require("child_process");
-        const cr = spawnSync(process.execPath, compileArgs, { encoding: "utf8" });
+        const cr = spawnSync(process.execPath, compileArgs, {
+          cwd: targetRoot,
+          env: { ...process.env, CLAUDE_PROJECT_DIR: targetRoot },
+          encoding: "utf8",
+        });
         if (cr.status !== 0) {
           console.warn(
             `mc:update: compile.js exited ${cr.status} — settings.json may be stale. stderr: ${(cr.stderr || "").slice(0, 200)}`,
@@ -1357,6 +1606,9 @@ async function run(opts) {
     decisions,
   );
   fs.writeFileSync(installedFile, JSON.stringify(newInstalled, null, 2) + "\n");
+  for (const line of renderKeptEdits(applyResult)) {
+    process.stderr.write("mc:update: " + line + "\n");
+  }
 
   if (!opts.noTransaction) {
     transactionModule.commitTransaction(txDir, {
@@ -1406,7 +1658,16 @@ async function run(opts) {
       "",
       "    cp -r <transaction>/backup/* .",
       "",
-      "Then check `git status` and reset framework-installed.json from the prior snapshot.",
+      "The automated path also restores .claude/framework-installed.json (the installed",
+      "version claim) and .claude/manifest.json. A file edited after the update is left",
+      "in place and named in the output (one you deleted stays deleted). Where the",
+      "transaction has no record of what the update wrote (it never committed, or an",
+      "older updater made it), a current file that differs from its pre-update copy is",
+      "saved to <transaction>/rollback-undo/ before it is restored or removed.",
+      "",
+      "A manual restore makes none of these checks. The pre-update copies of the",
+      "installed version claim and .claude/manifest.json are in",
+      "<transaction>/backup-meta/. Then check `git status`.",
       "",
     ].join("\n"),
   );
@@ -1722,6 +1983,68 @@ function runStatusCli(opts) {
   process.exit(1);
 }
 
+function compareSemver(a, b) {
+  const parse = (v) =>
+    /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(
+      String(v || "").trim(),
+    );
+  const x = parse(a);
+  const y = parse(b);
+  if (!x || !y) return null;
+  for (let i = 1; i <= 3; i++) {
+    const d = Number(x[i]) - Number(y[i]);
+    if (d !== 0) return Math.sign(d);
+  }
+  if (!x[4] || !y[4]) return x[4] ? -1 : y[4] ? 1 : 0;
+  return Math.sign(x[4].localeCompare(y[4], "en", { numeric: true }));
+}
+
+function comparableRoot(dir) {
+  let real = path.resolve(dir);
+  try {
+    real = fs.realpathSync.native(real);
+  } catch {
+  }
+  return process.platform === "win32" ? real.toLowerCase() : real;
+}
+
+function handoffToNewerEngine(args) {
+  if (process.env.MC_UPDATE_HANDOFF) return null;
+  if (args.includes("--no-handoff")) return null;
+  const localOnly = (a) =>
+    a === "--status" || a === "--rollback" || a.startsWith("--rollback=");
+  if (args.some(localOnly)) return null;
+  const i = args.indexOf("--source");
+  const source = i === -1 ? null : args[i + 1];
+  if (!source || source.startsWith("--")) return null;
+  const sourceDir = path.resolve(source);
+  if (comparableRoot(sourceDir) === comparableRoot(REPO_ROOT)) return null;
+  const engine = path.join(sourceDir, "scripts", "mc", "update.js");
+  if (!fs.existsSync(engine)) return null;
+  const versionOf = (root) => {
+    const v = readJSON(path.join(root, "version.json"), null);
+    return v && v.version;
+  };
+  const theirs = versionOf(sourceDir);
+  const ours = versionOf(REPO_ROOT);
+  if (compareSemver(theirs, ours) !== 1) return null;
+  process.stderr.write(
+    `[update] using the newer update engine from ${sourceDir} (v${theirs}; this copy is v${ours})\n`,
+  );
+  const childArgs = [engine, ...args];
+  if (!args.includes("--target")) childArgs.push("--target", REPO_ROOT);
+  const child = spawnSync(process.execPath, childArgs, {
+    stdio: "inherit",
+    env: { ...process.env, MC_UPDATE_HANDOFF: "1" },
+  });
+  if (child.error) {
+    process.stderr.write(
+      `[update] could not start the newer engine: ${child.error.message}\n`,
+    );
+  }
+  return child.status ?? 1;
+}
+
 if (require.main === module) {
   const args = process.argv.slice(2);
   const get = (flag) => {
@@ -1758,6 +2081,8 @@ if (require.main === module) {
     });
     return;
   }
+  const handoffStatus = handoffToNewerEngine(args);
+  if (handoffStatus !== null) process.exit(handoffStatus);
   const operatorOverrides = new Set();
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--operator-override" && i + 1 < args.length) {
@@ -1815,7 +2140,7 @@ if (require.main === module) {
   };
   if (!opts.to) {
     console.error(
-      "Usage: node scripts/mc/update.js --to <version> [--source <mc-repo>] [--target <install-path>] [--dry-run | --apply] [--confirm-deletes] [--force-fresh] [--allow-stale] [--allow-version-drift] [--reconcile-baseline|--accept-local-drift] [--diagnostic|--all-red] [--no-transaction] [--skip-postflight] [--strict-postflight]\n       node scripts/mc/update.js --rollback <txId> [--target <install-path>] [--json]\n       node scripts/mc/update.js --status [--target <install-path>] [--json] [--strict]",
+      "Usage: node scripts/mc/update.js --to <version> [--source <mc-repo>] [--target <install-path>] [--dry-run | --apply] [--confirm-deletes] [--force-fresh] [--allow-stale] [--allow-version-drift] [--reconcile-baseline|--accept-local-drift] [--diagnostic|--all-red] [--no-transaction] [--skip-postflight] [--strict-postflight] [--no-handoff]\n       --reconcile-baseline | --accept-local-drift: no longer needed; kept for compatibility (local edits are kept by default; the flag only records them in framework-installed.json#userModified).\n         --no-handoff: run this copy of the engine even when --source ships a newer one.\n       node scripts/mc/update.js --rollback <txId> [--target <install-path>] [--json]\n       node scripts/mc/update.js --status [--target <install-path>] [--json] [--strict]",
     );
     process.exit(2);
   }
@@ -1852,6 +2177,9 @@ if (require.main === module) {
       }
       console.log(`  Migrations: ${r.report.migrations.length}`);
       console.log(`  Post-update checks: ${r.report.postUpdateChecks.length}`);
+      for (const m of r.beforePreflight || []) {
+        console.log(`  will run before the checks: ${m.id} — ${m.description}`);
+      }
       const isApply = r.mode === "apply" && r.apply;
       const ac = isApply ? r.apply.counts : null;
       if (isApply) {
@@ -1871,7 +2199,8 @@ if (require.main === module) {
           const took = overrides.filter((o) => o.action === "took-target");
           const newer = kept.filter((o) => o.newerAvailable).length;
           console.log("");
-          console.log(`Local overrides (--keep-local): ${overrides.length} total — ${kept.length} content file(s) kept local (${newer} with a newer framework version available as .mc-new), ${took.length} engine file(s) took the target version (your copy saved as .local-<v>). Listed by /mc:doctor.`);
+          const removed = overrides.filter((o) => o.action === "deleted-saved-local").length;
+          console.log(`Kept local versions: ${overrides.length} total — ${kept.length} content file(s) kept as yours (${newer} with a newer framework version beside it as .mc-new), ${took.length} engine file(s) took the target version (your copy saved as .local-<v>)${removed ? `, ${removed} removed file(s) (your copy saved as .local-<v>)` : ""}. Listed by /mc:doctor.`);
           for (const o of overrides) {
             console.log(`  [${o.class}/${o.action}] ${o.path}  ->  ${o.sibling}`);
           }
@@ -2003,9 +2332,13 @@ module.exports = {
   planClass,
   summarize,
   applyUpdateDecisions,
+  buildInstalledSnapshot,
   keepLocalOwnerClass,
   findRepoRootFromCapsule,
   discoverCanonical,
   loadCapsule,
   runStatusCli,
+  runPostUpdateChecks,
+  runGenerators,
+  compareSemver,
 };

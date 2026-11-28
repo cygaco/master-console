@@ -44,6 +44,12 @@ const KNOWN_NOT_SHIPPED = [
 
   { prefix: "scripts/install-git-hooks.sh", reason: "dev git-hooks installer, not shipped" },
   { prefix: "scripts/path-lint.rules.generated.json", reason: "generated path-lint rules, not shipped" },
+  { prefix: "migrations/2.3.0-to-2.3.1/001-untrack-mc-transients.js", reason: "an update migration: the updating engine runs it from its own checkout, so products never need a copy" },
+  { prefix: "scripts/public-repo/check-public-tree.js", reason: "the public copy's pre-push check; publishing tooling stays in the publishing repository" },
+  { prefix: "tests/public-repo/check-public-tree.test.js", reason: "test of the private publishing tooling" },
+  { prefix: "tests/public-repo/freshness.test.js", reason: "test of the private publishing tooling" },
+  { prefix: "tests/public-repo/generator-stale-retry.test.js", reason: "test of the private publishing tooling" },
+  { prefix: "tests/public-repo/harvest-status-marker.test.js", reason: "test of the private publishing tooling" },
 ];
 const LOCAL_RULES_FILE = path.join(ROOT, ".claude", "project", "memory", "mc-ship-coverage.local.json");
 const LOCAL_RULES = (() => {

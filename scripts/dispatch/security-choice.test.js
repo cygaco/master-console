@@ -171,31 +171,39 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
   assert.ok(!fs.readFileSync(path.resolve(__dirname, "..", "..", ".claude", "agents", "_org", "role-registry.json"), "utf8").includes("securityClaudeOnlyFallback"));
 });
 
+const HUNTER = (verdict = "pass") => ({ verdict, record: verdict === "pass" || verdict === "warn" ? { dispatch_id: "d-hunter", completed_at: "2000-01-01T00:00:00.000Z" } : null });
 {
   const dead = (provider) => ({ pass: provider, provider, ok: false, verdict: "error" });
   const live = (provider, verdict) => ({ pass: provider, provider, ok: true, verdict });
-  const lanes = (cv = "pass") => [dead("antigravity"), dead("openai"), live("claude", cv)];
-  const ctx = (o = {}) => ({ optIn: true, signedIn: { claude: true, openai: false, antigravity: false }, claudeLaneVerified: true, ...o });
+  const lanes = () => [dead("antigravity"), dead("openai")];
+  const ctx = (o = {}) => ({ optIn: true, signedIn: { claude: true, openai: false, antigravity: false }, hunter: HUNTER(), ...o });
   test("evaluateClaudeOnly: every condition met → accept (pass)", () => {
     const r = sc.evaluateClaudeOnly(lanes(), ctx());
     assert.deepStrictEqual(r, { accept: true, reason: null, verdict: "pass" });
   });
-  test("evaluateClaudeOnly: Claude warn → accept as warn", () => assert.strictEqual(sc.evaluateClaudeOnly(lanes("warn"), ctx()).verdict, "warn"));
+  test("evaluateClaudeOnly: a live review by another lab in this run refuses, whatever the Claude verdict says", () => {
+    for (const verdict of ["pass", "warn"]) {
+      const r = sc.evaluateClaudeOnly(lanes(), ctx({ hunter: { ...HUNTER(verdict), otherLabReview: { provider: "openai" } } }));
+      assert.strictEqual(r.accept, false);
+      assert.strictEqual(r.reason, "another lab reviewed this run; a Claude-only result cannot replace it");
+    }
+  });
+  test("evaluateClaudeOnly: hunter warn → accept as warn", () => assert.strictEqual(sc.evaluateClaudeOnly(lanes(), ctx({ hunter: HUNTER("warn") })).verdict, "warn"));
   test("evaluateClaudeOnly: each condition missing alone → refused with a reason", () => {
     const cases = [
       [lanes(), ctx({ optIn: false })],
       [lanes(), ctx({ optIn: undefined })],
       [lanes(), null],
-      [lanes("fail"), ctx()],
-      [lanes("error"), ctx()],
+      [lanes(), ctx({ hunter: HUNTER("fail") })],
+      [lanes(), ctx({ hunter: HUNTER("error") })],
+      [lanes(), ctx({ hunter: undefined })],
       [lanes(), ctx({ signedIn: { claude: true, openai: true, antigravity: false } })],
       [lanes(), ctx({ signedIn: { claude: true, openai: false, antigravity: null } })],
       [lanes(), ctx({ signedIn: null })],
-      [lanes(), ctx({ claudeLaneVerified: false })],
-      [[dead("openai"), live("claude", "pass"), live("antigravity", "pass")], ctx()],
-      [[live("claude", "pass")], ctx()],
-      [[live("claude", "pass"), live("claude", "pass")], ctx()],
-      [[dead("claude"), dead("openai")], ctx()],
+      [[dead("openai"), live("antigravity", "pass")], ctx()],
+      [[dead("openai"), live("claude", "pass")], ctx()],
+      [[dead("claude")], ctx()],
+      [[dead("openai"), { ok: false }], ctx()],
       [[], ctx()],
       [null, ctx()],
     ];
@@ -206,11 +214,11 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
       assert.strictEqual(r.verdict, null);
     }
   });
-  test("evaluateClaudeOnly: lanes cannot supply their own sign-in or opt-in (only ctx counts)", () => {
-    const sneaky = lanes().map((l) => ({ ...l, signedIn: false, optIn: true, claudeLaneVerified: true }));
+  test("evaluateClaudeOnly: lanes cannot supply their own sign-in, opt-in or hunter verdict (only ctx counts)", () => {
+    const sneaky = lanes().map((l) => ({ ...l, signedIn: false, optIn: true, hunter: HUNTER() }));
     assert.strictEqual(sc.evaluateClaudeOnly(sneaky, ctx({ optIn: false })).accept, false);
     assert.strictEqual(sc.evaluateClaudeOnly(sneaky, ctx({ signedIn: {} })).accept, false);
-    assert.strictEqual(sc.evaluateClaudeOnly(sneaky, ctx({ claudeLaneVerified: undefined })).accept, false);
+    assert.strictEqual(sc.evaluateClaudeOnly(sneaky, ctx({ hunter: undefined })).accept, false);
   });
 }
 
@@ -242,7 +250,7 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
   await atest("checkSignedIn FALSIFIER: a resolver that THROWS is doubt (unknown), never 'not installed'", async () => {
     const r = await sc.checkSignedIn({ detectOpts: { resolveTool: () => { throw new Error("resolver exploded"); }, exec: async () => ({ exit: 0, stdout: "", stderr: "" }) } });
     assert.deepStrictEqual(r, { claude: null, openai: null, antigravity: null });
-    assert.strictEqual(sc.evaluateClaudeOnly([{ provider: "antigravity", ok: false }, { provider: "openai", ok: false }, { provider: "claude", ok: true, verdict: "pass" }], { optIn: true, signedIn: r, claudeLaneVerified: true }).accept, false);
+    assert.strictEqual(sc.evaluateClaudeOnly([{ provider: "antigravity", ok: false }, { provider: "openai", ok: false }], { optIn: true, signedIn: r, hunter: HUNTER() }).accept, false);
   });
   await atest("checkSignedIn FALSIFIER: a safety refusal / unvalidated install (ok:false, any other reason) is unknown", async () => {
     const refuse = (id) => ({ ok: false, reason: `no safe codex candidate (C:/x: npm-package-unvalidated)` });
@@ -268,11 +276,11 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
   const dr = require("../dispatch-review");
   const dead = (provider) => ({ pass: provider, provider, ok: false, verdict: "error" });
   const L = (provider, verdict) => ({ pass: provider, provider, ok: true, verdict });
-  const collapsed = () => [dead("antigravity"), dead("openai"), L("claude", "pass")];
+  const collapsed = () => [dead("antigravity"), dead("openai")];
   const plain = (lanes) => dr.mergeLanes("security-reviewer", lanes);
   const noCalls = () => {
     const calls = [];
-    return { calls, deps: { optIn: () => false, checkSignedIn: async () => { calls.push("signin"); return {}; }, claudeLaneRecordsVerified: () => { calls.push("ledger"); return true; } } };
+    return { calls, deps: { optIn: () => false, checkSignedIn: async () => { calls.push("signin"); return {}; }, hunterEvidence: () => { calls.push("ledger"); return HUNTER(); } } };
   };
   await atest("glue: opt-in off → the merged result is returned untouched and no sign-in check or ledger read happens", async () => {
     const { calls, deps } = noCalls();
@@ -284,22 +292,22 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
   await atest("glue: opt-in value other than exactly true → untouched", async () => {
     for (const v of ["true", 1, undefined, null, {}]) {
       const m = plain(collapsed());
-      const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), m, {}, { optIn: () => v, checkSignedIn: async () => ({ openai: false, antigravity: false }), claudeLaneRecordsVerified: () => true });
+      const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), m, {}, { optIn: () => v, checkSignedIn: async () => ({ openai: false, antigravity: false }), hunterEvidence: () => HUNTER() });
       assert.strictEqual(out, m, String(v));
     }
   });
   await atest("glue: not the security role, or not below the bar → untouched, nothing checked", async () => {
     const calls = [];
-    const deps = { optIn: () => true, checkSignedIn: async () => { calls.push("s"); return {}; }, claudeLaneRecordsVerified: () => { calls.push("l"); return true; } };
+    const deps = { optIn: () => true, checkSignedIn: async () => { calls.push("s"); return {}; }, hunterEvidence: () => { calls.push("l"); return HUNTER(); } };
     const other = dr.mergeLanes("qa-reviewer", collapsed());
     assert.strictEqual(await dr.applyClaudeOnlyFallback("qa-reviewer", collapsed(), other, {}, deps), other);
     const good = plain([L("antigravity", "pass"), L("openai", "pass"), L("claude", "pass")]);
     assert.strictEqual(await dr.applyClaudeOnlyFallback("security-reviewer", [], good, {}, deps), good);
     assert.deepStrictEqual(calls, []);
   });
-  await atest("glue POSITIVE: opt-in on + other labs signed out + verified Claude lane → accepted, labelled", async () => {
+  await atest("glue POSITIVE: opt-in on + other labs signed out + verified hunter review → accepted, labelled", async () => {
     const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), plain(collapsed()), {}, {
-      optIn: () => true, checkSignedIn: async () => ({ claude: true, openai: false, antigravity: false }), claudeLaneRecordsVerified: () => true,
+      optIn: () => true, checkSignedIn: async () => ({ claude: true, openai: false, antigravity: false }), hunterEvidence: () => HUNTER(),
     });
     assert.strictEqual(out.ok, true);
     assert.strictEqual(out.diversity, "claude-only");
@@ -307,7 +315,7 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
   });
   await atest("glue FALSIFIER: opt-in on but a lab is signed in (lane dead anyway) → held, with the reason", async () => {
     const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), plain(collapsed()), {}, {
-      optIn: () => true, checkSignedIn: async () => ({ claude: true, openai: true, antigravity: false }), claudeLaneRecordsVerified: () => true,
+      optIn: () => true, checkSignedIn: async () => ({ claude: true, openai: true, antigravity: false }), hunterEvidence: () => HUNTER(),
     });
     assert.strictEqual(out.ok, false);
     assert.strictEqual(out.diversity, undefined);
@@ -315,15 +323,15 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
   });
   await atest("glue FALSIFIER: the sign-in check could not answer → held", async () => {
     const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), plain(collapsed()), {}, {
-      optIn: () => true, checkSignedIn: async () => sc.checkSignedIn({ detect: async () => { throw new Error("offline"); } }), claudeLaneRecordsVerified: () => true,
+      optIn: () => true, checkSignedIn: async () => sc.checkSignedIn({ detect: async () => { throw new Error("offline"); } }), hunterEvidence: () => HUNTER(),
     });
     assert.strictEqual(out.ok, false);
     assert.strictEqual(out.diversity, undefined);
   });
-  await atest("glue FALSIFIER: the Claude lane's ledger check says no (or answers something that is not exactly true) → held", async () => {
-    for (const v of [false, undefined, "yes", 1]) {
+  await atest("glue FALSIFIER: the hunter evidence is missing or not a pass/warn with its record → held", async () => {
+    for (const v of [undefined, HUNTER("error"), HUNTER("fail"), { verdict: "pass", record: null }]) {
       const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), plain(collapsed()), {}, {
-        optIn: () => true, checkSignedIn: async () => ({ openai: false, antigravity: false }), claudeLaneRecordsVerified: () => v,
+        optIn: () => true, checkSignedIn: async () => ({ openai: false, antigravity: false }), hunterEvidence: () => v,
       });
       assert.strictEqual(out.ok, false, String(v));
     }
@@ -339,7 +347,7 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
     try {
       const m = plain(collapsed());
       const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), m, {}, {
-        checkSignedIn: async () => { throw new Error("must not be asked"); }, claudeLaneRecordsVerified: () => true,
+        checkSignedIn: async () => { throw new Error("must not be asked"); }, hunterEvidence: () => HUNTER(),
       });
       assert.strictEqual(out, m);
     } finally {
@@ -357,7 +365,7 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
     process.env.CLAUDE_PROJECT_DIR = root;
     try {
       const out = await dr.applyClaudeOnlyFallback("security-reviewer", collapsed(), plain(collapsed()), {}, {
-        checkSignedIn: async () => ({ openai: false, antigravity: false }), claudeLaneRecordsVerified: () => true,
+        checkSignedIn: async () => ({ openai: false, antigravity: false }), hunterEvidence: () => HUNTER(),
       });
       assert.strictEqual(out.diversity, "claude-only");
     } finally {
@@ -366,9 +374,9 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
     }
   });
 
-  const dropped = () => [dead("antigravity"), L("claude", "pass"), L("claude", "pass")];
+  const dropped = () => [dead("antigravity"), dead("claude")];
   const applyWith = (signedIn) => dr.applyClaudeOnlyFallback("security-reviewer", dropped(), plain(dropped()), {}, {
-    optIn: () => true, checkSignedIn: async () => signedIn, claudeLaneRecordsVerified: () => true,
+    optIn: () => true, checkSignedIn: async () => signedIn, hunterEvidence: () => HUNTER(),
   });
   await atest("choice-dropped lab FALSIFIER: openai not in the lanes but signed IN (or unknown, or missing) → held", async () => {
     for (const openai of [true, null, undefined]) {
@@ -384,8 +392,8 @@ test("the shipped manifest and the shipped role registry carry no opt-in", () =>
     assert.strictEqual(out.diversity, "claude-only");
   });
   await atest("evaluateClaudeOnly: a provider the lanes do not name and the sign-in state omits holds the review", async () => {
-    const lanes = [dead("antigravity"), L("claude", "pass"), L("claude", "pass")];
-    assert.strictEqual(sc.evaluateClaudeOnly(lanes, { optIn: true, signedIn: { antigravity: false }, claudeLaneVerified: true }).accept, false);
+    const lanes = [dead("antigravity"), dead("claude")];
+    assert.strictEqual(sc.evaluateClaudeOnly(lanes, { optIn: true, signedIn: { antigravity: false }, hunter: HUNTER() }).accept, false);
   });
 
   await atest("dispatch-review with a manifest that exists but cannot be parsed: exits 1 with project_settings_unreadable, fires nothing", async () => {

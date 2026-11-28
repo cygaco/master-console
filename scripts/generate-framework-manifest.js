@@ -250,9 +250,13 @@ function decorateAsset(asset) {
     ? sha256OfFile(absSrc, asset.dest || asset.src)
     : null;
   const owner = asset.owner || DEFAULT_OWNER_BY_KIND[kind] || "framework";
+  const isCheckAllowlist =
+    kind === "check_tool" &&
+    /^scripts\/checks\/[^/]+\.allowlist\.json$/.test(asset.dest);
   const mergeStrategy =
     asset.mergeStrategy ||
     asset.merge ||
+    (isCheckAllowlist ? "json_union" : null) ||
     DEFAULT_MERGE_STRATEGY[kind] ||
     "replace_if_unmodified";
   return {

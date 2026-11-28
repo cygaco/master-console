@@ -5,11 +5,13 @@ const mcEnv = require("../hooks/lib/mc-env");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const pv = require("../dispatch/provenance-verifier");
 
 const SPRINT = require("./paths");
 const hookPoints = require("./hook-points");
 const hookConsult = require("./hook-consult");
 const registryRoles = require("../dispatch/registry-roles");
+const securityChoice = require("../dispatch/security-choice");
 const { parseRequiredFlag } = require("../lib/strict-flag");
 
 const { foregroundAwareTimeout, WRAPPER_DEFAULTS } = require("../dispatch/timeout-policy");
@@ -265,7 +267,7 @@ function telemetry() {
 function recordAgentDispatch(
   agentPlan,
   sprintId,
-  { ok, promptBytes = 0, evidenceBytes, evidenceSha, elapsedMs = 0, via = "epsilon-runtime", verdict, shape = "in-process-agent" } = {},
+  { ok, promptBytes = 0, evidenceBytes, evidenceSha, elapsedMs = 0, via = "epsilon-runtime", verdict, shape = "in-process-agent", packetSha, outputDigest } = {},
 ) {
   if (typeof ok !== "boolean") {
     return { recorded: false, reason: "refusing to record without a real spawn outcome (ok must be a boolean returned by spawnAgent / derived from real evidence bytes)" };
@@ -304,6 +306,7 @@ function recordAgentDispatch(
     route: agentPlan.route,
     ...(evidenceSha ? { evidence_sha: evidenceSha } : {}),
     ...(verdict ? { verdict } : {}),
+    ...(packetSha ? { packet_sha256: packetSha, output_digest: outputDigest } : {}),
   });
   return { recorded: true, dispatch_id: dispatchId };
 }
@@ -398,7 +401,27 @@ function interpretSpawn(r, agentPlan, recordedByCli) {
   const exit = typeof r.status === "number" ? r.status : 1;
   const outBytes = Buffer.byteLength(r.stdout || "");
   const ok = exit === 0 && outBytes > 0;
-  return { spawned: true, ok, recorded: recordedByCli, route: agentPlan.route, exit_code: exit, output_bytes: outBytes, reaped: !ok };
+  return { spawned: true, ok, recorded: recordedByCli, route: agentPlan.route, exit_code: exit, output_bytes: outBytes, reaped: !ok, ...claudeOnlyFields(reviewResultOf(r.stdout)) };
+}
+
+function reviewResultOf(stdout) {
+  const last = String(stdout || "").trim().split("\n").pop();
+  try {
+    return JSON.parse(last);
+  } catch {
+    return null;
+  }
+}
+
+function claudeOnlyFields(o) {
+  return o && o.diversity === securityChoice.CLAUDE_ONLY ? { diversity: o.diversity, verdict_text: o.verdict_text } : {};
+}
+
+function claudeOnlyNote(dispatched) {
+  return (dispatched || [])
+    .filter((d) => d && d.diversity === securityChoice.CLAUDE_ONLY)
+    .map((d) => ` ${d.role}: ${d.verdict_text}`)
+    .join("");
 }
 
 function spawnAgent(agentPlan, sprintId, opts = {}) {
@@ -476,7 +499,7 @@ function spawnAgent(agentPlan, sprintId, opts = {}) {
   return out;
 }
 
-function recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedMs = 0 } = {}) {
+function recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedMs = 0, packetFile } = {}) {
   if (agentPlan.route !== ROUTE.CLAUDE_AGENT && agentPlan.route !== ROUTE.AGENT_TOOL) {
     return {
       recorded: false,
@@ -492,6 +515,20 @@ function recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedM
   } catch (e) {
     return { recorded: false, reason: `evidence unreadable: ${e.message}` };
   }
+  const isHunter = agentPlan.role === pv.HUNTER_ROLE;
+  let packetSha;
+  if (isHunter) {
+    let pbuf;
+    try {
+      pbuf = packetFile ? fs.readFileSync(packetFile) : null;
+    } catch {
+      pbuf = null;
+    }
+    if (!pbuf || pbuf.length === 0) {
+      return { recorded: false, reason: `refusing to record the ${pv.HUNTER_ROLE} without the review packet it ran on (--packet <file>, readable and non-empty)` };
+    }
+    packetSha = crypto.createHash("sha256").update(pbuf).digest("hex");
+  }
   const evidenceBytes = buf.length;
   const evidenceSha = crypto.createHash("sha256").update(buf).digest("hex");
   const ok = evidenceBytes > 0;
@@ -502,6 +539,7 @@ function recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedM
     if (v === "pass" || v === "fail" || v === "warn") verdict = v;
   } catch {
   }
+  if (isHunter && !verdict) verdict = "error";
   const result = recordAgentDispatch(agentPlan, sprintId, {
     ok,
     evidenceBytes,
@@ -509,6 +547,7 @@ function recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedM
     elapsedMs,
     via: "epsilon-agent",
     verdict,
+    ...(isHunter ? { packetSha, outputDigest: pv.hunterBindingDigest(packetSha, evidenceSha) } : {}),
   });
   return { ...result, ok, evidence_bytes: evidenceBytes, evidence_sha: evidenceSha };
 }
@@ -693,7 +732,7 @@ function conductGauntletStepBody(composition, sprintId, decision, opts, gauntlet
             reviewScope: { package: decision.package, files: rosterEntry ? rosterEntry.files : [] },
           });
           const out = spawn(a, sprintId, { ...opts, promptFile, env: { ...(opts.env || {}), ...mcEnv.envPair("GAUNTLET_RUN_ID", gauntletRunId) } });
-          dispatched.push({ role: a.role, route: a.route, spawned: out.spawned, ok: out.ok, recorded: out.recorded, reason: out.reason });
+          dispatched.push({ role: a.role, route: a.route, spawned: out.spawned, ok: out.ok, recorded: out.recorded, reason: out.reason, ...claudeOnlyFields(out) });
         }
       }
       stageResults.push({ stage: stage.stage, name: stage.name, ok: true, dispatched: toDispatch.length });
@@ -773,7 +812,7 @@ function conductStep(step, composition, sprintId, opts = {}) {
     const spawn = opts.spawn || spawnAgent;
     for (const a of plan.agents) {
       const out = spawn(a, sprintId, opts);
-      dispatched.push({ role: a.role, route: a.route, spawned: out.spawned, ok: out.ok, recorded: out.recorded, reason: out.reason });
+      dispatched.push({ role: a.role, route: a.route, spawned: out.spawned, ok: out.ok, recorded: out.recorded, reason: out.reason, ...claudeOnlyFields(out) });
     }
   }
 
@@ -864,6 +903,7 @@ function main(argv) {
         process.stdout.write(
           `  ${s.step.padEnd(9)} consulted=[${s.consulted.join(", ")}]` +
             (dispatch ? ` dispatched=${s.dispatched.filter((d) => d.recorded).length}/${s.dispatched.length}` : "") +
+            claudeOnlyNote(s.dispatched) +
             `\n`,
         );
       }
@@ -879,11 +919,16 @@ function main(argv) {
     const role = get("--role");
     const step = get("--step");
     const evidenceFile = get("--evidence");
+    const packetFile = get("--packet");
     const elapsedMs = parseInt(get("--elapsed-ms") || "0", 10) || 0;
     if (!role || !step || !evidenceFile) {
       process.stderr.write(
-        "usage: epsilon-runtime.js record-inprocess --sprint <id> --role <role> --step <step> --evidence <file> [--elapsed-ms <n>]\n",
+        "usage: epsilon-runtime.js record-inprocess --sprint <id> --role <role> --step <step> --evidence <file> [--packet <file>] [--elapsed-ms <n>]\n",
       );
+      return 2;
+    }
+    if (role === pv.HUNTER_ROLE && !packetFile) {
+      process.stderr.write(`record-inprocess: role ${pv.HUNTER_ROLE} requires --packet <file> (the review packet it ran on). Refusing — nothing written.\n`);
       return 2;
     }
     const grFlag = parseRequiredFlag(argv, "gauntlet-run");
@@ -904,7 +949,7 @@ function main(argv) {
     if (grFlag.present) mcEnv.setEnv("GAUNTLET_RUN_ID", grFlag.value);
     let out;
     try {
-      out = recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedMs });
+      out = recordInProcessCompletion(agentPlan, sprintId, { evidenceFile, elapsedMs, packetFile });
     } finally {
       mcEnv.restoreEnv(grSnap);
     }
@@ -939,6 +984,7 @@ module.exports = {
   recordInProcessCompletion,
   spawnAgent,
   interpretSpawn,
+  claudeOnlyNote,
   reviewScopeBlock,
   sanitizePromptValue,
   writeStepPrompt,

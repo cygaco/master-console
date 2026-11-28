@@ -111,6 +111,22 @@ async function loadMigration(file) {
   return mod;
 }
 
+const BEFORE_PREFLIGHT = "before-preflight";
+const AFTER_APPLY = "after-apply";
+
+function phaseOf(mod) {
+  return mod.phase === BEFORE_PREFLIGHT ? BEFORE_PREFLIGHT : AFTER_APPLY;
+}
+
+async function listBeforePreflight(from, to) {
+  const out = [];
+  for (const f of listMigrations(from, to)) {
+    const mig = await loadMigration(f);
+    if (phaseOf(mig) === BEFORE_PREFLIGHT) out.push(mig);
+  }
+  return out;
+}
+
 async function planAll(from, to, ctx) {
   const files = listMigrations(from, to);
   const allOps = [];
@@ -130,12 +146,14 @@ async function planAll(from, to, ctx) {
 }
 
 async function applyAll(from, to, ctx) {
+  const phase = (ctx && ctx.phase) || AFTER_APPLY;
   const alreadyApplied =
     (ctx && ctx.alreadyApplied instanceof Set) ? ctx.alreadyApplied : new Set();
   const files = listMigrations(from, to);
   const log = [];
   for (const f of files) {
     const mig = await loadMigration(f);
+    if (phaseOf(mig) !== phase) continue;
     if (alreadyApplied.has(mig.id)) {
       log.push({
         migration: mig.id,
@@ -170,6 +188,8 @@ async function applyAll(from, to, ctx) {
 module.exports = {
   listMigrations,
   listMigrationsBetween,
+  listBeforePreflight,
+  BEFORE_PREFLIGHT,
   listMigrationDirs,
   patternMatches,
   compareSemver,
@@ -189,7 +209,8 @@ if (require.main === module) {
   }
   (async () => {
     if (mode === "--apply") {
-      const log = await applyAll(from, to);
+      const log = await applyAll(from, to, { phase: BEFORE_PREFLIGHT });
+      if (!log.some((e) => e.halted)) log.push(...(await applyAll(from, to)));
       console.log(JSON.stringify(log, null, 2));
     } else {
       const ops = await planAll(from, to);

@@ -131,6 +131,30 @@ function buildSnapshotEntries(targetRoot, txDir, decisions) {
   return entries;
 }
 
+const METADATA_FILES = [
+  ".claude/framework-installed.json",
+  ".claude/manifest.json",
+];
+
+function buildMetadataEntries(targetRoot, txDir, entries) {
+  const out = [];
+  for (const dest of METADATA_FILES) {
+    if (entries.some((e) => e.dest === dest)) continue;
+    const abs = path.join(targetRoot, dest);
+    const existed = fs.existsSync(abs);
+    if (!existed && dest !== ".claude/framework-installed.json") continue;
+    let backup_path = null;
+    if (existed) {
+      backup_path = `backup-meta/${dest}`;
+      const backupAbs = path.join(txDir, backup_path);
+      fs.mkdirSync(path.dirname(backupAbs), { recursive: true });
+      fs.copyFileSync(abs, backupAbs);
+    }
+    out.push({ dest, existed_pre_apply: existed, backup_path });
+  }
+  return out;
+}
+
 function atomicWriteJSON(file, obj) {
   const tmp = `${file}.tmp-${process.pid}-${Date.now()}`;
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 2) + "\n");
@@ -177,6 +201,7 @@ function beginTransaction(opts) {
     $schema: "mc/update-snapshot/v1",
     txId,
     entries,
+    metadata: buildMetadataEntries(targetRoot, txDir, entries),
   };
   const snapshotFile = path.join(txDir, "snapshot.json");
   atomicWriteJSON(snapshotFile, snapshot);
@@ -232,7 +257,261 @@ function recordDelta(txDir, entry) {
       path.join(txDir, "snapshot.delta.jsonl"),
       JSON.stringify({ ts: new Date().toISOString(), ...entry }) + "\n",
     );
+    return true;
   } catch {
+    return false;
+  }
+}
+
+function readDeltas(txDir) {
+  const file = path.join(txDir, "snapshot.delta.jsonl");
+  if (!fs.existsSync(file)) return [];
+  const out = [];
+  for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+    if (!line.trim()) continue;
+    try {
+      const rec = JSON.parse(line);
+      if (rec && rec.kind && (rec.dest || Array.isArray(rec.paths))) out.push(rec);
+    } catch {
+    }
+  }
+  return out;
+}
+
+const PATH_BATCH = 100;
+
+function batches(list) {
+  const out = [];
+  for (let i = 0; i < list.length; i += PATH_BATCH) out.push(list.slice(i, i + PATH_BATCH));
+  return out;
+}
+
+function trackedPaths(targetRoot, paths) {
+  const { git } = require("../lib/ensure-gitignore-line");
+  const out = [];
+  for (const batch of batches(paths)) {
+    const r = git(targetRoot, ["--literal-pathspecs", "ls-files", "-z", "--", ...batch]);
+    if (r.status === 0) out.push(...r.stdout.split("\0").filter(Boolean));
+  }
+  return out;
+}
+
+function retrackPaths(targetRoot, paths) {
+  const { git } = require("../lib/ensure-gitignore-line");
+  const tracked = new Set(trackedPaths(targetRoot, paths));
+  const wanted = paths.filter(
+    (p) => !tracked.has(p) && fs.existsSync(path.join(targetRoot, p)),
+  );
+  const added = [];
+  const failed = [];
+  let error = null;
+  for (const batch of batches(wanted)) {
+    const r = git(targetRoot, ["--literal-pathspecs", "add", "-f", "--", ...batch]);
+    if (r.status === 0) added.push(...batch);
+    else {
+      failed.push(...batch);
+      error = error || (r.stderr || (r.error && r.error.message) || "git add failed").trim();
+    }
+  }
+  return { added, failed, error };
+}
+
+function describeRetrack(r) {
+  const parts = [];
+  if (r.added.length) parts.push(`tracked in git again: ${r.added.join(", ")}`);
+  if (r.failed.length) {
+    parts.push(
+      `could NOT re-add (run git add -f yourself): ${r.failed.join(", ")} — ${r.error.replace(/\s+/g, " ")}`,
+    );
+  }
+  return parts.join("; ") || "no untracked file needed to be added back to git";
+}
+
+const RESTORE_KINDS = new Set(["keep-local-engine-restore", "conflict-restore"]);
+
+function keepUndoCopy(txDir, targetRoot, dest) {
+  const abs = path.join(targetRoot, dest);
+  if (!fs.existsSync(abs)) return false;
+  const first = path.join(txDir, "rollback-undo", dest);
+  const current = sha256File(abs);
+  let dst = first;
+  for (let n = 2; fs.existsSync(dst); n++) {
+    if (sha256File(dst) === current) return true;
+    dst = `${first}.${n}`;
+  }
+  fs.mkdirSync(path.dirname(dst), { recursive: true });
+  fs.copyFileSync(abs, dst);
+  return true;
+}
+
+function saveUnproven(txDir, targetRoot, dest, st) {
+  if (keepUndoCopy(txDir, targetRoot, dest)) st.savedBeforeRestore.push(dest);
+}
+
+function leaveInPlace(txDir, rel, st) {
+  st.leftInPlace.push(rel);
+  const msg = `${rel} changed after the update — left in place`;
+  writeDiagnostic(txDir, `rollback: ${msg}`);
+  console.error(msg);
+}
+
+function rollbackEntries(txDir, targetRoot, snapshot, st) {
+  const written = new Map(
+    readDeltas(txDir)
+      .filter((r) => r.kind === "entry-written")
+      .map((r) => [r.dest, r.sha256]),
+  );
+  for (const e of snapshot.entries) {
+    const abs = path.join(targetRoot, e.dest);
+    try {
+      const restores = !!(e.existed_pre_apply && e.backup_path);
+      if (!restores && e.existed_pre_apply) continue;
+      const backupAbs = restores ? path.join(txDir, e.backup_path) : null;
+      if (restores && !fs.existsSync(backupAbs)) {
+        st.partial = true;
+        st.firstError = st.firstError || `backup missing: ${e.backup_path}`;
+        writeDiagnostic(
+          txDir,
+          `rollback: backup missing for ${e.dest} — leaving in place`,
+        );
+        continue;
+      }
+      const current = sha256File(abs);
+      const original = restores ? sha256File(backupAbs) : null;
+      if (!restores && current === null) continue;
+      if (!written.has(e.dest)) {
+        if (current !== original) saveUnproven(txDir, targetRoot, e.dest, st);
+      } else if (current !== written.get(e.dest) && current !== original) {
+        leaveInPlace(txDir, e.dest, st);
+        continue;
+      }
+      if (restores) {
+        fs.mkdirSync(path.dirname(abs), { recursive: true });
+        fs.copyFileSync(backupAbs, abs);
+        st.restoredCount += 1;
+      } else {
+        fs.unlinkSync(abs);
+        st.unlinkedCount += 1;
+      }
+    } catch (err) {
+      st.partial = true;
+      st.firstError = st.firstError || err.message;
+      writeDiagnostic(txDir, `rollback: error on ${e.dest}: ${err.message}`);
+    }
+  }
+}
+
+function rollbackRecorded(txDir, targetRoot, snapshot, st) {
+  const deltas = readDeltas(txDir);
+  const notRestored = new Set();
+  const leave = (rel) => leaveInPlace(txDir, rel, st);
+  const fail = (rel, message) => {
+    st.partial = true;
+    st.firstError = st.firstError || message;
+    notRestored.add(rel);
+    writeDiagnostic(txDir, `rollback: ${message}`);
+  };
+
+  const metadata = snapshot.metadata || [];
+  const metaDests = new Set(metadata.map((m) => m.dest));
+  for (const m of metadata) {
+    const abs = path.join(targetRoot, m.dest);
+    try {
+      const backupAbs = m.backup_path ? path.join(txDir, m.backup_path) : null;
+      if (m.existed_pre_apply && !(backupAbs && fs.existsSync(backupAbs))) {
+        fail(m.dest, `backup missing: ${m.backup_path}`);
+        continue;
+      }
+      const current = sha256File(abs);
+      const original = m.existed_pre_apply ? sha256File(backupAbs) : null;
+      if (current === original) continue;
+      const written = deltas.find(
+        (r) => r.kind === "metadata-written" && r.dest === m.dest,
+      );
+      if (written && written.sha256 !== current) {
+        notRestored.add(m.dest);
+        leave(m.dest);
+        continue;
+      }
+      if (written) keepUndoCopy(txDir, targetRoot, m.dest);
+      else saveUnproven(txDir, targetRoot, m.dest, st);
+      if (m.existed_pre_apply) {
+        fs.mkdirSync(path.dirname(abs), { recursive: true });
+        fs.copyFileSync(backupAbs, abs);
+        st.restoredCount += 1;
+      } else {
+        fs.unlinkSync(abs);
+        st.unlinkedCount += 1;
+      }
+    } catch (err) {
+      fail(m.dest, `error restoring ${m.dest}: ${err.message}`);
+    }
+  }
+
+  for (const rec of deltas) {
+    if (!RESTORE_KINDS.has(rec.kind) || metaDests.has(rec.dest)) continue;
+    const backupAbs = path.join(txDir, "backup", rec.dest);
+    const liveAbs = path.join(targetRoot, rec.dest);
+    try {
+      if (!fs.existsSync(backupAbs)) {
+        fail(rec.dest, `${rec.kind} backup missing: ${rec.dest} — leaving in place`);
+        continue;
+      }
+      const current = sha256File(liveAbs);
+      if (current === sha256File(backupAbs)) continue;
+      if (rec.sha256 === undefined) {
+        saveUnproven(txDir, targetRoot, rec.dest, st);
+      } else if (current !== rec.sha256) {
+        notRestored.add(rec.dest);
+        leave(rec.dest);
+        continue;
+      }
+      fs.mkdirSync(path.dirname(liveAbs), { recursive: true });
+      fs.copyFileSync(backupAbs, liveAbs);
+      st.restoredCount += 1;
+    } catch (err) {
+      fail(rec.dest, `error restoring ${rec.dest}: ${err.message}`);
+    }
+  }
+
+  for (const rec of deltas) {
+    if (rec.kind !== "untracked" || !Array.isArray(rec.paths)) continue;
+    try {
+      const r = retrackPaths(targetRoot, rec.paths);
+      st.retracked.push(...r.added);
+      const line = `rollback: ${describeRetrack(r)}`;
+      writeDiagnostic(txDir, line);
+      console.error(line);
+      if (r.failed.length) {
+        st.partial = true;
+        st.firstError = st.firstError || line;
+      }
+    } catch (err) {
+      fail(".mc", `error re-adding untracked files: ${err.message}`);
+    }
+  }
+
+  for (const rec of deltas) {
+    if (rec.kind !== "keep-local-sibling") continue;
+    const abs = path.join(targetRoot, rec.dest);
+    try {
+      if (!fs.existsSync(abs)) continue;
+      if (rec.preservesFor && notRestored.has(rec.preservesFor)) {
+        writeDiagnostic(
+          txDir,
+          `rollback: keeping ${rec.dest} — ${rec.preservesFor} was not restored`,
+        );
+        continue;
+      }
+      if (sha256File(abs) !== rec.sha256) {
+        leave(rec.dest);
+        continue;
+      }
+      fs.unlinkSync(abs);
+      st.unlinkedCount += 1;
+    } catch (err) {
+      fail(rec.dest, `error unlinking sibling ${rec.dest}: ${err.message}`);
+    }
   }
 }
 
@@ -240,6 +519,21 @@ function commitTransaction(txDir, opts) {
   if (!txDir) throw new Error("commitTransaction: txDir required");
   const header = readHeader(txDir);
   const targetRoot = header.targetRoot;
+  if (fs.existsSync(path.join(txDir, "snapshot.json"))) {
+    const snapshot = readSnapshot(txDir);
+    for (const [kind, list] of [
+      ["entry-written", snapshot.entries || []],
+      ["metadata-written", snapshot.metadata || []],
+    ]) {
+      for (const { dest } of list) {
+        recordDelta(txDir, {
+          kind,
+          dest,
+          sha256: sha256File(path.join(targetRoot, dest)),
+        });
+      }
+    }
+  }
   const resultFile = path.join(txDir, "result.json");
   const result = {
     completedAt: new Date().toISOString(),
@@ -319,90 +613,31 @@ function rollbackTransaction(txDir, opts) {
     }
   }
 
-  let restoredCount = 0;
-  let unlinkedCount = 0;
-  let partial = false;
-  let firstError = null;
-
-  for (const e of snapshot.entries) {
-    const abs = path.join(targetRoot, e.dest);
-    try {
-      if (e.existed_pre_apply && e.backup_path) {
-        const backupAbs = path.join(txDir, e.backup_path);
-        if (!fs.existsSync(backupAbs)) {
-          partial = true;
-          firstError = firstError || `backup missing: ${e.backup_path}`;
-          writeDiagnostic(
-            txDir,
-            `rollback: backup missing for ${e.dest} — leaving in place`,
-          );
-          continue;
-        }
-        fs.mkdirSync(path.dirname(abs), { recursive: true });
-        fs.copyFileSync(backupAbs, abs);
-        restoredCount += 1;
-      } else if (!e.existed_pre_apply) {
-        if (fs.existsSync(abs)) {
-          fs.unlinkSync(abs);
-          unlinkedCount += 1;
-        }
-      }
-    } catch (err) {
-      partial = true;
-      firstError = firstError || err.message;
-      writeDiagnostic(txDir, `rollback: error on ${e.dest}: ${err.message}`);
-    }
-  }
+  const st = {
+    restoredCount: 0,
+    unlinkedCount: 0,
+    partial: false,
+    firstError: null,
+    leftInPlace: [],
+    savedBeforeRestore: [],
+    retracked: [],
+  };
+  rollbackEntries(txDir, targetRoot, snapshot, st);
 
   try {
-    const deltaFile = path.join(txDir, "snapshot.delta.jsonl");
-    if (fs.existsSync(deltaFile)) {
-      const lines = fs
-        .readFileSync(deltaFile, "utf8")
-        .split("\n")
-        .filter((l) => l.trim());
-      for (const line of lines) {
-        let rec;
-        try {
-          rec = JSON.parse(line);
-        } catch {
-          continue;
-        }
-        if (rec && rec.kind === "keep-local-sibling" && rec.dest) {
-          const abs = path.join(targetRoot, rec.dest);
-          try {
-            if (fs.existsSync(abs)) {
-              fs.unlinkSync(abs);
-              unlinkedCount += 1;
-            }
-          } catch (err) {
-            partial = true;
-            firstError = firstError || err.message;
-            writeDiagnostic(txDir, `rollback: error unlinking sibling ${rec.dest}: ${err.message}`);
-          }
-        } else if (rec && rec.kind === "keep-local-engine-restore" && rec.dest) {
-          const backupAbs = path.join(txDir, "backup", rec.dest);
-          const liveAbs = path.join(targetRoot, rec.dest);
-          try {
-            if (fs.existsSync(backupAbs)) {
-              fs.mkdirSync(path.dirname(liveAbs), { recursive: true });
-              fs.copyFileSync(backupAbs, liveAbs);
-              restoredCount += 1;
-            } else {
-              partial = true;
-              firstError = firstError || `keep-local backup missing: ${rec.dest}`;
-              writeDiagnostic(txDir, `rollback: keep-local backup missing for ${rec.dest} — leaving in place`);
-            }
-          } catch (err) {
-            partial = true;
-            firstError = firstError || err.message;
-            writeDiagnostic(txDir, `rollback: error restoring engine file ${rec.dest}: ${err.message}`);
-          }
-        }
-      }
-    }
+    rollbackRecorded(txDir, targetRoot, snapshot, st);
   } catch (err) {
+    st.partial = true;
+    st.firstError = st.firstError || err.message;
     writeDiagnostic(txDir, `rollback: delta-pass failed: ${err.message}`);
+  }
+  const { restoredCount, unlinkedCount, partial, firstError, leftInPlace, savedBeforeRestore } = st;
+  if (savedBeforeRestore.length) {
+    const line =
+      `rollback: no record of what the update wrote for ${savedBeforeRestore.length} file(s) — ` +
+      `their current copies were saved to ${path.join(txDir, "rollback-undo")} first`;
+    writeDiagnostic(txDir, `${line}: ${savedBeforeRestore.join(", ")}`);
+    console.error(line);
   }
 
   const resultFile = path.join(txDir, "result.json");
@@ -418,6 +653,9 @@ function rollbackTransaction(txDir, opts) {
       error: (opts && opts.errorMessage) || firstError,
       restoredCount,
       unlinkedCount,
+      leftInPlace,
+      savedBeforeRestore,
+      retracked: st.retracked,
       rollbackDurationMs: Date.now() - start,
     },
   };
@@ -441,6 +679,7 @@ function rollbackTransaction(txDir, opts) {
     unlinkedCount,
     partial,
     error: firstError,
+    leftInPlace,
     rollback: result.rollback,
   };
 }
@@ -469,6 +708,9 @@ module.exports = {
   readHeader,
   readSnapshot,
   recordDelta,
+  trackedPaths,
+  retrackPaths,
+  describeRetrack,
   sha256File,
   sha256Buffer,
   atomicWriteJSON,

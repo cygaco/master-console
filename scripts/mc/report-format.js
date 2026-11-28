@@ -42,4 +42,37 @@ function printHumanReport(title, report) {
   console.log(renderHumanReport(title, report));
 }
 
-module.exports = { ORDER, LABELS, renderHumanReport, printHumanReport };
+const KEPT_EDIT_LABELS = {
+  MERGE_CLEAN: "merged",
+  LOCAL_CUSTOMIZED: "kept your edit",
+  MERGE_KEPT_LOCAL: "kept yours, new version beside",
+  ORPHAN_KEPT: "kept (removed in this version)",
+};
+
+function renderKeptEdits(applyResult) {
+  const rows = ((applyResult && applyResult.perFile) || []).filter(
+    (p) => KEPT_EDIT_LABELS[p.category] && p.status !== "kept_unverified",
+  );
+  if (!rows.length) return [];
+  const counts = applyResult.counts || {};
+  const totals =
+    "your edits: merged=" + (counts.merged || 0) +
+    " kept-edited=" + (counts.kept_edited || 0) +
+    " kept-with-new-beside=" + (counts.kept_new_beside || 0) +
+    " kept-removed=" + (counts.kept_modified || 0);
+  return [
+    totals,
+    ...rows.map(
+      (p) =>
+        "  " + KEPT_EDIT_LABELS[p.category] + ": " + p.dest + (p.sibling ? " -> " + p.sibling : ""),
+    ),
+  ];
+}
+
+module.exports = {
+  ORDER,
+  LABELS,
+  renderHumanReport,
+  printHumanReport,
+  renderKeptEdits,
+};

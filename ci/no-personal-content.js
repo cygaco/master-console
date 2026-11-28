@@ -91,7 +91,115 @@ function loadFingerprints(opts, env) {
   } catch (_) {
     throw new CannotRun('fingerprints are not valid JSON');
   }
-  return validateFingerprints(fp);
+  validateFingerprints(fp);
+  if (hasFreshness(fp)) checkFreshness(fp);
+  else if (opts.requireFresh) throw new CannotRun('fingerprints freshness unchecked: the list carries no source record and --require-fresh was given');
+  return fp;
+}
+
+function globToRegExp(g) {
+  let re = '';
+  for (let i = 0; i < g.length; i++) {
+    const c = g[i];
+    if (c === '*') { if (g[i + 1] === '*') { re += '.*'; i++; if (g[i + 1] === '/') i++; } else re += '[^/]*'; }
+    else if (c === '?') re += '[^/]';
+    else re += c.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+  }
+  return new RegExp('^' + re + '$');
+}
+function isUtf16Bom(buf) {
+  return buf.length >= 2 && ((buf[0] === 0xff && buf[1] === 0xfe) || (buf[0] === 0xfe && buf[1] === 0xff));
+}
+function classifySourceFile(buf, rel, ignore) {
+  if (isUtf16Bom(buf) || !buf.includes(0)) return 'text';
+  return ignore.some((re) => re.test(rel)) ? 'ignored' : 'binary';
+}
+function sourceWalk(dir, acc, refuse) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, e.name);
+    if (e.isSymbolicLink()) refuse('symlink');
+    if (e.isDirectory()) sourceWalk(p, acc, refuse);
+    else if (e.isFile()) acc.push(p);
+    else refuse('non-regular');
+  }
+  return acc;
+}
+function sourceEntries(abs, st, label, refuse) {
+  const isDir = st.isDirectory();
+  const files = isDir ? sourceWalk(abs, [], refuse).sort() : st.isFile() ? [abs] : [];
+  return files.map((file) => {
+    const rel = isDir ? path.relative(abs, file).split(path.sep).join('/') : path.basename(file);
+    return { file, rel, label: isDir ? label + ':' + rel : label };
+  });
+}
+
+const SOURCE_LABEL_RE = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$/;
+function hasFreshness(fp) {
+  return Object.prototype.hasOwnProperty.call(fp, 'freshness');
+}
+function validateFreshness(f) {
+  const ok = f && typeof f === 'object' && f.v === 1 &&
+    Array.isArray(f.sources) && f.sources.some((s) => s && s.label === 'identity') &&
+    f.sources.every((s) => s && typeof s.label === 'string' && SOURCE_LABEL_RE.test(s.label) &&
+      typeof s.path === 'string' && path.isAbsolute(s.path) && (s.kind === 'file' || s.kind === 'dir')) &&
+    Array.isArray(f.ignore) && f.ignore.every((p) => typeof p === 'string' && p.length > 0);
+  if (!ok) throw new CannotRun('fingerprints invalid: freshness record');
+}
+
+function digestSources(freshness) {
+  validateFreshness(freshness);
+  const ignore = freshness.ignore.map(globToRegExp);
+  const out = [];
+  for (const s of freshness.sources) {
+    const cannot = (why) => {
+      throw new CannotRun('fingerprints stale: a source ' + why + ' (' + s.label + '); rebuild the list and run again');
+    };
+    try {
+      if (s.label === 'identity') { out.push({ label: s.label, sha256: sha256(fs.readFileSync(s.path)) }); continue; }
+      const st = fs.lstatSync(s.path);
+      if (st.isSymbolicLink()) cannot('is now a symlink');
+      for (const e of sourceEntries(s.path, st, s.label, () => cannot('now holds a symlink or a non-regular file'))) {
+        const buf = fs.readFileSync(e.file);
+        const kind = classifySourceFile(buf, e.rel, ignore);
+        if (kind === 'binary') cannot('now holds a binary file');
+        if (kind === 'text') out.push({ label: e.label, sha256: sha256(buf) });
+      }
+    } catch (err) {
+      if (err instanceof CannotRun) throw err;
+      cannot('is missing or unreadable');
+    }
+  }
+  return out;
+}
+
+function checkFreshness(fp) {
+  const recorded = fp.sources;
+  if (!Array.isArray(recorded) || !recorded.every((s) => s && typeof s.label === 'string' && typeof s.sha256 === 'string')) {
+    throw new CannotRun('fingerprints invalid: sources');
+  }
+  const current = digestSources(fp.freshness);
+  const group = (list) => {
+    const m = new Map();
+    for (const s of list) m.set(s.label, (m.get(s.label) || []).concat(s.sha256).sort());
+    return m;
+  };
+  const was = group(recorded);
+  const now = group(current);
+  const declared = new Set(fp.freshness.sources.map((s) => s.label));
+  const tops = new Set();
+  let changed = 0;
+  for (const label of new Set([...was.keys(), ...now.keys()])) {
+    const a = was.get(label) || [];
+    const b = now.get(label) || [];
+    if (a.join() === b.join()) continue;
+    changed += Math.max(a.length, b.length);
+    const top = label.split(':')[0];
+    tops.add(declared.has(top) ? top : 'unlisted');
+  }
+  if (changed) {
+    throw new CannotRun('fingerprints stale: ' + changed + ' source file(s) changed since the list was built (' +
+      [...tops].sort().join(', ') + '); rebuild the list and run again');
+  }
 }
 
 const NEAR_W = 8;
@@ -405,8 +513,12 @@ function pngProblems(buf) {
   return out;
 }
 
+function gitEnv() {
+  return Object.assign({}, process.env, { GIT_NO_REPLACE_OBJECTS: '1' });
+}
+
 function git(root, args) {
-  const r = spawnSync('git', ['-C', root, ...args], { encoding: 'buffer', maxBuffer: 512 * 1024 * 1024, windowsHide: true });
+  const r = spawnSync('git', ['-C', root, ...args], { encoding: 'buffer', maxBuffer: 512 * 1024 * 1024, windowsHide: true, env: gitEnv() });
   if (r.error || r.status !== 0) throw new CannotRun('git ' + args[0] + ' failed');
   return r.stdout;
 }
@@ -438,7 +550,7 @@ function utf8OrLatin1(buf) {
 
 function catBatch(root, ids) {
   const r = spawnSync('git', ['-C', root, 'cat-file', '--batch'], {
-    input: Buffer.from(ids.join('\n') + '\n'), maxBuffer: 1024 * 1024 * 1024, windowsHide: true,
+    input: Buffer.from(ids.join('\n') + '\n'), maxBuffer: 1024 * 1024 * 1024, windowsHide: true, env: gitEnv(),
   });
   if (r.error || r.status !== 0) throw new CannotRun('git cat-file failed');
   const out = r.stdout;
@@ -788,7 +900,7 @@ function resolveCommits(ctx, hexes) {
   if (!todo.length) return;
   if (!ctx.hasGit) { for (const h of todo) ctx.commitCache.set(h, false); return; }
   const r = spawnSync('git', ['-C', ctx.root, 'cat-file', '--batch-check'], {
-    input: todo.map((h) => h + '^{commit}').join('\n') + '\n', encoding: 'utf8', maxBuffer: 1 << 26, windowsHide: true,
+    input: todo.map((h) => h + '^{commit}').join('\n') + '\n', encoding: 'utf8', maxBuffer: 1 << 26, windowsHide: true, env: gitEnv(),
   });
   if (r.error || r.status !== 0) throw new CannotRun('git cat-file failed');
   const outl = String(r.stdout).split('\n');
@@ -1394,6 +1506,7 @@ function runInner(opts) {
 
   const ok = violations.length === 0;
   const rep = { ok, exit: ok ? 0 : 1, checks_run: checks, scanned, files_scanned: processed, violations, report_only: reportOnly };
+  rep.fingerprints_freshness = hasFreshness(fp) ? 'verified' : 'unchecked';
   if (history) rep.history_narrative = NARR_CHECKS.filter((c) => !REPORT_ONLY.has(c));
   return rep;
 }
@@ -1411,6 +1524,7 @@ function parseArgs(argv) {
     else if (a === '--narrative-allowlist') { o.narrativeAllowlist = need(i); i++; }
     else if (a === '--history') o.history = true;
     else if (a === '--json') o.json = true;
+    else if (a === '--require-fresh') o.requireFresh = true;
     else throw new CannotRun('unknown argument');
   }
   return o;
@@ -1431,6 +1545,7 @@ function main(argv) {
     for (const v of report.violations) process.stdout.write('[' + v.check + '] ' + v.path + ':' + v.line + '\n');
     for (const v of report.report_only || []) process.stdout.write('[' + v.check + '] ' + v.path + ':' + v.line + ' REPORT-ONLY\n');
     if (report.exit === 2) process.stdout.write('CANNOT RUN: ' + report.error + '\n');
+    if (report.fingerprints_freshness === 'unchecked') process.stdout.write('fingerprints freshness: unchecked (the list carries no source record)\n');
     process.stdout.write(
       'no-personal-content: ' + (report.exit === 0 ? 'PASS' : report.exit === 1 ? 'FAIL' : 'CANNOT-RUN') +
         ' (' + report.violations.length + ' violation(s), ' + (report.report_only || []).length + ' report-only, ' + report.files_scanned + ' file(s))\n'
@@ -1439,7 +1554,7 @@ function main(argv) {
   return report.exit;
 }
 
-module.exports = { canonText, tokens, loadFingerprints, scanText, run, selfTest, NARR_CHECKS, scanNarrative, buildNarrativeContext, loadNarrativeAllowlist, lineSha };
+module.exports = { canonText, tokens, globToRegExp, isUtf16Bom, classifySourceFile, sourceEntries, digestSources, loadFingerprints, scanText, run, selfTest, NARR_CHECKS, scanNarrative, buildNarrativeContext, loadNarrativeAllowlist, lineSha };
 
 if (require.main === module) {
   let code = 2;

@@ -58,8 +58,8 @@ function signedRecord(overrides = {}) {
   return r;
 }
 
-test("SIGNED_FIELDS tail is [workorder_digest, dispatch_id, gauntlet_run_id] (appended at the END, prior order untouched)", () => {
-  assert.deepStrictEqual(SIGNED_FIELDS.slice(-3), ["workorder_digest", "dispatch_id", "gauntlet_run_id"]);
+test("SIGNED_FIELDS tail is [workorder_digest, dispatch_id, gauntlet_run_id, packet_sha256] (appended at the END, prior order untouched)", () => {
+  assert.deepStrictEqual(SIGNED_FIELDS.slice(-4), ["workorder_digest", "dispatch_id", "gauntlet_run_id", "packet_sha256"]);
 });
 test("SIGNED_FIELDS retains every pre-existing field in its original relative order", () => {
   const preExisting = [

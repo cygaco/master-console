@@ -101,8 +101,18 @@ function loadState(args) {
 function saveState(args, state) {
   if (args.dryRun) return;
   const f = stateFile(args);
+  ignoreLocalState(args.repoRoot);
   fs.mkdirSync(path.dirname(f), { recursive: true });
   fs.writeFileSync(f, JSON.stringify(state, null, 2) + "\n", "utf8");
+}
+
+function ignoreLocalState(repoRoot) {
+  try {
+    const gi = require("../lib/ensure-gitignore-line");
+    if (gi.isGitWorkTree(repoRoot)) gi.ensureMcIgnored(repoRoot);
+  } catch (e) {
+    process.stderr.write(`spinup: could not add .mc/ to .gitignore: ${e.message}\n`);
+  }
 }
 
 function loadPhase(name) {

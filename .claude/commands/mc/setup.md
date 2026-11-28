@@ -231,7 +231,7 @@ Users never have to think about "which step am I at" — the skill figures it ou
 After Step E succeeds (or after a re-run reports "fully set up"), invoke the provider smoke as the last operator-visible step:
 
 ```
-node scripts/mc/provider-smoke.js --providers claude,openai,gemini
+node scripts/mc/provider-smoke.js --providers claude,openai,antigravity
 ```
 
 This wraps the existing `paths.providerFallbackPolicy`-backed health

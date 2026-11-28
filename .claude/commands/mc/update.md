@@ -28,17 +28,25 @@ Check `.claude/framework-installed.json` exists. If not: tell the user to run `i
 **When the source is NOT a `master-console`/`MC`/`mc` sibling — pass `--source` explicitly.** Auto-discovery matches only those three sibling directory names (plus the manifest/installed-snapshot hints). A canonical clone with any other directory name will NOT be found by the sibling walk, and the `capsule-resolvable` gate (preflight gate 2) reports red. Give the engine the path directly:
 
 ```bash
-node scripts/mc/update.js --to <version> --source <abs-path-to-mc-clone> --target <product-path> --apply
+node "<canonical>/scripts/mc/update.js" --to <version> --target <product-path> --apply
 ```
+
+(`<canonical>` is that clone's folder.)
 
 `/portfolio:sync` already passes `--source` (the MC clone) and `--target` (each product) for every product it updates, so the portfolio path needs no manual `--source`. The explicit form above is for a one-off `/mc:update` run inside a single product whose canonical clone is not a standard-named sibling.
 
 ### Step 2 — invoke engine
 
+Run these from the product folder. `<canonical>` is the MC clone you are updating from:
+
 ```bash
-node scripts/mc/update.js --to <version> --dry-run    # default
-node scripts/mc/update.js --to <version> --apply       # if --apply supplied
+node "<canonical>/scripts/mc/update.js" --to <version> --target . --dry-run                   # default
+node "<canonical>/scripts/mc/update.js" --to <version> --target . --apply --confirm-deletes   # if --apply supplied
 ```
+
+Use the canonical copy because the product's own copy of the engine may be older than the fixes in the release you are installing. `--source` defaults to the engine's own repo. `--confirm-deletes` runs the Class A deletes in the plan; leave it off to defer them.
+
+The older form, `node scripts/mc/update.js --to <version> --source <canonical> --apply`, works for installs from 2.3.1 onward: when the source is a newer version, the product's engine hands the run to the source's engine and prints one line saying so. A 2.2.0 or 2.3.0 product has no handoff yet, so it needs the canonical command above. `--no-handoff` keeps the run on the local copy. `--status` and `--rollback` are never handed over.
 
 The engine prints `[update] capsule <v> not in local framework/releases/ — using canonical at <path>` to stderr when it auto-discovered a sibling/manifest-pointed clone. Pass that line through verbatim so the user sees where the source came from. Pass `--no-discover` to disable the walk (useful for closed-environment tests).
 

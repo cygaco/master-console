@@ -5,6 +5,9 @@
 const path = require("path");
 const fs = require("fs");
 
+const { PROJECT, PATHS } = require(
+  path.join(__dirname, "..", "hooks", "lib", "paths.js"),
+);
 const { probeAll, probeProvider } = require(
   path.join(__dirname, "..", "hooks", "lib", "provider-health.js"),
 );
@@ -19,6 +22,11 @@ const { runAutofixes } = require(
 const SCHEMA = "mc/provider-smoke/v1";
 
 const KNOWN_PROVIDERS = ["claude", "openai", "antigravity"];
+
+const DEPRECATED_PROVIDER_ALIASES = new Map([
+  ["gemini", "antigravity"],
+  ["google", "antigravity"],
+]);
 
 const PROBE_MODES = ["", "list"];
 
@@ -63,6 +71,8 @@ function validateProviders(rawList) {
     process.stderr.write("unknown_provider: <empty>\n");
     process.exit(1);
   }
+  const resolved = [];
+  const noticed = new Set();
   for (const t of tokens) {
     if (t === "") {
       process.stderr.write("unknown_provider: <empty>\n");
@@ -72,12 +82,22 @@ function validateProviders(rawList) {
       process.stderr.write("unknown_provider: " + t + "\n");
       process.exit(1);
     }
-    if (!KNOWN_PROVIDERS.includes(t)) {
+    const alias = DEPRECATED_PROVIDER_ALIASES.get(t);
+    const name = alias || t;
+    if (!KNOWN_PROVIDERS.includes(name)) {
       process.stderr.write("unknown_provider: " + t + "\n");
       process.exit(1);
     }
+    if (alias) noticed.add(t);
+    if (!resolved.includes(name)) resolved.push(name);
   }
-  return tokens;
+  if (noticed.size > 0) {
+    const old = [...noticed][0];
+    process.stderr.write(
+      `provider-smoke: '${old}' is a retired name; using '${DEPRECATED_PROVIDER_ALIASES.get(old)}'\n`,
+    );
+  }
+  return resolved;
 }
 
 function validateProbe(rawProbe) {
@@ -137,12 +157,7 @@ function classify(results) {
 function loadFailureModeCatalog() {
   const catalogPath = path.join(
     process.cwd(),
-    ".claude",
-    "agents",
-    "president",
-    ".system",
-    "policy",
-    "provider-failure-modes.json",
+    path.relative(PROJECT, PATHS.providerFailureModes),
   );
   if (!fs.existsSync(catalogPath)) {
     return { entries: {}, version: null, ok: true };

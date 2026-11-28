@@ -1,9 +1,9 @@
 {
   "$schema": "mc/version/v1",
   "name": "mc",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "MC — autonomous AI operating system for software engineering. Registry-driven hooks, transactional updates, honest release gates, generic promotion.",
-  "releasedAt": "2026-11-25",
+  "releasedAt": "2026-11-27",
   "minUpgradeableFrom": "0.1.2",
   "channel": "main",
   "frameworkManifestSchema": "mc/framework-manifest/v2",
@@ -56,7 +56,8 @@
     "1.2.0",
     "2.0.0",
     "2.1.0",
-    "2.2.0"
+    "2.2.0",
+    "2.3.0"
   ],
-  "notes": "Minor bump from 2.2.0, and the first public release since 2.1.0 (2.2.0 was prepared but never published on its own): model presets with fallback lists ending on Claude, sign-in detection, /models:swap, security review models you can switch, the session scorecard, one manifest command, lighter review rules and faster hooks. The removal of the pre-2.0.0 names stays at the 3.0.0 major. See CHANGELOG.md [2.3.0]."
+  "notes": "Patch release from 2.3.0: the update applies to a product you have worked in. Framework files you edited are kept or merged, a committed .mc/ folder no longer blocks, the post-update checks pass, rollback leaves files changed after the update in place, and the release's upgrade check now updates a worked-in copy. See CHANGELOG.md [2.3.1]."
 }

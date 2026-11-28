@@ -6,6 +6,27 @@ Where a capsule's notes were left as the generated placeholder at release time, 
 
 ## [Unreleased]
 
+## [2.3.1] — 2026-11-27
+
+A fix release for the update path. Updating a product you have worked in (one that edited framework files or committed its local state) from 2.2.0 or 2.3.0 stopped before changing anything; it now applies.
+
+### Fixed
+- **Your edits to framework files are kept.** A framework file you edited is left as you wrote it when the new version does not change it. When both changed, markdown files are merged line by line; when the merge cannot be done cleanly, your file stays in place and the new version is written beside it as `<file>.mc-new` for you to compare. Check allowlists (`scripts/checks/*.allowlist.json`) are merged entry by entry: your additions stay, entries the release adds arrive, entries the release drops go away unless you added them. A value both sides changed differently is reported as a conflict, never picked silently. An edited file the new version removes is kept. Code files you edited that the release also changed still stop the update and name the file, as before.
+- **`--accept-local-drift` no longer overwrites your edits.** It now only records the edited files; it is no longer needed, and kept for compatibility.
+- **A committed `.mc/` folder no longer blocks the update.** Before its checks, the update removes `.mc/` from git's index (the files stay on disk) and adds `.mc/` to `.gitignore`; new projects ignore it from the start.
+- **The post-update provider check names a provider that exists** (`antigravity`; the retired name `gemini` is accepted and mapped).
+- **`node scripts/paths/gate.js` passes after an update**: the stale path names in shipped reference docs and scripts are fixed, and leftover mirror files under `_mc/` from removed skills are pruned.
+- **Checks run by the update judge the project being updated**, even when the update is started from a session that points at another folder.
+- **Rollback is safer.** A rollback restores the copies saved by `--save-conflicts` and the installed version record; it leaves in place any file you changed after the update and names it; where no record says what the update wrote, it saves your current copy before restoring. See Known issues for what it does not undo.
+
+### Changed
+- **The update hands off to a newer engine.** From 2.3.1 on, running a product's own `scripts/mc/update.js` with `--source <newer Master Console checkout>` re-runs the newer checkout's engine (`--no-handoff` turns this off). Products still on 2.2.0 or 2.3.0 should run the newer checkout's engine directly once: `node "<checkout>/scripts/mc/update.js" --to 2.3.1 --target . --apply --confirm-deletes` from the product folder.
+- **The release's upgrade check now updates a worked-in copy** (git-tracked, with a committed `.mc/` state file and edited framework files) and fails on any failed post-update check.
+
+### Known issues
+- `--rollback` does not undo generated files written after the apply (the `_mc/` mirror, provenance markers, generated manifests) or the `.gitignore` line. Commit your work before updating; `git checkout` then undoes everything.
+- **Three release checks are red, as they were for 2.3.0; not every release check passed.** The ship-coverage check lists 598 framework files that no product receives and that have no recorded reason yet (the same list as at 2.3.0). The config-path check stops on four lists it has no rule for (two old review records and two public-copy lists); given rules, it reports one stale skip entry, the same as at 2.3.0. The full sealed-install check fails its telemetry step in all four install modes, the same as at 2.3.0; the sealed install itself is complete and does not reach back into the Master Console checkout. None of the three concerns the update path; the upgrade check, which now also updates a worked-in copy, passes.
+
 ## [2.3.0] — 2026-11-25
 
 2.3.0 is the first public release since 2.1.0. Version 2.2.0 (below) was prepared but never published on its own; everything in it is included in 2.3.0.

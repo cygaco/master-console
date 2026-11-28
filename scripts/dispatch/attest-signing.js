@@ -28,6 +28,7 @@ const SIGNED_FIELDS = Object.freeze([
   "workorder_digest",
   "dispatch_id",
   "gauntlet_run_id",
+  "packet_sha256",
 ]);
 
 let _cachedSecret;

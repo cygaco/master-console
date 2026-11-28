@@ -469,6 +469,269 @@ function dirtySetUnchanged(beforeHashes, afterHashes) {
   return { equal: changed.length === 0, changed };
 }
 
+const WORKED_IN_NAMED_ASSERTS = [
+  "worked_in_committed",
+  "worked_in_post_update_checks_all_passed",
+  "worked_in_md_edit_preserved",
+  "worked_in_allowlist_entry_preserved",
+  "worked_in_transients_untracked",
+];
+const WORKED_IN_STATE_REL = ".mc/spinup-state.json";
+const WORKED_IN_ALLOWLIST_REL = "scripts/checks/doc-ref-integrity.allowlist.json";
+const WORKED_IN_MD_LINE = "Product note: this line was added by the product that works in this install.";
+const WORKED_IN_ALLOWLIST_ENTRY = "docs/product-only/worked-in-upgrade-leg.md";
+
+function workedInEnv(root) {
+  const env = {};
+  for (const [k, v] of Object.entries(process.env)) {
+    if (!/^GIT_/i.test(k)) env[k] = v;
+  }
+  env.CLAUDE_PROJECT_DIR = root;
+  return env;
+}
+
+function workedInGit(root, args) {
+  const r = spawnSync(
+    "git",
+    ["-c", "core.longpaths=true", "-c", "core.hooksPath=.git/no-hooks", ...args],
+    { cwd: root, env: workedInEnv(root), encoding: "utf8", timeout: 180_000, maxBuffer: 64 * 1024 * 1024 },
+  );
+  if (r.status !== 0) {
+    throw new Error(`git ${args.join(" ")} failed in ${root}: ${describeSpawnFailure(r)}`);
+  }
+  return r.stdout || "";
+}
+
+function flattenCapsuleAssets(manifest) {
+  return Object.values((manifest && manifest.assets) || {}).flat();
+}
+
+function pickUnchangedMarkdownAsset(n1Manifest, nManifest, existsFn) {
+  const nByDest = new Map(flattenCapsuleAssets(nManifest).map((a) => [a.dest, a]));
+  const candidates = flattenCapsuleAssets(n1Manifest)
+    .filter((a) => {
+      const b = nByDest.get(a.dest);
+      return (
+        !!b && !!a.sha256 && a.sha256 === b.sha256 && !b.removedIn &&
+        a.owner === "framework" && b.owner === "framework" &&
+        /\.md$/.test(a.dest) && existsFn(a.dest)
+      );
+    })
+    .map((a) => a.dest)
+    .sort();
+  return candidates.find((d) => d.startsWith(".claude/commands/")) || candidates[0] || null;
+}
+
+function prepareWorkedInProduct({ pristineRoot, root, mdRel }) {
+  fs.cpSync(pristineRoot, root, { recursive: true, verbatimSymlinks: true });
+  const installedPath = path.join(root, ".claude", "framework-installed.json");
+  const installed = JSON.parse(fs.readFileSync(installedPath, "utf8"));
+  if (installed.target) {
+    installed.target = root;
+    fs.writeFileSync(installedPath, JSON.stringify(installed, null, 2));
+  }
+
+  workedInGit(root, ["init", "-q"]);
+  const top = workedInGit(root, ["rev-parse", "--show-toplevel"]).trim();
+  if (fs.realpathSync.native(top).toLowerCase() !== fs.realpathSync.native(root).toLowerCase()) {
+    throw new Error(`worked-in git top-level is ${top}, expected ${root}`);
+  }
+  for (const [k, v] of [
+    ["user.name", "worked-in product"],
+    ["user.email", "worked-in@example.invalid"],
+    ["commit.gpgsign", "false"],
+    ["core.longpaths", "true"],
+    ["core.autocrlf", "false"],
+  ]) {
+    workedInGit(root, ["config", k, v]);
+  }
+  workedInGit(root, ["add", "-A"]);
+  workedInGit(root, ["commit", "-q", "-m", "install"]);
+
+  const statePath = path.join(root, WORKED_IN_STATE_REL);
+  fs.mkdirSync(path.dirname(statePath), { recursive: true });
+  fs.writeFileSync(
+    statePath,
+    JSON.stringify({ schema: "mc/bootstrap/spinup-state/v2", completed: [], phases: {} }, null, 2) + "\n",
+  );
+  workedInGit(root, ["add", "-f", "--", WORKED_IN_STATE_REL]);
+  workedInGit(root, ["commit", "-q", "-m", "spinup state"]);
+
+  const mdPath = path.join(root, mdRel);
+  const md = fs.readFileSync(mdPath, "utf8");
+  fs.writeFileSync(mdPath, `${md}${md.endsWith("\n") ? "" : "\n"}${WORKED_IN_MD_LINE}\n`);
+  const allowPath = path.join(root, WORKED_IN_ALLOWLIST_REL);
+  const allow = JSON.parse(fs.readFileSync(allowPath, "utf8"));
+  if (!Array.isArray(allow.literals)) throw new Error(`${WORKED_IN_ALLOWLIST_REL} has no literals array`);
+  allow.literals.push(WORKED_IN_ALLOWLIST_ENTRY);
+  fs.writeFileSync(allowPath, JSON.stringify(allow, null, 2) + "\n");
+  workedInGit(root, ["add", "-f", "--", mdRel, WORKED_IN_ALLOWLIST_REL]);
+  workedInGit(root, ["commit", "-q", "-m", "product work"]);
+
+  if (!workedInGit(root, ["ls-files", "--", ".mc"]).split(/\r?\n/).includes(WORKED_IN_STATE_REL)) {
+    throw new Error(`fixture invalid: ${WORKED_IN_STATE_REL} is not tracked before the update`);
+  }
+}
+
+function parseTrailingJson(stdout) {
+  const lines = String(stdout || "").split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i] !== "{") continue;
+    try {
+      return JSON.parse(lines.slice(i).join("\n"));
+    } catch {
+    }
+  }
+  return null;
+}
+
+function applyToWorkedIn({ root, toVersion, logBase, timeoutMs }) {
+  const outFd = fs.openSync(`${logBase}.out`, "w");
+  const errFd = fs.openSync(`${logBase}.err`, "w");
+  let r;
+  try {
+    r = spawnSync(
+      process.execPath,
+      [
+        path.join(REPO_ROOT, "scripts", "mc", "update.js"),
+        "--to", toVersion, "--source", REPO_ROOT, "--target", root,
+        "--apply", "--confirm-deletes", "--json",
+      ],
+      { cwd: root, env: workedInEnv(root), stdio: ["ignore", outFd, errFd], timeout: timeoutMs },
+    );
+  } finally {
+    fs.closeSync(outFd);
+    fs.closeSync(errFd);
+  }
+  const stdout = fs.readFileSync(`${logBase}.out`, "utf8");
+  const stderr = fs.readFileSync(`${logBase}.err`, "utf8");
+  return {
+    result: parseTrailingJson(stdout),
+    spawnFailure: describeSpawnFailure({ status: r.status, signal: r.signal, error: r.error, stdout: "", stderr: stderr || stdout }),
+  };
+}
+
+function observeWorkedIn({ root, mdRel }) {
+  const state = { mdLinePresent: false, allowlistEntryPresent: false, trackedMc: null, stateOnDisk: false, errors: [] };
+  try {
+    state.mdLinePresent = fs.readFileSync(path.join(root, mdRel), "utf8").split(/\r?\n/).includes(WORKED_IN_MD_LINE);
+  } catch (e) {
+    state.errors.push(`md: ${e.message}`);
+  }
+  try {
+    const allow = JSON.parse(fs.readFileSync(path.join(root, WORKED_IN_ALLOWLIST_REL), "utf8"));
+    state.allowlistEntryPresent = Array.isArray(allow.literals) && allow.literals.includes(WORKED_IN_ALLOWLIST_ENTRY);
+  } catch (e) {
+    state.errors.push(`allowlist: ${e.message}`);
+  }
+  try {
+    state.trackedMc = workedInGit(root, ["ls-files", "--", ".mc"]).split(/\r?\n/).filter(Boolean);
+  } catch (e) {
+    state.errors.push(`ls-files: ${e.message}`);
+  }
+  state.stateOnDisk = fs.existsSync(path.join(root, WORKED_IN_STATE_REL));
+  return state;
+}
+
+function evaluateWorkedIn({ result, spawnFailure, state, declaredChecks, mdRel }) {
+  const out = [];
+  const add = (name, ok, detail) => out.push({ name, ok: !!ok, detail: ok ? "" : detail });
+  const r = result || {};
+  const migrationsFailed = !!r.migrations && r.migrations.status === "failed";
+  const committed = r.committed === true;
+
+  const preReds = ((r.preflight && r.preflight.gates) || [])
+    .filter((g) => g.status === "red")
+    .map((g) => `${g.name}:${String(g.reason || "").slice(0, 120)}`);
+  const why = !result
+    ? `no parseable result from the update CLI: ${spawnFailure}`
+    : [
+        r.error ? String(r.error).slice(0, 600) : "",
+        preReds.length ? `PREFLIGHT: ${preReds.join("; ")}` : "",
+        migrationsFailed ? "a migration failed" : "",
+        r.outcome ? `outcome=${r.outcome}` : "",
+        r.report && r.report.classCounts ? `classCounts=${JSON.stringify(r.report.classCounts)}` : "",
+      ].filter(Boolean).join(" | ") || spawnFailure;
+  add("worked_in_committed", committed && !migrationsFailed, why);
+
+  const checks = Array.isArray(r.postUpdateChecks) ? r.postUpdateChecks : null;
+  const notPassed = (checks || []).filter((c) => !c || c.status !== "passed");
+  const ran = new Set((checks || []).map((c) => c && c.check));
+  const missing = (declaredChecks || []).filter((c) => !ran.has(c));
+  add(
+    "worked_in_post_update_checks_all_passed",
+    !!checks && checks.length > 0 && notPassed.length === 0 && missing.length === 0,
+    !checks || !checks.length
+      ? "result has no postUpdateChecks list (missing is a FAIL)"
+      : [
+          ...notPassed.map((c) => `${c && c.check}: ${c && c.status} (exit=${c && c.exitCode}) ${String((c && (c.reason || c.stderr)) || "").slice(0, 160)}`),
+          ...missing.map((c) => `${c}: declared by the capsule, not run`),
+        ].join(" | "),
+  );
+
+  const preserved = (name, intact, what) =>
+    add(
+      name,
+      committed && intact,
+      !intact ? `LOST: ${what}` : `unproven: the update did not commit, so ${what} being intact proves nothing`,
+    );
+  preserved("worked_in_md_edit_preserved", state.mdLinePresent, `the product's line in ${mdRel}`);
+  preserved("worked_in_allowlist_entry_preserved", state.allowlistEntryPresent, `the product's entry in ${WORKED_IN_ALLOWLIST_REL}`);
+
+  const untracked = Array.isArray(state.trackedMc) && state.trackedMc.length === 0;
+  add(
+    "worked_in_transients_untracked",
+    committed && untracked && state.stateOnDisk,
+    [
+      committed ? "" : "the update did not commit",
+      untracked ? "" : `git ls-files .mc = ${state.trackedMc ? state.trackedMc.slice(0, 5).join(", ") : "unreadable"}`,
+      state.stateOnDisk ? "" : `${WORKED_IN_STATE_REL} is gone from disk`,
+      ...state.errors,
+    ].filter(Boolean).join(" | "),
+  );
+  return out;
+}
+
+function runWorkedInLeg({ assert, tmpBase, n1Src, n1Install, fromVersion, toVersion, timeoutMs }) {
+  const emitted = new Set();
+  const emit = (name, ok, detail) => {
+    emitted.add(name);
+    assert(name, ok, detail);
+  };
+  try {
+    const root = path.join(tmpBase, "wi");
+    assertSandboxTargetSafe(root, { label: "worked-in sandbox target" });
+    const readCapsule = (base, v, file) =>
+      JSON.parse(fs.readFileSync(path.join(base, "framework", "releases", v, file), "utf8"));
+    const n1Base = fs.existsSync(path.join(n1Src, "framework", "releases", fromVersion, "framework-manifest.json")) ? n1Src : REPO_ROOT;
+    const mdRel = pickUnchangedMarkdownAsset(
+      readCapsule(n1Base, fromVersion, "framework-manifest.json"),
+      readCapsule(REPO_ROOT, toVersion, "framework-manifest.json"),
+      (dest) => fs.existsSync(path.join(n1Install, dest)),
+    );
+    if (!mdRel) throw new Error("no installed framework .md asset is unchanged between N-1 and N");
+    const declaredChecks = readCapsule(REPO_ROOT, toVersion, "release.json").postUpdateChecks || [];
+
+    prepareWorkedInProduct({ pristineRoot: n1Install, root, mdRel });
+    emit("worked_in_fixture_ready", true, `edited ${mdRel} and ${WORKED_IN_ALLOWLIST_REL}; ${WORKED_IN_STATE_REL} tracked`);
+
+    const { result, spawnFailure } = applyToWorkedIn({
+      root,
+      toVersion,
+      logBase: path.join(tmpBase, "wi-update"),
+      timeoutMs,
+    });
+    const state = observeWorkedIn({ root, mdRel });
+    for (const v of evaluateWorkedIn({ result, spawnFailure, state, declaredChecks, mdRel })) {
+      emit(v.name, v.ok, v.detail);
+    }
+  } catch (e) {
+    for (const name of ["worked_in_fixture_ready", ...WORKED_IN_NAMED_ASSERTS]) {
+      if (!emitted.has(name)) emit(name, false, `worked-in leg did not complete: ${e.message}`);
+    }
+  }
+}
+
 async function runEngine({ timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
   const asserts = [];
   const assert = (name, ok, detail, opts) => {
@@ -600,6 +863,18 @@ async function runEngine({ timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
         assert("n1_source_repointed_to_N", false, `could not repoint N-1 install source to N: ${e.message}`);
         proceed = false;
       }
+    }
+
+    if (proceed) {
+      runWorkedInLeg({
+        assert,
+        tmpBase,
+        n1Src,
+        n1Install,
+        fromVersion: from_version,
+        toVersion: to_version,
+        timeoutMs,
+      });
     }
 
     if (proceed) {
@@ -791,6 +1066,7 @@ async function runEngine({ timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
     "fresh_n_parity_type_3c",
     "fresh_n_parity_symlink_target_3c",
     "fresh_n_parity_content_3c",
+    ...WORKED_IN_NAMED_ASSERTS,
   ];
   const requiredNamedEvidencePresent = REQUIRED_NAMED_LOAD_BEARING_ASSERTS.every((name) => {
     const a = asserts.find((x) => x.name === name);
@@ -1334,6 +1610,69 @@ function selfTest() {
     }
   });
 
+  const wiState = { mdLinePresent: true, allowlistEntryPresent: true, trackedMc: [], stateOnDisk: true, errors: [] };
+  const wiResult = { committed: true, postUpdateChecks: [{ check: "node a.js", status: "passed" }] };
+  const wiVerdicts = (over) =>
+    evaluateWorkedIn({ result: wiResult, spawnFailure: "code=1", state: wiState, declaredChecks: ["node a.js"], mdRel: "x.md", ...over });
+  const wiRed = (over) => wiVerdicts(over).filter((v) => !v.ok).map((v) => v.name).sort().join(",");
+  const wiAll = [...WORKED_IN_NAMED_ASSERTS].sort().join(",");
+  t("worked-in positive control: committed + all checks passed + edits intact + .mc untracked => every named check GREEN, in order", () => {
+    const v = wiVerdicts({});
+    return v.every((x) => x.ok) && v.map((x) => x.name).join(",") === WORKED_IN_NAMED_ASSERTS.join(",");
+  });
+  for (const status of ["failed", "degraded"]) {
+    t(`worked-in: a committed update with a ${status} post-update check REDs (the 2.3.0 escape)`, () =>
+      wiRed({ result: { committed: true, postUpdateChecks: [{ check: "node a.js", status }] } }) ===
+      "worked_in_post_update_checks_all_passed");
+  }
+  t("worked-in: a missing or empty postUpdateChecks list REDs", () =>
+    [undefined, []].every(
+      (postUpdateChecks) =>
+        wiRed({ result: { committed: true, postUpdateChecks }, declaredChecks: [] }) === "worked_in_post_update_checks_all_passed",
+    ));
+  t("worked-in: a capsule-declared check that never ran REDs", () =>
+    wiRed({ declaredChecks: ["node a.js", "node b.js"] }) === "worked_in_post_update_checks_all_passed");
+  t("worked-in: an update that did not commit REDs ALL named checks (intact edits are not vacuously preserved)", () =>
+    wiRed({ result: { committed: false } }) === wiAll);
+  t("worked-in: no parseable result REDs ALL named checks", () => wiRed({ result: null }) === wiAll);
+  t("worked-in: a failed migration on a committed update REDs worked_in_committed", () =>
+    wiRed({ result: { ...wiResult, migrations: { status: "failed" } } }) === "worked_in_committed");
+  t("worked-in: each lost edit / still-tracked or deleted transient REDs its own check only", () =>
+    wiRed({ state: { ...wiState, mdLinePresent: false } }) === "worked_in_md_edit_preserved" &&
+    wiRed({ state: { ...wiState, allowlistEntryPresent: false } }) === "worked_in_allowlist_entry_preserved" &&
+    wiRed({ state: { ...wiState, trackedMc: [WORKED_IN_STATE_REL] } }) === "worked_in_transients_untracked" &&
+    wiRed({ state: { ...wiState, trackedMc: null } }) === "worked_in_transients_untracked" &&
+    wiRed({ state: { ...wiState, stateOnDisk: false } }) === "worked_in_transients_untracked");
+  t("worked-in: the markdown pick skips changed / non-framework / uninstalled assets and is deterministic", () => {
+    const a = (dest, sha256, owner = "framework") => ({ dest, sha256, owner });
+    const rows = (changed) => ({
+      assets: {
+        x: [
+          a("z.md", "1"),
+          a(".claude/commands/b.md", "1"),
+          a(".claude/commands/a.md", changed),
+          a(".claude/commands/0.md", "1"),
+          a("a.md", "1", "generated"),
+        ],
+      },
+    });
+    return pickUnchangedMarkdownAsset(rows("1"), rows("2"), (d) => d !== ".claude/commands/0.md") === ".claude/commands/b.md";
+  });
+  t("worked-in: the CLI result is parsed past leading engine chatter; no object => null", () =>
+    parseTrailingJson('MIRROR\n{\n  "committed": true\n}\n').committed === true && parseTrailingJson("Update failed.\n") === null);
+  t("worked-in: the fixture env drops inherited GIT_* and pins CLAUDE_PROJECT_DIR to the sandbox", () => {
+    const had = Object.prototype.hasOwnProperty.call(process.env, "GIT_DIR");
+    const prior = process.env.GIT_DIR;
+    process.env.GIT_DIR = "synthetic";
+    try {
+      const env = workedInEnv("sandbox");
+      return !("GIT_DIR" in env) && env.CLAUDE_PROJECT_DIR === "sandbox";
+    } finally {
+      if (had) process.env.GIT_DIR = prior;
+      else delete process.env.GIT_DIR;
+    }
+  });
+
   const pass = results.filter((r) => r.status === "pass").length;
   const fail = results.length - pass;
   return { ok: fail === 0, pass, fail, results };
@@ -1434,4 +1773,6 @@ module.exports = {
   listDirtyFiles,
   hashDirtyFileSet,
   dirtySetUnchanged,
+  WORKED_IN_NAMED_ASSERTS,
+  evaluateWorkedIn,
 };

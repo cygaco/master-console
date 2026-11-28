@@ -23,7 +23,7 @@ function setup() {
   const conflictsDir = path.join(target, ".mc", "pre-2.2.0-conflicts");
   [target, source, txDir].forEach((d) => fs.mkdirSync(d, { recursive: true }));
 
-  const dest = ".claude/agents/_system/beta.md";
+  const dest = "scripts/hooks/beta-hook.js";
   const installedAbs = write(base, path.join("installed-copy", dest), "orig\n");
   write(target, dest, "CUSTOM — the operator's edit\n");
   write(source, dest, "V2 — the 2.2.0 version\n");

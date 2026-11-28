@@ -1,12 +1,16 @@
 ---
-description: Check whether our models are out of date — audits the configured dispatch models against the latest vendor catalogs and flags drift, deprecations, and dead ("ghost") ids. --refresh deep-ingests the live vendor docs first.
+description: Slow, deep audit of our models against the vendors' own pages — finds drift, deprecations and dead ("ghost") ids in the dispatch catalog; --refresh re-reads the live vendor docs first. For a quick look at what is new, use /models:swap.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js, runtime/models-research]
 writes: [runtime/models-research]
 ---
 
-# /models:check — are we on the latest models?
+# /models:check — the slow, deep model audit
+
+> **Not the quick question.** "Are we on the latest models" and "any new models out" are
+> `/models:swap`'s find step (`node scripts/models/models.js find`), which reports and swaps
+> nothing. Use this skill for the slow, deep audit against the vendors' own pages.
 
 Audit the dispatch catalog (`scripts/dispatch/catalog.js`, the provider/model/effort
 source of truth) against the **latest** model catalogs published by each vendor, and
@@ -91,6 +95,7 @@ $ node scripts/models/check.js
 
 ## See also
 
-- `/models:update` — apply the latest (migrate ids, sync catalog, regen manifests)
+- `/models:swap` — the everyday flow: find what each lab serves now, swap one in, undo
+- `/models:update` — the maintainer's manual catalog migration after this audit
 - `/models:router` — open the model router panel (and ensure latest options are in it)
 - `/models:route` — point one role at a specific model

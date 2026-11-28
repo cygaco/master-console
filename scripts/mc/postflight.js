@@ -48,6 +48,7 @@ function resolvePathsKey(targetRoot, key) {
 function runNodeCheck(scriptAbs, args, cwd) {
   const r = spawnSync(process.execPath, [scriptAbs, ...args], {
     cwd,
+    env: { ...process.env, CLAUDE_PROJECT_DIR: cwd },
     encoding: "utf8",
     timeout: 60_000,
   });

@@ -1,12 +1,15 @@
 ---
-description: Update the dispatch catalog to the latest models — re-ingest vendor docs, migrate deprecated/shut-down ids, add new options, and sync routing. Beta-gated for default-model changes.
+description: Maintainer's manual catalog migration after a deep audit — edits the model catalog file (catalog.js) by hand to migrate shut-down ids, add options and sync routing; Beta-gated for default changes. Everyday model requests are /models:swap.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js, runtime/models-research]
 writes: [scripts/dispatch/catalog.js, .claude/manifest.json, .claude/agents]
 ---
 
-# /models:update — bring the catalog to the latest models
+# /models:update — the maintainer's manual catalog migration
+
+> Everyday requests ("update the model table", "are we on the latest models", "swap us to the
+> newest Gemini") are `/models:swap`, not this skill.
 
 Apply the latest vendor model catalogs to MC dispatch: migrate dead ids, add new
 options, optionally adopt newer flagships, and keep every place the model is pinned in
@@ -80,5 +83,6 @@ $ARGUMENTS
 
 ## See also
 
+- `/models:swap` — the everyday flow: find what each lab serves now, swap one in, undo
 - `/models:check` — the auditor (run this first; `--refresh` to re-ingest)
 - `/models:route` — point one role at a model · `/models:router` — open the panel

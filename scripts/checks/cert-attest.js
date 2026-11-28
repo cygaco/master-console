@@ -9,6 +9,7 @@ const ROOT = process.env.CLAUDE_PROJECT_DIR || path.resolve(__dirname, "..", "..
 const NAME = "cert-attest";
 const { NON_AUTH_SIGNAL, filterAgyLogToRunWindow, norm } = require("../dispatch/agy-auth-tells");
 const ARTIFACT_DIR = path.join(ROOT, "runtime", "cert-attest");
+const securityChoice = require("../dispatch/security-choice");
 
 const pv = require(path.join(__dirname, "..", "dispatch", "provenance-verifier"));
 let attestSigning;
@@ -140,10 +141,23 @@ function attestLane(lane, records, opts = {}) {
   );
   const provenanceOk = (r) =>
     typeof r.code_sha === "string" && r.code_sha.length > 0 && (codeSha == null || r.code_sha === codeSha) && !!r.cmdline_checksum;
+  const cliAttesting = sameRun.filter((r) => {
+    if (!(r.shape === "subprocess-cross-provider" && attestSigning.verifyRecord(r))) return false;
+    if (pv.servedModelUnverifiableFromRecord(r.provider)) return false;
+    return pv.recordMatchesLane(r, pv.laneContract(profileName, r.provider), r.provider) && !!r.output_digest && provenanceOk(r);
+  });
   const match = sameRun.find((r) => {
     if (!attestSigning.verifyRecord(r)) return false;
     if (!pv.recordMatchesLane(r, contract, lane.provider)) return false;
-    if (contract.isHunter) return (r.evidence_sha || r.output_digest) && provenanceOk(r);
+    if (contract.isHunter) {
+      if (!(provenanceOk(r) && typeof r.packet_sha256 === "string" && pv.hunterPacketBound(r, r.packet_sha256))) return false;
+      if (!(cliAttesting.length > 0 && cliAttesting.every((c) => c.packet_sha256 === r.packet_sha256))) return false;
+      const hunter = pv.hunterVerdictFor(records, {
+        panelRunId: runId, sprintId, packetSha: r.packet_sha256, verify: attestSigning.verifyRecord,
+        ...pv.hunterWindowFor(cliAttesting, null),
+      });
+      return (hunter.verdict === "pass" || hunter.verdict === "warn") && hunter.record === r;
+    }
     return r.tool_id === lane.tool_id && !!r.output_digest && provenanceOk(r);
   });
   if (!match) {
@@ -177,7 +191,7 @@ function attestPanelRun({ runId, sprintId, profile, lanes, records, codeSha, rol
     .createHash("sha256")
     .update(attestedLanes.map((l) => `${l.laneId}:${l.evidence_digest || ""}`).join("|"))
     .digest("hex");
-  return {
+  const out = {
     ok,
     profile: (profile && profile.name) || null,
     run_id: runId || null,
@@ -194,6 +208,14 @@ function attestPanelRun({ runId, sprintId, profile, lanes, records, codeSha, rol
           ? "every required lane attested SAME-RUN, but code_sha is absent — a binding attestation must bind to a code SHA → NOT ok"
           : "every required lane attested SAME-RUN on its contracted provider (fallback:false), bound to run_id + code_sha",
   };
+  const stamps = (records || [])
+    .filter((r) => runBound && r.ok === true && r.fallback === false && r.panel_run_id === runId && (sprintId == null || r.sprint_id === sprintId) && attestSigning.verifyRecord(r))
+    .map((r) => r.provider);
+  if (securityChoice.deriveDiversity(stamps) === securityChoice.CLAUDE_ONLY) {
+    out.diversity = securityChoice.CLAUDE_ONLY;
+    out.reason = `${securityChoice.CLAUDE_ONLY_LINE}; this is not a multi-lab attestation. ${out.reason}`;
+  }
+  return out;
 }
 
 function gitHeadSha() {

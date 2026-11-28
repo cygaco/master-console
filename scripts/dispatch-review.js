@@ -93,6 +93,24 @@ function splitInProcess(passes) {
   return { fire: passes.filter((p) => !notRun.includes(p)), notRun };
 }
 
+function laneFromSettled(s) {
+  const r = s.result || {};
+  const isClaude = s.pass.provider === "claude";
+  return {
+    pass: s.pass.key,
+    provider: s.pass.provider,
+    model: s.pass.model,
+    ok: !s.spawnError && !!r.ok,
+    verdict: verdictOf(s.result),
+    laneId: LANE_ID[s.pass.provider] || s.pass.provider,
+    observedProvider: isClaude ? "claude" : r.provider || null,
+    fallback: isClaude ? false : !!(r.fallback || r.quotaFallbackFrom),
+    hasEvidence: !s.spawnError && !!s.result,
+    lane_out: s.laneOut ? path.relative(ROOT, s.laneOut) : null,
+    dispatch_id: typeof r.dispatch_id === "string" && r.dispatch_id ? r.dispatch_id : null,
+  };
+}
+
 function notRunGateLane(p) {
   return {
     pass: p.key, provider: p.provider, model: p.model, ok: false, verdict: "error",
@@ -103,11 +121,11 @@ function notRunGateLane(p) {
 async function main() {
   const argv = process.argv.slice(2);
   const role = argv[0];
-  const promptFile = argv[1];
+  const originalPromptFile = argv[1];
   const domain = parseFlag(argv, "--domain");
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
   const laneOutDir = parseFlag(argv, "--lane-out") || path.join(ROOT, "runtime", "reviews", `${role}-${ts}`);
-  if (!role || !promptFile) {
+  if (!role || !originalPromptFile) {
     console.error(
       JSON.stringify({ ok: false, error: "Usage: node scripts/dispatch-review.js <role> <prompt-file> [--domain <d>]" }),
     );
@@ -142,23 +160,16 @@ async function main() {
     process.exit(2);
   }
   for (const p of notRun) console.error(HUNTER_LINE);
+  let snapshot;
+  try {
+    snapshot = snapshotPacket(originalPromptFile, laneOutDir);
+  } catch (e) {
+    console.error(JSON.stringify({ ok: false, role, error: "packet_snapshot_failed", detail: e.message }));
+    process.exit(2);
+  }
+  const promptFile = snapshot.file;
   const settled = await Promise.all(fire.map((p) => spawnPass(role, promptFile, p, domain, laneOutDir)));
-  const lanes = settled.map((s) => {
-    const r = s.result || {};
-    const isClaude = s.pass.provider === "claude";
-    return {
-      pass: s.pass.key,
-      provider: s.pass.provider,
-      model: s.pass.model,
-      ok: !s.spawnError && !!r.ok,
-      verdict: verdictOf(s.result),
-      laneId: LANE_ID[s.pass.provider] || s.pass.provider,
-      observedProvider: isClaude ? "claude" : r.provider || null,
-      fallback: isClaude ? false : !!(r.fallback || r.quotaFallbackFrom),
-      hasEvidence: !s.spawnError && !!s.result,
-      lane_out: s.laneOut ? path.relative(ROOT, s.laneOut) : null,
-    };
-  });
+  const lanes = settled.map(laneFromSettled);
   let panelLanes = null;
   try {
     panelLanes = require("./dispatch/panel-lanes");
@@ -191,8 +202,9 @@ async function main() {
   let merged = mergeLanes(role, lanes, { declaredPasses });
   merged = await applyClaudeOnlyFallback(role, lanes, merged, {
     sprintId: mcEnv.readEnv("SPRINT_ID") || null,
-    sinceMs: runnerStartMs,
+    runnerStartMs,
     panelRunId,
+    packetSha: snapshot.sha,
     declaredPasses,
   });
   if (notRun.length) {
@@ -228,12 +240,21 @@ async function main() {
       sinceMs: runnerStartMs,
       panelRunId,
       requireSignature: true,
+      packetSha: snapshot.sha,
     });
     applyGateOutcome(merged, panelGate);
   }
 
   console.log(JSON.stringify(merged));
   process.exit(merged.ok ? 0 : 1);
+}
+
+function snapshotPacket(file, laneOutDir) {
+  const bytes = fs.readFileSync(file);
+  fs.mkdirSync(laneOutDir, { recursive: true });
+  const copy = path.join(laneOutDir, `packet.snapshot.${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}.txt`);
+  fs.writeFileSync(copy, bytes, { flag: "wx", mode: 0o444 });
+  return { file: copy, sha: require("crypto").createHash("sha256").update(bytes).digest("hex") };
 }
 
 function isSecurityPanelRole(role) {
@@ -267,6 +288,23 @@ function panelBlocked(reason) {
   return { floor_pass: false, manifest_valid: false, floor: r, binding: r };
 }
 
+function ownCliRecords(records, lanes, verify) {
+  const ids = new Set(
+    (lanes || []).filter((l) => l && l.provider !== "claude" && typeof l.dispatch_id === "string" && l.dispatch_id).map((l) => l.dispatch_id),
+  );
+  return (records || []).filter((r) => ids.has(r.dispatch_id) && verify(r) === true);
+}
+
+function liveHunterWindow(records, { lanes, verify, packetSha, runnerStartMs }) {
+  const pv = require("./dispatch/provenance-verifier");
+  const counted = ownCliRecords(records, lanes, verify).filter(
+    (r) => r.ok === true && typeof r.packet_sha256 === "string" && r.packet_sha256 === packetSha,
+  );
+  const window = pv.hunterWindowFor(counted, runnerStartMs);
+  if (!(window.untilMs > runnerStartMs)) return window;
+  return { sinceMs: runnerStartMs - pv.HUNTER_WINDOW_MS, untilMs: runnerStartMs };
+}
+
 function applyPanelGate(panelLanes, lanes, ctx = {}) {
   const { panelStatus, STATUS, loadManifest, validatePanelManifest } = panelLanes;
   let validation;
@@ -286,14 +324,20 @@ function applyPanelGate(panelLanes, lanes, ctx = {}) {
   const readLedger = ctx.readLedger || defaultReadLedger;
   const requireSignature = ctx.requireSignature === true;
   const { verifyRecord } = require("./dispatch/attest-signing");
-  const records = (readLedger(sprintId) || []).filter((r) => {
-    if (panelRunId && r.panel_run_id !== panelRunId) return false;
+  const runRecords = (readLedger(sprintId) || []).filter((r) => !panelRunId || r.panel_run_id === panelRunId);
+  const records = runRecords.filter((r) => {
     if (!sinceMs) return true;
     const t = Date.parse(r.completed_at || "");
     return Number.isFinite(t) && t >= sinceMs;
   });
+  const reviewedPacket = (r) =>
+    typeof ctx.packetSha === "string" && /^[0-9a-f]{64}$/.test(ctx.packetSha) && r.packet_sha256 === ctx.packetSha;
+  const ownRecord = (r, l) => typeof l.dispatch_id === "string" && l.dispatch_id !== "" && r.dispatch_id === l.dispatch_id;
   const toolIdOf = requireToolIdOf();
   const pv = require("./dispatch/provenance-verifier");
+  const hunterWindow = sinceMs
+    ? liveHunterWindow(runRecords, { lanes, verify: verifyRecord, packetSha: ctx.packetSha, runnerStartMs: sinceMs })
+    : {};
   const buildObserved = (profileName) =>
     lanes.map((l) => {
       if (pv.servedModelUnverifiableFromRecord(l.provider)) {
@@ -308,26 +352,33 @@ function applyPanelGate(panelLanes, lanes, ctx = {}) {
         };
       }
       const contract = pv.laneContract(profileName, l.observedProvider);
-      const rec = records.find((r) => {
-        if (!pv.recordMatchesLane(r, contract, l.observedProvider)) return false;
-        if (!(r.ok === true && r.fallback === false)) return false;
-        if (requireSignature && !verifyRecord(r)) return false;
-        if (contract.isHunter) return !!r.output_digest || !!r.evidence_sha;
-        return !!r.output_digest && !!r.cmdline_checksum && r.tool_id === toolIdOf(l.observedProvider);
-      });
+      let rec;
       let verdict = l.verdict;
+      let counted;
       if (contract.isHunter) {
-        const hv = rec && typeof rec.verdict === "string" ? rec.verdict.toLowerCase() : null;
-        verdict = hv === "pass" || hv === "fail" || hv === "warn" ? hv : "error";
+        const hunter = pv.hunterVerdictFor(runRecords, {
+          panelRunId, sprintId, packetSha: ctx.packetSha, verify: verifyRecord, ...hunterWindow,
+        });
+        rec = hunter.record;
+        verdict = hunter.verdict;
+        counted = !!rec || verdict === "fail";
+      } else {
+        rec = records.find((r) => {
+          if (!pv.recordMatchesLane(r, contract, l.observedProvider)) return false;
+          if (!(r.ok === true && r.fallback === false)) return false;
+          if (requireSignature && !(ownRecord(r, l) && verifyRecord(r) && reviewedPacket(r))) return false;
+          return !!r.output_digest && !!r.cmdline_checksum && r.tool_id === toolIdOf(l.observedProvider);
+        });
+        counted = !!rec;
       }
       return {
         laneId: l.laneId,
         contractedProvider: l.provider,
         observedProvider: rec ? rec.provider : l.observedProvider,
-        fallback: rec ? false : true,
-        alive: !!rec,
+        fallback: !counted,
+        alive: counted,
         verdict,
-        hasEvidence: !!rec,
+        hasEvidence: counted,
       };
     });
   const floorProfile = { name: "panel-2family", ...manifest.profiles["panel-2family"] };
@@ -338,7 +389,7 @@ function applyPanelGate(panelLanes, lanes, ctx = {}) {
     floor_pass: floor.status === STATUS.PASS,
     manifest_valid: true,
     contract_evaluated: "panel-2family-floor",
-    floor: { contract: "panel-2family-floor", claude_channel: "subprocess", status: floor.status, reason: floor.reason, families: floor.families, laneStatus: floor.laneStatus },
+    floor: { contract: "panel-2family-floor", claude_channel: "in-process-hunter", status: floor.status, reason: floor.reason, families: floor.families, laneStatus: floor.laneStatus },
     binding: { contract: "panel-3lab-binding", claude_channel: "in-process-hunter", status: binding.status, reason: binding.reason, operator_blocked: binding.operator_blocked || null },
   };
 }
@@ -381,6 +432,8 @@ function mergeLanes(role, lanes, opts) {
       result.verdict = ev.verdict;
       result.diversity = securityChoice.CLAUDE_ONLY;
       result.verdict_text = `${ev.verdict} — ${CLAUDE_ONLY_LINE}`;
+      const carried = opts.claudeOnly.hunter.record;
+      result.claude_only_evidence = { dispatch_id: carried.dispatch_id || null, completed_at: carried.completed_at || null };
       result.parsed = { agent: role, verdict: ev.verdict, diversity: securityChoice.CLAUDE_ONLY, lanes };
     } else {
       result.claude_only_declined = ev.reason;
@@ -394,19 +447,22 @@ async function applyClaudeOnlyFallback(role, lanes, merged, ctx, deps = {}) {
   const optIn = deps.optIn || (() => securityChoice.claudeOnlyOptIn());
   if (optIn() !== true) return merged;
   const signedIn = await (deps.checkSignedIn || (() => securityChoice.checkSignedIn()))();
-  const verified = (deps.claudeLaneRecordsVerified || claudeLaneRecordsVerified)(lanes, ctx);
+  const hunter = (deps.hunterEvidence || claudeHunterEvidence)({ ...ctx, lanes });
   const declared = ctx && Number.isInteger(ctx.declaredPasses) ? ctx.declaredPasses : merged.multipass ? Math.max(lanes.length, 2) : undefined;
-  return mergeLanes(role, lanes, { declaredPasses: declared, claudeOnly: { optIn: true, signedIn, claudeLaneVerified: verified === true } });
+  const result = mergeLanes(role, lanes, { declaredPasses: declared, claudeOnly: { optIn: true, signedIn, hunter } });
+  result.claude_only_signin = signedIn;
+  return result;
 }
 
 function applyGateOutcome(merged, panelGate) {
   merged.panel = panelGate;
   if (!panelGate.floor_pass) {
     merged.ok = false;
+    const heldAs = panelGate.floor && panelGate.floor.laneStatus && panelGate.floor.laneStatus.claude === "fail" ? "fail" : "error";
     for (const holder of [merged, merged.parsed]) {
       if (!holder) continue;
       for (const k of holder === merged ? ["verdict", "mergedVerdict"] : ["verdict"]) {
-        if (holder[k] === "pass" || holder[k] === "warn") holder[k] = "error";
+        if (holder[k] === "pass" || holder[k] === "warn") holder[k] = heldAs;
       }
     }
   }
@@ -423,32 +479,28 @@ function downgradeClaudeOnly(merged, reason) {
   }
   delete merged.diversity;
   delete merged.verdict_text;
+  delete merged.claude_only_evidence;
   merged.claude_only_declined = reason;
 }
 
-function claudeLaneRecordsVerified(lanes, ctx = {}) {
+function claudeHunterEvidence(ctx = {}) {
+  const none = (reason) => ({ verdict: "error", record: null, reason });
   try {
-    const claudeLanes = lanes.filter((l) => l.provider === "claude");
-    if (!claudeLanes.length || !ctx.panelRunId) return false;
+    if (!Number.isFinite(ctx.runnerStartMs)) return none("no runner start time");
     const pv = require("./dispatch/provenance-verifier");
     const { verifyRecord } = require("./dispatch/attest-signing");
-    const readLedger = ctx.readLedger || defaultReadLedger;
-    const toolIdOf = requireToolIdOf();
-    const contract = pv.laneContract("panel-2family", "claude");
-    const matching = (readLedger(ctx.sprintId || null) || []).filter((r) => {
-      if (!r || r.panel_run_id !== ctx.panelRunId) return false;
-      const t = Date.parse(r.completed_at || "");
-      if (!Number.isFinite(t) || t < (ctx.sinceMs || 0)) return false;
-      if (!pv.recordMatchesLane(r, contract, "claude")) return false;
-      if (!(r.ok === true && r.fallback === false)) return false;
-      if (!verifyRecord(r)) return false;
-      return !!r.output_digest && !!r.cmdline_checksum && r.tool_id === toolIdOf("claude");
+    const sprintId = ctx.sprintId || null;
+    const records = (ctx.readLedger || defaultReadLedger)(null);
+    const runRecords = records.filter((r) => r.panel_run_id === ctx.panelRunId);
+    const hunter = pv.hunterVerdictFor(records, {
+      panelRunId: ctx.panelRunId, sprintId, packetSha: ctx.packetSha, verify: verifyRecord,
+      ...liveHunterWindow(runRecords, { lanes: ctx.lanes, verify: verifyRecord, packetSha: ctx.packetSha, runnerStartMs: ctx.runnerStartMs }),
     });
-    return matching.length >= claudeLanes.length;
-  } catch {
-    return false;
+    return { ...hunter, otherLabReview: pv.liveOtherLabRecordFor(records, { panelRunId: ctx.panelRunId, verify: verifyRecord }) };
+  } catch (e) {
+    return none(`the ledger could not be read (${(e && e.message) || "error"})`);
   }
 }
 
 if (require.main === module) main();
-module.exports = { verdictOf, mergeLanes, persistLane, laneFileName, isSecurityPanelRole, applyPanelGate, panelLoaderFailClosed, resolvePassesForDispatch, splitInProcess, notRunGateLane, HUNTER_LINE, claudeLaneRecordsVerified, downgradeClaudeOnly, applyGateOutcome, applyClaudeOnlyFallback };
+module.exports = { laneFromSettled, snapshotPacket, verdictOf, mergeLanes, persistLane, laneFileName, isSecurityPanelRole, applyPanelGate, panelLoaderFailClosed, resolvePassesForDispatch, splitInProcess, notRunGateLane, HUNTER_LINE, claudeHunterEvidence, downgradeClaudeOnly, applyGateOutcome, applyClaudeOnlyFallback };

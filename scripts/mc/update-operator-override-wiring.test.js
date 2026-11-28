@@ -13,7 +13,6 @@ const SOURCE_TREE_ROOT = path.resolve(__dirname, "..", "..");
 function makeHonestyRedInstall() {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), "mc-ovr-"));
   fs.mkdirSync(path.join(target, ".claude"), { recursive: true });
-  fs.writeFileSync(path.join(target, "DRIFT.md"), "operator-edited content\n");
   fs.writeFileSync(
     path.join(target, ".claude", "framework-installed.json"),
     JSON.stringify(

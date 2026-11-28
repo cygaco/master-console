@@ -174,7 +174,7 @@ test("an orphan the installed snapshot lists under userModified is kept even whe
     }
     assert.strictEqual(decisions.find((d) => d.dest === edited.dest).category, "ORPHAN_KEPT");
     assert.strictEqual(entry(result, edited.dest).reason, KEPT_LABEL);
-    assert.strictEqual(decisions.find((d) => d.dest === editedFw.dest).category, "DELETE_CONFLICT");
+    assert.strictEqual(decisions.find((d) => d.dest === editedFw.dest).category, "ORPHAN_KEPT");
     assert.strictEqual(result.counts.deleted, 2);
   } finally {
     fs.rmSync(fx.base, { recursive: true, force: true });
@@ -210,13 +210,13 @@ test("list-decisions.js classifies orphans exactly as update.js does", () => {
     assert.deepStrictEqual(Object.fromEntries(listed), Object.fromEntries(expected));
     assert.strictEqual(listed.get(fx.files.modifiedProject.dest), "ORPHAN_KEPT");
     assert.strictEqual(listed.get(noHash.dest), "ORPHAN_KEPT");
-    assert.strictEqual(listed.get(modifiedFramework.dest), "DELETE_CONFLICT");
+    assert.strictEqual(listed.get(modifiedFramework.dest), "ORPHAN_KEPT");
     assert.strictEqual(listed.get(fx.files.unmodifiedProject.dest), "DELETE_SAFE");
 
     const c = spawnSync(process.execPath, [path.join(__dirname, "list-decisions.js"), "--target", fx.target, "--source", fx.source, "--to", version, "--category", "C"], { encoding: "utf8" });
     assert.strictEqual(c.status, 0, c.stderr);
     const cLines = c.stdout.split(/\r?\n/).filter((l) => l && !l.startsWith("#"));
-    assert.deepStrictEqual(cLines, [`DELETE_CONFLICT\t${modifiedFramework.dest}`]);
+    assert.deepStrictEqual(cLines, []);
   } finally {
     fs.rmSync(fx.base, { recursive: true, force: true });
   }

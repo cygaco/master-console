@@ -103,6 +103,7 @@ function runGate(gate, opts, targetRoot, sourceTreeRoot) {
   const args = ["--target", targetRoot, "--json", ...(gate.args(opts) || [])];
   const r = spawnSync(process.execPath, [scriptAbs, ...args], {
     cwd: targetRoot,
+    env: { ...process.env, CLAUDE_PROJECT_DIR: targetRoot },
     encoding: "utf8",
     timeout: 60_000,
   });

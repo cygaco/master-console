@@ -206,6 +206,15 @@ function promptDigest(promptBufOrStr) {
   }
 }
 
+function packetSha256(promptBufOrStr) {
+  try {
+    const buf = Buffer.isBuffer(promptBufOrStr) ? promptBufOrStr : Buffer.from(String(promptBufOrStr), "utf8");
+    return crypto.createHash("sha256").update(buf).digest("hex");
+  } catch {
+    return null;
+  }
+}
+
 function outputDigest(outBufOrStr) {
   try {
     const s = Buffer.isBuffer(outBufOrStr)
@@ -456,6 +465,7 @@ function getRoleModel(role) {
 if (require.main !== module) {
   module.exports = {
     findAgentSpec,
+    packetSha256,
     providerToolId,
     observedCompletionFields,
     failureRecordFields,
@@ -766,6 +776,7 @@ try {
   }
 
   result.role = role;
+  result.dispatch_id = dispatchId;
   if (roleModel) result.specModel = roleModel;
   const parsed = parseProviderJson(result.output);
   if (parsed) result.parsed = parsed;
@@ -816,6 +827,7 @@ try {
     ok: !!result.ok,
     ...runContext(),
     prompt_digest: promptDigest(prompt),
+    packet_sha256: packetSha256(prompt),
     shape: "subprocess-cross-provider",
     tool_id: observedRec.tool_id,
     ...(result && result.tool_path

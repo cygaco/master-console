@@ -59,6 +59,65 @@ function copyIfChanged(srcAbs, destAbs) {
   return "copied";
 }
 
+const PRUNE_ROOTS = ["agents", "commands", "kernel", "project/reference", "schemas"];
+
+function isRealDirChain(base, rel) {
+  let cur = base;
+  for (const seg of rel.split("/")) {
+    cur = path.join(cur, seg);
+    try {
+      if (!fs.lstatSync(cur).isDirectory()) return false;
+    } catch {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isAbsent(abs) {
+  try {
+    fs.lstatSync(abs);
+    return false;
+  } catch (e) {
+    return e.code === "ENOENT";
+  }
+}
+
+function pruneMirror(targetRoot, livePlan) {
+  const out = { pruned: [], failed: [] };
+  if (!livePlan || livePlan.size === 0) return out;
+
+  const visit = (relDir) => {
+    for (const e of fs.readdirSync(path.join(targetRoot, relDir), { withFileTypes: true })) {
+      const rel = `${relDir}/${e.name}`;
+      if (e.isDirectory()) {
+        visit(rel);
+        continue;
+      }
+      if (!e.isFile() || livePlan.has(rel)) continue;
+      const dest = CLAUDE_PREFIX + rel.slice(MC_PREFIX.length);
+      if (!isFrameworkViewDest(dest) || !isAbsent(path.join(targetRoot, dest))) continue;
+      try {
+        fs.unlinkSync(path.join(targetRoot, rel));
+        out.pruned.push(rel);
+      } catch (err) {
+        out.failed.push({ mirror: rel, reason: err.message });
+      }
+    }
+  };
+
+  for (const root of PRUNE_ROOTS) {
+    const relRoot = MC_PREFIX + root;
+    if (!isRealDirChain(targetRoot, relRoot)) continue;
+    try {
+      visit(relRoot);
+    } catch (err) {
+      out.failed.push({ mirror: relRoot, reason: err.message });
+    }
+  }
+  return out;
+}
+
 function populateSource(opts) {
   const targetRoot = path.resolve(opts.targetRoot);
   const mcRoot = path.resolve(opts.mcRoot);
@@ -123,6 +182,13 @@ function populateSource(opts) {
     }
   }
 
+  const pruneResult = pruneMirror(targetRoot, seenMirror);
+  result.pruned = pruneResult.pruned;
+  result.failed.push(...pruneResult.failed);
+  if (result.pruned.length > 0) {
+    process.stderr.write(`populate-source: pruned ${result.pruned.length} stale mirror file(s) from _mc/\n`);
+  }
+
   result.mirroredCount = result.copied.length + result.unchanged.length;
   if (result.failed.length > 0) {
     result.ok = false;
@@ -163,7 +229,7 @@ function main() {
   } else if (!opts.quiet) {
     process.stdout.write(
       `populate-source: ${r.copied.length} copied, ${r.unchanged.length} unchanged, ` +
-        `${r.missingSource.length} missing-source, ${r.failed.length} failed ` +
+        `${r.missingSource.length} missing-source, ${r.pruned.length} pruned, ${r.failed.length} failed ` +
         `(mirror total: ${r.mirroredCount})\n`,
     );
     if (r.failed.length) {
@@ -181,6 +247,7 @@ if (require.main === module) {
 
 module.exports = {
   populateSource,
+  pruneMirror,
   isFrameworkViewDest,
   destToMirrorRel,
 };

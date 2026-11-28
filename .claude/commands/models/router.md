@@ -1,5 +1,5 @@
 ---
-description: Open the model router panel — ensure the catalog carries all the latest model options, then launch the Dispatch Console GUI (browser) so you can view/edit role→provider→model→effort visually.
+description: Open the panel to view or change each role's model — ensures the catalog carries every current model option, then launches the Dispatch Console GUI (browser) for role→provider→model→effort.
 user-invocable: true
 namespace: models
 reads: [scripts/dispatch/catalog.js]

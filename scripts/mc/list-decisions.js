@@ -34,7 +34,14 @@ const manifest = JSON.parse(
 );
 const capsule = { release, manifest };
 
-const decisions = update.classify(installed, capsule, target);
+let sourceTreeRoot;
+try {
+  sourceTreeRoot = update.findRepoRootFromCapsule(capsuleDir);
+} catch {
+  sourceTreeRoot = source;
+}
+
+const decisions = update.classify(installed, capsule, target, { sourceTreeRoot });
 
 const filtered =
   wantCategory === "C" ? update.planClass(decisions).C : decisions;

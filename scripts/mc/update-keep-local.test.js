@@ -53,7 +53,7 @@ test("--keep-local: content kept live (+ .mc-new), engine takes target (+ .local
     const decisions = update.classify(fx.installed, fx.capsule, fx.target);
     const dc = decisions.find((x) => x.dest === fx.contentDest);
     const de = decisions.find((x) => x.dest === fx.engineDest);
-    assert.strictEqual(dc.category, "MERGE_CONFLICT", `content expected MERGE_CONFLICT, got ${dc.category}`);
+    assert.strictEqual(dc.category, "MERGE_KEPT_LOCAL", `content expected MERGE_KEPT_LOCAL, got ${dc.category}`);
     assert.strictEqual(de.category, "MERGE_CONFLICT", `engine expected MERGE_CONFLICT, got ${de.category}`);
 
     const res = update.applyUpdateDecisions(fx.source, fx.target, decisions, fx.capsule.manifest, fx.txDir, {
@@ -71,7 +71,7 @@ test("--keep-local: content kept live (+ .mc-new), engine takes target (+ .local
     assert.ok(fs.existsSync(engineLocal), ".local-<v> sibling must exist for engine");
     assert.strictEqual(fs.readFileSync(engineLocal, "utf8"), "// ENGINE — operator edit\n", ".local-<v> must hold the operator's edit");
 
-    assert.strictEqual(res.counts.local_kept, 1);
+    assert.strictEqual(res.counts.kept_new_beside, 1);
     assert.strictEqual(res.counts.local_took_target, 1);
     const oc = res.localOverrides.find((o) => o.path === fx.contentDest);
     const oe = res.localOverrides.find((o) => o.path === fx.engineDest);
@@ -85,7 +85,7 @@ test("--keep-local: content kept live (+ .mc-new), engine takes target (+ .local
   }
 });
 
-test("--keep-local: a DELETE_CONFLICT (removed in target, locally modified) is SAVED as .local-<v> then removed; recorded; never silently lost", () => {
+test("--keep-local: a file removed in target but locally modified is ORPHAN_KEPT: it stays on disk, unchanged", () => {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), "mc-kl-del-"));
   const target = path.join(base, "target");
   const source = path.join(base, "source");
@@ -105,7 +105,7 @@ test("--keep-local: a DELETE_CONFLICT (removed in target, locally modified) is S
     for (const dest of goners) {
       const d = decisions.find((x) => x.dest === dest);
       assert.ok(d, `decision for ${dest} must exist`);
-      assert.strictEqual(d.category, "DELETE_CONFLICT", `${dest} expected DELETE_CONFLICT, got ${d.category}`);
+      assert.strictEqual(d.category, "ORPHAN_KEPT", `${dest} expected ORPHAN_KEPT, got ${d.category}`);
     }
 
     const res = update.applyUpdateDecisions(source, target, decisions, capsule.manifest, txDir, {
@@ -116,15 +116,11 @@ test("--keep-local: a DELETE_CONFLICT (removed in target, locally modified) is S
 
     for (let i = 0; i < goners.length; i++) {
       const dest = goners[i];
-      assert.ok(!fs.existsSync(path.join(target, dest)), `${dest} must be removed`);
-      const sib = path.join(target, `${dest}.local-0.16.0`);
-      assert.ok(fs.existsSync(sib), `${dest}.local-0.16.0 must be saved`);
-      assert.strictEqual(fs.readFileSync(sib, "utf8"), `// LOCAL EDIT ${i}\n`, "the saved copy is the operator's exact bytes");
-      const o = res.localOverrides.find((x) => x.path === dest);
-      assert.ok(o, `localOverride for ${dest}`);
-      assert.strictEqual(o.action, "deleted-saved-local");
+      assert.strictEqual(fs.readFileSync(path.join(target, dest), "utf8"), `// LOCAL EDIT ${i}\n`, `${dest} must stay`);
+      assert.ok(!fs.existsSync(path.join(target, `${dest}.local-0.16.0`)), "no sidecar is needed");
     }
-    assert.strictEqual(res.localOverrides.filter((o) => o.action === "deleted-saved-local").length, goners.length);
+    assert.strictEqual(res.counts.deleted, 0);
+    assert.strictEqual(res.counts.kept_modified, goners.length);
   } finally {
     fs.rmSync(base, { recursive: true, force: true });
   }
